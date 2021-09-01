@@ -1,0 +1,26 @@
+# Logical Compound Types
+
+Compound types include any type that is configurable including complex types as well as configurable scalar types.
+
+
+
+Key points for discussion:
+
+* Should union type be included (only exists in Arrow)? Isn't a named struct sufficient?
+* Arbitrary precision time/date types (e.g. timestamp(9) which exists in Arrow and Trino, timestamp(1) which exists in Trino)
+* Can maps contain multiple values with the same key?
+
+
+
+| Type Name                   | Description                                                  | Arrow Analog        | Iceberg Analog | Spark Analog   | Trino Analog                |
+| --------------------------- | ------------------------------------------------------------ | ------------------- | -------------- | -------------- | --------------------------- |
+| FIXEDCHAR(L)                | A fixed length field of length L. L can be between [1..2,147,483,647]. Values less that are less in length than the length of the field are padded with spaces. | None                | None           | CharType(L)    | CHAR(L)                     |
+| VARCHAR(L)                  | A field that can holds UTF8 encoded strings between 0 and L length. The length of each value can be between [0..2,147,483,647]. The value of L can be between [1..2,147,483,647]. Values shorter than L are not padded. | None                | None           | VarcharType(L) | VARCHAR(L)                  |
+| FIXEDBINARY(L)              | A binary field that is fixed in width to L. Values that are shorter than L are 0-byte padded. | FixedSizeBinary<L>  | FIXED<L>       | -              | -                           |
+| DECIMAL(P,S)                | Fixed point decimal with precision P and scale S. Precision must be 38 or less. | DECIMAL(P,S)        | DECIMAL(P,S)   | DECIMAL(P,S)   | DECIMAL(P,S)                |
+| STRUCT&lt;N:T1,...,N:T2&gt; | A struct that maps unique names to value types. Each name is a UTF8 string. Each value can have a distinct type. | struct_<*>          | struct<*>      | struct<*>      | row<*>                      |
+| LIST&lt;T&gt;               | A list of values of type T. The list can be between [0..2,147,483,647] values in length. Maps to the | list                | list           | list           | array                       |
+| MAP<K, V>                   | An unordered list of type K keys with type V values.         | map<k,v>            | map<k,v>       | -              | map<k,v>                    |
+| TIMESTAMP_MICRO_TZ(TZ)      | A timestamp in microseconds with a timezone TZ.              | timestamp<micro;tz> | timestamptz    | -              | timestamp(6) with time zone |
+| TIMESTAMP_MILLI_TZ(TZ)      | A timestamp in microseconds with a timezone TZ.              | timestamp<milli;tz> | -              | -              | timestamp(3) with time zone |
+

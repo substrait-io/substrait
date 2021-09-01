@@ -1,10 +1,18 @@
-# Simple Types
+# Simple Logical Types
 
-CommonPlan tries to cover the most common types used in data manipulation. Since CommonPlan is focused on both logical and physical manipulation, the type system needs to support all the common logical types. Simple types are those that don't support any form of configuration. For simplicity, any generic type that has only a small number of discrete implementations is declared directly (as opposed to via configuration).
+CommonPlan tries to cover the most common types used in data manipulation. Simple types are those that don't support any form of configuration. For simplicity, any generic type that has only a small number of discrete implementations is declared directly (as opposed to via configuration).
+
+To minimize type explosion, the project currently follows the guideline that a logical type should probably only be included in the specification if it is included in at least two of the following open source Projects: Apache Arrow, Apache Iceberg, Apache Spark and Trino.
 
 
 
-OPEN QUESTION: how do we map differing logical types to physical types, minimizing producer complexity without losing power. For example, there are two different physical representations of decimal in arrow, two different list length types in arrow, etc.
+Discussion points:
+
+* How do we ensure commonplan is adoptable by different communities while avoiding type explosion? Is it important to avoid type explosion? Current proposal is to avoid types unless they exist in at least two projects.
+* Does it make sense to support user defined types?
+* We've included unsigned types here but they only currently exist in Arrow. Should we remove?
+
+
 
 | Type Name       | Description                                                  | Arrow Analog           | Iceberg Analog | Spark Analog  | Trino Analog           |
 | --------------- | ------------------------------------------------------------ | ---------------------- | -------------- | ------------- | ---------------------- |
@@ -27,6 +35,6 @@ OPEN QUESTION: how do we map differing logical types to physical types, minimizi
 | date            | Date, expressed as number of seconds since epoch             | Date<MILLISECOND>      | date           | DateType      | Date                   |
 | time_micro      | A time expressed in microseconds since start of day          | Time<MICROSECOND;64>   | time           | time(6)       | time(6)                |
 | time_milli      | A time expressed in milliseconds since start of day          | Time<MILLISECOND;32>   | -              | time(3)       | time(3)                |
-| INTERVAL_YEAR   | Interval day to month                                        | INTERVAL<YEAR_MONTH>   | -              | -             | Interval year to month |
-| INTERVAL_DAY    | Interval day to second                                       | INTERVAL<DAY_TIME>     | -              | -             | Interval day to second |
+| interval_year   | Interval day to month                                        | INTERVAL<YEAR_MONTH>   | -              | -             | Interval year to month |
+| interval_day    | Interval day to second                                       | INTERVAL<DAY_TIME>     | -              | -             | Interval day to second |
 
