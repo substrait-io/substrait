@@ -1,8 +1,8 @@
 # Scalar Functions
 
-Scalar functions are a function that takes in values from a single record and produces an output value. To clearly specify the definition of functions, CommonPlan declares a extensible specification plus binding approach to function resolution. This ensures a clear definition of function behavior separate from a particular use of each function while avoiding operations 
+Scalar functions are a function that takes in values from a single record and produces an output value. To clearly specify the definition of functions, Substrait declares a extensible specification plus binding approach to function resolution. This ensures a clear definition of function behavior separate from a particular use of each function while avoiding operations 
 
-CommonPlan supports a number of functions. A scalar function signature includes the following properties:
+Substrait supports a number of functions. A scalar function signature includes the following properties:
 
 | Property           | Description                                                  | Required                            |
 | ------------------ | ------------------------------------------------------------ | ----------------------------------- |
@@ -33,8 +33,8 @@ Each function signature is categorized based on a function signature id. The ide
 
 | Property         | Description                                                  |
 | ---------------- | ------------------------------------------------------------ |
-| Organization Id  | An unsigned 32 bit integer mapped to a list of known organizations listed in the [CommonPlan repository](../functions/organizations.yaml). |
-| Function Id      | An unsigned 32 bit integer mapped to a list of known functions for the specific organization. For the CommonPlan organization, the function is listed in [here](../functions/functions.yaml). |
+| Organization Id  | An unsigned 32 bit integer mapped to a list of known organizations listed in the [Substrait repository](../functions/organizations.yaml). |
+| Function Id      | An unsigned 32 bit integer mapped to a list of known functions for the specific organization. For the Substrait organization, the function is listed in [here](../functions/functions.yaml). |
 | Function Version | A version field for the function. It is expected that        |
 
 An organization is responsible for managing their own lists of functions. A function id should be used forever. If a function is deleted for any reason, the id should not be reused. Ideally each function signature will have one or more 
@@ -50,5 +50,5 @@ For scalar functions (one value produced for each record), a function binding de
 ## Key Discussion Points
 
 * Currently avoiding binary operator concepts (e.g. +)
-* How to define complex behavior definitions? Start with only allowing definition in CommonPlan? Come up with some kind of way to express output type derivation using something language agnostic (e.g. a WebAssembly scripting language)?
+* How to define complex behavior definitions? Start with only allowing definition in Substrait? Come up with some kind of way to express output type derivation using something language agnostic (e.g. a WebAssembly scripting language)?
 * Should we have a function version for each function signature? What happens if someone redefines or changes the semantics of a function?

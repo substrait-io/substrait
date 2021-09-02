@@ -1,6 +1,6 @@
 # Physical Types
 
-Since CommonPlan is designed to work in both logical and physical contexts, there is need to support extended attributes in the physical context.
+Since Substrait is designed to work in both logical and physical contexts, there is need to support extended attributes in the physical context.
 
 For each logical type, we declare one or more physical representations of that logical type as approrpriate to the system specializations. Additionally, we describe whether a particular type is dictionary encoded. Each of these representation details is also used when specifiying a function signature to determine which of the specific physical representations of data are supported by a paticular function signature.
 

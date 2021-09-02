@@ -1,0 +1,117 @@
+# Relational Basics
+
+Substrait is designed to allow a user to construct an arbitrarily complex data transformation plan. The plan is composed of one or more relational operations. Relational operations are well-defined transformation operations that work by taking zero or more input datasets and transforming them into zero or more output transformations. Substrait defines a core set of transformations and users are also able to extend the operations with their own specialized operations. 
+
+Each relational operation is composed of several different properties. Common properties for relational operations include the following:
+
+| Property   | Description                                                  | Type               |
+| ---------- | ------------------------------------------------------------ | ------------------ |
+| Emit       | The set of columns output from this operation and the order of those columns. | Logical & Physical |
+| Hints      | A set of optionally provided, optionally consumed information about an operation that better inform execution. These might include estimated number of input and output records, estimated record size, likely filter reduction, estimated dictionary size, etc. These can also include implementation specific pieces of execution information. | Physical           |
+| Constraint | A set of runtime constraints around the operation, limiting its consumption based on irl resources (CPU, memory) as well as virtual resources like number of records produced, largest record size, etc. | Physical           |
+
+
+
+## Relational Signatures
+
+In functions, function signatures are declared externally to the use of those signatures (function bindings). In the case of relational operations, signatures are declared directly in the specification. This is due to the speed of change and number of total operations. Relational operations in the specification are expected to be <100 for several years with additions being infrequent. On the other hand, there is an expectation of both a much larger number of functions (1,000s) and a much higher velocity of additions.
+
+Each Relational Operation must declare the following:
+
+* Transformation logic around properties of the data. For example, does a relational operation maintain sortedness of a field? Does an operation change the distribution of data? 
+* How many input sets does an operation produce? 
+* Does the operator produce an output (by specification, we limit relational operations to a single output at this time)
+* What is the schema and field ordering of an output (see emit below)?
+
+### Emit: Output Ordering
+
+A relational operation uses field references to access specific fields of the input stream. Field references are always ordinal based on the order of the incoming streams. Each relational operation must declare the order of its output data. To simpify things, each relational operation can be in one of two modes: 
+
+1. **Direct output**: The order of outputs is based on the definition declared by the relational operation. 
+2. **Remap**: A listed ordering of the direct outputs. This remapping can be also used to drop columns no longer used (such as a filter field or join keys after a join). Note that remapping/exclusion can only be done at the outputs root struct. Filtering of compound values or extracting subsets must be done through other operation types (e.g. projection).
+
+## Basic Operations
+
+To simplify the discussion, initially we are focused on defining two basic operations for a simple plan. Those operations are reading data from disk and filtering that data.
+
+
+
+## Read Operator
+
+The read operator is an operator that produces one output. A simple example would be the reading of a Parquet file. It is expected that many types of reads will be added over time
+
+| Signature            | Value                                    |
+| -------------------- | ---------------------------------------- |
+| Inputs               | 0                                        |
+| Outputs              | 1                                        |
+| Property Maintenance | N/A (no inputs)                          |
+| Output Order         | Defaults to the schema of the data read. |
+
+
+
+#### Properties
+
+| Property      | Description                                                  | Required                            |
+| ------------- | ------------------------------------------------------------ | ----------------------------------- |
+| Read Type     | The type of read to complete.                                | Required                            |
+| Definition    | The contents of the read property definition, validated to the read type signature | Required                            |
+| Direct Schema | Defines the schema of the output of the read (before any emit remapping/hiding). | Required                            |
+| Filter        | A boolean Substrait expression that describes the filter of a iceberg dataset. TBD: define how field referencing works. | Optional, defaults to none.         |
+| Projection    | A masked complex expression describing the portions of the content that should be read | Optional, defaults to all of schema |
+| Properties    | A list of name/value pairs associated with the read          | Optional, defaults to empty         |
+
+### Read Definition Types
+
+Read definition types are built by the community and added to the specification. This is a portion of specification that is expected to grow rapidly.
+
+
+
+#### Virtual Table
+
+| Property | Description | Required |
+| -------- | ----------- | -------- |
+| Data     | Required    | Required |
+
+
+
+#### Logical Iceberg Type
+
+| Property     | Description                                                  | Required |
+| ------------ | ------------------------------------------------------------ | -------- |
+| Table        | An array of strings that describe the namespace and name of the table to be read. | Required |
+| Catalog Type | The catalog type associated with this read                   | Required |
+
+
+
+#### Files Type
+
+| Property | Description                                                  | Required |
+| -------- | ------------------------------------------------------------ | -------- |
+| URIs     | An array URIs associated with the read                       | Required |
+| Format   | Enumeration of available formats. Only current option is PARQUET. | Required |
+
+
+
+#### Logical Arrow Flight
+
+| Property   | Description                                      | Required |
+| ---------- | ------------------------------------------------ | -------- |
+| URI        | Arrow Flight Endpoint                            | Required |
+| Descriptor | Bytes associated with an Arrow Flight Descriptor | Required |
+
+
+
+#### Physical Arrow Flight
+
+| Property | Description                                           | Required |
+| -------- | ----------------------------------------------------- | -------- |
+| Tickets  | Tickets associated with an Arrow flight get operation | Required |
+
+
+
+## Discussion Points
+
+* Do we try to make read definition types more extensible ala function signatures? Is that necessary if we have a custom relational operator?
+* How do we express decomposed types. For example, the Iceberg type above is for early logical planning. Once we do some operations, it may produce a list of Iceberg file reads. This is likely a secondary type of object.
+* We currently include a generic properties property on read type. Do we want this dumping ground? 
+

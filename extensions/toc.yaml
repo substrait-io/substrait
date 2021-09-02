@@ -1,9 +1,9 @@
 organization: 0
 license: aplv2
-name: CommonPlan
+name: Substrait
 extensions:
   functions: 
-    scalar: [https://github.com/commonplan/spec/blob/sketch/functions/scalar_functions.yaml]
-    aggregate: [https://github.com/commonplan/spec/blob/sketch/functions/aggregate_functions.yaml]
-    window: [https://github.com/commonplan/spec/blob/sketch/functions/window_functions.yaml]
-  types: [https://github.com/commonplan/spec/blob/sketch/functions/extension_types.yaml]
+    scalar: [https://github.com/substrait-io/spec/blob/sketch/extensions/scalar_functions.yaml]
+    aggregate: [https://github.com/substrait-io/spec/blob/sketch/extensions/aggregate_functions.yaml]
+    window: [https://github.com/substrait-io/spec/blob/sketch/extensions/window_functions.yaml]
+  types: [https://github.com/substrait-io/spec/blob/sketch/extensions/extension_types.yaml]

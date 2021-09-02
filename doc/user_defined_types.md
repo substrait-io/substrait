@@ -6,7 +6,6 @@ A yaml example of an extension type is below:
 
 ```yaml
   name: point
-  id: 0
   structure:
     longitude: i32
     latitude: i32

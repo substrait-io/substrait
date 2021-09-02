@@ -1,6 +1,6 @@
 # Simple Logical Types
 
-CommonPlan tries to cover the most common types used in data manipulation. Simple types are those that don't support any form of configuration. For simplicity, any generic type that has only a small number of discrete implementations is declared directly (as opposed to via configuration).
+Substrait tries to cover the most common types used in data manipulation. Simple types are those that don't support any form of configuration. For simplicity, any generic type that has only a small number of discrete implementations is declared directly (as opposed to via configuration).
 
 To minimize type explosion, the project currently follows the guideline that a logical type should probably only be included in the specification if it is included in at least two of the following open source Projects: Apache Arrow, Apache Iceberg, Apache Spark and Trino.
 
@@ -8,7 +8,7 @@ To minimize type explosion, the project currently follows the guideline that a l
 
 #### Discussion points
 
-* How do we ensure commonplan is adoptable by different communities while avoiding type explosion? Is it important to avoid type explosion? Current proposal is to avoid types unless they exist in at least two projects.
+* How do we ensure Substrait is adoptable by different communities while avoiding type explosion? Is it important to avoid type explosion? Current proposal is to avoid types unless they exist in at least two projects.
 * Does it make sense to support user defined types?
 * We've included unsigned types here but they only currently exist in Arrow. Should we remove?
 

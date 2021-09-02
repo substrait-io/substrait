@@ -1,11 +1,9 @@
 types:
 - name: point
-  id: 0
   structure:
     latitude: i32
     longitude: i32
 - name: line
-  id: 1
   structure:
     unwrapped: 
       list: 

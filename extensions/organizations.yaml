@@ -1,4 +1,4 @@
 organizations:
-- name: CommonPlan
+- name: Substrait
   id: 0
-  extensions: "github://CommonPlan/spec/extensions/toc.yaml"
+  extensions: "github://substrait-io/spec/extensions/toc.yaml"

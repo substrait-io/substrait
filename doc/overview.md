@@ -1,4 +1,4 @@
-# CommonPlan
+# Substrait
 
 
 
@@ -6,7 +6,7 @@
 
 Define a well-defined, cross-language specification of data compute operations. This includes a declaration of common operations, custom operations and one or more serialized representations of this specification. The spec focuses on the semantics of each operation and a consistent way to describe.
 
-In many ways, the goal of this project is similar to that of the Apache Arrow project. Arrow is focused on a standardized memory representation of columnar data. CommonPlan is focused on what should be done to data.
+In many ways, the goal of this project is similar to that of the Apache Arrow project. Arrow is focused on a standardized memory representation of columnar data. Substrait is focused on what should be done to data.
 
 
 
@@ -37,7 +37,7 @@ In many ways, the goal of this project is similar to that of the Apache Arrow pr
 * Establish clear delineation between specifications that MUST be respected to and those that can be optionally ignored.
 * Establish a forgiving compatibility approach and versioning scheme that supports cross-version compatibility in maximum number of cases.
 * Minimize the need for consumer intelligence by excluding concepts like overloading, type coercion, implicit casting, field name handling, etc. (Note: this is weak and should be better stated.)
-* Decomposability/severability: A particular producer or consumer should be able to produce or consume only a subset of the specification and interact well with any other CommonPlan system as long the specific operations requested fit within the subset of specification supported by the counter system.
+* Decomposability/severability: A particular producer or consumer should be able to produce or consume only a subset of the specification and interact well with any other Substrait system as long the specific operations requested fit within the subset of specification supported by the counter system.
 
 
 
@@ -71,12 +71,12 @@ Once all portions of the specification have been moved to commit (or eliminated)
 |          | empty  | [Table Functions](table_functions.md)                        | Functions that convert one or more values from an input record into 0..N output records. Example include operations such as explode, pos-exlode, etc. |
 |          | sketch | [User Defined Functions](user_defined_functions.md)          | Reusable named functions that are built beyond the core specification. Implementations are typically registered thorugh external means (drop a file in a directory, send a special command with implementation, etc). |
 |          | sketch | [Embedded Functions](embedded_functions.md)                  | Functions implementations embedded directly within the plan. Frequently used in data scicence workflows where business logic is interpersed with standard operations. |
-| 4        | sketch | Relational Basics                                            | Basic concepts around relational algebra and the two basic relational operations: read & filter. |
-|          | sketch | Logical Operations                                           | Common relational operations used in compute plans including project, join, aggregation, etc. |
-|          | sketch | Physical Relational Operations                               | Specific execution sub-variations of common relational operations that describe how an operation should be down. Examples include hash join, merge join, nested loop join, etc. |
-|          | sketch | Exchange Operations                                          | Operations associated with distributing work between multiple systems. Example might include hashed send, unordered reception, etc. |
-|          | sketch | User Defined Relational Operations                           | Installed and reusable relational operations customized to a particular platform. |
-|          | sketch | Embedded Relational Operations                               | Relational operations where plans contain the "machine" code to directly execute. |
-| 5        | sketch | Text Serialization                                           | A human producable & consumable representation of the plan specification. |
-| 6        | sketch | Binary Serialization                                         | A high performance & compact binary representation of the plan specification. |
+| 4        | sketch | [Relational Basics](relational_basics.md)                    | Basic concepts around relational algebra and the two basic relational operations: read & filter. |
+|          | empty  | Logical Operations                                           | Common relational operations used in compute plans including project, join, aggregation, etc. |
+|          | empty  | Physical Relational Operations                               | Specific execution sub-variations of common relational operations that describe how an operation should be down. Examples include hash join, merge join, nested loop join, etc. |
+|          | empty  | Exchange Operations                                          | Operations associated with distributing work between multiple systems. Example might include hashed send, unordered reception, etc. |
+|          | empty  | User Defined Relational Operations                           | Installed and reusable relational operations customized to a particular platform. |
+|          | empty  | Embedded Relational Operations                               | Relational operations where plans contain the "machine code" to directly execute the necessary operations. |
+| 5        | sketch | [Text Serialization](text_serialization.md)                  | A human producable & consumable representation of the plan specification. |
+| 6        | sketch | [Binary Serialization](binary_serialization.md)              | A high performance & compact binary representation of the plan specification. |
 
