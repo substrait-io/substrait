@@ -4,7 +4,7 @@ Compound types include any type that is configurable including complex types as 
 
 
 
-Key points for discussion:
+#### Key points for discussion
 
 * Should union type be included (only exists in Arrow)? Isn't a named struct sufficient?
 * Arbitrary precision time/date types (e.g. timestamp(9) which exists in Arrow and Trino, timestamp(1) which exists in Trino)

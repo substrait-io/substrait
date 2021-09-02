@@ -1,0 +1,4 @@
+organizations:
+- name: CommonPlan
+  id: 0
+  extensions: "github://CommonPlan/spec/extensions/toc.yaml"

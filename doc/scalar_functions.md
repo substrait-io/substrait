@@ -1,10 +1,12 @@
-# Function Signatures
+# Scalar Functions
 
-CommonPlan supports a number of functions. A function signature includes the following properties:
+Scalar functions are a function that takes in values from a single record and produces an output value. To clearly specify the definition of functions, CommonPlan declares a extensible specification plus binding approach to function resolution. This ensures a clear definition of function behavior separate from a particular use of each function while avoiding operations 
+
+CommonPlan supports a number of functions. A scalar function signature includes the following properties:
 
 | Property           | Description                                                  | Required                            |
 | ------------------ | ------------------------------------------------------------ | ----------------------------------- |
-| Name               | One or more utf8 strings that are used to access this function | At least one value is required.     |
+| Name               | One or more user friendly utf8 strings that are used to reference this function in languages | At least one value is required.     |
 | List of arguments  | Argument properties are defined below                        | Optional, defaults to niladic.      |
 | Determinate        | Whether this function is expected to reproduce the same output when it is invoked multiple times with the same input. This informs a plan consumer on whether it can constant reduce the defined function. An example would be a random() function, which is typically expected to be evaluated repeatedly despite having the same set of inputs. | Optional, defaults to true.         |
 | Session Dependent  | Whether this function is influenced by the session context it is invoked within. For example, a function may be influenced by a user who is invoking the function, the time zone of a session, or some other non-obvious parameter. This can inform caching systems on whether a particular function is cacheable. | Optional, defaults to false.        |
@@ -29,10 +31,11 @@ CommonPlan supports a number of functions. A function signature includes the fol
 
 Each function signature is categorized based on a function signature id. The identifier includes two components:
 
-| Property        | Description                                                  |
-| --------------- | ------------------------------------------------------------ |
-| Organization Id | An unsigned 32 bit integer mapped to a list of known organizations listed in the [CommonPlan repository](../functions/organizations.yaml). |
-| Function Id     | An unsigned 32 bit integer mapped to a list of known functions for the specific organization. For the CommonPlan organization, the function is listed in [here](../functions/functions.yaml). |
+| Property         | Description                                                  |
+| ---------------- | ------------------------------------------------------------ |
+| Organization Id  | An unsigned 32 bit integer mapped to a list of known organizations listed in the [CommonPlan repository](../functions/organizations.yaml). |
+| Function Id      | An unsigned 32 bit integer mapped to a list of known functions for the specific organization. For the CommonPlan organization, the function is listed in [here](../functions/functions.yaml). |
+| Function Version | A version field for the function. It is expected that        |
 
 An organization is responsible for managing their own lists of functions. A function id should be used forever. If a function is deleted for any reason, the id should not be reused. Ideally each function signature will have one or more 
 
@@ -48,3 +51,4 @@ For scalar functions (one value produced for each record), a function binding de
 
 * Currently avoiding binary operator concepts (e.g. +)
 * How to define complex behavior definitions? Start with only allowing definition in CommonPlan? Come up with some kind of way to express output type derivation using something language agnostic (e.g. a WebAssembly scripting language)?
+* Should we have a function version for each function signature? What happens if someone redefines or changes the semantics of a function?

@@ -6,7 +6,7 @@ To minimize type explosion, the project currently follows the guideline that a l
 
 
 
-Discussion points:
+#### Discussion points
 
 * How do we ensure commonplan is adoptable by different communities while avoiding type explosion? Is it important to avoid type explosion? Current proposal is to avoid types unless they exist in at least two projects.
 * Does it make sense to support user defined types?
