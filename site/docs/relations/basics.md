@@ -1,4 +1,4 @@
-# Relational Basics
+# Basics
 
 Substrait is designed to allow a user to construct an arbitrarily complex data transformation plan. The plan is composed of one or more relational operations. Relational operations are well-defined transformation operations that work by taking zero or more input datasets and transforming them into zero or more output transformations. Substrait defines a core set of transformations and users are also able to extend the operations with their own specialized operations. 
 

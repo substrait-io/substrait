@@ -2,16 +2,6 @@
 
 Compound types include any type that is configurable including complex types as well as configurable scalar types.
 
-
-
-#### Key points for discussion
-
-* Should union type be included (only exists in Arrow)? Isn't a named struct sufficient?
-* Arbitrary precision time/date types (e.g. timestamp(9) which exists in Arrow and Trino, timestamp(1) which exists in Trino)
-* Can maps contain multiple values with the same key?
-
-
-
 | Type Name                   | Description                                                  | Arrow Analog        | Iceberg Analog | Spark Analog   | Trino Analog                |
 | --------------------------- | ------------------------------------------------------------ | ------------------- | -------------- | -------------- | --------------------------- |
 | FIXEDCHAR(L)                | A fixed length field of length L. L can be between [1..2,147,483,647]. Values less that are less in length than the length of the field are padded with spaces. | None                | None           | CharType(L)    | CHAR(L)                     |
@@ -24,3 +14,8 @@ Compound types include any type that is configurable including complex types as 
 | TIMESTAMP_MICRO_TZ(TZ)      | A timestamp in microseconds with a timezone TZ.              | timestamp<micro;tz> | timestamptz    | -              | timestamp(6) with time zone |
 | TIMESTAMP_MILLI_TZ(TZ)      | A timestamp in microseconds with a timezone TZ.              | timestamp<milli;tz> | -              | -              | timestamp(3) with time zone |
 
+#### Discussion Points
+
+* Should union type be included (only exists in Arrow)? Isn't a named struct sufficient?
+* Arbitrary precision time/date types (e.g. timestamp(9) which exists in Arrow and Trino, timestamp(1) which exists in Trino)
+* Can maps contain multiple values with the same key?

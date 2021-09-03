@@ -31,11 +31,10 @@ Substrait supports a number of functions. A scalar function signature includes t
 
 Each function signature is categorized based on a function signature id. The identifier includes two components:
 
-| Property         | Description                                                  |
-| ---------------- | ------------------------------------------------------------ |
-| Organization Id  | An unsigned 32 bit integer mapped to a list of known organizations listed in the [Substrait repository](../functions/organizations.yaml). |
-| Function Id      | An unsigned 32 bit integer mapped to a list of known functions for the specific organization. For the Substrait organization, the function is listed in [here](../functions/functions.yaml). |
-| Function Version | A version field for the function. It is expected that        |
+| Property        | Description                                                  |
+| --------------- | ------------------------------------------------------------ |
+| Organization Id | An unsigned 32 bit integer mapped to a list of known organizations listed in the [Substrait repository](https://github.com/substrait-io/substrait/blob/sketch/extensions/organizations.yaml). |
+| Function Id     | An unsigned 32 bit integer mapped to a list of known functions for the specific organization. For the Substrait organization, the function is listed in [here](https://github.com/substrait-io/substrait/blob/sketch/extensions/scalar_functions.yaml). |
 
 An organization is responsible for managing their own lists of functions. A function id should be used forever. If a function is deleted for any reason, the id should not be reused. Ideally each function signature will have one or more 
 

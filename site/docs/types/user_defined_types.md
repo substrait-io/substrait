@@ -12,3 +12,4 @@ A yaml example of an extension type is below:
 ```
 
 This declares a new type (namespaced to the associated organization) called "point". This type is composed of two i32 values named longitude and latitude. Once a type has been declared, it can be used in function declarations.  [TBD: should field references be allowed to dereference the components of a user defined type?]
+

@@ -1,0 +1,8 @@
+arrange:
+  - index.md
+  - spec
+  - types
+  - expressions
+  - relations
+  - serialization
+  - community.md

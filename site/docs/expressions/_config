@@ -1,0 +1,9 @@
+arrange:
+  - field_references.md
+  - scalar_functions.md
+  - aggregate_functions.md
+  - specialized_record_expressions.md
+  - window_functions.md
+  - table_functions.md
+  - user_defined_functions.md
+  - embedded_functions.md

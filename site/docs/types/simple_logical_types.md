@@ -4,16 +4,6 @@ Substrait tries to cover the most common types used in data manipulation. Simple
 
 To minimize type explosion, the project currently follows the guideline that a logical type should probably only be included in the specification if it is included in at least two of the following open source Projects: Apache Arrow, Apache Iceberg, Apache Spark and Trino.
 
-
-
-#### Discussion points
-
-* How do we ensure Substrait is adoptable by different communities while avoiding type explosion? Is it important to avoid type explosion? Current proposal is to avoid types unless they exist in at least two projects.
-* Does it make sense to support user defined types?
-* We've included unsigned types here but they only currently exist in Arrow. Should we remove?
-
-
-
 | Type Name       | Description                                                  | Arrow Analog           | Iceberg Analog | Spark Analog  | Trino Analog           |
 | --------------- | ------------------------------------------------------------ | ---------------------- | -------------- | ------------- | ---------------------- |
 | boolean         | A value that is either true or false.                        | Bool                   | boolean        | boolean       | boolean                |
@@ -38,3 +28,8 @@ To minimize type explosion, the project currently follows the guideline that a l
 | interval_year   | Interval day to month                                        | INTERVAL<YEAR_MONTH>   | -              | -             | Interval year to month |
 | interval_day    | Interval day to second                                       | INTERVAL<DAY_TIME>     | -              | -             | Interval day to second |
 
+#### Discussion points
+
+* How do we ensure Substrait is adoptable by different communities while avoiding type explosion? Is it important to avoid type explosion? Current proposal is to avoid types unless they exist in at least two projects.
+* Does it make sense to support user defined types?
+* We've included unsigned types here but they only currently exist in Arrow. Should we remove?

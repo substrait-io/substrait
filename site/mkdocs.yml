@@ -1,0 +1,82 @@
+site_name: "Substrait: Cross-platform Relational Algebra and Expressions"
+site_description: "Substrait is a new specification and set of tools that allow different systems to express clear data manipulation operations."
+site_url: "https://substrait.io"
+edit_uri: ""
+strict: true
+remote_name: origin
+remote_branch: gh-pages
+use_directory_urls: true
+#include_search_page: false
+#search_index_only: true
+theme:
+  name: material
+  custom_dir: overrides  
+  logo: img/logo.svg
+  palette:
+    primary: pink
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.expand
+    - navigation.instant
+    - toc.integrate
+extra_css:
+  - stylesheets/extra.css
+
+extra:
+  analytics:
+    provider: google
+    property: G-57ZX8S93Q5
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/substrait_io
+repo_url: https://github.com/substrait-io/substrait
+plugins:
+  - markdownextradata
+  - search
+  - awesome-pages:
+      filename: _config
+  - minify:
+      minify_html: true
+markdown_extensions:
+  - smarty
+  - sane_lists
+  - extra
+  - tables
+  - markdown.extensions.admonition
+  - markdown.extensions.attr_list
+  - markdown.extensions.def_list
+  - markdown.extensions.footnotes
+  - meta
+  - markdown.extensions.toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: substrait-io
+      repo: substrait
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde

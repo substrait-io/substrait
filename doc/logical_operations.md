@@ -1,2 +1,0 @@
-# Logical Relational Operations
-

@@ -1,0 +1,3 @@
+arrange:
+  - text_serialization.md
+  - binary_serialization.md
