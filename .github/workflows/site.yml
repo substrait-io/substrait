@@ -2,7 +2,7 @@ name: Site
 
 on:
   push:
-    branches: [ main ]
+    branches: [ sketch ]
     paths:
       - 'site/**'
 jobs:
