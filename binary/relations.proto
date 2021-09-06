@@ -9,14 +9,37 @@ import "selection.proto";
 
 message RelCommon {
 
+    oneof kind {
+        Direct direct = 1;
+        Emit emit = 2;
+    }
+
+    Hint hint = 3;
+    RuntimeConstraint constraint = 4;
+
     message Direct {}
     message Emit {
         repeated int32 output_mapping = 1;
     }
 
-    oneof kind {
-        Direct direct = 1;
-        Emit emit = 2;
+    message Hint {
+        repeated HintKeyValue hint_key_values = 1;
+        Stats stats = 2;
+
+        message Stats {
+            double row_count = 1;
+            double record_size = 2;
+        }
+
+        message HintKeyValue {
+            string key = 1;
+            bytes value = 2;
+        }
+
+    }
+
+    message RuntimeConstraint {
+        // TODO: nodes, cpu threads/%, memory, iops, etc.
     }
 
 }

@@ -6,9 +6,10 @@ message ReferenceSegment {
 
     oneof reference_type {
         MapKey map_key = 1;
-        StructField struct_field = 2;
-        ListElement list_element = 3;
-        MapKeyExpression expression = 4;
+        MapKeyExpression expression = 2;
+        StructField struct_field = 3;
+        ListElement list_element = 4;
+        ListRange list_range = 5;
     }
 
     message MapKey {
