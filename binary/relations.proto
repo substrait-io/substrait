@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package io.substrait;
+
+import "type.proto";
+import "expression.proto";
+import "selection.proto";
+
+
+message RelCommon {
+
+    message Direct {}
+    message Emit {
+        repeated int32 output_mapping = 1;
+    }
+
+    oneof kind {
+        Direct direct = 1;
+        Emit emit = 2;
+    }
+
+}
+
+message ReadRel {
+    RelCommon common = 1;
+    Type.NamedStruct base_schema = 2;
+    Expression filter = 3;
+    MaskExpression projection = 4;
+
+
+    oneof read_type {
+        VirtualTable virtual_table = 5;
+    }
+
+
+    message VirtualTable {
+        repeated Expression.Literal.Struct values = 1;
+    }
+
+    message LogicalIceberg {
+        repeated string table = 1;
+
+        oneof catalog {
+            HadoopCatalog hadoop_catalog = 2;
+            JDBCCatalog jdbc_catalog = 3;
+            HiveCatalog hive_catalog = 4;
+            AWSCatalog aws_catalog = 5;
+        }
+
+        message HadoopCatalog {}
+        message JDBCCatalog {}
+        message HiveCatalog {}
+        message AWSCatalog {}
+
+    }
+
+}
+
+
+message FilterRel {
+    RelCommon common = 1;
+    Rel input = 2;
+    Expression condition = 3;
+}
+
+
+message Rel {
+  oneof RelType {
+      ReadRel read = 1;
+      FilterRel filter = 2;
+  }
+}

@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package io.substrait;
+
+import "type.proto";
+
+
+
+
+// List of function signatures available.
+message FunctionSignature {
+
+    message Scalar {
+        Identifier id = 1;
+        repeated Argument arguments = 2;
+        repeated string name = 3;
+        Description description = 4;
+
+        bool determinate = 7;
+        bool session_dependent = 8;
+
+        oneof derivation_type {
+            Type direct = 9;
+            CustomDerivationPolicy derivation_policy = 10;
+        }
+
+        repeated Implementation implementations = 11;
+    }
+
+    message Aggregate {
+        Identifier id = 1;
+        repeated Argument arguments = 2;
+        repeated string name = 3;
+        Description description = 4;
+
+        bool determinate = 7;
+        bool session_dependent = 8;
+
+        oneof derivation_type {
+            Type direct = 9;
+            CustomDerivationPolicy derivation_policy = 10;
+        }
+
+        bool ordered = 11;
+        uint64 max_set = 12;
+        Type intermediate_type = 13;
+
+        repeated Implementation implementations = 14;
+    }
+
+    message Window {
+        Identifier id = 1;
+        repeated Argument arguments = 2;
+        repeated string name = 3;
+        Description description = 4;
+
+        bool determinate = 7;
+        bool session_dependent = 8;
+
+        oneof derivation_type {
+            Type direct = 9;
+            CustomDerivationPolicy derivation_policy = 10;
+        }
+
+        bool ordered = 11;
+        uint64 max_set = 12;
+        Type intermediate_type = 13;
+        WindowType window_type = 14;
+        repeated Implementation implementations = 15;
+
+        enum WindowType {
+            UNKNOWN = 0;
+            STREAMING = 1;
+            PARTITION = 2;
+        }
+    }
+
+    message Identifier {
+        uint32 orgId = 1;
+        uint32 id = 2;
+    }
+
+    message CustomDerivationPolicy {
+        bytes policy = 11;
+    }
+
+    message Description {
+        string language = 1;
+        string body = 2;
+    }
+
+    message Implementation {
+
+        Type type = 1;
+        oneof implementation_type {
+            string uri = 2;
+            bytes binary = 3;
+        }
+
+        enum Type {
+            UNKNOWN = 0;
+            WEB_ASSEMBLY = 1;
+            TRINO_JAR = 2;
+        }
+    }
+
+    message Argument {
+
+        message Plain {
+            Type type = 1;
+        }
+
+        message Constant {
+            Type type = 1;
+        }
+
+        message Variadic {
+            Type type = 1;
+            uint32 min = 2;
+            uint32 max = 3;
+        }
+
+    }
+}
