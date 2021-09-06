@@ -74,38 +74,12 @@ Read definition types are built by the community and added to the specification.
 
 
 
-#### Logical Iceberg Type
-
-| Property     | Description                                                  | Required |
-| ------------ | ------------------------------------------------------------ | -------- |
-| Table        | An array of strings that describe the namespace and name of the table to be read. | Required |
-| Catalog Type | The catalog type associated with this read                   | Required |
-
-
-
 #### Files Type
 
-| Property | Description                                                  | Required |
-| -------- | ------------------------------------------------------------ | -------- |
-| URIs     | An array URIs associated with the read                       | Required |
-| Format   | Enumeration of available formats. Only current option is PARQUET. | Required |
-
-
-
-#### Logical Arrow Flight
-
-| Property   | Description                                      | Required |
-| ---------- | ------------------------------------------------ | -------- |
-| URI        | Arrow Flight Endpoint                            | Required |
-| Descriptor | Bytes associated with an Arrow Flight Descriptor | Required |
-
-
-
-#### Physical Arrow Flight
-
-| Property | Description                                           | Required |
-| -------- | ----------------------------------------------------- | -------- |
-| Tickets  | Tickets associated with an Arrow flight get operation | Required |
+| Property        | Description                                                  | Required |
+| --------------- | ------------------------------------------------------------ | -------- |
+| Items           | An array Items (path or path glob) associated with the read  | Required |
+| Format per item | Enumeration of available formats. Only current option is PARQUET. | Required |
 
 
 

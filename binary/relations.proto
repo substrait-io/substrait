@@ -37,20 +37,23 @@ message ReadRel {
         repeated Expression.Literal.Struct values = 1;
     }
 
-    message LogicalIceberg {
-        repeated string table = 1;
+    message LocalFiles {
 
-        oneof catalog {
-            HadoopCatalog hadoop_catalog = 2;
-            JDBCCatalog jdbc_catalog = 3;
-            HiveCatalog hive_catalog = 4;
-            AWSCatalog aws_catalog = 5;
+        repeated FileOrFiles items = 1;
+
+        message FileOrFiles {
+            oneof path_type {
+                string uri_path = 1;
+                string uri_path_glob = 2;
+            }
+
+            Format format = 3;
+
+            enum Format {
+                UNKNOWN = 0;
+                PARQUET = 1;
+            }
         }
-
-        message HadoopCatalog {}
-        message JDBCCatalog {}
-        message HiveCatalog {}
-        message AWSCatalog {}
 
     }
 

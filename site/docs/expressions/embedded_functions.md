@@ -29,11 +29,11 @@ There are many type of types of possible stored functions. For each, Substrait w
 
 
 
-## AssemblyScript Function Type
+## WebAssembly Function Type
 
 | Property | Description                                                  | Required                   |
 | -------- | ------------------------------------------------------------ | -------------------------- |
-| Script   | AssemblyScript function                                      | True                       |
+| Script   | WebAssembly function                                         | True                       |
 | Prereqs  | A list of AssemblyScript prerequisites required to compile the assemblyscript function using NPM coordinates | Optional, defaults to none |
 
 

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package io.substrait;
 
+import "type.proto";
 import "function.proto";
 import "selection.proto";
 
@@ -160,8 +161,32 @@ message Expression {
     }
 
     message MultiOrList {
-        Expression value = 1;
-        repeated Expression options = 2;
+        repeated Expression value = 1;
+        repeated Record options = 2;
+
+        message Record {
+            repeated Expression fields = 1;
+        }
+
+    }
+
+    message EmbeddedFunction {
+        repeated Expression arguments = 1;
+        Type output_type = 2;
+        oneof kind {
+            PythonPickleFunction python_pickle_function = 3;
+            WebAssemblyFunction web_assembly_function = 4;
+        }
+
+        message PythonPickleFunction {
+            bytes function = 1;
+            repeated string prerequisite = 2;
+        }
+
+        message WebAssemblyFunction {
+            bytes script = 1;
+            repeated string prerequisite = 2;
+        }
     }
 }
 
