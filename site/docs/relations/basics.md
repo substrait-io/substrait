@@ -30,56 +30,49 @@ A relational operation uses field references to access specific fields of the in
 1. **Direct output**: The order of outputs is based on the definition declared by the relational operation. 
 2. **Remap**: A listed ordering of the direct outputs. This remapping can be also used to drop columns no longer used (such as a filter field or join keys after a join). Note that remapping/exclusion can only be done at the outputs root struct. Filtering of compound values or extracting subsets must be done through other operation types (e.g. projection).
 
+## Relation Properties
+
+There are number of predefined properties that exist in Substrait relations. These include:
+
+### Distribution
+
+When data is partitioned across multiple sibling sets, distribution describes that set of properties that apply to any one partition. This is based on a set of distribution expression properties. A distribution is declared as a set of one or more fields and a distribution type across all fields.
+
+| Property            | Description                                                  | Required                                                     |
+| ------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Distribution Fields | List of fields references that describe distribution (e.g. [0,2:4,5:0:0]). The order of these references do not impact results. | Required for Partitioned distribution type. Disallowed for Singleton distribution type. |
+| Distribution Type   | PARTITIONED: For a discrete tuple of values for the declared distribution fields, all records with that tuple are located in the same partition. SINGLETON: there will only be a single partition for this operation. | Required                                                     |
+
+
+
+### Orderedness
+
+A guarantee that data output from this operation is provided with a sort order. The sort order will be declared based on a set of sort field definitions based on the emitted output of this operation.
+
+| Property         | Description                                                  | Required               |
+| ---------------- | ------------------------------------------------------------ | ---------------------- |
+| Sort Fields      | A list of fields that the data are ordered by. The list is in order of the sort. If sort by [0,1] this means we only consider the data for field 1 is only ordered within each discrete value of field 0. | At least one required. |
+| Per - Sort Field | A field reference that the data is sorted by.                | Required               |
+| Per - Sort Type  | The order of the data. See ordering types below.             | Required               |
+
+#### Ordering Types
+
+| Ordering                   | Nulls Position |
+| -------------------------- | -------------- |
+| Ascending                  | First          |
+| Descending                 | First          |
+| Ascending                  | Last           |
+| Descending                 | Last           |
+| Custom function identifier | First          |
+| Custom function identifier | Last           |
+
+
+
 ## Basic Operations
 
 To simplify the discussion, initially we are focused on defining two basic operations for a simple plan. Those operations are reading data from disk and filtering that data.
 
 
-
-## Read Operator
-
-The read operator is an operator that produces one output. A simple example would be the reading of a Parquet file. It is expected that many types of reads will be added over time
-
-| Signature            | Value                                    |
-| -------------------- | ---------------------------------------- |
-| Inputs               | 0                                        |
-| Outputs              | 1                                        |
-| Property Maintenance | N/A (no inputs)                          |
-| Output Order         | Defaults to the schema of the data read. |
-
-
-
-#### Properties
-
-| Property      | Description                                                  | Required                            |
-| ------------- | ------------------------------------------------------------ | ----------------------------------- |
-| Read Type     | The type of read to complete.                                | Required                            |
-| Definition    | The contents of the read property definition, validated to the read type signature | Required                            |
-| Direct Schema | Defines the schema of the output of the read (before any emit remapping/hiding). | Required                            |
-| Filter        | A boolean Substrait expression that describes the filter of a iceberg dataset. TBD: define how field referencing works. | Optional, defaults to none.         |
-| Projection    | A masked complex expression describing the portions of the content that should be read | Optional, defaults to all of schema |
-| Properties    | A list of name/value pairs associated with the read          | Optional, defaults to empty         |
-
-### Read Definition Types
-
-Read definition types are built by the community and added to the specification. This is a portion of specification that is expected to grow rapidly.
-
-
-
-#### Virtual Table
-
-| Property | Description | Required |
-| -------- | ----------- | -------- |
-| Data     | Required    | Required |
-
-
-
-#### Files Type
-
-| Property        | Description                                                  | Required |
-| --------------- | ------------------------------------------------------------ | -------- |
-| Items           | An array Items (path or path glob) associated with the read  | Required |
-| Format per item | Enumeration of available formats. Only current option is PARQUET. | Required |
 
 
 
