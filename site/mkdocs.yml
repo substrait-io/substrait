@@ -1,4 +1,4 @@
-site_name: "Substrait: Cross-platform Relational Algebra and Expressions"
+site_name: "Substrait: Cross-Language Serialization for Relational Algebra"
 site_description: "Substrait is a new specification and set of tools that allow different systems to express clear data manipulation operations."
 site_url: "https://substrait.io"
 edit_uri: ""

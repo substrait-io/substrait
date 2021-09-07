@@ -1,4 +1,11 @@
+---
+title: Home
+---
 # Substrait: Cross-Language Serialization for Relational Algebra
+
+
+
+
 
 ## Project Vision
 
@@ -42,4 +49,4 @@ A key goal of the Substrait project is to not be coupled to any single existing 
 
 ## Why the name Substrait?
 
-A strait is a narrow connector of water between two other pieces of water. In analytics, data is often thought of was water. Substrait is focused on instructions related to the data. In other words, what defines or supports the movement of water between one or more larger systems. Thus the underlayment for the strait connecting different pools of water => sub-strait.
+A strait is a narrow connector of water between two other pieces of water. In analytics, data is often thought of as water. Substrait is focused on instructions related to the data. In other words, what defines or supports the movement of water between one or more larger systems. Thus the underlayment for the strait connecting different pools of water => sub-strait.
