@@ -5,14 +5,9 @@ message Type {
 
     oneof kind {
         I8 i8 = 1;
-        U8 u8 = 2;
         I16 i16 = 3;
-        U16 u16 = 4;
         I32 i32 = 5;
-        U32 u32 = 6;
         I64 i64 = 7;
-        U64 u64 = 8;
-        FP16 fp16 = 9;
         FP32 fp32 = 10;
         FP64 fp64 = 11;
         String string = 12;

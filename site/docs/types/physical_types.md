@@ -10,14 +10,9 @@ In many cases, a system will only have a single representation physical represen
 | ------------------ | ----------------------------------------------------------- | --------------------------- |
 | boolean            | 0=System default                                            | no                          |
 | i8                 | 0=System default                                            | no                          |
-| u8                 | 0=System default                                            | no                          |
 | i16                | 0=System default                                            | no                          |
-| u16                | 0=System default                                            | no                          |
 | i32                | 0=System default                                            | no                          |
-| u32                | 0=System default                                            | no                          |
 | i64                | 0=System default                                            | no                          |
-| u64                | 0=System default                                            | no                          |
-| fp16               | 0=System default                                            | no                          |
 | fp32               | 0=System default                                            | no                          |
 | fp64               | 0=System default                                            | no                          |
 | string             | 0=System default, 1=Arrow Large String                      | yes                         |
