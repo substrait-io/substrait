@@ -222,26 +222,6 @@ The aggregate operation groups input data on one or more sets of grouping keys, 
 
 ### 
 
-## Write Operation
-
-The write operation is a terminal operation, that describes writing the input data to storage.
-
-| Signature            | Value                                                        |
-| -------------------- | ------------------------------------------------------------ |
-| Inputs               | 1                                                            |
-| Outputs              | 0                                                            |
-| Property Maintenance | Maintains distribution if all distribution fields are contained in every grouping set. No orderness guaranteed. |
-| Direct Output Order  | The list of distinct columns from each grouping set (ordered by their first appearance) followed by the list of measures in declaration order, followed by a integer describing the associated particular grouping set the value is derived from. |
-
-### Aggregate Properties
-
-| Property         | Description                                                  | Required                                |
-| ---------------- | ------------------------------------------------------------ | --------------------------------------- |
-| Input            | The relational input                                         | Required                                |
-| Grouping Sets    | One or more grouping sets                                    | Optional, required if no measures.      |
-| Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional, defaults to 0.                |
-| Measures         | A list of one or more aggregate expressions.                 | Optional, required if no grouping sets. |
-
 ## Write Operator
 
 The write operator is an operator that consumes one output and writes it to storage. A simple example would be writing Parquet files. It is expected that many types of writes will be added over time

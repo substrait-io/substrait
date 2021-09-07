@@ -1,5 +1,9 @@
 # Physical Relations
 
+There is no true distinction between logical and physical operations in Substrait. By convention, certain operations are classified as physical but all operations can be potentially used in any kind of plan. A particular set of transformations or target operators may (by convention) be considered the "physical plan" but this is a characteristic of the system consuming substrait as opposed to a definition within Substrait.
+
+
+
 ## Hash Equijoin Operator
 
 The hash equijoin join operator will build a hash table out of the right input based on a set of join keys. It will then probe that hash table for incoming inputs, finding matches. 
