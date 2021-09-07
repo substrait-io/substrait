@@ -12,3 +12,5 @@ The primary formats that exist that roughly qualify under these requirements inc
 
 The binary serialization representation is being developed within [GitHub](https://github.com/substrait-io/substrait/tree/main/binary) and is planned to be presented inline in the spec to help clarify the relationship between the specification and the serialized representations.
 
+
+

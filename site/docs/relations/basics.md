@@ -57,20 +57,14 @@ A guarantee that data output from this operation is provided with a sort order. 
 
 #### Ordering Types
 
-| Ordering                   | Nulls Position |
-| -------------------------- | -------------- |
-| Ascending                  | First          |
-| Descending                 | First          |
-| Ascending                  | Last           |
-| Descending                 | Last           |
-| Custom function identifier | First          |
-| Custom function identifier | Last           |
-
-
-
-## Basic Operations
-
-To simplify the discussion, initially we are focused on defining two basic operations for a simple plan. Those operations are reading data from disk and filtering that data.
+| Ordering                   | Descriptions                                                 | Nulls Position                                  |
+| -------------------------- | ------------------------------------------------------------ | ----------------------------------------------- |
+| Ascending                  | Returns data in a ascending order based on the quality function associated with the type. Nulls are included before any values. | First                                           |
+| Descending                 | Returns data in a descending order based on the quality function associated with the type. Nulls are included before any values. | First                                           |
+| Ascending                  | Returns data in a ascending order based on the quality function associated with the type. Nulls are included after any values. | Last                                            |
+| Descending                 | Returns data in a descending order based on the quality function associated with the type. Nulls are included after any values. | Last                                            |
+| Custom function identifier | Returns data using a custom function that returns -1, 0, or 1 depending on the order of the data. | Per Function                                    |
+| Clustered                  | Ensures that all equal values are coalesced (but no ordering betwixt values is defined). E.g, for values 1,2,3,1,2,3, output bould be any of the following 1,1,2,2,3,3 or 2,2,3,3,1,1 or 3,3,2,2,1,1 or 3,3,1,1,2,2. | N/A, may appear anywhere but will be coalesced. |
 
 
 

@@ -2,6 +2,5 @@ arrange:
   - basics.md
   - logical_relations.md
   - physical_relations.md
-  - exchange_relations.md
   - user_defined_relations.md
   - embedded_relations.md

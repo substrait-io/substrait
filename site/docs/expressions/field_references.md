@@ -75,5 +75,11 @@ By default, when only a single field is selected from a struct, that struct is r
 
 
 
+## Discussion Points
+
+* Should we support column reordering/positioning using a masked complex expression? (Right now, you can only mask things out.)
+
+
+
 
 
