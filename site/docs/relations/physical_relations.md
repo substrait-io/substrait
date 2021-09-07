@@ -9,7 +9,7 @@ The hash equijoin join operator will build a hash table out of the right input b
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness of the left set is maintained in INNER join cases, otherwise it is eliminated. |
-| Direct Output Order  | Same as the [Join](logical_relations/#join_operator) operator. |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
 
 ### Hash Equijoin Properties
 
@@ -32,7 +32,7 @@ The nested loop join operator does a join by holding the entire right input and 
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
-| Direct Output Order  | Same as the [Join](logical_relations/#join_operator) operator. |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
 
 ### NLJ Properties
 
@@ -54,7 +54,7 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
-| Direct Output Order  | Same as the [Join](logical_relations/#join_operator) operator. |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
 
 ### Merge Join Properties
 
@@ -157,7 +157,7 @@ The hash aggregate operation maintains a hash table for each grouping set to col
 | Inputs               | 1                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Maintains distribution if all distribution fields are contained in every grouping set. No orderness guaranteed. |
-| Direct Output Order  | Same as defined by Aggregate operation.                      |
+| Direct Output Order  | Same as defined by [Aggregate](logical_relations.md#aggregate-operation) operation. |
 
 ### Hash Aggregate Properties
 
@@ -179,7 +179,7 @@ The streaming aggregate operation leverages data ordered by the grouping express
 | Inputs               | 1                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Maintains distribution if all distribution fields are contained in every grouping set. Maintains input ordering. |
-| Direct Output Order  | Same as defined by Aggregate operation.                      |
+| Direct Output Order  | Same as defined by [Aggregate](logical_relations.md#aggregate-operation) operation. |
 
 ### Streaming Aggregate Properties
 
