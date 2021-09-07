@@ -25,7 +25,7 @@ Once all portions of the specification have been moved to commit (or eliminated)
 |          | sketch | [User Defined Types](/types/user_defined_types)                  | Extensions that can be defined for specific IR producers/consumers. |
 | 2        | sketch | [Field References](/expressions/field_references)                      | Expressions to identify which portions of a record should be |
 | 3        | sketch | [Scalar Functions](/expressions/scalar_functions)                      | Description of how functions are specified. Concepts include arguments, variadic functions, output type derivation, etc. |
-|          | sketch | [Scalar Function List](https://github.com/substrait-io/substrait/blob/sketch/extensions/scalar_functions.yaml)  | A list of well-known canonical functions in yaml format.     |
+|          | sketch | [Scalar Function List](https://github.com/substrait-io/substrait/blob/main/extensions/scalar_functions.yaml)  | A list of well-known canonical functions in yaml format.     |
 |          | sketch | [Specialized Record Expressions](/expressions/specialized_record_expressions) | Specialized expression types that are more naturally expressed outside the function paradigm. Examples include items such as if/then/else and switch statements. |
 |          | sketch | [Aggregate Functions](/expressions/aggregate_functions)                | Functions that are expressed in aggregation operations. Examples include things such as SUM, COUNT, etc. Operations take many records and collapse them into a single (possibly compound) value. |
 |          | sketch | [Window Functions](/expressions/window_functions)                      | Functions that relate a record to a set of encompassing records. Examples in SQL include RANK, NTILE, etc. |
