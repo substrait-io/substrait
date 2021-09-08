@@ -5,14 +5,12 @@ functions:
     - type: i32
   variadic: 2..N
   return: i32
-  exception: overflow
 - name: lt
   id: 1
   arguments: 
     - type: i32
     - type: i32
   return: boolean
-  exception: error
 - name: and
   id: 3
   arguments: - type: boolean
