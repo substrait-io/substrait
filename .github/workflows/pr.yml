@@ -1,0 +1,20 @@
+name: PR Build Check
+
+on:
+  pull_request:
+jobs:
+  site:
+    name: Build Website
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: ./.github/actions/dev-tool-python
+        with:
+          python-version: '3.8'
+      - name: Install dependencies
+        run: python3 -m pip install -r ./site/requirements.txt
+      - name: Generate Static Site
+        run: mkdocs build
+        working-directory: ./site
+
