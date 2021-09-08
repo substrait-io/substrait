@@ -16,7 +16,7 @@ message FunctionSignature {
         repeated string name = 3;
         Description description = 4;
 
-        bool determinate = 7;
+        bool deterministic = 7;
         bool session_dependent = 8;
 
         oneof derivation_type {
@@ -33,7 +33,7 @@ message FunctionSignature {
         repeated string name = 3;
         Description description = 4;
 
-        bool determinate = 7;
+        bool deterministic = 7;
         bool session_dependent = 8;
 
         oneof derivation_type {
@@ -54,7 +54,7 @@ message FunctionSignature {
         repeated string name = 3;
         Description description = 4;
 
-        bool determinate = 7;
+        bool deterministic = 7;
         bool session_dependent = 8;
 
         oneof derivation_type {
