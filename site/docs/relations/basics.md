@@ -14,7 +14,7 @@ Each relational operation is composed of several different properties. Common pr
 
 ## Relational Signatures
 
-In functions, function signatures are declared externally to the use of those signatures (function bindings). In the case of relational operations, signatures are declared directly in the specification. This is due to the speed of change and number of total operations. Relational operations in the specification are expected to be <100 for several years with additions being infrequent. On the other hand, there is an expectation of both a much larger number of functions (1,000s) and a much higher velocity of additions.
+In functions, function signatures are declared externally to the use of those signatures (function bindings). In the case of relational operations, signatures are declared directly in the specification. This is due to the speed of change and number of total operations. Relational operations in the specification are expected to be &lt;100 for several years with additions being infrequent. On the other hand, there is an expectation of both a much larger number of functions (1,000s) and a much higher velocity of additions.
 
 Each Relational Operation must declare the following:
 
