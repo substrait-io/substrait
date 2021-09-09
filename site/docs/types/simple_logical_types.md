@@ -15,11 +15,9 @@ To minimize type explosion, the project currently follows the guideline that a l
 | fp64            | An 8 byte double precision floating point number with range as defined [here](https://en.wikipedia.org/wiki/Double-precision_floating-point_format). | Float&lt;DOUBLE&gt;          | double         | DecimalType   | double                 |
 | string          | A string of text that can be up to 2,147,483,647 bytes in length. String is encoded in UTF8 | Utf8                   | string         | StringType    | varchar (no len)       |
 | binary          | A binary value that can be up to 2,147,483,647 bytes in length. | Binary                 | binary         | BinaryType    | Varbinary              |
-| timestamp_micro | A timestamp with microsecond precision                       | Timestamp&lt;MICROSECOND&gt; | timestamp      | TimestampType | timestamp(6)           |
-| timestamp_milli | A timestamp with millisecond precision                       | Timestamp&lt;MILLISECOND&gt; | -              | -             | timestamp(3)           |
-| date            | Date, expressed as number of seconds since epoch             | Date&lt;MILLISECOND&gt;      | date           | DateType      | Date                   |
-| time_micro      | A time expressed in microseconds since start of day          | Time&lt;MICROSECOND;64&gt;   | time           | time(6)       | time(6)                |
-| time_milli      | A time expressed in milliseconds since start of day          | Time&lt;MILLISECOND;32&gt;   | -              | time(3)       | time(3)                |
+| timestamp | A timestamp with microsecond precision                       | Timestamp&lt;MICROSECOND&gt; | timestamp      | TimestampType | timestamp(6)           |
+| date            | A date       | Date&lt;MILLISECOND&gt;      | date           | DateType      | Date                   |
+| time      | A time with microsecond precision since the beginning of any day. Maximum value is one day. | Time&lt;MICROSECOND;64&gt;   | time           | time(6)       | time(6)                |
 | interval_year   | Interval day to month                                        | INTERVAL&lt;YEAR_MONTH&gt;   | -              | -             | Interval year to month |
 | interval_day    | Interval day to second                                       | INTERVAL&lt;DAY_TIME&gt;     | -              | -             | Interval day to second |
 
