@@ -13,7 +13,7 @@ message Type {
         String string = 12;
         Binary binary = 13;
         Timestamp timestamp = 14;
-        Date time = 16;
+        Date date = 16;
         Time time = 17;
         IntervalYear interval_year = 19;
         IntervalDay interval_day = 20;
