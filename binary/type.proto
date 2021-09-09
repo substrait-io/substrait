@@ -29,243 +29,72 @@ message Type {
         UserDefined user_defined = 31;
     }
 
-    message I8 {
-        PhysicalType physical_type = 1;
+    message I8 {}
 
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
+    message I16 {}
 
-    message U8 {
-        PhysicalType physical_type = 1;
+    message I32 {}
 
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
+    message I64 {}
 
-    message I16 {
-        PhysicalType physical_type = 1;
+    message FP32 {}
 
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
+    message FP64 {}
 
-    message U16 {
-        PhysicalType physical_type = 1;
+    message String {}
 
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
+    message Binary {}
 
-    message I32 {
-        PhysicalType physical_type = 1;
+    message Timestamp {}
 
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
+    message Date {}
 
-    message U32 {
-        PhysicalType physical_type = 1;
+    message Time {}
 
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
+    message IntervalYear {}
 
-    message I64 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message U64 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message FP16 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message FP32 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message FP64 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message String {
-        PhysicalType physical_type = 1;
-        bool dictionary_encoded = 2;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-            ARROW_LARGE_STRING = 1;
-        }
-    }
-
-    message Binary {
-        PhysicalType physical_type = 1;
-        bool dictionary_encoded = 2;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-            ARROW_LARGE_BINARY = 1;
-        }
-    }
-
-    message Timestamp {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message Date {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message Time {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message IntervalYear {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message IntervalDay {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-            ARROW_MONTH_DAY_NANO = 1;
-        }
-    }
+    message IntervalDay {}
 
     // Start compound types.
     message FixedChar {
         int32 length = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
     }
 
     message VarChar {
         int32 length = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
     }
 
     message FixedBinary {
         int32 length = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
     }
 
     message Decimal {
         int32 scale = 1;
         int32 precision = 2;
-        PhysicalType physical_type = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-            ARROW_128 = 1;
-        }
     }
 
     message Struct {
         repeated Type types = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
     }
 
     message NamedStruct {
 
         repeated Pair pairs = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
 
         message Pair {
             string name = 1;
             Type type = 2;
         }
 
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
     }
 
     message List {
         Type type = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
     }
 
     message Map {
 
         repeated KeyValue key_values = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-            UTF8_ORDERED_KEYS = 1;
-        }
 
         message KeyValue {
             Type key = 1;
@@ -275,24 +104,11 @@ message Type {
 
     message TimestampMicroTZ {
         string timezone = 1;
-
-        PhysicalType physical_type = 2;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
     }
 
     message TimestampTZ {
         string timezone = 1;
-
-        PhysicalType physical_type = 2;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
     }
-
     message UserDefined {
         int32 organization = 1;
         string name = 2;

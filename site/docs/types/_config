@@ -1,5 +1,4 @@
 arrange:
   - simple_logical_types.md
   - compound_logical_types.md
-  - physical_types.md
   - user_defined_types.md
