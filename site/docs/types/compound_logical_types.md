@@ -13,6 +13,7 @@ Compound types include any type that is configurable including complex types as 
 | MAP&lt;K, V&gt;                   | An unordered list of type K keys with type V values.         | map&lt;k,v&gt;            | map&lt;k,v&gt;       | -              | map&lt;k,v&gt;                    |
 | TIMESTAMP_MICRO_TZ(TZ)      | A timestamp in microseconds with a timezone TZ.              | timestamp&lt;micro;tz&gt; | timestamptz    | -              | timestamp(6) with time zone |
 | TIMESTAMP_MILLI_TZ(TZ)      | A timestamp in microseconds with a timezone TZ.              | timestamp&lt;milli;tz&gt; | -              | -              | timestamp(3) with time zone |
+| Decimal(P, S)               | A fixed precision decimal value having precision (P, number of digits) <= 38 and Scale (S, number of fractional digist) 0 <= S <=  P) | Decimal<P, S, bitwidth=128> | decimal(P,S) | decimal(P, S) |   DECIMAL(P, S)
 
 #### Discussion Points
 
