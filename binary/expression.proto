@@ -22,14 +22,9 @@ message Expression {
     message Literal {
         oneof literal_type {
             int32 i8 = 1;
-            uint32 u8 = 2;
             int32 i16 = 3;
-            uint32 u16 = 4;
             int32 i32 = 5;
-            uint32 u32 = 6;
             int64 i64 = 7;
-            uint64 u64 = 8;
-            float fp16 = 9;
             float fp32 = 10;
             double fp64 = 11;
             string string = 12;
