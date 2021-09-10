@@ -29,11 +29,9 @@ message Expression {
             double fp64 = 11;
             string string = 12;
             bytes binary = 13;
-            fixed64 timestamp_micro = 14;
-            fixed64 timestamp_milli = 15;
+            fixed64 timestamp = 14;
             fixed32 date = 16;
-            fixed32 time_micro = 17;
-            uint32 time_milli = 18;
+            uint64 time = 17;
             IntervalYearToMonth interval_year_to_month = 19;
             IntervalDayToSecond interval_day_to_second = 20;
             string fixed_char = 21;
@@ -42,8 +40,7 @@ message Expression {
             bytes decimal = 24;
             Struct struct = 25;
             Map map = 26;
-            fixed64 timestamp_micro_tz = 27;
-            fixed64 timestamp_milli_tz = 28;
+            fixed64 timestamp_tz = 27;
         }
 
         message Map {

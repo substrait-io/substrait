@@ -12,11 +12,9 @@ message Type {
         FP64 fp64 = 11;
         String string = 12;
         Binary binary = 13;
-        TimestampMicro timestamp_micro = 14;
-        TimestampMilli timestamp_milli = 15;
-        Date time = 16;
-        TimeMicro time_micro = 17;
-        TimeMilli time_milli = 18;
+        Timestamp timestamp = 14;
+        Date date = 16;
+        Time time = 17;
         IntervalYear interval_year = 19;
         IntervalDay interval_day = 20;
         FixedChar fixed_char = 21;
@@ -27,8 +25,7 @@ message Type {
         NamedStruct named_struct = 26;
         List list = 27;
         Map map = 28;
-        TimestampMicroTZ timestamp_micro_tz = 29;
-        TimestampMilliTZ timestamp_milli_tz = 30;
+        TimestampTZ timestamp_tz = 29;
         UserDefined user_defined = 31;
     }
 
@@ -140,15 +137,7 @@ message Type {
         }
     }
 
-    message TimestampMicro {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message TimestampMilli {
+    message Timestamp {
         PhysicalType physical_type = 1;
 
         enum PhysicalType {
@@ -164,15 +153,7 @@ message Type {
         }
     }
 
-    message TimeMicro {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message TimeMilli {
+    message Time {
         PhysicalType physical_type = 1;
 
         enum PhysicalType {
@@ -302,7 +283,7 @@ message Type {
         }
     }
 
-    message TimestampMilliTZ {
+    message TimestampTZ {
         string timezone = 1;
 
         PhysicalType physical_type = 2;
