@@ -1,4 +1,4 @@
-# Simple Logical Types
+# Simple Types
 
 Substrait tries to cover the most common types used in data manipulation. Simple types are those that don't support any form of configuration. For simplicity, any generic type that has only a small number of discrete implementations is declared directly (as opposed to via configuration).
 

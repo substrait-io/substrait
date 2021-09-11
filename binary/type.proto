@@ -30,242 +30,104 @@ message Type {
     }
 
     message I8 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message U8 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 1;
     }
 
     message I16 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message U16 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 1;
     }
 
     message I32 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message U32 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 1;
     }
 
     message I64 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message U64 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
-    }
-
-    message FP16 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 1;
     }
 
     message FP32 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 1;
     }
 
     message FP64 {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 1;
     }
 
     message String {
-        PhysicalType physical_type = 1;
-        bool dictionary_encoded = 2;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-            ARROW_LARGE_STRING = 1;
-        }
+        Variation variation = 1;
     }
 
     message Binary {
-        PhysicalType physical_type = 1;
-        bool dictionary_encoded = 2;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-            ARROW_LARGE_BINARY = 1;
-        }
+        Variation variation = 1;
     }
 
     message Timestamp {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 1;
     }
 
     message Date {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 1;
     }
 
     message Time {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 1;
     }
 
     message IntervalYear {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 1;
     }
 
     message IntervalDay {
-        PhysicalType physical_type = 1;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-            ARROW_MONTH_DAY_NANO = 1;
-        }
+        Variation variation = 1;
     }
 
     // Start compound types.
     message FixedChar {
         int32 length = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 2;
     }
 
     message VarChar {
         int32 length = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 2;
     }
 
     message FixedBinary {
         int32 length = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 2;
     }
 
     message Decimal {
         int32 scale = 1;
         int32 precision = 2;
-        PhysicalType physical_type = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-            ARROW_128 = 1;
-        }
+        Variation variation = 3;
     }
 
     message Struct {
         repeated Type types = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 2;
     }
 
     message NamedStruct {
 
         repeated Pair pairs = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
+        Variation variation = 2;
 
         message Pair {
             string name = 1;
             Type type = 2;
         }
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
     }
 
     message List {
         Type type = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 2;
     }
 
     message Map {
 
         repeated KeyValue key_values = 1;
-        PhysicalType physical_type = 2;
-        bool dictionary_encoded = 3;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-            UTF8_ORDERED_KEYS = 1;
-        }
+        Variation variation = 2;
 
         message KeyValue {
             Type key = 1;
@@ -275,22 +137,17 @@ message Type {
 
     message TimestampMicroTZ {
         string timezone = 1;
-
-        PhysicalType physical_type = 2;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+        Variation variation = 2;
     }
 
     message TimestampTZ {
         string timezone = 1;
+        Variation variation = 2;
+    }
 
-        PhysicalType physical_type = 2;
-
-        enum PhysicalType {
-            SYSTEM_DEFAULT = 0;
-        }
+    message Variation {
+        int32 organization = 1;
+        string name = 2;
     }
 
     message UserDefined {
