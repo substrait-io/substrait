@@ -1,4 +1,4 @@
-# Logical Compound Types
+# Compound Types
 
 Compound types include any type that is configurable including complex types as well as configurable scalar types.
 
