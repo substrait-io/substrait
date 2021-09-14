@@ -27,6 +27,7 @@ message Type {
         Map map = 28;
         TimestampTZ timestamp_tz = 29;
         UserDefined user_defined = 31;
+        UUID uuid = 32;
     }
 
     message I8 {
@@ -73,11 +74,19 @@ message Type {
         Variation variation = 1;
     }
 
+    message TimestampTZ {
+        Variation variation = 1;
+    }
+
     message IntervalYear {
         Variation variation = 1;
     }
 
     message IntervalDay {
+        Variation variation = 1;
+    }
+
+    message UUID {
         Variation variation = 1;
     }
 
@@ -133,16 +142,6 @@ message Type {
             Type key = 1;
             Type value = 2;
         }
-    }
-
-    message TimestampMicroTZ {
-        string timezone = 1;
-        Variation variation = 2;
-    }
-
-    message TimestampTZ {
-        string timezone = 1;
-        Variation variation = 2;
     }
 
     message Variation {

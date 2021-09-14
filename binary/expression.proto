@@ -41,6 +41,7 @@ message Expression {
             Struct struct = 25;
             Map map = 26;
             fixed64 timestamp_tz = 27;
+            bytes uuid = 28;
         }
 
         message Map {
