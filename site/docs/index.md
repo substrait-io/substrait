@@ -19,6 +19,7 @@ In many ways, the goal of this project is similar to that of the Apache Arrow pr
 
 * Communicate a compute plan between a SQL parser and an execution engine (e.g. Calcite SQL parsing to Arrow C++ compute kernel)
 * Serialize a plan that represents a SQL view for consistent use in multiple systems (e.g. Iceberg views in Spark and Trino)
+* Submit a plan to different execution engines (e.g. Datafusion and Postgres) and get a consistent interpretation of the semantics.
 * Create an alternative plan generation implementation that can connect an existing end-user compute expression system to an existing end-user processing engine (e.g. Pandas operations executed inside SingleStore)
 * Build a pluggable plan visualization tool (e.g. D3 based plan visualizer)
 
