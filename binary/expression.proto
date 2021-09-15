@@ -36,7 +36,7 @@ message Expression {
             IntervalDayToSecond interval_day_to_second = 20;
             string fixed_char = 21;
             string var_char = 22;
-            string fixed_binary = 23;
+            bytes fixed_binary = 23;
             bytes decimal = 24;
             Struct struct = 25;
             Map map = 26;
