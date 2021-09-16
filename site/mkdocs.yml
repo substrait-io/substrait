@@ -38,6 +38,9 @@ plugins:
       filename: _config
   - minify:
       minify_html: true
+  - mkdocs_protobuf:
+      proto_dir: ../binary
+      indent_depth: 4 # requied to make superfences happy
 markdown_extensions:
   - smarty
   - sane_lists

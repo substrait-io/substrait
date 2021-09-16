@@ -12,6 +12,17 @@ Properties for an embedded function include:
 | Function Properties | Function properties, one of those items defined below.     | Required |
 | Output Type         | The fully resolved output type for this embedded function. | Required |
 
+The binary representation of an embedded function is:
+
+
+=== "Binary Representation"
+    ```proto
+%%% proto.message.EmbeddedFunction %%%
+    ```
+=== "Human Readable Representation"
+    n/a
+=== "Example"
+    n/a
 
 
 ## Function Details
