@@ -19,9 +19,9 @@ Once all portions of the specification have been moved to commit (or eliminated)
 
 | Priority | Status | Section                                                      | Description                                                  |
 | -------- | ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 1        | sketch | [Simple Types](/types/simple_logical_types)                  | A way to describe the set of basic types that will be operated on within a plan. Only includes simple types such as integers and doubles (nothing configurable or compound). |
-|          | sketch | [Compound Types](/types/compound_logical_types)              | Expression of types that go beyond simple scalar values. Key concepts here include: configurable types such as fixed length and numeric types as well as compound types such as structs, maps, lists, etc. |
-|          | sketch | [Type Variations](/types/type_variations.md)                 | Physical variations to base types.                           |
+| 1        | wip    | [Simple Types](/types/simple_logical_types)                  | A way to describe the set of basic types that will be operated on within a plan. Only includes simple types such as integers and doubles (nothing configurable or compound). |
+|          | wip    | [Compound Types](/types/compound_logical_types)              | Expression of types that go beyond simple scalar values. Key concepts here include: configurable types such as fixed length and numeric types as well as compound types such as structs, maps, lists, etc. |
+|          | wip    | [Type Variations](/types/type_variations.md)                 | Physical variations to base types.                           |
 |          | sketch | [User Defined Types](/types/user_defined_types)              | Extensions that can be defined for specific IR producers/consumers. |
 | 2        | sketch | [Field References](/expressions/field_references)            | Expressions to identify which portions of a record should be |
 | 3        | sketch | [Scalar Functions](/expressions/scalar_functions)            | Description of how functions are specified. Concepts include arguments, variadic functions, output type derivation, etc. |
