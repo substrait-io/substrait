@@ -17,4 +17,21 @@ jobs:
       - name: Generate Static Site
         run: mkdocs build
         working-directory: ./site
+  proto:
+    name: Check Protobuf
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v1
+      - name: Compile protobuf
+        run: |
+          set -e
 
+          for i in $(ls);
+          do
+            protoc --proto_path=. --java_out . $i
+          done
+          set +e
+        working-directory: ./binary
+      
