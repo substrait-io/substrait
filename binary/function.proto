@@ -4,7 +4,7 @@ package io.substrait;
 
 import "type.proto";
 
-
+option java_multiple_files = true;
 
 
 // List of function signatures available.

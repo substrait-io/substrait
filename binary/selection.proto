@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package io.substrait;
 
+option java_multiple_files = true;
+
 message ReferenceSegment {
 
     oneof reference_type {
