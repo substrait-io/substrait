@@ -26,6 +26,12 @@ jobs:
         uses: arduino/setup-protoc@v1
       - name: Compile protobuf
         run: |
-          for i in $(ls);do protoc --proto_path=. --java_out . $i;done
+          set -e
+
+          for i in $(ls);
+          do
+            protoc --proto_path=. --java_out . $i
+          done
+          set +e
         working-directory: ./binary
       

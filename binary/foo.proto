@@ -1,0 +1,5 @@
+syntax = "proto123";
+
+message RyanIsAwesome {
+ not_a_valid_type boo = 2 
+}
