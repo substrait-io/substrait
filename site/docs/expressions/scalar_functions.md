@@ -102,7 +102,7 @@ For reference, here are are some common output type derivations and how they can
 | --------------------------------------------- | ------------------------------------------------------------ |
 | Add item to list                              | `add(<List<T>, T>) => List<T>`                               |
 | Decimal Division                              | `divide(Decimal(P1,S1), Decimal(P2,S2)) => Decimal(P1 -S1 + S2 + MAX(6, S1 + P2 + 1), MAX(6, S1 + P2 + 1))` |
-| Do regex on only string maps to return values | `extract_values(Map<K,V>) => if(K==STRING) THEN LIST<V> ELSE !bindable` |
+| Do regex on only string maps to return values | `extract_values(Map<K,V>) => if(K==STRING OR K==VARCHAR(*)) THEN LIST<V> ELSE !bindable` |
 
 
 
