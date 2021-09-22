@@ -65,7 +65,7 @@ Any function can declare a return type expression. A return type expression uses
 * Boolean: True and False
 * Type: A Substrait type (with possibly additional embedded expressions)
 
-These types are evaluated using a small set of operations to to support common scenarios. Since it is possible that output derivation ultimately determines that binding is not allowed, a `not_bindable` operation is provided that states that the particular binding is now sllowed. List of valid operations:
+These types are evaluated using a small set of operations to to support common scenarios. Since it is possible that output derivation ultimately determines that binding is not allowed, a `not_bindable` operation is provided that states that the particular binding is not allowed. List of valid operations:
 
 ```
 Math: +, -, *, /, min, max
@@ -100,7 +100,7 @@ For reference, here are are some common output type derivations and how they can
 
 | Operation                                     | Definition                                                   |
 | --------------------------------------------- | ------------------------------------------------------------ |
-| Add item to list                              | `add(<List<T>, T>) => List<T>)`                              |
+| Add item to list                              | `add(<List<T>, T>) => List<T>`                               |
 | Decimal Division                              | `divide(Decimal(P1,S1), Decimal(P2,S2)) => Decimal(P1 -S1 + S2 + MAX(6, S1 + P2 + 1), MAX(6, S1 + P2 + 1))` |
 | Do regex on only string maps to return values | `extract_values(Map<K,V>) => if(K==STRING) THEN LIST<V> ELSE !bindable` |
 
