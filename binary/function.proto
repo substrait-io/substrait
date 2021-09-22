@@ -19,12 +19,9 @@ message FunctionSignature {
         bool deterministic = 7;
         bool session_dependent = 8;
 
-        oneof derivation_type {
-            Type direct = 9;
-            CustomDerivationPolicy derivation_policy = 10;
-        }
+        TypeExpression output_type = 9;
 
-        repeated Implementation implementations = 11;
+        repeated Implementation implementations = 10;
     }
 
     message Aggregate {
@@ -36,10 +33,7 @@ message FunctionSignature {
         bool deterministic = 7;
         bool session_dependent = 8;
 
-        oneof derivation_type {
-            Type direct = 9;
-            CustomDerivationPolicy derivation_policy = 10;
-        }
+        TypeExpression output_type = 9;
 
         bool ordered = 11;
         uint64 max_set = 12;
@@ -57,10 +51,7 @@ message FunctionSignature {
         bool deterministic = 7;
         bool session_dependent = 8;
 
-        oneof derivation_type {
-            Type direct = 9;
-            CustomDerivationPolicy derivation_policy = 10;
-        }
+        TypeExpression output_type = 9;
 
         bool ordered = 11;
         uint64 max_set = 12;
@@ -121,4 +112,6 @@ message FunctionSignature {
         }
 
     }
+
 }
+
