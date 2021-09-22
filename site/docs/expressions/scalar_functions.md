@@ -65,7 +65,7 @@ Any function can declare a return type expression. A return type expression uses
 * Boolean: True and False
 * Type: A Substrait type (with possibly additional embedded expressions)
 
-These types are evaluated using a small set of operations to to support common scenarios. Since it is possible that output derivation ultimately determines that binding is not allowed, a `not_bindable` operation is provided that states that the particular binding is not allowed. List of valid operations:
+These types are evaluated using a small set of operations to support common scenarios. Since it is possible that output derivation ultimately determines that binding is not allowed, a `not_bindable` operation is provided that states that the particular binding is not allowed. List of valid operations:
 
 ```
 Math: +, -, *, /, min, max
