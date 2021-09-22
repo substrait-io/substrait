@@ -6,6 +6,8 @@ import "type.proto";
 import "function.proto";
 import "selection.proto";
 
+option java_multiple_files = true;
+
 message Expression {
     oneof rex_type {
         Literal literal = 1;
@@ -21,7 +23,8 @@ message Expression {
 
     message Literal {
         oneof literal_type {
-            int32 i8 = 1;
+            bool boolean = 1;
+            int32 i8 = 2;
             int32 i16 = 3;
             int32 i32 = 5;
             int64 i64 = 7;
@@ -42,6 +45,7 @@ message Expression {
             Map map = 26;
             fixed64 timestamp_tz = 27;
             bytes uuid = 28;
+            Type null = 29; // a typed null literal
         }
 
         message Map {

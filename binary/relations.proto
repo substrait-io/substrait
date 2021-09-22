@@ -6,6 +6,7 @@ import "type.proto";
 import "expression.proto";
 import "selection.proto";
 
+option java_multiple_files = true;
 
 message RelCommon {
 
