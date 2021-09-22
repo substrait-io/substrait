@@ -47,11 +47,10 @@ For scalar functions (one value produced for each record), a function binding de
 
 ### Input Argument Types
 
-Input arguments can be declared in one of three ways: complete, wildcarded, parameterized.
+Input arguments can be declared in one of two ways: materialized or parameterized.
 
-* Complete Type: Complete types are either simple types or compound types with all parameters fully defined. Examples include i32, fp32, VARCHAR(20), List&lt;fp32&gt;, etc.
-* Wildcard Types: Compound types can be wildcarded meaning that any valid value for the parameter can be accepted. Types are wildcarded by failing to express a particular value for the type. When serialized, this will typically mean using a null pointer or sentinel value. Examples would be  VARCHAR(*), List&lt;\*&gt;, DECIMAL(\*,10).
-* Parameterized types: Types can be parameterized such that the parameter can be used in a output derivation. Example parameterized types would be VARCHAR(T), List&lt;E&gt;, MAP&lt;K, fp32&gt;, etc. Parameters are simple names. Any parameters defined in an argument must be referenced at least once in an output expression. Parameterized argument types can only be used when a function is using expression based output type derivation.
+* Materialized Type: Materialized types are either simple types or compound types with all parameters fully defined (without any parameters). Examples include i32, fp32, VARCHAR(20), List&lt;fp32&gt;, etc.
+* Parameterized types: Types can be parameterized such that the parameter can be used in a output derivation e.g. `f(K) => K` or to guarantee consistency of type between input arguments `f(K,K) => boolean`. Example parameterized types would be VARCHAR(T), List&lt;E&gt;, MAP&lt;K, fp32&gt;, etc. A parameters is named with a simple UTF8 character or string.
 
 ### Direct Return Types
 
