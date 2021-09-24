@@ -82,7 +82,7 @@ Fully defined with argument types:
 * `multiply(integer a, integer b) => integer`
 * `divide(integer a, integer b) => integer`
 * `add(integer a, integer b) => integer`
-* `substract(integer a, integer b) => integer`
+* `subtract(integer a, integer b) => integer`
 * `min(integer a, integer b) => integer`
 * `max(integer a, integer b) => integer`
 * `equal(integer a, integer b) => boolean`
