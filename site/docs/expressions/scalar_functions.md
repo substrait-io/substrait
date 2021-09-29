@@ -2,53 +2,33 @@
 
 Scalar functions are a function that takes in values from a single record and produces an output value. To clearly specify the definition of functions, Substrait declares a extensible specification plus binding approach to function resolution. A scalar function signature includes the following properties:
 
-| Property                 | Description                                                  | Required                            |
-| ------------------------ | ------------------------------------------------------------ | ----------------------------------- |
-| Name                     | One or more user friendly utf8 strings that are used to reference this function in languages | At least one value is required.     |
-| List of arguments        | Argument properties are defined below. Arguments can be fully defined, parameterized or wildcarded. See further details below. | Optional, defaults to niladic.      |
-| List of parameter bounds | For each parameter, defines the bounds of that parameter. Options include simple bounds such as `List<K> where K IN (fp32, fp64)`. |                                     |
-| Deterministic            | Whether this function is expected to reproduce the same output when it is invoked multiple times with the same input. This informs a plan consumer on whether it can constant reduce the defined function. An example would be a random() function, which is typically expected to be evaluated repeatedly despite having the same set of inputs. | Optional, defaults to true.         |
-| Session Dependent        | Whether this function is influenced by the session context it is invoked within. For example, a function may be influenced by a user who is invoking the function, the time zone of a session, or some other non-obvious parameter. This can inform caching systems on whether a particular function is cacheable. | Optional, defaults to false.        |
-| Variadic Behavior        | Whether the last argument of the function is variadic. Options include: [Single argument, M..N]. M must be less than or equal to N. N can be defined or left as "unlimited". | Optional, defaults to single value. |
-| Description              | Additional description of function for implementers or users. Should be written human readable to allow exposure to end users. Presented as a map with language => description mappings. E.g. `{ "en": "This adds two numbers together.", "fr": "cela ajoute deux nombres"}`. | Optional                            |
-| Return Type              | The output type is expected to be a physical type of the expression. Return types can be one of a simple, fully-defined compound type or a type expression. See below for more on type expressions. | Required                            |
-| Implementation Map       | A map of implementation locations for one or more implementations of the given function. Each key is a function implementation type. Implementation types include examples such as: AthenaArrowLambda, TrinoV361Jar, ArrowCppKernelEnum, GandivaEnum, LinkedIn Transport Jar, etc. [Definition TBD]. Implementation type has one or more properties associated with retrieval of that implementation. | Optional                            |
+| Property               | Description                                                  | Required                            |
+| ---------------------- | ------------------------------------------------------------ | ----------------------------------- |
+| Name                   | One or more user friendly utf8 strings that are used to reference this function in languages | At least one value is required.     |
+| List of arguments      | Argument properties are defined below. Arguments can be fully defined, parameterized or wildcarded. See further details below. | Optional, defaults to niladic.      |
+| Deterministic          | Whether this function is expected to reproduce the same output when it is invoked multiple times with the same input. This informs a plan consumer on whether it can constant reduce the defined function. An example would be a random() function, which is typically expected to be evaluated repeatedly despite having the same set of inputs. | Optional, defaults to true.         |
+| Session Dependent      | Whether this function is influenced by the session context it is invoked within. For example, a function may be influenced by a user who is invoking the function, the time zone of a session, or some other non-obvious parameter. This can inform caching systems on whether a particular function is cacheable. | Optional, defaults to false.        |
+| Variadic Behavior      | Whether the last argument of the function is variadic. Options include: [Single argument, M..N]. M must be less than or equal to N. N can be defined or left as "unlimited". | Optional, defaults to single value. |
+| Description            | Additional description of function for implementers or users. Should be written human readable to allow exposure to end users. Presented as a map with language => description mappings. E.g. `{ "en": "This adds two numbers together.", "fr": "cela ajoute deux nombres"}`. | Optional                            |
+| Return Type Expression | The output type is expected to be a physical type of the expression. Return types can be one of a simple, fully-defined compound type or a type expression. See below for more on type expressions. | Required                            |
+| Implementation Map     | A map of implementation locations for one or more implementations of the given function. Each key is a function implementation type. Implementation types include examples such as: AthenaArrowLambda, TrinoV361Jar, ArrowCppKernelEnum, GandivaEnum, LinkedIn Transport Jar, etc. [Definition TBD]. Implementation type has one or more properties associated with retrieval of that implementation. | Optional                            |
 
 
-
-
-
-## Function Ids
-
-Each function signature is categorized based on a function signature id. The identifier includes two components:
-
-| Property        | Description                                                  |
-| --------------- | ------------------------------------------------------------ |
-| Organization Id | An unsigned 32 bit integer mapped to a list of known organizations listed in the [Substrait repository](https://github.com/substrait-io/substrait/blob/main/extensions/organizations.yaml). |
-| Function Id     | An unsigned 32 bit integer mapped to a list of known functions for the specific organization. For the Substrait organization, the function is listed in [here](https://github.com/substrait-io/substrait/blob/main/extensions/scalar_functions.yaml). |
-
-An organization is responsible for managing their own lists of functions. A function id should be used forever. If a function is deleted for any reason, the id should not be reused. Ideally each function signature will have one or more 
-
-## Scalar Function Bindings
-
-For scalar functions (one value produced for each record), a function binding declares the function identifier to be used and the input arguments.
 
 ## Argument Types
 
 There are two main types of arguments: Value Arguments and Type Arguments. 
 
-* Value Arguments: Arguments that where the function will refer to data value, could be a literal or reference. This is the most common type of argument. Value arguments are not available in output derivation. Value arguments can be declared in one of two ways: materialized or parameterized. Materialized Types are either simple types or compound types with all parameters fully defined (without any parameters). Examples include i32, fp32, VARCHAR(20), List&lt;fp32&gt;, etc. Parameterized types are discussed further below.
-* Type Arguments: Type arguments are used to inform the evaluation and/or type derivation of the function. For example, you might have a function which is `truncate(<type> DECIMAL(P0,S0), <value> DECIMAL(P1, S1), <value> i32)`. This function declares two value arguments (arg1 and arg2) and  
-
-
+* Value Arguments: Arguments that where the function will refer to data value, could be a constant (literal-based expression) or variable (reference-based expression). This is the most common type of argument. Value arguments are not available in output derivation. Value arguments can be declared in one of two ways: concrete or parameterized. Concrete Types are either simple types or compound types with all parameters fully defined (without any parameters). Examples include i32, fp32, VARCHAR(20), List&lt;fp32&gt;, etc. Parameterized types are discussed further below.
+* Type Arguments: Type arguments are used to inform the evaluation and/or type derivation of the function. For example, you might have a function which is `truncate(<type> DECIMAL(P0,S0), <value> DECIMAL(P1, S1), <value> i32)`. This function declares two value arguments (arg1 and arg2) and type argument. The type argument's value can be used in output type determination. (The types of the values arguments can also be used for output type derivation.)
 
 #### Value Argument Properties
 
-| Property      | Description                                                  | Required                                                   |
-| ------------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
-| Name          | A human name for this argument to help clarify use.          | Optional, defaults to a name based on position (e.g. arg0) |
-| Physical Type | The physical types this argument requires.Physical types are used here so that different binds are used when working in a physical plan depending on the execution engines capabilities. In common cases, the system default representation is used. | Required                                                   |
-| Constant      | Whether this argument is required to be a constant for invocation. For example, in some system a regular expression pattern would only be accepted as a literal and not a column value reference. | Optional, defaults to false                                |
+| Property | Description                                                  | Required                                                   |
+| -------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
+| Name     | A human name for this argument to help clarify use.          | Optional, defaults to a name based on position (e.g. arg0) |
+| Type     | A fully concrete or parameterized (bound or not).            | Required                                                   |
+| Constant | Whether this argument is required to be a constant for invocation. For example, in some system a regular expression pattern would only be accepted as a literal and not a column value reference. | Optional, defaults to false                                |
 
 #### Type Argument Properties
 
@@ -79,9 +59,9 @@ When the last argument of a function is variadic and declares a type parameter e
 
 ## Output Type Derivation
 
-### Direct Return Types
+### Concrete Return Types
 
-A direct return type is one that is fully known at function definition type. Example simple direct return types would be things such as i32, fp32. For compound types, a direct return type must be fully declared. Example fully defined types: VARCHAR(20), DECIMAL(25,5)
+A concrete return type is one that is fully known at function definition time. Example simple concrete return types would be things such as i32, fp32. For compound types, a concrete return type must be fully declared. Example of fully defined compound types: VARCHAR(20), DECIMAL(25,5)
 
 ### Return Type Expressions
 

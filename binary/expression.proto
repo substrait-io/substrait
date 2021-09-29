@@ -3,8 +3,8 @@ syntax = "proto3";
 package io.substrait;
 
 import "type.proto";
-import "function.proto";
 import "selection.proto";
+import "extensions.proto";
 
 option java_multiple_files = true;
 
@@ -73,18 +73,18 @@ message Expression {
     }
 
     message ScalarFunction {
-        FunctionSignature.Identifier id = 1;
+        Extensions.FunctionId id = 1;
         repeated Expression args = 2;
     }
 
     message AggregateFunction {
-        FunctionSignature.Identifier id = 1;
+        Extensions.FunctionId id = 1;
         repeated Expression args = 2;
         repeated SortField sorts = 3;
     }
 
     message WindowFunction {
-        FunctionSignature.Identifier id = 1;
+        Extensions.FunctionId id = 1;
         repeated Expression partitions = 2;
         repeated SortField sorts = 3;
         Bound upper_bound = 4;
@@ -117,7 +117,7 @@ message Expression {
 
         oneof sort_kind {
             SortType formal = 2;
-            FunctionSignature.Identifier comparison_function = 3;
+            Extensions.FunctionId comparison_function = 3;
         }
         enum SortType {
             UNKNOWN = 0;

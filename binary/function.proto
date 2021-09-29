@@ -3,6 +3,9 @@ syntax = "proto3";
 package io.substrait;
 
 import "type.proto";
+import "parameterized_types.proto";
+import "type_expressions.proto";
+import "extensions.proto";
 
 option java_multiple_files = true;
 
@@ -10,8 +13,14 @@ option java_multiple_files = true;
 // List of function signatures available.
 message FunctionSignature {
 
+    message FinalArgVariadic {
+        int64 min_args = 1;
+        int64 max_args = 2;
+    }
+    message FinalArgNormal {}
+
     message Scalar {
-        Identifier id = 1;
+        Extensions.FunctionId id = 1;
         repeated Argument arguments = 2;
         repeated string name = 3;
         Description description = 4;
@@ -19,13 +28,18 @@ message FunctionSignature {
         bool deterministic = 7;
         bool session_dependent = 8;
 
-        TypeExpression output_type = 9;
+        DerivationExpression output_type = 9;
 
-        repeated Implementation implementations = 10;
+        oneof final_variable_behavior {
+            FinalArgVariadic variadic = 10;
+            FinalArgNormal normal = 11;
+        }
+
+        repeated Implementation implementations = 12;
     }
 
     message Aggregate {
-        Identifier id = 1;
+        Extensions.FunctionId id = 1;
         repeated Argument arguments = 2;
         repeated string name = 3;
         Description description = 4;
@@ -33,17 +47,22 @@ message FunctionSignature {
         bool deterministic = 7;
         bool session_dependent = 8;
 
-        TypeExpression output_type = 9;
+        DerivationExpression output_type = 9;
 
-        bool ordered = 11;
+        oneof final_variable_behavior {
+            FinalArgVariadic variadic = 10;
+            FinalArgNormal normal = 11;
+        }
+
+        bool ordered = 14;
         uint64 max_set = 12;
         Type intermediate_type = 13;
 
-        repeated Implementation implementations = 14;
+        repeated Implementation implementations = 15;
     }
 
     message Window {
-        Identifier id = 1;
+        Extensions.FunctionId id = 1;
         repeated Argument arguments = 2;
         repeated string name = 3;
         Description description = 4;
@@ -51,11 +70,14 @@ message FunctionSignature {
         bool deterministic = 7;
         bool session_dependent = 8;
 
-        TypeExpression output_type = 9;
-
+        DerivationExpression intermediate_type = 9;
+        DerivationExpression output_type = 10;
+        oneof final_variable_behavior {
+            FinalArgVariadic variadic = 16;
+            FinalArgNormal normal = 17;
+        }
         bool ordered = 11;
         uint64 max_set = 12;
-        Type intermediate_type = 13;
         WindowType window_type = 14;
         repeated Implementation implementations = 15;
 
@@ -64,15 +86,6 @@ message FunctionSignature {
             STREAMING = 1;
             PARTITION = 2;
         }
-    }
-
-    message Identifier {
-        uint32 orgId = 1;
-        uint32 id = 2;
-    }
-
-    message CustomDerivationPolicy {
-        bytes policy = 11;
     }
 
     message Description {
@@ -96,19 +109,15 @@ message FunctionSignature {
     }
 
     message Argument {
+        ParameterizedType type = 1;
+        ArgumentKind kind = 2;
+        string name = 3;
 
-        message Plain {
-            Type type = 1;
-        }
-
-        message Constant {
-            Type type = 1;
-        }
-
-        message Variadic {
-            Type type = 1;
-            uint32 min = 2;
-            uint32 max = 3;
+        enum ArgumentKind {
+            UNKNOWN = 0;
+            VARIABLE_VALUE = 1;
+            CONSTANT_VALUE = 2;
+            TYPE = 3;
         }
 
     }

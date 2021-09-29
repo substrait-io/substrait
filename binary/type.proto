@@ -1,6 +1,8 @@
 syntax = "proto3";
 package io.substrait;
 
+import "extensions.proto";
+
 option java_multiple_files = true;
 
 message Type {
@@ -20,140 +22,155 @@ message Type {
         Time time = 17;
         IntervalYear interval_year = 19;
         IntervalDay interval_day = 20;
+        TimestampTZ timestamp_tz = 29;
+        UUID uuid = 32;
+
         FixedChar fixed_char = 21;
         VarChar varchar = 22;
         FixedBinary fixed_binary = 23;
         Decimal decimal = 24;
+
         Struct struct = 25;
         NamedStruct named_struct = 26;
         List list = 27;
         Map map = 28;
-        TimestampTZ timestamp_tz = 29;
-        UserDefined user_defined = 31;
-        UUID uuid = 32;
 
-        // A special type that can only be used for parameterized function arguments.
-        // This allows a user to express things like List<T>
-        Parameter parameter = 33;
-
-        // A special type that can only be used in function return type declarations.
-        TypeExpression expression = 34;
+        Extensions.TypeId user_defined = 31;
     }
 
-    message Parameter {
-        string name = 1;
+    enum Nullability {
+        NULLABLE = 0;
+        REQUIRED = 1;
     }
 
     message Boolean {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
     message I8 {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message I16 {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message I32 {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message I64 {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message FP32 {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message FP64 {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message String {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message Binary {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message Timestamp {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message Date {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message Time {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message TimestampTZ {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message IntervalYear {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message IntervalDay {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     message UUID {
         Variation variation = 1;
+        Nullability nullability = 2;
     }
 
     // Start compound types.
     message FixedChar {
-        IntegerParameter length = 1;
+        int32 length = 1;
         Variation variation = 2;
+        Nullability nullability = 3;
     }
 
     message VarChar {
-        IntegerParameter length = 1;
+        int32 length = 1;
         Variation variation = 2;
+        Nullability nullability = 3;
     }
 
     message FixedBinary {
-        IntegerParameter length = 1;
+        int32 length = 1;
         Variation variation = 2;
+        Nullability nullability = 3;
     }
 
     message Decimal {
-        IntegerParameter scale = 1;
-        IntegerParameter precision = 2;
+        int32 scale = 1;
+        int32 precision = 2;
         Variation variation = 3;
+        Nullability nullability = 4;
     }
 
     message Struct {
         repeated Type types = 1;
         Variation variation = 2;
+        Nullability nullability = 3;
     }
 
     message NamedStruct {
-
-        repeated Pair pairs = 1;
-        Variation variation = 2;
-
-        message Pair {
-            string name = 1;
-            Type type = 2;
-        }
+        // list of names in dfs order
+        repeated string names = 1;
+        Struct struct = 2;
     }
 
     message List {
         Type type = 1;
         Variation variation = 2;
+        Nullability nullability = 3;
     }
 
     message Map {
         Type key = 1;
         Type value = 2;
         Variation variation = 3;
+        Nullability nullability = 4;
     }
 
     message Variation {
@@ -161,70 +178,5 @@ message Type {
         string name = 2;
     }
 
-    message UserDefined {
-        int32 organization = 1;
-        string name = 2;
-    }
-
-    message IntegerParameter {
-        oneof integer_type {
-            int32 literal = 1;
-            String parameter_name = 2;
-        }
-    }
 }
 
-
-message TypeExpression {
-
-    oneof expression_type {
-        int32 integer_literal = 1;
-        UnaryOp unary_op = 2;
-        BinaryOp binary_op = 3;
-        Type.Parameter parameter = 4;
-        IfElse if_else = 5;
-        NotBindable not_bindable = 6;
-        Type type = 7;
-    }
-
-    message IfElse {
-        TypeExpression if_condition = 1;
-        TypeExpression if_return = 2;
-        TypeExpression else_return = 3;
-    }
-
-    message NotBindable {}
-
-    message UnaryOp {
-        OpType op_type = 1;
-        TypeExpression arg = 2;
-
-        enum OpType {
-            UNKNOWN = 0;
-            BOOLEAN_NOT = 1;
-        }
-    }
-
-    message BinaryOp {
-
-        OpType op_type = 1;
-        TypeExpression arg1 = 2;
-        TypeExpression arg2 = 3;
-
-        enum OpType {
-            UNKNOWN = 0;
-            PLUS = 1;
-            MINUS = 2;
-            MULTIPLY = 3;
-            DIVIDE = 4;
-            MIN = 5;
-            MAX = 6;
-            GREATER_THAN = 7;
-            LESS_THAN = 8;
-            AND = 9;
-            OR = 10;
-            EQUAL = 11;
-        }
-    }
-
-}
