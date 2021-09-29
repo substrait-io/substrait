@@ -1,28 +1,20 @@
 # Scalar Functions
 
-Scalar functions are a function that takes in values from a single record and produces an output value. To clearly specify the definition of functions, Substrait declares a extensible specification plus binding approach to function resolution. This ensures a clear definition of function behavior separate from a particular use of each function while avoiding operations 
+Scalar functions are a function that takes in values from a single record and produces an output value. To clearly specify the definition of functions, Substrait declares a extensible specification plus binding approach to function resolution. A scalar function signature includes the following properties:
 
-Substrait supports a number of functions. A scalar function signature includes the following properties:
-
-| Property           | Description                                                  | Required                            |
-| ------------------ | ------------------------------------------------------------ | ----------------------------------- |
-| Name               | One or more user friendly utf8 strings that are used to reference this function in languages | At least one value is required.     |
-| List of arguments  | Argument properties are defined below. Arguments can be fully defined, parameterized or wildcarded. See further details below. | Optional, defaults to niladic.      |
-| Deterministic      | Whether this function is expected to reproduce the same output when it is invoked multiple times with the same input. This informs a plan consumer on whether it can constant reduce the defined function. An example would be a random() function, which is typically expected to be evaluated repeatedly despite having the same set of inputs. | Optional, defaults to true.         |
-| Session Dependent  | Whether this function is influenced by the session context it is invoked within. For example, a function may be influenced by a user who is invoking the function, the time zone of a session, or some other non-obvious parameter. This can inform caching systems on whether a particular function is cacheable. | Optional, defaults to false.        |
-| Variadic Behavior  | Whether the last argument of the function is variadic. Options include: [Single argument, M..N]. M must be less than or equal to N. N can be defined or left as "unlimited". | Optional, defaults to single value. |
-| Description        | Additional description of function for implementers or users. Should be written human readable to allow exposure to end users. Presented as a map with language => description mappings. E.g. `{ "en": "This adds two numbers together.", "fr": "cela ajoute deux nombres"}`. | Optional                            |
-| Return Type        | The output type is expected to be a physical type of the expression. Return types can be either or simple, fully-defined compound type or a type expression. See below for more on type expressions. | Required                            |
-| Implementation Map | A map of implementation locations for one or more implementations of the given function. Each key is a function implementation type. Implementation types include examples such as: AthenaArrowLambda, TrinoV361Jar, ArrowCppKernelEnum, GandivaEnum, LinkedIn Transport Jar, etc. [Definition TBD]. Implementation type has one or more properties associated with retrieval of that implementation. | Optional                            |
-
+| Property                 | Description                                                  | Required                            |
+| ------------------------ | ------------------------------------------------------------ | ----------------------------------- |
+| Name                     | One or more user friendly utf8 strings that are used to reference this function in languages | At least one value is required.     |
+| List of arguments        | Argument properties are defined below. Arguments can be fully defined, parameterized or wildcarded. See further details below. | Optional, defaults to niladic.      |
+| List of parameter bounds | For each parameter, defines the bounds of that parameter. Options include simple bounds such as `List<K> where K IN (fp32, fp64)`. |                                     |
+| Deterministic            | Whether this function is expected to reproduce the same output when it is invoked multiple times with the same input. This informs a plan consumer on whether it can constant reduce the defined function. An example would be a random() function, which is typically expected to be evaluated repeatedly despite having the same set of inputs. | Optional, defaults to true.         |
+| Session Dependent        | Whether this function is influenced by the session context it is invoked within. For example, a function may be influenced by a user who is invoking the function, the time zone of a session, or some other non-obvious parameter. This can inform caching systems on whether a particular function is cacheable. | Optional, defaults to false.        |
+| Variadic Behavior        | Whether the last argument of the function is variadic. Options include: [Single argument, M..N]. M must be less than or equal to N. N can be defined or left as "unlimited". | Optional, defaults to single value. |
+| Description              | Additional description of function for implementers or users. Should be written human readable to allow exposure to end users. Presented as a map with language => description mappings. E.g. `{ "en": "This adds two numbers together.", "fr": "cela ajoute deux nombres"}`. | Optional                            |
+| Return Type              | The output type is expected to be a physical type of the expression. Return types can be one of a simple, fully-defined compound type or a type expression. See below for more on type expressions. | Required                            |
+| Implementation Map       | A map of implementation locations for one or more implementations of the given function. Each key is a function implementation type. Implementation types include examples such as: AthenaArrowLambda, TrinoV361Jar, ArrowCppKernelEnum, GandivaEnum, LinkedIn Transport Jar, etc. [Definition TBD]. Implementation type has one or more properties associated with retrieval of that implementation. | Optional                            |
 
 
-## Argument Properties
-
-| Property      | Description                                                  |
-| ------------- | ------------------------------------------------------------ |
-| Physical Type | The physical types this argument requires. Physical types are used here so that different binds are used when working in a physical plan depending on the execution engines capabilities. In common cases, the system default representation is used. |
-| Constant      | Whether this argument is required to be a constant for invocation. For example, in some system a regular expression pattern would only be accepted as a literal and not a column value reference. |
 
 
 
@@ -41,16 +33,47 @@ An organization is responsible for managing their own lists of functions. A func
 
 For scalar functions (one value produced for each record), a function binding declares the function identifier to be used and the input arguments.
 
+## Argument Types
+
+There are two main types of arguments: Value Arguments and Type Arguments. 
+
+* Value Arguments: Arguments that where the function will refer to data value, could be a literal or reference. This is the most common type of argument. Value arguments are not available in output derivation. Value arguments can be declared in one of two ways: materialized or parameterized. Materialized Types are either simple types or compound types with all parameters fully defined (without any parameters). Examples include i32, fp32, VARCHAR(20), List&lt;fp32&gt;, etc. Parameterized types are discussed further below.
+* Type Arguments: Type arguments are used to inform the evaluation and/or type derivation of the function. For example, you might have a function which is `truncate(<type> DECIMAL(P0,S0), <value> DECIMAL(P1, S1), <value> i32)`. This function declares two value arguments (arg1 and arg2) and  
 
 
-## Argument Types & Output Type Derivation
 
-### Input Argument Types
+#### Value Argument Properties
 
-Input arguments can be declared in one of two ways: materialized or parameterized.
+| Property      | Description                                                  | Required                                                   |
+| ------------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
+| Name          | A human name for this argument to help clarify use.          | Optional, defaults to a name based on position (e.g. arg0) |
+| Physical Type | The physical types this argument requires.Physical types are used here so that different binds are used when working in a physical plan depending on the execution engines capabilities. In common cases, the system default representation is used. | Required                                                   |
+| Constant      | Whether this argument is required to be a constant for invocation. For example, in some system a regular expression pattern would only be accepted as a literal and not a column value reference. | Optional, defaults to false                                |
 
-* Materialized Type: Materialized types are either simple types or compound types with all parameters fully defined (without any parameters). Examples include i32, fp32, VARCHAR(20), List&lt;fp32&gt;, etc.
-* Parameterized types: Types can be parameterized such that the parameter can be used in a output derivation e.g. `f(K) => K` or to guarantee consistency of type between input arguments `f(K,K) => boolean`. Example parameterized types would be VARCHAR(T), List&lt;E&gt;, MAP&lt;K, fp32&gt;, etc. A parameters is named with a simple UTF8 character or string.
+#### Type Argument Properties
+
+| Property | Description                                                  | Required                                                   |
+| -------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
+| Type     | A partially or completely parameterized type. E.g. List&lt;K&gt; or K | Required                                                   |
+| Name     | A human name for this argument to help clarify use.          | Optional, defaults to a name based on position (e.g. arg0) |
+
+### Parameterized Types
+
+Types are parametered by two types of values: by inner types (e.g. List&lt;K&gt;) and numeric values (e.g. VARCHAR(P,S)). Parameter names are simple strings (frequently a single character). There are two types of parameters: integer parameters and type parameters. 
+
+When the same parameter name is used multiple times in a function definition, the function can only bind if the exact same value is used for all parameters of that name. For example, if one had a function with a signature of `fn(VARCHAR(N), VARCHAR(N)), the function would be only be usable if both VARCHAR types had the same length value N. This necessitates that all instances of the same parameter name must be of the same parameter type (all instances are a type parameter or always intances are aninteger parameter).
+
+#### Integer Parameter Bounds
+
+A type which declares one or more integer parameters can also declare a range of legal values for a function. For example, one could declare a function `fn(VARCHAR(N)) where N IN [0..20]` to describe a function which only takes in a varchar types that are less than or equal to 20 characters in length.
+
+#### Type Parameter Bounds
+
+A parameterized type can either be unbounded (any type is allowed) or be bounded. When bounded, the function can only be bound to arguments of the types bound to. For example, one could declare a function `fn(Map<K,V> map) where K IN [STRING, VARCHAR(N), FIXEDCHAR(N)]` which would allow the function to accept a map argument as long as the key type is one of STRING, VARCHAR or FIXEDCHAR. Note, when duplicate parameter names are used in disjunct bounds options, the names will use the same bounds. For example, in the above map function, if one were to declare a bound such as where N IN [0..20], this limit would apply to either N parameter.
+
+ 
+
+## Output Type Derivation
 
 ### Direct Return Types
 
@@ -69,13 +92,14 @@ These types are evaluated using a small set of operations to support common scen
 ```
 Math: +, -, *, /, min, max
 Boolean: &&, ||, !, <, >, ==
-Input Parameters: type parameter, literal parameter
-Literals: integer, type
-Special: !bindable
+Parameters: type, integer
+Literals: type, integer
 ```
 
 Fully defined with argument types:
 
+* `type_parameter(string name) => type`
+* `integer_parameter(string name) => integer`
 * `not(boolean x) => boolean` 
 * `and(boolean a, boolean b) => boolean` 
 * `or(boolean a, boolean b) => boolean` 
@@ -91,17 +115,16 @@ Fully defined with argument types:
 * `equal(Type a, Type b) => boolean`
 * `if(boolean a) then (integer) else (integer)`
 * `if(boolean a) then (type) else (type)`
-* `not_bindable()`
 
 #### Example Type Expressions Uses
 
 For reference, here are are some common output type derivations and how they can be expressed with a return type expression:
 
-| Operation                                     | Definition                                                   |
-| --------------------------------------------- | ------------------------------------------------------------ |
-| Add item to list                              | `add(<List<T>, T>) => List<T>`                               |
-| Decimal Division                              | `divide(Decimal(P1,S1), Decimal(P2,S2)) => Decimal(P1 -S1 + S2 + MAX(6, S1 + P2 + 1), MAX(6, S1 + P2 + 1))` |
-| Do regex on only string maps to return values | `extract_values(Map<K,V>) => if(K==STRING OR K==VARCHAR(*)) THEN LIST<V> ELSE !bindable` |
+| Operation                                      | Definition                                                   |
+| ---------------------------------------------- | ------------------------------------------------------------ |
+| Add item to list                               | `add(<List<T>, T>) => List<T>`                               |
+| Decimal Division                               | `divide(Decimal(P1,S1), Decimal(P2,S2)) => Decimal(P1 -S1 + S2 + MAX(6, S1 + P2 + 1), MAX(6, S1 + P2 + 1))` |
+| Do regex on only string maps to return values. | `extract_values(Map<K,V>) => List<V> WHERE K IN [STRING, VARCHAR(N), FIXEDCHAR(N)]` |
 
 
 
