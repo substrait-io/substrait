@@ -71,6 +71,10 @@ A type which declares one or more integer parameters can also declare a range of
 
 A parameterized type can either be unbounded (any type is allowed) or be bounded. When bounded, the function can only be bound to arguments of the types bound to. For example, one could declare a function `fn(Map<K,V> map) where K IN [STRING, VARCHAR(N), FIXEDCHAR(N)]` which would allow the function to accept a map argument as long as the key type is one of STRING, VARCHAR or FIXEDCHAR. Note, when duplicate parameter names are used in disjunct bounds options, the names will use the same bounds. For example, in the above map function, if one were to declare a bound such as where N IN [0..20], this limit would apply to either N parameter.
 
+#### Type Parameter Resolution in variadic functions
+
+When the last argument of a function is variadic and declares a type parameter e.g. `fn(A, B, C...)`, the C parameter can be marked as either consistent or inconsistent. If marked as consistent, the function can only be bound to arguments where all of the C types are the same concrete type. If marked as inconsistent, each unique C can be bound to a different type within the constraints of what T allows.
+
  
 
 ## Output Type Derivation
@@ -87,7 +91,7 @@ Any function can declare a return type expression. A return type expression uses
 * Boolean: True and False
 * Type: A Substrait type (with possibly additional embedded expressions)
 
-These types are evaluated using a small set of operations to support common scenarios. Since it is possible that output derivation ultimately determines that binding is not allowed, a `not_bindable` operation is provided that states that the particular binding is not allowed. List of valid operations:
+These types are evaluated using a small set of operations to support common scenarios. List of valid operations:
 
 ```
 Math: +, -, *, /, min, max
@@ -112,7 +116,7 @@ Fully defined with argument types:
 * `equal(integer a, integer b) => boolean`
 * `greater_than(integer a, integer b) => boolean`
 * `less_than(integer a, integer b) => boolean`
-* `equal(Type a, Type b) => boolean`
+* `covers(Type a, Type b) => boolean`Covers means that type b matches type A for as much as type B is defined. For example, if type A is `VARCHAR(20)` and type B is `VARCHAR(N)`, type B would be considered covering. Similarlily if type A was `List<Struct<a:f32, b:f32>>`and type B was `List<Struct<>>`, it would be considered covering. Note that this is directional "as in B covers A" or "B can be further enhanced to match the definition A". 
 * `if(boolean a) then (integer) else (integer)`
 * `if(boolean a) then (type) else (type)`
 
@@ -120,11 +124,13 @@ Fully defined with argument types:
 
 For reference, here are are some common output type derivations and how they can be expressed with a return type expression:
 
-| Operation                                      | Definition                                                   |
-| ---------------------------------------------- | ------------------------------------------------------------ |
-| Add item to list                               | `add(<List<T>, T>) => List<T>`                               |
-| Decimal Division                               | `divide(Decimal(P1,S1), Decimal(P2,S2)) => Decimal(P1 -S1 + S2 + MAX(6, S1 + P2 + 1), MAX(6, S1 + P2 + 1))` |
-| Do regex on only string maps to return values. | `extract_values(Map<K,V>) => List<V> WHERE K IN [STRING, VARCHAR(N), FIXEDCHAR(N)]` |
+| Operation                                                 | Definition                                                   |
+| --------------------------------------------------------- | ------------------------------------------------------------ |
+| Add item to list                                          | `add(<List<T>, T>) => List<T>`                               |
+| Decimal Division                                          | `divide(Decimal(P1,S1), Decimal(P2,S2)) => Decimal(P1 -S1 + S2 + MAX(6, S1 + P2 + 1), MAX(6, S1 + P2 + 1))` |
+| Do regex on only string maps to return values.            | `extract_values(Map<K,V>) => List<V> WHERE K IN [STRING, VARCHAR(N), FIXEDCHAR(N)]` |
+| Concatenate two fixed sized character strings             | `concat(FIXEDCHAR(A), FIXEDCHAR(B)) => CHAR(A+B)`            |
+| Make a struct of a set of fields and a struct definition. | `make_struct(<type> T, K...) => T`                           |
 
 
 
