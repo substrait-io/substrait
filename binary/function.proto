@@ -14,9 +14,27 @@ option java_multiple_files = true;
 message FunctionSignature {
 
     message FinalArgVariadic {
+        // the minimum number of arguments allowed for the list of final arguments (inclusive).
         int64 min_args = 1;
+
+        // the maxinum number of arguments allowed for the list of final arguments (exclusive)
         int64 max_args = 2;
+
+        // the type of parameterized type consistency
+        ParameterConsistency consistency = 3;
+
+        enum ParameterConsistency {
+            UNKNOWN = 0;
+
+            // All argument must be the same concrete type.
+            CONSISTENT = 1;
+
+            // Each argument can be any possible concrete type afforded by the bounds of any parameter defined in
+            // the arguments specification.
+            INCONSISTENT = 2;
+        }
     }
+
     message FinalArgNormal {}
 
     message Scalar {
@@ -96,10 +114,7 @@ message FunctionSignature {
     message Implementation {
 
         Type type = 1;
-        oneof implementation_type {
-            string uri = 2;
-            bytes binary = 3;
-        }
+        string uri = 2;
 
         enum Type {
             UNKNOWN = 0;
