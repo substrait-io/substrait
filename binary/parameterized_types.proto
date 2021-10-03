@@ -32,7 +32,6 @@ message ParameterizedType {
         ParameterizedDecimal decimal = 24;
 
         ParameterizedStruct struct = 25;
-        ParameterizedNamedStruct named_struct = 26;
         ParameterizedList list = 27;
         ParameterizedMap map = 28;
 

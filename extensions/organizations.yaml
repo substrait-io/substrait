@@ -1,4 +1,0 @@
-organizations:
-- name: Substrait
-  id: 0
-  extensions: "github://substrait-io/spec/extensions/toc.yaml"
