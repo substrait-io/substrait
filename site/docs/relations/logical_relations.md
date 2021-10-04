@@ -241,7 +241,7 @@ The write operator is an operator that consumes one output and writes it to stor
 | Field names                 | The names of all struct fields in breadth-first order.       | Required                    |
 | Masked Complex Expression   | The masking expression applied to the input record prior to write. | Optional, defaults to all   |
 | Rotation description fields | A list of fields that can be used for stream description whenever a stream is reset | Optional, defaults to none. |
-| Rotation indiciator         | An input field id that describes when the current stream should be "rotated". Individual write definition types may support the ability to rotate the output into one or more streams. This could mean closing and opening a new file, finishing and restarting a TCP connection, etc. If a rotation indiciator is available, it will be 0 except when a rotation should occur. Rotation indication are frequently defined by things like discrete partition values but could be done based on number of records or other arbitrary criteria. Typically | Optional, defaults to none. |
+| Rotation indicator          | An input field id that describes when the current stream should be "rotated". Individual write definition types may support the ability to rotate the output into one or more streams. This could mean closing and opening a new file, finishing and restarting a TCP connection, etc. If a rotation indicator is available, it will be 0 except when a rotation should occur. Rotation indication are frequently defined by things like discrete partition values but could be done based on number of records or other arbitrary criteria. Typically | Optional, defaults to none. |
 
 ### Write Definition Types
 

@@ -29,7 +29,7 @@ The hash equijoin join operator will build a hash table out of the right input b
 
 ## NLJ Operator
 
-The nested loop join operator does a join by holding the entire right input and then iterating over it using the left input, evaluating the join expression on the cartesian product of all rows, only outputing rows where the expression is true. Will also include non-matching rows in the OUTER, LEFT and RIGHT operations per the join type requirements.
+The nested loop join operator does a join by holding the entire right input and then iterating over it using the left input, evaluating the join expression on the cartesian product of all rows, only outputting rows where the expression is true. Will also include non-matching rows in the OUTER, LEFT and RIGHT operations per the join type requirements.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -86,7 +86,7 @@ The distribute operator will redistribute data based on zero or more distributio
 | Property           | Description                                                  | Required                                                     |
 | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Input              | The relational input                                         | Required.                                                    |
-| Expressions        | A list of expressions that describe how the data should be distributed. | Optional. If undefined, data is expected to be distributed fairly evenly amonst destinations. |
+| Expressions        | A list of expressions that describe how the data should be distributed. | Optional. If undefined, data is expected to be distributed fairly evenly amongst destinations. |
 | Partition Count    | The number of partitions targeted for output                 | Optional, defaults to the number of discrete values produced by the expressions. |
 | Expression Mapping | A set of distribution expression tuples that are mapped to particular destinations. | Optional, expressions of the same type are expected to be mapped to the destination given a consistent number of target partitions. |
 
@@ -154,7 +154,7 @@ The topn operator reorders a dataset based on one or more identified sort fields
 
 ## Hash Aggregate Operation
 
-The hash aggregate operation maintains a hash table for each grouping set to collesce equivalent tuples.
+The hash aggregate operation maintains a hash table for each grouping set to coalesce equivalent tuples.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |

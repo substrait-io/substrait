@@ -9,7 +9,7 @@ Aggregate function signatures contain all of the properties defined for [scalar 
 | Inherits                 | All properties defined for scalar function                   | N/A                             |
 | Ordered                  | Whether this aggregation function should allow user ordering | Optional, defaults to false     |
 | Maximum set size         | Maximum allowed set size as an unsigned integer              | Optional, defaults to unlimited |
-| Decomposable             | Whether the funtion can be executed in one or more intermediate steps. Valid options are: NONE, ONE, MANY, describing how intermediate steps can be taken. | Optional, defaults to NONE      |
+| Decomposable             | Whether the function can be executed in one or more intermediate steps. Valid options are: NONE, ONE, MANY, describing how intermediate steps can be taken. | Optional, defaults to NONE     |
 | Intermediate Output Type | If the function is decomposable, represents the intermediate output type that is used, if the function is defined as either ONE or MANY decomposable. Will be a struct in many cases. | Required for ONE and MANY.      |
 
 

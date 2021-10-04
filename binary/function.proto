@@ -17,7 +17,7 @@ message FunctionSignature {
         // the minimum number of arguments allowed for the list of final arguments (inclusive).
         int64 min_args = 1;
 
-        // the maxinum number of arguments allowed for the list of final arguments (exclusive)
+        // the maximum number of arguments allowed for the list of final arguments (exclusive)
         int64 max_args = 2;
 
         // the type of parameterized type consistency
