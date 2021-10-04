@@ -1,5 +1,6 @@
 functions:
   - name: 'sum'
+    nullability: DECLARED_OUTPUT
     description: "Sum a set of values."
     options:
       overflow: [SILENT, SATURATE, ERROR]
@@ -11,7 +12,7 @@ functions:
         arguments:
           - type: K
         intermediate: K
-        return: K
+        return: K?
       - name: decimal
         decomposable: MANY
         parameters:
@@ -20,9 +21,10 @@ functions:
             - S: "1..38"
         arguments:
           - type: "DECIMAL<P,S>"
-        intermediate: "DECIMAL<38,S>"
-        return: "DECIMAL<38,S>"
+        intermediate: "DECIMAL<38,S>?"
+        return: "DECIMAL<38,S>?"
   - name: 'avg'
+    nullability: DECLARED_OUTPUT
     description: "Average a set of values."
     options:
       overflow: [SILENT, SATURATE, ERROR]
@@ -32,8 +34,8 @@ functions:
         parameters:
           - K: [i8,i16,i32,i64,fp32,fp64]
         arguments:
-          - type: K
-        intermediate: "STRUCT<sum:K,count:i64>"
+          - type: K?
+        intermediate: "STRUCT<K,i64>"
         return: K
       - name: decimal
         decomposable: MANY
@@ -43,9 +45,10 @@ functions:
             - S: "1..38"
         arguments:
           - type: "DECIMAL<P,S>"
-        intermediate: "STRUCT<DECIMAL<38,S>,count:i64>"
+        intermediate: "STRUCT<DECIMAL<38,S>,i64>"
         return: "DECIMAL<38,S>"
   - name: 'count'
+    nullability: DECLARED_OUTPUT
     description: "Average a set of values."
     options:
       overflow: [SILENT, SATURATE, ERROR]

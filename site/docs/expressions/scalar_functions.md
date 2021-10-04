@@ -9,6 +9,7 @@ A function is a scalar function if that function takes in values from a single r
 | Deterministic          | Whether this function is expected to reproduce the same output when it is invoked multiple times with the same input. This informs a plan consumer on whether it can constant reduce the defined function. An example would be a random() function, which is typically expected to be evaluated repeatedly despite having the same set of inputs. | Optional, defaults to true.         |
 | Session Dependent      | Whether this function is influenced by the session context it is invoked within. For example, a function may be influenced by a user who is invoking the function, the time zone of a session, or some other non-obvious parameter. This can inform caching systems on whether a particular function is cacheable. | Optional, defaults to false.        |
 | Variadic Behavior      | Whether the last argument of the function is variadic or a single argument.  If variadic the argument can optionally have a lower bound (minimum number of instances) and upper bound (maximum number of instances) | Optional, defaults to single value. |
+| Nullability Handling | Describes how nullability of input arguments maps to nullability of output arguments. Three options are: MIRROR, DECLARED_OUTPUT and DISCRETE. More details about nullability handling are listed below. | Optional, defaults to MIRROR |
 | Description            | Additional description of function for implementers or users. Should be written human readable to allow exposure to end users. Presented as a map with language => description mappings. E.g. `{ "en": "This adds two numbers together.", "fr": "cela ajoute deux nombres"}`. | Optional                            |
 | Return Value | The output type of the expression.  Return types can be expressed as a fully-defined type or a type expression. See below for more on type expressions. | Required                            |
 | Implementation Map     | A map of implementation locations for one or more implementations of the given function. Each key is a function implementation type. Implementation types include examples such as: AthenaArrowLambda, TrinoV361Jar, ArrowCppKernelEnum, GandivaEnum, LinkedIn Transport Jar, etc. [Definition TBD]. Implementation type has one or more properties associated with retrieval of that implementation. | Optional                            |
@@ -36,6 +37,18 @@ There are two main types of arguments: Value Arguments and Type Arguments.
 | -------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
 | Type     | A partially or completely parameterized type. E.g. List&lt;K&gt; or K | Required                                                   |
 | Name     | A human readable name for this argument to help clarify use.          | Optional, defaults to a name based on position (e.g. arg0) |
+
+
+
+### Nullability Handling
+
+| Mode            | Description                                                  |
+| --------------- | ------------------------------------------------------------ |
+| MIRROR          | This means that the function has the behavior that if at least one of the input arguments are nullable, the return type is also nullable. If all arguments are non-nullable, the return type will be non-nullable.  An example might be the `+` function. |
+| DECLARED_OUTPUT | Input arguments are accepted of any mix of nullability. The nullability of the output function is whatever the return type expression states. Example use might be the function `is_null()` where the output is always `boolean` independent of the nullability of the input. |
+| DISCRETE        | The input and arguments all define concrete nullability and can only be bound to the types that have those nullability. For example, if a type input is declare `i64?` and one has a `i64` literal, the `i64` literal must be specifically cast to `i64?` to allow the operation to bind. |
+
+
 
 ### Parameterized Types
 
