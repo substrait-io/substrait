@@ -2,7 +2,7 @@
 
 While most all types of operations could be reduced to functions, in some cases this would be overly simplistic. Instead, it is helpful to construct some other expression constructs. 
 
-These constructs should be focused on different expression types as opposed to something that directly related to syntantic sugar. For example, CAST and EXTRACT or SQL operations that are presented using specialized syntax. However, they can easily modeled using a function paradigm with minimal complexity.
+These constructs should be focused on different expression types as opposed to something that directly related to syntactic sugar. For example, CAST and EXTRACT or SQL operations that are presented using specialized syntax. However, they can easily modeled using a function paradigm with minimal complexity.
 
 ## Literal Expressions
 
@@ -24,7 +24,7 @@ When an if expression is declared, all return expressions must be the same ident
 
 #### Shortcut Behavior
 
-An if expression is expected to logically short-cicuit on a postive outcome. This means that a skipped else/elseif expression cannot cause an error. For example, this should not actually throw an error despite the fact that the cast operation should fail.
+An if expression is expected to logically short-circuit on a positive outcome. This means that a skipped else/elseif expression cannot cause an error. For example, this should not actually throw an error despite the fact that the cast operation should fail.
 
 ```
 if 'value' = 'value' then 0

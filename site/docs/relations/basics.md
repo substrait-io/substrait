@@ -25,7 +25,7 @@ Each Relational Operation must declare the following:
 
 ### Emit: Output Ordering
 
-A relational operation uses field references to access specific fields of the input stream. Field references are always ordinal based on the order of the incoming streams. Each relational operation must declare the order of its output data. To simpify things, each relational operation can be in one of two modes: 
+A relational operation uses field references to access specific fields of the input stream. Field references are always ordinal based on the order of the incoming streams. Each relational operation must declare the order of its output data. To simplify things, each relational operation can be in one of two modes: 
 
 1. **Direct output**: The order of outputs is based on the definition declared by the relational operation. 
 2. **Remap**: A listed ordering of the direct outputs. This remapping can be also used to drop columns no longer used (such as a filter field or join keys after a join). Note that remapping/exclusion can only be done at the outputs root struct. Filtering of compound values or extracting subsets must be done through other operation types (e.g. projection).
@@ -64,7 +64,7 @@ A guarantee that data output from this operation is provided with a sort order. 
 | Ascending                  | Returns data in a ascending order based on the quality function associated with the type. Nulls are included after any values. | Last                                            |
 | Descending                 | Returns data in a descending order based on the quality function associated with the type. Nulls are included after any values. | Last                                            |
 | Custom function identifier | Returns data using a custom function that returns -1, 0, or 1 depending on the order of the data. | Per Function                                    |
-| Clustered                  | Ensures that all equal values are coalesced (but no ordering betwixt values is defined). E.g, for values 1,2,3,1,2,3, output bould be any of the following 1,1,2,2,3,3 or 2,2,3,3,1,1 or 3,3,2,2,1,1 or 3,3,1,1,2,2. | N/A, may appear anywhere but will be coalesced. |
+| Clustered                  | Ensures that all equal values are coalesced (but no ordering betwixt values is defined). E.g, for values 1,2,3,1,2,3, output could be any of the following 1,1,2,2,3,3 or 2,2,3,3,1,1 or 3,3,2,2,1,1 or 3,3,1,1,2,2. | N/A, may appear anywhere but will be coalesced. |
 
 
 
