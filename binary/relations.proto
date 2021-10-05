@@ -51,9 +51,14 @@ message ReadRel {
     Expression filter = 3;
     MaskExpression projection = 4;
 
-
     oneof read_type {
         VirtualTable virtual_table = 5;
+        LocalFiles local_files = 6;
+        NamedTable named_table = 7;
+    }
+
+    message NamedTable {
+        repeated string names = 1;
     }
 
 
@@ -83,6 +88,56 @@ message ReadRel {
 
 }
 
+message ProjectRel {
+    RelCommon common = 1;
+    Rel input = 2;
+    repeated Expression expressions = 3;
+}
+
+message JoinRel {
+    RelCommon common = 1;
+    Rel left = 2;
+    Rel right = 3;
+    Expression expression = 4;
+    Expression post_join_filter = 5;
+
+    enum JoinType {
+        UNKNOWN = 0;
+        INNER = 1;
+        OUTER = 2;
+        LEFT = 3;
+        RIGHT = 4;
+    }
+}
+
+message FetchRel {
+    RelCommon common = 1;
+    Rel input = 2;
+    int64 offset = 3;
+    int64 count = 4;
+}
+
+message AggregateRel {
+    RelCommon common = 1;
+    Rel input = 2;
+    repeated Grouping groupings = 3;
+    repeated Measure measures = 4;
+    Expression.AggregationPhase phase = 5;
+
+    message Grouping {
+        repeated int32 input_fields = 1;
+    }
+
+    message Measure {
+        Expression.AggregateFunction measure = 1;
+    }
+}
+
+message SortRel {
+    RelCommon common = 1;
+    Rel input = 2;
+    repeated Expression.SortField sorts = 3;
+}
 
 message FilterRel {
     RelCommon common = 1;
@@ -90,10 +145,31 @@ message FilterRel {
     Expression condition = 3;
 }
 
+message SetRel {
+    RelCommon common = 1;
+    repeated Rel inputs = 2;
+    SetOp op = 3;
+
+    enum SetOp {
+        UNKNOWN = 0;
+        MINUS_PRIMARY = 1;
+        MINUS_MULTISET = 2;
+        INTERSECTION_PRIMARY = 3;
+        INTERSECTION_MULTISET = 4;
+        UNION_DISTINCT = 5;
+        UNION_ALL = 6;
+    }
+}
 
 message Rel {
   oneof RelType {
       ReadRel read = 1;
       FilterRel filter = 2;
+      FetchRel fetch = 3;
+      AggregateRel aggregate = 4;
+      SortRel sort = 5;
+      JoinRel join = 6;
+      ProjectRel project = 7;
+      SetRel set = 8;
   }
 }

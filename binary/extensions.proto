@@ -47,6 +47,11 @@ message Extensions {
             ExtensionId extension_id = 2;
             string name = 3;
             uint32 index = 4;
+            repeated Option options = 5;
+            message Option {
+                string key = 1;
+                string value = 2;
+            }
         }
     }
 

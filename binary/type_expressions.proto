@@ -32,7 +32,6 @@ message DerivationExpression {
         ExpressionDecimal decimal = 24;
 
         ExpressionStruct struct = 25;
-        ExpressionNamedStruct named_struct = 26;
         ExpressionList list = 27;
         ExpressionMap map = 28;
 

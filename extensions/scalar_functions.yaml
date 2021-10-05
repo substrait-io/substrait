@@ -1,18 +1,353 @@
-functions:
-- name: add
-  id: 0
+- name: '+'
+  description: "Add two numeric values."
+  options:
+    overflow: [SILENT, SATURATE, ERROR]
+  variants:
+    - variant: scalar
+      parameters:
+        - K: [i8,i16,i32,i64,fp32,fp64]
+      arguments:
+        - type: K
+        - type: K
+      return: K
+    - variant: decimal
+      parameters:
+        integer:
+        - P1: "1..38"
+        - S1: "1..38"
+        - P2: "1..38"
+        - S2: "1..38"
+      arguments:
+        - type: "DECIMAL<P1,S1>"
+        - type: "DECIMAL<P2,S2>"
+      return: |-
+        init_scale = max(S1,S2)
+        init_prec = init_scale + max(P1 - S1, P2-S2) + 1
+        min_scale = min(init_scale, 6)
+        delta = init_prec - 38
+        prec = min(init_prec,38)
+        scale = init_prec > 38 ? scale - init_prec + 38 : min_scale
+        DECIMAL<prec, scale>
+    - variant: date/time plus interval year
+      description: Add an interval to a date/time type.
+      parameters:
+        - T: [timestamp, timestamp_tz, date]
+        - I: [interval_year, interval_day]
+      arguments:
+        - type: T
+        - type: I
+      return: T
+- name: '-'
+  description: "Subtract one operand from another."
+  options:
+    overflow: [SILENT, SATURATE, ERROR]
+  variants:
+    - variant: scalar
+      parameters:
+        - K: [i8,i16,i32,i64,fp32,fp64]
+      arguments:
+        - type: K
+        - type: K
+      return: K
+    - variant: decimal
+      parameters:
+        integer:
+          - P1: "1..38"
+          - S1: "1..38"
+          - P2: "1..38"
+          - S2: "1..38"
+      arguments:
+        - type: "DECIMAL<P1,S1>"
+        - type: "DECIMAL<P2,S2>"
+      return: |-
+        init_scale = max(S1,S2)
+        init_prec = init_scale + max(P1 - S1, P2-S2) + 1
+        min_scale = min(init_scale, 6)
+        delta = init_prec - 38
+        prec = min(init_prec,38)
+        scale = init_prec > 38 ? scale - init_prec + 38 : min_scale
+        DECIMAL<prec, scale>
+- name: '*'
+  description: Multiply two numeric values.
+  options:
+    overflow: [SILENT, SATURATE, ERROR]
+  variants:
+    - variant: scalar
+      parameters:
+        - K: [i8,i16,i32,i64,fp32,fp64]
+      arguments:
+        - type: K
+        - type: K
+      return: K
+    - variant: decimal
+      parameters:
+        integer:
+          - P1: "1..38"
+          - S1: "1..38"
+          - P2: "1..38"
+          - S2: "1..38"
+      arguments:
+        - type: "DECIMAL<P1,S1>"
+        - type: "DECIMAL<P2,S2>"
+      return: |-
+        init_scale = S1 + S2
+        init_prec = P1 + P2 + 1
+        min_scale = min(init_scale, 6)
+        delta = init_prec - 38
+        prec = min(init_prec,38)
+        scale = init_prec > 38 ? scale - init_prec + 38 : min_scale
+        DECIMAL<prec, scale>
+- name: '/'
+  description: "Divide two numeric values."
+  options:
+    overflow: [SILENT, SATURATE, ERROR]
+  variants:
+    - variant: divide
+      parameters:
+        - K: [i8,i16,i32,i64,fp32,fp64]
+      arguments:
+        - type: K
+        - type: K
+      return: K
+    - variant: decimal
+      parameters:
+        integer:
+          - P1: "1..38"
+          - S1: "1..38"
+          - P2: "1..38"
+          - S2: "1..38"
+      arguments:
+        - type: "DECIMAL<P1,S1>"
+        - type: "DECIMAL<P2,S2>"
+      return: |-
+        init_scale = max(6, S1 + P2 + 1)
+        init_prec = P1 - S1 + P2 + init_scale
+        min_scale = min(init_scale, 6)
+        delta = init_prec - 38
+        prec = min(init_prec,38)
+        scale = init_prec > 38 ? scale - init_prec + 38 : min_scale
+        DECIMAL<prec, scale>
+- name: ['mod','%']
+  description: "Modulus of two values."
+  variants:
+    - variant: divide
+      parameters:
+        - K: [i8,i16,i32,i64,fp32,fp64]
+      arguments:
+        - type: K
+        - type: K
+      return: K
+    - variant: decimal
+      parameters:
+        integer:
+          - P1: "1..38"
+          - S1: "1..38"
+          - P2: "1..38"
+          - S2: "1..38"
+      arguments:
+        - type: "DECIMAL<P1,S1>"
+        - type: "DECIMAL<P2,S2>"
+      return: |-
+        init_scale = max(S1,S2)
+        init_prec = min(P1 - S1, P2 - S2) + init_scale
+        min_scale = min(init_scale, 6)
+        delta = init_prec - 38
+        prec = min(init_prec,38)
+        scale = init_prec > 38 ? scale - init_prec + 38 : min_scale
+        DECIMAL<prec, scale>
+- name: like
+  description: Determine whether a string matches a particular pattern using SQL standard like syntax.
+  options:
+    case: [SENSITIVE, INSENSITIVE]
+  parameters:
+    - S1: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"]
+    - S2: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"]
   arguments:
-    - type: i32
-  variadic: 2..N
-  return: i32
-- name: lt
-  id: 1
-  arguments: 
-    - type: i32
-    - type: i32
+    - type: S1
+      name: value to test
+    - type: S2
+      name: pattern
+      constant: true
+  return: boolean
+- template: "comparisons"
+  nullability: DECLARED_OUTPUT
+  variants:
+    - variant: simple
+      parameters:
+        - K: [boolean,i8,i16,i32,i64,fp32,fp64,timestamp,timestamp_tz,date,time]
+      arguments:
+        - type: K
+        - type: K
+      return: boolean
+    - variant: string comparisons
+      parameters:
+        - S1: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"]
+        - S2: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"]
+      arguments:
+        - type: S1
+        - type: S2
+      return: boolean
+    - variant: binary comparisons
+      parameters:
+        - S1: ["BINARY", "FIXEDBINARY<L1>"]
+        - S1: ["BINARY", "FIXEDBINARY<L2>"]
+      arguments:
+        - type: S1
+        - type: S2
+      return: boolean
+- name: "="
+  extends: comparisons
+  description: Whether two values equal eachother.
+  variants:
+    - variant: equality_only_types
+      parameters:
+        - K: [uuid, interval_year, interval_day]
+      arguments:
+        - type: K
+        - type: K
+      return: boolean
+- name: "is_not_distinct_from"
+  extends: comparisons
+  description: Whether two values equal eachother (nulls are considered equal).
+  variants:
+    - variant: equality_only_types
+      parameters:
+        - K: [uuid, interval_year, interval_day]
+      arguments:
+        - type: K
+        - type: K
+      return: boolean
+- name: ["!=", "<>"]
+  extends: comparisons
+  description: Whether two values are not equal to eachother.
+- name: "<"
+  extends: comparisons
+  description: Whether the first value is less than the second value.
+- name: "<="
+  extends: comparisons
+  description: Whether the first value is less than or equal to the second value.
+- name: ">"
+  extends: comparisons
+  description: Whether the first value is greater than the second value.
+- name: ">="
+  extends: comparisons
+  description: Whether the first value is greater than or equal to the second value.
+- name: compare
+  description: |-
+    Whether the first value is greater than, less than or equal to the second value. Returns -1 if first
+    value is less than second, 0 if the two values are equal or 1 if the first value is greater than the second.
+  options:
+    nulls: [FIRST, LAST]
+  variants:
+    - variant: simple
+      parameters:
+        - K: [boolean,i8,i16,i32,i64,fp32,fp64,timestamp,timestamp_tz,date,time,interval_year]
+      arguments:
+        - type: K
+        - type: K
+      return: i8
+    - variant: string comparisons
+      parameters:
+        - S1: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"]
+        - S2: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"]
+      arguments:
+        - type: S1
+        - type: S2
+      return: i8
+- name: cast
+  description: Convert value from one type to another.
+  nullability: DISCRETE
+  variants:
+    - variant: string
+      description: Convert value to string.
+      parameters:
+        - V: [boolean, i8, i16, i32, i64, fp32, fp64, timestamp_tz, date, time, interval_year, interval_day,
+              boolean?, i8?, i16?, i32?, i64?, fp32?, fp64?, timestamp_tz?, date?, time?, interval_year?, interval_day?]
+        - S: [VARCHAR<N>, FIXEDCHAR<N>, STRING, VARCHAR<N>?, FIXEDCHAR<N>?, STRING?]
+      arguments:
+        - type: S
+          kind: TYPE
+          name: Target type.
+        - type: V
+          name: Value to cast.
+- name: extract
+  description: Extract portion of a date/time value.
+  parameters:
+    - D: [timestamp, timestamp_tz, date, time]
+  arguments:
+    - type: D
+      name: Date/time value to extract information from.
+    - type: STRING
+      name: The part of the value to extract.
+      constant: TRUE
+  return: i64
+- template: boolean
+  arugments:
+      - type: boolean
+      - type: boolean
+  return: boolean
+- name: not
+  description: The boolean not of a provided value
+  arugments:
+    - type: boolean
   return: boolean
 - name: and
-  id: 3
-  arguments: - type: boolean
-  variadic: 2..N
-  return: boolean
+  extends: boolean
+  description: The boolean and of two values.
+- name: or
+  extends: boolean
+  description: The boolean or of two values.
+- name: xor
+  extends: boolean
+  description: The boolean xor of two values.
+- name: concat
+  variants:
+      - variant: fixed-width strings
+        arguments:
+          - type: FIXEDCHAR<L1>
+          - type: FIXEDCHAR<L2>
+        return: FIXEDCHAR<L1 + L2>
+      - variant: variable defined-length strings
+        parameters:
+          - S1: [FIXEDCHAR<L1>, VARCHAR<L1>]
+          - S2: [FIXEDCHAR<L2>, VARCHAR<L2>]
+        arguments:
+          - type: S1
+          - type: S2
+        return VARCHAR<L1 + L2>
+      - variant: arbitrary length values
+        parameters:
+          - S1: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"]
+          - S2: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"]
+        arguments:
+          - type: S1
+          - type: S2
+        return: string
+      - variant: fixed-width binary
+        arguments:
+          - type: FIXEDBINARY<L1>
+          - type: FIXEDBINARY<L2>
+        return: FIXEDBINARY<L1 + L2>
+      - variant: binary
+        parameters:
+          - S1: [ fixedbinary<L1>, binary ]
+          - S2: [ fixedbinary<L2>, binary ]
+        arguments:
+          - type: S1
+          - type: S2
+        return: binary
+- name: substring
+  description: Get a sub portion of the given string.
+  parameters:
+    - S: ["VARCHAR<L>", "FIXEDCHAR<L>", "STRING"]
+  arguments:
+    - type: S
+      name: String to extract from.
+    - type: i32
+      name: Start position (inclusive, zero index). Negatives starts from end of string.
+    - type: i32
+      name: End position (exclusive, zero index). Negative starts from end of string.
+
+
+
+

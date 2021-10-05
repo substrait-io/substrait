@@ -13,7 +13,6 @@ message Expression {
         Literal literal = 1;
         FieldReference selection = 2;
         ScalarFunction scalar_function = 3;
-        AggregateFunction aggregate_function = 4;
         WindowFunction window_function = 5;
         IfThen if_then = 6;
         SwitchExpression switch_expression = 7;
@@ -75,13 +74,25 @@ message Expression {
     message ScalarFunction {
         Extensions.FunctionId id = 1;
         repeated Expression args = 2;
+        Type output_type = 3;
     }
 
     message AggregateFunction {
         Extensions.FunctionId id = 1;
         repeated Expression args = 2;
         repeated SortField sorts = 3;
+        AggregationPhase phase = 4;
+        Type output_type = 5;
     }
+
+    enum AggregationPhase {
+        UNKNOWN = 0;
+        INITIAL_TO_INTERMEDIATE = 1;
+        INTERMEDIATE_TO_INTERMEDIATE = 2;
+        INITIAL_TO_RESULT = 3;
+        INTERMEDIATE_TO_RESULT = 4;
+    }
+
 
     message WindowFunction {
         Extensions.FunctionId id = 1;
@@ -89,6 +100,8 @@ message Expression {
         repeated SortField sorts = 3;
         Bound upper_bound = 4;
         Bound lower_bound = 5;
+        AggregationPhase phase = 6;
+        Type output_type = 7;
 
         message Bound {
 

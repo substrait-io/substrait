@@ -2,4 +2,5 @@ arrange:
   - simple_logical_types.md
   - compound_logical_types.md
   - type_variations.md
+  - type_parsing.md
   - user_defined_types.md

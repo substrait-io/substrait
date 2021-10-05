@@ -1,9 +1,0 @@
-organization: 0
-license: aplv2
-name: Substrait
-extensions:
-  functions: 
-    scalar: [https://github.com/substrait-io/spec/blob/main/extensions/scalar_functions.yaml]
-    aggregate: [https://github.com/substrait-io/spec/blob/main/extensions/aggregate_functions.yaml]
-    window: [https://github.com/substrait-io/spec/blob/main/extensions/window_functions.yaml]
-  types: [https://github.com/substrait-io/spec/blob/main/extensions/extension_types.yaml]

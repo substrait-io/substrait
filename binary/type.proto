@@ -31,7 +31,6 @@ message Type {
         Decimal decimal = 24;
 
         Struct struct = 25;
-        NamedStruct named_struct = 26;
         List list = 27;
         Map map = 28;
 

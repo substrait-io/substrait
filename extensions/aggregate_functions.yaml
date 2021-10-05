@@ -1,18 +1,61 @@
 functions:
-- name: add
-  id: 0
-  arguments:
-    - type: i32
-  variadic: 2..N
-  return: i32
-- name: lt
-  id: 1
-  arguments: 
-    - type: i32
-    - type: i32
-  return: boolean
-- name: and
-  id: 3
-  arguments: - type: boolean
-  variadic: 2..N
-  return: boolean
+  - name: 'sum'
+    nullability: DECLARED_OUTPUT
+    description: "Sum a set of values."
+    options:
+      overflow: [SILENT, SATURATE, ERROR]
+    variants:
+      - name: scalar
+        decomposable: MANY
+        parameters:
+          - K: [i8,i16,i32,i64,fp32,fp64]
+        arguments:
+          - type: K
+        intermediate: K
+        return: K?
+      - name: decimal
+        decomposable: MANY
+        parameters:
+          integer:
+            - P: "1..38"
+            - S: "1..38"
+        arguments:
+          - type: "DECIMAL<P,S>"
+        intermediate: "DECIMAL<38,S>?"
+        return: "DECIMAL<38,S>?"
+  - name: 'avg'
+    nullability: DECLARED_OUTPUT
+    description: "Average a set of values."
+    options:
+      overflow: [SILENT, SATURATE, ERROR]
+    variants:
+      - name: scalar
+        decomposable: MANY
+        parameters:
+          - K: [i8,i16,i32,i64,fp32,fp64]
+        arguments:
+          - type: K?
+        intermediate: "STRUCT<K,i64>"
+        return: K
+      - name: decimal
+        decomposable: MANY
+        parameters:
+          integer:
+            - P: "1..38"
+            - S: "1..38"
+        arguments:
+          - type: "DECIMAL<P,S>"
+        intermediate: "STRUCT<DECIMAL<38,S>,i64>"
+        return: "DECIMAL<38,S>"
+  - name: 'count'
+    nullability: DECLARED_OUTPUT
+    description: "Average a set of values."
+    options:
+      overflow: [SILENT, SATURATE, ERROR]
+    decomposable: MANY
+      parameters:
+        - K
+      arguments:
+        - type: K
+      intermediate: i64
+      return: i64
