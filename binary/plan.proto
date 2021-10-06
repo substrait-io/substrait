@@ -6,7 +6,7 @@ import "relations.proto";
 import "extensions.proto";
 
 option java_multiple_files = true;
-
+option csharp_namespace = "Substrait.Protobuf";
 
 // Describe a set of operations to complete.
 // For compactness sake, identifiers are normalized at the plan level.
