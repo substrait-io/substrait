@@ -7,6 +7,7 @@ import "expression.proto";
 import "selection.proto";
 
 option java_multiple_files = true;
+option csharp_namespace = "Substrait.Protobuf";
 
 message RelCommon {
 
