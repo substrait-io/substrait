@@ -2,49 +2,59 @@ functions:
   - name: 'sum'
     nullability: DECLARED_OUTPUT
     description: "Sum a set of values."
-    options:
-      overflow: [SILENT, SATURATE, ERROR]
     variants:
       - name: scalar
         decomposable: MANY
         parameters:
-          - K: [i8,i16,i32,i64,fp32,fp64]
+          - K: {types: [i8,i16,i32,i64,fp32,fp64]}
+          - overflow:
+            options: [SILENT, SATURATE, ERROR]
+            required: false
         arguments:
-          - type: K
+          - enum: overflow
+          - value: K
         intermediate: K
         return: K?
       - name: decimal
         decomposable: MANY
         parameters:
-          integer:
-            - P: "1..38"
-            - S: "1..38"
+          - P: {range: [1,39]}
+          - S: {range: [0,39]}
+          - overflow:
+            options: [SILENT, SATURATE, ERROR]
+            required: false
         arguments:
-          - type: "DECIMAL<P,S>"
+          - enum: overflow
+          - value: "DECIMAL<P,S>"
         intermediate: "DECIMAL<38,S>?"
         return: "DECIMAL<38,S>?"
   - name: 'avg'
     nullability: DECLARED_OUTPUT
     description: "Average a set of values."
-    options:
-      overflow: [SILENT, SATURATE, ERROR]
     variants:
       - name: scalar
         decomposable: MANY
         parameters:
-          - K: [i8,i16,i32,i64,fp32,fp64]
+          - K: {types: [i8,i16,i32,i64,fp32,fp64]}
+          - overflow:
+            options: [SILENT, SATURATE, ERROR]
+            required: false
         arguments:
-          - type: K?
-        intermediate: "STRUCT<K,i64>"
+          - enum: overflow
+          - value: K
+        intermediate: "STRUCT<i64,i64>"
         return: K
       - name: decimal
         decomposable: MANY
         parameters:
-          integer:
-            - P: "1..38"
-            - S: "1..38"
-        arguments:
-          - type: "DECIMAL<P,S>"
+          - P: { range: [ 1,39 ] }
+          - S: { range: [ 0,39 ] }
+          - overflow:
+            options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          arguments:
+            - enum: overflow
+            - value: "DECIMAL<P,S>"
         intermediate: "STRUCT<DECIMAL<38,S>,i64>"
         return: "DECIMAL<38,S>"
   - name: 'count'
@@ -54,8 +64,12 @@ functions:
       overflow: [SILENT, SATURATE, ERROR]
     decomposable: MANY
       parameters:
-        - K
+        - K: {types: null}
+        - overflow:
+          options: [SILENT, SATURATE, ERROR]
+          required: false
       arguments:
-        - type: K
+        - enum: overflow
+        - value: K
       intermediate: i64
       return: i64

@@ -124,15 +124,26 @@ message FunctionSignature {
     }
 
     message Argument {
-        ParameterizedType type = 1;
-        ArgumentKind kind = 2;
-        string name = 3;
+        string name = 1;
 
-        enum ArgumentKind {
-            UNKNOWN = 0;
-            VARIABLE_VALUE = 1;
-            CONSTANT_VALUE = 2;
-            TYPE = 3;
+        oneof argument_kind {
+            ValueArgument value = 2;
+            TypeArgument type = 3;
+            EnumArgument enum = 4;
+        }
+
+        message ValueArgument {
+            ParameterizedType type = 1;
+            bool constant = 2;
+        }
+
+        message TypeArgument {
+            ParameterizedType type = 1;
+        }
+
+        message EnumArgument {
+            repeated string options = 1;
+            bool optional = 2;
         }
 
     }

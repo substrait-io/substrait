@@ -1,25 +1,66 @@
+parameter_templates:
+  - PREC: {range: [1,39]}
+  - SCALE: {range: [0,39]}
+  - SCALAR_NUMBER: {types: [i8,i16,i32,i64,fp32,fp64]}
+  - NUMERIC_OVERFLOW:
+    options: [ SILENT, SATURATE, ERROR ]
+    required: false
+function_templates:
+  - name: "comparisons"
+    nullability: DECLARED_OUTPUT
+    variants:
+      - variant: simple
+        parameters:
+          - K: [ boolean,i8,i16,i32,i64,fp32,fp64,timestamp,timestamp_tz,date,time ]
+        arguments:
+          - value: K
+          - value: K
+        return: boolean
+      - variant: string comparisons
+        parameters:
+          - S1: { types: [ "VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING" ] }
+          - S2: { types: [ "VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING" ] }
+        arguments:
+          - value: S1
+          - value: S2
+        return: boolean
+      - variant: binary comparisons
+        parameters:
+          - S1: { types: [ "BINARY", "FIXEDBINARY<L1>" ] }
+          - S1: { types: [ "BINARY", "FIXEDBINARY<L2>" ] }
+        arguments:
+          - value: S1
+          - value: S2
+        return: boolean
+  - name: boolean
+    arugments:
+      - value: boolean
+      - value: boolean
+    return: boolean
+
+functions:
 - name: '+'
   description: "Add two numeric values."
-  options:
-    overflow: [SILENT, SATURATE, ERROR]
-  variants:
     - variant: scalar
       parameters:
-        - K: [i8,i16,i32,i64,fp32,fp64]
+        - overflow: NUMERIC_OVERFLOW
+        - K: SCALAR_NUMBER
       arguments:
+        - enum: overflow
         - type: K
         - type: K
       return: K
     - variant: decimal
       parameters:
-        integer:
-        - P1: "1..38"
-        - S1: "1..38"
-        - P2: "1..38"
-        - S2: "1..38"
+        - overflow: NUMERIC_OVERFLOW
+        - P1: PREC
+        - S1: SCALE
+        - P2: PREC
+        - S2: SCALE
       arguments:
-        - type: "DECIMAL<P1,S1>"
-        - type: "DECIMAL<P2,S2>"
+        - enum: overflow
+        - value: "DECIMAL<P1,S1>"
+        - value: "DECIMAL<P2,S2>"
       return: |-
         init_scale = max(S1,S2)
         init_prec = init_scale + max(P1 - S1, P2-S2) + 1
@@ -34,31 +75,32 @@
         - T: [timestamp, timestamp_tz, date]
         - I: [interval_year, interval_day]
       arguments:
-        - type: T
-        - type: I
+        - value: T
+        - value: I
       return: T
 - name: '-'
   description: "Subtract one operand from another."
-  options:
-    overflow: [SILENT, SATURATE, ERROR]
   variants:
     - variant: scalar
       parameters:
-        - K: [i8,i16,i32,i64,fp32,fp64]
+        - overflow: NUMERIC_OVERFLOW
+        - K: SCALAR_NUMBER
       arguments:
+        - enum: overflow
         - type: K
         - type: K
       return: K
     - variant: decimal
       parameters:
-        integer:
-          - P1: "1..38"
-          - S1: "1..38"
-          - P2: "1..38"
-          - S2: "1..38"
+        - overflow: NUMERIC_OVERFLOW
+        - P1: PREC
+        - S1: SCALE
+        - P2: PREC
+        - S2: SCALE
       arguments:
-        - type: "DECIMAL<P1,S1>"
-        - type: "DECIMAL<P2,S2>"
+        - enum: overflow
+        - value: "DECIMAL<P1,S1>"
+        - value: "DECIMAL<P2,S2>"
       return: |-
         init_scale = max(S1,S2)
         init_prec = init_scale + max(P1 - S1, P2-S2) + 1
@@ -69,26 +111,27 @@
         DECIMAL<prec, scale>
 - name: '*'
   description: Multiply two numeric values.
-  options:
-    overflow: [SILENT, SATURATE, ERROR]
   variants:
     - variant: scalar
       parameters:
-        - K: [i8,i16,i32,i64,fp32,fp64]
+        - overflow: NUMERIC_OVERFLOW
+        - K: SCALAR_NUMBER
       arguments:
+        - enum: overflow
         - type: K
         - type: K
       return: K
     - variant: decimal
       parameters:
-        integer:
-          - P1: "1..38"
-          - S1: "1..38"
-          - P2: "1..38"
-          - S2: "1..38"
+        - overflow: NUMERIC_OVERFLOW
+        - P1: PREC
+        - S1: SCALE
+        - P2: PREC
+        - S2: SCALE
       arguments:
-        - type: "DECIMAL<P1,S1>"
-        - type: "DECIMAL<P2,S2>"
+        - enum: overflow
+        - value: "DECIMAL<P1,S1>"
+        - value: "DECIMAL<P2,S2>"
       return: |-
         init_scale = S1 + S2
         init_prec = P1 + P2 + 1
@@ -99,26 +142,27 @@
         DECIMAL<prec, scale>
 - name: '/'
   description: "Divide two numeric values."
-  options:
-    overflow: [SILENT, SATURATE, ERROR]
   variants:
-    - variant: divide
+    - variant: scalar
       parameters:
-        - K: [i8,i16,i32,i64,fp32,fp64]
+        - overflow: NUMERIC_OVERFLOW
+        - K: SCALAR_NUMBER
       arguments:
+        - enum: overflow
         - type: K
         - type: K
       return: K
     - variant: decimal
       parameters:
-        integer:
-          - P1: "1..38"
-          - S1: "1..38"
-          - P2: "1..38"
-          - S2: "1..38"
+        - overflow: NUMERIC_OVERFLOW
+        - P1: PREC
+        - S1: SCALE
+        - P2: PREC
+        - S2: SCALE
       arguments:
-        - type: "DECIMAL<P1,S1>"
-        - type: "DECIMAL<P2,S2>"
+        - enum: overflow
+        - value: "DECIMAL<P1,S1>"
+        - value: "DECIMAL<P2,S2>"
       return: |-
         init_scale = max(6, S1 + P2 + 1)
         init_prec = P1 - S1 + P2 + init_scale
@@ -130,23 +174,26 @@
 - name: ['mod','%']
   description: "Modulus of two values."
   variants:
-    - variant: divide
+    - variant: scalar
       parameters:
-        - K: [i8,i16,i32,i64,fp32,fp64]
+        - overflow: NUMERIC_OVERFLOW
+        - K: SCALAR_NUMBER
       arguments:
+        - enum: overflow
         - type: K
         - type: K
       return: K
     - variant: decimal
       parameters:
-        integer:
-          - P1: "1..38"
-          - S1: "1..38"
-          - P2: "1..38"
-          - S2: "1..38"
+        - overflow: NUMERIC_OVERFLOW
+        - P1: PREC
+        - S1: SCALE
+        - P2: PREC
+        - S2: SCALE
       arguments:
-        - type: "DECIMAL<P1,S1>"
-        - type: "DECIMAL<P2,S2>"
+        - enum: overflow
+        - value: "DECIMAL<P1,S1>"
+        - value: "DECIMAL<P2,S2>"
       return: |-
         init_scale = max(S1,S2)
         init_prec = min(P1 - S1, P2 - S2) + init_scale
@@ -160,8 +207,8 @@
   options:
     case: [SENSITIVE, INSENSITIVE]
   parameters:
-    - S1: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"]
-    - S2: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"]
+    - S1: STRINGS
+    - S2: STRINGS
   arguments:
     - type: S1
       name: value to test
@@ -169,42 +216,16 @@
       name: pattern
       constant: true
   return: boolean
-- template: "comparisons"
-  nullability: DECLARED_OUTPUT
-  variants:
-    - variant: simple
-      parameters:
-        - K: [boolean,i8,i16,i32,i64,fp32,fp64,timestamp,timestamp_tz,date,time]
-      arguments:
-        - type: K
-        - type: K
-      return: boolean
-    - variant: string comparisons
-      parameters:
-        - S1: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"]
-        - S2: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"]
-      arguments:
-        - type: S1
-        - type: S2
-      return: boolean
-    - variant: binary comparisons
-      parameters:
-        - S1: ["BINARY", "FIXEDBINARY<L1>"]
-        - S1: ["BINARY", "FIXEDBINARY<L2>"]
-      arguments:
-        - type: S1
-        - type: S2
-      return: boolean
 - name: "="
   extends: comparisons
   description: Whether two values equal eachother.
   variants:
     - variant: equality_only_types
       parameters:
-        - K: [uuid, interval_year, interval_day]
+        - K: {types: [uuid, interval_year, interval_day]}
       arguments:
-        - type: K
-        - type: K
+        - value: K
+        - value: K
       return: boolean
 - name: "is_not_distinct_from"
   extends: comparisons
@@ -212,10 +233,10 @@
   variants:
     - variant: equality_only_types
       parameters:
-        - K: [uuid, interval_year, interval_day]
+        - K: {types: [uuid, interval_year, interval_day]}
       arguments:
-        - type: K
-        - type: K
+        - value: K
+        - value: K
       return: boolean
 - name: ["!=", "<>"]
   extends: comparisons
@@ -241,18 +262,18 @@
   variants:
     - variant: simple
       parameters:
-        - K: [boolean,i8,i16,i32,i64,fp32,fp64,timestamp,timestamp_tz,date,time,interval_year]
+        - K: {types: [boolean,i8,i16,i32,i64,fp32,fp64,timestamp,timestamp_tz,date,time,interval_year]}
       arguments:
-        - type: K
-        - type: K
+        - value: K
+        - value: K
       return: i8
     - variant: string comparisons
       parameters:
-        - S1: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"]
-        - S2: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"]
+        - S1: {types: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"]}
+        - S2: {types: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"]}
       arguments:
-        - type: S1
-        - type: S2
+        - value: S1
+        - value: S2
       return: i8
 - name: cast
   description: Convert value from one type to another.
@@ -261,35 +282,32 @@
     - variant: string
       description: Convert value to string.
       parameters:
-        - V: [boolean, i8, i16, i32, i64, fp32, fp64, timestamp_tz, date, time, interval_year, interval_day,
-              boolean?, i8?, i16?, i32?, i64?, fp32?, fp64?, timestamp_tz?, date?, time?, interval_year?, interval_day?]
-        - S: [VARCHAR<N>, FIXEDCHAR<N>, STRING, VARCHAR<N>?, FIXEDCHAR<N>?, STRING?]
+        - V: {types: [boolean, i8, i16, i32, i64, fp32, fp64, timestamp_tz, date, time, interval_year, interval_day,
+              boolean?, i8?, i16?, i32?, i64?, fp32?, fp64?, timestamp_tz?, date?, time?, interval_year?, interval_day?]}
+
+        - S: {types:[VARCHAR<N>, FIXEDCHAR<N>, STRING, VARCHAR<N>?, FIXEDCHAR<N>?, STRING?]}
       arguments:
         - type: S
-          kind: TYPE
           name: Target type.
-        - type: V
+        - value: V
           name: Value to cast.
 - name: extract
   description: Extract portion of a date/time value.
   parameters:
-    - D: [timestamp, timestamp_tz, date, time]
+    - D: {types: [timestamp, timestamp_tz, date, time]}
+    - date_part:
+      options: [ YEAR, MONTH, DAY, SECOND ]
+      required: true
   arguments:
-    - type: D
+    - value: D
       name: Date/time value to extract information from.
-    - type: STRING
+    - enum: date_part
       name: The part of the value to extract.
-      constant: TRUE
   return: i64
-- template: boolean
-  arugments:
-      - type: boolean
-      - type: boolean
-  return: boolean
 - name: not
   description: The boolean not of a provided value
   arugments:
-    - type: boolean
+    - value: boolean
   return: boolean
 - name: and
   extends: boolean
@@ -304,48 +322,48 @@
   variants:
       - variant: fixed-width strings
         arguments:
-          - type: FIXEDCHAR<L1>
-          - type: FIXEDCHAR<L2>
+          - value: FIXEDCHAR<L1>
+          - value: FIXEDCHAR<L2>
         return: FIXEDCHAR<L1 + L2>
       - variant: variable defined-length strings
         parameters:
-          - S1: [FIXEDCHAR<L1>, VARCHAR<L1>]
-          - S2: [FIXEDCHAR<L2>, VARCHAR<L2>]
+          - S1: {types: [FIXEDCHAR<L1>, VARCHAR<L1>]}
+          - S2: {types: [FIXEDCHAR<L2>, VARCHAR<L2>]}
         arguments:
-          - type: S1
-          - type: S2
+          - value: S1
+          - value: S2
         return VARCHAR<L1 + L2>
       - variant: arbitrary length values
         parameters:
-          - S1: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"]
-          - S2: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"]
+          - S1: {types: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"]}
+          - S2: {types: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"]}
         arguments:
-          - type: S1
-          - type: S2
+          - value: S1
+          - value: S2
         return: string
       - variant: fixed-width binary
         arguments:
-          - type: FIXEDBINARY<L1>
-          - type: FIXEDBINARY<L2>
+          - value: FIXEDBINARY<L1>
+          - value: FIXEDBINARY<L2>
         return: FIXEDBINARY<L1 + L2>
       - variant: binary
         parameters:
-          - S1: [ fixedbinary<L1>, binary ]
-          - S2: [ fixedbinary<L2>, binary ]
+          - S1: {types: [ fixedbinary<L1>, binary ]}
+          - S2: {types: [ fixedbinary<L2>, binary ]}
         arguments:
-          - type: S1
-          - type: S2
+          - value: S1
+          - value: S2
         return: binary
 - name: substring
   description: Get a sub portion of the given string.
   parameters:
-    - S: ["VARCHAR<L>", "FIXEDCHAR<L>", "STRING"]
+    - S: {types: ["VARCHAR<L>", "FIXEDCHAR<L>", "STRING"]}
   arguments:
-    - type: S
+    - value: S
       name: String to extract from.
-    - type: i32
+    - value: i32
       name: Start position (inclusive, zero index). Negatives starts from end of string.
-    - type: i32
+    - value: i32
       name: End position (exclusive, zero index). Negative starts from end of string.
 
 
