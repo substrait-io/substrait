@@ -18,6 +18,16 @@ message Expression {
         SwitchExpression switch_expression = 7;
         SingularOrList singular_or_list = 8;
         MultiOrList multi_or_list = 9;
+        Enum enum = 10;
+    }
+
+    message Enum {
+        oneof enum_kind {
+            string specified = 1;
+            Empty unspecified = 2;
+        }
+
+        message Empty {}
     }
 
     message Literal {

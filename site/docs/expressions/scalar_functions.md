@@ -22,6 +22,8 @@ There are two main types of arguments: Value Arguments and Type Arguments.
 
 * Value Arguments: An argument that refers to a data value.  This could be a constant (a literal expression defined in the plan) or variable (A reference expression that references data being processed by the plan). This is the most common type of argument. Value arguments are not available in output derivation. Value arguments can be declared in one of two ways: concrete or parameterized. Concrete Types are either simple types or compound types with all parameters fully defined (without referencing any type arguments). Examples include i32, fp32, VARCHAR(20), List&lt;fp32&gt;, etc. Parameterized types are discussed further below.
 * Type Arguments: Type arguments are used to inform the evaluation and/or type derivation of the function. For example, you might have a function which is `truncate(<type> DECIMAL(P0,S0), <value> DECIMAL(P1, S1), <value> i32)`. This function declares two value arguments and a type argument. The type argument's value can be used to determine the output type (The types of the values arguments can also be used for output type derivation.)
+* Required Enumeration: Required enumeration arguments are arguments that support a fixed set of declared values as constant arguments. These arguments must be specified as part of an expression. While these could be implemented as constant string value arguments, they are formally included to improve validation/contextual help/etc for frontend processors and ides. An example might use might be `extract([DAY|YEAR|MONTH], <date value>)`. In this example, a producer must specify a type of date part to extract. Note, the value of a required enumeration cannot be used in type derivation.
+* Optional Enumeration: Similar to required enumeration but more focused on supporting alternative behaviors. An optional enumeration always includes an "unspecified" default option that can be bound based on the capabilities of the plan consumer. When a plan does not specify a behavior, the consumer is expected to resolve the option based on the first option the system can match. An example usecase might be `OVERFLOW_BEHAVIOR:[OVERFLOW, SATURATE, ERROR]` If unspecified, an engine would use the first of these that it implements. If specified, the engine would be expected to behave as specified or fail. Note, the value of an optional enumeration cannot be used in type derivation.
 
 #### Value Argument Properties
 
@@ -37,6 +39,20 @@ There are two main types of arguments: Value Arguments and Type Arguments.
 | -------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
 | Type     | A partially or completely parameterized type. E.g. List&lt;K&gt; or K | Required                                                   |
 | Name     | A human readable name for this argument to help clarify use.          | Optional, defaults to a name based on position (e.g. arg0) |
+
+#### Required Enumeration Properties
+
+| Property | Description                                                  | Required                                                   |
+| -------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
+| Options  | List of valid string options for this argument               | Required                                                   |
+| Name     | A human readable name for this argument to help clarify use. | Optional, defaults to a name based on position (e.g. arg0) |
+
+#### Optional Enumeration Properties
+
+| Property | Description                                                  | Required                                                   |
+| -------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
+| Options  | Priority-ordered list of valid string options for this argument. The pseudo-option will be the default "value" for the enumeration unless a binding specifies a specific value. | Required                                                   |
+| Name     | A human readable name for this argument to help clarify use. | Optional, defaults to a name based on position (e.g. arg0) |
 
 
 

@@ -1,61 +1,80 @@
-functions:
-  - name: 'sum'
+%YAML 1.1
+---
+fragments:
+  - &Prec {range: [1,39]}
+  - &Scale {range: [0,30]}
+  - &ScalarNumber {types: [i8,i16,i32,i64,fp32,fp64]}
+  - &StringsL1 { types: [ "VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING" ] }
+  - &BinariesL1 { types: [ "BINARY", "FIXEDBINARY<L1>" ] }
+  - &StringsL2 { types: [ "VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING" ] }
+  - &BinariesL2 { types: [ "BINARY", "FIXEDBINARY<L2>" ] }
+  - &Decimal1 DECIMAL<P1,S1>
+  - &Decimal2 DECIMAL<P2,S2>
+  - &NumericOverflow
+    options: [ SILENT, SATURATE, ERROR ]
+    required: false
+  - &SingleDecimal
+    P: *Prec
+    S: *Scale
+  - m: &NumericOverflow
+    options: [ SILENT, SATURATE, ERROR ]
+    required: false
+
+aggregate_functions:
+  - info: &Sum
+      name: sum
+      description: Sum a set of values.
     nullability: DECLARED_OUTPUT
-    description: "Sum a set of values."
-    options:
-      overflow: [SILENT, SATURATE, ERROR]
-    variants:
-      - name: scalar
-        decomposable: MANY
-        parameters:
-          - K: [i8,i16,i32,i64,fp32,fp64]
-        arguments:
-          - type: K
-        intermediate: K
-        return: K?
-      - name: decimal
-        decomposable: MANY
-        parameters:
-          integer:
-            - P: "1..38"
-            - S: "1..38"
-        arguments:
-          - type: "DECIMAL<P,S>"
-        intermediate: "DECIMAL<38,S>?"
-        return: "DECIMAL<38,S>?"
-  - name: 'avg'
-    nullability: DECLARED_OUTPUT
-    description: "Average a set of values."
-    options:
-      overflow: [SILENT, SATURATE, ERROR]
-    variants:
-      - name: scalar
-        decomposable: MANY
-        parameters:
-          - K: [i8,i16,i32,i64,fp32,fp64]
-        arguments:
-          - type: K?
-        intermediate: "STRUCT<K,i64>"
-        return: K
-      - name: decimal
-        decomposable: MANY
-        parameters:
-          integer:
-            - P: "1..38"
-            - S: "1..38"
-        arguments:
-          - type: "DECIMAL<P,S>"
-        intermediate: "STRUCT<DECIMAL<38,S>,i64>"
-        return: "DECIMAL<38,S>"
-  - name: 'count'
-    nullability: DECLARED_OUTPUT
-    description: "Average a set of values."
-    options:
-      overflow: [SILENT, SATURATE, ERROR]
     decomposable: MANY
-      parameters:
-        - K
-      arguments:
-        - type: K
-      intermediate: i64
-      return: i64
+    bounds:
+      K: *ScalarNumber
+    arguments:
+      - *NumericOverflow
+      - value: K
+    intermediate: K
+    return: K?
+  - info: *Sum
+    nullability: DECLARED_OUTPUT
+    decomposable: MANY
+    bounds: *SingleDecimal
+    arguments:
+      - *NumericOverflow
+      - value: "DECIMAL<P,S>"
+    intermediate: "DECIMAL<38,S>?"
+    return: "DECIMAL<38,S>?"
+
+
+  - info: &Avg
+      name: avg
+      description: Average a set of values.
+    nullability: DECLARED_OUTPUT
+    decomposable: MANY
+    bounds:
+      K: *ScalarNumber
+    arguments:
+      - *NumericOverflow
+      - value: K
+    intermediate: "STRUCT<i64,i64>"
+    return: K
+  - info: *Avg
+    decomposable: MANY
+    bounds: *SingleDecimal
+    arguments:
+      - *NumericOverflow
+      - value: "DECIMAL<P,S>"
+    intermediate: "STRUCT<DECIMAL<38,S>,i64>"
+    return: "DECIMAL<38,S>"
+
+  - info:
+      name: 'count'
+      description: "Average a set of values."
+    nullability: DECLARED_OUTPUT
+    decomposable: MANY
+    bounds:
+      K: {types: null}
+    arguments:
+      - *NumericOverflow
+      - value: K
+    intermediate: i64
+    return: i64
+
