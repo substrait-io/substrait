@@ -55,6 +55,7 @@ message Expression {
             fixed64 timestamp_tz = 27;
             bytes uuid = 28;
             Type null = 29; // a typed null literal
+            List list = 30;
         }
 
         message Map {
