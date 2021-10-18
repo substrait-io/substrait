@@ -112,6 +112,7 @@ message Expression {
         Bound lower_bound = 5;
         AggregationPhase phase = 6;
         Type output_type = 7;
+        repeated Expression args = 8;
 
         message Bound {
 
