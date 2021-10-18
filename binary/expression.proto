@@ -70,15 +70,20 @@ message Expression {
             int32 years = 1;
             int32 months = 2;
         }
+
         message IntervalDayToSecond {
             int32 days = 1;
             int32 seconds = 2;
         }
 
         message Struct {
-            repeated Literal fields = 1;
-        }
+            message Field {
+                string name = 1;
+                Literal value = 2;
+            }
 
+            repeated Field fields = 1;
+        }
     }
 
     message ScalarFunction {
