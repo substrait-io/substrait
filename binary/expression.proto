@@ -126,10 +126,13 @@ message Expression {
 
             message CurrentRow {}
 
+            message Unbounded {}
+
             oneof kind {
                 Preceding preceding = 1;
                 Following following = 2;
                 CurrentRow current_row = 3;
+                Unbounded unbounded = 4;
             }
 
         }
