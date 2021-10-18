@@ -55,6 +55,7 @@ message Expression {
             fixed64 timestamp_tz = 27;
             bytes uuid = 28;
             Type null = 29; // a typed null literal
+            List list = 30;
         }
 
         message Map {
@@ -70,15 +71,21 @@ message Expression {
             int32 years = 1;
             int32 months = 2;
         }
+
         message IntervalDayToSecond {
             int32 days = 1;
             int32 seconds = 2;
         }
 
         message Struct {
+            // A possibly heterogeneously typed list of literals
             repeated Literal fields = 1;
         }
 
+        message List {
+            // A homogeneously typed list of literals
+            repeated Literal values = 1;
+        }
     }
 
     message ScalarFunction {
