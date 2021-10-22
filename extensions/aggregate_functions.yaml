@@ -30,6 +30,7 @@ aggregate_functions:
       - value: K
     intermediate: K
     return: K?
+
   - info: *Sum
     nullability: DECLARED_OUTPUT
     decomposable: MANY
@@ -39,7 +40,6 @@ aggregate_functions:
       - value: "DECIMAL<P,S>"
     intermediate: "DECIMAL<38,S>?"
     return: "DECIMAL<38,S>?"
-
 
   - info: &Avg
       name: avg
@@ -53,6 +53,7 @@ aggregate_functions:
       - value: K
     intermediate: "STRUCT<i64,i64>"
     return: K
+
   - info: *Avg
     decomposable: MANY
     bounds: *SingleDecimal
@@ -74,4 +75,3 @@ aggregate_functions:
       - value: K
     intermediate: i64
     return: i64
-
