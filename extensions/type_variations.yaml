@@ -4,7 +4,9 @@ types:
         description: a four-byte dictionary encoded string
         functions: inherits
       - name: bigoffset
-        description: The arrow large string representation of strings, still restricted to the default string size defined in Substrait.
+        description: >-
+          The arrow large string representation of strings, still restricted to the default string size defined in
+          Substrait.
         functions: separate
   - struct:
       - name: avro
