@@ -164,9 +164,7 @@ scalar_functions:
 
   - info:
       name: like
-      description: |-
-        Determine whether a string matches a particular pattern using SQL
-        standard like syntax.
+      description: Determine whether a string matches a particular pattern using SQL standard like syntax.
     bounds:
       S1: *StringsL1
       S2: *StringsL2
@@ -222,8 +220,7 @@ scalar_functions:
 
   - info: &lteq
       name: "<="
-      description: >-
-        Whether the first value is less than or equal to the second value.
+      description: Whether the first value is less than or equal to the second value.
     <<: *SimpleComparisons
   - info: *lteq
     <<: *StringComparisons
@@ -241,8 +238,7 @@ scalar_functions:
 
   - info: &gteq
       name: ">="
-      description: >-
-        Whether the first value is greater than or equal to the second value.
+      description: Whether the first value is greater than or equal to the second value.
     <<: *SimpleComparisons
   - info: *gteq
     <<: *StringComparisons
@@ -251,11 +247,9 @@ scalar_functions:
 
   - info: &Compare
       name: compare
-      description: >-
-        Whether the first value is greater than, less than or equal to the
-        second value. Returns -1 if first value is less than second, 0 if the
-        two values are equal or 1 if the first value is greater than the
-        second.
+      description: |-
+        Whether the first value is greater than, less than or equal to the second value. Returns -1 if first
+        value is less than second, 0 if the two values are equal or 1 if the first value is greater than the second.
     bounds:
       K: { types: [boolean, i8, i16, i32, i64, fp32, fp64, timestamp, timestamp_tz, date, time, interval_year] }
     arguments:
@@ -393,10 +387,6 @@ scalar_functions:
       - value: S
         name: String to extract from.
       - value: i32
-        name: >-
-          Start position (inclusive, zero index). Negative values start from
-          the end of the string.
+        name: Start position (inclusive, zero index). Negatives starts from end of string.
       - value: i32
-        name: >-
-          End position (exclusive, zero index). Negative values start from the
-          end of the string.
+        name: End position (exclusive, zero index). Negative starts from end of string.
