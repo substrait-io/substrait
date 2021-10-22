@@ -1,24 +1,21 @@
 %YAML 1.1
 ---
 fragments:
-  - &Prec {range: [1,39]}
-  - &Scale {range: [0,30]}
-  - &ScalarNumber {types: [i8,i16,i32,i64,fp32,fp64]}
-  - &StringsL1 { types: [ "VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING" ] }
-  - &BinariesL1 { types: [ "BINARY", "FIXEDBINARY<L1>" ] }
-  - &StringsL2 { types: [ "VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING" ] }
-  - &BinariesL2 { types: [ "BINARY", "FIXEDBINARY<L2>" ] }
+  - &Prec { range: [1, 39] }
+  - &Scale { range: [0, 30] }
+  - &ScalarNumber { types: [i8, i16, i32, i64, fp32, fp64] }
+  - &StringsL1 { types: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"] }
+  - &BinariesL1 { types: ["BINARY", "FIXEDBINARY<L1>"] }
+  - &StringsL2 { types: ["VARCHAR<L2>", "FIXEDCHAR<L2>", "STRING"] }
+  - &BinariesL2 { types: ["BINARY", "FIXEDBINARY<L2>"] }
   - &Decimal1 DECIMAL<P1,S1>
   - &Decimal2 DECIMAL<P2,S2>
   - &NumericOverflow
-    options: [ SILENT, SATURATE, ERROR ]
+    options: [SILENT, SATURATE, ERROR]
     required: false
   - &SingleDecimal
     P: *Prec
     S: *Scale
-  - m: &NumericOverflow
-    options: [ SILENT, SATURATE, ERROR ]
-    required: false
 
 aggregate_functions:
   - info: &Sum
@@ -33,6 +30,7 @@ aggregate_functions:
       - value: K
     intermediate: K
     return: K?
+
   - info: *Sum
     nullability: DECLARED_OUTPUT
     decomposable: MANY
@@ -42,7 +40,6 @@ aggregate_functions:
       - value: "DECIMAL<P,S>"
     intermediate: "DECIMAL<38,S>?"
     return: "DECIMAL<38,S>?"
-
 
   - info: &Avg
       name: avg
@@ -56,6 +53,7 @@ aggregate_functions:
       - value: K
     intermediate: "STRUCT<i64,i64>"
     return: K
+
   - info: *Avg
     decomposable: MANY
     bounds: *SingleDecimal
@@ -66,15 +64,14 @@ aggregate_functions:
     return: "DECIMAL<38,S>"
 
   - info:
-      name: 'count'
+      name: "count"
       description: "Average a set of values."
     nullability: DECLARED_OUTPUT
     decomposable: MANY
     bounds:
-      K: {types: null}
+      K: { types: null }
     arguments:
       - *NumericOverflow
       - value: K
     intermediate: i64
     return: i64
-

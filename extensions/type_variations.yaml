@@ -1,18 +1,20 @@
 types:
-- string:
-  - name: dict4
-    description: a four-byte dictionary encoded string
-    functions: inherits
-  - name: bigoffset
-    description: The arrow large string representation of strings, still restricted to the default string size defined in Substrait.
-    functions: separate
-- struct:
-  - name: avro
-    description: an avro encoded struct
-    functions: separate
-  - name: cstruct
-    description: a cstruct representation of the struct
-    functions: separate
-  - name: dict2
-    description: a 2-byte dictionary encoded string.
-    functions: inherit
+  - string:
+      - name: dict4
+        description: a four-byte dictionary encoded string
+        functions: inherits
+      - name: bigoffset
+        description: >-
+          The arrow large string representation of strings, still restricted to the default string size defined in
+          Substrait.
+        functions: separate
+  - struct:
+      - name: avro
+        description: an avro encoded struct
+        functions: separate
+      - name: cstruct
+        description: a cstruct representation of the struct
+        functions: separate
+      - name: dict2
+        description: a 2-byte dictionary encoded string.
+        functions: inherit
