@@ -16,9 +16,6 @@ fragments:
   - &SingleDecimal
     P: *Prec
     S: *Scale
-  - m: &NumericOverflow
-    options: [ SILENT, SATURATE, ERROR ]
-    required: false
 
 aggregate_functions:
   - info: &Sum
