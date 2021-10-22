@@ -351,16 +351,32 @@ scalar_functions:
     return: FIXEDCHAR<L1 + L2>
   - info: *Concat
     bounds:
-      S1: *StringsL1
-      S2: *StringsL2
+      S1: VARCHAR<L1>
+      S2: { types: ["VARCHAR<L2>", "FIXEDCHAR<L2>"] }
     arguments:
       - value: S1
       - value: S2
     return: VARCHAR<L1 + L2>
   - info: *Concat
     bounds:
-      S1: *StringsL1
-      S2: *StringsL2
+      S1: FIXEDCHAR<L1>
+      S2: VARCHAR<L2>
+    arguments:
+      - value: S1
+      - value: S2
+    return: VARCHAR<L1 + L2>
+  - info: *Concat
+    bounds:
+      S1: { types: ["VARCHAR<L1>", "FIXEDCHAR<L1>", "STRING"] }
+      S2: STRING
+    arguments:
+      - value: S1
+      - value: S2
+    return: string
+  - info: *Concat
+    bounds:
+      S1: STRING
+      S2: { types: ["VARCHAR<L2>", "FIXEDCHAR<L2>"] }
     arguments:
       - value: S1
       - value: S2
@@ -372,8 +388,16 @@ scalar_functions:
     return: FIXEDBINARY<L1 + L2>
   - info: *Concat
     bounds:
-      S1: *BinariesL1
-      S2: *BinariesL2
+      S1: BINARY
+      S2: { types: ["BINARY", "FIXEDBINARY<L2>"] }
+    arguments:
+      - value: S1
+      - value: S2
+    return: binary
+  - info: *Concat
+    bounds:
+      S1: FIXEDBINARY<L1>
+      S2: BINARY
     arguments:
       - value: S1
       - value: S2
