@@ -11,15 +11,16 @@ fragments:
   - &Decimal1 DECIMAL<P1,S1>
   - &Decimal2 DECIMAL<P2,S2>
   - &NumericOverflow
-    options: [ SILENT, SATURATE, ERROR ]
-    required: false
+    numeric_overflow:
+      values: [ SILENT, SATURATE, ERROR ] 
+      required: false
   - &BinaryScalarNumericArgs
     bounds:
       K: {types: [i8,i16,i32,i64,fp32,fp64]}
     arguments:
-      - *NumericOverflow
       - value: K
       - value: K
+    options: *NumericOverflow
   - &BinaryDecimalNumericArgs
     bounds:
       P1: *Prec
@@ -27,9 +28,9 @@ fragments:
       P2: *Prec
       S2: *Scale
     arguments:
-      - *NumericOverflow
       - value: DECIMAL<P1,S1>
       - value: DECIMAL<P2,S2>
+    options: *NumericOverflow
   - &SimpleComparisons
     nullability: DECLARED_OUTPUT
     bounds:
@@ -253,10 +254,6 @@ scalar_functions:
     bounds:
       K: {types: [boolean,i8,i16,i32,i64,fp32,fp64,timestamp,timestamp_tz,date,time,interval_year]}
     arguments:
-      - &NullOrdering
-        options: [FIRST, LAST]
-        name: Nulls Ordering
-        required: false
       - value: K
       - value: K
     return: i8
@@ -265,9 +262,12 @@ scalar_functions:
       S1: *StringsL1
       S2: *StringsL2
     arguments:
-      - *NullOrdering
       - value: S1
       - value: S2
+    options:
+      null_ordering:
+        values: [FIRST, LAST]
+        required: false
     return: i8
 
   - info: &Cast
@@ -277,7 +277,7 @@ scalar_functions:
     bounds:
       V: {types: [boolean, i8, i16, i32, i64, fp32, fp64, timestamp_tz, date, time, interval_year, interval_day,
             "boolean?", "i8?", "i16?", "i32?", "i64?", "fp32?", "fp64?", "timestamp_tz?", "date?", "time?", "interval_year?", "interval_day?"]}
-      S: {types:[VARCHAR<N>, FIXEDCHAR<N>, STRING, "VARCHAR<N>?", "FIXEDCHAR<N>?", "STRING?"]}
+      S: {types: [VARCHAR<N>, FIXEDCHAR<N>, STRING, "VARCHAR<N>?", "FIXEDCHAR<N>?", "STRING?"]}
     arguments:
       - type: S
         name: Target type.
@@ -285,15 +285,17 @@ scalar_functions:
         name: Value to cast.
   - info:
       name: extract
-      description: Extract portion of a date/time value.
+      description: Extract component of a date/time value.
     bounds:
       D: {types: [timestamp, timestamp_tz, date, time]}
     arguments:
-      - options: [ YEAR, MONTH, DAY, SECOND ]
-        name: The part of the value to extract.
-        required: true
       - value: D
         name: Date/time value to extract information from.
+    options:
+      component:
+        values: [ YEAR, MONTH, DAY, SECOND ]
+        name: The part of the value to extract.
+        required: true
     return: i64
   - info:
       name: not

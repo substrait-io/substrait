@@ -11,14 +11,12 @@ fragments:
   - &Decimal1 DECIMAL<P1,S1>
   - &Decimal2 DECIMAL<P2,S2>
   - &NumericOverflow
-    options: [ SILENT, SATURATE, ERROR ]
-    required: false
+    numeric_overflow:
+      values: [ SILENT, SATURATE, ERROR ]
+      required: false
   - &SingleDecimal
     P: *Prec
     S: *Scale
-  - m: &NumericOverflow
-    options: [ SILENT, SATURATE, ERROR ]
-    required: false
 
 aggregate_functions:
   - info: &Sum
@@ -29,8 +27,8 @@ aggregate_functions:
     bounds:
       K: *ScalarNumber
     arguments:
-      - *NumericOverflow
       - value: K
+    options: *NumericOverflow
     intermediate: K
     return: K?
   - info: *Sum
@@ -38,8 +36,8 @@ aggregate_functions:
     decomposable: MANY
     bounds: *SingleDecimal
     arguments:
-      - *NumericOverflow
       - value: "DECIMAL<P,S>"
+    options: *NumericOverflow
     intermediate: "DECIMAL<38,S>?"
     return: "DECIMAL<38,S>?"
 
@@ -52,16 +50,16 @@ aggregate_functions:
     bounds:
       K: *ScalarNumber
     arguments:
-      - *NumericOverflow
       - value: K
+    options: *NumericOverflow
     intermediate: "STRUCT<i64,i64>"
     return: K
   - info: *Avg
     decomposable: MANY
     bounds: *SingleDecimal
     arguments:
-      - *NumericOverflow
       - value: "DECIMAL<P,S>"
+    options: *NumericOverflow
     intermediate: "STRUCT<DECIMAL<38,S>,i64>"
     return: "DECIMAL<38,S>"
 
@@ -73,8 +71,8 @@ aggregate_functions:
     bounds:
       K: {types: null}
     arguments:
-      - *NumericOverflow
       - value: K
+    options: *NumericOverflow
     intermediate: i64
     return: i64
 
