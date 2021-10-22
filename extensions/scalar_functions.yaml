@@ -33,19 +33,7 @@ fragments:
   - &SimpleComparisons
     nullability: DECLARED_OUTPUT
     bounds:
-      K:
-        types:
-          - boolean
-          - i8
-          - i16
-          - i32
-          - i64
-          - fp32
-          - fp64
-          - timestamp
-          - timestamp_tz
-          - date
-          - time
+      K: { types: [boolean, i8, i16, i32, i64, fp32, fp64, timestamp, timestamp_tz, date, time] }
     arguments:
       - value: K
       - value: K
@@ -269,20 +257,7 @@ scalar_functions:
         two values are equal or 1 if the first value is greater than the
         second.
     bounds:
-      K:
-        types:
-          - boolean
-          - i8
-          - i16
-          - i32
-          - i64
-          - fp32
-          - fp64
-          - timestamp
-          - timestamp_tz
-          - date
-          - time
-          - interval_year
+      K: { types: [boolean, i8, i16, i32, i64, fp32, fp64, timestamp, timestamp_tz, date, time, interval_year] }
     arguments:
       - &NullOrdering
         options: [FIRST, LAST]
@@ -307,39 +282,36 @@ scalar_functions:
     nullability: DISCRETE
     bounds:
       V:
-        types:
-          - boolean
-          - i8
-          - i16
-          - i32
-          - i64
-          - fp32
-          - fp64
-          - timestamp_tz
-          - date
-          - time
-          - interval_year
-          - interval_day
-          - "boolean?"
-          - "i8?"
-          - "i16?"
-          - "i32?"
-          - "i64?"
-          - "fp32?"
-          - "fp64?"
-          - "timestamp_tz?"
-          - "date?"
-          - "time?"
-          - "interval_year?"
-          - "interval_day?"
-      S:
-        types:
-          - VARCHAR<N>
-          - FIXEDCHAR<N>
-          - STRING
-          - "VARCHAR<N>?"
-          - "FIXEDCHAR<N>?"
-          - "STRING?"
+        {
+          types:
+            [
+              boolean,
+              i8,
+              i16,
+              i32,
+              i64,
+              fp32,
+              fp64,
+              timestamp_tz,
+              date,
+              time,
+              interval_year,
+              interval_day,
+              "boolean?",
+              "i8?",
+              "i16?",
+              "i32?",
+              "i64?",
+              "fp32?",
+              "fp64?",
+              "timestamp_tz?",
+              "date?",
+              "time?",
+              "interval_year?",
+              "interval_day?",
+            ],
+        }
+      S: { types: [VARCHAR<N>, FIXEDCHAR<N>, STRING, "VARCHAR<N>?", "FIXEDCHAR<N>?", "STRING?"] }
     arguments:
       - type: S
         name: Target type.
