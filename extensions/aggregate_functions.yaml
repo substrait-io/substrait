@@ -27,7 +27,7 @@ aggregate_functions:
       K: *ScalarNumber
     arguments:
       - *NumericOverflow
-      - value: K
+      - param: K
     intermediate: K
     return: K?
 
@@ -37,7 +37,7 @@ aggregate_functions:
     bounds: *SingleDecimal
     arguments:
       - *NumericOverflow
-      - value: "DECIMAL<P,S>"
+      - param: "DECIMAL<P,S>"
     intermediate: "DECIMAL<38,S>?"
     return: "DECIMAL<38,S>?"
 
@@ -50,7 +50,7 @@ aggregate_functions:
       K: *ScalarNumber
     arguments:
       - *NumericOverflow
-      - value: K
+      - param: K
     intermediate: "STRUCT<i64,i64>"
     return: K
 
@@ -59,7 +59,7 @@ aggregate_functions:
     bounds: *SingleDecimal
     arguments:
       - *NumericOverflow
-      - value: "DECIMAL<P,S>"
+      - param: "DECIMAL<P,S>"
     intermediate: "STRUCT<DECIMAL<38,S>,i64>"
     return: "DECIMAL<38,S>"
 
@@ -72,6 +72,6 @@ aggregate_functions:
       K: { types: null }
     arguments:
       - *NumericOverflow
-      - value: K
+      - param: K
     intermediate: i64
     return: i64

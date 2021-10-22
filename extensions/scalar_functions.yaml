@@ -18,8 +18,8 @@ fragments:
       K: { types: [i8, i16, i32, i64, fp32, fp64] }
     arguments:
       - *NumericOverflow
-      - value: K
-      - value: K
+      - param: K
+      - param: K
   - &BinaryDecimalNumericArgs
     bounds:
       P1: *Prec
@@ -28,15 +28,15 @@ fragments:
       S2: *Scale
     arguments:
       - *NumericOverflow
-      - value: DECIMAL<P1,S1>
-      - value: DECIMAL<P2,S2>
+      - param: DECIMAL<P1,S1>
+      - param: DECIMAL<P2,S2>
   - &SimpleComparisons
     nullability: DECLARED_OUTPUT
     bounds:
       K: { types: [boolean, i8, i16, i32, i64, fp32, fp64, timestamp, timestamp_tz, date, time] }
     arguments:
-      - value: K
-      - value: K
+      - param: K
+      - param: K
     return: boolean
   - &StringComparisons
     nullability: DECLARED_OUTPUT
@@ -44,8 +44,8 @@ fragments:
       S1: *StringsL1
       S2: *StringsL2
     arguments:
-      - value: S1
-      - value: S2
+      - param: S1
+      - param: S2
     return: boolean
   - &BinaryComparisons
     nullability: DECLARED_OUTPUT
@@ -53,21 +53,21 @@ fragments:
       S1: *BinariesL1
       S2: *BinariesL2
     arguments:
-      - value: S1
-      - value: S2
+      - param: S1
+      - param: S2
     return: boolean
   - &UnorderedComparisons
     nullability: DECLARED_OUTPUT
     bounds:
       K: { types: [uuid, interval_year, interval_day] }
     arguments:
-      - value: K
-      - value: K
+      - param: K
+      - param: K
     return: boolean
   - &BinaryBoolean
     arguments:
-      - value: boolean
-      - value: boolean
+      - concrete: boolean
+      - concrete: boolean
     return: boolean
 scalar_functions:
   - info: &add
@@ -94,8 +94,8 @@ scalar_functions:
       T: { types: [timestamp, timestamp_tz, date] }
       I: { types: [interval_year, interval_day] }
     arguments:
-      - value: T
-      - value: I
+      - param: T
+      - param: I
     return: T
 
   - info: &minus
@@ -169,9 +169,9 @@ scalar_functions:
       S1: *StringsL1
       S2: *StringsL2
     arguments:
-      - value: S1
+      - param: S1
         name: value to test
-      - value: S2
+      - param: S2
         name: pattern
         constant: true
     return: boolean
@@ -257,8 +257,8 @@ scalar_functions:
         options: [FIRST, LAST]
         name: Nulls Ordering
         required: false
-      - value: K
-      - value: K
+      - param: K
+      - param: K
     return: i8
   - info: *Compare
     bounds:
@@ -266,8 +266,8 @@ scalar_functions:
       S2: *StringsL2
     arguments:
       - *NullOrdering
-      - value: S1
-      - value: S2
+      - param: S1
+      - param: S2
     return: i8
 
   - info: &Cast
@@ -309,7 +309,7 @@ scalar_functions:
     arguments:
       - type: S
         name: Target type.
-      - value: V
+      - param: V
         name: Value to cast.
   - info:
       name: extract
@@ -320,14 +320,14 @@ scalar_functions:
       - options: [YEAR, MONTH, DAY, SECOND]
         name: The part of the value to extract.
         required: true
-      - value: D
+      - param: D
         name: Date/time value to extract information from.
     return: i64
   - info:
       name: not
       description: The boolean not of a provided value
     arguments:
-      - value: boolean
+      - concrete: boolean
     return: boolean
   - info:
       name: and
@@ -346,37 +346,37 @@ scalar_functions:
       name: concat
       description: Concatenate two strings
     arguments:
-      - value: FIXEDCHAR<L1>
-      - value: FIXEDCHAR<L2>
+      - param: FIXEDCHAR<L1>
+      - param: FIXEDCHAR<L2>
     return: FIXEDCHAR<L1 + L2>
   - info: *Concat
     bounds:
       S1: *StringsL1
       S2: *StringsL2
     arguments:
-      - value: S1
-      - value: S2
+      - param: S1
+      - param: S2
     return: VARCHAR<L1 + L2>
   - info: *Concat
     bounds:
       S1: *StringsL1
       S2: *StringsL2
     arguments:
-      - value: S1
-      - value: S2
+      - param: S1
+      - param: S2
     return: string
   - info: *Concat
     arguments:
-      - value: FIXEDBINARY<L1>
-      - value: FIXEDBINARY<L2>
+      - param: FIXEDBINARY<L1>
+      - param: FIXEDBINARY<L2>
     return: FIXEDBINARY<L1 + L2>
   - info: *Concat
     bounds:
       S1: *BinariesL1
       S2: *BinariesL2
     arguments:
-      - value: S1
-      - value: S2
+      - param: S1
+      - param: S2
     return: binary
   - info:
       name: substring
@@ -384,9 +384,9 @@ scalar_functions:
     bounds:
       S: *StringsL1
     arguments:
-      - value: S
+      - param: S
         name: String to extract from.
-      - value: i32
+      - concrete: i32
         name: Start position (inclusive, zero index). Negatives starts from end of string.
-      - value: i32
+      - concrete: i32
         name: End position (exclusive, zero index). Negative starts from end of string.
