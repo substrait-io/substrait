@@ -276,7 +276,7 @@ scalar_functions:
     nullability: DISCRETE
     bounds:
       V: {types: [boolean, i8, i16, i32, i64, fp32, fp64, timestamp_tz, date, time, interval_year, interval_day,
-            "boolean?", "i8?", "i16?", "i32?", "i64?", "fp32?", "fp64?", "timestamp_tz?", "date?", "time?", "interval_year?", "interval_day?"]}
+                  "boolean?", "i8?", "i16?", "i32?", "i64?", "fp32?", "fp64?", "timestamp_tz?", "date?", "time?", "interval_year?", "interval_day?"]}
       S: {types: [VARCHAR<N>, FIXEDCHAR<N>, STRING, "VARCHAR<N>?", "FIXEDCHAR<N>?", "STRING?"]}
     arguments:
       - type: S
@@ -362,7 +362,3 @@ scalar_functions:
         name: Start position (inclusive, zero index). Negatives starts from end of string.
       - value: i32
         name: End position (exclusive, zero index). Negative starts from end of string.
-
-
-
-
