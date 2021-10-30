@@ -8,6 +8,7 @@ import "type_expressions.proto";
 import "extensions.proto";
 
 option java_multiple_files = true;
+option csharp_namespace = "Substrait.Protobuf";
 
 
 // List of function signatures available.

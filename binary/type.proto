@@ -4,6 +4,7 @@ package io.substrait;
 import "extensions.proto";
 
 option java_multiple_files = true;
+option csharp_namespace = "Substrait.Protobuf";
 
 message Type {
 
