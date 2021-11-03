@@ -101,6 +101,8 @@ message JoinRel {
     Rel right = 3;
     Expression expression = 4;
     Expression post_join_filter = 5;
+    
+    JoinType type = 6;
 
     enum JoinType {
         UNKNOWN = 0;
