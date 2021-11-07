@@ -49,15 +49,15 @@ When data is partitioned across multiple sibling sets, distribution describes th
 
 A guarantee that data output from this operation is provided with a sort order. The sort order will be declared based on a set of sort field definitions based on the emitted output of this operation.
 
-| Property         | Description                                                  | Required               |
-| ---------------- | ------------------------------------------------------------ | ---------------------- |
-| Sort Fields      | A list of fields that the data are ordered by. The list is in order of the sort. If sort by [0,1] this means we only consider the data for field 1 is only ordered within each discrete value of field 0. | At least one required. |
-| Per - Sort Field | A field reference that the data is sorted by.                | Required               |
-| Per - Sort Type  | The order of the data. See ordering types below.             | Required               |
+| Property              | Description                                                  | Required               |
+| --------------------- | ------------------------------------------------------------ | ---------------------- |
+| Sort Fields           | A list of fields that the data are ordered by. The list is in order of the sort. If sort by [0,1] this means we only consider the data for field 1 is only ordered within each discrete value of field 0. | At least one required. |
+| Per - Sort Field      | A field reference that the data is sorted by.                | Required               |
+| Per - Sort Direction  | The direction of the data. See direction options below.      | Required               |
 
-#### Ordering Types
+#### Ordering Directions
 
-| Ordering                   | Descriptions                                                 | Nulls Position                                  |
+| Direction                  | Descriptions                                                 | Nulls Position                                  |
 | -------------------------- | ------------------------------------------------------------ | ----------------------------------------------- |
 | Ascending                  | Returns data in a ascending order based on the quality function associated with the type. Nulls are included before any values. | First                                           |
 | Descending                 | Returns data in a descending order based on the quality function associated with the type. Nulls are included before any values. | First                                           |

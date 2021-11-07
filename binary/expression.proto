@@ -151,10 +151,10 @@ message Expression {
         Expression expr = 1;
 
         oneof sort_kind {
-            SortType formal = 2;
+            SortDirection direction = 2;
             Extensions.FunctionId comparison_function = 3;
         }
-        enum SortType {
+        enum SortDirection {
             UNKNOWN = 0;
             ASC_NULLS_FIRST = 1;
             ASC_NULLS_LAST = 2;
