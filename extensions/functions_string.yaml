@@ -1,0 +1,6 @@
+%YAML 1.2
+---
+scalar_functions:
+
+
+# TODO: add like, concat, substring, string specific cross type equalities.
