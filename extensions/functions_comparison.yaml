@@ -8,7 +8,7 @@ scalar_functions:
       - args:
           - value: any1
           - value: any1
-        return: BOOLEAN?
+        return: BOOLEAN
   -
     name: "equal"
     description: Whether two values are equal (nulls are considered unequal).
@@ -16,7 +16,7 @@ scalar_functions:
       - args:
           - value: any1
           - value: any1
-        return: BOOLEAN?
+        return: BOOLEAN
   -
     name: "is_not_distinct_from"
     description: Whether two values are equal (nulls are considered equal).
@@ -24,6 +24,38 @@ scalar_functions:
       - args:
           - value: any1
           - value: any1
-        return: BOOLEAN?
+        return: BOOLEAN
+  -
+    name: "lt"
+    description: Less than
+    impls:
+      - args:
+          - value: any1
+          - value: any1
+        return: BOOLEAN
+  -
+    name: "gt"
+    description: Less than
+    impls:
+      - args:
+          - value: any1
+          - value: any1
+        return: BOOLEAN
+  -
+    name: "lte"
+    description: Less than or equal to
+    impls:
+      - args:
+          - value: any1
+          - value: any1
+        return: BOOLEAN
+  -
+    name: "gte"
+    description: Less than or equal to
+    impls:
+      - args:
+          - value: any1
+          - value: any1
+        return: BOOLEAN
 # TODO: add lt, gt, lte, gte, compare
 

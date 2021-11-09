@@ -1,0 +1,4 @@
+# This directory is here to work around a bug in out of project Antlr paths within Gradle. 
+#
+# See: https://github.com/gradle/gradle/issues/13016
+
