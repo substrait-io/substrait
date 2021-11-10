@@ -76,11 +76,11 @@ scalar_functions:
       - args:
           - value: timestamp_tz
           - value: interval_year
-        return: timestamp
+        return: timestamp_tz
       - args:
           - value: date
           - value: interval_year
-        return: timestamp
+        return: date
       - args:
           - value: timestamp
           - value: interval_day
@@ -88,8 +88,8 @@ scalar_functions:
       - args:
           - value: timestamp_tz
           - value: interval_day
-        return: timestamp
+        return: timestamp_tz
       - args:
           - value: date
           - value: interval_day
-        return: timestamp
+        return: date

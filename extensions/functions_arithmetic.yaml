@@ -123,7 +123,7 @@ scalar_functions:
         return: fp64
   -
     name: "divide"
-    description: "Divide one value by another."
+    description: "Divide one value by another. Partial values are truncated."
     impls:
       - args:
           - value: i8
@@ -226,7 +226,7 @@ aggregate_functions:
         intermediate: fp64?
         return: fp64?
   - name: "avg"
-    description: Average a set of values.
+    description: Average a set of values. For integral types, this truncates partial values.
     impls:
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
