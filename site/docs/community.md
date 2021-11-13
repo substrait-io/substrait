@@ -18,7 +18,7 @@ license. Development is done in the open leveraging GitHub issues and PRs.
 : The [@substrait_io](https://twitter.com/substrait_io) account on Twitter is our official account. Follow-up to keep
   to date on what is happening with Substrait!
 
-[Docs](https://github.com/substrait-io/substrait/tree/scratch/site/docs)
+[Docs](https://github.com/substrait-io/substrait/tree/main/site/docs)
 : Our website is all maintained in our source repository. If there is something you think
   can be improved, feel free to fork our repository and post a pull request.
 
