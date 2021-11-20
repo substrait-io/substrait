@@ -110,6 +110,8 @@ message JoinRel {
         OUTER = 2;
         LEFT = 3;
         RIGHT = 4;
+        SEMI = 5;
+        ANTI = 6;
     }
 }
 
