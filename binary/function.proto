@@ -5,7 +5,6 @@ package io.substrait;
 import "type.proto";
 import "parameterized_types.proto";
 import "type_expressions.proto";
-import "extensions.proto";
 
 option java_multiple_files = true;
 option csharp_namespace = "Substrait.Protobuf";
@@ -39,7 +38,6 @@ message FunctionSignature {
     message FinalArgNormal {}
 
     message Scalar {
-        Extensions.FunctionId id = 1;
         repeated Argument arguments = 2;
         repeated string name = 3;
         Description description = 4;
@@ -58,9 +56,8 @@ message FunctionSignature {
     }
 
     message Aggregate {
-        Extensions.FunctionId id = 1;
         repeated Argument arguments = 2;
-        repeated string name = 3;
+        string name = 3;
         Description description = 4;
 
         bool deterministic = 7;
@@ -81,7 +78,6 @@ message FunctionSignature {
     }
 
     message Window {
-        Extensions.FunctionId id = 1;
         repeated Argument arguments = 2;
         repeated string name = 3;
         Description description = 4;
