@@ -168,10 +168,9 @@ message SetRel {
 
 // A relation with output field names.
 //
-// This is for use at the root of a `Rel`, and is not designed for intermediate
-// relations.
-message NamedRel {
-    RelCommon common = 1;
+// This is for use at the root of a `Rel`.
+message RelRoot {
+    // A relation
     Rel input = 2;
 
     // Field names in depth-first order
@@ -188,6 +187,5 @@ message Rel {
       JoinRel join = 6;
       ProjectRel project = 7;
       SetRel set = 8;
-      NamedRel named = 9;
   }
 }
