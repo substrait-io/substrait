@@ -54,7 +54,7 @@ jobs:
           set -e
           for i in $(ls);
           do
-            ajv validate -s ../text/simple_extensions_schema.yml --strict=true --spec=draft2020 -d $i
+            ajv validate -s ../text/simple_extensions_schema.yaml --strict=true --spec=draft2020 -d $i
           done
           set +e
         working-directory: ./extensions
