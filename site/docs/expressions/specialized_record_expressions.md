@@ -4,9 +4,17 @@ While most all types of operations could be reduced to functions, in some cases 
 
 These constructs should be focused on different expression types as opposed to something that directly related to syntactic sugar. For example, CAST and EXTRACT or SQL operations that are presented using specialized syntax. However, they can easily modeled using a function paradigm with minimal complexity.
 
+
+
 ## Literal Expressions
 
 For each data type, it is possible to create a literal value for that data type. The representation depends on the serialization format.
+
+
+
+## Cast Expression
+
+To convert a value from one type to another, Substrait defines a cast expression. Cast expression declare an expected type and an input argument.
 
 
 

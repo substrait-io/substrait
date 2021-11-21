@@ -2,7 +2,6 @@ syntax = "proto3";
 package io.substrait;
 
 import "type.proto";
-import "extensions.proto";
 
 option java_multiple_files = true;
 option csharp_namespace = "Substrait.Protobuf";
@@ -36,7 +35,7 @@ message ParameterizedType {
         ParameterizedList list = 27;
         ParameterizedMap map = 28;
 
-        Extensions.TypeId user_defined = 31;
+        uint32 user_defined_pointer = 31;
 
         TypeParameter type_parameter = 33;
 
@@ -59,32 +58,32 @@ message ParameterizedType {
     
     message ParameterizedFixedChar {
         IntegerOption length = 1;
-        Type.Variation variation = 2;
+        uint32 variation_pointer = 2;
         Type.Nullability nullability = 3;
     }
 
     message ParameterizedVarChar {
         IntegerOption length = 1;
-        Type.Variation variation = 2;
+        uint32 variation_pointer = 2;
         Type.Nullability nullability = 3;
     }
 
     message ParameterizedFixedBinary {
         IntegerOption length = 1;
-        Type.Variation variation = 2;
+        uint32 variation_pointer = 2;
         Type.Nullability nullability = 3;
     }
 
     message ParameterizedDecimal {
         IntegerOption scale = 1;
         IntegerOption precision = 2;
-        Type.Variation variation = 3;
+        uint32 variation_pointer = 3;
         Type.Nullability nullability = 4;
     }
 
     message ParameterizedStruct {
         repeated ParameterizedType types = 1;
-        Type.Variation variation = 2;
+        uint32 variation_pointer = 2;
         Type.Nullability nullability = 3;
     }
 
@@ -96,14 +95,14 @@ message ParameterizedType {
 
     message ParameterizedList {
         ParameterizedType type = 1;
-        Type.Variation variation = 2;
+        uint32 variation_pointer = 2;
         Type.Nullability nullability = 3;
     }
 
     message ParameterizedMap {
         ParameterizedType key = 1;
         ParameterizedType value = 2;
-        Type.Variation variation = 3;
+        uint32 variation_pointer = 3;
         Type.Nullability nullability = 4;
     }
 

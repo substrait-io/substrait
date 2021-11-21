@@ -1,0 +1,230 @@
+$id: http://substrait.io/schemas/simple_extensions
+$schema: https://json-schema.org/draft/2020-12/schema
+additionalProperties: false
+type: object
+properties:
+  types:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+        structure:
+          type: object
+          additionalProperties:
+            $ref: "#/$defs/type"
+  type_variations:
+    type: array
+    minItems: 1
+    items:
+      type: object
+      additionalProperties: false
+      required: [parent, name]
+      properties:
+        parent:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        functions:
+          type: string
+          enum: [INHERITS, SEPARATE]
+  scalar_functions:
+    type: array
+    items:
+      $ref: "#/$defs/scalarFunction"
+  aggregate_functions:
+    type: array
+    items:
+      $ref: "#/$defs/aggregateFunction"
+
+$defs:
+  type:
+    oneOf:
+      - type: string
+      - type: object
+  arguments:  # an array of arguments
+    type: array
+    items:
+      oneOf:
+        - type: object # enumeration
+          additionalProperties: false
+          required: [ options ]
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            options:
+              type: array
+              items:
+                type: string
+            required:
+              type: boolean
+        - type: object # value
+          required: [ value ]
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            value:
+              $ref: "#/$defs/type"
+        - type: object # type
+          required: [ type ]
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            type:
+              type: string
+  variadicBehavior:
+    type: object
+    additionalProperties: false
+    properties:
+      min:
+        type: number
+      max:
+        type: number
+      parameterConsistency:
+        type: string
+        enum: [CONSISTENT, INCONSISTENT]
+  deterministic:
+    type: boolean
+  sessionDependent:
+    type: boolean
+  nullabilityHandling:
+    type: string
+    enum: [MIRROR, DECLARED_OUTPUT, DISCRETE]
+  returnValue:
+    $ref: "#/$defs/type"
+  implementation:
+    type: object
+    additionalProperties:
+      type: string
+  intermediate:
+    $ref: "#/$defs/type"
+  decomposable:
+    type: string
+    enum: [NONE, ONE, MANY]
+  maxset:
+    type: number
+  ordered:
+    type: boolean
+  scalarFunction:
+    type: object
+    additionalProperties: false
+    required: [name, impls]
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      impls:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required: [ return ]
+          properties:
+            args:
+              $ref: "#/$defs/arguments"
+            variadic:
+              $ref: "#/$defs/variadicBehavior"
+            sessionDependent:
+              $ref: "#/$defs/sessionDependent"
+            deterministic:
+              $ref: "#/$defs/deterministic"
+            nullability:
+              $ref: "#/$defs/nullabilityHandling"
+            return:
+              $ref: "#/$defs/returnValue"
+            implementation:
+              $ref: "#/$defs/implementation"
+  aggregateFunction:
+    type: object
+    additionalProperties: false
+    required: [name, impls]
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      impls:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required: [ intermediate, return ]
+          properties:
+            args:
+              $ref: "#/$defs/arguments"
+            variadic:
+              $ref: "#/$defs/variadicBehavior"
+            sessionDependent:
+              $ref: "#/$defs/sessionDependent"
+            deterministic:
+              $ref: "#/$defs/deterministic"
+            nullability:
+              $ref: "#/$defs/nullabilityHandling"
+            return:
+              $ref: "#/$defs/returnValue"
+            implementation:
+              $ref: "#/$defs/implementation"
+            intermediate:
+              $ref: "#/$defs/intermediate"
+            ordered:
+              $ref: "#/$defs/ordered"
+            maxset:
+              $ref: "#/$defs/maxset"
+            decomposable:
+              $ref: "#/$defs/decomposable"
+  windowFunction:
+    type: object
+    additionalProperties: false
+    required: [name, impls]
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      impls:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          required: [ intermediate, return ]
+          properties:
+            args:
+              $ref: "#/$defs/arguments"
+            variadic:
+              $ref: "#/$defs/variadicBehavior"
+            sessionDependent:
+              $ref: "#/$defs/sessionDependent"
+            deterministic:
+              $ref: "#/$defs/deterministic"
+            nullability:
+              $ref: "#/$defs/nullabilityHandling"
+            return:
+              $ref: "#/$defs/returnValue"
+            implementation:
+              $ref: "#/$defs/implementation"
+            intermediate:
+              $ref: "#/$defs/intermediate"
+            ordered:
+              $ref: "#/$defs/ordered"
+            maxset:
+              $ref: "#/$defs/maxset"
+            decomposable:
+              $ref: "#/$defs/decomposable"
+            window_type:
+              type: string
+              enum: [STREAMING, PARTITION]
