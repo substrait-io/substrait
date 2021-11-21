@@ -171,10 +171,10 @@ message SetRel {
 // This is for use at the root of a `Rel` tree.
 message RelRoot {
     // A relation
-    Rel input = 2;
+    Rel input = 1;
 
     // Field names in depth-first order
-    repeated string names = 3;
+    repeated string names = 2;
 }
 
 message Rel {
