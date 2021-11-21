@@ -53,10 +53,10 @@ message Type {
     }
 
     // The type's nullability
-    Nullability nullability = 1;
+    Nullability nullability = 32;
 
     // The type's variation. Optional.
-    Variation variation = 2;
+    Variation variation = 33;
 
     message Boolean {}
     message I8 {}
