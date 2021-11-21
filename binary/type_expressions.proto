@@ -49,32 +49,32 @@ message DerivationExpression {
 
     message ExpressionFixedChar {
         DerivationExpression length = 1;
-        Type.Variation variation = 2;
+        Variation variation = 2;
         Type.Nullability nullability = 3;
     }
 
     message ExpressionVarChar {
         DerivationExpression length = 1;
-        Type.Variation variation = 2;
+        Variation variation = 2;
         Type.Nullability nullability = 3;
     }
 
     message ExpressionFixedBinary {
         DerivationExpression length = 1;
-        Type.Variation variation = 2;
+        Variation variation = 2;
         Type.Nullability nullability = 3;
     }
 
     message ExpressionDecimal {
         DerivationExpression scale = 1;
         DerivationExpression precision = 2;
-        Type.Variation variation = 3;
+        Variation variation = 3;
         Type.Nullability nullability = 4;
     }
 
     message ExpressionStruct {
         repeated DerivationExpression types = 1;
-        Type.Variation variation = 2;
+        Variation variation = 2;
         Type.Nullability nullability = 3;
     }
 
@@ -85,14 +85,14 @@ message DerivationExpression {
 
     message ExpressionList {
         DerivationExpression type = 1;
-        Type.Variation variation = 2;
+        Variation variation = 2;
         Type.Nullability nullability = 3;
     }
 
     message ExpressionMap {
         DerivationExpression key = 1;
         DerivationExpression value = 2;
-        Type.Variation variation = 3;
+        Variation variation = 3;
         Type.Nullability nullability = 4;
     }
 

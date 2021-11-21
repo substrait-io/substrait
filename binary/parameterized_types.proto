@@ -59,32 +59,32 @@ message ParameterizedType {
     
     message ParameterizedFixedChar {
         IntegerOption length = 1;
-        Type.Variation variation = 2;
+        Variation variation = 2;
         Type.Nullability nullability = 3;
     }
 
     message ParameterizedVarChar {
         IntegerOption length = 1;
-        Type.Variation variation = 2;
+        Variation variation = 2;
         Type.Nullability nullability = 3;
     }
 
     message ParameterizedFixedBinary {
         IntegerOption length = 1;
-        Type.Variation variation = 2;
+        Variation variation = 2;
         Type.Nullability nullability = 3;
     }
 
     message ParameterizedDecimal {
         IntegerOption scale = 1;
         IntegerOption precision = 2;
-        Type.Variation variation = 3;
+        Variation variation = 3;
         Type.Nullability nullability = 4;
     }
 
     message ParameterizedStruct {
         repeated ParameterizedType types = 1;
-        Type.Variation variation = 2;
+        Variation variation = 2;
         Type.Nullability nullability = 3;
     }
 
@@ -96,14 +96,14 @@ message ParameterizedType {
 
     message ParameterizedList {
         ParameterizedType type = 1;
-        Type.Variation variation = 2;
+        Variation variation = 2;
         Type.Nullability nullability = 3;
     }
 
     message ParameterizedMap {
         ParameterizedType key = 1;
         ParameterizedType value = 2;
-        Type.Variation variation = 3;
+        Variation variation = 3;
         Type.Nullability nullability = 4;
     }
 
