@@ -51,10 +51,10 @@ jobs:
           node-version: '14'
       - run: npm install -g ajv-cli
       - run: |
-          set -e
+          set -euo pipefail
           for i in $(ls);
           do
-            ajv validate -s ../text/simple_extensions_schema.yaml --strict=true --spec=draft2020 -d $i
+            ajv validate -s ../text/simple_extensions_schema.yaml --strict=true --spec=draft2020 -d "$i"
           done
           set +e
         working-directory: ./extensions

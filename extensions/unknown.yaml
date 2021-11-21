@@ -3,36 +3,31 @@
 types:
   - name: unknown
 scalar_functions:
-  -
-    name: "add"
+  - name: "add"
     impls:
       - args:
           - value: unknown
           - value: unknown
         return: unknown
-  -
-    name: "subtract"
+  - name: "subtract"
     impls:
       - args:
           - value: unknown
           - value: unknown
         return: unknown
-  -
-    name: "multiply"
+  - name: "multiply"
     impls:
       - args:
           - value: unknown
           - value: unknown
         return: unknown
-  -
-    name: "divide"
+  - name: "divide"
     impls:
       - args:
           - value: unknown
           - value: unknown
         return: unknown
-  -
-    name: "modulus"
+  - name: "modulus"
     impls:
       - args:
           - value: unknown
