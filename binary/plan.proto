@@ -8,13 +8,20 @@ import "extensions.proto";
 option java_multiple_files = true;
 option csharp_namespace = "Substrait.Protobuf";
 
+// Either a relation or root relation
+message PlanRel {
+    oneof RelType {
+        // Any relation
+        Rel rel = 1;
+        // The root of a relation tree
+        RelRoot root = 2;
+    }
+}
+
 // Describe a set of operations to complete.
 // For compactness sake, identifiers are normalized at the plan level.
 message Plan {
-
     repeated Extensions.Extension extensions = 1;
     repeated Extensions.Mapping mappings = 2;
-    repeated Rel relations = 3;
-
+    repeated PlanRel relations = 3;
 }
-
