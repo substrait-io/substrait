@@ -21,7 +21,7 @@ A Substrait plan can reference one or more YAML files via URI for extension. In 
 | ------------------- | ------------------------------------------------------------ |
 | Types               | The name as defined on the type object.                      |
 | Type Variations     | The name as defined on the type object.                      |
-| Function Signatures | If there is only one impl, the name is defined at the top-level definition of the object. If there are multiple impls, the name is a composite string that includes the top-level name (e.g. `add`) followed by a compound string that describes the types of the arguments (e.g. `add:i8_i8`). How arguments are mapped to a compound name are described below. |
+| Function Signatures | If there is only one impl, the name may be defined at the top-level definition of the object. If there are multiple impls, the name is a composite string that includes the top-level name (e.g. add) followed by a compound string that describes the types of the arguments (e.g. add:i8_i8). In the case there is one impl, the multiple impl naming scheme is also supported. How arguments are mapped to a compound name are described below. |
 
 ## Advanced Extensions
 
