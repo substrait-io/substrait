@@ -166,6 +166,18 @@ message SetRel {
     }
 }
 
+// A relation with output field names.
+//
+// This is for use at the root of a `Rel`, and is not designed for intermediate
+// relations.
+message NamedRel {
+    RelCommon common = 1;
+    Rel input = 2;
+
+    // Field names in depth-first order
+    repeated string names = 3;
+}
+
 message Rel {
   oneof RelType {
       ReadRel read = 1;
@@ -176,5 +188,6 @@ message Rel {
       JoinRel join = 6;
       ProjectRel project = 7;
       SetRel set = 8;
+      NamedRel named = 9;
   }
 }
