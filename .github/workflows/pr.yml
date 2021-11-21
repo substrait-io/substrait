@@ -34,10 +34,27 @@ jobs:
           done
           set +e
         working-directory: ./binary
-  yaml:
-    name: Check yaml files
+  yamllint:
+    name: Lint YAML extensions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Run yamllint
         run: yamllint .
+  yamlvalidate:
+    name: Validate YAML extensions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install -g ajv-cli
+      - run: |
+          set -e
+          for i in $(ls);
+          do
+            ajv validate -s ../text/simple_extensions_schema.yml --strict=true --spec=draft2020 -d $i
+          done
+          set +e
+        working-directory: ./extensions
