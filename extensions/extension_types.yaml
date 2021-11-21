@@ -6,5 +6,5 @@ types:
       longitude: i32
   - name: line
     structure:
-      unwrapped:
-        list: point
+      start: point
+      end: point
