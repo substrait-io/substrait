@@ -168,7 +168,7 @@ message SetRel {
 
 // A relation with output field names.
 //
-// This is for use at the root of a `Rel`.
+// This is for use at the root of a `Rel` tree.
 message RelRoot {
     // A relation
     Rel input = 2;
