@@ -50,13 +50,24 @@ message Expression {
             string fixed_char = 21;
             string var_char = 22;
             bytes fixed_binary = 23;
-            bytes decimal = 24;
+            Decimal decimal = 24;
             Struct struct = 25;
             Map map = 26;
             fixed64 timestamp_tz = 27;
             bytes uuid = 28;
             Type null = 29; // a typed null literal
             List list = 30;
+        }
+
+        message Decimal {
+            // little-endian twos-complement integer representation of complete value (ignoring precision)
+            // Always 16 bytes in length
+            bytes value = 1;
+            // The maximum number of digits allowed in the value.
+            // the maximum precision is 38.
+            int32 precision = 2;
+            // declared scale of decimal literal
+            int32 scale = 3;
         }
 
         message Map {
