@@ -61,10 +61,12 @@ message Expression {
 
         message Decimal {
             // little-endian twos-complement integer representation of complete value (ignoring precision)
+            // Always 16 bytes in length
             bytes value = 1;
             // declared scale of decimal literal
             int32 scale = 2;
-            // The maximum number of values allowed in the value
+            // The maximum number of values allowed in the value.
+            // the maximum precision is 38.
             int32 precision = 3;
         }
 
