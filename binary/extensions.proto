@@ -64,13 +64,11 @@ message SimpleExtensionDeclaration {
 // A generic object that can be used to embed additional extension information into the serialized substrait plan.
 message AdvancedExtension {
 
-    // Optimizations are helpful information that don't influence semantics. May be ignored by a consumer.
-    map<string, bytes> optimization_map = 1;
-    google.protobuf.Any optimization_entity = 2;
+    // An optimization is helpful information that don't influence semantics. May be ignored by a consumer.
+    google.protobuf.Any optimization = 1;
 
-    // Enhancements alter semantics. Cannot be ignored by a consumer.
-    map<string, bytes> enhancement_map = 3;
-    google.protobuf.Any enhancement_entity = 4;
+    // An enhancement alter semantics. Cannot be ignored by a consumer.
+    google.protobuf.Any enhancement = 2;
 }
 
 
