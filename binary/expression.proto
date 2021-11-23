@@ -100,14 +100,14 @@ message Expression {
     }
 
     message ScalarFunction {
-        // points to a function_surrogate_key defined in this plan
+        // points to a function_anchor defined in this plan
         uint32 function_reference = 1;
         repeated Expression args = 2;
         Type output_type = 3;
     }
 
     message AggregateFunction {
-        // points to a function_surrogate_key defined in this plan
+        // points to a function_anchor defined in this plan
         uint32 function_reference = 1;
         repeated Expression args = 2;
         repeated SortField sorts = 3;
@@ -125,6 +125,7 @@ message Expression {
 
 
     message WindowFunction {
+        // points to a function_anchor defined in this plan
         uint32 function_reference = 1;
         repeated Expression partitions = 2;
         repeated SortField sorts = 3;

@@ -26,10 +26,10 @@ message SimpleExtensionDeclaration {
 
     // Describes a Type
     message ExtensionType {
-        // references the surrogate key defined for a specific extension URI.
+        // references the extension_uri_anchor defined for a specific extension URI.
         uint32 extension_uri_reference = 1;
 
-        // A surrogate key used in the context of a single plan to reference a named type defined in that extension.
+        // A surrogate key used in the context of a single plan to reference a specific extension type
         uint32 type_anchor = 2;
 
         // the name of the type in the defined extension YAML.
@@ -37,10 +37,10 @@ message SimpleExtensionDeclaration {
     }
 
     message ExtensionTypeVariation {
-        // references the surrogate key defined for a specific extension URI.
+        // references the extension_uri_anchor defined for a specific extension URI.
         uint32 extension_uri_pointer = 1;
 
-        // A surrogate key used in the context of a single plan to reference a named type variation defined in the referenced extension.
+        // A surrogate key used in the context of a single plan to reference a specific type variation
         uint32 type_variation_anchor = 2;
 
         // the name of the type in the defined extension YAML.
@@ -48,10 +48,10 @@ message SimpleExtensionDeclaration {
     }
 
     message ExtensionFunction {
-        // references the surrogate key defined for a specific extension URI.
+        // references the extension_uri_anchor defined for a specific extension URI.
         uint32 extension_uri_pointer = 1;
 
-        // A surrogate key used in the context of a single plan to reference a named type variation defined in the referenced extension.
+        // A surrogate key used in the context of a single plan to reference a specific function
         uint32 function_anchor = 2;
 
         // A simple name if there is only one impl for the function within the YAML.
