@@ -1,17 +1,21 @@
 # Specialized Record Expressions
-
 While most all types of operations could be reduced to functions, in some cases this would be overly simplistic. Instead, it is helpful to construct some other expression constructs. 
 
 These constructs should be focused on different expression types as opposed to something that directly related to syntactic sugar. For example, CAST and EXTRACT or SQL operations that are presented using specialized syntax. However, they can easily modeled using a function paradigm with minimal complexity.
 
-## Literal Expressions
 
-For each data type, it is possible to create a literal value for that data type. The representation depends on the serialization format.
+
+## Literal Expressions
+For each data type, it is possible to create a literal value for that data type. The representation depends on the serialization format. Literal expressions include both a type literal and a possibly null value.
+
+
+
+## Cast Expression
+To convert a value from one type to another, Substrait defines a cast expression. Cast expression declare an expected type and an input argument.
 
 
 
 ## If Expression
-
 An if value expression is an expression composed of one if clause, zero or more else if clauses and an else clause. In pseudo code, they are envisioned as:
 
 ```
@@ -23,7 +27,6 @@ else <result expression 3>
 When an if expression is declared, all return expressions must be the same identical type.
 
 #### Shortcut Behavior
-
 An if expression is expected to logically short-circuit on a positive outcome. This means that a skipped else/elseif expression cannot cause an error. For example, this should not actually throw an error despite the fact that the cast operation should fail.
 
 ```
@@ -34,7 +37,6 @@ else cast('hello' as integer)
 
 
 ## Switch Expression
-
 Switch expression allow a selection of alternate branches based on the value of a given expression. They are an optimized form of a generic if expression where all conditions are equality to the same value. In pseudo-code:
 
 ```

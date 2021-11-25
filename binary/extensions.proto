@@ -3,6 +3,7 @@ syntax = "proto3";
 package io.substrait.extensions;
 
 option java_multiple_files = true;
+option java_package = "io.substrait.proto";
 option csharp_namespace = "Substrait.Protobuf";
 
 import "google/protobuf/any.proto";

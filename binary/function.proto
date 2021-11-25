@@ -7,6 +7,7 @@ import "parameterized_types.proto";
 import "type_expressions.proto";
 
 option java_multiple_files = true;
+option java_package = "io.substrait.proto";
 option csharp_namespace = "Substrait.Protobuf";
 
 // List of function signatures available.
