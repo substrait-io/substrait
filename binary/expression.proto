@@ -4,7 +4,6 @@ package io.substrait;
 
 import "type.proto";
 import "selection.proto";
-import "extensions.proto";
 
 option java_multiple_files = true;
 option csharp_namespace = "Substrait.Protobuf";
@@ -101,13 +100,15 @@ message Expression {
     }
 
     message ScalarFunction {
-        Extensions.FunctionId id = 1;
+        // points to a function_anchor defined in this plan
+        uint32 function_reference = 1;
         repeated Expression args = 2;
         Type output_type = 3;
     }
 
     message AggregateFunction {
-        Extensions.FunctionId id = 1;
+        // points to a function_anchor defined in this plan
+        uint32 function_reference = 1;
         repeated Expression args = 2;
         repeated SortField sorts = 3;
         AggregationPhase phase = 4;
@@ -124,7 +125,8 @@ message Expression {
 
 
     message WindowFunction {
-        Extensions.FunctionId id = 1;
+        // points to a function_anchor defined in this plan
+        uint32 function_reference = 1;
         repeated Expression partitions = 2;
         repeated SortField sorts = 3;
         Bound upper_bound = 4;
@@ -163,7 +165,7 @@ message Expression {
 
         oneof sort_kind {
             SortDirection direction = 2;
-            Extensions.FunctionId comparison_function = 3;
+            uint32 comparison_function_reference = 3;
         }
         enum SortDirection {
             UNKNOWN = 0;

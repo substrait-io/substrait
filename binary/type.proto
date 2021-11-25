@@ -1,8 +1,6 @@
 syntax = "proto3";
 package io.substrait;
 
-import "extensions.proto";
-
 option java_multiple_files = true;
 option csharp_namespace = "Substrait.Protobuf";
 
@@ -35,7 +33,7 @@ message Type {
         List list = 27;
         Map map = 28;
 
-        Extensions.TypeId user_defined = 31;
+        uint32 user_defined_type_reference = 31;
     }
 
     enum Nullability {
@@ -44,113 +42,113 @@ message Type {
     }
 
     message Boolean {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
     message I8 {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message I16 {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message I32 {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message I64 {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message FP32 {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message FP64 {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message String {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message Binary {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message Timestamp {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message Date {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message Time {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message TimestampTZ {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message IntervalYear {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message IntervalDay {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     message UUID {
-        Variation variation = 1;
+        uint32 type_variation_reference = 1;
         Nullability nullability = 2;
     }
 
     // Start compound types.
     message FixedChar {
         int32 length = 1;
-        Variation variation = 2;
+        uint32 type_variation_reference = 2;
         Nullability nullability = 3;
     }
 
     message VarChar {
         int32 length = 1;
-        Variation variation = 2;
+        uint32 type_variation_reference = 2;
         Nullability nullability = 3;
     }
 
     message FixedBinary {
         int32 length = 1;
-        Variation variation = 2;
+        uint32 type_variation_reference = 2;
         Nullability nullability = 3;
     }
 
     message Decimal {
         int32 scale = 1;
         int32 precision = 2;
-        Variation variation = 3;
+        uint32 type_variation_reference = 3;
         Nullability nullability = 4;
     }
 
     message Struct {
         repeated Type types = 1;
-        Variation variation = 2;
+        uint32 type_variation_reference = 2;
         Nullability nullability = 3;
     }
 
@@ -162,20 +160,15 @@ message Type {
 
     message List {
         Type type = 1;
-        Variation variation = 2;
+        uint32 type_variation_reference = 2;
         Nullability nullability = 3;
     }
 
     message Map {
         Type key = 1;
         Type value = 2;
-        Variation variation = 3;
+        uint32 type_variation_reference = 3;
         Nullability nullability = 4;
-    }
-
-    message Variation {
-        int32 organization = 1;
-        string name = 2;
     }
 
 }

@@ -2,7 +2,6 @@ syntax = "proto3";
 package io.substrait;
 
 import "type.proto";
-import "extensions.proto";
 
 option java_multiple_files = true;
 option csharp_namespace = "Substrait.Protobuf";
@@ -36,7 +35,7 @@ message DerivationExpression {
         ExpressionList list = 27;
         ExpressionMap map = 28;
 
-        Extensions.TypeId user_defined = 31;
+        uint32 user_defined_pointer = 31;
 
         string type_parameter_name = 33;
         string integer_parameter_name = 34;
@@ -49,32 +48,32 @@ message DerivationExpression {
 
     message ExpressionFixedChar {
         DerivationExpression length = 1;
-        Type.Variation variation = 2;
+        uint32 variation_pointer = 2;
         Type.Nullability nullability = 3;
     }
 
     message ExpressionVarChar {
         DerivationExpression length = 1;
-        Type.Variation variation = 2;
+        uint32 variation_pointer = 2;
         Type.Nullability nullability = 3;
     }
 
     message ExpressionFixedBinary {
         DerivationExpression length = 1;
-        Type.Variation variation = 2;
+        uint32 variation_pointer = 2;
         Type.Nullability nullability = 3;
     }
 
     message ExpressionDecimal {
         DerivationExpression scale = 1;
         DerivationExpression precision = 2;
-        Type.Variation variation = 3;
+        uint32 variation_pointer = 3;
         Type.Nullability nullability = 4;
     }
 
     message ExpressionStruct {
         repeated DerivationExpression types = 1;
-        Type.Variation variation = 2;
+        uint32 variation_pointer = 2;
         Type.Nullability nullability = 3;
     }
 
@@ -85,14 +84,14 @@ message DerivationExpression {
 
     message ExpressionList {
         DerivationExpression type = 1;
-        Type.Variation variation = 2;
+        uint32 variation_pointer = 2;
         Type.Nullability nullability = 3;
     }
 
     message ExpressionMap {
         DerivationExpression key = 1;
         DerivationExpression value = 2;
-        Type.Variation variation = 3;
+        uint32 variation_pointer = 3;
         Type.Nullability nullability = 4;
     }
 

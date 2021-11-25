@@ -5,4 +5,5 @@ arrange:
   - expressions
   - relations
   - serialization
+  - extensions
   - community.md
