@@ -13,179 +13,166 @@ option csharp_namespace = "Substrait.Protobuf";
 
 message RelCommon {
 
-    oneof emit_kind {
-        Direct direct = 1;
-        Emit emit = 2;
+  oneof emit_kind {
+    Direct direct = 1;
+    Emit emit = 2;
+  }
+
+  Hint hint = 3;
+  io.substrait.extensions.AdvancedExtension advanced_extension = 4;
+
+  message Direct {}
+  message Emit { repeated int32 output_mapping = 1; }
+
+  // Changes to the operation that can influence efficiency/performance but
+  // should not impact correctness.
+  message Hint {
+    Stats stats = 1;
+    RuntimeConstraint constraint = 2;
+    io.substrait.extensions.AdvancedExtension advanced_extension = 10;
+
+    message Stats {
+      double row_count = 1;
+      double record_size = 2;
+      io.substrait.extensions.AdvancedExtension advanced_extension = 10;
     }
 
-    Hint hint = 3;
-    io.substrait.extensions.AdvancedExtension advanced_extension = 4;
+    message RuntimeConstraint {
+      // TODO: nodes, cpu threads/%, memory, iops, etc.
 
-    message Direct {}
-    message Emit {
-        repeated int32 output_mapping = 1;
+      io.substrait.extensions.AdvancedExtension advanced_extension = 10;
     }
-
-    // Changes to the operation that can influence efficiency/performance but should not impact correctness.
-    message Hint {
-        Stats stats = 1;
-        RuntimeConstraint constraint = 2;
-        io.substrait.extensions.AdvancedExtension advanced_extension = 10;
-
-        message Stats {
-            double row_count = 1;
-            double record_size = 2;
-            io.substrait.extensions.AdvancedExtension advanced_extension = 10;
-        }
-    
-        message RuntimeConstraint {
-            // TODO: nodes, cpu threads/%, memory, iops, etc.
-
-           io.substrait.extensions.AdvancedExtension advanced_extension = 10;
-        }
-        
-    }
-
-
+  }
 }
 
 message ReadRel {
-    RelCommon common = 1;
-    Type.NamedStruct base_schema = 2;
-    Expression filter = 3;
-    MaskExpression projection = 4;
+  RelCommon common = 1;
+  Type.NamedStruct base_schema = 2;
+  Expression filter = 3;
+  MaskExpression projection = 4;
+  io.substrait.extensions.AdvancedExtension advanced_extension = 10;
+
+  oneof read_type {
+    VirtualTable virtual_table = 5;
+    LocalFiles local_files = 6;
+    NamedTable named_table = 7;
+    ExtensionTable extension_table = 8;
+  }
+
+  message NamedTable {
+    repeated string names = 1;
+    io.substrait.extensions.AdvancedExtension advanced_extension = 10;
+  }
+
+  // a table composed of literals.
+  message VirtualTable { repeated Expression.Literal.Struct values = 1; }
+
+  // a stub type that can be used to extend/introduce new table types outside
+  // the specification.
+  message ExtensionTable { google.protobuf.Any detail = 1; }
+
+  message LocalFiles {
+
+    repeated FileOrFiles items = 1;
     io.substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-    oneof read_type {
-        VirtualTable virtual_table = 5;
-        LocalFiles local_files = 6;
-        NamedTable named_table = 7;
-        ExtensionTable extension_table = 8;
+    message FileOrFiles {
+      oneof path_type {
+        string uri_path = 1;
+        string uri_path_glob = 2;
+        string uri_file = 3;
+        string uri_folder = 4;
+      }
+
+      Format format = 5;
+
+      enum Format {
+        UNKNOWN = 0;
+        PARQUET = 1;
+      }
     }
-
-    message NamedTable {
-        repeated string names = 1;
-        io.substrait.extensions.AdvancedExtension advanced_extension = 10;
-    }
-
-    // a table composed of literals.
-    message VirtualTable {
-        repeated Expression.Literal.Struct values = 1;
-    }
-
-    // a stub type that can be used to extend/introduce new table types outside the specification.
-    message ExtensionTable {
-        google.protobuf.Any detail = 1;
-    }
-    
-    message LocalFiles {
-
-        repeated FileOrFiles items = 1;
-        io.substrait.extensions.AdvancedExtension advanced_extension = 10;
-
-        message FileOrFiles {
-            oneof path_type {
-                string uri_path = 1;
-                string uri_path_glob = 2;
-                string uri_file = 3;
-                string uri_folder = 4;
-            }
-
-            Format format = 5;
-
-            enum Format {
-                UNKNOWN = 0;
-                PARQUET = 1;
-            }
-        }
-
-    }
+  }
 }
 
 message ProjectRel {
-    RelCommon common = 1;
-    Rel input = 2;
-    repeated Expression expressions = 3;
-    io.substrait.extensions.AdvancedExtension advanced_extension = 10;
+  RelCommon common = 1;
+  Rel input = 2;
+  repeated Expression expressions = 3;
+  io.substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
 message JoinRel {
-    RelCommon common = 1;
-    Rel left = 2;
-    Rel right = 3;
-    Expression expression = 4;
-    Expression post_join_filter = 5;
-    
-    JoinType type = 6;
+  RelCommon common = 1;
+  Rel left = 2;
+  Rel right = 3;
+  Expression expression = 4;
+  Expression post_join_filter = 5;
 
-    enum JoinType {
-        UNKNOWN = 0;
-        INNER = 1;
-        OUTER = 2;
-        LEFT = 3;
-        RIGHT = 4;
-        SEMI = 5;
-        ANTI = 6;
-    }
+  JoinType type = 6;
 
-    io.substrait.extensions.AdvancedExtension advanced_extension = 10;
+  enum JoinType {
+    UNKNOWN = 0;
+    INNER = 1;
+    OUTER = 2;
+    LEFT = 3;
+    RIGHT = 4;
+    SEMI = 5;
+    ANTI = 6;
+  }
+
+  io.substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
 message FetchRel {
-    RelCommon common = 1;
-    Rel input = 2;
-    int64 offset = 3;
-    int64 count = 4;
-    io.substrait.extensions.AdvancedExtension advanced_extension = 10;
+  RelCommon common = 1;
+  Rel input = 2;
+  int64 offset = 3;
+  int64 count = 4;
+  io.substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
 message AggregateRel {
-    RelCommon common = 1;
-    Rel input = 2;
-    repeated Grouping groupings = 3;
-    repeated Measure measures = 4;
-    Expression.AggregationPhase phase = 5;
-    io.substrait.extensions.AdvancedExtension advanced_extension = 10;
+  RelCommon common = 1;
+  Rel input = 2;
+  repeated Grouping groupings = 3;
+  repeated Measure measures = 4;
+  Expression.AggregationPhase phase = 5;
+  io.substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-    message Grouping {
-        repeated int32 input_fields = 1;
-    }
+  message Grouping { repeated int32 input_fields = 1; }
 
-    message Measure {
-        Expression.AggregateFunction measure = 1;
-    }
-    
+  message Measure { Expression.AggregateFunction measure = 1; }
 }
 
 message SortRel {
-    RelCommon common = 1;
-    Rel input = 2;
-    repeated Expression.SortField sorts = 3;
-    io.substrait.extensions.AdvancedExtension advanced_extension = 10;
+  RelCommon common = 1;
+  Rel input = 2;
+  repeated Expression.SortField sorts = 3;
+  io.substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
 message FilterRel {
-    RelCommon common = 1;
-    Rel input = 2;
-    Expression condition = 3;
-    io.substrait.extensions.AdvancedExtension advanced_extension = 10;
+  RelCommon common = 1;
+  Rel input = 2;
+  Expression condition = 3;
+  io.substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
 message SetRel {
-    RelCommon common = 1;
-    repeated Rel inputs = 2;
-    SetOp op = 3;
-    io.substrait.extensions.AdvancedExtension advanced_extension = 10;
+  RelCommon common = 1;
+  repeated Rel inputs = 2;
+  SetOp op = 3;
+  io.substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-    enum SetOp {
-        UNKNOWN = 0;
-        MINUS_PRIMARY = 1;
-        MINUS_MULTISET = 2;
-        INTERSECTION_PRIMARY = 3;
-        INTERSECTION_MULTISET = 4;
-        UNION_DISTINCT = 5;
-        UNION_ALL = 6;
-    }
+  enum SetOp {
+    UNKNOWN = 0;
+    MINUS_PRIMARY = 1;
+    MINUS_MULTISET = 2;
+    INTERSECTION_PRIMARY = 3;
+    INTERSECTION_MULTISET = 4;
+    UNION_DISTINCT = 5;
+    UNION_ALL = 6;
+  }
 }
 
 // Stub to support extension with a single input
@@ -198,7 +185,7 @@ message ExtensionSingleRel {
 // Stub to support extension with a zero inputs
 message ExtensionLeafRel {
   RelCommon common = 1;
-    google.protobuf.Any detail = 2;
+  google.protobuf.Any detail = 2;
 }
 
 // Stub to support extension with multiple inputs
@@ -212,24 +199,24 @@ message ExtensionMultiRel {
 //
 // This is for use at the root of a `Rel` tree.
 message RelRoot {
-    // A relation
-    Rel input = 1;
-    // Field names in depth-first order
-    repeated string names = 2;
+  // A relation
+  Rel input = 1;
+  // Field names in depth-first order
+  repeated string names = 2;
 }
 
 message Rel {
   oneof RelType {
-      ReadRel read = 1;
-      FilterRel filter = 2;
-      FetchRel fetch = 3;
-      AggregateRel aggregate = 4;
-      SortRel sort = 5;
-      JoinRel join = 6;
-      ProjectRel project = 7;
-      SetRel set = 8;
-      ExtensionSingleRel extension_single = 9;
-      ExtensionMultiRel extension_multi = 10;
-      ExtensionLeafRel extension_leaf = 11;
+    ReadRel read = 1;
+    FilterRel filter = 2;
+    FetchRel fetch = 3;
+    AggregateRel aggregate = 4;
+    SortRel sort = 5;
+    JoinRel join = 6;
+    ProjectRel project = 7;
+    SetRel set = 8;
+    ExtensionSingleRel extension_single = 9;
+    ExtensionMultiRel extension_multi = 10;
+    ExtensionLeafRel extension_leaf = 11;
   }
 }
