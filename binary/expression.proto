@@ -9,232 +9,216 @@ option java_multiple_files = true;
 option csharp_namespace = "Substrait.Protobuf";
 
 message Expression {
-    oneof rex_type {
-        Literal literal = 1;
-        FieldReference selection = 2;
-        ScalarFunction scalar_function = 3;
-        WindowFunction window_function = 5;
-        IfThen if_then = 6;
-        SwitchExpression switch_expression = 7;
-        SingularOrList singular_or_list = 8;
-        MultiOrList multi_or_list = 9;
-        Enum enum = 10;
+  oneof rex_type {
+    Literal literal = 1;
+    FieldReference selection = 2;
+    ScalarFunction scalar_function = 3;
+    WindowFunction window_function = 5;
+    IfThen if_then = 6;
+    SwitchExpression switch_expression = 7;
+    SingularOrList singular_or_list = 8;
+    MultiOrList multi_or_list = 9;
+    Enum enum = 10;
+  }
+
+  message Enum {
+    oneof enum_kind {
+      string specified = 1;
+      Empty unspecified = 2;
     }
 
-    message Enum {
-        oneof enum_kind {
-            string specified = 1;
-            Empty unspecified = 2;
-        }
+    message Empty {}
+  }
 
-        message Empty {}
+  message Literal {
+    oneof literal_type {
+      bool boolean = 1;
+      int32 i8 = 2;
+      int32 i16 = 3;
+      int32 i32 = 5;
+      int64 i64 = 7;
+      float fp32 = 10;
+      double fp64 = 11;
+      string string = 12;
+      bytes binary = 13;
+      fixed64 timestamp = 14;
+      fixed32 date = 16;
+      uint64 time = 17;
+      IntervalYearToMonth interval_year_to_month = 19;
+      IntervalDayToSecond interval_day_to_second = 20;
+      string fixed_char = 21;
+      string var_char = 22;
+      bytes fixed_binary = 23;
+      Decimal decimal = 24;
+      Struct struct = 25;
+      Map map = 26;
+      fixed64 timestamp_tz = 27;
+      bytes uuid = 28;
+      Type null = 29; // a typed null literal
+      List list = 30;
     }
 
-    message Literal {
-        oneof literal_type {
-            bool boolean = 1;
-            int32 i8 = 2;
-            int32 i16 = 3;
-            int32 i32 = 5;
-            int64 i64 = 7;
-            float fp32 = 10;
-            double fp64 = 11;
-            string string = 12;
-            bytes binary = 13;
-            fixed64 timestamp = 14;
-            fixed32 date = 16;
-            uint64 time = 17;
-            IntervalYearToMonth interval_year_to_month = 19;
-            IntervalDayToSecond interval_day_to_second = 20;
-            string fixed_char = 21;
-            string var_char = 22;
-            bytes fixed_binary = 23;
-            Decimal decimal = 24;
-            Struct struct = 25;
-            Map map = 26;
-            fixed64 timestamp_tz = 27;
-            bytes uuid = 28;
-            Type null = 29; // a typed null literal
-            List list = 30;
-        }
-
-        message Decimal {
-            // little-endian twos-complement integer representation of complete value (ignoring precision)
-            // Always 16 bytes in length
-            bytes value = 1;
-            // The maximum number of digits allowed in the value.
-            // the maximum precision is 38.
-            int32 precision = 2;
-            // declared scale of decimal literal
-            int32 scale = 3;
-        }
-
-        message Map {
-            message KeyValue {
-                Literal key = 1;
-                Literal value = 2;
-            }
-
-            repeated KeyValue key_values = 1;
-        }
-
-        message IntervalYearToMonth {
-            int32 years = 1;
-            int32 months = 2;
-        }
-
-        message IntervalDayToSecond {
-            int32 days = 1;
-            int32 seconds = 2;
-        }
-
-        message Struct {
-            // A possibly heterogeneously typed list of literals
-            repeated Literal fields = 1;
-        }
-
-        message List {
-            // A homogeneously typed list of literals
-            repeated Literal values = 1;
-        }
+    message Decimal {
+      // little-endian twos-complement integer representation of complete value
+      // (ignoring precision) Always 16 bytes in length
+      bytes value = 1;
+      // The maximum number of digits allowed in the value.
+      // the maximum precision is 38.
+      int32 precision = 2;
+      // declared scale of decimal literal
+      int32 scale = 3;
     }
 
-    message ScalarFunction {
-        // points to a function_anchor defined in this plan
-        uint32 function_reference = 1;
-        repeated Expression args = 2;
-        Type output_type = 3;
+    message Map {
+      message KeyValue {
+        Literal key = 1;
+        Literal value = 2;
+      }
+
+      repeated KeyValue key_values = 1;
     }
 
-    message AggregateFunction {
-        // points to a function_anchor defined in this plan
-        uint32 function_reference = 1;
-        repeated Expression args = 2;
-        repeated SortField sorts = 3;
-        AggregationPhase phase = 4;
-        Type output_type = 5;
+    message IntervalYearToMonth {
+      int32 years = 1;
+      int32 months = 2;
     }
 
-    enum AggregationPhase {
-        UNKNOWN = 0;
-        INITIAL_TO_INTERMEDIATE = 1;
-        INTERMEDIATE_TO_INTERMEDIATE = 2;
-        INITIAL_TO_RESULT = 3;
-        INTERMEDIATE_TO_RESULT = 4;
+    message IntervalDayToSecond {
+      int32 days = 1;
+      int32 seconds = 2;
     }
 
-
-    message WindowFunction {
-        // points to a function_anchor defined in this plan
-        uint32 function_reference = 1;
-        repeated Expression partitions = 2;
-        repeated SortField sorts = 3;
-        Bound upper_bound = 4;
-        Bound lower_bound = 5;
-        AggregationPhase phase = 6;
-        Type output_type = 7;
-        repeated Expression args = 8;
-
-        message Bound {
-
-            message Preceding {
-                int64 offset = 1;
-            }
-
-            message Following {
-                int64 offset = 1;
-            }
-
-            message CurrentRow {}
-
-            message Unbounded {}
-
-            oneof kind {
-                Preceding preceding = 1;
-                Following following = 2;
-                CurrentRow current_row = 3;
-                Unbounded unbounded = 4;
-            }
-
-        }
-
+    message Struct {
+      // A possibly heterogeneously typed list of literals
+      repeated Literal fields = 1;
     }
 
-    message SortField {
-        Expression expr = 1;
+    message List {
+      // A homogeneously typed list of literals
+      repeated Literal values = 1;
+    }
+  }
 
-        oneof sort_kind {
-            SortDirection direction = 2;
-            uint32 comparison_function_reference = 3;
-        }
-        enum SortDirection {
-            UNKNOWN = 0;
-            ASC_NULLS_FIRST = 1;
-            ASC_NULLS_LAST = 2;
-            DESC_NULLS_FIRST = 3;
-            DESC_NULLS_LAST = 4;
-            CLUSTERED = 5;
-        }
+  message ScalarFunction {
+    // points to a function_anchor defined in this plan
+    uint32 function_reference = 1;
+    repeated Expression args = 2;
+    Type output_type = 3;
+  }
 
+  message AggregateFunction {
+    // points to a function_anchor defined in this plan
+    uint32 function_reference = 1;
+    repeated Expression args = 2;
+    repeated SortField sorts = 3;
+    AggregationPhase phase = 4;
+    Type output_type = 5;
+  }
+
+  enum AggregationPhase {
+    UNKNOWN = 0;
+    INITIAL_TO_INTERMEDIATE = 1;
+    INTERMEDIATE_TO_INTERMEDIATE = 2;
+    INITIAL_TO_RESULT = 3;
+    INTERMEDIATE_TO_RESULT = 4;
+  }
+
+  message WindowFunction {
+    // points to a function_anchor defined in this plan
+    uint32 function_reference = 1;
+    repeated Expression partitions = 2;
+    repeated SortField sorts = 3;
+    Bound upper_bound = 4;
+    Bound lower_bound = 5;
+    AggregationPhase phase = 6;
+    Type output_type = 7;
+    repeated Expression args = 8;
+
+    message Bound {
+
+      message Preceding { int64 offset = 1; }
+
+      message Following { int64 offset = 1; }
+
+      message CurrentRow {}
+
+      message Unbounded {}
+
+      oneof kind {
+        Preceding preceding = 1;
+        Following following = 2;
+        CurrentRow current_row = 3;
+        Unbounded unbounded = 4;
+      }
+    }
+  }
+
+  message SortField {
+    Expression expr = 1;
+
+    oneof sort_kind {
+      SortDirection direction = 2;
+      uint32 comparison_function_reference = 3;
+    }
+    enum SortDirection {
+      UNKNOWN = 0;
+      ASC_NULLS_FIRST = 1;
+      ASC_NULLS_LAST = 2;
+      DESC_NULLS_FIRST = 3;
+      DESC_NULLS_LAST = 4;
+      CLUSTERED = 5;
+    }
+  }
+
+  message IfThen {
+
+    repeated IfClause ifs = 1;
+    Expression else = 2;
+
+    message IfClause {
+      Expression if = 1;
+      Expression then = 2;
+    }
+  }
+
+  message SwitchExpression {
+    repeated IfValue ifs = 1;
+    Expression else = 2;
+
+    message IfValue {
+      Expression if = 1;
+      Expression then = 2;
+    }
+  }
+
+  message SingularOrList {
+    Expression value = 1;
+    repeated Expression options = 2;
+  }
+
+  message MultiOrList {
+    repeated Expression value = 1;
+    repeated Record options = 2;
+
+    message Record { repeated Expression fields = 1; }
+  }
+
+  message EmbeddedFunction {
+    repeated Expression arguments = 1;
+    Type output_type = 2;
+    oneof kind {
+      PythonPickleFunction python_pickle_function = 3;
+      WebAssemblyFunction web_assembly_function = 4;
     }
 
-    message IfThen {
-
-        repeated IfClause ifs = 1;
-        Expression else = 2;
-
-        message IfClause {
-            Expression if = 1;
-            Expression then = 2;
-        }
-
+    message PythonPickleFunction {
+      bytes function = 1;
+      repeated string prerequisite = 2;
     }
 
-    message SwitchExpression {
-        repeated IfValue ifs = 1;
-        Expression else = 2;
-
-        message IfValue {
-            Expression if = 1;
-            Expression then = 2;
-        }
+    message WebAssemblyFunction {
+      bytes script = 1;
+      repeated string prerequisite = 2;
     }
-
-    message SingularOrList {
-        Expression value = 1;
-        repeated Expression options = 2;
-    }
-
-    message MultiOrList {
-        repeated Expression value = 1;
-        repeated Record options = 2;
-
-        message Record {
-            repeated Expression fields = 1;
-        }
-
-    }
-
-    message EmbeddedFunction {
-        repeated Expression arguments = 1;
-        Type output_type = 2;
-        oneof kind {
-            PythonPickleFunction python_pickle_function = 3;
-            WebAssemblyFunction web_assembly_function = 4;
-        }
-
-        message PythonPickleFunction {
-            bytes function = 1;
-            repeated string prerequisite = 2;
-        }
-
-        message WebAssemblyFunction {
-            bytes script = 1;
-            repeated string prerequisite = 2;
-        }
-    }
+  }
 }
-
-
-
-

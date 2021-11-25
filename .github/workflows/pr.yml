@@ -17,6 +17,15 @@ jobs:
       - name: Generate Static Site
         run: mkdocs build
         working-directory: ./site
+  proto-format-check:
+    name: Check Protobuf Style
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: jidicula/clang-format-action@v4.3.1
+        with:
+          clang-format-version: '13'
+          check-path: binary
   proto:
     name: Check Protobuf
     runs-on: ubuntu-latest
