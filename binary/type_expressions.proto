@@ -4,6 +4,7 @@ package io.substrait;
 import "type.proto";
 
 option java_multiple_files = true;
+option java_package = "io.substrait.proto";
 option csharp_namespace = "Substrait.Protobuf";
 
 message DerivationExpression {
@@ -44,6 +45,7 @@ message DerivationExpression {
     UnaryOp unary_op = 36;
     BinaryOp binary_op = 37;
     IfElse if_else = 38;
+    ReturnProgram return_program = 39;
   }
 
   message ExpressionFixedChar {
@@ -132,5 +134,15 @@ message DerivationExpression {
       EQUALS = 11;
       COVERS = 12;
     }
+  }
+
+  message ReturnProgram {
+    message Assignment {
+      string name = 1;
+      DerivationExpression expression = 2;
+    }
+
+    repeated Assignment assignments = 1;
+    DerivationExpression finalExpression = 2;
   }
 }

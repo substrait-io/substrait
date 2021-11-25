@@ -28,8 +28,6 @@ The read operator is an operator that produces one output. A simple example woul
 
 Read definition types are built by the community and added to the specification. This is a portion of specification that is expected to grow rapidly.
 
-
-
 #### Virtual Table
 
 | Property | Description | Required |
@@ -101,8 +99,6 @@ The project operation will produce one or more additional expressions based on t
 | Property Maintenance | Distribution maintained, mapped by emit. Orderedness: Maintained if no window operations. Extended to include projection fields if fields are direct references. If window operations are present, no orderedness is maintained. |
 | Direct Output Order  | The field order of the input + the list of new expressions in the order they are declared in the expressions list. |
 
-
-
 ### Project Properties
 
 | Property    | Description                                          | Required                         |
@@ -122,8 +118,6 @@ The join operation will combine two separate inputs into a single output, based 
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is empty post operation. Physical relations may provide better property maintenance. |
 | Direct Output Order  | The emit order of the left input followed by the emit order of the right input. |
-
-
 
 ### Join Properties
 
@@ -155,8 +149,6 @@ The set operation ecompasses several set level operations that support combining
 | Outputs              | 1                                                            |
 | Property Maintenance | Maintains distribution if all inputs have the same ordinal distribution. Orderness is not maintained. |
 | Direct Output Order  | All inputs are ordinally matched and returned together. All inputs must have matching record types. |
-
-
 
 ### Set Properties
 
@@ -198,7 +190,6 @@ The fetch operation eliminates records outside a desired window. Typically corre
 | Offset   | A positive integer. Declares the offset for retrieval of records. | Optional, defaults to 0. |
 | Count    | A positive integer. Declares the number of records that should be returned. | Required                 |
 
-### 
 
 ## Aggregate Operation
 
@@ -218,9 +209,8 @@ The aggregate operation groups input data on one or more sets of grouping keys, 
 | Input            | The relational input                                         | Required                                |
 | Grouping Sets    | One or more grouping sets                                    | Optional, required if no measures.      |
 | Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional, defaults to 0.                |
-| Measures         | A list of one or more aggregate expressions.                 | Optional, required if no grouping sets. |
+| Measures         | A list of one or more aggregate expressions along with an optional filter. | Optional, required if no grouping sets. |
 
-### 
 
 ## Write Operator
 
@@ -247,8 +237,6 @@ The write operator is an operator that consumes one output and writes it to stor
 
 Write definition types are built by the community and added to the specification. This is a portion of specification that is expected to grow rapidly.
 
-
-
 #### Virtual Table
 
 | Property | Description                                                  | Required                     |
@@ -264,10 +252,6 @@ Write definition types are built by the community and added to the specification
 | -------- | ------------------------------------------------------------ | -------- |
 | Path     | A uri to write the data to. Supports the inclusion of field references that are listed as available in properties as a "rotation description field". | Required |
 | Format   | Enumeration of available formats. Only current option is PARQUET. | Required |
-
-
-
-
 
 
 

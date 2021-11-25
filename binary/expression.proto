@@ -6,6 +6,7 @@ import "type.proto";
 import "selection.proto";
 
 option java_multiple_files = true;
+option java_package = "io.substrait.proto";
 option csharp_namespace = "Substrait.Protobuf";
 
 message Expression {
@@ -19,6 +20,7 @@ message Expression {
     SingularOrList singular_or_list = 8;
     MultiOrList multi_or_list = 9;
     Enum enum = 10;
+    Cast cast = 11;
   }
 
   message Enum {
@@ -47,7 +49,7 @@ message Expression {
       IntervalYearToMonth interval_year_to_month = 19;
       IntervalDayToSecond interval_day_to_second = 20;
       string fixed_char = 21;
-      string var_char = 22;
+      VarChar var_char = 22;
       bytes fixed_binary = 23;
       Decimal decimal = 24;
       Struct struct = 25;
@@ -56,6 +58,16 @@ message Expression {
       bytes uuid = 28;
       Type null = 29; // a typed null literal
       List list = 30;
+    }
+
+    // whether the literal type should be treated as a nullable type. Applies to
+    // all members of union other than the Typed null (which should directly
+    // declare nullability).
+    bool nullable = 50;
+
+    message VarChar {
+      string value = 1;
+      uint32 length = 2;
     }
 
     message Decimal {
@@ -106,23 +118,6 @@ message Expression {
     Type output_type = 3;
   }
 
-  message AggregateFunction {
-    // points to a function_anchor defined in this plan
-    uint32 function_reference = 1;
-    repeated Expression args = 2;
-    repeated SortField sorts = 3;
-    AggregationPhase phase = 4;
-    Type output_type = 5;
-  }
-
-  enum AggregationPhase {
-    UNKNOWN = 0;
-    INITIAL_TO_INTERMEDIATE = 1;
-    INTERMEDIATE_TO_INTERMEDIATE = 2;
-    INITIAL_TO_RESULT = 3;
-    INTERMEDIATE_TO_RESULT = 4;
-  }
-
   message WindowFunction {
     // points to a function_anchor defined in this plan
     uint32 function_reference = 1;
@@ -153,23 +148,6 @@ message Expression {
     }
   }
 
-  message SortField {
-    Expression expr = 1;
-
-    oneof sort_kind {
-      SortDirection direction = 2;
-      uint32 comparison_function_reference = 3;
-    }
-    enum SortDirection {
-      UNKNOWN = 0;
-      ASC_NULLS_FIRST = 1;
-      ASC_NULLS_LAST = 2;
-      DESC_NULLS_FIRST = 3;
-      DESC_NULLS_LAST = 4;
-      CLUSTERED = 5;
-    }
-  }
-
   message IfThen {
 
     repeated IfClause ifs = 1;
@@ -179,6 +157,11 @@ message Expression {
       Expression if = 1;
       Expression then = 2;
     }
+  }
+
+  message Cast {
+    Type type = 1;
+    Expression input = 2;
   }
 
   message SwitchExpression {
@@ -221,4 +204,38 @@ message Expression {
       repeated string prerequisite = 2;
     }
   }
+}
+
+message SortField {
+  Expression expr = 1;
+
+  oneof sort_kind {
+    SortDirection direction = 2;
+    uint32 comparison_function_reference = 3;
+  }
+  enum SortDirection {
+    UNKNOWN = 0;
+    ASC_NULLS_FIRST = 1;
+    ASC_NULLS_LAST = 2;
+    DESC_NULLS_FIRST = 3;
+    DESC_NULLS_LAST = 4;
+    CLUSTERED = 5;
+  }
+}
+
+enum AggregationPhase {
+  UNKNOWN = 0;
+  INITIAL_TO_INTERMEDIATE = 1;
+  INTERMEDIATE_TO_INTERMEDIATE = 2;
+  INITIAL_TO_RESULT = 3;
+  INTERMEDIATE_TO_RESULT = 4;
+}
+
+message AggregateFunction {
+  // points to a function_anchor defined in this plan
+  uint32 function_reference = 1;
+  repeated Expression args = 2;
+  repeated SortField sorts = 3;
+  AggregationPhase phase = 4;
+  Type output_type = 5;
 }
