@@ -189,5 +189,5 @@ message Type {
 message NamedStruct {
   // list of names in dfs order
   repeated string names = 1;
-  Struct struct = 2;
+  Type.Struct struct = 2;
 }
