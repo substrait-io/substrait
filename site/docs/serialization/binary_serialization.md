@@ -64,6 +64,15 @@ Substrait protobuf exposes a special object in multiple places in the representa
 %%% proto.message.AdvancedExtension %%%
     ```
 
+## Capabilities
+
+When two systems exchanging substrait plans want to understand each others capabilities, they may exchange a `Capabilities` message. The capabilities message provides information on the set of simple and advanced extensions that the system supports.
+
+=== "Capabilities Message"
+    ```proto
+%%% proto.message.Capabilities %%%
+    ```
+
 ## Protobuf Rationale
 
 The binary format of a Substrait is designed to be easy to work with in many languages. A key requirement is that someone can take the binary format IDL and use standard tools to build a set of primitives that are easy to work with in any of a number of languages. This allows communities to build and use Substrait using only a binary IDL and the specification (and allows the Substrait project to avoid being required to build libraries for each language to work with the specification). 
