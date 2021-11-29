@@ -44,7 +44,8 @@ message Expression {
       string string = 12;
       bytes binary = 13;
       fixed64 timestamp = 14;
-      fixed32 date = 16;
+      // Date in units of milliseconds since the UNIX epoch.
+      int64 date = 16;
       uint64 time = 17;
       IntervalYearToMonth interval_year_to_month = 19;
       IntervalDayToSecond interval_day_to_second = 20;
