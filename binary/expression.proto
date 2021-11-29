@@ -181,7 +181,7 @@ message Expression {
     Expression else = 2;
 
     message IfValue {
-      Expression if = 1;
+      Literal if = 1;
       Expression then = 2;
     }
   }
