@@ -221,7 +221,7 @@ message Expression {
   // the desired field or a particular element in an array. Supports
   // expressions that would roughly translate to something similar to:
   // a.b[2].c['my_map_key'].x where a,b,c and x are struct field references 
-  // (ordinalized in the internal representation here), [2] is an list offset
+  // (ordinalized in the internal representation here), [2] is a list offset
   // and ['my_map_key'] is a reference into a map field.
   message ReferenceSegment {
 
@@ -260,7 +260,7 @@ message Expression {
   // A reference that takes an existing subtype and selectively removes fields from 
   // it. For example, one might initially have an inner struct with 100 fields but a 
   // a particular operation only needs to interact with only 2 of those 100 fields.
-  // In this situation, one would you a mask expression to eliminate the 98 fields that
+  // In this situation, one would use a mask expression to eliminate the 98 fields that
   // are not relevant to the rest of the operation pipeline.
   //
   // Note that this does not fundamentally alter the structure of data beyond the 
@@ -376,5 +376,3 @@ message AggregateFunction {
   AggregationPhase phase = 4;
   Type output_type = 5;
 }
-
-
