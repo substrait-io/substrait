@@ -153,12 +153,6 @@ message Type {
     Nullability nullability = 3;
   }
 
-  message NamedStruct {
-    // list of names in dfs order
-    repeated string names = 1;
-    Struct struct = 2;
-  }
-
   message List {
     Type type = 1;
     uint32 type_variation_reference = 2;
@@ -171,4 +165,29 @@ message Type {
     uint32 type_variation_reference = 3;
     Nullability nullability = 4;
   }
+}
+
+// A message for modeling name/type pairs.
+//
+// Useful for representing relation schemas.
+//
+// Notes:
+//
+// * The names field is in depth-first order.
+//
+// For example a schema such as:
+//
+// a: int64
+// b: struct<c: float32, d: string>
+//
+// would have a `names` field that looks like:
+//
+// ["a", "b", "c", "d"]
+//
+// * Only struct fields are contained in this field's elements,
+// * Map keys should be traversed first, then values when producing/consuming
+message NamedStruct {
+  // list of names in dfs order
+  repeated string names = 1;
+  Type.Struct struct = 2;
 }
