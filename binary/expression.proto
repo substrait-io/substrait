@@ -57,7 +57,8 @@ message Expression {
       Decimal decimal = 24;
       Struct struct = 25;
       Map map = 26;
-      fixed64 timestamp_tz = 27;
+      // Timestamp in units of microseconds since the UNIX epoch.
+      int64 timestamp_tz = 27;
       bytes uuid = 28;
       Type null = 29; // a typed null literal
       List list = 30;
