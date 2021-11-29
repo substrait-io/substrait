@@ -88,6 +88,14 @@ message Expression {
       }
 
       repeated KeyValue key_values = 1;
+      // The key type of the map literal
+      //
+      // Required if `key_values` is empty
+      Type key_type = 2;
+      // The value type of the map literal
+      //
+      // Required if `key_values` is empty
+      Type value_type = 3;
     }
 
     message IntervalYearToMonth {
@@ -108,6 +116,10 @@ message Expression {
     message List {
       // A homogeneously typed list of literals
       repeated Literal values = 1;
+      // The element type of the list literal.
+      //
+      // Required if `values` is empty.
+      Type element_type = 2;
     }
   }
 
