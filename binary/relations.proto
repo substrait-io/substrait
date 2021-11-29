@@ -139,7 +139,7 @@ message AggregateRel {
 
   io.substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-  message Grouping { repeated int32 input_fields = 1; }
+  message Grouping { repeated Expression grouping_expressions = 1; }
 
   message Measure {
     AggregateFunction measure = 1;
