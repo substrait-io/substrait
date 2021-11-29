@@ -48,7 +48,7 @@ message RelCommon {
 
 message ReadRel {
   RelCommon common = 1;
-  Type.NamedStruct base_schema = 2;
+  NamedStruct base_schema = 2;
   Expression filter = 3;
   MaskExpression projection = 4;
   io.substrait.extensions.AdvancedExtension advanced_extension = 10;
