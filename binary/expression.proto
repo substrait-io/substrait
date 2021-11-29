@@ -15,8 +15,8 @@ message Expression {
     FieldReference selection = 2;
     ScalarFunction scalar_function = 3;
     WindowFunction window_function = 5;
-    CasePredicateExpression case_predicate = 6;
-    CaseValueExpression case_value = 7;
+    IfThen if_then = 6;
+    SwitchExpression switch_expression = 7;
     SingularOrList singular_or_list = 8;
     MultiOrList multi_or_list = 9;
     Enum enum = 10;
@@ -148,22 +148,13 @@ message Expression {
     }
   }
 
-  message CasePredicateExpression {
-    repeated CasePredicate predicates = 1;
+  message IfThen {
+
+    repeated IfClause ifs = 1;
     Expression else = 2;
 
-    message CasePredicate {
+    message IfClause {
       Expression if = 1;
-      Expression then = 2;
-    }
-  }
-
-  message CaseValueExpression {
-    repeated CaseValue ifs = 1;
-    Expression else = 2;
-
-    message CaseValue {
-      Literal value = 1;
       Expression then = 2;
     }
   }
@@ -171,6 +162,16 @@ message Expression {
   message Cast {
     Type type = 1;
     Expression input = 2;
+  }
+
+  message SwitchExpression {
+    repeated IfValue ifs = 1;
+    Expression else = 2;
+
+    message IfValue {
+      Literal if = 1;
+      Expression then = 2;
+    }
   }
 
   message SingularOrList {
