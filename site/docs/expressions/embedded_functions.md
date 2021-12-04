@@ -17,7 +17,7 @@ The binary representation of an embedded function is:
 
 === "Binary Representation"
     ```proto
-%%% proto.message.EmbeddedFunction %%%
+%%% proto.message.Expression.EmbeddedFunction %%%
     ```
 === "Human Readable Representation"
     n/a
