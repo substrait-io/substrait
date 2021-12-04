@@ -2,6 +2,8 @@ version: v1
 plugins:
   - name: cpp
     out: gen/proto/cpp
+  - name: csharp
+    out: gen/proto/csharp
   - name: java
     out: gen/proto/java
   - name: python
