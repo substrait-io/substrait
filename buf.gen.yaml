@@ -1,0 +1,8 @@
+version: v1
+plugins:
+  - name: cpp
+    out: gen/proto/cpp
+  - name: java
+    out: gen/proto/java
+  - name: python
+    out: gen/proto/python

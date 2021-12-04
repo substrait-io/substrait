@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package io.substrait;
+package substrait;
 
-import "type.proto";
-import "parameterized_types.proto";
-import "type_expressions.proto";
+import "substrait/type.proto";
+import "substrait/parameterized_types.proto";
+import "substrait/type_expressions.proto";
 
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
@@ -26,14 +26,14 @@ message FunctionSignature {
     ParameterConsistency consistency = 3;
 
     enum ParameterConsistency {
-      UNKNOWN = 0;
+      PARAMETER_CONSISTENCY_UNSPECIFIED = 0;
 
       // All argument must be the same concrete type.
-      CONSISTENT = 1;
+      PARAMETER_CONSISTENCY_CONSISTENT = 1;
 
       // Each argument can be any possible concrete type afforded by the bounds
       // of any parameter defined in the arguments specification.
-      INCONSISTENT = 2;
+      PARAMETER_CONSISTENCY_INCONSISTENT = 2;
     }
   }
 
@@ -99,9 +99,9 @@ message FunctionSignature {
     repeated Implementation implementations = 15;
 
     enum WindowType {
-      UNKNOWN = 0;
-      STREAMING = 1;
-      PARTITION = 2;
+      WINDOW_TYPE_UNSPECIFIED = 0;
+      WINDOW_TYPE_STREAMING = 1;
+      WINDOW_TYPE_PARTITION = 2;
     }
   }
 
@@ -116,9 +116,9 @@ message FunctionSignature {
     string uri = 2;
 
     enum Type {
-      UNKNOWN = 0;
-      WEB_ASSEMBLY = 1;
-      TRINO_JAR = 2;
+      TYPE_UNSPECIFIED = 0;
+      TYPE_WEB_ASSEMBLY = 1;
+      TYPE_TRINO_JAR = 2;
     }
   }
 
