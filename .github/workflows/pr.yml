@@ -25,24 +25,17 @@ jobs:
       - uses: jidicula/clang-format-action@v4.3.1
         with:
           clang-format-version: '13'
-          check-path: binary
+          check-path: proto/subsrait
   proto:
     name: Check Protobuf
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install Protoc
-        uses: arduino/setup-protoc@v1
+      - uses: arduino/setup-protoc@v1
+      - uses: bufbuild/buf-setup-action@v0.7.0
+      - uses: bufbuild/buf-lint-action@v1
       - name: Compile protobuf
-        run: |
-          set -e
-
-          for i in $(ls);
-          do
-            protoc --proto_path=. --java_out . $i
-          done
-          set +e
-        working-directory: ./binary
+        run: buf generate
   yamllint:
     name: Lint YAML extensions
     runs-on: ubuntu-latest

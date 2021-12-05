@@ -1,7 +1,7 @@
 syntax = "proto3";
-package io.substrait;
+package substrait;
 
-import "type.proto";
+import "substrait/type.proto";
 
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
@@ -104,35 +104,35 @@ message DerivationExpression {
   }
 
   message UnaryOp {
-    OpType op_type = 1;
+    UnaryOpType op_type = 1;
     DerivationExpression arg = 2;
 
-    enum OpType {
-      UNKNOWN = 0;
-      BOOLEAN_NOT = 1;
+    enum UnaryOpType {
+      UNARY_OP_TYPE_UNSPECIFIED = 0;
+      UNARY_OP_TYPE_BOOLEAN_NOT = 1;
     }
   }
 
   message BinaryOp {
 
-    OpType op_type = 1;
+    BinaryOpType op_type = 1;
     DerivationExpression arg1 = 2;
     DerivationExpression arg2 = 3;
 
-    enum OpType {
-      UNKNOWN = 0;
-      PLUS = 1;
-      MINUS = 2;
-      MULTIPLY = 3;
-      DIVIDE = 4;
-      MIN = 5;
-      MAX = 6;
-      GREATER_THAN = 7;
-      LESS_THAN = 8;
-      AND = 9;
-      OR = 10;
-      EQUALS = 11;
-      COVERS = 12;
+    enum BinaryOpType {
+      BINARY_OP_TYPE_UNSPECIFIED = 0;
+      BINARY_OP_TYPE_PLUS = 1;
+      BINARY_OP_TYPE_MINUS = 2;
+      BINARY_OP_TYPE_MULTIPLY = 3;
+      BINARY_OP_TYPE_DIVIDE = 4;
+      BINARY_OP_TYPE_MIN = 5;
+      BINARY_OP_TYPE_MAX = 6;
+      BINARY_OP_TYPE_GREATER_THAN = 7;
+      BINARY_OP_TYPE_LESS_THAN = 8;
+      BINARY_OP_TYPE_AND = 9;
+      BINARY_OP_TYPE_OR = 10;
+      BINARY_OP_TYPE_EQUALS = 11;
+      BINARY_OP_TYPE_COVERS = 12;
     }
   }
 
@@ -143,6 +143,6 @@ message DerivationExpression {
     }
 
     repeated Assignment assignments = 1;
-    DerivationExpression finalExpression = 2;
+    DerivationExpression final_expression = 2;
   }
 }

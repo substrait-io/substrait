@@ -43,7 +43,7 @@ plugins:
   - minify:
       minify_html: true
   - mkdocs_protobuf:
-      proto_dir: ../binary
+      proto_dir: ../proto/substrait
       indent_depth: 4 # requied to make superfences happy
 markdown_extensions:
   - smarty

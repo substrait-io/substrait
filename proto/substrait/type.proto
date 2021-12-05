@@ -1,5 +1,5 @@
 syntax = "proto3";
-package io.substrait;
+package substrait;
 
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
@@ -38,8 +38,9 @@ message Type {
   }
 
   enum Nullability {
-    NULLABLE = 0;
-    REQUIRED = 1;
+    NULLABILITY_UNSPECIFIED = 0;
+    NULLABILITY_NULLABLE = 1;
+    NULLABILITY_REQUIRED = 2;
   }
 
   message Boolean {

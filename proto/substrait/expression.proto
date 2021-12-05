@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package io.substrait;
+package substrait;
 
-import "type.proto";
+import "substrait/type.proto";
 
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
@@ -355,21 +355,21 @@ message SortField {
     uint32 comparison_function_reference = 3;
   }
   enum SortDirection {
-    UNKNOWN = 0;
-    ASC_NULLS_FIRST = 1;
-    ASC_NULLS_LAST = 2;
-    DESC_NULLS_FIRST = 3;
-    DESC_NULLS_LAST = 4;
-    CLUSTERED = 5;
+    SORT_DIRECTION_UNSPECIFIED = 0;
+    SORT_DIRECTION_ASC_NULLS_FIRST = 1;
+    SORT_DIRECTION_ASC_NULLS_LAST = 2;
+    SORT_DIRECTION_DESC_NULLS_FIRST = 3;
+    SORT_DIRECTION_DESC_NULLS_LAST = 4;
+    SORT_DIRECTION_CLUSTERED = 5;
   }
 }
 
 enum AggregationPhase {
-  UNKNOWN = 0;
-  INITIAL_TO_INTERMEDIATE = 1;
-  INTERMEDIATE_TO_INTERMEDIATE = 2;
-  INITIAL_TO_RESULT = 3;
-  INTERMEDIATE_TO_RESULT = 4;
+  AGGREGATION_PHASE_UNSPECIFIED = 0;
+  AGGREGATION_PHASE_INITIAL_TO_INTERMEDIATE = 1;
+  AGGREGATION_PHASE_INTERMEDIATE_TO_INTERMEDIATE = 2;
+  AGGREGATION_PHASE_INITIAL_TO_RESULT = 3;
+  AGGREGATION_PHASE_INTERMEDIATE_TO_RESULT = 4;
 }
 
 message AggregateFunction {
