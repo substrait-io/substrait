@@ -122,7 +122,7 @@ message Expression {
       // The element type of the list literal.
       //
       // Required if `values` is empty.
-      Type element_type = 2;
+      Type value_type = 2;
     }
   }
 
