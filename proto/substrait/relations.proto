@@ -86,6 +86,15 @@ message ReadRel {
 
       FileFormat format = 5;
 
+      // the index of the partition this item belongs to
+      uint64 partition_index = 6;
+
+      // the start position in byte to read from this item
+      uint64 start = 7;
+      
+      // the length in byte to read from this item
+      uint64 length = 8;
+
       enum FileFormat {
         FILE_FORMAT_UNSPECIFIED = 0;
         FILE_FORMAT_PARQUET = 1;
