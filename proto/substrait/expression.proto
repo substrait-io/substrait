@@ -44,7 +44,7 @@ message Expression {
       bytes binary = 13;
       // Timestamp in units of microseconds since the UNIX epoch.
       int64 timestamp = 14;
-      // Date in units of microseconds since the UNIX epoch.
+      // Date in units of milliseconds since the UNIX epoch.
       int64 date = 16;
       // Time in units of microseconds past midnight
       int64 time = 17;
