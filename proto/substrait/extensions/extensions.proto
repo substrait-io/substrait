@@ -43,7 +43,7 @@ message SimpleExtensionDeclaration {
 
   message ExtensionTypeVariation {
     // references the extension_uri_anchor defined for a specific extension URI.
-    uint32 extension_uri_pointer = 1;
+    uint32 extension_uri_reference = 1;
 
     // A surrogate key used in the context of a single plan to reference a
     // specific type variation
@@ -55,7 +55,7 @@ message SimpleExtensionDeclaration {
 
   message ExtensionFunction {
     // references the extension_uri_anchor defined for a specific extension URI.
-    uint32 extension_uri_pointer = 1;
+    uint32 extension_uri_reference = 1;
 
     // A surrogate key used in the context of a single plan to reference a
     // specific function
