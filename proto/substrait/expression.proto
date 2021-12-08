@@ -18,7 +18,8 @@ message Expression {
     SwitchExpression switch_expression = 7;
     SingularOrList singular_or_list = 8;
     MultiOrList multi_or_list = 9;
-    Enum enum = 10;
+    Enum enum
+    = 10;
     Cast cast = 11;
   }
 
@@ -44,8 +45,8 @@ message Expression {
       bytes binary = 13;
       // Timestamp in units of microseconds since the UNIX epoch.
       int64 timestamp = 14;
-      // Date in units of milliseconds since the UNIX epoch.
-      int64 date = 16;
+      // Date in units of days since the UNIX epoch.
+      int32 date = 16;
       // Time in units of microseconds past midnight
       int64 time = 17;
       IntervalYearToMonth interval_year_to_month = 19;
@@ -59,7 +60,7 @@ message Expression {
       // Timestamp in units of microseconds since the UNIX epoch.
       int64 timestamp_tz = 27;
       bytes uuid = 28;
-      Type null = 29; // a typed null literal
+      Type null = 29;  // a typed null literal
       List list = 30;
       Type.List empty_list = 31;
       Type.Map empty_map = 32;
@@ -135,10 +136,13 @@ message Expression {
     repeated Expression args = 8;
 
     message Bound {
+      message Preceding {
+        int64 offset = 1;
+      }
 
-      message Preceding { int64 offset = 1; }
-
-      message Following { int64 offset = 1; }
+      message Following {
+        int64 offset = 1;
+      }
 
       message CurrentRow {}
 
@@ -154,7 +158,6 @@ message Expression {
   }
 
   message IfThen {
-
     repeated IfClause ifs = 1;
     Expression else = 2;
 
@@ -188,7 +191,9 @@ message Expression {
     repeated Expression value = 1;
     repeated Record options = 2;
 
-    message Record { repeated Expression fields = 1; }
+    message Record {
+      repeated Expression fields = 1;
+    }
   }
 
   message EmbeddedFunction {
@@ -210,15 +215,14 @@ message Expression {
     }
   }
 
-  // A way to reference the inner property of a complex record. Can reference 
-  // either a map key by literal, a struct field by the ordinal position of 
+  // A way to reference the inner property of a complex record. Can reference
+  // either a map key by literal, a struct field by the ordinal position of
   // the desired field or a particular element in an array. Supports
   // expressions that would roughly translate to something similar to:
-  // a.b[2].c['my_map_key'].x where a,b,c and x are struct field references 
+  // a.b[2].c['my_map_key'].x where a,b,c and x are struct field references
   // (ordinalized in the internal representation here), [2] is a list offset
   // and ['my_map_key'] is a reference into a map field.
   message ReferenceSegment {
-
     oneof reference_type {
       MapKey map_key = 1;
       StructField struct_field = 2;
@@ -228,15 +232,15 @@ message Expression {
     message MapKey {
       // literal based reference to specific possible value in map.
       Literal map_key = 1;
-      
-      // Optional child segment      
+
+      // Optional child segment
       ReferenceSegment child = 2;
     }
 
     message StructField {
       // zero-indexed ordinal position of field in struct
       int32 field = 1;
-      
+
       // Optional child segment
       ReferenceSegment child = 2;
     }
@@ -244,23 +248,22 @@ message Expression {
     message ListElement {
       // zero-indexed ordinal position of element in list
       int32 offset = 1;
-      
+
       // Optional child segment
       ReferenceSegment child = 2;
     }
-
   }
 
-  // A reference that takes an existing subtype and selectively removes fields from 
-  // it. For example, one might initially have an inner struct with 100 fields but a 
-  // a particular operation only needs to interact with only 2 of those 100 fields.
-  // In this situation, one would use a mask expression to eliminate the 98 fields that
-  // are not relevant to the rest of the operation pipeline.
+  // A reference that takes an existing subtype and selectively removes fields
+  // from it. For example, one might initially have an inner struct with 100
+  // fields but a a particular operation only needs to interact with only 2 of
+  // those 100 fields. In this situation, one would use a mask expression to
+  // eliminate the 98 fields that are not relevant to the rest of the operation
+  // pipeline.
   //
-  // Note that this does not fundamentally alter the structure of data beyond the 
-  // elimination of unecessary elements.
+  // Note that this does not fundamentally alter the structure of data beyond
+  // the elimination of unecessary elements.
   message MaskExpression {
-
     StructSelect select = 1;
     bool maintain_singular_struct = 2;
 
@@ -272,7 +275,9 @@ message Expression {
       }
     }
 
-    message StructSelect { repeated StructItem struct_items = 1; }
+    message StructSelect {
+      repeated StructItem struct_items = 1;
+    }
 
     message StructItem {
       int32 field = 1;
@@ -280,7 +285,6 @@ message Expression {
     }
 
     message ListSelect {
-
       repeated ListSelectItem selection = 1;
       Select child = 2;
 
@@ -290,7 +294,9 @@ message Expression {
           ListSlice slice = 2;
         }
 
-        message ListElement { int32 field = 1; }
+        message ListElement {
+          int32 field = 1;
+        }
 
         message ListSlice {
           int32 start = 1;
@@ -307,33 +313,37 @@ message Expression {
 
       Select child = 3;
 
-      message MapKey { string map_key = 1; }
+      message MapKey {
+        string map_key = 1;
+      }
 
-      message MapKeyExpression { string map_key_expression = 1; }
+      message MapKeyExpression {
+        string map_key_expression = 1;
+      }
     }
   }
 
-  // A reference to an inner part of a complex object. Can reference reference a single 
-  // element or a masked version of elements
+  // A reference to an inner part of a complex object. Can reference reference a
+  // single element or a masked version of elements
   message FieldReference {
-
-    // Whether this is composed of a single element reference or a masked element subtree
+    // Whether this is composed of a single element reference or a masked
+    // element subtree
     oneof reference_type {
       ReferenceSegment direct_reference = 1;
       MaskExpression masked_reference = 2;
     }
 
-    // Whether this reference has an origin of a root struct or is based on the ouput 
-    // of an expression. When this is a RootReference and direct_reference above is used,
-    // the direct_reference must be of a type StructField.
+    // Whether this reference has an origin of a root struct or is based on the
+    // ouput of an expression. When this is a RootReference and direct_reference
+    // above is used, the direct_reference must be of a type StructField.
     oneof root_type {
       Expression expression = 3;
       RootReference root_reference = 4;
     }
 
-    // Singleton that expresses this FieldReference is rooted off the root incoming record type
+    // Singleton that expresses this FieldReference is rooted off the root
+    // incoming record type
     message RootReference {}
-
   }
 }
 
