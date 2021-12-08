@@ -210,11 +210,11 @@ message Expression {
     }
   }
 
-  // A way to reference the inner property of a complex record. Can reference 
-  // either a map key by literal, a struct field by the ordinal position of 
+  // A way to reference the inner property of a complex record. Can reference
+  // either a map key by literal, a struct field by the ordinal position of
   // the desired field or a particular element in an array. Supports
   // expressions that would roughly translate to something similar to:
-  // a.b[2].c['my_map_key'].x where a,b,c and x are struct field references 
+  // a.b[2].c['my_map_key'].x where a,b,c and x are struct field references
   // (ordinalized in the internal representation here), [2] is a list offset
   // and ['my_map_key'] is a reference into a map field.
   message ReferenceSegment {
@@ -228,15 +228,15 @@ message Expression {
     message MapKey {
       // literal based reference to specific possible value in map.
       Literal map_key = 1;
-      
-      // Optional child segment      
+
+      // Optional child segment
       ReferenceSegment child = 2;
     }
 
     message StructField {
       // zero-indexed ordinal position of field in struct
       int32 field = 1;
-      
+
       // Optional child segment
       ReferenceSegment child = 2;
     }
@@ -244,20 +244,20 @@ message Expression {
     message ListElement {
       // zero-indexed ordinal position of element in list
       int32 offset = 1;
-      
+
       // Optional child segment
       ReferenceSegment child = 2;
     }
 
   }
 
-  // A reference that takes an existing subtype and selectively removes fields from 
-  // it. For example, one might initially have an inner struct with 100 fields but a 
+  // A reference that takes an existing subtype and selectively removes fields from
+  // it. For example, one might initially have an inner struct with 100 fields but a
   // a particular operation only needs to interact with only 2 of those 100 fields.
   // In this situation, one would use a mask expression to eliminate the 98 fields that
   // are not relevant to the rest of the operation pipeline.
   //
-  // Note that this does not fundamentally alter the structure of data beyond the 
+  // Note that this does not fundamentally alter the structure of data beyond the
   // elimination of unecessary elements.
   message MaskExpression {
 
@@ -313,7 +313,7 @@ message Expression {
     }
   }
 
-  // A reference to an inner part of a complex object. Can reference reference a single 
+  // A reference to an inner part of a complex object. Can reference reference a single
   // element or a masked version of elements
   message FieldReference {
 
@@ -323,7 +323,7 @@ message Expression {
       MaskExpression masked_reference = 2;
     }
 
-    // Whether this reference has an origin of a root struct or is based on the ouput 
+    // Whether this reference has an origin of a root struct or is based on the ouput
     // of an expression. When this is a RootReference and direct_reference above is used,
     // the direct_reference must be of a type StructField.
     oneof root_type {

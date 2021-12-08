@@ -5,10 +5,10 @@ aggregate_functions:
     description: Count a set of values
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - options: [SILENT, SATURATE, ERROR]
             required: false
           - value: any
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64
-        return: i64        
+        return: i64
