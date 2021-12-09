@@ -17,6 +17,11 @@ jobs:
       - name: Generate Static Site
         run: mkdocs build
         working-directory: ./site
+  editorconfig-checker:
+    name: Check editorconfig
+    runs-on: ubuntu-latest
+    steps:
+      - uses: editorconfig-checker/action-editorconfig-checker@v1
   proto-format-check:
     name: Check Protobuf Style
     runs-on: ubuntu-latest
