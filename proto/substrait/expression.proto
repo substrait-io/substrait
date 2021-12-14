@@ -44,8 +44,8 @@ message Expression {
       bytes binary = 13;
       // Timestamp in units of microseconds since the UNIX epoch.
       int64 timestamp = 14;
-      // Date in units of microseconds since the UNIX epoch.
-      int64 date = 16;
+      // Date in units of days since the UNIX epoch.
+      int32 date = 16;
       // Time in units of microseconds past midnight
       int64 time = 17;
       IntervalYearToMonth interval_year_to_month = 19;
