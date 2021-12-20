@@ -76,6 +76,9 @@ message ReadRel {
     repeated FileOrFiles items = 1;
     substrait.extensions.AdvancedExtension advanced_extension = 10;
 
+    // the index of the partition these local files belong to
+    uint64 partition_index = 2;
+
     message FileOrFiles {
       oneof path_type {
         string uri_path = 1;
@@ -86,14 +89,11 @@ message ReadRel {
 
       FileFormat format = 5;
 
-      // the index of the partition this item belongs to
-      uint64 partition_index = 6;
-
       // the start position in byte to read from this item
-      uint64 start = 7;
+      uint64 start = 6;
 
       // the length in byte to read from this item
-      uint64 length = 8;
+      uint64 length = 7;
 
       enum FileFormat {
         FILE_FORMAT_UNSPECIFIED = 0;
