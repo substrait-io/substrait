@@ -27,7 +27,7 @@ extra_css:
 
 extra:
   versions:
-    slackinvitelink: https://join.slack.com/t/substrait/shared_invite/zt-z5lab650-psEVQIHpNJmfxHDJLZY1~w
+    slackinvitelink: https://join.slack.com/t/substrait/shared_invite/zt-10oeki45w-FARWnh4NMpXnm4x~hWyiGQ
   analytics:
     provider: google
     property: G-57ZX8S93Q5
