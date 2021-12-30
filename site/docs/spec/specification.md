@@ -23,7 +23,7 @@ Once all portions of the specification have been moved to commit (or eliminated)
 |          | wip    | [Compound Types](/types/compound_logical_types)              | Expression of types that go beyond simple scalar values. Key concepts here include: configurable types such as fixed length and numeric types as well as compound types such as structs, maps, lists, etc. |
 |          | wip    | [Type Variations](/types/type_variations)                    | Physical variations to base types.                           |
 |          | sketch | [User Defined Types](/types/user_defined_types)              | Extensions that can be defined for specific IR producers/consumers. |
-| 2        | sketch | [Field References](/expressions/field_references)            | Expressions to identify which portions of a record should be |
+| 2        | sketch | [Field References](/expressions/field_references)            | Expressions to identify which portions of a record should be operated on.     |
 | 3        | sketch | [Scalar Functions](/expressions/scalar_functions)            | Description of how functions are specified. Concepts include arguments, variadic functions, output type derivation, etc. |
 |          | sketch | [Scalar Function List](https://github.com/substrait-io/substrait/blob/main/extensions/scalar_functions.yaml) | A list of well-known canonical functions in yaml format.     |
 |          | sketch | [Specialized Record Expressions](/expressions/specialized_record_expressions) | Specialized expression types that are more naturally expressed outside the function paradigm. Examples include items such as if/then/else and switch statements. |
