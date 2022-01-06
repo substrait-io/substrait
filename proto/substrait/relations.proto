@@ -103,6 +103,21 @@ message ReadRel {
   }
 }
 
+message DistributeRel {
+  RelCommon common = 1;
+  Rel input = 2;
+  int64 partitionCount = 3;
+  DistributeType type = 4;
+  DistributionField d_field = 5;
+
+  Expression ExpressionMapping = 6;
+
+  enum DistributeType {
+    boradcast = 0;
+    scatter = 1;
+  }
+}
+
 message ProjectRel {
   RelCommon common = 1;
   Rel input = 2;
@@ -234,5 +249,6 @@ message Rel {
     ExtensionSingleRel extension_single = 9;
     ExtensionMultiRel extension_multi = 10;
     ExtensionLeafRel extension_leaf = 11;
+    DistributeRel distribute = 12;
   }
 }

@@ -337,6 +337,15 @@ message Expression {
   }
 }
 
+message DistributionField {
+  repeated Expression expr = 1;
+
+  oneof distribution_kind {
+    // points to a function_anchor defined in this plan
+    uint32 distribution_function_reference = 2;
+  }
+}
+
 message SortField {
   Expression expr = 1;
 
