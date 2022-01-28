@@ -127,7 +127,16 @@ message JoinRel {
     JOIN_TYPE_RIGHT = 4;
     JOIN_TYPE_SEMI = 5;
     JOIN_TYPE_ANTI = 6;
+    JOIN_TYPE_SINGLE=7;
   }
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
+message CrossRel {
+  RelCommon common = 1;
+  Rel left = 2;
+  Rel right = 3;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
@@ -234,5 +243,6 @@ message Rel {
     ExtensionSingleRel extension_single = 9;
     ExtensionMultiRel extension_multi = 10;
     ExtensionLeafRel extension_leaf = 11;
+    CrossRel cross = 12;
   }
 }
