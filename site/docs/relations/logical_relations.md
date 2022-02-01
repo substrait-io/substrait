@@ -107,6 +107,24 @@ The project operation will produce one or more additional expressions based on t
 | Expressions | List of one or more expressions to add to the input. | At least one expression required |
 
 
+## Cross Product Operation
+
+The cross product operation will combine two separate inputs into a single output. It pairs every record from the left input with every record of the right input.
+
+| Signature            | Value                                                        |
+| -------------------- | ------------------------------------------------------------ |
+| Inputs               | 2                                                            |
+| Outputs              | 1                                                            |
+| Property Maintenance | Distribution is maintained. Orderedness is empty post operation. |
+| Direct Output Order  | The emit order of the left input followed by the emit order of the right input. |
+
+### Cross Product Properties
+
+| Property        | Description                                                  | Required                           |
+| --------------- | ------------------------------------------------------------ | ---------------------------------- |
+| Left Input      | A relational input.                                          | Required                           |
+| Right Input     | A relational input.                                          | Required                           |
+
 
 ## Join Operation
 
@@ -136,8 +154,9 @@ The join operation will combine two separate inputs into a single output, based 
 | Outer | Return all records from both the left and right inputs. For each cross input match, return a record including the data from both sides. For any remaining non-match records, return the record from the corresponding input along with nulls for the opposite input. |
 | Left  | Return all records from the left input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the left input, return the left record along with nulls for the right input. |
 | Right | Return all records from the right input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the right input, return the left record along with nulls for the right input. |
-
-
+| Semi | Returns records from the left input. These are returned only if the records have a join partner on the right side. |
+| Anti  | Return records from the left input. These are returned only if the records do not have a join partner on the right side. |
+| Single | Returns one join partner per entry on the left input. If more than one join partner exists, there are two valid semantics. 1) Only the first match is returned. 2) The system throws an error. If there is no match between the left and right inputs, NULL is returned. |
 
 ## Set Operation
 
