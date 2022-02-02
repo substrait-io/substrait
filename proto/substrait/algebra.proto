@@ -258,6 +258,7 @@ message Expression {
     MultiOrList multi_or_list = 9;
     Enum enum = 10;
     Cast cast = 11;
+    Subquery subquery = 12;
   }
 
   message Enum {
@@ -568,11 +569,87 @@ message Expression {
     oneof root_type {
       Expression expression = 3;
       RootReference root_reference = 4;
+      OuterReference outer_reference = 5;
     }
 
     // Singleton that expresses this FieldReference is rooted off the root
     // incoming record type
     message RootReference {}
+    message OuterReference {
+      // number of subquery boundaries to traverse up for this field's reference
+      //
+      // an outer reference is a root reference for the outer relation's
+      // subquery
+      //
+      // This value must be >= 1
+      uint32 steps_out = 1;
+    }
+  }
+
+  message Subquery {
+    // Subquery relation expression
+    oneof subquery_type {
+      Scalar scalar = 1;
+      SetPredicate set_predicate = 2;
+      InPredicate in_predicate = 3;
+      SetComparison set_comparison = 4;
+    }
+
+    // A subquery with one row and one column, often an aggregate though not
+    // required to be.
+    message Scalar {
+      Rel input = 1;
+    }
+
+    enum SetPredicateOp {
+      SET_PREDICATE_OP_UNSPECIFIED = 0;
+      SET_PREDICATE_OP_EXISTS = 1;
+      SET_PREDICATE_OP_UNIQUE = 2;
+    }
+
+    // A predicate over a set of rows in the form of a subquery
+    /// EXISTS and UNIQUE are common SQL forms of this operation
+    message SetPredicate {
+      // TODO: should allow expressions
+      SetPredicateOp set_predicate_op = 1;
+      Rel tuple_set = 2;
+    }
+
+    // Predicate checking that the left expression is contained in the right subquery
+    //
+    // Examples:
+    //
+    // x IN (SELECT * FROM t)
+    // (x, y) IN (SELECT a, b FROM t)
+    message InPredicate {
+      repeated Expression needles = 1;
+      Rel haystack = 2;
+    }
+
+    enum SetComparisonOperator {
+      SET_COMPARISON_OPERATOR_UNSPECIFIED = 0;
+      SET_COMPARISON_OPERATOR_EQ = 1;
+      SET_COMPARISON_OPERATOR_NE = 2;
+      SET_COMPARISON_OPERATOR_LT = 3;
+      SET_COMPARISON_OPERATOR_GT = 4;
+      SET_COMPARISON_OPERATOR_LE = 5;
+      SET_COMPARISON_OPERATOR_GE = 6;
+    }
+
+    enum SetReductionOperator {
+      SET_REDUCTION_OPERATOR_UNSPECIFIED = 0;
+      SET_REDUCTION_OPERATOR_ANY = 1;
+      SET_REDUCTION_OPERATOR_ALL = 2;
+    }
+
+    message SetComparison {
+      // ANY or ALL
+      SetReductionOperator set_reduction_operator = 2;
+      // A comparison operator
+      SetComparisonOperator set_comparison_operator = 3;
+      Expression left = 1;
+      Rel right = 4;
+    }
   }
 }
 
