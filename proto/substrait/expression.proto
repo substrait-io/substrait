@@ -248,17 +248,17 @@ message Expression {
       // Optional child segment
       ReferenceSegment child = 2;
     }
-
   }
 
-  // A reference that takes an existing subtype and selectively removes fields from
-  // it. For example, one might initially have an inner struct with 100 fields but a
-  // a particular operation only needs to interact with only 2 of those 100 fields.
-  // In this situation, one would use a mask expression to eliminate the 98 fields that
-  // are not relevant to the rest of the operation pipeline.
+  // A reference that takes an existing subtype and selectively removes fields
+  // from it. For example, one might initially have an inner struct with 100
+  // fields but a a particular operation only needs to interact with only 2 of
+  // those 100 fields. In this situation, one would use a mask expression to
+  // eliminate the 98 fields that are not relevant to the rest of the operation
+  // pipeline.
   //
-  // Note that this does not fundamentally alter the structure of data beyond the
-  // elimination of unecessary elements.
+  // Note that this does not fundamentally alter the structure of data beyond
+  // the elimination of unecessary elements.
   message MaskExpression {
 
     StructSelect select = 1;
@@ -313,27 +313,28 @@ message Expression {
     }
   }
 
-  // A reference to an inner part of a complex object. Can reference reference a single
-  // element or a masked version of elements
+  // A reference to an inner part of a complex object. Can reference reference a
+  // single element or a masked version of elements
   message FieldReference {
 
-    // Whether this is composed of a single element reference or a masked element subtree
+    // Whether this is composed of a single element reference or a masked
+    // element subtree
     oneof reference_type {
       ReferenceSegment direct_reference = 1;
       MaskExpression masked_reference = 2;
     }
 
-    // Whether this reference has an origin of a root struct or is based on the ouput
-    // of an expression. When this is a RootReference and direct_reference above is used,
-    // the direct_reference must be of a type StructField.
+    // Whether this reference has an origin of a root struct or is based on the
+    // ouput of an expression. When this is a RootReference and direct_reference
+    // above is used, the direct_reference must be of a type StructField.
     oneof root_type {
       Expression expression = 3;
       RootReference root_reference = 4;
     }
 
-    // Singleton that expresses this FieldReference is rooted off the root incoming record type
+    // Singleton that expresses this FieldReference is rooted off the root
+    // incoming record type
     message RootReference {}
-
   }
 }
 
