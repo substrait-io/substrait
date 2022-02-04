@@ -1,6 +1,3 @@
-extern crate prost_build;
-extern crate walkdir;
-
 use std::{ffi::OsStr, io::Result};
 
 fn main() -> Result<()> {
