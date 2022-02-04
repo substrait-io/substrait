@@ -1,9 +1,9 @@
 extern crate prost_build;
 extern crate walkdir;
 
-use std::ffi::OsStr;
+use std::{ffi::OsStr, io::Result};
 
-fn main() {
+fn main() -> Result<()> {
     let proto_path = "../proto";
 
     let proto_files: Vec<_> = walkdir::WalkDir::new(proto_path)
@@ -15,5 +15,5 @@ fn main() {
         .map(|e| e.into_path())
         .collect();
 
-    prost_build::compile_protos(&proto_files, &[proto_path]).unwrap();
+    prost_build::compile_protos(&proto_files, &[proto_path])
 }
