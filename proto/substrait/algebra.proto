@@ -575,11 +575,10 @@ message Expression {
     // Singleton that expresses this FieldReference is rooted off the root
     // incoming record type
     message RootReference {}
+
+    // A root reference for the outer relation's subquery
     message OuterReference {
       // number of subquery boundaries to traverse up for this field's reference
-      //
-      // an outer reference is a root reference for the outer relation's
-      // subquery
       //
       // This value must be >= 1
       uint32 steps_out = 1;
