@@ -90,7 +90,6 @@ message ReadRel {
         string uri_folder = 4;
       }
 
-
       FileFormat format = 5;
 
       // the index of the partition this item belongs to
