@@ -600,11 +600,10 @@ message Expression {
 
     // A subquery with one row and one column. This is often an aggregate
     // though not required to be.
-    message Scalar {
-      Rel input = 1;
-    }
+    message Scalar { Rel input = 1; }
 
-    // Predicate checking that the left expression is contained in the right subquery
+    // Predicate checking that the left expression is contained in the right
+    // subquery
     //
     // Examples:
     //
