@@ -586,12 +586,16 @@ message Expression {
     }
   }
 
+  // Subquery relation expression
   message Subquery {
-    // Subquery relation expression
     oneof subquery_type {
+      // Scalar subquery
       Scalar scalar = 1;
-      SetPredicate set_predicate = 2;
+      // x IN y predicate
       InPredicate in_predicate = 3;
+      // EXISTS/UNIQUE predicate
+      SetPredicate set_predicate = 2;
+      // ANY/ALL predicate
       SetComparison set_comparison = 4;
     }
 
