@@ -592,9 +592,9 @@ message Expression {
       // Scalar subquery
       Scalar scalar = 1;
       // x IN y predicate
-      InPredicate in_predicate = 3;
+      InPredicate in_predicate = 2;
       // EXISTS/UNIQUE predicate
-      SetPredicate set_predicate = 2;
+      SetPredicate set_predicate = 3;
       // ANY/ALL predicate
       SetComparison set_comparison = 4;
     }
