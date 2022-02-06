@@ -258,6 +258,7 @@ message Expression {
     MultiOrList multi_or_list = 9;
     Enum enum = 10;
     Cast cast = 11;
+    Subquery subquery = 12;
   }
 
   message Enum {
@@ -568,11 +569,96 @@ message Expression {
     oneof root_type {
       Expression expression = 3;
       RootReference root_reference = 4;
+      OuterReference outer_reference = 5;
     }
 
     // Singleton that expresses this FieldReference is rooted off the root
     // incoming record type
     message RootReference {}
+
+    // A root reference for the outer relation's subquery
+    message OuterReference {
+      // number of subquery boundaries to traverse up for this field's reference
+      //
+      // This value must be >= 1
+      uint32 steps_out = 1;
+    }
+  }
+
+  // Subquery relation expression
+  message Subquery {
+    oneof subquery_type {
+      // Scalar subquery
+      Scalar scalar = 1;
+      // x IN y predicate
+      InPredicate in_predicate = 2;
+      // EXISTS/UNIQUE predicate
+      SetPredicate set_predicate = 3;
+      // ANY/ALL predicate
+      SetComparison set_comparison = 4;
+    }
+
+    // A subquery with one row and one column. This is often an aggregate
+    // though not required to be.
+    message Scalar { Rel input = 1; }
+
+    // Predicate checking that the left expression is contained in the right
+    // subquery
+    //
+    // Examples:
+    //
+    // x IN (SELECT * FROM t)
+    // (x, y) IN (SELECT a, b FROM t)
+    message InPredicate {
+      repeated Expression needles = 1;
+      Rel haystack = 2;
+    }
+
+    // A predicate over a set of rows in the form of a subquery
+    // EXISTS and UNIQUE are common SQL forms of this operation.
+    message SetPredicate {
+      enum PredicateOp {
+        PREDICATE_OP_UNSPECIFIED = 0;
+        PREDICATE_OP_EXISTS = 1;
+        PREDICATE_OP_UNIQUE = 2;
+      }
+      // TODO: should allow expressions
+      PredicateOp predicate_op = 1;
+      Rel tuples = 2;
+    }
+
+    // A subquery comparison using ANY or ALL.
+    // Examples:
+    //
+    // SELECT *
+    // FROM t1
+    // WHERE x < ANY(SELECT y from t2)
+    message SetComparison {
+      enum ComparisonOp {
+        COMPARISON_OP_UNSPECIFIED = 0;
+        COMPARISON_OP_EQ = 1;
+        COMPARISON_OP_NE = 2;
+        COMPARISON_OP_LT = 3;
+        COMPARISON_OP_GT = 4;
+        COMPARISON_OP_LE = 5;
+        COMPARISON_OP_GE = 6;
+      }
+
+      enum ReductionOp {
+        REDUCTION_OP_UNSPECIFIED = 0;
+        REDUCTION_OP_ANY = 1;
+        REDUCTION_OP_ALL = 2;
+      }
+
+      // ANY or ALL
+      ReductionOp reduction_op = 1;
+      // A comparison operator
+      ComparisonOp comparison_op = 2;
+      // left side of the expression
+      Expression left = 3;
+      // right side of the expression
+      Rel right = 4;
+    }
   }
 }
 
