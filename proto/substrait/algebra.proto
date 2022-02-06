@@ -595,24 +595,23 @@ message Expression {
       SetComparison set_comparison = 4;
     }
 
-    // A subquery with one row and one column, often an aggregate though not
-    // required to be.
+    // A subquery with one row and one column. This is often an aggregate
+    // though not required to be.
     message Scalar {
       Rel input = 1;
     }
 
-    enum SetPredicateOp {
-      SET_PREDICATE_OP_UNSPECIFIED = 0;
-      SET_PREDICATE_OP_EXISTS = 1;
-      SET_PREDICATE_OP_UNIQUE = 2;
-    }
-
     // A predicate over a set of rows in the form of a subquery
-    /// EXISTS and UNIQUE are common SQL forms of this operation
+    // EXISTS and UNIQUE are common SQL forms of this operation.
     message SetPredicate {
+      enum PredicateOp {
+        PREDICATE_OP_UNSPECIFIED = 0;
+        PREDICATE_OP_EXISTS = 1;
+        PREDICATE_OP_UNIQUE = 2;
+      }
       // TODO: should allow expressions
-      SetPredicateOp set_predicate_op = 1;
-      Rel tuple_set = 2;
+      PredicateOp predicate_op = 1;
+      Rel tuples = 2;
     }
 
     // Predicate checking that the left expression is contained in the right subquery
@@ -626,28 +625,36 @@ message Expression {
       Rel haystack = 2;
     }
 
-    enum SetComparisonOperator {
-      SET_COMPARISON_OPERATOR_UNSPECIFIED = 0;
-      SET_COMPARISON_OPERATOR_EQ = 1;
-      SET_COMPARISON_OPERATOR_NE = 2;
-      SET_COMPARISON_OPERATOR_LT = 3;
-      SET_COMPARISON_OPERATOR_GT = 4;
-      SET_COMPARISON_OPERATOR_LE = 5;
-      SET_COMPARISON_OPERATOR_GE = 6;
-    }
-
-    enum SetReductionOperator {
-      SET_REDUCTION_OPERATOR_UNSPECIFIED = 0;
-      SET_REDUCTION_OPERATOR_ANY = 1;
-      SET_REDUCTION_OPERATOR_ALL = 2;
-    }
-
+    // A subquery comparison using ANY or ALL.
+    // Examples:
+    //
+    // SELECT *
+    // FROM t1
+    // WHERE x < ANY(SELECT y from t2)
     message SetComparison {
+      enum ComparisonOp {
+        COMPARISON_OP_UNSPECIFIED = 0;
+        COMPARISON_OP_EQ = 1;
+        COMPARISON_OP_NE = 2;
+        COMPARISON_OP_LT = 3;
+        COMPARISON_OP_GT = 4;
+        COMPARISON_OP_LE = 5;
+        COMPARISON_OP_GE = 6;
+      }
+
+      enum ReductionOp {
+        REDUCTION_OP_UNSPECIFIED = 0;
+        REDUCTION_OP_ANY = 1;
+        REDUCTION_OP_ALL = 2;
+      }
+
       // ANY or ALL
-      SetReductionOperator set_reduction_operator = 2;
+      ReductionOp reduction_op = 1;
       // A comparison operator
-      SetComparisonOperator set_comparison_operator = 3;
-      Expression left = 1;
+      ComparisonOp comparison_op = 2;
+      // left side of the expression
+      Expression left = 3;
+      // right side of the expression
       Rel right = 4;
     }
   }
