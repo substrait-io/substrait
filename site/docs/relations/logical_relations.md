@@ -37,7 +37,6 @@ Read definition types are built by the community and added to the specification.
 
 
 #### Files Type
-#### Files Type
 
 | Property                    | Description                                                       | Required |
 | --------------------------- | ----------------------------------------------------------------- | -------- |
