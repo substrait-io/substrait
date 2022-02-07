@@ -75,6 +75,11 @@ message ReadRel {
     repeated FileOrFiles items = 1;
     substrait.extensions.AdvancedExtension advanced_extension = 10;
 
+    // Many files consist of indivisible chunks (e.g. parquet row groups
+    // or CSV rows).  If a slice partially selects an indivisible chunk
+    // then the consumer should employ some rule to decide which slice to
+    // include the chunk in (e.g. include it in the slice that contains
+    // the midpoint of the chunk)
     message FileOrFiles {
       oneof path_type {
         string uri_path = 1;

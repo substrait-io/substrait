@@ -38,11 +38,22 @@ Read definition types are built by the community and added to the specification.
 
 #### Files Type
 
-| Property        | Description                                                  | Required |
-| --------------- | ------------------------------------------------------------ | -------- |
-| Items           | An array Items (path or path glob) associated with the read  | Required |
-| Format per item | Enumeration of available formats. Only current option is PARQUET. | Required |
+| Property                    | Description                                                       | Required |
+| --------------------------- | ----------------------------------------------------------------- | -------- |
+| Items                       | An array Items (path or path glob) associated with the read       | Required |
+| Format per item             | Enumeration of available formats. Only current option is PARQUET. | Required |
+| Slicing parameters per item | Information to use when reading a slice of a file.                | Optional |
 
+##### Slicing Files
+
+A read operation may only read part of a file.  This is convenient, for example, when distributing
+a read operation across several nodes.  The slicing parameters are specified as byte offsets
+into the file.
+
+Many file formats consist of indivisible "chunks" of data (e.g. parquet row groups).  If this
+happens the consumer can determine which slice a particular chunk belongs to.  For example, one
+possible approach is that a chunk should only be read if the midpoint of the chunk (dividing by
+2 and rounding down) is contained within the asked-for byte range.
 
 
 ## Filter Operation
