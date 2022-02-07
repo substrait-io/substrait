@@ -1,6 +1,10 @@
 use prost::Message;
 
+pub mod data_type;
 pub mod diagnostic;
+pub mod doc_tree;
+pub mod extension;
+pub mod path;
 pub mod proto;
 
 /// Default result type.
@@ -15,30 +19,30 @@ impl Validator {
     fn validate_plan_rel(
         &mut self,
         _rel: &proto::substrait::PlanRel,
-        _path: diagnostic::Path,
-    ) -> Result<String> {
-        Ok("ok".into())
+        _path: path::Path,
+    ) -> Result<doc_tree::Node> {
+        Ok(doc_tree::NodeType::ProtoMessage("substrait.PlanRel".to_string()).into())
     }
 
     fn validate_plan(
         &mut self,
         plan: &proto::substrait::Plan,
-        path: diagnostic::Path,
-    ) -> Result<String> {
+        path: path::Path,
+    ) -> Result<doc_tree::Node> {
         for (index, relation) in plan.relations.iter().enumerate() {
             let sub_path = path.select_repeated("relations", index);
             self.validate_plan_rel(relation, sub_path).unwrap(); // TODO
         }
-        Ok("ok".into())
+        Ok(doc_tree::NodeType::ProtoMessage("substrait.Plan".to_string()).into())
     }
 
-    fn validate<B: prost::bytes::Buf>(&mut self, buf: B) -> Result<String> {
+    fn validate<B: prost::bytes::Buf>(&mut self, buf: B) -> Result<doc_tree::Node> {
         let plan = proto::substrait::Plan::decode(buf)?;
-        self.validate_plan(&plan, diagnostic::Path::Root("plan"))
+        self.validate_plan(&plan, path::Path::Root("plan"))
     }
 }
 
-pub fn validate<B: prost::bytes::Buf>(buf: B) -> (diagnostic::Diagnostics, Option<String>) {
+pub fn validate<B: prost::bytes::Buf>(buf: B) -> (diagnostic::Diagnostics, Option<doc_tree::Node>) {
     let mut validator = Validator::default();
     let description = validator
         .validate(buf)
@@ -46,7 +50,7 @@ pub fn validate<B: prost::bytes::Buf>(buf: B) -> (diagnostic::Diagnostics, Optio
             validator.diagnostics.push(diagnostic::Diagnostic {
                 cause: e,
                 level: diagnostic::Level::Error,
-                path: diagnostic::Path::Root("unknown").to_path_buf(),
+                path: path::Path::Root("unknown").to_path_buf(),
             })
         })
         .ok();

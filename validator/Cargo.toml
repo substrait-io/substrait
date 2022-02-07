@@ -8,6 +8,10 @@ bytes = "0.4"
 prost = "0.9"
 prost-types = "0.9"
 thiserror = "1.0"
+strum = "0.23"
+strum_macros = "0.23"
+regex = "1"
+lazy_static = "1.4"
 
 [build-dependencies]
 prost-build = "0.9"
