@@ -64,26 +64,26 @@ impl Path<'_> {
     /// Returns a new Path that references an optional field with the
     /// given name within the protobuf message referred to by the current
     /// path, or likewise for the key within a YAML map.
-    pub fn select_field(&self, name: &'static str) -> Path {
+    pub fn with_field(&self, name: &'static str) -> Path {
         Path::Select(self, PathElement::Field(name))
     }
 
     /// Returns a new Path that references an element of a repeated field
     /// with the given name within the message referred to by the current
     /// path.
-    pub fn select_repeated(&self, name: &'static str, index: usize) -> Path {
+    pub fn with_repeated(&self, name: &'static str, index: usize) -> Path {
         Path::Select(self, PathElement::Repeated(name, index))
     }
 
     /// Returns a new Path that references a particular variant of a
     /// OneOf field with the given name within the message referred to
     /// by the current path.
-    pub fn select_variant(&self, name: &'static str, variant: &'static str) -> Path {
+    pub fn with_variant(&self, name: &'static str, variant: &'static str) -> Path {
         Path::Select(self, PathElement::Variant(name, variant))
     }
 
     /// Returns a new Path that references a YAML array element.
-    pub fn select_index(&self, index: usize) -> Path {
+    pub fn with_index(&self, index: usize) -> Path {
         Path::Select(self, PathElement::Index(index))
     }
 }
@@ -127,10 +127,10 @@ mod tests {
     #[test]
     fn paths() {
         let a = Path::Root("a");
-        let b = a.select_field("b");
-        let c = b.select_repeated("c", 42);
-        let d = c.select_variant("d", "e");
-        let e = d.select_index(33);
+        let b = a.with_field("b");
+        let c = b.with_repeated("c", 42);
+        let d = c.with_variant("d", "e");
+        let e = d.with_index(33);
         let buf: PathBuf = e.to_path_buf();
         assert_eq!(format!("{}", e), "a.b.c[42].d<e>[33]");
         assert_eq!(format!("{}", buf), "a.b.c[42].d<e>[33]");

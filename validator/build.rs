@@ -12,5 +12,9 @@ fn main() -> Result<()> {
         .map(|e| e.into_path())
         .collect();
 
-    prost_build::compile_protos(&proto_files, &[proto_path])
+    let mut config = prost_build::Config::new();
+
+    config.type_attribute(".", "#[derive(::substrait_validator_derive::ProtoMeta)]");
+
+    config.compile_protos(&proto_files, &[proto_path])
 }

@@ -11,6 +11,8 @@ pub enum Cause {
     UnknownType(String),
     #[error("mismatched type parameters: {0}")]
     MismatchedTypeParameters(String),
+    #[error("missing required field {0}")]
+    MissingField(String),
 }
 
 /// Result type for diagnostics.

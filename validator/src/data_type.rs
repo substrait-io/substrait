@@ -1,6 +1,6 @@
 use crate::diagnostic::Cause::MismatchedTypeParameters;
 use crate::extension;
-use lazy_static::lazy_static;
+use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::HashSet;
 use std::rc::Rc;
@@ -94,6 +94,9 @@ pub enum Class {
 
     /// User-defined type.
     UserDefined(Rc<UserDefined>),
+
+    /// Unresolved type. Used for error recovery.
+    Unresolved(String),
 }
 
 impl std::fmt::Display for Class {
@@ -102,6 +105,7 @@ impl std::fmt::Display for Class {
             Class::Simple(simple) => write!(f, "{}", simple),
             Class::Compound(compound) => write!(f, "{}", compound),
             Class::UserDefined(user_defined) => write!(f, "{}", user_defined),
+            Class::Unresolved(name) => write!(f, "{}!", name),
         }
     }
 }
@@ -128,6 +132,7 @@ impl ParameterChecker for Class {
                     ))
                 }
             }
+            Class::Unresolved(_) => Ok(()),
         }
     }
 }
@@ -348,9 +353,9 @@ pub enum Parameter {
 
 impl std::fmt::Display for Parameter {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        lazy_static! {
-            static ref IDENTIFIER_RE: Regex = Regex::new("[a-zA-Z_][a-zA-Z0-9_]*").unwrap();
-        }
+        static IDENTIFIER_RE: Lazy<Regex> =
+            Lazy::new(|| Regex::new("[a-zA-Z_][a-zA-Z0-9_]*").unwrap());
+
         match self {
             Parameter::Type(data_type) => write!(f, "{}", data_type),
             Parameter::NamedType(name, data_type) => {
