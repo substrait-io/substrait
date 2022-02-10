@@ -1,7 +1,7 @@
 use std::fmt::Formatter;
 
 /// Element of a path to some field of a protobuf message and/or YAML file.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum PathElement {
     /// Refers to an optional protobuf field with the given name within the
     /// message, or a YAML map entry with the given key.
@@ -32,7 +32,7 @@ impl std::fmt::Display for PathElement {
 }
 
 /// Refers to a location within a protobuf message.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct PathBuf {
     root: &'static str,
     elements: Vec<PathElement>,
@@ -50,7 +50,7 @@ impl std::fmt::Display for PathBuf {
 
 /// Used to track a location within a protobuf message. The owned version
 /// is PathBuf.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Path<'a> {
     /// Refers to the root message.
     Root(&'static str),

@@ -1,7 +1,7 @@
 pub mod meta {
     use crate::doc_tree;
 
-    #[derive(Clone, Debug)]
+    #[derive(Clone, Debug, PartialEq)]
     pub enum ProtoPrimitiveData {
         /// Used for booleans.
         Bool(bool),
@@ -264,5 +264,145 @@ pub mod substrait {
     include!(concat!(env!("OUT_DIR"), "/substrait.rs"));
     pub mod extensions {
         include!(concat!(env!("OUT_DIR"), "/substrait.extensions.rs"));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::meta::*;
+    use super::*;
+    use crate::doc_tree;
+
+    #[test]
+    fn message() {
+        assert_eq!(substrait::Plan::proto_message_type(), "substrait.Plan");
+        assert_eq!(
+            substrait::Plan::proto_type_to_node(),
+            doc_tree::Node {
+                node_type: doc_tree::NodeType::ProtoMessage("substrait.Plan"),
+                data: vec![],
+            }
+        );
+
+        let msg = substrait::Plan::default();
+        assert_eq!(
+            msg.proto_data_to_node(),
+            doc_tree::Node {
+                node_type: doc_tree::NodeType::ProtoMessage("substrait.Plan"),
+                data: vec![],
+            }
+        );
+        assert_eq!(msg.proto_data_variant(), None);
+    }
+
+    #[test]
+    fn oneof() {
+        assert_eq!(
+            substrait::plan_rel::RelType::proto_type_to_node(),
+            doc_tree::Node {
+                node_type: doc_tree::NodeType::ProtoMissingOneOf,
+                data: vec![],
+            }
+        );
+
+        let oneof = substrait::plan_rel::RelType::Rel(substrait::Rel::default());
+        assert_eq!(oneof.proto_one_of_variant(), "rel");
+        assert_eq!(
+            oneof.proto_data_to_node(),
+            doc_tree::Node {
+                node_type: doc_tree::NodeType::ProtoMessage("substrait.Rel"),
+                data: vec![],
+            }
+        );
+        assert_eq!(oneof.proto_data_variant(), Some("rel"));
+    }
+
+    #[test]
+    fn enumeration() {
+        assert_eq!(
+            substrait::AggregationPhase::proto_enum_type(),
+            "substrait.AggregationPhase"
+        );
+        assert_eq!(
+            substrait::AggregationPhase::proto_enum_default_variant(),
+            "AGGREGATION_PHASE_UNSPECIFIED"
+        );
+        assert_eq!(
+            substrait::AggregationPhase::Unspecified.proto_enum_variant(),
+            "AGGREGATION_PHASE_UNSPECIFIED"
+        );
+
+        assert_eq!(
+            substrait::AggregationPhase::proto_primitive_type(),
+            "substrait.AggregationPhase"
+        );
+        assert_eq!(
+            substrait::AggregationPhase::proto_primitive_default(),
+            ProtoPrimitiveData::Enum("AGGREGATION_PHASE_UNSPECIFIED")
+        );
+        assert_eq!(
+            substrait::AggregationPhase::Unspecified.proto_primitive_data(),
+            ProtoPrimitiveData::Enum("AGGREGATION_PHASE_UNSPECIFIED")
+        );
+
+        assert_eq!(
+            substrait::AggregationPhase::proto_type_to_node(),
+            doc_tree::Node {
+                node_type: doc_tree::NodeType::ProtoPrimitive(
+                    "substrait.AggregationPhase",
+                    ProtoPrimitiveData::Enum("AGGREGATION_PHASE_UNSPECIFIED")
+                ),
+                data: vec![],
+            }
+        );
+        assert_eq!(
+            substrait::AggregationPhase::Unspecified.proto_data_to_node(),
+            doc_tree::Node {
+                node_type: doc_tree::NodeType::ProtoPrimitive(
+                    "substrait.AggregationPhase",
+                    ProtoPrimitiveData::Enum("AGGREGATION_PHASE_UNSPECIFIED")
+                ),
+                data: vec![],
+            }
+        );
+        assert_eq!(
+            substrait::AggregationPhase::Unspecified.proto_data_variant(),
+            None
+        );
+    }
+
+    #[test]
+    fn primitive() {
+        assert_eq!(u32::proto_primitive_type(), "uint32");
+        assert_eq!(
+            u32::proto_primitive_default(),
+            ProtoPrimitiveData::Unsigned(0)
+        );
+        assert_eq!(
+            42u32.proto_primitive_data(),
+            ProtoPrimitiveData::Unsigned(42)
+        );
+
+        assert_eq!(
+            u32::proto_type_to_node(),
+            doc_tree::Node {
+                node_type: doc_tree::NodeType::ProtoPrimitive(
+                    "uint32",
+                    ProtoPrimitiveData::Unsigned(0)
+                ),
+                data: vec![],
+            }
+        );
+        assert_eq!(
+            42u32.proto_data_to_node(),
+            doc_tree::Node {
+                node_type: doc_tree::NodeType::ProtoPrimitive(
+                    "uint32",
+                    ProtoPrimitiveData::Unsigned(42)
+                ),
+                data: vec![],
+            }
+        );
+        assert_eq!(42u32.proto_data_variant(), None);
     }
 }

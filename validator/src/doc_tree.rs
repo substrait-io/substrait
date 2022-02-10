@@ -15,7 +15,7 @@ use std::rc::Rc;
 /// process, and therefore isn't nearly as strictly-typed as you would
 /// otherwise want it to be. Protobuf itself is already a reasonable format
 /// for this!
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Node {
     /// The protobuf type name for the message that this object represents.
     pub node_type: NodeType,
@@ -218,7 +218,7 @@ impl Node {
 
 /// The original data type that the node represents, to (in theory) allow the
 /// original structure of the plan to be recovered from the documentation tree.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum NodeType {
     /// The associated node represents a protobuf message of the given type
     /// (full protobuf path). The contents of the message are described using
@@ -253,7 +253,7 @@ pub enum NodeType {
 }
 
 /// Information nodes for a parsed protobuf message.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum NodeData {
     /// For protobuf nodes, indicates that the node has a populated optional
     /// field (optional in the protobuf sense, may be mandatory in Substrait
@@ -302,7 +302,7 @@ pub enum NodeData {
 }
 
 /// A reference to a node elsewhere in the tree.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct NodeReference {
     /// Absolute path to the node.
     pub path: path::PathBuf,

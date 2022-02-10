@@ -1,7 +1,7 @@
 use crate::doc_tree;
 
 /// Extension information.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct ExtensionInfo {
     /// The URI of the YAML file that's defining the extension.
     pub uri: String,

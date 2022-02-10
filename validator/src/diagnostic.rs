@@ -3,7 +3,7 @@ use std::fmt::Formatter;
 use thiserror::Error;
 
 /// Enumeration for the particular types of diagnostics we might encounter.
-#[derive(Clone, Debug, Error)]
+#[derive(Clone, Debug, PartialEq, Error)]
 pub enum Cause {
     #[error("failed to parse proto format")]
     ProtoParseFailure(#[from] prost::DecodeError),
@@ -19,7 +19,7 @@ pub enum Cause {
 pub type Result<T> = std::result::Result<T, Cause>;
 
 /// Error level for a diagnostic message.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Level {
     /// Level used for diagnostics that indicate that there is definitely
     /// something wrong with the plan.
@@ -36,7 +36,7 @@ pub enum Level {
 }
 
 /// A complete diagnostic message.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Diagnostic {
     /// The cause of the diagnostic.
     pub cause: Cause,

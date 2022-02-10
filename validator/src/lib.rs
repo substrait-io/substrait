@@ -118,5 +118,9 @@ pub fn validate<B: prost::bytes::Buf>(buf: B) -> (diagnostic::Diagnostics, Optio
 }
 */
 pub fn test() {
-    println!("Hello, world!");
+    use proto::meta::ProtoMessage;
+    println!(
+        "Hello, world! {}",
+        proto::substrait::Plan::proto_message_type()
+    );
 }

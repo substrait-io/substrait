@@ -90,7 +90,7 @@ fn proto_meta_derive_oneof(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Toke
         .map(|variant| {
             let ident = &variant.ident;
             let proto_name = ident.to_string().to_snake_case();
-            quote! { #name::#ident (_) => stringify!(#proto_name) }
+            quote! { #name::#ident (_) => #proto_name }
         })
         .collect();
 
@@ -155,7 +155,7 @@ fn proto_meta_derive_enum(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Token
     let variant_matches: Vec<_> = variant_names
         .iter()
         .map(|(ident, proto_name)| {
-            quote! { #name::#ident => stringify!(#proto_name) }
+            quote! { #name::#ident => #proto_name }
         })
         .collect();
 
@@ -176,7 +176,7 @@ fn proto_meta_derive_enum(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Token
             }
 
             fn proto_enum_default_variant() -> &'static str {
-                stringify!(#first_variant_name)
+                #first_variant_name
             }
 
             fn proto_enum_variant(&self) -> &'static str {
@@ -188,54 +188,3 @@ fn proto_meta_derive_enum(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Token
     )
     .into()
 }
-
-/*let variant_name_impl = if let syn::Data::Enum(ref data_enum) = ast.data {
-
-    let matches: Vec<_> = data_enum.variants.iter().map(|variant| {
-        let ident = &variant.ident;
-        let proto_ident = ident.to_string().to_snake_case();
-
-        let params = match variant.fields {
-            syn::Fields::Unit => quote!{},
-            syn::Fields::Unnamed(..) => quote!{(..)},
-            syn::Fields::Named(..) => quote!{{..}}
-        };
-
-        quote!{ #name::#ident #params => stringify!(#proto_ident)}
-
-    }).collect();
-
-    quote!{
-        match *self {
-            #(#matches),*
-        }
-    }
-
-} else {
-
-    quote!{
-        panic!("not an enum!");
-    }
-
-};
-
-quote!(
-    impl #impl_generics crate::ProtoNames for #name #ty_generics #where_clause {
-        fn proto_type_name() -> &'static str {
-            use ::once_cell::sync::Lazy;
-            static TYPE_NAME: Lazy<::std::string::String> = Lazy::new(|| {
-                let iter = module_path!()
-                    .split("::")
-                    .skip(2)
-                    .chain(::std::iter::once(stringify!(#name)));
-                ::itertools::Itertools::intersperse(iter, ".").collect()
-            });
-            &TYPE_NAME
-        }
-
-        fn proto_variant_name(&self) -> &'static str {
-            #variant_name_impl
-        }
-    }
-)
-.into()*/

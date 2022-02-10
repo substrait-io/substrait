@@ -7,7 +7,7 @@ use std::rc::Rc;
 use strum_macros::{Display, EnumString};
 
 /// A Substrait data type.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct DataType {
     /// Type class (simple, compound, or user-defined).
     pub class: Class,
@@ -84,7 +84,7 @@ impl DataType {
 }
 
 /// Type class.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Class {
     /// Well-known simple type.
     Simple(Simple),
@@ -138,7 +138,7 @@ impl ParameterChecker for Class {
 }
 
 /// Enumeration of simple types defined by Substrait.
-#[derive(Clone, Debug, Display, EnumString)]
+#[derive(Clone, Debug, PartialEq, Display, EnumString)]
 #[strum(ascii_case_insensitive, serialize_all = "snake_case")]
 pub enum Simple {
     Boolean,
@@ -160,7 +160,7 @@ pub enum Simple {
 }
 
 /// Enumeration of compound types defined by Substrait.
-#[derive(Clone, Debug, Display, EnumString)]
+#[derive(Clone, Debug, PartialEq, Display, EnumString)]
 #[strum(ascii_case_insensitive, serialize_all = "UPPERCASE")]
 pub enum Compound {
     FixedChar,
@@ -300,7 +300,7 @@ impl ParameterChecker for Compound {
 }
 
 /// User-defined base data type.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct UserDefined {
     /// Extension information for this type.
     pub extension: extension::ExtensionInfo,
@@ -316,7 +316,7 @@ impl std::fmt::Display for UserDefined {
 }
 
 /// Variation information for a Substrait data type.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Variation {
     /// Extension information for this type variation.
     pub extension: extension::ExtensionInfo,
@@ -332,14 +332,14 @@ impl std::fmt::Display for Variation {
 }
 
 /// Type variation function behavior.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum FunctionBehavior {
     Inherits,
     Separate,
 }
 
 /// Parameter for parameterized types.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Parameter {
     /// Type parameter (list element type, struct element types, etc).
     Type(DataType),
