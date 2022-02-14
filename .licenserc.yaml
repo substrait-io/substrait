@@ -1,0 +1,9 @@
+header:
+  license:
+    spdx-id: Apache-2.0
+    copyright-owner: Apache Software Foundation
+
+  paths: 
+    - 'proto/substrait/**'  
+
+  comment: on-failure
