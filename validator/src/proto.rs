@@ -23,6 +23,9 @@ pub mod meta {
 
         /// Used for enumerations.
         Enum(&'static str),
+
+        /// Used for Any messages.
+        Any(prost_types::Any),
     }
 
     /// Trait for all Rust types that represent protobuf types.
@@ -38,6 +41,15 @@ pub mod meta {
         /// Returns the name of the selected variant of a oneof field, if this
         /// is a rust enum used to represent a oneof field.
         fn proto_data_variant(&self) -> Option<&'static str>;
+
+        /// Complete the subtrees of this datum in output that have not already
+        /// been parsed using UnknownField nodes. Returns if any such nodes
+        /// were added.
+        fn proto_parse_unknown(
+            &self,
+            context: &mut crate::Context,
+            output: &mut doc_tree::Node,
+        ) -> bool;
     }
 
     /// Trait for all Rust types that represent protobuf messages. These are
@@ -68,6 +80,9 @@ pub mod meta {
         /// Returns the actual value for this primitive data type as a
         /// ProtoPrimitiveData variant.
         fn proto_primitive_data(&self) -> ProtoPrimitiveData;
+
+        /// Returns whether this is the default value of the primitive.
+        fn proto_primitive_is_default(&self) -> bool;
     }
 
     /// Trait for all Rust types that represent protobuf enums. These are
@@ -98,6 +113,10 @@ pub mod meta {
         fn proto_primitive_data(&self) -> ProtoPrimitiveData {
             ProtoPrimitiveData::Enum(self.proto_enum_variant())
         }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            self.proto_enum_variant() == T::proto_enum_default_variant()
+        }
     }
 
     /// Blanket implementation to make all protobuf primitives behave like
@@ -107,10 +126,7 @@ pub mod meta {
     /// for ProtoMessage and ProtoOneOf as well, since they're always the same.
     /// Unfortunately, we can only define a single blanket implementation, so
     /// we opt for the one that isn't already generated via derive macros.
-    impl<T> ProtoDatum for T
-    where
-        T: ProtoPrimitive,
-    {
+    impl<T: ProtoPrimitive> ProtoDatum for T {
         fn proto_type_to_node() -> doc_tree::Node {
             doc_tree::NodeType::ProtoPrimitive(
                 T::proto_primitive_type(),
@@ -130,6 +146,14 @@ pub mod meta {
         fn proto_data_variant(&self) -> Option<&'static str> {
             None
         }
+
+        fn proto_parse_unknown(
+            &self,
+            _context: &mut crate::Context,
+            _output: &mut doc_tree::Node,
+        ) -> bool {
+            false
+        }
     }
 
     impl ProtoPrimitive for bool {
@@ -143,6 +167,10 @@ pub mod meta {
 
         fn proto_primitive_data(&self) -> ProtoPrimitiveData {
             ProtoPrimitiveData::Bool(*self)
+        }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            !*self
         }
     }
 
@@ -158,6 +186,10 @@ pub mod meta {
         fn proto_primitive_data(&self) -> ProtoPrimitiveData {
             ProtoPrimitiveData::Unsigned((*self).into())
         }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            *self != 0
+        }
     }
 
     impl ProtoPrimitive for u64 {
@@ -171,6 +203,10 @@ pub mod meta {
 
         fn proto_primitive_data(&self) -> ProtoPrimitiveData {
             ProtoPrimitiveData::Unsigned(*self)
+        }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            *self != 0
         }
     }
 
@@ -186,6 +222,10 @@ pub mod meta {
         fn proto_primitive_data(&self) -> ProtoPrimitiveData {
             ProtoPrimitiveData::Signed((*self).into())
         }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            *self != 0
+        }
     }
 
     impl ProtoPrimitive for i64 {
@@ -199,6 +239,10 @@ pub mod meta {
 
         fn proto_primitive_data(&self) -> ProtoPrimitiveData {
             ProtoPrimitiveData::Signed(*self)
+        }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            *self != 0
         }
     }
 
@@ -214,6 +258,10 @@ pub mod meta {
         fn proto_primitive_data(&self) -> ProtoPrimitiveData {
             ProtoPrimitiveData::Float((*self).into())
         }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            *self != 0.0
+        }
     }
 
     impl ProtoPrimitive for f64 {
@@ -227,6 +275,10 @@ pub mod meta {
 
         fn proto_primitive_data(&self) -> ProtoPrimitiveData {
             ProtoPrimitiveData::Float(*self)
+        }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            *self != 0.0
         }
     }
 
@@ -242,6 +294,10 @@ pub mod meta {
         fn proto_primitive_data(&self) -> ProtoPrimitiveData {
             ProtoPrimitiveData::String(self.clone())
         }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            self.is_empty()
+        }
     }
 
     impl ProtoPrimitive for Vec<u8> {
@@ -255,6 +311,28 @@ pub mod meta {
 
         fn proto_primitive_data(&self) -> ProtoPrimitiveData {
             ProtoPrimitiveData::Bytes(self.clone())
+        }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            self.is_empty()
+        }
+    }
+
+    impl ProtoPrimitive for prost_types::Any {
+        fn proto_primitive_type() -> &'static str {
+            "any"
+        }
+
+        fn proto_primitive_default() -> ProtoPrimitiveData {
+            ProtoPrimitiveData::Any(prost_types::Any::default())
+        }
+
+        fn proto_primitive_data(&self) -> ProtoPrimitiveData {
+            ProtoPrimitiveData::Any(self.clone())
+        }
+
+        fn proto_primitive_is_default(&self) -> bool {
+            self.type_url.is_empty()
         }
     }
 }

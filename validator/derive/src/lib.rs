@@ -12,7 +12,7 @@ pub fn proto_meta(input: TokenStream) -> TokenStream {
 
 fn proto_meta_derive(ast: syn::DeriveInput) -> TokenStream {
     match ast.data {
-        syn::Data::Struct(_) => proto_meta_derive_message(&ast),
+        syn::Data::Struct(ref struct_data) => proto_meta_derive_message(&ast, struct_data),
         syn::Data::Enum(ref enum_data) => match enum_data.variants.iter().next().unwrap().fields {
             syn::Fields::Unit => {
                 for variant in enum_data.variants.iter() {
@@ -42,9 +42,113 @@ fn proto_meta_derive(ast: syn::DeriveInput) -> TokenStream {
     }
 }
 
-fn proto_meta_derive_message(ast: &syn::DeriveInput) -> TokenStream {
+enum FieldType {
+    Optional,
+    BoxedOptional,
+    Repeated,
+    Primitive,
+}
+
+fn is_repeated(typ: &syn::Type) -> FieldType {
+    if let syn::Type::Path(path) = typ {
+        if let Some(last) = path.path.segments.last() {
+            if last.ident == "Option" {
+                if let syn::PathArguments::AngleBracketed(ref args) = last.arguments {
+                    if let syn::GenericArgument::Type(syn::Type::Path(path2)) =
+                        args.args.first().unwrap()
+                    {
+                        if path2.path.segments.last().unwrap().ident == "Box" {
+                            return FieldType::BoxedOptional;
+                        } else {
+                            return FieldType::Optional;
+                        }
+                    }
+                }
+                panic!("Option without type argument?");
+            } else if last.ident == "Vec" {
+                if let syn::PathArguments::AngleBracketed(ref args) = last.arguments {
+                    if let syn::GenericArgument::Type(syn::Type::Path(path2)) =
+                        args.args.first().unwrap()
+                    {
+                        if path2.path.segments.last().unwrap().ident == "u8" {
+                            return FieldType::Primitive;
+                        } else {
+                            return FieldType::Repeated;
+                        }
+                    }
+                }
+                panic!("Vec without type argument?");
+            }
+        }
+    }
+    FieldType::Primitive
+}
+
+fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> TokenStream {
     let name = &ast.ident;
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
+
+    let parse_unknown_matches: Vec<_> = data
+        .fields
+        .iter()
+        .map(|field| {
+            if let Some(ident) = &field.ident {
+                let action = match is_repeated(&field.ty) {
+                    FieldType::Optional => quote! {
+                        output.push_proto_field(
+                            context,
+                            &self.#ident.as_ref(),
+                            stringify!(#ident),
+                            true,
+                            |_, _, _| Ok(()),
+                            |_, _, _| Ok(()),
+                        );
+                    },
+                    FieldType::BoxedOptional => quote! {
+                        output.push_proto_field(
+                            context,
+                            &self.#ident,
+                            stringify!(#ident),
+                            true,
+                            |_, _, _| Ok(()),
+                            |_, _, _| Ok(()),
+                        );
+                    },
+                    FieldType::Repeated => quote! {
+                        output.push_proto_repeated_field(
+                            context,
+                            &self.#ident.as_ref(),
+                            stringify!(#ident),
+                            true,
+                            |_, _, _| Ok(()),
+                            |_, _, _, _| Ok(()),
+                        );
+                    },
+                    FieldType::Primitive => quote! {
+                        use crate::proto::meta::ProtoPrimitive;
+                        if !self.#ident.proto_primitive_is_default() {
+                            output.push_proto_field(
+                                context,
+                                &Some(&self.#ident),
+                                stringify!(#ident),
+                                true,
+                                |_, _, _| Ok(()),
+                                |_, _, _| Ok(()),
+                            );
+                        }
+                    },
+                };
+                quote! {
+                    if !context.fields_parsed.contains(stringify!(#ident)) {
+                        unknowns = true;
+                        #action
+                    }
+                }
+            } else {
+                panic!("protobuf message fields must have names");
+            }
+        })
+        .collect();
 
     quote!(
         impl #impl_generics crate::proto::meta::ProtoMessage for #name #ty_generics #where_clause {
@@ -75,6 +179,12 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput) -> TokenStream {
             fn proto_data_variant(&self) -> Option<&'static str> {
                 None
             }
+
+            fn proto_parse_unknown(&self, context: &mut crate::Context, output: &mut crate::doc_tree::Node) -> bool {
+                let mut unknowns = false;
+                #(#parse_unknown_matches)*
+                unknowns
+            }
         }
     )
     .into()
@@ -103,6 +213,15 @@ fn proto_meta_derive_oneof(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Toke
         })
         .collect();
 
+    let parse_unknown_matches: Vec<_> = data
+        .variants
+        .iter()
+        .map(|variant| {
+            let ident = &variant.ident;
+            quote! { #name::#ident (x) => x.proto_parse_unknown(context, output) }
+        })
+        .collect();
+
     quote!(
         impl #impl_generics crate::proto::meta::ProtoOneOf for #name #ty_generics #where_clause {
             fn proto_one_of_variant(&self) -> &'static str {
@@ -126,6 +245,12 @@ fn proto_meta_derive_oneof(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Toke
             fn proto_data_variant(&self) -> Option<&'static str> {
                 use crate::proto::meta::ProtoOneOf;
                 Some(self.proto_one_of_variant())
+            }
+
+            fn proto_parse_unknown(&self, context: &mut crate::Context, output: &mut crate::doc_tree::Node) -> bool {
+                match self {
+                    #(#parse_unknown_matches),*
+                }
             }
         }
     )

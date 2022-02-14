@@ -1,5 +1,9 @@
+use std::collections::HashSet;
+
 pub mod data_type;
 pub mod diagnostic;
+
+#[macro_use]
 pub mod doc_tree;
 pub mod extension;
 pub mod path;
@@ -14,6 +18,8 @@ pub struct Context<'a> {
     pub path: path::Path<'a>,
 
     pub data_type: Option<data_type::DataType>,
+
+    pub fields_parsed: HashSet<String>,
 }
 
 pub fn validate_embedded_function(
@@ -25,9 +31,22 @@ pub fn validate_embedded_function(
     // to do so.
 
     // Recoverable diagnostics and information:
-    output.push_error(context, diagnostic::Cause::UnknownType("".to_string()));
-    output.push_warning(context, diagnostic::Cause::UnknownType("".to_string()));
-    output.push_info(context, diagnostic::Cause::UnknownType("".to_string()));
+    diagnostic!(output, context, Error, UnknownType, "hello");
+    diagnostic!(
+        output,
+        context,
+        Warning,
+        UnknownType,
+        "can also {} here",
+        "format"
+    );
+    diagnostic!(
+        output,
+        context,
+        Info,
+        diagnostic::Cause::UnknownType("or make the Cause directly".to_string())
+    );
+    comment!(output, "hello");
     output.push_comment("".to_string());
 
     // Setting type information (can be called multiple times):
@@ -37,33 +56,66 @@ pub fn validate_embedded_function(
         variation: None,
         parameters: vec![],
     };
-    output.push_type(context, data_type);
+    set_type!(output, context, data_type);
 
     // Parsing an optional field:
-    output.push_proto_field(
+    let _maybe_node = proto_field!(
+        output,
         context,
-        &input.output_type,
-        "output_type", // want to automate this with a macro, must always be the field name above
-        |_input, _context, _output| todo!(),
-        |_field, _context, _output| Ok(()),
+        input,
+        output_type,                         /* field name */
+        |_input, _context, _output| todo!(), /* optional parser */
+        |_field, _context, _output| Ok(())   /* optional validator */
     );
 
     // Parsing a required field:
-    output.push_proto_required_field(
+    let _node = proto_required_field!(
+        output,
         context,
-        &input.output_type,
-        "output_type",
-        |_input, _context, _output| todo!(),
-        |_field, _context, _output| Ok(()),
+        input,
+        output_type,                         /* field name */
+        |_input, _context, _output| todo!(), /* optional parser */
+        |_field, _context, _output| Ok(())   /* optional validator */
+    );
+
+    // Parsing a oneof field (can also use proto_field!() if optional):
+    let _node = proto_required_field!(
+        output,
+        context,
+        input,
+        kind, /* field name */
+        |_input: &proto::substrait::expression::embedded_function::Kind, _context, _output| todo!(), /* optional parser */
+        |_field, _context, _output| Ok(()) /* optional validator */
     );
 
     // Parsing a repeated field:
-    output.push_proto_repeated_field(
+    let _vec_node = proto_repeated_field!(
+        output,
         context,
-        &input.arguments,
-        "arguments",
-        |_input, _context, _output| todo!(),
-        |_index, _field, _context, _output| Ok(()),
+        input,
+        arguments,                                  /* repeated field name */
+        |_input, _context, _output| todo!(),        /* optional parser */
+        |_index, _field, _context, _output| Ok(())  /* optional validator */
+    );
+
+    // Note: for primitive fields (i.e. fields with a primitive type, like an
+    // integer), the parser
+
+    Ok(())
+}
+
+pub fn validate_list(
+    input: &proto::substrait::r#type::List,
+    context: &mut Context,
+    output: &mut doc_tree::Node,
+) -> Result<()> {
+    let _maybe_node = proto_boxed_field!(
+        output,
+        context,
+        input,
+        r#type,                              /* field name */
+        |_input, _context, _output| todo!(), /* optional parser */
+        |_field, _context, _output| Ok(())   /* optional validator */
     );
 
     Ok(())
