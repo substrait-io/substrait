@@ -16,39 +16,19 @@ use proto::meta::ProtoDatum;
 /// Default result type.
 pub type Result<T> = diagnostic::Result<T>;
 
-/// Contextual information available while parsing.
-pub struct Context<'a> {
-    /// Context object for the parent node.
-    pub parent: Option<&'a Context<'a>>,
-
-    /// The path leading up to the node we're validating. Used for generating
-    /// diagnostics.
-    pub path: path::Path<'a>,
-
-    // The stack of table schemas that FieldRefs currently index into.
-    //pub schema: Option<data_type::DataType>,
-    /// The set of field names that we've already parsed. This is used to
-    /// automatically search through message subtrees that the validator
-    /// doesn't yet implement: after all normal validation for a node is done,
-    /// the tree-walking logic checks whether there are fields with non-default
-    /// data associated with them of which the field name hasn't been added to
-    /// this set yet. It's also used to prevent validating the same node twice.
-    pub fields_parsed: HashSet<String>,
-}
-
 pub fn validate_embedded_function(
     input: &proto::substrait::expression::EmbeddedFunction,
-    context: &mut Context,
+    breadcrumb: &mut context::Breadcrumb,
     output: &mut doc_tree::Node,
 ) -> Result<()> {
     // Immediate death/cannot continue: just return Err() (or use ? operator
     // to do so.
 
     // Recoverable diagnostics and information:
-    diagnostic!(output, context, Error, UnknownType, "hello");
+    diagnostic!(output, breadcrumb, Error, UnknownType, "hello");
     diagnostic!(
         output,
-        context,
+        breadcrumb,
         Warning,
         UnknownType,
         "can also {} here",
@@ -56,7 +36,7 @@ pub fn validate_embedded_function(
     );
     diagnostic!(
         output,
-        context,
+        breadcrumb,
         Info,
         diagnostic::Cause::UnknownType("or make the Cause directly".to_string())
     );
@@ -75,7 +55,7 @@ pub fn validate_embedded_function(
     // Parsing an optional field:
     let _maybe_node = proto_field!(
         output,
-        context,
+        breadcrumb,
         input,
         output_type,                         /* field name */
         |_input, _context, _output| todo!(), /* optional parser */
@@ -85,7 +65,7 @@ pub fn validate_embedded_function(
     // Parsing a required field:
     let _node = proto_required_field!(
         output,
-        context,
+        breadcrumb,
         input,
         output_type,                         /* field name */
         |_input, _context, _output| todo!(), /* optional parser */
@@ -95,7 +75,7 @@ pub fn validate_embedded_function(
     // Parsing a oneof field (can also use proto_field!() if optional):
     let _node = proto_required_field!(
         output,
-        context,
+        breadcrumb,
         input,
         kind, /* field name */
         |_input: &proto::substrait::expression::embedded_function::Kind, _context, _output| todo!(), /* optional parser */
@@ -105,7 +85,7 @@ pub fn validate_embedded_function(
     // Parsing a repeated field:
     let _vec_node = proto_repeated_field!(
         output,
-        context,
+        breadcrumb,
         input,
         arguments,                                  /* repeated field name */
         |_input, _context, _output| todo!(),        /* optional parser */
@@ -120,12 +100,12 @@ pub fn validate_embedded_function(
 
 pub fn validate_list(
     input: &proto::substrait::r#type::List,
-    context: &mut Context,
+    breadcrumb: &mut context::Breadcrumb,
     output: &mut doc_tree::Node,
 ) -> Result<()> {
     let _maybe_node = proto_boxed_field!(
         output,
-        context,
+        breadcrumb,
         input,
         r#type,                              /* field name */
         |_input, _context, _output| todo!(), /* optional parser */
@@ -136,7 +116,7 @@ pub fn validate_list(
 }
 
 pub fn validate<B: prost::bytes::Buf>(buf: B) -> doc_tree::Node {
-    let mut context = crate::Context {
+    let mut breadcrumb = context::Breadcrumb {
         parent: None,
         path: path::Path::Root("plan"),
         fields_parsed: HashSet::new(),
@@ -145,12 +125,12 @@ pub fn validate<B: prost::bytes::Buf>(buf: B) -> doc_tree::Node {
     match proto::substrait::Plan::decode(buf) {
         Err(err) => {
             let mut output = proto::substrait::Plan::proto_type_to_node();
-            diagnostic!(output, &context, Error, err.into());
+            diagnostic!(output, &breadcrumb, Error, err.into());
             output
         }
         Ok(plan) => {
             let mut output = plan.proto_data_to_node();
-            output.handle_unknown_fields(&mut context, &plan, false);
+            output.handle_unknown_fields(&mut breadcrumb, &plan, false);
             output
         }
     }

@@ -1,3 +1,4 @@
+use crate::context;
 use crate::data_type;
 use crate::diagnostic;
 use crate::path;
@@ -174,14 +175,14 @@ impl Node {
     /// Pushes a diagnostic message to the node information list.
     pub fn push_diagnostic(
         &mut self,
-        context: &crate::Context,
+        breadcrumb: &context::Breadcrumb,
         level: diagnostic::Level,
         cause: diagnostic::Cause,
     ) {
         self.data.push(NodeData::Diagnostic(diagnostic::Diagnostic {
             cause,
             level,
-            path: context.path.to_path_buf(),
+            path: breadcrumb.path.to_path_buf(),
         }))
     }
 
@@ -201,7 +202,7 @@ impl Node {
     /// Parse and push a protobuf optional field.
     pub fn push_proto_field<T, F, FV>(
         &mut self,
-        context: &mut crate::Context,
+        breadcrumb: &mut context::Breadcrumb,
         input: &Option<impl std::ops::Deref<Target = T>>,
         field_name: &'static str,
         unknown_subtree: bool,
@@ -210,20 +211,20 @@ impl Node {
     ) -> Option<Rc<Node>>
     where
         T: ProtoDatum,
-        F: FnOnce(&T, &mut crate::Context, &mut Node) -> crate::Result<()>,
-        FV: Fn(&Node, &mut crate::Context, &mut Node) -> crate::Result<()>,
+        F: FnOnce(&T, &mut context::Breadcrumb, &mut Node) -> crate::Result<()>,
+        FV: Fn(&Node, &mut context::Breadcrumb, &mut Node) -> crate::Result<()>,
     {
-        if !context.fields_parsed.insert(field_name.to_string()) {
+        if !breadcrumb.fields_parsed.insert(field_name.to_string()) {
             panic!("field {} was parsed multiple times", field_name);
         }
 
         if let Some(field_input) = input {
             let field_input = field_input.deref();
 
-            // Create the context for the child message.
-            let mut field_context = crate::Context {
-                parent: Some(context),
-                path: context.path.with_field(field_name),
+            // Create the breadcrumb for the child message.
+            let mut field_breadcrumb = context::Breadcrumb {
+                parent: Some(breadcrumb),
+                path: breadcrumb.path.with_field(field_name),
                 fields_parsed: HashSet::new(),
             };
 
@@ -231,12 +232,12 @@ impl Node {
             let mut field_output = field_input.proto_data_to_node();
 
             // Call the provided parser function.
-            if let Err(cause) = parser(field_input, &mut field_context, &mut field_output) {
-                diagnostic!(field_output, &field_context, Error, cause);
+            if let Err(cause) = parser(field_input, &mut field_breadcrumb, &mut field_output) {
+                field_output.push_diagnostic(&field_breadcrumb, diagnostic::Level::Error, cause);
             }
 
             // Handle any fields not handled by the provided parse function.
-            field_output.handle_unknown_fields(&mut field_context, field_input, unknown_subtree);
+            field_output.handle_unknown_fields(&mut field_breadcrumb, field_input, unknown_subtree);
 
             // Push and return the completed node.
             let field_output = Rc::new(field_output);
@@ -249,8 +250,8 @@ impl Node {
             );
 
             // Run the validator.
-            if let Err(cause) = validator(&field_output, context, self) {
-                diagnostic!(self, context, Error, cause);
+            if let Err(cause) = validator(&field_output, breadcrumb, self) {
+                self.push_diagnostic(breadcrumb, diagnostic::Level::Error, cause);
             }
 
             Some(field_output)
@@ -264,7 +265,7 @@ impl Node {
     /// an empty node is returned as an error recovery placeholder.
     pub fn push_proto_required_field<T, F, FV>(
         &mut self,
-        context: &mut crate::Context,
+        breadcrumb: &mut context::Breadcrumb,
         input: &Option<impl std::ops::Deref<Target = T>>,
         field_name: &'static str,
         parser: F,
@@ -272,15 +273,19 @@ impl Node {
     ) -> Rc<Node>
     where
         T: ProtoDatum,
-        F: FnOnce(&T, &mut crate::Context, &mut Node) -> crate::Result<()>,
-        FV: Fn(&Node, &mut crate::Context, &mut Node) -> crate::Result<()>,
+        F: FnOnce(&T, &mut context::Breadcrumb, &mut Node) -> crate::Result<()>,
+        FV: Fn(&Node, &mut context::Breadcrumb, &mut Node) -> crate::Result<()>,
     {
         if let Some(node) =
-            self.push_proto_field(context, input, field_name, false, parser, validator)
+            self.push_proto_field(breadcrumb, input, field_name, false, parser, validator)
         {
             node
         } else {
-            diagnostic!(self, context, Error, MissingField, "{}", field_name);
+            self.push_diagnostic(
+                breadcrumb,
+                diagnostic::Level::Error,
+                diagnostic::Cause::MissingField(field_name.to_string()),
+            );
             Rc::new(T::proto_type_to_node())
         }
     }
@@ -291,7 +296,7 @@ impl Node {
     /// field-specific validation to be done.
     pub fn push_proto_repeated_field<T, F, FV>(
         &mut self,
-        context: &mut crate::Context,
+        breadcrumb: &mut context::Breadcrumb,
         input: &[T],
         field_name: &'static str,
         unknown_subtree: bool,
@@ -300,10 +305,10 @@ impl Node {
     ) -> Vec<Rc<Node>>
     where
         T: ProtoDatum,
-        F: Fn(&T, &mut crate::Context, &mut Node) -> crate::Result<()>,
-        FV: Fn(usize, &Node, &mut crate::Context, &mut Node) -> crate::Result<()>,
+        F: Fn(&T, &mut context::Breadcrumb, &mut Node) -> crate::Result<()>,
+        FV: Fn(usize, &Node, &mut context::Breadcrumb, &mut Node) -> crate::Result<()>,
     {
-        if !context.fields_parsed.insert(field_name.to_string()) {
+        if !breadcrumb.fields_parsed.insert(field_name.to_string()) {
             panic!("field {} was parsed multiple times", field_name);
         }
 
@@ -312,9 +317,9 @@ impl Node {
             .enumerate()
             .map(|(index, field_input)| {
                 // Create the context for the child message.
-                let mut field_context = crate::Context {
-                    parent: Some(context),
-                    path: context.path.with_repeated(field_name, index),
+                let mut field_breadcrumb = context::Breadcrumb {
+                    parent: Some(breadcrumb),
+                    path: breadcrumb.path.with_repeated(field_name, index),
                     fields_parsed: HashSet::new(),
                 };
 
@@ -322,13 +327,17 @@ impl Node {
                 let mut field_output = field_input.proto_data_to_node();
 
                 // Call the provided parser function.
-                if let Err(cause) = parser(field_input, &mut field_context, &mut field_output) {
-                    diagnostic!(field_output, &field_context, Error, cause);
+                if let Err(cause) = parser(field_input, &mut field_breadcrumb, &mut field_output) {
+                    field_output.push_diagnostic(
+                        &field_breadcrumb,
+                        diagnostic::Level::Error,
+                        cause,
+                    );
                 }
 
                 // Handle any fields not handled by the provided parse function.
                 field_output.handle_unknown_fields(
-                    &mut field_context,
+                    &mut field_breadcrumb,
                     field_input,
                     unknown_subtree,
                 );
@@ -342,8 +351,8 @@ impl Node {
                 ));
 
                 // Run the validator.
-                if let Err(cause) = validator(index, &field_output, context, self) {
-                    diagnostic!(self, context, Error, cause);
+                if let Err(cause) = validator(index, &field_output, breadcrumb, self) {
+                    self.push_diagnostic(breadcrumb, diagnostic::Level::Error, cause);
                 }
 
                 field_output
@@ -356,11 +365,11 @@ impl Node {
     /// populated/non-default unhandled fields.
     pub fn handle_unknown_fields<T: ProtoDatum>(
         &mut self,
-        context: &mut crate::Context,
+        breadcrumb: &mut context::Breadcrumb,
         input: &T,
         unknown_subtree: bool,
     ) {
-        if input.proto_parse_unknown(context, self) && !unknown_subtree {
+        if input.proto_parse_unknown(breadcrumb, self) && !unknown_subtree {
             let mut fields = HashSet::new();
             for data in self.data.iter() {
                 match data {
@@ -377,7 +386,11 @@ impl Node {
                 let fields: String =
                     itertools::Itertools::intersperse(fields.into_iter(), ", ".to_string())
                         .collect();
-                diagnostic!(self, context, Warning, UnknownField, "{}", fields);
+                self.push_diagnostic(
+                    breadcrumb,
+                    diagnostic::Level::Warning,
+                    diagnostic::Cause::UnknownField(fields),
+                );
             }
         }
     }

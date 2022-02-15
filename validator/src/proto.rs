@@ -1,4 +1,5 @@
 pub mod meta {
+    use crate::context;
     use crate::doc_tree;
 
     #[derive(Clone, Debug, PartialEq)]
@@ -47,7 +48,7 @@ pub mod meta {
         /// were added.
         fn proto_parse_unknown(
             &self,
-            context: &mut crate::Context,
+            breadcrumb: &mut context::Breadcrumb,
             output: &mut doc_tree::Node,
         ) -> bool;
     }
@@ -149,7 +150,7 @@ pub mod meta {
 
         fn proto_parse_unknown(
             &self,
-            _context: &mut crate::Context,
+            _breadcrumb: &mut context::Breadcrumb,
             _output: &mut doc_tree::Node,
         ) -> bool {
             false
