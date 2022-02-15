@@ -95,51 +95,51 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
             if let Some(ident) = &field.ident {
                 let action = match is_repeated(&field.ty) {
                     FieldType::Optional => quote! {
-                        output.push_proto_field(
-                            breadcrumb,
+                        crate::doc_tree::push_proto_field(
+                            context,
                             &self.#ident.as_ref(),
                             stringify!(#ident),
                             true,
-                            |_, _, _| Ok(()),
-                            |_, _, _| Ok(()),
+                            |_| Ok(()),
+                            |_, _| Ok(()),
                         );
                     },
                     FieldType::BoxedOptional => quote! {
-                        output.push_proto_field(
-                            breadcrumb,
+                        crate::doc_tree::push_proto_field(
+                            context,
                             &self.#ident,
                             stringify!(#ident),
                             true,
-                            |_, _, _| Ok(()),
-                            |_, _, _| Ok(()),
+                            |_| Ok(()),
+                            |_, _| Ok(()),
                         );
                     },
                     FieldType::Repeated => quote! {
-                        output.push_proto_repeated_field(
-                            breadcrumb,
+                        crate::doc_tree::push_proto_repeated_field(
+                            context,
                             &self.#ident.as_ref(),
                             stringify!(#ident),
                             true,
+                            |_| Ok(()),
                             |_, _, _| Ok(()),
-                            |_, _, _, _| Ok(()),
                         );
                     },
                     FieldType::Primitive => quote! {
                         use crate::proto::meta::ProtoPrimitive;
-                        if !self.#ident.proto_primitive_is_default() {
-                            output.push_proto_field(
-                                breadcrumb,
+                        if !context.config.ignore_unknown_fields_set_to_default || !self.#ident.proto_primitive_is_default() {
+                            crate::doc_tree::push_proto_field(
+                                context,
                                 &Some(&self.#ident),
                                 stringify!(#ident),
                                 true,
-                                |_, _, _| Ok(()),
-                                |_, _, _| Ok(()),
+                                |_| Ok(()),
+                                |_, _| Ok(()),
                             );
                         }
                     },
                 };
                 quote! {
-                    if !breadcrumb.fields_parsed.contains(stringify!(#ident)) {
+                    if !context.breadcrumb.fields_parsed.contains(stringify!(#ident)) {
                         unknowns = true;
                         #action
                     }
@@ -180,7 +180,10 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                 None
             }
 
-            fn proto_parse_unknown(&self, breadcrumb: &mut crate::context::Breadcrumb, output: &mut crate::doc_tree::Node) -> bool {
+            fn proto_parse_unknown<T>(
+                &self,
+                context: &mut crate::context::Context<'_, T>,
+            ) -> bool {
                 let mut unknowns = false;
                 #(#parse_unknown_matches)*
                 unknowns
@@ -218,7 +221,7 @@ fn proto_meta_derive_oneof(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Toke
         .iter()
         .map(|variant| {
             let ident = &variant.ident;
-            quote! { #name::#ident (x) => x.proto_parse_unknown(breadcrumb, output) }
+            quote! { #name::#ident (x) => x.proto_parse_unknown(context) }
         })
         .collect();
 
@@ -247,7 +250,10 @@ fn proto_meta_derive_oneof(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Toke
                 Some(self.proto_one_of_variant())
             }
 
-            fn proto_parse_unknown(&self, breadcrumb: &mut crate::context::Breadcrumb, output: &mut crate::doc_tree::Node) -> bool {
+            fn proto_parse_unknown<T>(
+                &self,
+                context: &mut crate::context::Context<'_, T>,
+            ) -> bool {
                 match self {
                     #(#parse_unknown_matches),*
                 }

@@ -34,8 +34,8 @@ impl std::fmt::Display for PathElement {
 /// Refers to a location within a protobuf message.
 #[derive(Clone, Debug, PartialEq)]
 pub struct PathBuf {
-    root: &'static str,
-    elements: Vec<PathElement>,
+    pub root: &'static str,
+    pub elements: Vec<PathElement>,
 }
 
 impl std::fmt::Display for PathBuf {
@@ -64,27 +64,34 @@ impl Path<'_> {
     /// Returns a new Path that references an optional field with the
     /// given name within the protobuf message referred to by the current
     /// path, or likewise for the key within a YAML map.
+    pub fn with(&self, element: PathElement) -> Path {
+        Path::Select(self, element)
+    }
+
+    /// Returns a new Path that references an optional field with the
+    /// given name within the protobuf message referred to by the current
+    /// path, or likewise for the key within a YAML map.
     pub fn with_field(&self, name: &'static str) -> Path {
-        Path::Select(self, PathElement::Field(name))
+        self.with(PathElement::Field(name))
     }
 
     /// Returns a new Path that references an element of a repeated field
     /// with the given name within the message referred to by the current
     /// path.
     pub fn with_repeated(&self, name: &'static str, index: usize) -> Path {
-        Path::Select(self, PathElement::Repeated(name, index))
+        self.with(PathElement::Repeated(name, index))
     }
 
     /// Returns a new Path that references a particular variant of a
     /// OneOf field with the given name within the message referred to
     /// by the current path.
     pub fn with_variant(&self, name: &'static str, variant: &'static str) -> Path {
-        Path::Select(self, PathElement::Variant(name, variant))
+        self.with(PathElement::Variant(name, variant))
     }
 
     /// Returns a new Path that references a YAML array element.
     pub fn with_index(&self, index: usize) -> Path {
-        Path::Select(self, PathElement::Index(index))
+        self.with(PathElement::Index(index))
     }
 }
 

@@ -26,7 +26,7 @@ pub struct Context<'a, T> {
     /// "Breadcrumbs" with information about the ancestors of the current node.
     /// Essentially a stack structure, where only the top of the stack is
     /// mutable.
-    pub breadcrumbs: &'a mut Breadcrumb<'a>,
+    pub breadcrumb: &'a mut Breadcrumb<'a>,
 
     /// Configuration structure, created before validation starts and immutable
     /// afterwards.
@@ -34,6 +34,7 @@ pub struct Context<'a, T> {
 }
 
 /// Global state information tracked by the validation logic.
+#[derive(Default)]
 pub struct State {
     /// YAML-defined function set, indexed by anchor.
     pub functions: HashMap<u32, extension::ExtensionInfo>,
@@ -74,7 +75,30 @@ pub struct Breadcrumb<'a> {
     pub fields_parsed: HashSet<String>,
 }
 
+impl Breadcrumb<'_> {
+    /// Creates a breadcrumb for the root node.
+    pub fn new(root_name: &'static str) -> Self {
+        Self {
+            parent: None,
+            path: path::Path::Root(root_name),
+            fields_parsed: HashSet::new(),
+        }
+    }
+
+    /// Creates the next breadcrumb.
+    pub fn next(&self, element: path::PathElement) -> Breadcrumb {
+        Breadcrumb {
+            parent: Some(self),
+            path: self.path.with(element),
+            fields_parsed: HashSet::new(),
+        }
+    }
+}
+
 /// Configuration structure.
+#[derive(Default)]
 pub struct Config {
-    // Placeholder; nothing here yet.
+    /// When set, so not generate warnings for unknown protobuf fields that are
+    /// set to their protobuf-defined default value.
+    pub ignore_unknown_fields_set_to_default: bool,
 }
