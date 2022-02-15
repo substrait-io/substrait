@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bytes = "0.4"
 prost = "0.9"
 prost-types = "0.9"
 thiserror = "1.0"

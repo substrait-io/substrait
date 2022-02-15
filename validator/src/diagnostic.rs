@@ -13,7 +13,7 @@ pub enum Cause {
     MismatchedTypeParameters(String),
     #[error("missing required field {0}")]
     MissingField(String),
-    #[error("found non-default values for field(s) not yet understood by the validator: {0}")]
+    #[error("found values for field(s) not yet understood by the validator: {0}")]
     UnknownField(String),
 }
 

@@ -3,7 +3,7 @@ use crate::data_type;
 use crate::diagnostic;
 use crate::path;
 use crate::proto::meta::*;
-use std::collections::HashSet;
+use std::collections::VecDeque;
 use std::rc::Rc;
 
 /// Convenience/shorthand macro for pushing diagnostic messages to a node.
@@ -138,9 +138,9 @@ where
             input: field_input,
             output: &mut field_output,
             state: context.state,
-            breadcrumb: &mut context
-                .breadcrumb
-                .next(path::PathElement::Field(field_name)),
+            breadcrumb: &mut context.breadcrumb.next(path::PathElement::Field(
+                field_input.proto_data_variant().unwrap_or(field_name),
+            )),
             config: context.config,
         };
 
@@ -156,7 +156,17 @@ where
         let field_output = Rc::new(field_output);
         context.output.data.push(
             if let Some(variant_name) = field_input.proto_data_variant() {
-                NodeData::OneOfField(field_name, variant_name, field_output.clone())
+                if unknown_subtree {
+                    NodeData::UnknownOneOfField(
+                        field_name.to_string(),
+                        variant_name.to_string(),
+                        field_output.clone(),
+                    )
+                } else {
+                    NodeData::OneOfField(field_name, variant_name, field_output.clone())
+                }
+            } else if unknown_subtree {
+                NodeData::UnknownField(field_name.to_string(), field_output.clone())
             } else {
                 NodeData::Field(field_name, field_output.clone())
             },
@@ -317,11 +327,11 @@ where
 
             // Push the completed node.
             let field_output = Rc::new(field_output);
-            context.output.data.push(NodeData::RepeatedField(
-                field_name,
-                index,
-                field_output.clone(),
-            ));
+            context.output.data.push(if unknown_subtree {
+                NodeData::UnknownRepeatedField(field_name.to_string(), index, field_output.clone())
+            } else {
+                NodeData::RepeatedField(field_name, index, field_output.clone())
+            });
 
             // Run the validator.
             if let Err(cause) = validator(context, &field_output, index) {
@@ -338,14 +348,17 @@ where
 /// populated/non-default unhandled fields.
 fn handle_unknown_fields<T: ProtoDatum>(context: &mut context::Context<T>, unknown_subtree: bool) {
     if context.input.proto_parse_unknown(context) && !unknown_subtree {
-        let mut fields = HashSet::new();
+        let mut fields = vec![];
         for data in context.output.data.iter() {
             match data {
                 NodeData::UnknownField(field, _) => {
-                    fields.insert(field.clone());
+                    fields.push(field.clone());
                 }
-                NodeData::UnknownRepeatedField(field, _, _) => {
-                    fields.insert(field.clone());
+                NodeData::UnknownRepeatedField(field, 0, _) => {
+                    fields.push(field.clone());
+                }
+                NodeData::UnknownOneOfField(field, variant, _) => {
+                    fields.push(format!("{}({})", field, variant));
                 }
                 _ => {}
             }
@@ -457,6 +470,24 @@ impl Node {
             }
         }
     }
+
+    /// Returns an iterator that iterates over all nodes depth-first.
+    pub fn iter_flattened_nodes(&self) -> FlattenedNodeIter {
+        FlattenedNodeIter {
+            remaining: VecDeque::from(vec![self]),
+        }
+    }
+
+    /// Iterates over all diagnostics in the tree.
+    pub fn iter_diagnostics(&self) -> impl Iterator<Item = &diagnostic::Diagnostic> + '_ {
+        self.iter_flattened_nodes()
+            .map(|node| node.data.iter())
+            .flatten()
+            .filter_map(|x| match x {
+                NodeData::Diagnostic(d) => Some(d),
+                _ => None,
+            })
+    }
 }
 
 /// The original data type that the node represents, to (in theory) allow the
@@ -522,6 +553,9 @@ pub enum NodeData {
     /// with the given field name, variant name, and data.
     OneOfField(&'static str, &'static str, Rc<Node>),
 
+    /// Combination of UnknownField and OneOfField.
+    UnknownOneOfField(String, String, Rc<Node>),
+
     /// For YAML arrays, provides information for the given index in the array.
     /// The array elements are always stored in-order and without gaps, but the
     /// elements may be interspersed with metadata (diagnostics, comments,
@@ -555,4 +589,34 @@ pub struct NodeReference {
 
     /// Link to the node.
     pub node: Rc<Node>,
+}
+
+pub struct FlattenedNodeIter<'a> {
+    remaining: VecDeque<&'a Node>,
+}
+
+impl<'a> Iterator for FlattenedNodeIter<'a> {
+    type Item = &'a Node;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let maybe_node = self.remaining.pop_back();
+        if let Some(node) = maybe_node {
+            self.remaining
+                .extend(node.data.iter().rev().filter_map(|x| -> Option<&Node> {
+                    match x {
+                        NodeData::Field(_, n) => Some(n),
+                        NodeData::UnknownField(_, n) => Some(n),
+                        NodeData::RepeatedField(_, _, n) => Some(n),
+                        NodeData::UnknownRepeatedField(_, _, n) => Some(n),
+                        NodeData::OneOfField(_, _, n) => Some(n),
+                        NodeData::UnknownOneOfField(_, _, n) => Some(n),
+                        NodeData::ArrayElement(_, n) => Some(n),
+                        NodeData::Diagnostic(_) => None,
+                        NodeData::DataType(_) => None,
+                        NodeData::Comment(_) => None,
+                    }
+                }));
+        }
+        maybe_node
+    }
 }
