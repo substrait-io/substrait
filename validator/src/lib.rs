@@ -6,6 +6,7 @@ pub mod diagnostic;
 
 #[macro_use]
 pub mod doc_tree;
+pub mod context;
 pub mod extension;
 pub mod path;
 pub mod proto;
