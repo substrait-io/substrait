@@ -15,8 +15,7 @@ macro_rules! diagnostic {
     };
 }
 
-/// Convenience/shorthand macro for pushing comments to a node. Note that
-/// unlike the other macros like this, no context is needed.
+/// Convenience/shorthand macro for pushing comments to a node.
 macro_rules! comment {
     ($output:expr, $($fmts:expr),*) => {
         $output.push_comment(format!($($fmts),*))
@@ -27,32 +26,18 @@ macro_rules! comment {
 /// that this macro isn't shorter than just using push_type() directly; it
 /// exists for symmetry.
 macro_rules! set_type {
-    ($output:expr, $context:expr, $typ:expr) => {
-        $output.push_type($context, $typ)
+    ($output:expr, $typ:expr) => {
+        $output.push_type($typ)
     };
 }
 
 /// Convenience/shorthand macro for parsing optional protobuf fields.
 macro_rules! proto_field {
     ($output:expr, $context:expr, $input:expr, $field:ident) => {
-        $output.push_proto_field(
-            $context,
-            &$input.$field.as_ref(),
-            stringify!($field),
-            false,
-            |_, _, _| Ok(()),
-            |_, _, _| Ok(()),
-        )
+        proto_field!($output, $context, $input, $field, |_, _, _| Ok(()))
     };
     ($output:expr, $context:expr, $input:expr, $field:ident, $parser:expr) => {
-        $output.push_proto_field(
-            $context,
-            &$input.$field.as_ref(),
-            stringify!($field),
-            false,
-            $parser,
-            |_, _, _| Ok(()),
-        )
+        proto_field!($output, $context, $input, $field, parser, |_, _, _| Ok(()))
     };
     ($output:expr, $context:expr, $input:expr, $field:ident, $parser:expr, $validator:expr) => {
         $output.push_proto_field(
@@ -68,24 +53,10 @@ macro_rules! proto_field {
 
 macro_rules! proto_boxed_field {
     ($output:expr, $context:expr, $input:expr, $field:ident) => {
-        $output.push_proto_field(
-            $context,
-            &$input.$field,
-            stringify!($field),
-            false,
-            |_, _, _| Ok(()),
-            |_, _, _| Ok(()),
-        )
+        proto_boxed_field!($output, $context, $input, $field, |_, _, _| Ok(()))
     };
     ($output:expr, $context:expr, $input:expr, $field:ident, $parser:expr) => {
-        $output.push_proto_field(
-            $context,
-            &$input.$field,
-            stringify!($field),
-            false,
-            $parser,
-            |_, _, _| Ok(()),
-        )
+        proto_boxed_field!($output, $context, $input, $field, parser, |_, _, _| Ok(()))
     };
     ($output:expr, $context:expr, $input:expr, $field:ident, $parser:expr, $validator:expr) => {
         $output.push_proto_field(
@@ -102,22 +73,10 @@ macro_rules! proto_boxed_field {
 /// Convenience/shorthand macro for parsing required protobuf fields.
 macro_rules! proto_required_field {
     ($output:expr, $context:expr, $input:expr, $field:ident) => {
-        $output.push_proto_required_field(
-            $context,
-            &$input.$field.as_ref(),
-            stringify!($field),
-            |_, _, _| Ok(()),
-            |_, _, _| Ok(()),
-        )
+        proto_required_field!($output, $context, $input, $field, |_, _, _| Ok(()))
     };
     ($output:expr, $context:expr, $input:expr, $field:ident, $parser:expr) => {
-        $output.push_proto_required_field(
-            $context,
-            &$input.$field.as_ref(),
-            stringify!($field),
-            $parser,
-            |_, _, _| Ok(()),
-        )
+        proto_required_field!($output, $context, $input, $field, parser, |_, _, _| Ok(()))
     };
     ($output:expr, $context:expr, $input:expr, $field:ident, $parser:expr, $validator:expr) => {
         $output.push_proto_required_field(
@@ -133,22 +92,10 @@ macro_rules! proto_required_field {
 #[allow(unused_macros)]
 macro_rules! proto_boxed_required_field {
     ($output:expr, $context:expr, $input:expr, $field:ident) => {
-        $output.push_proto_required_field(
-            $context,
-            &$input.$field,
-            stringify!($field),
-            |_, _, _| Ok(()),
-            |_, _, _| Ok(()),
-        )
+        proto_boxed_required_field!($output, $context, $input, $field, |_, _, _| Ok(()))
     };
     ($output:expr, $context:expr, $input:expr, $field:ident, $parser:expr) => {
-        $output.push_proto_required_field(
-            $context,
-            &$input.$field,
-            stringify!($field),
-            $parser,
-            |_, _, _| Ok(()),
-        )
+        proto_boxed_required_field!($output, $context, $input, $field, parser, |_, _, _| Ok(()))
     };
     ($output:expr, $context:expr, $input:expr, $field:ident, $parser:expr, $validator:expr) => {
         $output.push_proto_required_field(
@@ -164,24 +111,10 @@ macro_rules! proto_boxed_required_field {
 /// Convenience/shorthand macro for parsing repeated protobuf fields.
 macro_rules! proto_repeated_field {
     ($output:expr, $context:expr, $input:expr, $field:ident) => {
-        $output.push_proto_repeated_field(
-            $context,
-            &$input.$field,
-            stringify!($field),
-            false,
-            |_, _, _| Ok(()),
-            |_, _, _, _| Ok(()),
-        )
+        proto_repeated_field!($output, $context, $input, $field, |_, _, _| Ok(()))
     };
     ($output:expr, $context:expr, $input:expr, $field:ident, $parser:expr) => {
-        $output.push_proto_repeated_field(
-            $context,
-            &$input.$field,
-            stringify!($field),
-            false,
-            $parser,
-            |_, _, _, _| Ok(()),
-        )
+        proto_repeated_field!($output, $context, $input, $field, parser, |_, _, _| Ok(()))
     };
     ($output:expr, $context:expr, $input:expr, $field:ident, $parser:expr, $validator:expr) => {
         $output.push_proto_repeated_field(
@@ -208,19 +141,22 @@ macro_rules! proto_repeated_field {
 /// for this!
 #[derive(Clone, Debug, PartialEq)]
 pub struct Node {
-    /// The protobuf type name for the message that this object represents.
+    /// The type of node.
     pub node_type: NodeType,
+
+    /// The type of data returned by this node, if any. Depending on the
+    /// message and context, this may represent a table schema or scalar
+    /// data.
+    pub data_type: Option<data_type::DataType>,
 
     /// The information gathered about the message.
     ///
-    /// This normally includes all the populated fields of the message that
-    /// the validator knows about (note the implication here: fields that the
-    /// validator does NOT know about are NOT represented, so this is not
-    /// necessarily a complete representation of the incoming Substrait
-    /// message) via OptionalField, RepeatedField, and OneOfField elements.
-    /// These elements are however interspersed with diagnostics, type
-    /// information, and unstructured comment nodes to provide context, and
-    /// the validator will try to order nodes in a reasonable way.
+    /// This normally includes all child nodes for this message, possibly
+    /// interspersed with diagnostics, type information, and unstructured
+    /// comment nodes to provide context, all ordered in a reasonable way.
+    /// Note however that this information is intended to be understood by
+    /// a human, not by the validator itself (aside from serialization to a
+    /// human-readable notation).
     pub data: Vec<NodeData>,
 }
 
@@ -228,6 +164,7 @@ impl From<NodeType> for Node {
     fn from(node_type: NodeType) -> Self {
         Node {
             node_type,
+            data_type: None,
             data: vec![],
         }
     }
@@ -256,9 +193,9 @@ impl Node {
 
     /// Pushes a data type to the node information list, and saves it in the
     /// current context.
-    pub fn push_type(&mut self, context: &mut crate::Context, data_type: data_type::DataType) {
+    pub fn push_type(&mut self, data_type: data_type::DataType) {
         self.data.push(NodeData::DataType(data_type.clone()));
-        context.data_type = Some(data_type);
+        self.data_type = Some(data_type);
     }
 
     /// Parse and push a protobuf optional field.
@@ -287,7 +224,6 @@ impl Node {
             let mut field_context = crate::Context {
                 parent: Some(context),
                 path: context.path.with_field(field_name),
-                data_type: None,
                 fields_parsed: HashSet::new(),
             };
 
@@ -300,11 +236,7 @@ impl Node {
             }
 
             // Handle any fields not handled by the provided parse function.
-            if field_input.proto_parse_unknown(&mut field_context, &mut field_output)
-                && !unknown_subtree
-            {
-                field_output.push_unknown_field_diagnostic(context);
-            }
+            field_output.handle_unknown_fields(&mut field_context, field_input, unknown_subtree);
 
             // Push and return the completed node.
             let field_output = Rc::new(field_output);
@@ -383,7 +315,6 @@ impl Node {
                 let mut field_context = crate::Context {
                     parent: Some(context),
                     path: context.path.with_repeated(field_name, index),
-                    data_type: None,
                     fields_parsed: HashSet::new(),
                 };
 
@@ -396,11 +327,11 @@ impl Node {
                 }
 
                 // Handle any fields not handled by the provided parse function.
-                if field_input.proto_parse_unknown(&mut field_context, &mut field_output)
-                    && !unknown_subtree
-                {
-                    field_output.push_unknown_field_diagnostic(context);
-                }
+                field_output.handle_unknown_fields(
+                    &mut field_context,
+                    field_input,
+                    unknown_subtree,
+                );
 
                 // Push the completed node.
                 let field_output = Rc::new(field_output);
@@ -420,24 +351,34 @@ impl Node {
             .collect()
     }
 
-    /// Generate and push a diagnostic message for unknown fields.
-    fn push_unknown_field_diagnostic(&mut self, context: &mut crate::Context) {
-        let mut fields = HashSet::new();
-        for data in self.data.iter() {
-            match data {
-                NodeData::UnknownField(field, _) => {
-                    fields.insert(field.clone());
+    /// Handle all fields that haven't already been handled. If unknown_subtree
+    /// is false, this also generates a diagnostic message if there were
+    /// populated/non-default unhandled fields.
+    pub fn handle_unknown_fields<T: ProtoDatum>(
+        &mut self,
+        context: &mut crate::Context,
+        input: &T,
+        unknown_subtree: bool,
+    ) {
+        if input.proto_parse_unknown(context, self) && !unknown_subtree {
+            let mut fields = HashSet::new();
+            for data in self.data.iter() {
+                match data {
+                    NodeData::UnknownField(field, _) => {
+                        fields.insert(field.clone());
+                    }
+                    NodeData::UnknownRepeatedField(field, _, _) => {
+                        fields.insert(field.clone());
+                    }
+                    _ => {}
                 }
-                NodeData::UnknownRepeatedField(field, _, _) => {
-                    fields.insert(field.clone());
-                }
-                _ => {}
             }
-        }
-        if !fields.is_empty() {
-            let fields: String =
-                itertools::Itertools::intersperse(fields.into_iter(), ", ".to_string()).collect();
-            diagnostic!(self, context, Warning, UnknownField, "{}", fields);
+            if !fields.is_empty() {
+                let fields: String =
+                    itertools::Itertools::intersperse(fields.into_iter(), ", ".to_string())
+                        .collect();
+                diagnostic!(self, context, Warning, UnknownField, "{}", fields);
+            }
         }
     }
 }
@@ -515,14 +456,14 @@ pub enum NodeData {
     /// diagnostic message being emitted.
     Diagnostic(diagnostic::Diagnostic),
 
-    /// Provides type information for this message. Depending on the message,
-    /// this may be a struct or named struct representing a schema, or it may
-    /// represent the type of some scalar expression. Multiple TypeInfo nodes
-    /// may be present, in particular for relations that perform multiple
-    /// operations in one go (for example read, project, emit). The TypeInfo
-    /// and operation description *Field nodes are then ordered by data flow.
-    /// In particular, the last TypeInfo node always represents the type of the
-    /// final result of a node.
+    /// Provides (intermediate) type information for this node. Depending on
+    /// the message, this may be a struct or named struct representing a
+    /// schema, or it may represent the type of some scalar expression.
+    /// Multiple TypeInfo nodes may be present, in particular for relations
+    /// that perform multiple operations in one go (for example read, project,
+    /// emit). The TypeInfo and operation description *Field nodes are then
+    /// ordered by data flow. In particular, the last TypeInfo node always
+    /// represents the type of the final result of a node.
     DataType(data_type::DataType),
 
     /// Used for adding unstructured additional information to a message,

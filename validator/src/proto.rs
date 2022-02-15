@@ -358,6 +358,7 @@ mod tests {
             substrait::Plan::proto_type_to_node(),
             doc_tree::Node {
                 node_type: doc_tree::NodeType::ProtoMessage("substrait.Plan"),
+                data_type: None,
                 data: vec![],
             }
         );
@@ -367,6 +368,7 @@ mod tests {
             msg.proto_data_to_node(),
             doc_tree::Node {
                 node_type: doc_tree::NodeType::ProtoMessage("substrait.Plan"),
+                data_type: None,
                 data: vec![],
             }
         );
@@ -379,6 +381,7 @@ mod tests {
             substrait::plan_rel::RelType::proto_type_to_node(),
             doc_tree::Node {
                 node_type: doc_tree::NodeType::ProtoMissingOneOf,
+                data_type: None,
                 data: vec![],
             }
         );
@@ -389,6 +392,7 @@ mod tests {
             oneof.proto_data_to_node(),
             doc_tree::Node {
                 node_type: doc_tree::NodeType::ProtoMessage("substrait.Rel"),
+                data_type: None,
                 data: vec![],
             }
         );
@@ -430,6 +434,7 @@ mod tests {
                     "substrait.AggregationPhase",
                     ProtoPrimitiveData::Enum("AGGREGATION_PHASE_UNSPECIFIED")
                 ),
+                data_type: None,
                 data: vec![],
             }
         );
@@ -440,6 +445,7 @@ mod tests {
                     "substrait.AggregationPhase",
                     ProtoPrimitiveData::Enum("AGGREGATION_PHASE_UNSPECIFIED")
                 ),
+                data_type: None,
                 data: vec![],
             }
         );
@@ -468,6 +474,7 @@ mod tests {
                     "uint32",
                     ProtoPrimitiveData::Unsigned(0)
                 ),
+                data_type: None,
                 data: vec![],
             }
         );
@@ -478,6 +485,7 @@ mod tests {
                     "uint32",
                     ProtoPrimitiveData::Unsigned(42)
                 ),
+                data_type: None,
                 data: vec![],
             }
         );

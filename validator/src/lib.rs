@@ -1,3 +1,4 @@
+use prost::Message;
 use std::collections::HashSet;
 
 pub mod data_type;
@@ -9,16 +10,28 @@ pub mod extension;
 pub mod path;
 pub mod proto;
 
+use proto::meta::ProtoDatum;
+
 /// Default result type.
 pub type Result<T> = diagnostic::Result<T>;
 
+/// Contextual information available while parsing.
 pub struct Context<'a> {
+    /// Context object for the parent node.
     pub parent: Option<&'a Context<'a>>,
 
+    /// The path leading up to the node we're validating. Used for generating
+    /// diagnostics.
     pub path: path::Path<'a>,
 
-    pub data_type: Option<data_type::DataType>,
-
+    // The stack of table schemas that FieldRefs currently index into.
+    //pub schema: Option<data_type::DataType>,
+    /// The set of field names that we've already parsed. This is used to
+    /// automatically search through message subtrees that the validator
+    /// doesn't yet implement: after all normal validation for a node is done,
+    /// the tree-walking logic checks whether there are fields with non-default
+    /// data associated with them of which the field name hasn't been added to
+    /// this set yet. It's also used to prevent validating the same node twice.
     pub fields_parsed: HashSet<String>,
 }
 
@@ -56,7 +69,7 @@ pub fn validate_embedded_function(
         variation: None,
         parameters: vec![],
     };
-    set_type!(output, context, data_type);
+    set_type!(output, data_type);
 
     // Parsing an optional field:
     let _maybe_node = proto_field!(
@@ -120,55 +133,28 @@ pub fn validate_list(
 
     Ok(())
 }
-/*
-#[derive(Default)]
-struct Validator {
-    /// Vector of all diagnostics we've gathered thus far.
-    diagnostics: diagnostic::Diagnostics,
-}
 
-impl Validator {
-    fn validate_plan_rel(
-        &mut self,
-        _rel: &proto::substrait::PlanRel,
-        _path: path::Path,
-    ) -> Result<doc_tree::Node> {
-        Ok(doc_tree::Node::message("substrait.PlanRel"))
-    }
+pub fn validate<B: prost::bytes::Buf>(buf: B) -> doc_tree::Node {
+    let mut context = crate::Context {
+        parent: None,
+        path: path::Path::Root("plan"),
+        fields_parsed: HashSet::new(),
+    };
 
-    fn validate_plan(
-        &mut self,
-        plan: &proto::substrait::Plan,
-        path: path::Path,
-    ) -> Result<doc_tree::Node> {
-        for (index, relation) in plan.relations.iter().enumerate() {
-            let sub_path = path.with_repeated("relations", index);
-            self.validate_plan_rel(relation, sub_path).unwrap(); // TODO
+    match proto::substrait::Plan::decode(buf) {
+        Err(err) => {
+            let mut output = proto::substrait::Plan::proto_type_to_node();
+            diagnostic!(output, &context, Error, err.into());
+            output
         }
-        Ok(doc_tree::Node::message("substrait.Plan"))
-    }
-
-    fn validate<B: prost::bytes::Buf>(&mut self, buf: B) -> Result<doc_tree::Node> {
-        let plan = proto::substrait::Plan::decode(buf)?;
-        self.validate_plan(&plan, path::Path::Root("plan"))
+        Ok(plan) => {
+            let mut output = plan.proto_data_to_node();
+            output.handle_unknown_fields(&mut context, &plan, false);
+            output
+        }
     }
 }
 
-pub fn validate<B: prost::bytes::Buf>(buf: B) -> (diagnostic::Diagnostics, Option<doc_tree::Node>) {
-    let mut validator = Validator::default();
-    let description = validator
-        .validate(buf)
-        .map_err(|e| {
-            validator.diagnostics.push(diagnostic::Diagnostic {
-                cause: e,
-                level: diagnostic::Level::Error,
-                path: path::Path::Root("unknown").to_path_buf(),
-            })
-        })
-        .ok();
-    (validator.diagnostics, description)
-}
-*/
 pub fn test() {
     use proto::meta::ProtoMessage;
     println!(
