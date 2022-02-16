@@ -69,10 +69,10 @@ pub fn push_data_type<T>(context: &mut context::Context<T>, data_type: data_type
 /// Convenience/shorthand macro for parsing optional protobuf fields.
 macro_rules! proto_field {
     ($context:expr, $field:ident) => {
-        proto_field!($context, $field, |_, _, _| Ok(()))
+        proto_field!($context, $field, |_| Ok(()))
     };
     ($context:expr, $field:ident, $parser:expr) => {
-        proto_field!($context, $field, parser, |_, _, _| Ok(()))
+        proto_field!($context, $field, $parser, |_, _| Ok(()))
     };
     ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_field(
@@ -88,10 +88,10 @@ macro_rules! proto_field {
 
 macro_rules! proto_boxed_field {
     ($context:expr, $field:ident) => {
-        proto_boxed_field!($context, $field, |_, _, _| Ok(()))
+        proto_boxed_field!($context, $field, |_| Ok(()))
     };
     ($context:expr, $field:ident, $parser:expr) => {
-        proto_boxed_field!($context, $field, parser, |_, _, _| Ok(()))
+        proto_boxed_field!($context, $field, $parser, |_, _| Ok(()))
     };
     ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_field(
@@ -186,10 +186,10 @@ where
 /// Convenience/shorthand macro for parsing required protobuf fields.
 macro_rules! proto_required_field {
     ($context:expr, $field:ident) => {
-        proto_required_field!($context, $field, |_, _, _| Ok(()))
+        proto_required_field!($context, $field, |_| Ok(()))
     };
     ($context:expr, $field:ident, $parser:expr) => {
-        proto_required_field!($context, $field, parser, |_, _, _| Ok(()))
+        proto_required_field!($context, $field, $parser, |_, _| Ok(()))
     };
     ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_required_field(
@@ -206,15 +206,35 @@ macro_rules! proto_required_field {
 #[allow(unused_macros)]
 macro_rules! proto_boxed_required_field {
     ($context:expr, $field:ident) => {
-        proto_boxed_required_field!($context, $field, |_, _, _| Ok(()))
+        proto_boxed_required_field!($context, $field, |_| Ok(()))
     };
     ($context:expr, $field:ident, $parser:expr) => {
-        proto_boxed_required_field!($context, $field, parser, |_, _, _| Ok(()))
+        proto_boxed_required_field!($context, $field, $parser, |_, _| Ok(()))
     };
     ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_required_field(
             $context,
             &$context.input.$field,
+            stringify!($field),
+            false,
+            $parser,
+            $validator,
+        )
+    };
+}
+
+#[allow(unused_macros)]
+macro_rules! proto_primitive_field {
+    ($context:expr, $field:ident) => {
+        proto_primitive_field!($context, $field, |_| Ok(()))
+    };
+    ($context:expr, $field:ident, $parser:expr) => {
+        proto_primitive_field!($context, $field, $parser, |_, _| Ok(()))
+    };
+    ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
+        crate::doc_tree::push_proto_required_field(
+            $context,
+            &Some(&$context.input.$field),
             stringify!($field),
             false,
             $parser,
@@ -260,7 +280,7 @@ macro_rules! proto_repeated_field {
         proto_repeated_field!($context, $field, |_| Ok(()))
     };
     ($context:expr, $field:ident, $parser:expr) => {
-        proto_repeated_field!($context, $field, parser, |_, _, _| Ok(()))
+        proto_repeated_field!($context, $field, $parser, |_, _, _| Ok(()))
     };
     ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_repeated_field(
@@ -509,10 +529,10 @@ pub enum NodeType {
     /// Used for anchor/reference-based references to other nodes.
     Reference(u64, NodeReference),
 
-    /// Used for resolved YAML URIs, in order to include the resolution result,
-    /// parse result, and documentation for the referenced YAML, in addition to
+    /// Used for resolved YAML URIs, in order to include the parse result and
+    /// documentation for the referenced YAML (if available), in addition to
     /// the URI itself.
-    YamlUri(String, diagnostic::Result<Rc<Node>>),
+    YamlUri(YamlData),
 
     /// The associated node represents a YAML map. The contents of the map are
     /// described using Field and UnknownField.
@@ -524,6 +544,16 @@ pub enum NodeType {
 
     /// The associated node represents a YAML primitive
     YamlPrimitive(ProtoPrimitiveData),
+}
+
+/// Information about a YAML extension.
+#[derive(Clone, Debug, PartialEq, Default)]
+pub struct YamlData {
+    /// URI for the YAML file.
+    pub uri: String,
+
+    /// The parsed YAML data, if any.
+    pub data: Option<Rc<Node>>,
 }
 
 /// Information nodes for a parsed protobuf message.

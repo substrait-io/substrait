@@ -11,76 +11,87 @@ pub mod proto;
 /// Default result type.
 pub type Result<T> = diagnostic::Result<T>;
 
-pub fn validate_embedded_function(
-    x: &mut context::Context<proto::substrait::expression::EmbeddedFunction>,
-) -> Result<()> {
-    // Immediate death/cannot continue: just return Err() (or use ? operator
-    // to do so.
 
-    // Recoverable diagnostics and information:
-    diagnostic!(x, Error, UnknownType, "hello");
-    diagnostic!(x, Warning, UnknownType, "can also {} here", "format");
-    diagnostic!(
-        x,
-        Info,
-        diagnostic::Cause::UnknownType("or make the Cause directly".to_string())
-    );
-    comment!(x, "hello");
+/// "Parse" an anchor. This just reports an error if the anchor is 0.
+fn parse_anchor(x: &mut context::Context<u32>) -> Result<()> {
+    if *x.input == 0 {
+        diagnostic!(x, Error, IllegalValue, "anchor 0 is reserved to disambiguate unspecified references from references to anchor 0");
+    }
+    Ok(())
+}
 
-    // Setting type information (can be called multiple times):
-    let data_type = data_type::DataType {
-        class: data_type::Class::Simple(data_type::Simple::Boolean),
-        nullable: false,
-        variation: None,
-        parameters: vec![],
-    };
-    data_type!(x, data_type);
+/// Parse a YAML extension URI string.
+fn parse_uri(x: &mut context::Context<String>) -> Result<()> {
 
-    // Parsing an optional field:
-    let _maybe_node = proto_field!(
-        x,
-        output_type,              /* field name */
-        |_x| todo!(),             /* optional parser */
-        |_x, _field_node| Ok(())  /* optional validator */
-    );
+    // The node type will have been set as if this is a normal string
+    // primitive. We want extra information though, namely the contents of the
+    // YAML file. So we change the node type.
+    x.output.node_type = doc_tree::NodeType::YamlUri(doc_tree::YamlData{
+        uri: x.input.clone(),
+        data: None
+    });
 
-    // Parsing a required field:
-    let _node = proto_required_field!(
-        x,
-        output_type,                /* field name */
-        |_x| todo!(),               /* optional parser */
-        |_x, _field_output| Ok(())  /* optional validator */
-    );
-
-    // Parsing a oneof field (can also use proto_field!() if optional):
-    let _node = proto_required_field!(
-        x,
-        kind,                       /* field name */
-        |_x| todo!(),               /* optional parser */
-        |_x, _field_output| Ok(())  /* optional validator */
-    );
-
-    // Parsing a repeated field:
-    let _vec_node = proto_repeated_field!(
-        x,
-        arguments,                        /* repeated field name */
-        |_x| todo!(),                     /* optional parser */
-        |_x, _field_node, _index| Ok(())  /* optional validator */
-    );
-
-    // Note: for primitive fields (i.e. fields with a primitive type, like an
-    // integer), the parser
+    // The data field in the above struct should be set to the parse result of
+    // the YAML file if it is resolved and parses. But that's not implemented
+    // yet, so report a warning.
+    diagnostic!(x, Warning, NotYetImplemented, "extension YAML resolution and parsing is not yet implemented");
 
     Ok(())
 }
 
-pub fn validate_list(x: &mut context::Context<proto::substrait::r#type::List>) -> Result<()> {
-    let _maybe_node = proto_boxed_field!(
-        x,
-        r#type,                   /* field name */
-        |_x| todo!(),             /* optional parser */
-        |_x, _field_node| Ok(())  /* optional validator */
-    );
+/// Parse a mapping from a URI anchor to a YAML extension.
+fn parse_extension_uri_mapping(x: &mut context::Context<proto::substrait::extensions::SimpleExtensionUri>) -> Result<()> {
+
+    // Parse the fields.
+    proto_primitive_field!(x, extension_uri_anchor, parse_anchor);
+    let yaml = proto_primitive_field!(x, uri, parse_uri);
+
+    // Insert a mapping for the URI anchor.
+    if let doc_tree::NodeType::YamlUri(ref data) = yaml.node_type {
+        if let Some(prev_data) = x.state.uris.insert(x.input.extension_uri_anchor, data.clone()) {
+            diagnostic!(x, Error, IllegalValue, "anchor {} is already in use for URI {}", x.input.extension_uri_anchor, prev_data.uri);
+        }
+    } else {
+        panic!();
+    }
+    
+    Ok(())
+}
+
+/// Parse a mapping from a function/type/variation anchor to an extension.
+fn parse_extension_mapping_data(x: &mut context::Context<proto::substrait::extensions::simple_extension_declaration::MappingType>) -> Result<()> {
+    match x.input {
+        proto::substrait::extensions::simple_extension_declaration::MappingType::ExtensionType(ty) => {
+            let mut x = x.replace_input(ty);
+            let x = &mut x;
+
+            // Parse the fields.
+            proto_primitive_field!(x, extension_uri_reference);
+            proto_primitive_field!(x, type_anchor, parse_anchor);
+            proto_primitive_field!(x, name);
+
+        }
+        proto::substrait::extensions::simple_extension_declaration::MappingType::ExtensionTypeVariation(ty_var) => {
+
+        }
+        proto::substrait::extensions::simple_extension_declaration::MappingType::ExtensionFunction(func) => {
+
+        }
+    };
+    Ok(())
+}
+
+/// Parse a mapping from a function/type/variation anchor to an extension.
+fn parse_extension_mapping(x: &mut context::Context<proto::substrait::extensions::SimpleExtensionDeclaration>) -> Result<()> {
+    proto_required_field!(x, mapping_type, parse_extension_mapping_data);
+    Ok(())
+}
+
+fn parse_plan(x: &mut context::Context<proto::substrait::Plan>) -> Result<()> {
+
+    // Parse the fields.
+    proto_repeated_field!(x, extension_uris, parse_extension_uri_mapping);
+    proto_repeated_field!(x, extensions, parse_extension_mapping);
 
     Ok(())
 }
@@ -89,7 +100,7 @@ pub fn validate<B: prost::bytes::Buf>(buffer: B) -> doc_tree::Node {
     doc_tree::Node::parse_proto::<proto::substrait::Plan, _, _>(
         buffer,
         "plan",
-        |_| Ok(()),
+        parse_plan,
         &mut context::State::default(),
         &context::Config::default(),
     )
@@ -145,5 +156,79 @@ mod tests {
         let data = validate(data);
         let diags: Vec<_> = data.iter_diagnostics().map(|x| x.to_string()).collect();
         assert_eq!(diags, vec!["Warning (plan): found values for field(s) not yet understood by the validator: extensions, relations".to_string()])
+    }
+
+    pub fn validate_embedded_function(
+        x: &mut context::Context<proto::substrait::expression::EmbeddedFunction>,
+    ) -> Result<()> {
+        // Immediate death/cannot continue: just return Err() (or use ? operator
+        // to do so.
+    
+        // Recoverable diagnostics and information:
+        diagnostic!(x, Error, UnknownType, "hello");
+        diagnostic!(x, Warning, UnknownType, "can also {} here", "format");
+        diagnostic!(
+            x,
+            Info,
+            diagnostic::Cause::UnknownType("or make the Cause directly".to_string())
+        );
+        comment!(x, "hello");
+    
+        // Setting type information (can be called multiple times):
+        let data_type = data_type::DataType {
+            class: data_type::Class::Simple(data_type::Simple::Boolean),
+            nullable: false,
+            variation: None,
+            parameters: vec![],
+        };
+        data_type!(x, data_type);
+    
+        // Parsing an optional field:
+        let _maybe_node = proto_field!(
+            x,
+            output_type,              /* field name */
+            |_x| todo!(),             /* optional parser */
+            |_x, _field_node| Ok(())  /* optional validator */
+        );
+    
+        // Parsing a required field:
+        let _node = proto_required_field!(
+            x,
+            output_type,                /* field name */
+            |_x| todo!(),               /* optional parser */
+            |_x, _field_output| Ok(())  /* optional validator */
+        );
+    
+        // Parsing a oneof field (can also use proto_field!() if optional):
+        let _node = proto_required_field!(
+            x,
+            kind,                       /* field name */
+            |_x| todo!(),               /* optional parser */
+            |_x, _field_output| Ok(())  /* optional validator */
+        );
+    
+        // Parsing a repeated field:
+        let _vec_node = proto_repeated_field!(
+            x,
+            arguments,                        /* repeated field name */
+            |_x| todo!(),                     /* optional parser */
+            |_x, _field_node, _index| Ok(())  /* optional validator */
+        );
+    
+        // Note: for primitive fields (i.e. fields with a primitive type, like an
+        // integer), the parser
+    
+        Ok(())
+    }
+    
+    pub fn validate_list(x: &mut context::Context<proto::substrait::r#type::List>) -> Result<()> {
+        let _maybe_node = proto_boxed_field!(
+            x,
+            r#type,                   /* field name */
+            |_x| todo!(),             /* optional parser */
+            |_x, _field_node| Ok(())  /* optional validator */
+        );
+    
+        Ok(())
     }
 }

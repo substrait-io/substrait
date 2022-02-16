@@ -15,6 +15,10 @@ pub enum Cause {
     MissingField(String),
     #[error("found values for field(s) not yet understood by the validator: {0}")]
     UnknownField(String),
+    #[error("{0}")]
+    NotYetImplemented(String),
+    #[error("illegal value: {0}")]
+    IllegalValue(String),
 }
 
 /// Result type for diagnostics.

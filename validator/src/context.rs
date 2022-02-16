@@ -33,9 +33,24 @@ pub struct Context<'a, T> {
     pub config: &'a Config,
 }
 
+impl<'a, T> Context<'a, T> {
+    pub fn replace_input<'b, U>(&'a mut self, input: &'a U) -> Context<'b, U> {
+        Context {
+            input,
+            output: self.output,
+            state: self.state,
+            breadcrumb: self.breadcrumb,
+            config: self.config
+        }
+    }
+}
+
 /// Global state information tracked by the validation logic.
 #[derive(Default)]
 pub struct State {
+    /// YAML extension URI map.
+    pub uris: HashMap<u32, doc_tree::YamlData>,
+
     /// YAML-defined function set, indexed by anchor.
     pub functions: HashMap<u32, extension::ExtensionInfo>,
 
