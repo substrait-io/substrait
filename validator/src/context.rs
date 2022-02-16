@@ -5,13 +5,9 @@ use crate::path;
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
-pub struct Context<'a, T> {
-    /// The to-be-validated input node. Fields in the node can be read directly
-    /// if needed for validation of this node, but should always also be
-    /// traversed by a *_field!() macro for the output tree structure to be
-    /// completed.
-    pub input: &'a T,
-
+/// Parse/validation context and output node, passed to parser functions along
+/// with a reference to the to-be-parsed input node.
+pub struct Context<'a> {
     /// The node in the documentation tree that should reflect the input node.
     /// The structure of the documentation tree will be the same as the input
     /// tree, but represented in a more generic way, and with annotations like
@@ -33,23 +29,11 @@ pub struct Context<'a, T> {
     pub config: &'a Config,
 }
 
-impl<'a, T> Context<'a, T> {
-    pub fn replace_input<'b, U>(&'a mut self, input: &'a U) -> Context<'b, U> {
-        Context {
-            input,
-            output: self.output,
-            state: self.state,
-            breadcrumb: self.breadcrumb,
-            config: self.config
-        }
-    }
-}
-
 /// Global state information tracked by the validation logic.
 #[derive(Default)]
 pub struct State {
     /// YAML extension URI map.
-    pub uris: HashMap<u32, doc_tree::YamlData>,
+    pub uris: HashMap<u32, extension::YamlData>,
 
     /// YAML-defined function set, indexed by anchor.
     pub functions: HashMap<u32, extension::ExtensionInfo>,

@@ -46,7 +46,7 @@ pub mod meta {
         /// Complete the subtrees of this datum in output that have not already
         /// been parsed using UnknownField nodes. Returns if any such nodes
         /// were added.
-        fn proto_parse_unknown<T>(&self, context: &mut context::Context<'_, T>) -> bool;
+        fn proto_parse_unknown(&self, context: &mut context::Context<'_>) -> bool;
     }
 
     /// Trait for all Rust types that represent protobuf messages. These are
@@ -144,7 +144,7 @@ pub mod meta {
             None
         }
 
-        fn proto_parse_unknown<S>(&self, _context: &mut context::Context<'_, S>) -> bool {
+        fn proto_parse_unknown(&self, _context: &mut context::Context<'_>) -> bool {
             false
         }
     }

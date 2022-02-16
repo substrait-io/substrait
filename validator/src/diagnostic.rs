@@ -19,6 +19,8 @@ pub enum Cause {
     NotYetImplemented(String),
     #[error("illegal value: {0}")]
     IllegalValue(String),
+    #[error("missing anchor for reference: {0}")]
+    MissingAnchor(String),
 }
 
 /// Result type for diagnostics.

@@ -1,6 +1,7 @@
 use crate::context;
 use crate::data_type;
 use crate::diagnostic;
+use crate::extension;
 use crate::path;
 use crate::proto::meta::*;
 use std::collections::VecDeque;
@@ -17,8 +18,8 @@ macro_rules! diagnostic {
 }
 
 /// Pushes a diagnostic message to the node information list.
-pub fn push_diagnostic<T>(
-    context: &mut context::Context<T>,
+pub fn push_diagnostic(
+    context: &mut context::Context,
     level: diagnostic::Level,
     cause: diagnostic::Cause,
 ) {
@@ -33,6 +34,7 @@ pub fn push_diagnostic<T>(
 }
 
 /// Convenience/shorthand macro for pushing comments to a node.
+#[allow(unused_macros)]
 macro_rules! comment {
     ($context:expr, $($fmts:expr),*) => {
         crate::doc_tree::push_comment($context, format!($($fmts),*))
@@ -40,7 +42,8 @@ macro_rules! comment {
 }
 
 /// Pushes a comment to the node information list.
-pub fn push_comment<T, S: AsRef<str>>(context: &mut context::Context<T>, comment: S) {
+#[allow(unused_macros)]
+pub fn push_comment<S: AsRef<str>>(context: &mut context::Context, comment: S) {
     context
         .output
         .data
@@ -50,6 +53,7 @@ pub fn push_comment<T, S: AsRef<str>>(context: &mut context::Context<T>, comment
 /// Convenience/shorthand macro for pushing type information to a node. Note
 /// that this macro isn't shorter than just using push_data_type() directly; it
 /// exists for symmetry.
+#[allow(unused_macros)]
 macro_rules! data_type {
     ($context:expr, $typ:expr) => {
         crate::doc_tree::push_data_type($context, $typ)
@@ -58,7 +62,7 @@ macro_rules! data_type {
 
 /// Pushes a data type to the node information list, and saves it in the
 /// current context.
-pub fn push_data_type<T>(context: &mut context::Context<T>, data_type: data_type::DataType) {
+pub fn push_data_type(context: &mut context::Context, data_type: data_type::DataType) {
     context
         .output
         .data
@@ -67,17 +71,19 @@ pub fn push_data_type<T>(context: &mut context::Context<T>, data_type: data_type
 }
 
 /// Convenience/shorthand macro for parsing optional protobuf fields.
+#[allow(unused_macros)]
 macro_rules! proto_field {
-    ($context:expr, $field:ident) => {
-        proto_field!($context, $field, |_| Ok(()))
+    ($input:expr, $context:expr, $field:ident) => {
+        proto_field!($input, $context, $field, |_, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr) => {
-        proto_field!($context, $field, $parser, |_, _| Ok(()))
+    ($input:expr, $context:expr, $field:ident, $parser:expr) => {
+        proto_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_field(
+            $input,
             $context,
-            &$context.input.$field.as_ref(),
+            &$input.$field.as_ref(),
             stringify!($field),
             false,
             $parser,
@@ -86,17 +92,19 @@ macro_rules! proto_field {
     };
 }
 
+#[allow(unused_macros)]
 macro_rules! proto_boxed_field {
-    ($context:expr, $field:ident) => {
-        proto_boxed_field!($context, $field, |_| Ok(()))
+    ($input:expr, $context:expr, $field:ident) => {
+        proto_boxed_field!($input, $context, $field, |_, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr) => {
-        proto_boxed_field!($context, $field, $parser, |_, _| Ok(()))
+    ($input:expr, $context:expr, $field:ident, $parser:expr) => {
+        proto_boxed_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_field(
+            $input,
             $context,
-            &$context.input.$field,
+            &$input.$field,
             stringify!($field),
             false,
             $parser,
@@ -107,7 +115,8 @@ macro_rules! proto_boxed_field {
 
 /// Parse and push a protobuf optional field.
 pub fn push_proto_field<TP, TF, FP, FV>(
-    context: &mut context::Context<TP>,
+    input: &TP,
+    context: &mut context::Context,
     field: &Option<impl std::ops::Deref<Target = TF>>,
     field_name: &'static str,
     unknown_subtree: bool,
@@ -116,8 +125,8 @@ pub fn push_proto_field<TP, TF, FP, FV>(
 ) -> Option<Rc<Node>>
 where
     TF: ProtoDatum,
-    FP: Fn(&mut context::Context<TF>) -> crate::Result<()>,
-    FV: Fn(&mut context::Context<TP>, &Node) -> crate::Result<()>,
+    FP: Fn(&TF, &mut context::Context) -> crate::Result<()>,
+    FV: Fn(&TP, &mut context::Context, &Node) -> crate::Result<()>,
 {
     if !context
         .breadcrumb
@@ -135,7 +144,6 @@ where
 
         // Create the context for the child message.
         let mut field_context = context::Context {
-            input: field_input,
             output: &mut field_output,
             state: context.state,
             breadcrumb: &mut context.breadcrumb.next(path::PathElement::Field(
@@ -145,12 +153,12 @@ where
         };
 
         // Call the provided parser function.
-        if let Err(cause) = parser(&mut field_context) {
+        if let Err(cause) = parser(field_input, &mut field_context) {
             diagnostic!(&mut field_context, Error, cause);
         }
 
         // Handle any fields not handled by the provided parse function.
-        handle_unknown_fields(&mut field_context, unknown_subtree);
+        handle_unknown_fields(field_input, &mut field_context, unknown_subtree);
 
         // Push and return the completed node.
         let field_output = Rc::new(field_output);
@@ -173,7 +181,7 @@ where
         );
 
         // Run the validator.
-        if let Err(cause) = validator(context, &field_output) {
+        if let Err(cause) = validator(input, context, &field_output) {
             diagnostic!(context, Error, cause);
         }
 
@@ -184,17 +192,19 @@ where
 }
 
 /// Convenience/shorthand macro for parsing required protobuf fields.
+#[allow(unused_macros)]
 macro_rules! proto_required_field {
-    ($context:expr, $field:ident) => {
-        proto_required_field!($context, $field, |_| Ok(()))
+    ($input:expr, $context:expr, $field:ident) => {
+        proto_required_field!($input, $context, $field, |_, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr) => {
-        proto_required_field!($context, $field, $parser, |_, _| Ok(()))
+    ($input:expr, $context:expr, $field:ident, $parser:expr) => {
+        proto_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_required_field(
+            $input,
             $context,
-            &$context.input.$field.as_ref(),
+            &$input.$field.as_ref(),
             stringify!($field),
             false,
             $parser,
@@ -205,16 +215,17 @@ macro_rules! proto_required_field {
 
 #[allow(unused_macros)]
 macro_rules! proto_boxed_required_field {
-    ($context:expr, $field:ident) => {
-        proto_boxed_required_field!($context, $field, |_| Ok(()))
+    ($input:expr, $context:expr, $field:ident) => {
+        proto_boxed_required_field!($input, $context, $field, |_, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr) => {
-        proto_boxed_required_field!($context, $field, $parser, |_, _| Ok(()))
+    ($input:expr, $context:expr, $field:ident, $parser:expr) => {
+        proto_boxed_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_required_field(
+            $input,
             $context,
-            &$context.input.$field,
+            &$input.$field,
             stringify!($field),
             false,
             $parser,
@@ -225,16 +236,17 @@ macro_rules! proto_boxed_required_field {
 
 #[allow(unused_macros)]
 macro_rules! proto_primitive_field {
-    ($context:expr, $field:ident) => {
-        proto_primitive_field!($context, $field, |_| Ok(()))
+    ($input:expr, $context:expr, $field:ident) => {
+        proto_primitive_field!($input, $context, $field, |_, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr) => {
-        proto_primitive_field!($context, $field, $parser, |_, _| Ok(()))
+    ($input:expr, $context:expr, $field:ident, $parser:expr) => {
+        proto_primitive_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_required_field(
+            $input,
             $context,
-            &Some(&$context.input.$field),
+            &Some(&$input.$field),
             stringify!($field),
             false,
             $parser,
@@ -247,7 +259,8 @@ macro_rules! proto_primitive_field {
 /// not populated, a MissingField diagnostic is pushed automatically, and
 /// an empty node is returned as an error recovery placeholder.
 pub fn push_proto_required_field<TP, TF, FP, FV>(
-    context: &mut context::Context<TP>,
+    input: &TP,
+    context: &mut context::Context,
     field: &Option<impl std::ops::Deref<Target = TF>>,
     field_name: &'static str,
     unknown_subtree: bool,
@@ -256,10 +269,11 @@ pub fn push_proto_required_field<TP, TF, FP, FV>(
 ) -> Rc<Node>
 where
     TF: ProtoDatum,
-    FP: Fn(&mut context::Context<TF>) -> crate::Result<()>,
-    FV: Fn(&mut context::Context<TP>, &Node) -> crate::Result<()>,
+    FP: Fn(&TF, &mut context::Context) -> crate::Result<()>,
+    FV: Fn(&TP, &mut context::Context, &Node) -> crate::Result<()>,
 {
     if let Some(node) = push_proto_field(
+        input,
         context,
         field,
         field_name,
@@ -276,16 +290,17 @@ where
 
 /// Convenience/shorthand macro for parsing repeated protobuf fields.
 macro_rules! proto_repeated_field {
-    ($context:expr, $field:ident) => {
-        proto_repeated_field!($context, $field, |_| Ok(()))
+    ($input:expr, $context:expr, $field:ident) => {
+        proto_repeated_field!($input, $context, $field, |_, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr) => {
-        proto_repeated_field!($context, $field, $parser, |_, _, _| Ok(()))
+    ($input:expr, $context:expr, $field:ident, $parser:expr) => {
+        proto_repeated_field!($input, $context, $field, $parser, |_, _, _, _| Ok(()))
     };
-    ($context:expr, $field:ident, $parser:expr, $validator:expr) => {
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::doc_tree::push_proto_repeated_field(
+            $input,
             $context,
-            &$context.input.$field,
+            &$input.$field,
             stringify!($field),
             false,
             $parser,
@@ -299,7 +314,8 @@ macro_rules! proto_repeated_field {
 /// immediately after each repetition of the field is handled, allowing
 /// field-specific validation to be done.
 pub fn push_proto_repeated_field<TP, TF, FP, FV>(
-    context: &mut context::Context<TP>,
+    input: &TP,
+    context: &mut context::Context,
     field: &[TF],
     field_name: &'static str,
     unknown_subtree: bool,
@@ -308,8 +324,8 @@ pub fn push_proto_repeated_field<TP, TF, FP, FV>(
 ) -> Vec<Rc<Node>>
 where
     TF: ProtoDatum,
-    FP: Fn(&mut context::Context<TF>) -> crate::Result<()>,
-    FV: Fn(&mut context::Context<TP>, &Node, usize) -> crate::Result<()>,
+    FP: Fn(&TF, &mut context::Context) -> crate::Result<()>,
+    FV: Fn(&TP, &mut context::Context, &Node, usize) -> crate::Result<()>,
 {
     if !context
         .breadcrumb
@@ -328,7 +344,6 @@ where
 
             // Create the context for the child message.
             let mut field_context = context::Context {
-                input: field_input,
                 output: &mut field_output,
                 state: context.state,
                 breadcrumb: &mut context
@@ -338,12 +353,12 @@ where
             };
 
             // Call the provided parser function.
-            if let Err(cause) = parser(&mut field_context) {
+            if let Err(cause) = parser(field_input, &mut field_context) {
                 diagnostic!(&mut field_context, Error, cause);
             }
 
             // Handle any fields not handled by the provided parse function.
-            handle_unknown_fields(&mut field_context, unknown_subtree);
+            handle_unknown_fields(field_input, &mut field_context, unknown_subtree);
 
             // Push the completed node.
             let field_output = Rc::new(field_output);
@@ -354,7 +369,7 @@ where
             });
 
             // Run the validator.
-            if let Err(cause) = validator(context, &field_output, index) {
+            if let Err(cause) = validator(input, context, &field_output, index) {
                 diagnostic!(context, Error, cause);
             }
 
@@ -366,8 +381,12 @@ where
 /// Handle all fields that haven't already been handled. If unknown_subtree
 /// is false, this also generates a diagnostic message if there were
 /// populated/non-default unhandled fields.
-fn handle_unknown_fields<T: ProtoDatum>(context: &mut context::Context<T>, unknown_subtree: bool) {
-    if context.input.proto_parse_unknown(context) && !unknown_subtree {
+fn handle_unknown_fields<T: ProtoDatum>(
+    input: &T,
+    context: &mut context::Context,
+    unknown_subtree: bool,
+) {
+    if input.proto_parse_unknown(context) && !unknown_subtree {
         let mut fields = vec![];
         for data in context.output.data.iter() {
             match data {
@@ -445,7 +464,7 @@ impl Node {
     ) -> Self
     where
         T: prost::Message + ProtoDatum + Default,
-        F: FnOnce(&mut context::Context<T>) -> crate::Result<()>,
+        F: FnOnce(&T, &mut context::Context) -> crate::Result<()>,
         B: prost::bytes::Buf,
     {
         match T::decode(buffer) {
@@ -471,7 +490,6 @@ impl Node {
 
                 // Create the root context.
                 let mut context = context::Context {
-                    input: &input,
                     output: &mut output,
                     state,
                     breadcrumb: &mut context::Breadcrumb::new(root_name),
@@ -479,12 +497,12 @@ impl Node {
                 };
 
                 // Call the provided parser function.
-                if let Err(cause) = root_parser(&mut context) {
+                if let Err(cause) = root_parser(&input, &mut context) {
                     diagnostic!(&mut context, Error, cause);
                 }
 
                 // Handle any fields not handled by the provided parse function.
-                handle_unknown_fields(&mut context, false);
+                handle_unknown_fields(&input, &mut context, false);
 
                 output
             }
@@ -532,7 +550,7 @@ pub enum NodeType {
     /// Used for resolved YAML URIs, in order to include the parse result and
     /// documentation for the referenced YAML (if available), in addition to
     /// the URI itself.
-    YamlUri(YamlData),
+    YamlData(extension::YamlData),
 
     /// The associated node represents a YAML map. The contents of the map are
     /// described using Field and UnknownField.
@@ -544,16 +562,6 @@ pub enum NodeType {
 
     /// The associated node represents a YAML primitive
     YamlPrimitive(ProtoPrimitiveData),
-}
-
-/// Information about a YAML extension.
-#[derive(Clone, Debug, PartialEq, Default)]
-pub struct YamlData {
-    /// URI for the YAML file.
-    pub uri: String,
-
-    /// The parsed YAML data, if any.
-    pub data: Option<Rc<Node>>,
 }
 
 /// Information nodes for a parsed protobuf message.

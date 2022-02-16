@@ -96,50 +96,54 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                 let action = match is_repeated(&field.ty) {
                     FieldType::Optional => quote! {
                         crate::doc_tree::push_proto_field(
-                            context,
+                            self,
+                            y,
                             &self.#ident.as_ref(),
                             stringify!(#ident),
                             true,
-                            |_| Ok(()),
                             |_, _| Ok(()),
+                            |_, _, _| Ok(()),
                         );
                     },
                     FieldType::BoxedOptional => quote! {
                         crate::doc_tree::push_proto_field(
-                            context,
+                            self,
+                            y,
                             &self.#ident,
                             stringify!(#ident),
                             true,
-                            |_| Ok(()),
                             |_, _| Ok(()),
+                            |_, _, _| Ok(()),
                         );
                     },
                     FieldType::Repeated => quote! {
                         crate::doc_tree::push_proto_repeated_field(
-                            context,
+                            self,
+                            y,
                             &self.#ident.as_ref(),
                             stringify!(#ident),
                             true,
-                            |_| Ok(()),
-                            |_, _, _| Ok(()),
+                            |_, _| Ok(()),
+                            |_, _, _, _| Ok(()),
                         );
                     },
                     FieldType::Primitive => quote! {
                         use crate::proto::meta::ProtoPrimitive;
-                        if !context.config.ignore_unknown_fields_set_to_default || !self.#ident.proto_primitive_is_default() {
+                        if !y.config.ignore_unknown_fields_set_to_default || !self.#ident.proto_primitive_is_default() {
                             crate::doc_tree::push_proto_field(
-                                context,
+                                self,
+                                y,
                                 &Some(&self.#ident),
                                 stringify!(#ident),
                                 true,
-                                |_| Ok(()),
                                 |_, _| Ok(()),
+                                |_, _, _| Ok(()),
                             );
                         }
                     },
                 };
                 quote! {
-                    if !context.breadcrumb.fields_parsed.contains(stringify!(#ident)) {
+                    if !y.breadcrumb.fields_parsed.contains(stringify!(#ident)) {
                         unknowns = true;
                         #action
                     }
@@ -180,9 +184,9 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                 None
             }
 
-            fn proto_parse_unknown<T>(
+            fn proto_parse_unknown(
                 &self,
-                context: &mut crate::context::Context<'_, T>,
+                y: &mut crate::context::Context<'_>,
             ) -> bool {
                 let mut unknowns = false;
                 #(#parse_unknown_matches)*
@@ -221,7 +225,7 @@ fn proto_meta_derive_oneof(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Toke
         .iter()
         .map(|variant| {
             let ident = &variant.ident;
-            quote! { #name::#ident (x) => x.proto_parse_unknown(context) }
+            quote! { #name::#ident (x) => x.proto_parse_unknown(y) }
         })
         .collect();
 
@@ -250,9 +254,9 @@ fn proto_meta_derive_oneof(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Toke
                 Some(self.proto_one_of_variant())
             }
 
-            fn proto_parse_unknown<T>(
+            fn proto_parse_unknown(
                 &self,
-                context: &mut crate::context::Context<'_, T>,
+                y: &mut crate::context::Context<'_>,
             ) -> bool {
                 match self {
                     #(#parse_unknown_matches),*
