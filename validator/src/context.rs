@@ -33,16 +33,16 @@ pub struct Context<'a> {
 #[derive(Default)]
 pub struct State {
     /// YAML extension URI map.
-    pub uris: HashMap<u32, extension::YamlData>,
+    pub uris: HashMap<u32, Rc<extension::YamlInfo>>,
 
     /// YAML-defined function set, indexed by anchor.
-    pub functions: HashMap<u32, extension::ExtensionInfo>,
+    pub functions: HashMap<u32, Rc<extension::Reference<extension::Function>>>,
 
     /// YAML-defined function set, indexed by anchor.
-    pub types: HashMap<u32, Rc<data_type::UserDefined>>,
+    pub types: HashMap<u32, Rc<extension::Reference<extension::DataType>>>,
 
     /// YAML-defined function set, indexed by anchor.
-    pub type_variations: HashMap<u32, Rc<data_type::Variation>>,
+    pub type_variations: HashMap<u32, Rc<extension::Reference<extension::TypeVariation>>>,
 
     /// Schema stack. This is what the validator for FieldRefs uses to
     /// determine the return type of the FieldRef. The back of the vector

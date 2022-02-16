@@ -16,7 +16,7 @@ pub struct DataType {
     pub nullable: bool,
 
     /// Type variation, if any.
-    pub variation: Option<Rc<Variation>>,
+    pub variation: Option<Rc<extension::Reference<extension::TypeVariation>>>,
 
     /// Type parameters for non-simple types.
     pub parameters: Vec<Parameter>,
@@ -51,14 +51,14 @@ impl std::fmt::Display for DataType {
 /// Trait for things that can resolve user-defined types and type variations.
 pub trait TypeResolver {
     /// Resolves a user-defined type from its name.
-    fn resolve_type<S: AsRef<str>>(&self, s: S) -> crate::Result<Rc<UserDefined>>;
+    fn resolve_type<S: AsRef<str>>(&self, s: S) -> crate::Result<Rc<extension::DataType>>;
 
     /// Resolves a type variation from its name and base type.
     fn resolve_type_variation<S: AsRef<str>>(
         &self,
         s: S,
         base_type: Class,
-    ) -> crate::Result<Rc<Variation>>;
+    ) -> crate::Result<Rc<extension::TypeVariation>>;
 }
 
 /// Trait for checking the type parameters for a base type.
@@ -93,7 +93,7 @@ pub enum Class {
     Compound(Compound),
 
     /// User-defined type.
-    UserDefined(Rc<UserDefined>),
+    UserDefined(Rc<extension::Reference<extension::DataType>>),
 
     /// Unresolved type. Used for error recovery.
     Unresolved(String),
@@ -297,45 +297,6 @@ impl ParameterChecker for Compound {
         }
         Ok(())
     }
-}
-
-/// User-defined base data type.
-#[derive(Clone, Debug, PartialEq)]
-pub struct UserDefined {
-    /// Extension information for this type.
-    pub extension: extension::ExtensionInfo,
-
-    /// The underlying structure of the type.
-    pub structure: Vec<(String, Simple)>,
-}
-
-impl std::fmt::Display for UserDefined {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.extension.name)
-    }
-}
-
-/// Variation information for a Substrait data type.
-#[derive(Clone, Debug, PartialEq)]
-pub struct Variation {
-    /// Extension information for this type variation.
-    pub extension: extension::ExtensionInfo,
-
-    /// Function behavior for this variation.
-    pub behavior: FunctionBehavior,
-}
-
-impl std::fmt::Display for Variation {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.extension.name)
-    }
-}
-
-/// Type variation function behavior.
-#[derive(Clone, Debug, PartialEq)]
-pub enum FunctionBehavior {
-    Inherits,
-    Separate,
 }
 
 /// Parameter for parameterized types.

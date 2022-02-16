@@ -114,7 +114,7 @@ macro_rules! proto_boxed_field {
 }
 
 /// Parse and push a protobuf optional field.
-pub fn push_proto_field<TP, TF, FP, FV>(
+pub fn push_proto_field<TP, TF, TR, FP, FV>(
     input: &TP,
     context: &mut context::Context,
     field: &Option<impl std::ops::Deref<Target = TF>>,
@@ -122,10 +122,10 @@ pub fn push_proto_field<TP, TF, FP, FV>(
     unknown_subtree: bool,
     parser: FP,
     validator: FV,
-) -> Option<Rc<Node>>
+) -> (Option<Rc<Node>>, Option<TR>)
 where
     TF: ProtoDatum,
-    FP: Fn(&TF, &mut context::Context) -> crate::Result<()>,
+    FP: Fn(&TF, &mut context::Context) -> crate::Result<TR>,
     FV: Fn(&TP, &mut context::Context, &Node) -> crate::Result<()>,
 {
     if !context
@@ -153,9 +153,11 @@ where
         };
 
         // Call the provided parser function.
-        if let Err(cause) = parser(field_input, &mut field_context) {
-            diagnostic!(&mut field_context, Error, cause);
-        }
+        let result = parser(field_input, &mut field_context)
+            .map_err(|cause| {
+                diagnostic!(&mut field_context, Error, cause);
+            })
+            .ok();
 
         // Handle any fields not handled by the provided parse function.
         handle_unknown_fields(field_input, &mut field_context, unknown_subtree);
@@ -185,9 +187,9 @@ where
             diagnostic!(context, Error, cause);
         }
 
-        Some(field_output)
+        (Some(field_output), result)
     } else {
-        None
+        (None, None)
     }
 }
 
@@ -237,7 +239,7 @@ macro_rules! proto_boxed_required_field {
 #[allow(unused_macros)]
 macro_rules! proto_primitive_field {
     ($input:expr, $context:expr, $field:ident) => {
-        proto_primitive_field!($input, $context, $field, |_, _| Ok(()))
+        proto_primitive_field!($input, $context, $field, |x, _| Ok(x.to_owned()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr) => {
         proto_primitive_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
@@ -258,7 +260,7 @@ macro_rules! proto_primitive_field {
 /// Parse and push a required field of some message type. If the field is
 /// not populated, a MissingField diagnostic is pushed automatically, and
 /// an empty node is returned as an error recovery placeholder.
-pub fn push_proto_required_field<TP, TF, FP, FV>(
+pub fn push_proto_required_field<TP, TF, TR, FP, FV>(
     input: &TP,
     context: &mut context::Context,
     field: &Option<impl std::ops::Deref<Target = TF>>,
@@ -266,13 +268,13 @@ pub fn push_proto_required_field<TP, TF, FP, FV>(
     unknown_subtree: bool,
     parser: FP,
     validator: FV,
-) -> Rc<Node>
+) -> (Rc<Node>, Option<TR>)
 where
     TF: ProtoDatum,
-    FP: Fn(&TF, &mut context::Context) -> crate::Result<()>,
+    FP: Fn(&TF, &mut context::Context) -> crate::Result<TR>,
     FV: Fn(&TP, &mut context::Context, &Node) -> crate::Result<()>,
 {
-    if let Some(node) = push_proto_field(
+    if let (Some(node), result) = push_proto_field(
         input,
         context,
         field,
@@ -281,10 +283,10 @@ where
         parser,
         validator,
     ) {
-        node
+        (node, result)
     } else {
         diagnostic!(context, Error, MissingField, "{}", field_name);
-        Rc::new(TF::proto_type_to_node())
+        (Rc::new(TF::proto_type_to_node()), None)
     }
 }
 
@@ -313,7 +315,7 @@ macro_rules! proto_repeated_field {
 /// given validator function will be called in the current context
 /// immediately after each repetition of the field is handled, allowing
 /// field-specific validation to be done.
-pub fn push_proto_repeated_field<TP, TF, FP, FV>(
+pub fn push_proto_repeated_field<TP, TF, TR, FP, FV>(
     input: &TP,
     context: &mut context::Context,
     field: &[TF],
@@ -321,10 +323,10 @@ pub fn push_proto_repeated_field<TP, TF, FP, FV>(
     unknown_subtree: bool,
     parser: FP,
     validator: FV,
-) -> Vec<Rc<Node>>
+) -> (Vec<Rc<Node>>, Vec<Option<TR>>)
 where
     TF: ProtoDatum,
-    FP: Fn(&TF, &mut context::Context) -> crate::Result<()>,
+    FP: Fn(&TF, &mut context::Context) -> crate::Result<TR>,
     FV: Fn(&TP, &mut context::Context, &Node, usize) -> crate::Result<()>,
 {
     if !context
@@ -353,9 +355,11 @@ where
             };
 
             // Call the provided parser function.
-            if let Err(cause) = parser(field_input, &mut field_context) {
-                diagnostic!(&mut field_context, Error, cause);
-            }
+            let result = parser(field_input, &mut field_context)
+                .map_err(|cause| {
+                    diagnostic!(&mut field_context, Error, cause);
+                })
+                .ok();
 
             // Handle any fields not handled by the provided parse function.
             handle_unknown_fields(field_input, &mut field_context, unknown_subtree);
@@ -373,9 +377,9 @@ where
                 diagnostic!(context, Error, cause);
             }
 
-            field_output
+            (field_output, result)
         })
-        .collect()
+        .unzip()
 }
 
 /// Handle all fields that haven't already been handled. If unknown_subtree
@@ -550,7 +554,7 @@ pub enum NodeType {
     /// Used for resolved YAML URIs, in order to include the parse result and
     /// documentation for the referenced YAML (if available), in addition to
     /// the URI itself.
-    YamlData(extension::YamlData),
+    YamlData(Rc<extension::YamlInfo>),
 
     /// The associated node represents a YAML map. The contents of the map are
     /// described using Field and UnknownField.

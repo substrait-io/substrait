@@ -21,6 +21,8 @@ pub enum Cause {
     IllegalValue(String),
     #[error("missing anchor for reference: {0}")]
     MissingAnchor(String),
+    #[error("failed to resolve name: {0}")]
+    NameResolutionFailed(String),
 }
 
 /// Result type for diagnostics.

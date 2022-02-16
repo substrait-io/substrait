@@ -8,25 +8,28 @@ pub mod extension;
 pub mod path;
 pub mod proto;
 
+use std::rc::Rc;
+
 /// Default result type.
 pub type Result<T> = diagnostic::Result<T>;
 
 /// "Parse" an anchor. This just reports an error if the anchor is 0.
-fn parse_anchor(x: &u32, y: &mut context::Context) -> Result<()> {
+fn parse_anchor(x: &u32, _y: &mut context::Context) -> Result<u32> {
     if *x == 0 {
-        diagnostic!(y, Error, IllegalValue, "anchor 0 is reserved to disambiguate unspecified references from references to anchor 0");
+        Err(diagnostic::Cause::IllegalValue(
+            "anchor 0 is reserved to disambiguate unspecified optional references".to_string(),
+        ))
+    } else {
+        Ok(*x)
     }
-    Ok(())
 }
 
 /// Parse a YAML extension URI string.
-fn parse_uri<S: AsRef<str>>(x: &S, y: &mut context::Context) -> Result<()> {
+fn parse_uri<S: AsRef<str>>(x: &S, y: &mut context::Context) -> Result<Rc<extension::YamlInfo>> {
     let x = x.as_ref();
 
-    // The node type will have been set as if this is a normal string
-    // primitive. We want extra information though, namely the contents of the
-    // YAML file. So we change the node type.
-    y.output.node_type = doc_tree::NodeType::YamlData(extension::YamlData {
+    // Construct the YAML data object.
+    let yaml_data = Rc::new(extension::YamlInfo {
         uri: x.to_string(),
         anchor_path: y.breadcrumb.parent.map(|x| x.path.to_path_buf()),
         data: None,
@@ -42,7 +45,12 @@ fn parse_uri<S: AsRef<str>>(x: &S, y: &mut context::Context) -> Result<()> {
         "extension YAML resolution and parsing is not yet implemented"
     );
 
-    Ok(())
+    // The node type will have been set as if this is a normal string
+    // primitive. We want extra information though, namely the contents of the
+    // YAML file. So we change the node type.
+    y.output.node_type = doc_tree::NodeType::YamlData(yaml_data.clone());
+
+    Ok(yaml_data)
 }
 
 /// Parse a mapping from a URI anchor to a YAML extension.
@@ -51,46 +59,42 @@ fn parse_extension_uri_mapping(
     y: &mut context::Context,
 ) -> Result<()> {
     // Parse the fields.
-    proto_primitive_field!(x, y, extension_uri_anchor, parse_anchor);
-    let yaml = proto_primitive_field!(x, y, uri, parse_uri);
+    let anchor = proto_primitive_field!(x, y, extension_uri_anchor, parse_anchor).1;
+    let yaml_data = proto_primitive_field!(x, y, uri, parse_uri).1.unwrap();
 
-    // Insert a mapping for the URI anchor.
-    if let doc_tree::NodeType::YamlData(ref data) = yaml.node_type {
-        if let Some(prev_data) = y.state.uris.insert(x.extension_uri_anchor, data.clone()) {
+    // If the specified anchor is valid, insert a mapping for it.
+    if let Some(anchor) = anchor {
+        if let Some(prev_data) = y.state.uris.insert(anchor, yaml_data) {
             diagnostic!(
                 y,
                 Error,
                 IllegalValue,
                 "anchor {} is already in use for URI {}",
-                x.extension_uri_anchor,
+                anchor,
                 prev_data.uri
             );
         }
-    } else {
-        panic!();
     }
 
     Ok(())
 }
 
-fn resolve_required_uri(uri_reference: u32, y: &mut context::Context) -> extension::YamlData {
-    match y.state.uris.get(&uri_reference).cloned() {
+/// Parse an URI reference and resolve it.
+fn parse_uri_reference(
+    uri_reference: &u32,
+    y: &mut context::Context,
+) -> Result<Rc<extension::YamlInfo>> {
+    match y.state.uris.get(uri_reference).cloned() {
         Some(yaml_data) => {
             if let Some(ref path) = yaml_data.anchor_path {
                 comment!(y, "URI anchor is defined at {}", path);
             }
-            yaml_data
+            Ok(yaml_data)
         }
-        None => {
-            diagnostic!(
-                y,
-                Error,
-                MissingAnchor,
-                "URI anchor {} does not exist",
-                uri_reference
-            );
-            extension::YamlData::default()
-        }
+        None => Err(diagnostic::Cause::MissingAnchor(format!(
+            "URI anchor {} does not exist",
+            uri_reference
+        ))),
     }
 }
 
@@ -103,28 +107,136 @@ fn parse_extension_mapping_data(
         proto::substrait::extensions::simple_extension_declaration::MappingType::ExtensionType(x) => {
 
             // Parse the fields.
-            proto_primitive_field!(x, y, extension_uri_reference);
-            proto_primitive_field!(x, y, type_anchor, parse_anchor);
-            proto_primitive_field!(x, y, name);
-            resolve_required_uri(x.extension_uri_reference, y);
+            let yaml_info = proto_primitive_field!(x, y, extension_uri_reference, parse_uri_reference).1;
+            let anchor = proto_primitive_field!(x, y, type_anchor, parse_anchor).1;
+            let name = proto_primitive_field!(x, y, name).1.unwrap();
+
+            // If we successfully resolved the URI reference to a URI, resolved
+            // that URI, and managed to parse the YAML it pointed to, try to
+            // resolve the data type in it.
+            let data_type = yaml_info.as_ref().map(|yaml_info| {
+                yaml_info.data.as_ref().map(|data| {
+                    let data_type = data.types.get(&name.to_lowercase()).cloned();
+                    if data_type.is_none() {
+                        diagnostic!(y, Error, NameResolutionFailed, "failed to resolve data type {:?} in {}", name, yaml_info);
+                    }
+                    data_type
+                }).flatten()
+            }).flatten();
+
+            // Construct a reference for this data type.
+            let reference = Rc::new(extension::Reference {
+                common: extension::Common {
+                    name,
+                    yaml_info,
+                    anchor_path: Some(y.breadcrumb.path.to_path_buf())
+                },
+                definition: data_type
+            });
+
+            // If the specified anchor is valid, insert a mapping for it.
+            if let Some(anchor) = anchor {
+                if let Some(prev_data) = y.state.types.insert(anchor, reference) {
+                    diagnostic!(
+                        y,
+                        Error,
+                        IllegalValue,
+                        "anchor {} is already in use for data type {}",
+                        anchor,
+                        prev_data
+                    );
+                }
+            }
 
         }
         proto::substrait::extensions::simple_extension_declaration::MappingType::ExtensionTypeVariation(x) => {
 
             // Parse the fields.
-            proto_primitive_field!(x, y, extension_uri_reference);
-            proto_primitive_field!(x, y, type_variation_anchor, parse_anchor);
-            proto_primitive_field!(x, y, name);
-            resolve_required_uri(x.extension_uri_reference, y);
+            let yaml_info = proto_primitive_field!(x, y, extension_uri_reference, parse_uri_reference).1;
+            let anchor = proto_primitive_field!(x, y, type_variation_anchor, parse_anchor).1;
+            let name = proto_primitive_field!(x, y, name).1.unwrap();
+
+            // If we successfully resolved the URI reference to a URI, resolved
+            // that URI, and managed to parse the YAML it pointed to, try to
+            // resolve the type variation in it.
+            let type_variation = yaml_info.as_ref().map(|yaml_info| {
+                yaml_info.data.as_ref().map(|data| {
+                    let type_variation = data.type_variations.get(&name.to_lowercase()).cloned();
+                    if type_variation.is_none() {
+                        diagnostic!(y, Error, NameResolutionFailed, "failed to resolve type variation {:?} in {}", name, yaml_info);
+                    }
+                    type_variation
+                }).flatten()
+            }).flatten();
+
+            // Construct a reference for this type variation.
+            let reference = Rc::new(extension::Reference {
+                common: extension::Common {
+                    name,
+                    yaml_info,
+                    anchor_path: Some(y.breadcrumb.path.to_path_buf())
+                },
+                definition: type_variation
+            });
+
+            // If the specified anchor is valid, insert a mapping for it.
+            if let Some(anchor) = anchor {
+                if let Some(prev_data) = y.state.type_variations.insert(anchor, reference) {
+                    diagnostic!(
+                        y,
+                        Error,
+                        IllegalValue,
+                        "anchor {} is already in use for type variation {}",
+                        anchor,
+                        prev_data
+                    );
+                }
+            }
 
         }
         proto::substrait::extensions::simple_extension_declaration::MappingType::ExtensionFunction(x) => {
 
             // Parse the fields.
-            proto_primitive_field!(x, y, extension_uri_reference);
-            proto_primitive_field!(x, y, function_anchor, parse_anchor);
-            proto_primitive_field!(x, y, name);
-            resolve_required_uri(x.extension_uri_reference, y);
+            let yaml_info = proto_primitive_field!(x, y, extension_uri_reference, parse_uri_reference).1;
+            let anchor = proto_primitive_field!(x, y, function_anchor, parse_anchor).1;
+            let name = proto_primitive_field!(x, y, name).1.unwrap();
+
+            // If we successfully resolved the URI reference to a URI, resolved
+            // that URI, and managed to parse the YAML it pointed to, try to
+            // resolve the data type in it.
+            let function = yaml_info.as_ref().map(|yaml_info| {
+                yaml_info.data.as_ref().map(|data| {
+                    let function = data.functions.get(&name.to_lowercase()).cloned();
+                    if function.is_none() {
+                        diagnostic!(y, Error, NameResolutionFailed, "failed to resolve function {:?} in {}", name, yaml_info);
+                    }
+                    function
+                }).flatten()
+            }).flatten();
+
+            // Construct a reference for this data type.
+            let reference = Rc::new(extension::Reference {
+                common: extension::Common {
+                    name,
+                    yaml_info,
+                    anchor_path: Some(y.breadcrumb.path.to_path_buf())
+                },
+                definition: function
+            });
+
+            // If the specified anchor is valid, insert a mapping for it.
+            if let Some(anchor) = anchor {
+                if let Some(prev_data) = y.state.functions.insert(anchor, reference) {
+                    diagnostic!(
+                        y,
+                        Error,
+                        IllegalValue,
+                        "anchor {} is already in use for function {}",
+                        anchor,
+                        prev_data
+                    );
+                }
+            }
 
         }
     };
@@ -206,7 +318,10 @@ mod tests {
             0, 16, 1, 26, 12, 10, 8, 18, 6, 10, 4, 18, 2, 8, 1, 16, 1,
         ]);
         let data = validate(data);
-        let _diags: Vec<_> = data.iter_diagnostics().map(|x| x.to_string()).collect();
+        let diags: Vec<_> = data.iter_diagnostics().map(|x| x.to_string()).collect();
+        for diag in diags.iter() {
+            println!("{}", diag);
+        }
         //assert_eq!(diags, vec!["Warning (plan): found values for field(s) not yet understood by the validator: extensions, relations".to_string()])
     }
 
@@ -242,7 +357,7 @@ mod tests {
             x,
             y,
             output_type,                  /* field name */
-            |_x, _y| todo!(),             /* optional parser */
+            |_x, _y| Ok(()),              /* optional parser */
             |_x, _y, _field_node| Ok(())  /* optional validator */
         );
 
@@ -251,7 +366,7 @@ mod tests {
             x,
             y,
             output_type,                    /* field name */
-            |_x, _y| todo!(),               /* optional parser */
+            |_x, _y| Ok(()),                /* optional parser */
             |_x, _y, _field_output| Ok(())  /* optional validator */
         );
 
@@ -260,7 +375,7 @@ mod tests {
             x,
             y,
             kind,                           /* field name */
-            |_x, _y| todo!(),               /* optional parser */
+            |_x, _y| Ok(()),                /* optional parser */
             |_x, _y, _field_output| Ok(())  /* optional validator */
         );
 
@@ -269,7 +384,7 @@ mod tests {
             x,
             y,
             arguments,                            /* repeated field name */
-            |_x, _y| todo!(),                     /* optional parser */
+            |_x, _y| Ok(()),                      /* optional parser */
             |_x, _y, _field_node, _index| Ok(())  /* optional validator */
         );
 
@@ -285,7 +400,7 @@ mod tests {
             x,
             y,
             r#type,                       /* field name */
-            |_x, _y| todo!(),             /* optional parser */
+            |_x, _y| Ok(()),              /* optional parser */
             |_x, _y, _field_node| Ok(())  /* optional validator */
         );
 
