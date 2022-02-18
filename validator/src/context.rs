@@ -44,6 +44,15 @@ pub struct State {
     /// YAML-defined function set, indexed by anchor.
     pub type_variations: HashMap<u32, Rc<extension::Reference<extension::TypeVariation>>>,
 
+    /// Protobuf "any" URLs depended on, that we have not encountered a
+    /// declaration for yet (we check the declarations at the end). The
+    /// path refers to the first use of that URL.
+    pub pending_proto_url_dependencies: HashMap<String, path::PathBuf>,
+
+    /// Protobuf "any" URLs that have been declared in the plan. The path
+    /// refers to the declaration.
+    pub proto_url_declarations: HashMap<String, path::PathBuf>,
+
     /// Schema stack. This is what the validator for FieldRefs uses to
     /// determine the return type of the FieldRef. The back of the vector
     /// represents the innermost query, while entries further to the front
@@ -100,4 +109,9 @@ pub struct Config {
     /// When set, so not generate warnings for unknown protobuf fields that are
     /// set to their protobuf-defined default value.
     pub ignore_unknown_fields_set_to_default: bool,
+
+    /// Protobuf message URLs that are whitelisted for use in "any" messages,
+    /// i.e. that the caller warrants the existence of in the consumer that
+    /// the plan is validated for.
+    pub whitelisted_any_urls: HashSet<String>,
 }

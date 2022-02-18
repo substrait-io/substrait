@@ -13,9 +13,15 @@ pub enum Cause {
     MismatchedTypeParameters(String),
     #[error("missing required field {0}")]
     MissingField(String),
-    #[error("found values for field(s) not yet understood by the validator: {0}")]
+    #[error("encountered values for field(s) not yet understood by the validator: {0}")]
     UnknownField(String),
-    #[error("{0}")]
+    #[error("encountered a protobuf \"any\": {0}")]
+    ProtoAny(String),
+    #[error("redundant protobuf \"any\" declaration: {0}")]
+    RedundantProtoAnyDeclaration(String),
+    #[error("missing protobuf \"any\" declaration: {0}")]
+    MissingProtoAnyDeclaration(String),
+    #[error("not yet implemented: {0}")]
     NotYetImplemented(String),
     #[error("illegal value: {0}")]
     IllegalValue(String),

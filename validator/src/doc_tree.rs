@@ -37,17 +37,29 @@ pub fn push_diagnostic(
 #[allow(unused_macros)]
 macro_rules! comment {
     ($context:expr, $($fmts:expr),*) => {
-        crate::doc_tree::push_comment($context, format!($($fmts),*))
+        crate::doc_tree::push_comment($context, format!($($fmts),*), None)
+    };
+}
+
+/// Convenience/shorthand macro for pushing comments to a node.
+#[allow(unused_macros)]
+macro_rules! link {
+    ($context:expr, $link:expr, $($fmts:expr),*) => {
+        crate::doc_tree::push_comment($context, format!($($fmts),*), Some($link))
     };
 }
 
 /// Pushes a comment to the node information list.
 #[allow(unused_macros)]
-pub fn push_comment<S: AsRef<str>>(context: &mut context::Context, comment: S) {
+pub fn push_comment<S: AsRef<str>>(
+    context: &mut context::Context,
+    comment: S,
+    path: Option<path::PathBuf>,
+) {
     context
         .output
         .data
-        .push(NodeData::Comment(comment.as_ref().to_string()))
+        .push(NodeData::Comment(comment.as_ref().to_string(), path))
 }
 
 /// Convenience/shorthand macro for pushing type information to a node. Note
@@ -619,8 +631,9 @@ pub enum NodeData {
     DataType(data_type::DataType),
 
     /// Used for adding unstructured additional information to a message,
-    /// wherever this may aid human understanding of a message.
-    Comment(String),
+    /// wherever this may aid human understanding of a message. Optionally, a
+    /// link to another node may be attached to it.
+    Comment(String, Option<path::PathBuf>),
 }
 
 /// A reference to a node elsewhere in the tree.
@@ -655,7 +668,7 @@ impl<'a> Iterator for FlattenedNodeIter<'a> {
                         NodeData::ArrayElement(_, n) => Some(n),
                         NodeData::Diagnostic(_) => None,
                         NodeData::DataType(_) => None,
-                        NodeData::Comment(_) => None,
+                        NodeData::Comment(_, _) => None,
                     }
                 }));
         }
