@@ -159,7 +159,10 @@ where
             output: &mut field_output,
             state: context.state,
             breadcrumb: &mut context.breadcrumb.next(path::PathElement::Field(
-                field_input.proto_data_variant().unwrap_or(field_name),
+                field_input
+                    .proto_data_variant()
+                    .unwrap_or(field_name)
+                    .to_string(),
             )),
             config: context.config,
         };
@@ -362,7 +365,7 @@ where
                 state: context.state,
                 breadcrumb: &mut context
                     .breadcrumb
-                    .next(path::PathElement::Repeated(field_name, index)),
+                    .next(path::PathElement::Repeated(field_name.to_string(), index)),
                 config: context.config,
             };
 
@@ -576,7 +579,7 @@ pub enum NodeType {
     /// are described using ArrayElement datums.
     YamlArray,
 
-    /// The associated node represents a YAML primitive
+    /// The associated node represents a YAML primitive.
     YamlPrimitive(ProtoPrimitiveData),
 }
 

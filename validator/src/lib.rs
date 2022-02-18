@@ -4,6 +4,7 @@ pub mod diagnostic;
 #[macro_use]
 pub mod doc_tree;
 pub mod context;
+pub mod export;
 pub mod extension;
 pub mod path;
 pub mod proto;
@@ -74,6 +75,10 @@ mod tests {
         for diag in diags.iter() {
             println!("{}", diag);
         }
+
+        //let mut out = std::fs::File::create("test.html").unwrap();
+        //export::html::export(&mut out, "plan", &data).unwrap();
+
         //assert_eq!(diags, vec!["Warning (plan): found values for field(s) not yet understood by the validator: extensions, relations".to_string()])
     }
 

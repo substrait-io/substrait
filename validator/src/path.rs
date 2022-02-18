@@ -5,16 +5,16 @@ use std::fmt::Formatter;
 pub enum PathElement {
     /// Refers to an optional protobuf field with the given name within the
     /// message, or a YAML map entry with the given key.
-    Field(&'static str),
+    Field(String),
 
     /// Refers to one of the elements of a repeated field with the given
     /// name within the message referred to by the parent path.
-    Repeated(&'static str, usize),
+    Repeated(String, usize),
 
     /// Refers to the selected variant of a OneOf field with the given name
     /// within the message referred to by the parent path. The first str is
     /// the field name, the second is the variant name.
-    Variant(&'static str, &'static str),
+    Variant(String, String),
 
     /// Refers to an indexed element within a YAML array.
     Index(usize),
@@ -25,7 +25,7 @@ impl std::fmt::Display for PathElement {
         match self {
             PathElement::Field(field) => write!(f, ".{}", field),
             PathElement::Repeated(field, index) => write!(f, ".{}[{}]", field, index),
-            PathElement::Variant(field, variant) => write!(f, ".{}<{}>", field, variant),
+            PathElement::Variant(field, variant) => write!(f, ".{}{{{}}}", field, variant),
             PathElement::Index(index) => write!(f, "[{}]", index),
         }
     }
@@ -71,22 +71,22 @@ impl Path<'_> {
     /// Returns a new Path that references an optional field with the
     /// given name within the protobuf message referred to by the current
     /// path, or likewise for the key within a YAML map.
-    pub fn with_field(&self, name: &'static str) -> Path {
-        self.with(PathElement::Field(name))
+    pub fn with_field<S: Into<String>>(&self, name: S) -> Path {
+        self.with(PathElement::Field(name.into()))
     }
 
     /// Returns a new Path that references an element of a repeated field
     /// with the given name within the message referred to by the current
     /// path.
-    pub fn with_repeated(&self, name: &'static str, index: usize) -> Path {
-        self.with(PathElement::Repeated(name, index))
+    pub fn with_repeated<S: Into<String>>(&self, name: S, index: usize) -> Path {
+        self.with(PathElement::Repeated(name.into(), index))
     }
 
     /// Returns a new Path that references a particular variant of a
     /// OneOf field with the given name within the message referred to
     /// by the current path.
-    pub fn with_variant(&self, name: &'static str, variant: &'static str) -> Path {
-        self.with(PathElement::Variant(name, variant))
+    pub fn with_variant<S: Into<String>, V: Into<String>>(&self, name: S, variant: V) -> Path {
+        self.with(PathElement::Variant(name.into(), variant.into()))
     }
 
     /// Returns a new Path that references a YAML array element.
@@ -105,6 +105,13 @@ impl std::fmt::Display for Path<'_> {
 }
 
 impl Path<'_> {
+    pub fn end_to_string(&self) -> String {
+        match self {
+            Path::Root(name) => name.to_string(),
+            Path::Select(_, element) => element.to_string(),
+        }
+    }
+
     /// Creates an owned version of this Path.
     pub fn to_path_buf(&self) -> PathBuf {
         match self {
@@ -139,7 +146,7 @@ mod tests {
         let d = c.with_variant("d", "e");
         let e = d.with_index(33);
         let buf: PathBuf = e.to_path_buf();
-        assert_eq!(format!("{}", e), "a.b.c[42].d<e>[33]");
-        assert_eq!(format!("{}", buf), "a.b.c[42].d<e>[33]");
+        assert_eq!(format!("{}", e), "a.b.c[42].d{e}[33]");
+        assert_eq!(format!("{}", buf), "a.b.c[42].d{e}[33]");
     }
 }
