@@ -3,6 +3,7 @@ pub mod diagnostic;
 
 #[macro_use]
 pub mod doc_tree;
+pub mod comment;
 pub mod context;
 pub mod export;
 pub mod extension;

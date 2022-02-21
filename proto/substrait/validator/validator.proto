@@ -1,0 +1,509 @@
+syntax = "proto3";
+
+package substrait.validator;
+
+import "google/protobuf/any.proto";
+
+option java_multiple_files = true;
+option java_package = "io.substrait.validator.proto";
+option csharp_namespace = "Substrait.Validator.Protobuf";
+
+// One of the functions of the validator is to convert Substrait plans to a
+// format that is more easy to consume for software geared toward making
+// human-readable representations of Substrait. The validator can be tasked to
+// emit a tree of these nodes for that purpose.
+//
+// Note that, unlike substrait.Plan and its children, the nodes in this tree
+// are intentionally devoid of typing information: all nodes are of type Node.
+// The purpose of this is to allow a consumer of these trees to walk over the
+// entire tree without needing in-depth knowledge of how Substrait works (and,
+// with that, to decouple them from changes to the Substrait specification):
+// they are intended as an intermediate format for converting Substrait plans
+// into more human-friendly representations after all, not for programmatically
+// dealing with the semantics of Substrait itself. That's what the validator is
+// for, in this case.
+//
+// In particular, gathering all diagnostics emitted by the validator only
+// requires the consumer to use the Node, Node.Data, Node.Child, and of course
+// the Diagnostic message types.
+//
+// In case the consumer does need additional information from the original
+// substrait.Plan, every node can be related back to its corresponding message
+// via the path information associated with the nodes.
+message Node {
+
+  // The type of node.
+  oneof node_type {
+
+    // This node represents a protobuf message. The fields are described using
+    // Field, RepeatedField, and OneOfField messages in data.
+    ProtoMessage proto_message = 1;
+
+    // This node represents a protobuf primitive or enum.
+    ProtoPrimitive proto_primitive = 2;
+
+    // Special case of proto_primitive for references to anchors defined
+    // elsewhere in the plan.
+    NodeReference node_reference = 3;
+
+    // Special case for proto_primitive for references to YAML files via a URI.
+    // If resolved, the keys in the toplevel YAML map are represented using
+    // Field messages in data.
+    YamlReference yaml_reference = 4;
+
+    // This node represents a YAML map/object. The keys are represented using
+    // Field messages in data.
+    Empty yaml_map = 5;
+
+    // This node represents a YAML array. The elements are represented using
+    // ArrayElement messages in data.
+    Empty yaml_array = 6;
+
+    // This node represents a YAML primitive.
+    PrimitiveData yaml_primitive = 7;
+
+  }
+
+  // For the following types of nodes, the validator will try to do type
+  // resolution:
+  //  - type-like nodes resolve to said type;
+  //  - expression-like nodes resolve to the type returned by the expression;
+  //  - relation-like nodes resolve to the schema (as a named struct) returned
+  //    by the relation.
+  // This field will be populated for such nodes even if resolution fails, to
+  // indicate that there is supposed to be a type. In that case, the type kind
+  // will be set to "unresolved." The field will not be populated for nodes
+  // that don't have a logical Substrait type.
+  DataType data_type = 16;
+
+  // For relation nodes, the validator will emit additional information, to
+  // allow consumers to easily build a relation tree. This field is only
+  // populated for relation-like nodes.
+  Relation relation = 17;
+
+  // Data associated with this node.
+  repeated Data data = 31;
+
+  // Data associated with the node. Note that some variants are illegal based
+  // on the node type (for example, a primitive does not have fields, so it
+  // makes no sense for Field data to appear).
+  message Data {
+
+    oneof kind {
+
+      // Represents a child node in the tree.
+      Child child = 1;
+
+      // Represents a diagnostic message.
+      Diagnostic diagnostic = 2;
+
+      // Represents an (intermediate) data type.
+      DataType data_type = 3;
+
+      // Unstructured additional information about the node or something in it.
+      Comment comment = 4;
+
+    }
+
+  }
+
+  // Representation of a child node in the tree.
+  message Child {
+
+    // Path element identifying the relation of this child node to its
+    // parent.
+    Path.Element path = 1;
+
+    // The child node.
+    Node node = 2;
+
+    // Whether the validator recognized/expected the field or element that
+    // this child represents. Fields/elements may be unrecognized simply
+    // because validation is not implemented for them yet. In any case, this
+    // flag indicates that the subtree represented by this node could not be
+    // validated.
+    bool recognized = 3;
+
+  }
+
+
+  // Information about a protobuf message.
+  message ProtoMessage {
+
+    // The full protobuf path for the type, for example "substrait.Plan".
+    string path = 1;
+
+  }
+
+  // Information about a protobuf primitive.
+  message ProtoPrimitive {
+
+    // Logically compatible protobuf name of the primitive type, for example
+    // uint32 for any 32-bit unsigned data storage type.
+    string path = 1;
+
+    // Value of the primitive.
+    PrimitiveData data = 2;
+
+  }
+
+  // Information about the reference part of a reference/anchor pair.
+  message NodeReference {
+
+    // Integer value of the reference and anchor.
+    uint64 value = 1;
+
+    // Absolute path to the referenced node, i.e. the node containing the
+    // anchor field.
+    Path path = 2;
+
+  }
+
+  // Information about a reference to a YAML file.
+  message YamlReference {
+
+    // URI to the YAML file.
+    string uri = 1;
+
+  }
+
+  // Value for a primitive data element.
+  message PrimitiveData {
+    oneof data {
+      bool boolean = 1;
+      uint64 unsigned = 2;
+      int64 signed = 3;
+      double real = 4;
+      string unicode = 5;
+      bytes binary = 6;
+      string variant = 7;
+      google.protobuf.Any any = 8;
+    }
+  }
+
+}
+
+// An absolute path to a node in the tree.
+message Path {
+
+  // Name of the root node. Currently always set to `plan`.
+  string root = 1;
+
+  // Elements of the path. The first element selects a child node of the root
+  // node, the second selects one of its children, etc.
+  repeated Element elements = 2;
+
+  // Path element structure.
+  message Element {
+    oneof kind {
+      Field field = 1;
+      RepeatedField repeated_field = 2;
+      OneOfField oneof_field = 3;
+      ArrayElement array_element = 4;
+    }
+  }
+
+  // Path element used for protobuf fields and YAML maps.
+  // Canonically represented as `.<field>` if field matches
+  // [a-zA-Z_][a-zA-Z0-9_]*, or as `."<field>"` using \\ and \" escape
+  // sequences if not (note that this can only happen for YAML map keys).
+  message Field {
+    string field = 1;
+  }
+
+  // Path element used for protobuf repeated field elements.
+  // Canonically represented as `.<field>[<index>]`.
+  message RepeatedField {
+    string field = 1;
+    uint64 index = 2;
+  }
+
+  // Path element used for protobuf oneof fields.
+  // Canonically represented as `.<field>{<variant>}`.
+  message OneOfField {
+    string field = 1;
+    string variant = 2;
+  }
+
+  // Path element used for YAML arrays.
+  // Canonically represented as `[<index>]`.
+  message ArrayElement {
+    uint64 index = 2;
+  }
+
+}
+
+// Representation of a diagnostic message.
+message Diagnostic {
+
+  // The error level/severity for this diagnostic.
+  Level level = 1;
+
+  // The machine-readable message for this diagnostic.
+  Cause cause = 2;
+
+  // The human-readable message for this diagnostic.
+  string msg = 3;
+
+  // A path associated with this diagnostic. This is usually the path for
+  // the node it is associated with, but not necessarily: for example, a
+  // diagnostic message relating to a duplicate definition may refer back
+  // to the previous or first definition.
+  Path path = 4;
+
+  // Error level.
+  enum Level {
+
+    // Information diagnostic. Has no bearing on the validity of the plan.
+    LEVEL_INFO = 0;
+
+    // Warning diagnostic. The presence of warning diagnostics indicates
+    // that the plan may or may not be valid, for example because the
+    // validator was unable to access a referenced YAML file, or because
+    // enhancements using protobuf's Any type were used.
+    LEVEL_WARNING = 1;
+
+    // Error diagnostic. The presence of error diagnostics indicates that
+    // the plan is invalid.
+    LEVEL_ERROR = 2;
+
+  }
+
+  // Machine-readable cause for a diagnostic message.
+  enum Cause {
+    UNSPECIFIED = 0;
+    // TODO: once diagnostic causes stabilize a bit, start defining them
+    // here.
+  }
+
+}
+
+// Representation of a comment made by the validator that is only intended
+// to be interpreted by people.
+message Comment {
+
+  // Comments consist of one or more "spans," each of which may have some
+  // additional link-like data associated with it.
+  repeated Span spans = 1;
+
+  message Span {
+
+    // Text for this span.
+    string text = 1;
+
+    // Specified if this span of text should link to something.
+    oneof link {
+
+      // Link to a path in the tree.
+      Path path = 2;
+
+      // Link to a web page.
+      string url = 3;
+
+    }
+
+  }
+
+}
+
+// Representation of a resolved data type.
+message DataType {
+
+  // Type class.
+  oneof kind {
+    Simple simple = 1;
+    Compound compound = 2;
+    UserDefinedType user_defined_type = 3;
+    Unresolved unresolved_type = 7;
+  }
+
+  // Nullability.
+  bool nullable = 8;
+
+  // Type variation, if any.
+  oneof variation {
+    UserDefinedVariation user_defined_variation = 9;
+    Unresolved unresolved_variation = 15;
+  }
+
+  // Type parameters for non-simple types.
+  repeated Parameter parameters = 16;
+
+  // Enumeration of simple types. Message numbers correspond to the ones in
+  // substrait.Type. Note that UNSPECIFIED should never be emitted by the
+  // validator.
+  enum Simple {
+    SIMPLE_UNSPECIFIED = 0;
+    SIMPLE_BOOLEAN = 1;
+    SIMPLE_I8 = 2;
+    SIMPLE_I16 = 3;
+    SIMPLE_I32 = 5;
+    SIMPLE_I64 = 7;
+    SIMPLE_FP32 = 10;
+    SIMPLE_FP64 = 11;
+    SIMPLE_STRING = 12;
+    SIMPLE_BINARY = 13;
+    SIMPLE_TIMESTAMP = 14;
+    SIMPLE_DATE = 16;
+    SIMPLE_TIME = 17;
+    SIMPLE_INTERVAL_YEAR = 19;
+    SIMPLE_INTERVAL_DAY = 20;
+    SIMPLE_TIMESTAMP_TZ = 29;
+    SIMPLE_UUID = 32;
+  }
+
+  // Enumeration of compound types. Message numbers correspond to the ones in
+  // substrait.Type. Note that UNSPECIFIED should never be emitted by the
+  // validator.
+  enum Compound {
+    COMPOUND_UNSPECIFIED = 0;
+    COMPOUND_FIXED_CHAR = 21;
+    COMPOUND_VAR_CHAR = 22;
+    COMPOUND_FIXED_BINARY = 23;
+    COMPOUND_DECIMAL = 24;
+    COMPOUND_STRUCT = 25;
+    COMPOUND_NAMED_STRUCT = 26;
+    COMPOUND_LIST = 27;
+    COMPOUND_MAP = 28;
+  }
+
+  // Information about a user-defined type.
+  message UserDefinedType {
+
+    // URI of the YAML file that the type is (supposed to be) defined in, if
+    // known.
+    string uri = 1;
+
+    // Name of the type within the scope of that YAML file.
+    string name = 2;
+
+    // Type definition information from the YAML file, if resolution
+    // succeeded.
+    Definition definition = 3;
+
+    // Type definition information from a YAML file for a user-defined type.
+    message Definition {
+
+      // The primitive structure of the type.
+      repeated Element structure = 1;
+
+    }
+
+    // Primitive structure element for a user-defined type.
+    message Element {
+
+      // Name of the element.
+      string name = 1;
+
+      // Type of data.
+      Simple kind = 2;
+
+    }
+
+  }
+
+  // Information about a type variation.
+  message UserDefinedVariation {
+
+    // URI of the YAML file that the type variation is (supposed to be) defined
+    // in, if known.
+    string uri = 1;
+
+    // Name of the type within the scope of that YAML file.
+    string name = 2;
+
+    // Type definition information from the YAML file, if resolution
+    // succeeded.
+    Definition definition = 3;
+
+    // Type definition information from a YAML file for a user-defined type.
+    message Definition {
+
+      // Function behavior for this type variation.
+      FunctionBehavior function_behavior = 1;
+
+    }
+
+    // Function behavior for a type variation.
+    enum FunctionBehavior {
+      FUNCTION_BEHAVIOR_INHERITS = 0;
+      FUNCTION_BEHAVIOR_SEPARATE = 1;
+    }
+
+  }
+
+  // Emitted by the validator when a node should logically have type
+  // information associated with it, but it failed to resolve the type for
+  // whatever reason.
+  message Unresolved {
+
+    // Some best-effort name or description of this type.
+    string description = 1;
+
+  }
+
+  // Type parameter.
+  message Parameter {
+
+    // Type of parameter.
+    oneof kind {
+
+      // Anonymous data type parameter, for example the T in LIST<T>.
+      DataType data_type = 1;
+
+      // Named data type parameter, for example N:T in NSTRUCT<N:T>.
+      Named named_type = 2;
+
+      // Unsigned integer parameter, for example the L in VARCHAR<L>.
+      uint64 unsigned = 3;
+
+    }
+
+  }
+
+  // A named type, used for NSTRUCT (meta)types.
+  message Named {
+
+    // Name of the struct element.
+    string name = 1;
+
+    // Data type of the struct element.
+    DataType data_type = 2;
+
+  }
+
+}
+
+// Additional information for relation nodes.
+message Relation {
+
+  // The type of relation.
+  RelationType relation_type = 1;
+
+  // The child relations, i.e. the data sources for this relation.
+  repeated Path children = 2;
+
+  // Additional unstructured information about this relation.
+  Comment comment = 31;
+
+  // Basic information about the type of relation. Note that the enum variant
+  // indices correspond to the Rel.rel_type oneof message indices.
+  enum RelationType {
+    RELATION_TYPE_UNRECOGNIZED = 0;
+    RELATION_TYPE_READ = 1;
+    RELATION_TYPE_FILTER = 2;
+    RELATION_TYPE_FETCH = 3;
+    RELATION_TYPE_AGGREGATE = 4;
+    RELATION_TYPE_SORT = 5;
+    RELATION_TYPE_JOIN = 6;
+    RELATION_TYPE_PROJECT = 7;
+    RELATION_TYPE_SET = 8;
+    RELATION_TYPE_EXTENSION = 9;
+    RELATION_TYPE_CROSS = 12;
+  }
+
+}
+
+// Used for oneof field variants that have no data associated with them.
+message Empty {
+}

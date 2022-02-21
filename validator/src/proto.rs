@@ -336,6 +336,9 @@ pub mod substrait {
     pub mod extensions {
         include!(concat!(env!("OUT_DIR"), "/substrait.extensions.rs"));
     }
+    pub mod validator {
+        include!(concat!(env!("OUT_DIR"), "/substrait.validator.rs"));
+    }
 }
 
 #[cfg(test)]

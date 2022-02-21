@@ -1,3 +1,4 @@
+use crate::comment;
 use crate::diagnostic;
 use crate::doc_tree;
 use crate::path;
@@ -290,44 +291,12 @@ fn format_node(
 
     for data in node.data.iter() {
         match data {
-            doc_tree::NodeData::Field(field, node) => {
-                let (sub_html, sub_level) =
-                    format_node(&path.with_field(*field), unknown_subtree, node);
-                html.extend(sub_html.into_iter());
-                level = max(level, sub_level);
-            }
-            doc_tree::NodeData::UnknownField(field, node) => {
-                let (sub_html, sub_level) = format_node(&path.with_field(field), true, node);
-                html.extend(sub_html.into_iter());
-                level = max(level, sub_level);
-            }
-            doc_tree::NodeData::RepeatedField(field, index, node) => {
-                let (sub_html, sub_level) =
-                    format_node(&path.with_repeated(*field, *index), unknown_subtree, node);
-                html.extend(sub_html.into_iter());
-                level = max(level, sub_level);
-            }
-            doc_tree::NodeData::UnknownRepeatedField(field, index, node) => {
-                let (sub_html, sub_level) =
-                    format_node(&path.with_repeated(field, *index), true, node);
-                html.extend(sub_html.into_iter());
-                level = max(level, sub_level);
-            }
-            doc_tree::NodeData::OneOfField(field, variant, node) => {
-                let (sub_html, sub_level) =
-                    format_node(&path.with_variant(*field, *variant), unknown_subtree, node);
-                html.extend(sub_html.into_iter());
-                level = max(level, sub_level);
-            }
-            doc_tree::NodeData::UnknownOneOfField(field, variant, node) => {
-                let (sub_html, sub_level) =
-                    format_node(&path.with_variant(field, variant), true, node);
-                html.extend(sub_html.into_iter());
-                level = max(level, sub_level);
-            }
-            doc_tree::NodeData::ArrayElement(index, node) => {
-                let (sub_html, sub_level) =
-                    format_node(&path.with_index(*index), unknown_subtree, node);
+            doc_tree::NodeData::Child(child) => {
+                let (sub_html, sub_level) = format_node(
+                    &path.with(child.path_element.clone()),
+                    !child.recognized,
+                    &child.node,
+                );
                 html.extend(sub_html.into_iter());
                 level = max(level, sub_level);
             }
@@ -359,18 +328,24 @@ fn format_node(
             doc_tree::NodeData::DataType(_data_type) => {
                 // todo
             }
-            doc_tree::NodeData::Comment(comment, None) => {
-                html.push(format!(
-                    "<div class=\"card comment\">\n{}\n</div>",
-                    html_escape(comment)
-                ));
-            }
-            doc_tree::NodeData::Comment(comment, Some(link)) => {
-                html.push(format!(
-                    "<div class=\"card comment\">\n<a {}>\n{}\n</a>\n</div>",
-                    format_reference(link),
-                    html_escape(comment)
-                ));
+            doc_tree::NodeData::Comment(comment) => {
+                html.push("<div class=\"card comment\">\n".to_string());
+                for span in comment.spans.iter() {
+                    html.push(match &span.link {
+                        None => html_escape(&span.text),
+                        Some(comment::Link::Path(path)) => format!(
+                            "<a {}>{}</a>",
+                            format_reference(path),
+                            html_escape(&span.text)
+                        ),
+                        Some(comment::Link::Url(url)) => format!(
+                            "<a href=\"{}\">{}</a>",
+                            str_escape(url),
+                            html_escape(&span.text)
+                        ),
+                    })
+                }
+                html.push("\n</div>".to_string());
             }
         }
     }

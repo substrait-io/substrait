@@ -1,3 +1,4 @@
+use crate::comment;
 use crate::context;
 use crate::data_type;
 use crate::diagnostic;
@@ -53,13 +54,17 @@ macro_rules! link {
 #[allow(unused_macros)]
 pub fn push_comment<S: AsRef<str>>(
     context: &mut context::Context,
-    comment: S,
+    text: S,
     path: Option<path::PathBuf>,
 ) {
-    context
-        .output
-        .data
-        .push(NodeData::Comment(comment.as_ref().to_string(), path))
+    let text = text.as_ref().to_string();
+    let comment = comment::Comment::new();
+    let comment = if let Some(path) = path {
+        comment.with_link_to_path(text, path)
+    } else {
+        comment.with_plain(text)
+    };
+    context.output.data.push(NodeData::Comment(comment))
 }
 
 /// Convenience/shorthand macro for pushing type information to a node. Note
@@ -154,16 +159,19 @@ where
         // Create the node for the child message.
         let mut field_output = field_input.proto_data_to_node();
 
+        // Create the path element for referring to the child node.
+        let path_element = path::PathElement::Field(
+            field_input
+                .proto_data_variant()
+                .unwrap_or(field_name)
+                .to_string(),
+        );
+
         // Create the context for the child message.
         let mut field_context = context::Context {
             output: &mut field_output,
             state: context.state,
-            breadcrumb: &mut context.breadcrumb.next(path::PathElement::Field(
-                field_input
-                    .proto_data_variant()
-                    .unwrap_or(field_name)
-                    .to_string(),
-            )),
+            breadcrumb: &mut context.breadcrumb.next(path_element.clone()),
             config: context.config,
         };
 
@@ -179,23 +187,11 @@ where
 
         // Push and return the completed node.
         let field_output = Rc::new(field_output);
-        context.output.data.push(
-            if let Some(variant_name) = field_input.proto_data_variant() {
-                if unknown_subtree {
-                    NodeData::UnknownOneOfField(
-                        field_name.to_string(),
-                        variant_name.to_string(),
-                        field_output.clone(),
-                    )
-                } else {
-                    NodeData::OneOfField(field_name, variant_name, field_output.clone())
-                }
-            } else if unknown_subtree {
-                NodeData::UnknownField(field_name.to_string(), field_output.clone())
-            } else {
-                NodeData::Field(field_name, field_output.clone())
-            },
-        );
+        context.output.data.push(NodeData::Child(Child {
+            path_element,
+            node: field_output.clone(),
+            recognized: !unknown_subtree,
+        }));
 
         // Run the validator.
         if let Err(cause) = validator(input, context, &field_output) {
@@ -359,13 +355,14 @@ where
             // Create the node for the child message.
             let mut field_output = field_input.proto_data_to_node();
 
+            // Create the path element for referring to the child node.
+            let path_element = path::PathElement::Repeated(field_name.to_string(), index);
+
             // Create the context for the child message.
             let mut field_context = context::Context {
                 output: &mut field_output,
                 state: context.state,
-                breadcrumb: &mut context
-                    .breadcrumb
-                    .next(path::PathElement::Repeated(field_name.to_string(), index)),
+                breadcrumb: &mut context.breadcrumb.next(path_element.clone()),
                 config: context.config,
             };
 
@@ -381,11 +378,11 @@ where
 
             // Push the completed node.
             let field_output = Rc::new(field_output);
-            context.output.data.push(if unknown_subtree {
-                NodeData::UnknownRepeatedField(field_name.to_string(), index, field_output.clone())
-            } else {
-                NodeData::RepeatedField(field_name, index, field_output.clone())
-            });
+            context.output.data.push(NodeData::Child(Child {
+                path_element,
+                node: field_output.clone(),
+                recognized: !unknown_subtree,
+            }));
 
             // Run the validator.
             if let Err(cause) = validator(input, context, &field_output, index) {
@@ -408,17 +405,10 @@ fn handle_unknown_fields<T: ProtoDatum>(
     if input.proto_parse_unknown(context) && !unknown_subtree {
         let mut fields = vec![];
         for data in context.output.data.iter() {
-            match data {
-                NodeData::UnknownField(field, _) => {
-                    fields.push(field.clone());
+            if let NodeData::Child(child) = data {
+                if !child.recognized {
+                    fields.push(child.path_element.to_string());
                 }
-                NodeData::UnknownRepeatedField(field, 0, _) => {
-                    fields.push(field.clone());
-                }
-                NodeData::UnknownOneOfField(field, variant, _) => {
-                    fields.push(format!("{}({})", field, variant));
-                }
-                _ => {}
             }
         }
         if !fields.is_empty() {
@@ -488,8 +478,8 @@ impl Node {
     {
         match T::decode(buffer) {
             Err(err) => {
-                // Create a minimal root node with just the proto parse error
-                // in it.
+                // Create a minimal root node with just the prot
+
                 let mut output = T::proto_type_to_node();
                 output
                     .data
@@ -560,7 +550,9 @@ pub enum NodeType {
     /// type and with the given data.
     ProtoPrimitive(&'static str, ProtoPrimitiveData),
 
-    /// The associated node represents an unpopulated oneof field.
+    /// The associated node represents an unpopulated oneof field. This should
+    /// never appear in the final tree, but is used when a Rust enum
+    /// representation of a oneof field is converted to a node without data.
     ProtoMissingOneOf,
 
     /// Used for anchor/reference-based references to other nodes.
@@ -586,38 +578,8 @@ pub enum NodeType {
 /// Information nodes for a parsed protobuf message.
 #[derive(Clone, Debug, PartialEq)]
 pub enum NodeData {
-    /// For protobuf nodes, indicates that the node has a populated optional
-    /// field (optional in the protobuf sense, may be mandatory in Substrait
-    /// context) with the given field name and data. For YAML maps, represents
-    /// a key-value pair.
-    Field(&'static str, Rc<Node>),
-
-    /// For protobuf nodes and YAML maps, indicates that a field exists/was
-    /// specified that the validator doesn't know about.
-    UnknownField(String, Rc<Node>),
-
-    /// For protobuf nodes, indicates that the node has a populated repeated
-    /// field with the given field name, index, and data. The elements of
-    /// repeated nodes are always stored in-order and without gaps, but the
-    /// elements may be interspersed with metadata (diagnostics, comments,
-    /// etc).
-    RepeatedField(&'static str, usize, Rc<Node>),
-
-    /// Combination of UnknownField and RepeatedField.
-    UnknownRepeatedField(String, usize, Rc<Node>),
-
-    /// For protobuf nodes, indicates that the node as a populated OneOf field
-    /// with the given field name, variant name, and data.
-    OneOfField(&'static str, &'static str, Rc<Node>),
-
-    /// Combination of UnknownField and OneOfField.
-    UnknownOneOfField(String, String, Rc<Node>),
-
-    /// For YAML arrays, provides information for the given index in the array.
-    /// The array elements are always stored in-order and without gaps, but the
-    /// elements may be interspersed with metadata (diagnostics, comments,
-    /// etc).
-    ArrayElement(usize, Rc<Node>),
+    /// A reference to a child node in the tree.
+    Child(Child),
 
     /// Indicates that parsing/validating this message resulted in some
     /// diagnostic message being emitted.
@@ -634,9 +596,25 @@ pub enum NodeData {
     DataType(data_type::DataType),
 
     /// Used for adding unstructured additional information to a message,
-    /// wherever this may aid human understanding of a message. Optionally, a
-    /// link to another node may be attached to it.
-    Comment(String, Option<path::PathBuf>),
+    /// wherever this may aid human understanding of a message.
+    Comment(comment::Comment),
+}
+
+/// Reference to a child node in the tree.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Child {
+    /// Path element identifying the relation of this child node to its parent.
+    pub path_element: path::PathElement,
+
+    /// The child node.
+    pub node: Rc<Node>,
+
+    /// Whether the validator recognized/expected the field or element that
+    /// this child represents. Fields/elements may be unrecognized simply
+    /// because validation is not implemented for them yet. In any case, this
+    /// flag indicates that the subtree represented by this node could not be
+    /// validated.
+    pub recognized: bool,
 }
 
 /// A reference to a node elsewhere in the tree.
@@ -661,17 +639,10 @@ impl<'a> Iterator for FlattenedNodeIter<'a> {
         if let Some(node) = maybe_node {
             self.remaining
                 .extend(node.data.iter().rev().filter_map(|x| -> Option<&Node> {
-                    match x {
-                        NodeData::Field(_, n) => Some(n),
-                        NodeData::UnknownField(_, n) => Some(n),
-                        NodeData::RepeatedField(_, _, n) => Some(n),
-                        NodeData::UnknownRepeatedField(_, _, n) => Some(n),
-                        NodeData::OneOfField(_, _, n) => Some(n),
-                        NodeData::UnknownOneOfField(_, _, n) => Some(n),
-                        NodeData::ArrayElement(_, n) => Some(n),
-                        NodeData::Diagnostic(_) => None,
-                        NodeData::DataType(_) => None,
-                        NodeData::Comment(_, _) => None,
+                    if let NodeData::Child(child) = x {
+                        Some(&child.node)
+                    } else {
+                        None
                     }
                 }));
         }
