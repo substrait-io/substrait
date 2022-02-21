@@ -1,7 +1,6 @@
+use crate::diagnostic;
 use crate::diagnostic::Cause::MismatchedTypeParameters;
 use crate::extension;
-use once_cell::sync::Lazy;
-use regex::Regex;
 use std::collections::HashSet;
 use std::rc::Rc;
 use strum_macros::{Display, EnumString};
@@ -51,20 +50,20 @@ impl std::fmt::Display for DataType {
 /// Trait for things that can resolve user-defined types and type variations.
 pub trait TypeResolver {
     /// Resolves a user-defined type from its name.
-    fn resolve_type<S: AsRef<str>>(&self, s: S) -> crate::Result<Rc<extension::DataType>>;
+    fn resolve_type<S: AsRef<str>>(&self, s: S) -> diagnostic::Result<Rc<extension::DataType>>;
 
     /// Resolves a type variation from its name and base type.
     fn resolve_type_variation<S: AsRef<str>>(
         &self,
         s: S,
         base_type: Class,
-    ) -> crate::Result<Rc<extension::TypeVariation>>;
+    ) -> diagnostic::Result<Rc<extension::TypeVariation>>;
 }
 
 /// Trait for checking the type parameters for a base type.
 trait ParameterChecker {
     /// Checks whether the given parameter set is valid for this base type.
-    fn check_parameters(&self, params: &[Parameter]) -> crate::Result<()>;
+    fn check_parameters(&self, params: &[Parameter]) -> diagnostic::Result<()>;
 }
 
 impl DataType {
@@ -72,7 +71,7 @@ impl DataType {
     pub fn parse<S: AsRef<str>, R: TypeResolver>(
         _s: S,
         _type_resolver: R,
-    ) -> crate::Result<DataType> {
+    ) -> diagnostic::Result<DataType> {
         todo!(
             "use nom or some other parser to implement this;
             also run ParameterChecker. then make round-trip tests.
@@ -111,7 +110,7 @@ impl std::fmt::Display for Class {
 }
 
 impl ParameterChecker for Class {
-    fn check_parameters(&self, params: &[Parameter]) -> crate::Result<()> {
+    fn check_parameters(&self, params: &[Parameter]) -> diagnostic::Result<()> {
         match self {
             Class::Simple(_) => {
                 if params.is_empty() {
@@ -175,7 +174,7 @@ pub enum Compound {
 }
 
 impl ParameterChecker for Compound {
-    fn check_parameters(&self, params: &[Parameter]) -> crate::Result<()> {
+    fn check_parameters(&self, params: &[Parameter]) -> diagnostic::Result<()> {
         match self {
             Compound::FixedChar | Compound::VarChar | Compound::FixedBinary => {
                 if params.len() != 1 {
@@ -314,8 +313,8 @@ pub enum Parameter {
 
 impl std::fmt::Display for Parameter {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        static IDENTIFIER_RE: Lazy<Regex> =
-            Lazy::new(|| Regex::new("[a-zA-Z_][a-zA-Z0-9_]*").unwrap());
+        static IDENTIFIER_RE: once_cell::sync::Lazy<regex::Regex> =
+            once_cell::sync::Lazy::new(|| regex::Regex::new("[a-zA-Z_][a-zA-Z0-9_]*").unwrap());
 
         match self {
             Parameter::Type(data_type) => write!(f, "{}", data_type),

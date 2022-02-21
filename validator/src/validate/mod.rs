@@ -1,8 +1,8 @@
 mod extensions;
 
 use crate::context;
+use crate::diagnostic::Result;
 use crate::proto;
-use crate::Result;
 
 /// Toplevel parse function for a plan.
 pub fn parse_plan(x: &proto::substrait::Plan, y: &mut context::Context) -> Result<()> {

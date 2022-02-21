@@ -1,3 +1,3 @@
 fn main() {
-    substrait_validator::test();
+    //substrait_validator::test();
 }

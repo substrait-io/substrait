@@ -1,5 +1,3 @@
-use std::fmt::Formatter;
-
 /// Element of a path to some field of a protobuf message and/or YAML file.
 #[derive(Clone, Debug, PartialEq)]
 pub enum PathElement {
@@ -21,7 +19,7 @@ pub enum PathElement {
 }
 
 impl std::fmt::Display for PathElement {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             PathElement::Field(field) => write!(f, ".{}", field),
             PathElement::Repeated(field, index) => write!(f, ".{}[{}]", field, index),
@@ -39,7 +37,7 @@ pub struct PathBuf {
 }
 
 impl std::fmt::Display for PathBuf {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.root)?;
         for element in self.elements.iter() {
             write!(f, "{}", element)?;
@@ -96,7 +94,7 @@ impl Path<'_> {
 }
 
 impl std::fmt::Display for Path<'_> {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Path::Root(name) => write!(f, "{}", name),
             Path::Select(parent, element) => write!(f, "{}{}", parent, element),

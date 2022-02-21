@@ -1,9 +1,9 @@
 use crate::context;
 use crate::diagnostic;
+use crate::diagnostic::Result;
 use crate::doc_tree;
 use crate::extension;
 use crate::proto;
-use crate::Result;
 use std::collections::HashMap;
 use std::rc::Rc;
 

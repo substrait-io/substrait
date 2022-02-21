@@ -1,5 +1,4 @@
 use crate::path;
-use std::fmt::Formatter;
 use thiserror::Error;
 
 /// Enumeration for the particular types of diagnostics we might encounter.
@@ -35,20 +34,20 @@ pub enum Cause {
 pub type Result<T> = std::result::Result<T, Cause>;
 
 /// Error level for a diagnostic message.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Level {
-    /// Level used for diagnostics that indicate that there is definitely
-    /// something wrong with the plan.
-    Error,
+    /// Level used for diagnostics that don't point out anything wrong with
+    /// the plan, and merely provide additional information.
+    Info,
 
     /// Level used for diagnostics that may or may not indicate that there
     /// is something wrong with the plan, i.e. the plan *could* be valid,
     /// but the validator isn't sure.
     Warning,
 
-    /// Level used for diagnostics that don't point out anything wrong with
-    /// the plan, and merely provide additional information.
-    Info,
+    /// Level used for diagnostics that indicate that there is definitely
+    /// something wrong with the plan.
+    Error,
 }
 
 /// A complete diagnostic message.
@@ -65,7 +64,7 @@ pub struct Diagnostic {
 }
 
 impl std::fmt::Display for Diagnostic {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?} ({}): {}", self.level, self.path, self.cause)
     }
 }

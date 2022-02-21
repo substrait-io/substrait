@@ -2,7 +2,8 @@ use crate::data_type;
 use crate::doc_tree;
 use crate::extension;
 use crate::path;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
+use std::collections::HashSet;
 use std::rc::Rc;
 
 /// Parse/validation context and output node, passed to parser functions along

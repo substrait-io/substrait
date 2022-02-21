@@ -3,7 +3,6 @@ use crate::diagnostic;
 use crate::doc_tree;
 use crate::path;
 use crate::proto;
-use std::cmp::max;
 
 const HEADER: &str = r#"
 <!DOCTYPE html>
@@ -298,20 +297,20 @@ fn format_node(
                     &child.node,
                 );
                 html.extend(sub_html.into_iter());
-                level = max(level, sub_level);
+                level = std::cmp::max(level, sub_level);
             }
             doc_tree::NodeData::Diagnostic(diag) => {
                 let cause = html_escape(diag.cause.to_string());
                 match diag.level {
                     diagnostic::Level::Error => {
-                        level = max(level, Level::Error);
+                        level = std::cmp::max(level, Level::Error);
                         html.push(format!(
                             "<div class=\"card diag_error\">\nError: {}\n</div>",
                             cause
                         ));
                     }
                     diagnostic::Level::Warning => {
-                        level = max(level, Level::Warning);
+                        level = std::cmp::max(level, Level::Warning);
                         html.push(format!(
                             "<div class=\"card diag_warn\">\nWarning: {}\n</div>",
                             cause

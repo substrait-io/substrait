@@ -11,10 +11,32 @@ pub mod path;
 pub mod proto;
 mod validate;
 
-/// Default result type.
-pub type Result<T> = diagnostic::Result<T>;
+/// Validity of a plan.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Validity {
+    /// The plan is valid.
+    Valid,
 
-pub fn validate<B: prost::bytes::Buf>(buffer: B) -> doc_tree::Node {
+    /// The plan may or may not be valid; the validator was not able to prove
+    /// or disprove validity.
+    MaybeValid,
+
+    /// The plan is invalid.
+    Invalid,
+}
+
+impl From<diagnostic::Level> for Validity {
+    fn from(level: diagnostic::Level) -> Self {
+        match level {
+            diagnostic::Level::Info => Validity::Valid,
+            diagnostic::Level::Warning => Validity::MaybeValid,
+            diagnostic::Level::Error => Validity::Invalid,
+        }
+    }
+}
+
+/// Validates the given substrait.Plan message and returns the parse tree.
+pub fn parse<B: prost::bytes::Buf>(buffer: B) -> doc_tree::Node {
     doc_tree::Node::parse_proto::<proto::substrait::Plan, _, _>(
         buffer,
         "plan",
@@ -24,12 +46,22 @@ pub fn validate<B: prost::bytes::Buf>(buffer: B) -> doc_tree::Node {
     )
 }
 
-pub fn test() {
-    use proto::meta::ProtoMessage;
-    println!(
-        "Hello, world! {}",
-        proto::substrait::Plan::proto_message_type()
-    );
+/// Returns whether the plan represented by the given parse tree is valid.
+pub fn check(root: &doc_tree::Node) -> Validity {
+    root.iter_diagnostics()
+        .map(|x| x.level)
+        .fold(diagnostic::Level::Info, std::cmp::max)
+        .into()
+}
+
+/// Exports a parse tree to a file or other output device using the specified
+/// data format.
+pub fn export<T: std::io::Write>(
+    out: &mut T,
+    format: export::Format,
+    root: &doc_tree::Node,
+) -> std::io::Result<()> {
+    export::export(out, format, "plan", root)
 }
 
 #[cfg(test)]
@@ -41,7 +73,7 @@ mod tests {
         // TPC-H 01 as returned by
         // https://github.com/jvanstraten/duckdb-substrait-demo/tree/28b30b58a6caa22cc5e074ae5d3c251def836ac7
         // This needs to not be bytes. Testing strategy is TBD.
-        let data = prost::bytes::Bytes::from(vec![
+        let buffer = prost::bytes::Bytes::from(vec![
             18, 17, 26, 15, 26, 13, 108, 101, 115, 115, 116, 104, 97, 110, 101, 113, 117, 97, 108,
             18, 17, 26, 15, 16, 1, 26, 11, 105, 115, 95, 110, 111, 116, 95, 110, 117, 108, 108, 18,
             9, 26, 7, 16, 2, 26, 3, 97, 110, 100, 18, 7, 26, 5, 16, 3, 26, 1, 42, 18, 7, 26, 5, 16,
@@ -71,97 +103,13 @@ mod tests {
             10, 4, 18, 2, 8, 8, 26, 8, 18, 6, 10, 4, 18, 2, 8, 9, 26, 10, 10, 6, 18, 4, 10, 2, 18,
             0, 16, 1, 26, 12, 10, 8, 18, 6, 10, 4, 18, 2, 8, 1, 16, 1,
         ]);
-        let data = validate(data);
-        let diags: Vec<_> = data.iter_diagnostics().map(|x| x.to_string()).collect();
-        for diag in diags.iter() {
-            println!("{}", diag);
-        }
+        let root = parse(buffer);
+        assert_eq!(check(&root), Validity::Invalid);
+        export(&mut std::io::stdout(), export::Format::Diagnostics, &root).unwrap();
 
         //let mut out = std::fs::File::create("test.html").unwrap();
         //export::html::export(&mut out, "plan", &data).unwrap();
 
         //assert_eq!(diags, vec!["Warning (plan): found values for field(s) not yet understood by the validator: extensions, relations".to_string()])
-    }
-
-    #[allow(dead_code)]
-    fn validate_embedded_function(
-        x: &proto::substrait::expression::EmbeddedFunction,
-        y: &mut context::Context,
-    ) -> Result<()> {
-        // Immediate death/cannot continue: just return Err() (or use ? operator
-        // to do so.
-
-        // Recoverable diagnostics and information:
-        diagnostic!(y, Error, UnknownType, "hello");
-        diagnostic!(y, Warning, UnknownType, "can also {} here", "format");
-        diagnostic!(
-            y,
-            Info,
-            diagnostic::Cause::UnknownType("or make the Cause directly".to_string())
-        );
-        comment!(y, "hello");
-
-        // Setting type information (can be called multiple times):
-        let data_type = data_type::DataType {
-            class: data_type::Class::Simple(data_type::Simple::Boolean),
-            nullable: false,
-            variation: None,
-            parameters: vec![],
-        };
-        data_type!(y, data_type);
-
-        // Parsing an optional field:
-        let _maybe_node = proto_field!(
-            x,
-            y,
-            output_type,                  /* field name */
-            |_x, _y| Ok(()),              /* optional parser */
-            |_x, _y, _field_node| Ok(())  /* optional validator */
-        );
-
-        // Parsing a required field:
-        let _node = proto_required_field!(
-            x,
-            y,
-            output_type,                    /* field name */
-            |_x, _y| Ok(()),                /* optional parser */
-            |_x, _y, _field_output| Ok(())  /* optional validator */
-        );
-
-        // Parsing a oneof field (can also use proto_field!() if optional):
-        let _node = proto_required_field!(
-            x,
-            y,
-            kind,                           /* field name */
-            |_x, _y| Ok(()),                /* optional parser */
-            |_x, _y, _field_output| Ok(())  /* optional validator */
-        );
-
-        // Parsing a repeated field:
-        let _vec_node = proto_repeated_field!(
-            x,
-            y,
-            arguments,                            /* repeated field name */
-            |_x, _y| Ok(()),                      /* optional parser */
-            |_x, _y, _field_node, _index| Ok(())  /* optional validator */
-        );
-
-        // Note: for primitive fields (i.e. fields with a primitive type, like an
-        // integer), the parser
-
-        Ok(())
-    }
-
-    #[allow(dead_code)]
-    fn validate_list(x: &proto::substrait::r#type::List, y: &mut context::Context) -> Result<()> {
-        let _maybe_node = proto_boxed_field!(
-            x,
-            y,
-            r#type,                       /* field name */
-            |_x, _y| Ok(()),              /* optional parser */
-            |_x, _y, _field_node| Ok(())  /* optional validator */
-        );
-
-        Ok(())
     }
 }

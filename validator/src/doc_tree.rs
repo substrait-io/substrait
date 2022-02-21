@@ -142,8 +142,8 @@ pub fn push_proto_field<TP, TF, TR, FP, FV>(
 ) -> (Option<Rc<Node>>, Option<TR>)
 where
     TF: ProtoDatum,
-    FP: Fn(&TF, &mut context::Context) -> crate::Result<TR>,
-    FV: Fn(&TP, &mut context::Context, &Node) -> crate::Result<()>,
+    FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+    FV: Fn(&TP, &mut context::Context, &Node) -> diagnostic::Result<()>,
 {
     if !context
         .breadcrumb
@@ -282,8 +282,8 @@ pub fn push_proto_required_field<TP, TF, TR, FP, FV>(
 ) -> (Rc<Node>, Option<TR>)
 where
     TF: ProtoDatum,
-    FP: Fn(&TF, &mut context::Context) -> crate::Result<TR>,
-    FV: Fn(&TP, &mut context::Context, &Node) -> crate::Result<()>,
+    FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+    FV: Fn(&TP, &mut context::Context, &Node) -> diagnostic::Result<()>,
 {
     if let (Some(node), result) = push_proto_field(
         input,
@@ -337,8 +337,8 @@ pub fn push_proto_repeated_field<TP, TF, TR, FP, FV>(
 ) -> (Vec<Rc<Node>>, Vec<Option<TR>>)
 where
     TF: ProtoDatum,
-    FP: Fn(&TF, &mut context::Context) -> crate::Result<TR>,
-    FV: Fn(&TP, &mut context::Context, &Node, usize) -> crate::Result<()>,
+    FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+    FV: Fn(&TP, &mut context::Context, &Node, usize) -> diagnostic::Result<()>,
 {
     if !context
         .breadcrumb
@@ -473,7 +473,7 @@ impl Node {
     ) -> Self
     where
         T: prost::Message + ProtoDatum + Default,
-        F: FnOnce(&T, &mut context::Context) -> crate::Result<()>,
+        F: FnOnce(&T, &mut context::Context) -> diagnostic::Result<()>,
         B: prost::bytes::Buf,
     {
         match T::decode(buffer) {
@@ -525,15 +525,20 @@ impl Node {
         }
     }
 
+    /// Returns an iterator that iterates over all NodeData objects in the
+    /// order in which they were defined.
+    pub fn iter_flattened_node_data(&self) -> FlattenedNodeDataIter {
+        FlattenedNodeDataIter {
+            remaining: self.data.iter().rev().collect(),
+        }
+    }
+
     /// Iterates over all diagnostics in the tree.
     pub fn iter_diagnostics(&self) -> impl Iterator<Item = &diagnostic::Diagnostic> + '_ {
-        self.iter_flattened_nodes()
-            .map(|node| node.data.iter())
-            .flatten()
-            .filter_map(|x| match x {
-                NodeData::Diagnostic(d) => Some(d),
-                _ => None,
-            })
+        self.iter_flattened_node_data().filter_map(|x| match x {
+            NodeData::Diagnostic(d) => Some(d),
+            _ => None,
+        })
     }
 }
 
@@ -647,5 +652,21 @@ impl<'a> Iterator for FlattenedNodeIter<'a> {
                 }));
         }
         maybe_node
+    }
+}
+
+pub struct FlattenedNodeDataIter<'a> {
+    remaining: VecDeque<&'a NodeData>,
+}
+
+impl<'a> Iterator for FlattenedNodeDataIter<'a> {
+    type Item = &'a NodeData;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let maybe_node_data = self.remaining.pop_back();
+        if let Some(NodeData::Child(child)) = maybe_node_data {
+            self.remaining.extend(child.node.data.iter().rev())
+        }
+        maybe_node_data
     }
 }
