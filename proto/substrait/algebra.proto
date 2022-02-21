@@ -241,14 +241,10 @@ message ExchangeRel {
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-  message ScatterFields {
-    repeated Expression.FieldReference fields = 1;
-  }
+  message ScatterFields { repeated Expression.FieldReference fields = 1; }
 
   // Returns a single bucket number per record.
-  message SingleBucketExpression {
-    Expression expression = 1;
-  }
+  message SingleBucketExpression { Expression expression = 1; }
 
   // Returns zero or more bucket numbers per record
   message MultiBucketExpression {
@@ -261,13 +257,14 @@ message ExchangeRel {
 
   // Route approximately
   message RoundRobin {
-    // whether the round robin behavior is required to exact (per record) or approximate.
-    // Defaults to approximate.
+    // whether the round robin behavior is required to exact (per record) or
+    // approximate. Defaults to approximate.
     bool exact = 1;
   }
 
   message ExchangeTarget {
-    // Describes the partition id(s) to send. If this is empty, all data is sent to this target.
+    // Describes the partition id(s) to send. If this is empty, all data is sent
+    // to this target.
     repeated int32 partition_id = 1;
 
     oneof target_type {
@@ -275,9 +272,7 @@ message ExchangeRel {
       google.protobuf.Any extended = 3;
     }
   }
-
 }
-
 
 // A relation with output field names.
 //
