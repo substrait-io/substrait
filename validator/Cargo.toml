@@ -1,5 +1,5 @@
 [package]
-name = "substrait-validator"
+name = "substrait-validator-rs"
 version = "0.1.0"
 edition = "2021"
 

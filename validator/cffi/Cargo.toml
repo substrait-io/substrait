@@ -1,0 +1,14 @@
+[package]
+name = "substrait-validator-c"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[build-dependencies]
+cbindgen = "0.20.0"
+
+[dependencies]
+substrait-validator-rs = { path = ".." }
+libc = "0.2"
