@@ -61,7 +61,6 @@ message Node {
 
     // This node represents a YAML primitive.
     PrimitiveData yaml_primitive = 7;
-
   }
 
   // For the following types of nodes, the validator will try to do type
@@ -102,9 +101,7 @@ message Node {
 
       // Unstructured additional information about the node or something in it.
       Comment comment = 4;
-
     }
-
   }
 
   // Representation of a child node in the tree.
@@ -123,16 +120,13 @@ message Node {
     // flag indicates that the subtree represented by this node could not be
     // validated.
     bool recognized = 3;
-
   }
-
 
   // Information about a protobuf message.
   message ProtoMessage {
 
     // The full protobuf path for the type, for example "substrait.Plan".
     string path = 1;
-
   }
 
   // Information about a protobuf primitive.
@@ -144,7 +138,6 @@ message Node {
 
     // Value of the primitive.
     PrimitiveData data = 2;
-
   }
 
   // Information about the reference part of a reference/anchor pair.
@@ -156,7 +149,6 @@ message Node {
     // Absolute path to the referenced node, i.e. the node containing the
     // anchor field.
     Path path = 2;
-
   }
 
   // Information about a reference to a YAML file.
@@ -164,7 +156,6 @@ message Node {
 
     // URI to the YAML file.
     string uri = 1;
-
   }
 
   // Value for a primitive data element.
@@ -181,9 +172,7 @@ message Node {
       string variant = 7;
       google.protobuf.Any any = 8;
     }
-
   }
-
 }
 
 // An absolute path to a node in the tree.
@@ -210,9 +199,7 @@ message Path {
   // Canonically represented as `.<field>` if field matches
   // [a-zA-Z_][a-zA-Z0-9_]*, or as `."<field>"` using \\ and \" escape
   // sequences if not (note that this can only happen for YAML map keys).
-  message Field {
-    string field = 1;
-  }
+  message Field { string field = 1; }
 
   // Path element used for protobuf repeated field elements.
   // Canonically represented as `.<field>[<index>]`.
@@ -230,10 +217,7 @@ message Path {
 
   // Path element used for YAML arrays.
   // Canonically represented as `[<index>]`.
-  message ArrayElement {
-    uint64 index = 2;
-  }
-
+  message ArrayElement { uint64 index = 2; }
 }
 
 // Representation of a diagnostic message.
@@ -269,7 +253,6 @@ message Diagnostic {
     // Error diagnostic. The presence of error diagnostics indicates that
     // the plan is invalid.
     LEVEL_ERROR = 2;
-
   }
 
   // Machine-readable cause for a diagnostic message.
@@ -278,7 +261,6 @@ message Diagnostic {
     // TODO: once diagnostic causes stabilize a bit, start defining them
     // here.
   }
-
 }
 
 // Representation of a comment made by the validator that is only intended
@@ -302,11 +284,8 @@ message Comment {
 
       // Link to a web page.
       string url = 3;
-
     }
-
   }
-
 }
 
 // Representation of a resolved data type.
@@ -389,7 +368,6 @@ message DataType {
 
       // The primitive structure of the type.
       repeated Element structure = 1;
-
     }
 
     // Primitive structure element for a user-defined type.
@@ -400,9 +378,7 @@ message DataType {
 
       // Type of data.
       Simple kind = 2;
-
     }
-
   }
 
   // Information about a type variation.
@@ -424,7 +400,6 @@ message DataType {
 
       // Function behavior for this type variation.
       FunctionBehavior function_behavior = 1;
-
     }
 
     // Function behavior for a type variation.
@@ -432,7 +407,6 @@ message DataType {
       FUNCTION_BEHAVIOR_INHERITS = 0;
       FUNCTION_BEHAVIOR_SEPARATE = 1;
     }
-
   }
 
   // Emitted by the validator when a node should logically have type
@@ -442,7 +416,6 @@ message DataType {
 
     // Some best-effort name or description of this type.
     string description = 1;
-
   }
 
   // Type parameter.
@@ -459,9 +432,7 @@ message DataType {
 
       // Unsigned integer parameter, for example the L in VARCHAR<L>.
       uint64 unsigned = 3;
-
     }
-
   }
 
   // A named type, used for NSTRUCT (meta)types.
@@ -472,9 +443,7 @@ message DataType {
 
     // Data type of the struct element.
     DataType data_type = 2;
-
   }
-
 }
 
 // Additional information for relation nodes.
@@ -504,9 +473,7 @@ message Relation {
     RELATION_TYPE_EXTENSION = 9;
     RELATION_TYPE_CROSS = 12;
   }
-
 }
 
 // Used for oneof field variants that have no data associated with them.
-message Empty {
-}
+message Empty {}

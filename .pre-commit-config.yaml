@@ -5,3 +5,8 @@ repos:
     -   id: fmt
     -   id: clippy
     -   id: cargo-check
+-   repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v13.0.1
+    hooks:
+    -   id: clang-format
+        types: [file]
