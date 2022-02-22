@@ -1,10 +1,10 @@
-name: validator-py
+name: Validator (Python)
 
 on:
   pull_request:
 
 jobs:
-  linux:
+  test-linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -13,13 +13,13 @@ jobs:
         manylinux: auto
         command: build
         args: --release -o dist -m validator/py/Cargo.toml
-    - name: Upload wheels
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
+#    - name: Upload wheels
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: wheels
+#        path: dist
 
-  windows:
+  test-windows:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
@@ -27,13 +27,13 @@ jobs:
       with:
         command: build
         args: --release --no-sdist -o dist -m validator/py/Cargo.toml
-    - name: Upload wheels
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
+#    - name: Upload wheels
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: wheels
+#        path: dist
 
-  macos:
+  test-macos:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
@@ -41,11 +41,11 @@ jobs:
       with:
         command: build
         args: --release --no-sdist -o dist --universal2 -m validator/py/Cargo.toml
-    - name: Upload wheels
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
+#    - name: Upload wheels
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: wheels
+#        path: dist
 
   release:
     name: Release

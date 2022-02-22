@@ -1,0 +1,21 @@
+name: Validator (C)
+
+on:
+  pull_request:
+
+jobs:
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: Configure
+        run: mkdir -p build && cd build && cmake ../validator/c -DSUBSTRAIT_VALIDATOR_BUILD_TESTS=ON
+      - name: Build
+        run: cmake --build build
+      - name: Test
+        run: ctest --output-on-failure --test-dir build
