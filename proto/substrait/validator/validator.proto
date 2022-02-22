@@ -240,24 +240,25 @@ message Diagnostic {
 
   // Error level.
   enum Level {
+    LEVEL_UNSPECIFIED = 0;
 
     // Information diagnostic. Has no bearing on the validity of the plan.
-    LEVEL_INFO = 0;
+    LEVEL_INFO = 1;
 
     // Warning diagnostic. The presence of warning diagnostics indicates
     // that the plan may or may not be valid, for example because the
     // validator was unable to access a referenced YAML file, or because
     // enhancements using protobuf's Any type were used.
-    LEVEL_WARNING = 1;
+    LEVEL_WARNING = 2;
 
     // Error diagnostic. The presence of error diagnostics indicates that
     // the plan is invalid.
-    LEVEL_ERROR = 2;
+    LEVEL_ERROR = 3;
   }
 
   // Machine-readable cause for a diagnostic message.
   enum Cause {
-    UNSPECIFIED = 0;
+    CAUSE_UNSPECIFIED = 0;
     // TODO: once diagnostic causes stabilize a bit, start defining them
     // here.
   }
@@ -404,8 +405,9 @@ message DataType {
 
     // Function behavior for a type variation.
     enum FunctionBehavior {
-      FUNCTION_BEHAVIOR_INHERITS = 0;
-      FUNCTION_BEHAVIOR_SEPARATE = 1;
+      FUNCTION_BEHAVIOR_UNSPECIFIED = 0;
+      FUNCTION_BEHAVIOR_INHERITS = 1;
+      FUNCTION_BEHAVIOR_SEPARATE = 2;
     }
   }
 
@@ -461,7 +463,7 @@ message Relation {
   // Basic information about the type of relation. Note that the enum variant
   // indices correspond to the Rel.rel_type oneof message indices.
   enum RelationType {
-    RELATION_TYPE_UNRECOGNIZED = 0;
+    RELATION_TYPE_UNSPECIFIED = 0;
     RELATION_TYPE_READ = 1;
     RELATION_TYPE_FILTER = 2;
     RELATION_TYPE_FETCH = 3;
