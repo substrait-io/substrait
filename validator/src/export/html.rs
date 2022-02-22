@@ -799,10 +799,10 @@ pub fn export<T: std::io::Write>(
 
     // Emit the node graph.
     writeln!(out, "<details class=\"relation_tree\" open=\"true\">")?;
-    writeln!(out, "<summary>Relation tree</summary>")?;
+    writeln!(out, "<summary>Relation graphs</summary>")?;
     writeln!(
         out,
-        "<div class=\"note\">Note: data flows upwards in these trees.</div>"
+        "<div class=\"note\">Note: data flows upwards in these graphs.</div>"
     )?;
     let mut index = 0;
     for s in format_relation_tree(&path, root, &mut index, true) {

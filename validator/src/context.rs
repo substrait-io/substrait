@@ -4,7 +4,7 @@ use crate::path;
 use crate::tree;
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// Parse/validation context and output node, passed to parser functions along
 /// with a reference to the to-be-parsed input node.
@@ -34,16 +34,16 @@ pub struct Context<'a> {
 #[derive(Default)]
 pub struct State {
     /// YAML extension URI map.
-    pub uris: HashMap<u32, Rc<extension::YamlInfo>>,
+    pub uris: HashMap<u32, Arc<extension::YamlInfo>>,
 
     /// YAML-defined function set, indexed by anchor.
-    pub functions: HashMap<u32, Rc<extension::Reference<extension::Function>>>,
+    pub functions: HashMap<u32, Arc<extension::Reference<extension::Function>>>,
 
     /// YAML-defined function set, indexed by anchor.
-    pub types: HashMap<u32, Rc<extension::Reference<extension::DataType>>>,
+    pub types: HashMap<u32, Arc<extension::Reference<extension::DataType>>>,
 
     /// YAML-defined function set, indexed by anchor.
-    pub type_variations: HashMap<u32, Rc<extension::Reference<extension::TypeVariation>>>,
+    pub type_variations: HashMap<u32, Arc<extension::Reference<extension::TypeVariation>>>,
 
     /// Protobuf "any" URLs depended on, that we have not encountered a
     /// declaration for yet (we check the declarations at the end). The

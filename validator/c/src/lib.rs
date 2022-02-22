@@ -30,7 +30,7 @@ pub extern "C" fn substrait_validator_get_last_error() -> *const libc::c_char {
 
 /// Parse result handle.
 pub struct Handle {
-    pub root: substrait_validator_rs::tree::Node,
+    pub root: substrait_validator::tree::Node,
 }
 
 /// Parses the given byte buffer as a substrait.Plan message. Returns a handle
@@ -50,7 +50,7 @@ pub extern "C" fn substrait_validator_parse(data: *const u8, size: u64) -> *mut 
     let data = unsafe { std::slice::from_raw_parts(data, size.try_into().unwrap()) };
 
     // Perform the actual parsing.
-    let root = substrait_validator_rs::parse(data);
+    let root = substrait_validator::parse(data);
 
     // Create a box to store the return value handle on the stack.
     let handle = Box::new(Handle { root });
@@ -87,16 +87,16 @@ pub extern "C" fn substrait_validator_check(handle: *const Handle) -> i32 {
     let root = &handle.as_ref().unwrap().root;
 
     // Perform the check.
-    match substrait_validator_rs::check(root) {
-        substrait_validator_rs::Validity::Valid => 1,
-        substrait_validator_rs::Validity::MaybeValid => 0,
-        substrait_validator_rs::Validity::Invalid => -1,
+    match substrait_validator::check(root) {
+        substrait_validator::Validity::Valid => 1,
+        substrait_validator::Validity::MaybeValid => 0,
+        substrait_validator::Validity::Invalid => -1,
     }
 }
 
 /// The guts for the export functions.
 fn export(
-    format: substrait_validator_rs::export::Format,
+    format: substrait_validator::export::Format,
     handle: *const Handle,
     size: *mut u64,
 ) -> *mut u8 {
@@ -114,7 +114,7 @@ fn export(
     let mut data: Vec<u8> = vec![0, 0, 0, 0, 0, 0, 0, 0];
 
     // Perform the actual export function.
-    if let Err(e) = substrait_validator_rs::export(&mut data, format, root) {
+    if let Err(e) = substrait_validator::export(&mut data, format, root) {
         set_last_error(e.to_string());
         return std::ptr::null_mut();
     }
@@ -163,7 +163,7 @@ pub extern "C" fn substrait_validator_export_diagnostics(
     size: *mut u64,
 ) -> *mut u8 {
     export(
-        substrait_validator_rs::export::Format::Diagnostics,
+        substrait_validator::export::Format::Diagnostics,
         handle,
         size,
     )
@@ -177,7 +177,7 @@ pub extern "C" fn substrait_validator_export_html(
     handle: *const Handle,
     size: *mut u64,
 ) -> *mut u8 {
-    export(substrait_validator_rs::export::Format::Html, handle, size)
+    export(substrait_validator::export::Format::Html, handle, size)
 }
 
 /// Same as substrait_validator_export_diagnostics(), but instead returns a
@@ -189,7 +189,7 @@ pub extern "C" fn substrait_validator_export_proto(
     handle: *const Handle,
     size: *mut u64,
 ) -> *mut u8 {
-    export(substrait_validator_rs::export::Format::Proto, handle, size)
+    export(substrait_validator::export::Format::Proto, handle, size)
 }
 
 /// Frees memory associated with an exported buffer. No-op if given a nullptr.

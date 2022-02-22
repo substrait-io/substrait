@@ -55,6 +55,29 @@ pub fn check(root: &tree::Node) -> Validity {
         .into()
 }
 
+/// Returns the first diagnostic of the highest severity level in the tree.
+pub fn get_diagnostic(root: &tree::Node) -> Option<&diagnostic::Diagnostic> {
+    let mut result: Option<&diagnostic::Diagnostic> = None;
+    for diag in root.iter_diagnostics() {
+        // We can return immediately for error diagnostics, since this is the
+        // highest level.
+        if diag.level == diagnostic::Level::Error {
+            return Some(diag);
+        }
+
+        // For other levels, update only if the incoming diagnostic is of a
+        // higher level/severity than the current one.
+        if let Some(cur) = result.as_mut() {
+            if diag.level > (*cur).level {
+                *cur = diag;
+            }
+        } else {
+            result = Some(diag);
+        }
+    }
+    result
+}
+
 /// Exports a parse tree to a file or other output device using the specified
 /// data format.
 pub fn export<T: std::io::Write>(

@@ -3,7 +3,7 @@ use crate::diagnostic::Cause::MismatchedTypeParameters;
 use crate::extension;
 use crate::primitives;
 use std::collections::HashSet;
-use std::rc::Rc;
+use std::sync::Arc;
 use strum_macros::{Display, EnumString};
 
 /// A Substrait data type.
@@ -16,7 +16,7 @@ pub struct DataType {
     pub nullable: bool,
 
     /// Type variation, if any.
-    pub variation: Option<Rc<extension::Reference<extension::TypeVariation>>>,
+    pub variation: Option<Arc<extension::Reference<extension::TypeVariation>>>,
 
     /// Type parameters for non-simple types.
     pub parameters: Vec<Parameter>,
@@ -51,14 +51,14 @@ impl std::fmt::Display for DataType {
 /// Trait for things that can resolve user-defined types and type variations.
 pub trait TypeResolver {
     /// Resolves a user-defined type from its name.
-    fn resolve_type<S: AsRef<str>>(&self, s: S) -> diagnostic::Result<Rc<extension::DataType>>;
+    fn resolve_type<S: AsRef<str>>(&self, s: S) -> diagnostic::Result<Arc<extension::DataType>>;
 
     /// Resolves a type variation from its name and base type.
     fn resolve_type_variation<S: AsRef<str>>(
         &self,
         s: S,
         base_type: Class,
-    ) -> diagnostic::Result<Rc<extension::TypeVariation>>;
+    ) -> diagnostic::Result<Arc<extension::TypeVariation>>;
 }
 
 /// Trait for checking the type parameters for a base type.
@@ -93,7 +93,7 @@ pub enum Class {
     Compound(Compound),
 
     /// User-defined type.
-    UserDefined(Rc<extension::Reference<extension::DataType>>),
+    UserDefined(Arc<extension::Reference<extension::DataType>>),
 
     /// Unresolved type. Used for error recovery.
     Unresolved(String),

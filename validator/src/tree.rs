@@ -8,7 +8,7 @@ use crate::primitives;
 use crate::proto::meta::*;
 use crate::tree;
 use std::collections::VecDeque;
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// Convenience/shorthand macro for pushing diagnostic messages to a node.
 macro_rules! diagnostic {
@@ -141,7 +141,7 @@ pub fn push_proto_field<TP, TF, TR, FP, FV>(
     unknown_subtree: bool,
     parser: FP,
     validator: FV,
-) -> (Option<Rc<Node>>, Option<TR>)
+) -> (Option<Arc<Node>>, Option<TR>)
 where
     TF: ProtoDatum,
     FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
@@ -187,7 +187,7 @@ where
         handle_unknown_fields(field_input, &mut field_context, unknown_subtree);
 
         // Push and return the completed node.
-        let field_output = Rc::new(field_output);
+        let field_output = Arc::new(field_output);
         context.output.data.push(NodeData::Child(Child {
             path_element,
             node: field_output.clone(),
@@ -280,7 +280,7 @@ pub fn push_proto_required_field<TP, TF, TR, FP, FV>(
     unknown_subtree: bool,
     parser: FP,
     validator: FV,
-) -> (Rc<Node>, Option<TR>)
+) -> (Arc<Node>, Option<TR>)
 where
     TF: ProtoDatum,
     FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
@@ -298,7 +298,7 @@ where
         (node, result)
     } else {
         diagnostic!(context, Error, MissingField, "{}", field_name);
-        (Rc::new(TF::proto_type_to_node()), None)
+        (Arc::new(TF::proto_type_to_node()), None)
     }
 }
 
@@ -335,7 +335,7 @@ pub fn push_proto_repeated_field<TP, TF, TR, FP, FV>(
     unknown_subtree: bool,
     parser: FP,
     validator: FV,
-) -> (Vec<Rc<Node>>, Vec<Option<TR>>)
+) -> (Vec<Arc<Node>>, Vec<Option<TR>>)
 where
     TF: ProtoDatum,
     FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
@@ -378,7 +378,7 @@ where
             handle_unknown_fields(field_input, &mut field_context, unknown_subtree);
 
             // Push the completed node.
-            let field_output = Rc::new(field_output);
+            let field_output = Arc::new(field_output);
             context.output.data.push(NodeData::Child(Child {
                 path_element,
                 node: field_output.clone(),
@@ -567,7 +567,7 @@ pub enum NodeType {
     /// Used for resolved YAML URIs, in order to include the parse result and
     /// documentation for the referenced YAML (if available), in addition to
     /// the URI itself.
-    YamlData(Rc<extension::YamlInfo>),
+    YamlData(Arc<extension::YamlInfo>),
 
     /// The associated node represents a YAML map. The contents of the map are
     /// described using Field and UnknownField.
@@ -613,7 +613,7 @@ pub struct Child {
     pub path_element: path::PathElement,
 
     /// The child node.
-    pub node: Rc<Node>,
+    pub node: Arc<Node>,
 
     /// Whether the validator recognized/expected the field or element that
     /// this child represents. Fields/elements may be unrecognized simply
@@ -630,7 +630,7 @@ pub struct NodeReference {
     pub path: path::PathBuf,
 
     /// Link to the node.
-    pub node: Rc<Node>,
+    pub node: Arc<Node>,
 }
 
 pub struct FlattenedNodeIter<'a> {

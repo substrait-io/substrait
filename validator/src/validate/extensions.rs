@@ -5,7 +5,7 @@ use crate::extension;
 use crate::proto;
 use crate::tree;
 use std::collections::HashMap;
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// "Parse" an anchor. This just reports an error if the anchor is 0.
 fn parse_anchor(x: &u32, _y: &mut context::Context) -> Result<u32> {
@@ -19,11 +19,11 @@ fn parse_anchor(x: &u32, _y: &mut context::Context) -> Result<u32> {
 }
 
 /// Parse a YAML extension URI string.
-fn parse_uri<S: AsRef<str>>(x: &S, y: &mut context::Context) -> Result<Rc<extension::YamlInfo>> {
+fn parse_uri<S: AsRef<str>>(x: &S, y: &mut context::Context) -> Result<Arc<extension::YamlInfo>> {
     let x = x.as_ref();
 
     // Construct the YAML data object.
-    let yaml_data = Rc::new(extension::YamlInfo {
+    let yaml_data = Arc::new(extension::YamlInfo {
         uri: x.to_string(),
         anchor_path: y.breadcrumb.parent.map(|x| x.path.to_path_buf()),
         data: None,
@@ -80,7 +80,7 @@ fn parse_extension_uri_mapping(
 fn parse_uri_reference(
     uri_reference: &u32,
     y: &mut context::Context,
-) -> Result<Rc<extension::YamlInfo>> {
+) -> Result<Arc<extension::YamlInfo>> {
     match y.state.uris.get(uri_reference).cloned() {
         Some(yaml_data) => {
             if let Some(ref path) = yaml_data.anchor_path {
@@ -122,7 +122,7 @@ fn parse_extension_mapping_data(
             }).flatten();
 
             // Construct a reference for this data type.
-            let reference = Rc::new(extension::Reference {
+            let reference = Arc::new(extension::Reference {
                 common: extension::Common {
                     name,
                     yaml_info,
@@ -170,7 +170,7 @@ fn parse_extension_mapping_data(
             }).flatten();
 
             // Construct a reference for this type variation.
-            let reference = Rc::new(extension::Reference {
+            let reference = Arc::new(extension::Reference {
                 common: extension::Common {
                     name,
                     yaml_info,
@@ -218,7 +218,7 @@ fn parse_extension_mapping_data(
             }).flatten();
 
             // Construct a reference for this data type.
-            let reference = Rc::new(extension::Reference {
+            let reference = Arc::new(extension::Reference {
                 common: extension::Common {
                     name,
                     yaml_info,

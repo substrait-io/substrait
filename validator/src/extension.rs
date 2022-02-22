@@ -2,7 +2,7 @@ use crate::data_type;
 use crate::path;
 use crate::tree;
 use std::collections::HashMap;
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// Information about a YAML extension.
 #[derive(Clone, Debug, PartialEq)]
@@ -41,15 +41,15 @@ pub struct YamlData {
 
     /// Functions defined in this YAML file. Names are stored in lower case
     /// (Substrait's name resolution is case-insensitive).
-    pub functions: HashMap<String, Rc<Function>>,
+    pub functions: HashMap<String, Arc<Function>>,
 
     /// Types defined in this YAML file. Names are stored in lower case
     /// (Substrait's name resolution is case-insensitive).
-    pub types: HashMap<String, Rc<DataType>>,
+    pub types: HashMap<String, Arc<DataType>>,
 
     /// Type variations defined in this YAML file. Names are stored in lower
     /// case (Substrait's name resolution is case-insensitive).
-    pub type_variations: HashMap<String, Rc<TypeVariation>>,
+    pub type_variations: HashMap<String, Arc<TypeVariation>>,
 }
 
 /// Extension information common to all extension types: URI, name, anchor
@@ -60,7 +60,7 @@ pub struct Common {
     pub name: String,
 
     /// Information about the YAML that this extension is defined in, if any.
-    pub yaml_info: Option<Rc<YamlInfo>>,
+    pub yaml_info: Option<Arc<YamlInfo>>,
 
     /// The path to the node that defined the anchor for this extension, if
     /// any.
@@ -95,7 +95,7 @@ pub struct Reference<T> {
 
     /// Extension definition information, specific to this type of extension,
     /// if we managed to resolve the reference.
-    pub definition: Option<Rc<T>>,
+    pub definition: Option<Arc<T>>,
 }
 
 impl<T> std::fmt::Display for Reference<T> {
