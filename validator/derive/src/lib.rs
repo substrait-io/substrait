@@ -95,7 +95,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
             if let Some(ident) = &field.ident {
                 let action = match is_repeated(&field.ty) {
                     FieldType::Optional => quote! {
-                        crate::doc_tree::push_proto_field(
+                        crate::tree::push_proto_field(
                             self,
                             y,
                             &self.#ident.as_ref(),
@@ -106,7 +106,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                         );
                     },
                     FieldType::BoxedOptional => quote! {
-                        crate::doc_tree::push_proto_field(
+                        crate::tree::push_proto_field(
                             self,
                             y,
                             &self.#ident,
@@ -117,7 +117,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                         );
                     },
                     FieldType::Repeated => quote! {
-                        crate::doc_tree::push_proto_repeated_field(
+                        crate::tree::push_proto_repeated_field(
                             self,
                             y,
                             &self.#ident.as_ref(),
@@ -130,7 +130,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                     FieldType::Primitive => quote! {
                         use crate::proto::meta::ProtoPrimitive;
                         if !y.config.ignore_unknown_fields_set_to_default || !self.#ident.proto_primitive_is_default() {
-                            crate::doc_tree::push_proto_field(
+                            crate::tree::push_proto_field(
                                 self,
                                 y,
                                 &Some(&self.#ident),
@@ -170,14 +170,14 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
         }
 
         impl #impl_generics crate::proto::meta::ProtoDatum for #name #ty_generics #where_clause {
-            fn proto_type_to_node() -> crate::doc_tree::Node {
+            fn proto_type_to_node() -> crate::tree::Node {
                 use crate::proto::meta::ProtoMessage;
-                crate::doc_tree::NodeType::ProtoMessage(Self::proto_message_type()).into()
+                crate::tree::NodeType::ProtoMessage(Self::proto_message_type()).into()
             }
 
-            fn proto_data_to_node(&self) -> crate::doc_tree::Node {
+            fn proto_data_to_node(&self) -> crate::tree::Node {
                 use crate::proto::meta::ProtoMessage;
-                crate::doc_tree::NodeType::ProtoMessage(Self::proto_message_type()).into()
+                crate::tree::NodeType::ProtoMessage(Self::proto_message_type()).into()
             }
 
             fn proto_data_variant(&self) -> Option<&'static str> {
@@ -239,11 +239,11 @@ fn proto_meta_derive_oneof(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Toke
         }
 
         impl #impl_generics crate::proto::meta::ProtoDatum for #name #ty_generics #where_clause {
-            fn proto_type_to_node() -> crate::doc_tree::Node {
-                crate::doc_tree::NodeType::ProtoMissingOneOf.into()
+            fn proto_type_to_node() -> crate::tree::Node {
+                crate::tree::NodeType::ProtoMissingOneOf.into()
             }
 
-            fn proto_data_to_node(&self) -> crate::doc_tree::Node {
+            fn proto_data_to_node(&self) -> crate::tree::Node {
                 match self {
                     #(#node_matches),*
                 }

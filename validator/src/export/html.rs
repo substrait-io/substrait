@@ -1,8 +1,7 @@
 use crate::comment;
 use crate::diagnostic;
-use crate::doc_tree;
 use crate::path;
-use crate::proto;
+use crate::tree;
 
 const HEADER: &str = r#"
 <!DOCTYPE html>
@@ -14,7 +13,8 @@ body {
     font-family: sans-serif;
 }
 
-details, div.card {
+details,
+div.card {
     border: 1px solid;
     border-color: rgba(0, 0, 0, .3);
     color: rgba(0, 0, 0, .8);
@@ -22,12 +22,14 @@ details, div.card {
     margin-top: .2em;
 }
 
-details:hover, div.card:hover {
+details:hover,
+div.card:hover {
     border-color: #000;
     color: rgba(0, 0, 0, .9);
 }
 
-details:target, div.card:target {
+details:target,
+div.card:target {
     box-shadow: 0 0 .3em .2em rgba(0, 0, 0, 0.3);
     border-color: #000;
     color: rgba(0, 0, 0, .9);
@@ -38,7 +40,6 @@ details {
 }
 
 summary {
-    font-weight: bold;
     margin: -.2em -.5em 0;
     padding: .2em .5em;
 }
@@ -48,7 +49,7 @@ details[open] {
 }
 
 details[open] > summary {
-    border-bottom: 1px solid;
+    border-bottom: 1px solid rgba(0, 0, 0, .3);
     margin-bottom: .2em;
 }
 
@@ -99,33 +100,56 @@ div.data_type::before {
     font-family: "Font Awesome 5 Free";
     color: #048;
     content: "\f0db";
+    padding-right: .2em;
 }
 
 div.comment {
-    background-color: #9fc;
+    background-color: #bfd;
 }
 
 div.comment::before {
     font-family: "Font Awesome 5 Free";
     color: #084;
     content: "\f249";
+    padding-right: .2em;
+}
+
+details.relation_tree {
+    background-color: #bdf;
+}
+
+details.relation_tree > summary::before {
+    font-family: "Font Awesome 5 Free";
+    color: #048;
+    content: "\f0e8";
+    padding-right: .2em;
 }
 
 div.diag_info {
     background-color: #9f9;
+    color: #333;
 }
 
-div.diag_info::before {
+div.diag_info::before,
+summary.valid::before {
     font-family: "Font Awesome 5 Free";
     color: #080;
     content: "\f058";
 }
 
-div.diag_warn {
-    background-color: #fc9;
+span.valid {
+    color: #080;
+    font-weight: bold;
 }
 
-div.diag_warn::before {
+div.diag_warn {
+    background-color: #fc9;
+    color: #333;
+    font-weight: bold;
+}
+
+div.diag_warn::before,
+summary.maybe_valid::before {
     font-family: "Font Awesome 5 Free";
     color: #840;
     content: "\f059";
@@ -133,17 +157,26 @@ div.diag_warn::before {
 
 div.diag_error {
     background-color: #f99;
+    color: #000;
+    font-weight: bold;
 }
 
-div.diag_error::before {
+div.diag_error::before,
+summary.invalid::before {
     font-family: "Font Awesome 5 Free";
     color: #800;
     content: "\f00d";
 }
 
+span.invalid {
+    color: #c00;
+    font-weight: bold;
+}
+
 a.anchor {
     opacity: 0.4;
     text-decoration: none;
+    float: right;
 }
 
 a.anchor:hover {
@@ -156,7 +189,8 @@ a.anchor::before {
     content: "\f0c1";
 }
 
-details:target, div.card:target {
+details:target,
+div.card:target {
   animation: highlight 1000ms ease-out;
 }
 
@@ -165,6 +199,135 @@ details:target, div.card:target {
   50% { box-shadow: 0 0 2em 1em rgba(0, 0, 0, 0.3); }
   100% { }
 }
+
+span.field {
+    font-weight: bold;
+    color: #333;
+}
+
+span.value {
+    font-weight: bold;
+    color: #000;
+}
+
+span.type {
+    font-style: italic;
+    font-size: 80%;
+    color: #555;
+}
+
+span.cause {
+    font-weight: normal;
+}
+
+div.note {
+    font-style: italic;
+    color: #555;
+}
+
+.tree,
+.tree ul,
+.tree li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.tree {
+    margin: 0 auto 1em;
+    text-align: center;
+}
+
+.tree,
+.tree ul {
+    display: table;
+}
+
+.tree ul {
+    width: 100%;
+}
+
+.tree li {
+    display: table-cell;
+    padding: 1.5em 0 0;
+    vertical-align: top;
+}
+
+/* _________ */
+.tree li:before {
+    outline: solid 1px #666;
+    content: "";
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.tree li:first-child:before {
+    left: 50%;
+}
+
+.tree li:last-child:before {
+    right: 50%;
+}
+
+.tree span {
+    border: solid 0.1em #666;
+    border-radius: 0.2em;
+    display: inline-block;
+    margin: 0 0.2em 0.5em;
+    padding: 0.2em 0.5em;
+    position: relative;
+}
+
+/* | */
+.tree ul:before {
+    outline: solid 1px #555;
+    content: "";
+    height: 0.5em;
+    left: 50%;
+    position: absolute;
+}
+
+.tree span:before {
+    margin-left: -1px;
+    padding-left: 0.2em;
+    font-size: 100%;
+    content: "";
+    height: 1.5em;
+    left: 50%;
+    position: absolute;
+}
+
+.tree span.data_source:before {
+    border-left: solid 2px #555;
+}
+
+.tree span.subquery:before {
+    border-left: dotted 2px #555;
+}
+
+.tree ul:before {
+    top: -0.5em;
+}
+
+.tree span:before {
+    top: -1.55em;
+}
+
+/* The root node doesn't connect upwards */
+.tree > li {
+    margin-top: 0;
+}
+
+.tree > li:before,
+.tree > li:after,
+.tree > li > span:before {
+    outline: none !important;
+    border: none !important;
+}
+
 </style>
 </head>
 <body>
@@ -197,149 +360,401 @@ select();
 </html>
 "#;
 
+/// All the error levels for nodes that we have different formatting for in
+/// the context of HTML output.
 #[derive(PartialOrd, Ord, PartialEq, Eq)]
 enum Level {
+    /// Subtree is valid.
     Ok,
+
+    /// There are descendent nodes with warnings.
     ChildWarning,
+
+    /// The current node has warnings.
     Warning,
+
+    /// There are descendent nodes with errors.
     ChildError,
+
+    /// The current node has errors.
     Error,
 }
 
-fn str_escape<S: AsRef<str>>(text: S) -> String {
-    // TODO
-    text.as_ref().to_string()
+impl From<diagnostic::Level> for Level {
+    fn from(level: diagnostic::Level) -> Self {
+        match level {
+            diagnostic::Level::Info => Level::Ok,
+            diagnostic::Level::Warning => Level::Warning,
+            diagnostic::Level::Error => Level::Error,
+        }
+    }
 }
 
-fn href_escape<S: AsRef<str>>(text: S) -> String {
-    // TODO
-    text.as_ref().to_string()
+impl Level {
+    pub fn class(&self) -> &'static str {
+        match self {
+            Level::Ok => "ok",
+            Level::ChildWarning => "warn_child",
+            Level::Warning => "warn_here",
+            Level::ChildError => "error_child",
+            Level::Error => "error_here",
+        }
+    }
 }
 
+/// Escapes HTML text or parameter values using character entities.
 fn html_escape<S: AsRef<str>>(text: S) -> String {
-    // TODO
-    text.as_ref().to_string()
+    let text = text.as_ref();
+    let mut result = String::with_capacity(text.len());
+    for c in text.chars() {
+        match c {
+            '&' => result += "&amp;",
+            '<' => result += "&lt;",
+            '>' => result += "&gt;",
+            '"' => result += "&quot;",
+            '\'' => result += "&apos;",
+            c => result.push(c),
+        }
+    }
+    result
 }
 
-fn format_reference(path: &path::PathBuf) -> String {
-    let path = path.to_string();
+/// Encodes part of an URL using percent escape sequences.
+fn url_encode<S: AsRef<str>>(text: S) -> String {
+    use std::fmt::Write;
+    let text = text.as_ref();
+    let mut result = String::with_capacity(text.len());
+    for c in text.chars() {
+        if c.is_alphanumeric() || "-._~!$&'()*+,;=:@".contains(c) {
+            result.push(c);
+        } else {
+            let mut buf = [0; 4];
+            for b in c.encode_utf8(&mut buf).as_bytes() {
+                write!(result, "%{:02x}", *b).unwrap();
+            }
+        }
+    }
+    result
+}
+
+/// Encodes a node path using () instead of [] and {}. Such paths should be
+/// still be unambiguous, and should be more readable than their
+/// percent-encoded variants (only round parentheses are unreserved in URLs).
+fn path_encode<S: AsRef<str>>(text: S) -> String {
+    text.as_ref()
+        .chars()
+        .map(|c| match c {
+            '[' => '(',
+            ']' => ')',
+            '<' => '(',
+            '>' => ')',
+            c => c,
+        })
+        .collect()
+}
+
+/// Formats a path to a node or diagnostic.
+fn format_path(path: &path::PathBuf, index: Option<usize>) -> String {
+    if let Some(index) = index {
+        format!("{}:{}", path, index)
+    } else {
+        path.to_string()
+    }
+}
+
+/// Formats the parameters of an <a> tag to a node or diagnostic.
+fn format_reference_parameters(path: &path::PathBuf, index: Option<usize>) -> String {
+    let path = format_path(path, index);
     format!(
         "href=\"#{}\" title=\"{}\"",
-        href_escape(&path),
-        str_escape(&path)
+        html_escape(url_encode(path_encode(&path))),
+        html_escape(&path)
     )
 }
 
-fn format_primitive_data(data: &proto::meta::ProtoPrimitiveData) -> String {
-    // TODO
-    html_escape(format!("{:?}", data))
+/// Formats a link to a node (index = None)
+/// or diagnostic (index = Some(index of NodeData entry)).
+fn format_reference<S: std::fmt::Display>(
+    text: S,
+    path: &path::PathBuf,
+    index: Option<usize>,
+) -> String {
+    format!(
+        "<a {}>{}</a>",
+        format_reference_parameters(path, index),
+        text
+    )
 }
 
-fn format_node(
+/// Formats an anchor/permalink tag for a node (index = None)
+/// or diagnostic (index = Some(index of NodeData entry)).
+fn format_anchor(path: &path::PathBuf, index: Option<usize>) -> String {
+    format!(
+        "<a {} class=\"anchor\"></a>",
+        format_reference_parameters(path, index)
+    )
+}
+
+/// Formats the id parameter for a div/details tag for a node (index = None)
+/// or diagnostic (index = Some(index of NodeData entry)).
+fn format_id(path: &path::PathBuf, index: Option<usize>) -> String {
+    format!(
+        "id=\"{}\"",
+        html_escape(url_encode(path_encode(format_path(path, index))))
+    )
+}
+
+/// Creates a span with the given class name. The text is HTML-escaped.
+fn format_span<S: std::fmt::Display>(class: &'static str, text: S) -> String {
+    format!(
+        "<span class=\"{}\">{}</span>",
+        class,
+        html_escape(text.to_string())
+    )
+}
+
+/// Formats a diagnostic message box. path should be the node that the
+/// diagnostic is defined in, and index should be its index within Node::data.
+/// with_id specifies whether the HTML id parameter should be included.
+fn format_diagnostic(
+    diag: &diagnostic::Diagnostic,
+    path: &path::PathBuf,
+    index: usize,
+    with_id: bool,
+) -> String {
+    let cause = format_span("cause", diag.cause.to_string());
+    let cause = if &diag.path == path {
+        cause
+    } else {
+        format_reference(cause, &diag.path, None)
+    };
+    let id = if with_id {
+        let mut id = format_id(path, Some(index));
+        id.push(' ');
+        id
+    } else {
+        String::new()
+    };
+    let anchor = format_anchor(path, Some(index));
+
+    match diag.level {
+        diagnostic::Level::Error => {
+            format!(
+                "<div {}class=\"card diag_error\">\nError: {}\n{}\n</div>",
+                id, cause, anchor
+            )
+        }
+        diagnostic::Level::Warning => {
+            format!(
+                "<div {}class=\"card diag_warn\">\nWarning: {}\n{}\n</div>",
+                id, cause, anchor
+            )
+        }
+        diagnostic::Level::Info => {
+            format!(
+                "<div {}class=\"card diag_info\">\nInfo: {}\n{}\n</div>",
+                id, cause, anchor
+            )
+        }
+    }
+}
+
+/// Format a flattened list of diagnostic cards.
+fn format_diagnostics(path: &path::Path, node: &tree::Node) -> (Vec<String>, diagnostic::Level) {
+    let mut html = vec![];
+    let mut level = diagnostic::Level::Info;
+    for (index, data) in node.data.iter().enumerate() {
+        match data {
+            tree::NodeData::Child(child) => {
+                let (sub_html, sub_level) =
+                    format_diagnostics(&path.with(child.path_element.clone()), &child.node);
+                html.extend(sub_html);
+                level = std::cmp::max(level, sub_level);
+            }
+            tree::NodeData::Diagnostic(diag) => {
+                html.push(format_diagnostic(diag, &path.to_path_buf(), index, false));
+                level = std::cmp::max(level, diag.level);
+            }
+            _ => {}
+        }
+    }
+    (html, level)
+}
+
+// Format the relation trees.
+fn format_relation_tree(
+    path: &path::Path,
+    node: &tree::Node,
+    index: &mut usize,
+    is_root: bool,
+) -> Vec<String> {
+    let mut html = vec![];
+
+    // TODO: this is still nonsense
+    let relation_info = if let tree::NodeType::ProtoMessage(msg) = node.node_type {
+        if msg == "substrait.Rel" {
+            if let tree::NodeData::Child(child) = node.data.get(0).unwrap() {
+                if let tree::NodeType::ProtoMessage(typ) = child.node.node_type {
+                    Some(typ.rsplit_once(".").unwrap().1.to_string())
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        }
+    } else {
+        None
+    };
+    let is_relation = relation_info.is_some();
+
+    if let Some(info) = relation_info {
+        if is_root {
+            html.push("<details class=\"relation_tree\">".to_string());
+            html.push(format!(
+                "<summary>Query/relation graph #{}</summary>",
+                *index
+            ));
+            html.push("<ul class=\"tree\"><li><span class=\"root\">Sink</span><ul>".to_string());
+        };
+        html.push(format!(
+            "<li><span class=\"data_source\">{}</span>",
+            format_reference(info, &path.to_path_buf(), None)
+        ));
+    }
+
+    let mut has_children = false;
+    for data in node.data.iter() {
+        if let tree::NodeData::Child(child) = data {
+            let sub_html = format_relation_tree(
+                &path.with(child.path_element.clone()),
+                &child.node,
+                index,
+                is_root && !is_relation,
+            );
+            if !sub_html.is_empty() {
+                if is_relation && !has_children {
+                    html.push("<ul>".to_string());
+                }
+                has_children = true;
+                html.extend(sub_html);
+            }
+        }
+    }
+
+    if is_relation {
+        if has_children {
+            html.push("</ul>".to_string());
+        }
+        html.push("</li>".to_string());
+        if is_root {
+            html.push("</ul></li></ul>".to_string());
+            html.push("</details>".to_string());
+            *index += 1;
+        }
+    }
+
+    html
+}
+
+// Format the node tree.
+fn format_node_tree(
     path: &path::Path,
     unknown_subtree: bool,
-    node: &doc_tree::Node,
+    node: &tree::Node,
 ) -> (Vec<String>, Level) {
+    // Get the HTML ID for this card.
+    let pathbuf = path.to_path_buf();
+    let id = format_id(&pathbuf, None);
+
+    // Format the card header.
     let value = match &node.node_type {
-        doc_tree::NodeType::ProtoMessage(proto_type) => html_escape(proto_type),
-        doc_tree::NodeType::ProtoPrimitive(proto_type, data) => {
+        tree::NodeType::ProtoMessage(proto_type) => format_span("type", proto_type),
+        tree::NodeType::ProtoPrimitive(proto_type, data) => {
             format!(
-                "{} ({})",
-                format_primitive_data(data),
-                html_escape(proto_type)
+                "= {} {}",
+                format_span("value", data),
+                format_span("type", proto_type)
             )
         }
-        doc_tree::NodeType::ProtoMissingOneOf => "?".to_string(),
-        doc_tree::NodeType::Reference(num, target) => {
+        tree::NodeType::ProtoMissingOneOf => "?".to_string(),
+        tree::NodeType::Reference(num, target) => format_reference(
             format!(
-                "<a {}>{} (uint32, reference)</a>",
-                format_reference(&target.path),
-                num
+                "= {} {}",
+                format_span("value", num),
+                format_span("type", "uint32, reference")
+            ),
+            &target.path,
+            None,
+        ),
+        tree::NodeType::YamlData(yaml) => {
+            format!(
+                "= {} {}",
+                format_span("value", &yaml.uri),
+                format_span("type", "string, resolved to YAML")
             )
         }
-        doc_tree::NodeType::YamlData(yaml) => {
-            format!("{} (string, resolved to YAML)", html_escape(&yaml.uri))
-        }
-        doc_tree::NodeType::YamlMap => "YAML map".to_string(),
-        doc_tree::NodeType::YamlArray => "YAML array".to_string(),
-        doc_tree::NodeType::YamlPrimitive(data) => format_primitive_data(data),
+        tree::NodeType::YamlMap => format_span("type", "YAML map"),
+        tree::NodeType::YamlArray => format_span("type", "YAML array"),
+        tree::NodeType::YamlPrimitive(data) => format!("= {}", format_span("value", data)),
     };
-
     let header = format!(
-        "{}: {} <a {} class=\"anchor\"></a>",
-        html_escape(path.end_to_string()),
+        "{} {} {}",
+        format_span("field", path.end_to_string()),
         value,
-        format_reference(&path.to_path_buf())
+        format_anchor(&pathbuf, None)
     );
-    let id = str_escape(path.to_string());
 
+    // If the node doesn't have any additional data associated with it, output
+    // a normal <div> rather than a <details> card.
     if node.data.is_empty() {
         let class = if unknown_subtree { "unknown" } else { "ok" };
-
         return (
             vec![format!(
-                "<div id=\"{}\" class=\"card {}\">{}</div>",
+                "<div {} class=\"card {}\">{}</div>",
                 id, class, header
             )],
             Level::Ok,
         );
     }
 
+    // Gather child nodes here. The first entry of the html Vec is reserved for
+    // the open tags, which we don't have all the information for just yet.
     let mut html = vec![String::new()];
     let mut level = Level::Ok;
 
-    for data in node.data.iter() {
+    // Iterate over node data here, recursively entering children.
+    for (index, data) in node.data.iter().enumerate() {
         match data {
-            doc_tree::NodeData::Child(child) => {
-                let (sub_html, sub_level) = format_node(
+            tree::NodeData::Child(child) => {
+                let (sub_html, sub_level) = format_node_tree(
                     &path.with(child.path_element.clone()),
                     !child.recognized,
                     &child.node,
                 );
-                html.extend(sub_html.into_iter());
+                html.extend(sub_html);
                 level = std::cmp::max(level, sub_level);
             }
-            doc_tree::NodeData::Diagnostic(diag) => {
-                let cause = html_escape(diag.cause.to_string());
-                match diag.level {
-                    diagnostic::Level::Error => {
-                        level = std::cmp::max(level, Level::Error);
-                        html.push(format!(
-                            "<div class=\"card diag_error\">\nError: {}\n</div>",
-                            cause
-                        ));
-                    }
-                    diagnostic::Level::Warning => {
-                        level = std::cmp::max(level, Level::Warning);
-                        html.push(format!(
-                            "<div class=\"card diag_warn\">\nWarning: {}\n</div>",
-                            cause
-                        ));
-                    }
-                    diagnostic::Level::Info => {
-                        html.push(format!(
-                            "<div class=\"card diag_info\">\nInfo: {}\n</div>",
-                            cause
-                        ));
-                    }
-                }
+            tree::NodeData::Diagnostic(diag) => {
+                html.push(format_diagnostic(diag, &pathbuf, index, true));
+                level = std::cmp::max(level, diag.level.into());
             }
-            doc_tree::NodeData::DataType(_data_type) => {
-                // todo
+            tree::NodeData::DataType(_data_type) => {
+                // TODO
             }
-            doc_tree::NodeData::Comment(comment) => {
+            tree::NodeData::Comment(comment) => {
                 html.push("<div class=\"card comment\">\n".to_string());
                 for span in comment.spans.iter() {
                     html.push(match &span.link {
                         None => html_escape(&span.text),
-                        Some(comment::Link::Path(path)) => format!(
-                            "<a {}>{}</a>",
-                            format_reference(path),
-                            html_escape(&span.text)
-                        ),
+                        Some(comment::Link::Path(path)) => {
+                            format_reference(html_escape(&span.text), path, None)
+                        }
                         Some(comment::Link::Url(url)) => format!(
                             "<a href=\"{}\">{}</a>",
-                            str_escape(url),
+                            html_escape(url),
                             html_escape(&span.text)
                         ),
                     })
@@ -349,24 +764,20 @@ fn format_node(
         }
     }
 
+    // Add the surrounding <details> tags now that we have the error level
+    // information we needed.
     let class = if unknown_subtree {
         "unknown"
     } else {
-        match level {
-            Level::Ok => "ok",
-            Level::ChildWarning => "warn_child",
-            Level::Warning => "warn_here",
-            Level::ChildError => "error_child",
-            Level::Error => "error_here",
-        }
+        level.class()
     };
-
     html[0] = format!(
-        "<details id=\"{}\" class=\"{}\">\n<summary>\n{}\n</summary>",
+        "<details {} class=\"{}\">\n<summary>\n{}\n</summary>",
         id, class, header
     );
     html.push("</details>".to_string());
 
+    // Determine the minimum error level for the parent.
     let level = match level {
         Level::Error => Level::ChildError,
         Level::Warning => Level::ChildWarning,
@@ -376,14 +787,67 @@ fn format_node(
     (html, level)
 }
 
+/// Export the tree in HTML format, with as many details as possible, and as
+/// human-readable as possible. Purely intended for debugging.
 pub fn export<T: std::io::Write>(
     out: &mut T,
     root_name: &'static str,
-    root: &doc_tree::Node,
+    root: &tree::Node,
 ) -> std::io::Result<()> {
+    let path = path::Path::Root(root_name);
     write!(out, "{}", HEADER)?;
-    for s in format_node(&path::Path::Root(root_name), false, root).0 {
+
+    // Emit the node graph.
+    writeln!(out, "<details class=\"relation_tree\" open=\"true\">")?;
+    writeln!(out, "<summary>Relation tree</summary>")?;
+    writeln!(
+        out,
+        "<div class=\"note\">Note: data flows upwards in these trees.</div>"
+    )?;
+    let mut index = 0;
+    for s in format_relation_tree(&path, root, &mut index, true) {
         writeln!(out, "{}", s)?;
     }
+    writeln!(out, "</details>")?;
+
+    // Emit diagnostics summary.
+    let (diag_html, level) = format_diagnostics(&path, root);
+    let validity_class = match level {
+        diagnostic::Level::Info => "valid",
+        diagnostic::Level::Warning => "maybe_valid",
+        diagnostic::Level::Error => "invalid",
+    };
+    let validity_summary = match level {
+        diagnostic::Level::Info => "This plan is <span class=\"valid\">VALID</span>",
+        diagnostic::Level::Warning => "The validator was unable to determine validity",
+        diagnostic::Level::Error => "This plan is <span class=\"invalid\">INVALID</span>",
+    };
+    writeln!(
+        out,
+        "<details class=\"{}\" open=\"true\">",
+        Level::from(level).class()
+    )?;
+    writeln!(
+        out,
+        "<summary class=\"{}\">{}</summary>",
+        validity_class, validity_summary
+    )?;
+    if diag_html.is_empty() {
+        writeln!(
+            out,
+            "<div class=\"note\">No diagnostics were reported.</div>"
+        )?;
+    } else {
+        for s in diag_html {
+            writeln!(out, "{}", s)?;
+        }
+    }
+    writeln!(out, "</details>")?;
+
+    // Emit protobuf-level raw node tree.
+    for s in format_node_tree(&path, false, root).0 {
+        writeln!(out, "{}", s)?;
+    }
+
     write!(out, "{}", FOOTER)
 }

@@ -30,7 +30,7 @@ pub extern "C" fn substrait_validator_get_last_error() -> *const libc::c_char {
 
 /// Parse result handle.
 pub struct Handle {
-    pub root: substrait_validator_rs::doc_tree::Node,
+    pub root: substrait_validator_rs::tree::Node,
 }
 
 /// Parses the given byte buffer as a substrait.Plan message. Returns a handle

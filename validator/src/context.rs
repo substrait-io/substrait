@@ -1,7 +1,7 @@
 use crate::data_type;
-use crate::doc_tree;
 use crate::extension;
 use crate::path;
+use crate::tree;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::rc::Rc;
@@ -14,7 +14,7 @@ pub struct Context<'a> {
     /// tree, but represented in a more generic way, and with annotations like
     /// comments and diagnostics attached to each node. The output tree is not
     /// intended to be read back by the validator.
-    pub output: &'a mut doc_tree::Node,
+    pub output: &'a mut tree::Node,
 
     /// State object. This is tracked between nodes as they are traversed, and
     /// is always mutable for the node currently being validated.

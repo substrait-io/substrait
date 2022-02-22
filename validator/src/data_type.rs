@@ -1,6 +1,7 @@
 use crate::diagnostic;
 use crate::diagnostic::Cause::MismatchedTypeParameters;
 use crate::extension;
+use crate::primitives;
 use std::collections::HashSet;
 use std::rc::Rc;
 use strum_macros::{Display, EnumString};
@@ -313,25 +314,10 @@ pub enum Parameter {
 
 impl std::fmt::Display for Parameter {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        static IDENTIFIER_RE: once_cell::sync::Lazy<regex::Regex> =
-            once_cell::sync::Lazy::new(|| regex::Regex::new("[a-zA-Z_][a-zA-Z0-9_]*").unwrap());
-
         match self {
             Parameter::Type(data_type) => write!(f, "{}", data_type),
             Parameter::NamedType(name, data_type) => {
-                if IDENTIFIER_RE.is_match(name) {
-                    write!(f, "{}: {}", name, data_type)
-                } else {
-                    write!(f, "\"")?;
-                    for c in name.chars() {
-                        match c {
-                            '\\' => write!(f, "\\\\")?,
-                            '"' => write!(f, "\"")?,
-                            x => write!(f, "{}", x)?,
-                        }
-                    }
-                    write!(f, "\": {}", data_type)
-                }
+                write!(f, "{}: {}", primitives::as_ident_or_string(name), data_type)
             }
             Parameter::Unsigned(value) => write!(f, "{}", value),
         }

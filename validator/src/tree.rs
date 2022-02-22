@@ -4,7 +4,9 @@ use crate::data_type;
 use crate::diagnostic;
 use crate::extension;
 use crate::path;
+use crate::primitives;
 use crate::proto::meta::*;
+use crate::tree;
 use std::collections::VecDeque;
 use std::rc::Rc;
 
@@ -14,7 +16,7 @@ macro_rules! diagnostic {
         diagnostic!($context, $level, diagnostic::Cause::$cause(format!($($fmts),*)))
     };
     ($context:expr, $level:ident, $cause:expr) => {
-        crate::doc_tree::push_diagnostic($context, diagnostic::Level::$level, $cause)
+        tree::push_diagnostic($context, diagnostic::Level::$level, $cause)
     };
 }
 
@@ -38,7 +40,7 @@ pub fn push_diagnostic(
 #[allow(unused_macros)]
 macro_rules! comment {
     ($context:expr, $($fmts:expr),*) => {
-        crate::doc_tree::push_comment($context, format!($($fmts),*), None)
+        tree::push_comment($context, format!($($fmts),*), None)
     };
 }
 
@@ -46,7 +48,7 @@ macro_rules! comment {
 #[allow(unused_macros)]
 macro_rules! link {
     ($context:expr, $link:expr, $($fmts:expr),*) => {
-        crate::doc_tree::push_comment($context, format!($($fmts),*), Some($link))
+        tree::push_comment($context, format!($($fmts),*), Some($link))
     };
 }
 
@@ -73,7 +75,7 @@ pub fn push_comment<S: AsRef<str>>(
 #[allow(unused_macros)]
 macro_rules! data_type {
     ($context:expr, $typ:expr) => {
-        crate::doc_tree::push_data_type($context, $typ)
+        tree::push_data_type($context, $typ)
     };
 }
 
@@ -97,7 +99,7 @@ macro_rules! proto_field {
         proto_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::doc_tree::push_proto_field(
+        tree::push_proto_field(
             $input,
             $context,
             &$input.$field.as_ref(),
@@ -118,7 +120,7 @@ macro_rules! proto_boxed_field {
         proto_boxed_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::doc_tree::push_proto_field(
+        tree::push_proto_field(
             $input,
             $context,
             &$input.$field,
@@ -160,12 +162,11 @@ where
         let mut field_output = field_input.proto_data_to_node();
 
         // Create the path element for referring to the child node.
-        let path_element = path::PathElement::Field(
-            field_input
-                .proto_data_variant()
-                .unwrap_or(field_name)
-                .to_string(),
-        );
+        let path_element = if let Some(variant) = field_input.proto_data_variant() {
+            path::PathElement::Variant(field_name.to_string(), variant.to_string())
+        } else {
+            path::PathElement::Field(field_name.to_string())
+        };
 
         // Create the context for the child message.
         let mut field_context = context::Context {
@@ -214,7 +215,7 @@ macro_rules! proto_required_field {
         proto_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::doc_tree::push_proto_required_field(
+        tree::push_proto_required_field(
             $input,
             $context,
             &$input.$field.as_ref(),
@@ -235,7 +236,7 @@ macro_rules! proto_boxed_required_field {
         proto_boxed_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::doc_tree::push_proto_required_field(
+        tree::push_proto_required_field(
             $input,
             $context,
             &$input.$field,
@@ -256,7 +257,7 @@ macro_rules! proto_primitive_field {
         proto_primitive_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::doc_tree::push_proto_required_field(
+        tree::push_proto_required_field(
             $input,
             $context,
             &Some(&$input.$field),
@@ -310,7 +311,7 @@ macro_rules! proto_repeated_field {
         proto_repeated_field!($input, $context, $field, $parser, |_, _, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::doc_tree::push_proto_repeated_field(
+        tree::push_proto_repeated_field(
             $input,
             $context,
             &$input.$field,
@@ -553,7 +554,7 @@ pub enum NodeType {
 
     /// The associated node represents a protobuf primitive value of the given
     /// type and with the given data.
-    ProtoPrimitive(&'static str, ProtoPrimitiveData),
+    ProtoPrimitive(&'static str, primitives::PrimitiveData),
 
     /// The associated node represents an unpopulated oneof field. This should
     /// never appear in the final tree, but is used when a Rust enum
@@ -577,7 +578,7 @@ pub enum NodeType {
     YamlArray,
 
     /// The associated node represents a YAML primitive.
-    YamlPrimitive(ProtoPrimitiveData),
+    YamlPrimitive(primitives::PrimitiveData),
 }
 
 /// Information nodes for a parsed protobuf message.

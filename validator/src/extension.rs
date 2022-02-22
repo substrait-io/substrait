@@ -1,6 +1,6 @@
 use crate::data_type;
-use crate::doc_tree;
 use crate::path;
+use crate::tree;
 use std::collections::HashMap;
 use std::rc::Rc;
 
@@ -37,7 +37,7 @@ impl std::fmt::Display for YamlInfo {
 #[derive(Clone, Debug, PartialEq)]
 pub struct YamlData {
     /// Reference to the parsed YAML data, if any.
-    pub data: doc_tree::NodeReference,
+    pub data: tree::NodeReference,
 
     /// Functions defined in this YAML file. Names are stored in lower case
     /// (Substrait's name resolution is case-insensitive).

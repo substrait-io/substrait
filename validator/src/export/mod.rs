@@ -1,8 +1,8 @@
-pub mod diagnostics;
-pub mod html;
-pub mod proto;
+mod diagnostics;
+mod html;
+mod proto;
 
-use crate::doc_tree;
+use crate::tree;
 
 /// Supported output formats for exporting.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -23,7 +23,7 @@ pub fn export<T: std::io::Write>(
     out: &mut T,
     format: Format,
     root_name: &'static str,
-    root: &doc_tree::Node,
+    root: &tree::Node,
 ) -> std::io::Result<()> {
     match format {
         Format::Diagnostics => diagnostics::export(out, root_name, root),

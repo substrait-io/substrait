@@ -1,3 +1,5 @@
+use crate::primitives;
+
 /// Element of a path to some field of a protobuf message and/or YAML file.
 #[derive(Clone, Debug, PartialEq)]
 pub enum PathElement {
@@ -21,9 +23,16 @@ pub enum PathElement {
 impl std::fmt::Display for PathElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            PathElement::Field(field) => write!(f, ".{}", field),
-            PathElement::Repeated(field, index) => write!(f, ".{}[{}]", field, index),
-            PathElement::Variant(field, variant) => write!(f, ".{}{{{}}}", field, variant),
+            PathElement::Field(field) => write!(f, ".{}", primitives::as_ident_or_string(field)),
+            PathElement::Repeated(field, index) => {
+                write!(f, ".{}[{}]", primitives::as_ident_or_string(field), index)
+            }
+            PathElement::Variant(field, variant) => write!(
+                f,
+                ".{}<{}>",
+                primitives::as_ident_or_string(field),
+                primitives::as_ident_or_string(variant)
+            ),
             PathElement::Index(index) => write!(f, "[{}]", index),
         }
     }
@@ -144,7 +153,19 @@ mod tests {
         let d = c.with_variant("d", "e");
         let e = d.with_index(33);
         let buf: PathBuf = e.to_path_buf();
-        assert_eq!(format!("{}", e), "a.b.c[42].d{e}[33]");
-        assert_eq!(format!("{}", buf), "a.b.c[42].d{e}[33]");
+        assert_eq!(format!("{}", e), "a.b.c[42].d<e>[33]");
+        assert_eq!(format!("{}", buf), "a.b.c[42].d<e>[33]");
+    }
+
+    #[test]
+    fn non_ident_paths() {
+        let a = Path::Root("a");
+        let b = a.with_field("4");
+        let c = b.with_repeated("8", 15);
+        let d = c.with_variant("16", "23");
+        let e = d.with_index(42);
+        let buf: PathBuf = e.to_path_buf();
+        assert_eq!(format!("{}", e), "a.\"4\".\"8\"[15].\"16\"<\"23\">[42]");
+        assert_eq!(format!("{}", buf), "a.\"4\".\"8\"[15].\"16\"<\"23\">[42]");
     }
 }

@@ -169,6 +169,8 @@ message Node {
 
   // Value for a primitive data element.
   message PrimitiveData {
+
+    // Note: to represent a YAML null, this field is simply not populated.
     oneof data {
       bool boolean = 1;
       uint64 unsigned = 2;
@@ -179,6 +181,7 @@ message Node {
       string variant = 7;
       google.protobuf.Any any = 8;
     }
+
   }
 
 }

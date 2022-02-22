@@ -1,38 +1,36 @@
 use crate::comment;
 use crate::data_type;
 use crate::diagnostic;
-use crate::doc_tree;
 use crate::extension;
 use crate::path;
-use crate::proto::meta;
+use crate::primitives;
 use crate::proto::substrait::validator;
+use crate::tree;
 use prost::Message;
 
-impl From<&doc_tree::Node> for validator::Node {
-    fn from(node: &doc_tree::Node) -> Self {
+impl From<&tree::Node> for validator::Node {
+    fn from(node: &tree::Node) -> Self {
         Self {
             node_type: Some((&node.node_type).into()),
             data_type: node.data_type.as_ref().map(|x| x.into()),
-            relation: None, // TODO, doesn't exist in doc_tree yet
+            relation: None, // TODO, doesn't exist in tree yet
             data: node.data.iter().map(|x| x.into()).collect(),
         }
     }
 }
 
-impl From<&doc_tree::NodeData> for validator::node::Data {
-    fn from(node: &doc_tree::NodeData) -> Self {
+impl From<&tree::NodeData> for validator::node::Data {
+    fn from(node: &tree::NodeData) -> Self {
         Self {
             kind: Some(match node {
-                doc_tree::NodeData::Child(child) => {
-                    validator::node::data::Kind::Child(child.into())
-                }
-                doc_tree::NodeData::Diagnostic(diagnostic) => {
+                tree::NodeData::Child(child) => validator::node::data::Kind::Child(child.into()),
+                tree::NodeData::Diagnostic(diagnostic) => {
                     validator::node::data::Kind::Diagnostic(diagnostic.into())
                 }
-                doc_tree::NodeData::DataType(data_type) => {
+                tree::NodeData::DataType(data_type) => {
                     validator::node::data::Kind::DataType(data_type.into())
                 }
-                doc_tree::NodeData::Comment(comment) => {
+                tree::NodeData::Comment(comment) => {
                     validator::node::data::Kind::Comment(comment.into())
                 }
             }),
@@ -40,8 +38,8 @@ impl From<&doc_tree::NodeData> for validator::node::Data {
     }
 }
 
-impl From<&doc_tree::Child> for validator::node::Child {
-    fn from(node: &doc_tree::Child) -> Self {
+impl From<&tree::Child> for validator::node::Child {
+    fn from(node: &tree::Child) -> Self {
         Self {
             path: Some((&node.path_element).into()),
             node: Some(node.node.as_ref().into()),
@@ -98,74 +96,75 @@ impl From<&comment::Link> for validator::comment::span::Link {
     }
 }
 
-impl From<&doc_tree::NodeType> for validator::node::NodeType {
-    fn from(node: &doc_tree::NodeType) -> Self {
+impl From<&tree::NodeType> for validator::node::NodeType {
+    fn from(node: &tree::NodeType) -> Self {
         match node {
-            doc_tree::NodeType::ProtoMessage(proto_type) => {
+            tree::NodeType::ProtoMessage(proto_type) => {
                 validator::node::NodeType::ProtoMessage(validator::node::ProtoMessage {
                     path: proto_type.to_string(),
                 })
             }
-            doc_tree::NodeType::ProtoPrimitive(proto_type, data) => {
+            tree::NodeType::ProtoPrimitive(proto_type, data) => {
                 validator::node::NodeType::ProtoPrimitive(validator::node::ProtoPrimitive {
                     path: proto_type.to_string(),
                     data: Some(data.into()),
                 })
             }
-            doc_tree::NodeType::ProtoMissingOneOf => panic!("found ProtoMissingOneOf in tree!"),
-            doc_tree::NodeType::Reference(anchor, node) => {
+            tree::NodeType::ProtoMissingOneOf => panic!("found ProtoMissingOneOf in tree!"),
+            tree::NodeType::Reference(anchor, node) => {
                 validator::node::NodeType::NodeReference(validator::node::NodeReference {
                     value: *anchor,
                     path: Some((&node.path).into()),
                 })
             }
-            doc_tree::NodeType::YamlData(info) => {
+            tree::NodeType::YamlData(info) => {
                 validator::node::NodeType::YamlReference(validator::node::YamlReference {
                     uri: info.uri.clone(),
                 })
             }
-            doc_tree::NodeType::YamlMap => {
+            tree::NodeType::YamlMap => {
                 validator::node::NodeType::YamlMap(validator::Empty::default())
             }
-            doc_tree::NodeType::YamlArray => {
+            tree::NodeType::YamlArray => {
                 validator::node::NodeType::YamlArray(validator::Empty::default())
             }
-            doc_tree::NodeType::YamlPrimitive(data) => {
+            tree::NodeType::YamlPrimitive(data) => {
                 validator::node::NodeType::YamlPrimitive(data.into())
             }
         }
     }
 }
 
-impl From<&meta::ProtoPrimitiveData> for validator::node::PrimitiveData {
-    fn from(node: &meta::ProtoPrimitiveData) -> Self {
+impl From<&primitives::PrimitiveData> for validator::node::PrimitiveData {
+    fn from(node: &primitives::PrimitiveData) -> Self {
         Self {
-            data: Some(match node {
-                meta::ProtoPrimitiveData::Bool(x) => {
-                    validator::node::primitive_data::Data::Boolean(*x)
+            data: match node {
+                primitives::PrimitiveData::Null => None,
+                primitives::PrimitiveData::Bool(x) => {
+                    Some(validator::node::primitive_data::Data::Boolean(*x))
                 }
-                meta::ProtoPrimitiveData::Unsigned(x) => {
-                    validator::node::primitive_data::Data::Unsigned(*x)
+                primitives::PrimitiveData::Unsigned(x) => {
+                    Some(validator::node::primitive_data::Data::Unsigned(*x))
                 }
-                meta::ProtoPrimitiveData::Signed(x) => {
-                    validator::node::primitive_data::Data::Signed(*x)
+                primitives::PrimitiveData::Signed(x) => {
+                    Some(validator::node::primitive_data::Data::Signed(*x))
                 }
-                meta::ProtoPrimitiveData::Float(x) => {
-                    validator::node::primitive_data::Data::Real(*x)
+                primitives::PrimitiveData::Float(x) => {
+                    Some(validator::node::primitive_data::Data::Real(*x))
                 }
-                meta::ProtoPrimitiveData::String(x) => {
-                    validator::node::primitive_data::Data::Unicode(x.to_string())
+                primitives::PrimitiveData::String(x) => Some(
+                    validator::node::primitive_data::Data::Unicode(x.to_string()),
+                ),
+                primitives::PrimitiveData::Bytes(x) => {
+                    Some(validator::node::primitive_data::Data::Binary(x.clone()))
                 }
-                meta::ProtoPrimitiveData::Bytes(x) => {
-                    validator::node::primitive_data::Data::Binary(x.clone())
+                primitives::PrimitiveData::Enum(x) => Some(
+                    validator::node::primitive_data::Data::Variant(x.to_string()),
+                ),
+                primitives::PrimitiveData::Any(x) => {
+                    Some(validator::node::primitive_data::Data::Any(x.clone()))
                 }
-                meta::ProtoPrimitiveData::Enum(x) => {
-                    validator::node::primitive_data::Data::Variant(x.to_string())
-                }
-                meta::ProtoPrimitiveData::Any(x) => {
-                    validator::node::primitive_data::Data::Any(x.clone())
-                }
-            }),
+            },
         }
     }
 }
@@ -378,10 +377,11 @@ impl From<&data_type::Parameter> for validator::data_type::Parameter {
     }
 }
 
+/// Export the complete parse tree in protobuf substrait.validator.Node format.
 pub fn export<T: std::io::Write>(
     out: &mut T,
     _root_name: &'static str,
-    root: &doc_tree::Node,
+    root: &tree::Node,
 ) -> std::io::Result<()> {
     let root = validator::Node::from(root);
     let buf = root.encode_to_vec();

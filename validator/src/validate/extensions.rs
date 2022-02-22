@@ -1,9 +1,9 @@
 use crate::context;
 use crate::diagnostic;
 use crate::diagnostic::Result;
-use crate::doc_tree;
 use crate::extension;
 use crate::proto;
+use crate::tree;
 use std::collections::HashMap;
 use std::rc::Rc;
 
@@ -42,7 +42,7 @@ fn parse_uri<S: AsRef<str>>(x: &S, y: &mut context::Context) -> Result<Rc<extens
     // The node type will have been set as if this is a normal string
     // primitive. We want extra information though, namely the contents of the
     // YAML file. So we change the node type.
-    y.output.node_type = doc_tree::NodeType::YamlData(yaml_data.clone());
+    y.output.node_type = tree::NodeType::YamlData(yaml_data.clone());
 
     Ok(yaml_data)
 }
