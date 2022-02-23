@@ -10,7 +10,7 @@ thiserror = "1.0"
 strum = "0.23"
 strum_macros = "0.23"
 regex = "1"
-substrait-validator-derive = { path = "derive" }
+substrait-validator-derive = { path = "../rs-derive" }
 itertools = "0.8"
 once_cell = "1.9"
 jsonschema = "0.15"

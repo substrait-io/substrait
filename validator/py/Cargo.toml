@@ -9,5 +9,5 @@ name = "substrait_validator"
 crate-type = ["cdylib"]
 
 [dependencies]
-substrait-validator = { path = ".." }
+substrait-validator = { path = "../rs" }
 pyo3 = { version = "0.15.1", features = ["extension-module"] }

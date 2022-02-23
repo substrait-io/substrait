@@ -2,50 +2,79 @@ name: Validator (Python)
 
 on:
   pull_request:
+  push:
+    branches: [ main ]
 
 jobs:
-  test-linux:
+  linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: messense/maturin-action@v1
+    - name: Install dependencies
+      run: pip install protobuf protobuf-gen pytest
+    - name: Build wheels
+      uses: messense/maturin-action@v1
       with:
         manylinux: auto
         command: build
         args: --release -o dist -m validator/py/Cargo.toml
-#    - name: Upload wheels
-#      uses: actions/upload-artifact@v2
-#      with:
-#        name: wheels
-#        path: dist
+    - name: Install wheels
+      run: pip install --use-wheel --no-index --find-links=dist substrait-validator
+    - name: Test
+      working-directory: validator/py/tests
+      run: pytest
+    - name: Upload wheels
+      if: "startsWith(github.ref, 'refs/tags/')"
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
 
-  test-windows:
+  windows:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: messense/maturin-action@v1
+    - name: Install dependencies
+      run: pip install protobuf protobuf-gen pytest
+    - name: Build wheels
+      uses: messense/maturin-action@v1
       with:
         command: build
         args: --release --no-sdist -o dist -m validator/py/Cargo.toml
-#    - name: Upload wheels
-#      uses: actions/upload-artifact@v2
-#      with:
-#        name: wheels
-#        path: dist
+    - name: Install wheels
+      run: pip install --use-wheel --no-index --find-links=dist substrait-validator
+    - name: Test
+      working-directory: validator/py/tests
+      run: pytest
+    - name: Upload wheels
+      if: "startsWith(github.ref, 'refs/tags/')"
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
 
-  test-macos:
+  macos:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: messense/maturin-action@v1
+    - name: Install dependencies
+      run: pip install protobuf protobuf-gen pytest
+    - name: Build wheels
+      uses: messense/maturin-action@v1
       with:
         command: build
         args: --release --no-sdist -o dist --universal2 -m validator/py/Cargo.toml
-#    - name: Upload wheels
-#      uses: actions/upload-artifact@v2
-#      with:
-#        name: wheels
-#        path: dist
+    - name: Install wheels
+      run: pip install --use-wheel --no-index --find-links=dist substrait-validator
+    - name: Test
+      working-directory: validator/py/tests
+      run: pytest
+    - name: Upload wheels
+      if: "startsWith(github.ref, 'refs/tags/')"
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
 
   release:
     name: Release

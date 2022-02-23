@@ -1,7 +1,7 @@
 use std::{ffi::OsStr, io::Result};
 
 fn main() -> Result<()> {
-    let proto_path = "../proto";
+    let proto_path = "../../proto";
 
     let proto_files: Vec<_> = walkdir::WalkDir::new(proto_path)
         .into_iter()

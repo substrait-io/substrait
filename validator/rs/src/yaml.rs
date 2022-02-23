@@ -67,7 +67,7 @@ static SIMPLE_EXTENSIONS_SCHEMA: once_cell::sync::Lazy<jsonschema::JSONSchema> =
         jsonschema::JSONSchema::compile(
             &yaml_to_json(
                 yaml_rust::YamlLoader::load_from_str(include_str!(
-                    "../../text/simple_extensions_schema.yaml"
+                    "../../../text/simple_extensions_schema.yaml"
                 ))
                 .unwrap()
                 .pop()

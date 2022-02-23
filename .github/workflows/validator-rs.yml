@@ -2,6 +2,8 @@ name: Validator (Rust)
 
 on:
   pull_request:
+  push:
+    branches: [ main ]
 
 jobs:
   check:
@@ -13,9 +15,10 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: check
+      - name: Install dependencies
+        run: pip install protobuf-gen
+      - name: Run
+        run: cargo check
 
   test-linux:
     runs-on: ubuntu-latest
@@ -26,9 +29,10 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
+      - name: Install dependencies
+        run: pip install protobuf-gen
+      - name: Run
+        run: cargo test
 
   test-windows:
     runs-on: windows-latest
@@ -39,9 +43,10 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
+      - name: Install dependencies
+        run: pip install protobuf-gen
+      - name: Run
+        run: cargo test
 
   test-macos:
     runs-on: macos-latest
@@ -52,9 +57,10 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
+      - name: Install dependencies
+        run: pip install protobuf-gen
+      - name: Run
+        run: cargo test
 
   style:
     runs-on: ubuntu-latest
@@ -66,10 +72,8 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+      - name: Run
+        run: cargo fmt --all -- --check
 
   lint:
     runs-on: ubuntu-latest
@@ -81,7 +85,7 @@ jobs:
           toolchain: stable
           override: true
           components: clippy
-      - uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
+      - name: Install dependencies
+        run: pip install protobuf-gen
+      - name: Run
+        run: cargo clippy -- -D warnings

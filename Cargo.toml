@@ -1,8 +1,8 @@
 [workspace]
 
 members = [
-    "validator",
-    "validator/derive",
+    "validator/rs-derive",
+    "validator/rs",
     "validator/c",
     "validator/py"
 ]

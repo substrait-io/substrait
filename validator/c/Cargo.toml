@@ -10,5 +10,5 @@ crate-type = ["cdylib"]
 cbindgen = "0.20.0"
 
 [dependencies]
-substrait-validator = { path = ".." }
+substrait-validator = { path = "../rs" }
 libc = "0.2"
