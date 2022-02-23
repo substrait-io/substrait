@@ -19,11 +19,9 @@ At which point you can run:
 user@host:/path/to/substrait/validator/c$ cargo build --release
 ```
 
-This will generate:
-
- - static library: `/path/to/substrait/validator/target/release/libsubstrait_validator_c.a`;
- - shared library: `/path/to/substrait/validator/target/release/libsubstrait_validator_c.so`; and
- - header: `/path/to/substrait/validator/c/include`
+This will generate a shared library at
+`/path/to/substrait/validator/target/release/libsubstrait_validator_c.so` and
+header at `/path/to/substrait/validator/c/include`.
 
 ### Building using CMake
 
