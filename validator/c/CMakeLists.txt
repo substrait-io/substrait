@@ -8,7 +8,7 @@ include(FetchContent)
 FetchContent_Declare(
     Corrosion
     GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
-    GIT_TAG origin/master
+    GIT_TAG v0.1.0
 )
 FetchContent_MakeAvailable(Corrosion)
 corrosion_import_crate(
