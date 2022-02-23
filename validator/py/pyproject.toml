@@ -10,4 +10,25 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
+dependencies = [
+    "protobuf>3.19.3",
+]
 
+# Note: poetry is only used for development. It doesn't know about rust, so
+# using poetry build won't generally do anything useful.
+
+[tool.poetry]
+name = "substrait-validator"
+version = "0.0.0"
+description = ""
+authors = ["Jeroen van Straten <jeroen.van.straten@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.5"
+protobuf = "^3.19.3"
+protobuf-gen = "^0.0.4"
+maturin = "^0.12"

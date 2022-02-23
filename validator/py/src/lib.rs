@@ -7,16 +7,16 @@ use pyo3::types::PyBytes;
 /// To construct a parse tree (and in doing so, validate the Substrait plan),
 /// simply pass a bytes object containing the substrait.plan message to the
 /// constructor. Note that this "never fails:" any failures to parse the
-/// bytes object will be embedded as diagnostics in the ParseTree object. This
-/// allows multiple error messages to be contained within the object. Use
+/// bytes object will be embedded as diagnostics in the ParseResult object.
+/// This allows multiple error messages to be contained within the object. Use
 /// check(), check_valid(), or check_not_invalid() to check validity.
 #[pyclass]
-struct ParseTree {
+struct ParseResult {
     root: substrait_validator::tree::Node,
 }
 
 #[pymethods]
-impl ParseTree {
+impl ParseResult {
     #[new]
     pub fn new(data: &[u8]) -> Self {
         Self {
@@ -24,7 +24,7 @@ impl ParseTree {
         }
     }
 
-    /// Checks the validity of the plan passed to this ParseTree during
+    /// Checks the validity of the plan passed to this ParseResult during
     /// construction. Returns -1 for invalid plans, 0 for possibly valid
     /// plans (i.e. the validator was unable to prove validity either way),
     /// or 1 for valid plans.
@@ -99,9 +99,9 @@ impl ParseTree {
     }
 }
 
-/// A Python module implemented in Rust.
+/// Rust-native module for the validator.
 #[pymodule]
 fn substrait_validator(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_class::<ParseTree>()?;
+    m.add_class::<ParseResult>()?;
     Ok(())
 }
