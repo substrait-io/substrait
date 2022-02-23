@@ -4,6 +4,7 @@ use crate::diagnostic::Result;
 use crate::extension;
 use crate::proto;
 use crate::tree;
+use crate::yaml;
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -23,6 +24,7 @@ fn parse_uri<S: AsRef<str>>(x: &S, y: &mut context::Context) -> Result<Arc<exten
     let x = x.as_ref();
 
     // Resolve the YAML file.
+    let _ = yaml::load_simple_extension_yaml(x, y);
 
     // TODO: walk over the contents of the YAML file.
 

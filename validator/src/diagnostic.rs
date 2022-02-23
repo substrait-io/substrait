@@ -6,6 +6,14 @@ use thiserror::Error;
 pub enum Cause {
     #[error("failed to parse proto format: {0}")]
     ProtoParseFailed(#[from] prost::DecodeError),
+    #[error("did not attempt to resolve YAML: {0}")]
+    YamlResolutionDisabled(String),
+    #[error("failed to resolve YAML: {0}")]
+    YamlResolutionFailed(#[from] curl::Error),
+    #[error("failed to parse YAML: {0}")]
+    YamlParseFailed(String),
+    #[error("YAML is invalid: {0}")]
+    YamlSchemaValidationFailed(String),
     #[error("unknown type {0}")]
     UnknownType(String),
     #[error("mismatched type parameters: {0}")]
@@ -71,3 +79,20 @@ impl std::fmt::Display for Diagnostic {
 
 /// A list of diagnostics.
 pub type Diagnostics = Vec<Diagnostic>;
+
+/// Result type for complete diagnostics, including path.
+pub type DiagResult<T> = std::result::Result<T, Diagnostic>;
+
+/// Convenience/shorthand macro for creating error diagnostics.
+macro_rules! error {
+    ($path:expr, $cause:ident, $($fmts:expr),*) => {
+        error!($path, crate::diagnostic::Cause::$cause(format!($($fmts),*)))
+    };
+    ($path:expr, $cause:expr) => {
+        crate::diagnostic::Diagnostic {
+            cause: $cause,
+            level: crate::diagnostic::Level::Error,
+            path: $path
+        }
+    };
+}

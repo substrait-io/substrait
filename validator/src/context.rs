@@ -115,4 +115,14 @@ pub struct Config {
     /// i.e. that the caller warrants the existence of in the consumer that
     /// the plan is validated for.
     pub whitelisted_any_urls: HashSet<String>,
+
+    /// When set, the validator will (by default) not attempt to resolve YAML
+    /// URIs (meaning that it won't make network connections). You can override
+    /// either configuration for particular YAML files using
+    /// yaml_resolution_exceptions.
+    pub disable_yaml_resolution: bool,
+
+    /// Vector of patterns that, when any pattern matches for some YAML URI,
+    /// effectively negate the "resolve_yaml" parameter.
+    pub yaml_resolution_exceptions: Vec<glob::Pattern>,
 }

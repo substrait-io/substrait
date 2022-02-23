@@ -1,4 +1,6 @@
 pub mod data_type;
+
+#[macro_use]
 pub mod diagnostic;
 
 #[macro_use]
@@ -11,6 +13,7 @@ pub mod path;
 pub mod primitives;
 pub mod proto;
 mod validate;
+pub mod yaml;
 
 /// Validity of a plan.
 #[derive(Clone, Copy, Debug, PartialEq)]
