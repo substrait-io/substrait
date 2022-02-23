@@ -111,13 +111,13 @@ impl From<&tree::NodeType> for validator::node::NodeType {
                 })
             }
             tree::NodeType::ProtoMissingOneOf => panic!("found ProtoMissingOneOf in tree!"),
-            tree::NodeType::Reference(anchor, node) => {
+            tree::NodeType::NodeReference(anchor, node) => {
                 validator::node::NodeType::NodeReference(validator::node::NodeReference {
                     value: *anchor,
                     path: Some((&node.path).into()),
                 })
             }
-            tree::NodeType::YamlData(info) => {
+            tree::NodeType::YamlReference(info) => {
                 validator::node::NodeType::YamlReference(validator::node::YamlReference {
                     uri: info.uri.clone(),
                 })

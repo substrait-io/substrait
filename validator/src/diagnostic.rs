@@ -4,8 +4,8 @@ use thiserror::Error;
 /// Enumeration for the particular types of diagnostics we might encounter.
 #[derive(Clone, Debug, PartialEq, Error)]
 pub enum Cause {
-    #[error("failed to parse proto format")]
-    ProtoParseFailure(#[from] prost::DecodeError),
+    #[error("failed to parse proto format: {0}")]
+    ProtoParseFailed(#[from] prost::DecodeError),
     #[error("unknown type {0}")]
     UnknownType(String),
     #[error("mismatched type parameters: {0}")]
@@ -30,7 +30,7 @@ pub enum Cause {
     NameResolutionFailed(String),
 }
 
-/// Result type for diagnostics.
+/// Result type for diagnostic causes.
 pub type Result<T> = std::result::Result<T, Cause>;
 
 /// Error level for a diagnostic message.
@@ -51,7 +51,7 @@ pub enum Level {
 }
 
 /// A complete diagnostic message.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Error)]
 pub struct Diagnostic {
     /// The cause of the diagnostic.
     pub cause: Cause,

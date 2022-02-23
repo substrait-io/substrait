@@ -22,29 +22,23 @@ fn parse_anchor(x: &u32, _y: &mut context::Context) -> Result<u32> {
 fn parse_uri<S: AsRef<str>>(x: &S, y: &mut context::Context) -> Result<Arc<extension::YamlInfo>> {
     let x = x.as_ref();
 
+    // Resolve the YAML file.
+
+    // TODO: walk over the contents of the YAML file.
+
     // Construct the YAML data object.
-    let yaml_data = Arc::new(extension::YamlInfo {
+    let yaml_info = Arc::new(extension::YamlInfo {
         uri: x.to_string(),
         anchor_path: y.breadcrumb.parent.map(|x| x.path.to_path_buf()),
-        data: None,
+        data: None, // TODO: refer to generated data root node (if any) here
     });
-
-    // The data field in the above struct should be set to the parse result of
-    // the YAML file if it is resolved and parses. But that's not implemented
-    // yet, so report a warning.
-    diagnostic!(
-        y,
-        Warning,
-        NotYetImplemented,
-        "extension YAML resolution and parsing is not yet implemented"
-    );
 
     // The node type will have been set as if this is a normal string
     // primitive. We want extra information though, namely the contents of the
     // YAML file. So we change the node type.
-    y.output.node_type = tree::NodeType::YamlData(yaml_data.clone());
+    y.output.node_type = tree::NodeType::YamlReference(yaml_info.clone());
 
-    Ok(yaml_data)
+    Ok(yaml_info)
 }
 
 /// Parse a mapping from a URI anchor to a YAML extension.

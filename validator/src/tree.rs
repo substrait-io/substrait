@@ -6,17 +6,19 @@ use crate::extension;
 use crate::path;
 use crate::primitives;
 use crate::proto::meta::*;
-use crate::tree;
 use std::collections::VecDeque;
 use std::sync::Arc;
 
 /// Convenience/shorthand macro for pushing diagnostic messages to a node.
 macro_rules! diagnostic {
     ($context:expr, $level:ident, $cause:ident, $($fmts:expr),*) => {
-        diagnostic!($context, $level, diagnostic::Cause::$cause(format!($($fmts),*)))
+        diagnostic!($context, $level, crate::diagnostic::Cause::$cause(format!($($fmts),*)))
     };
     ($context:expr, $level:ident, $cause:expr) => {
-        tree::push_diagnostic($context, diagnostic::Level::$level, $cause)
+        crate::tree::push_diagnostic($context, crate::diagnostic::Level::$level, $cause)
+    };
+    ($context:expr, $diag:expr) => {
+        $context.output.data.push(crate::tree::NodeData::Diagnostic($diag))
     };
 }
 
@@ -40,7 +42,7 @@ pub fn push_diagnostic(
 #[allow(unused_macros)]
 macro_rules! comment {
     ($context:expr, $($fmts:expr),*) => {
-        tree::push_comment($context, format!($($fmts),*), None)
+        crate::tree::push_comment($context, format!($($fmts),*), None)
     };
 }
 
@@ -48,7 +50,7 @@ macro_rules! comment {
 #[allow(unused_macros)]
 macro_rules! link {
     ($context:expr, $link:expr, $($fmts:expr),*) => {
-        tree::push_comment($context, format!($($fmts),*), Some($link))
+        crate::tree::push_comment($context, format!($($fmts),*), Some($link))
     };
 }
 
@@ -75,7 +77,7 @@ pub fn push_comment<S: AsRef<str>>(
 #[allow(unused_macros)]
 macro_rules! data_type {
     ($context:expr, $typ:expr) => {
-        tree::push_data_type($context, $typ)
+        crate::tree::push_data_type($context, $typ)
     };
 }
 
@@ -99,7 +101,7 @@ macro_rules! proto_field {
         proto_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        tree::push_proto_field(
+        crate::tree::push_proto_field(
             $input,
             $context,
             &$input.$field.as_ref(),
@@ -120,7 +122,7 @@ macro_rules! proto_boxed_field {
         proto_boxed_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        tree::push_proto_field(
+        crate::tree::push_proto_field(
             $input,
             $context,
             &$input.$field,
@@ -215,7 +217,7 @@ macro_rules! proto_required_field {
         proto_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        tree::push_proto_required_field(
+        crate::tree::push_proto_required_field(
             $input,
             $context,
             &$input.$field.as_ref(),
@@ -236,7 +238,7 @@ macro_rules! proto_boxed_required_field {
         proto_boxed_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        tree::push_proto_required_field(
+        crate::tree::push_proto_required_field(
             $input,
             $context,
             &$input.$field,
@@ -257,7 +259,7 @@ macro_rules! proto_primitive_field {
         proto_primitive_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        tree::push_proto_required_field(
+        crate::tree::push_proto_required_field(
             $input,
             $context,
             &Some(&$input.$field),
@@ -303,6 +305,7 @@ where
 }
 
 /// Convenience/shorthand macro for parsing repeated protobuf fields.
+#[allow(unused_macros)]
 macro_rules! proto_repeated_field {
     ($input:expr, $context:expr, $field:ident) => {
         proto_repeated_field!($input, $context, $field, |_, _| Ok(()))
@@ -311,7 +314,7 @@ macro_rules! proto_repeated_field {
         proto_repeated_field!($input, $context, $field, $parser, |_, _, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        tree::push_proto_repeated_field(
+        crate::tree::push_proto_repeated_field(
             $input,
             $context,
             &$input.$field,
@@ -543,6 +546,67 @@ impl Node {
     }
 }
 
+/// Convenience/shorthand macro for the with_context function.
+#[allow(unused_macros)]
+macro_rules! with_context {
+    ($function:expr, ()) => {
+        with_context!(&mut crate::context::State::default(), $function, ())
+    };
+    ($function:expr, ($($args:expr),*)) => {
+        with_context!(&mut crate::context::State::default(), $function, ($($args),*))
+    };
+    (config = $config:expr, $function:expr, ()) => {
+        with_context!(&mut crate::context::State::default(), $config, $function, ())
+    };
+    (config = $config:expr, $function:expr, ($($args:expr),*)) => {
+        with_context!(&mut crate::context::State::default(), $config, $function, ($($args),*))
+    };
+    ($state:expr, $function:expr, ()) => {
+        with_context!($state, &crate::context::Config::default(), $function, ())
+    };
+    ($state:expr, $function:expr, ($($args:expr),*)) => {
+        with_context!($state, &crate::context::Config::default(), $function, ($($args),*))
+    };
+    ($state:expr, $config:expr, $function:expr, ()) => {
+        crate::tree::with_context(
+            $state,
+            $config,
+            $function,
+        )
+    };
+    ($state:expr, $config:expr, $function:expr, ($($args:expr),*)) => {
+        crate::tree::with_context(
+            $state,
+            $config,
+            |y| $function($($args),*, y),
+        )
+    };
+}
+
+// Creates a temporary context and calls a function with it.
+pub fn with_context<R, F: FnOnce(&mut context::Context) -> R>(
+    state: &mut context::State,
+    config: &context::Config,
+    function: F,
+) -> (R, Node) {
+    // Create the root node for the output.
+    let mut output = NodeType::ProtoMessage("temp").into();
+
+    // Create a temporary context.
+    let mut context = context::Context {
+        output: &mut output,
+        state,
+        breadcrumb: &mut context::Breadcrumb::new("temp"),
+        config,
+    };
+
+    // Call the function.
+    let result = function(&mut context);
+
+    // Return the results.
+    (result, output)
+}
+
 /// The original data type that the node represents, to (in theory) allow the
 /// original structure of the plan to be recovered from the documentation tree.
 #[derive(Clone, Debug, PartialEq)]
@@ -562,12 +626,12 @@ pub enum NodeType {
     ProtoMissingOneOf,
 
     /// Used for anchor/reference-based references to other nodes.
-    Reference(u64, NodeReference),
+    NodeReference(u64, NodeReference),
 
     /// Used for resolved YAML URIs, in order to include the parse result and
     /// documentation for the referenced YAML (if available), in addition to
     /// the URI itself.
-    YamlData(Arc<extension::YamlInfo>),
+    YamlReference(Arc<extension::YamlInfo>),
 
     /// The associated node represents a YAML map. The contents of the map are
     /// described using Field and UnknownField.

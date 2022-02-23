@@ -680,7 +680,7 @@ fn format_node_tree(
             )
         }
         tree::NodeType::ProtoMissingOneOf => "?".to_string(),
-        tree::NodeType::Reference(num, target) => format_reference(
+        tree::NodeType::NodeReference(num, target) => format_reference(
             format!(
                 "= {} {}",
                 format_span("value", num),
@@ -689,7 +689,7 @@ fn format_node_tree(
             &target.path,
             None,
         ),
-        tree::NodeType::YamlData(yaml) => {
+        tree::NodeType::YamlReference(yaml) => {
             format!(
                 "= {} {}",
                 format_span("value", &yaml.uri),

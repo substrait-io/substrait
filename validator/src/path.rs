@@ -67,6 +67,12 @@ pub enum Path<'a> {
     Select(&'a Path<'a>, PathElement),
 }
 
+impl Default for Path<'_> {
+    fn default() -> Self {
+        Path::Root("")
+    }
+}
+
 impl Path<'_> {
     /// Returns a new Path that references an optional field with the
     /// given name within the protobuf message referred to by the current
