@@ -9,7 +9,7 @@ name = "substrait_validator"
 crate-type = ["cdylib"]
 
 [dependencies]
-substrait-validator = { path = "../rs" }
+substrait-validator-core = { path = "../core" }
 pyo3 = { version = "0.15.1", features = ["extension-module"] }
 
 [build-dependencies]

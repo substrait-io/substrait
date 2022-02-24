@@ -12,7 +12,7 @@ use pyo3::types::PyBytes;
 /// check(), check_valid(), or check_not_invalid() to check validity.
 #[pyclass]
 struct ParseResult {
-    root: substrait_validator::tree::Node,
+    root: substrait_validator_core::tree::Node,
 }
 
 #[pymethods]
@@ -20,7 +20,7 @@ impl ParseResult {
     #[new]
     pub fn new(data: &[u8]) -> Self {
         Self {
-            root: substrait_validator::parse(data),
+            root: substrait_validator_core::parse(data),
         }
     }
 
@@ -29,10 +29,10 @@ impl ParseResult {
     /// plans (i.e. the validator was unable to prove validity either way),
     /// or 1 for valid plans.
     pub fn check(&self) -> i32 {
-        match substrait_validator::check(&self.root) {
-            substrait_validator::Validity::Valid => 1,
-            substrait_validator::Validity::MaybeValid => 0,
-            substrait_validator::Validity::Invalid => -1,
+        match substrait_validator_core::check(&self.root) {
+            substrait_validator_core::Validity::Valid => 1,
+            substrait_validator_core::Validity::MaybeValid => 0,
+            substrait_validator_core::Validity::Invalid => -1,
         }
     }
 
@@ -40,8 +40,8 @@ impl ParseResult {
     /// encountered in the plan if the plan was not proven to be valid by the
     /// validator.
     pub fn check_valid(&self) -> PyResult<()> {
-        if let Some(diag) = substrait_validator::get_diagnostic(&self.root) {
-            if diag.level >= substrait_validator::diagnostic::Level::Warning {
+        if let Some(diag) = substrait_validator_core::get_diagnostic(&self.root) {
+            if diag.level >= substrait_validator_core::diagnostic::Level::Warning {
                 return Err(PyValueError::new_err(diag.to_string()));
             }
         }
@@ -51,8 +51,8 @@ impl ParseResult {
     /// Throws a ValueError exception containing the first error encountered
     /// in the plan if the plan was proven to be invalid by the validator.
     pub fn check_not_invalid(&self) -> PyResult<()> {
-        if let Some(diag) = substrait_validator::get_diagnostic(&self.root) {
-            if diag.level >= substrait_validator::diagnostic::Level::Error {
+        if let Some(diag) = substrait_validator_core::get_diagnostic(&self.root) {
+            if diag.level >= substrait_validator_core::diagnostic::Level::Error {
                 return Err(PyValueError::new_err(diag.to_string()));
             }
         }
@@ -63,9 +63,9 @@ impl ParseResult {
     /// multiline string.
     pub fn export_diagnostics(&self) -> PyResult<String> {
         let mut result: Vec<u8> = vec![];
-        substrait_validator::export(
+        substrait_validator_core::export(
             &mut result,
-            substrait_validator::export::Format::Diagnostics,
+            substrait_validator_core::export::Format::Diagnostics,
             &self.root,
         )?;
         let result = String::from_utf8(result)?;
@@ -76,9 +76,9 @@ impl ParseResult {
     /// debugging.
     pub fn export_html(&self) -> PyResult<String> {
         let mut result: Vec<u8> = vec![];
-        substrait_validator::export(
+        substrait_validator_core::export(
             &mut result,
-            substrait_validator::export::Format::Html,
+            substrait_validator_core::export::Format::Html,
             &self.root,
         )?;
         let result = String::from_utf8(result)?;
@@ -89,9 +89,9 @@ impl ParseResult {
     /// message, using binary serialization.
     pub fn export_proto(&self, py: Python) -> PyResult<PyObject> {
         let mut result = vec![];
-        substrait_validator::export(
+        substrait_validator_core::export(
             &mut result,
-            substrait_validator::export::Format::Proto,
+            substrait_validator_core::export::Format::Proto,
             &self.root,
         )?;
         let result = PyBytes::new(py, &result).into();
