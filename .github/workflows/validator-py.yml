@@ -58,17 +58,17 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
-      run: pip install protobuf pytest
+      run: python3 -m pip install protobuf pytest
     - name: Build wheels
       uses: messense/maturin-action@v1
       with:
         command: build
         args: --release --no-sdist -o dist --universal2 -m validator/py/Cargo.toml
     - name: Install wheels
-      run: pip install --find-links=dist substrait-validator
+      run: python3 -m pip install --find-links=dist substrait-validator
     - name: Test
       working-directory: validator/py/tests
-      run: pytest
+      run: python3 -m pytest
     - name: Upload wheels
       if: "startsWith(github.ref, 'refs/tags/')"
       uses: actions/upload-artifact@v2
