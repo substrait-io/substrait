@@ -9,7 +9,7 @@ pub enum Cause {
     #[error("did not attempt to resolve YAML: {0}")]
     YamlResolutionDisabled(String),
     #[error("failed to resolve YAML: {0}")]
-    YamlResolutionFailed(#[from] curl::Error),
+    YamlResolutionFailed(String),
     #[error("failed to parse YAML: {0}")]
     YamlParseFailed(String),
     #[error("YAML is invalid: {0}")]

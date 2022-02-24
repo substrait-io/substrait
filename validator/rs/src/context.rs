@@ -104,6 +104,9 @@ impl Breadcrumb<'_> {
     }
 }
 
+/// Callback function type for resolving/downloading URIs.
+type UriResolver = Box<dyn Fn(&str) -> std::result::Result<Vec<u8>, String>>;
+
 /// Configuration structure.
 #[derive(Default)]
 pub struct Config {
@@ -116,13 +119,18 @@ pub struct Config {
     /// the plan is validated for.
     pub whitelisted_any_urls: HashSet<String>,
 
-    /// When set, the validator will (by default) not attempt to resolve YAML
-    /// URIs (meaning that it won't make network connections). You can override
-    /// either configuration for particular YAML files using
-    /// yaml_resolution_exceptions.
-    pub disable_yaml_resolution: bool,
+    /// Allows URIs from the plan to be remapped (Some(mapping)) or ignored
+    /// (None). All resolution can effectively be disabled by just adding a
+    /// rule that maps * to None. Furthermore, in the absence of a custom
+    /// yaml_uri_resolver function, this can be used to remap URIs to
+    /// pre-downloaded files.
+    pub yaml_uri_overrides: Vec<(glob::Pattern, Option<String>)>,
 
-    /// Vector of patterns that, when any pattern matches for some YAML URI,
-    /// effectively negate the "resolve_yaml" parameter.
-    pub yaml_resolution_exceptions: Vec<glob::Pattern>,
+    /// Optional callback function for resolving YAML URIs. If specified, all
+    /// URIs (after processing yaml_uri_overrides) are resolved using this
+    /// function. The function takes the URI as its argument, and should either
+    /// return the download contents as a Vec<u8> or return a String-based
+    /// error. If no downloader is specified, only file:// URLs with an
+    /// absolute path are supported.
+    pub yaml_uri_resolver: Option<UriResolver>,
 }

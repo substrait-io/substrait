@@ -81,29 +81,86 @@ static SIMPLE_EXTENSIONS_SCHEMA: once_cell::sync::Lazy<jsonschema::JSONSchema> =
 
 /// Attempts to resolve a YAML URI.
 fn resolve_yaml_uri(uri: &str, config: &context::Config) -> Result<Vec<u8>> {
-    // Figure out whether we should even try to resolve this URI. If not, send
-    // a warning and return None.
-    let pattern_matched = config
-        .yaml_resolution_exceptions
+    // Apply yaml_uri_overrides configuration.
+    let remapped_uri = config
+        .yaml_uri_overrides
         .iter()
-        .any(|x| x.matches(uri));
-    if config.disable_yaml_resolution ^ pattern_matched {
-        return Err(diagnostic::Cause::YamlResolutionDisabled(
-            if pattern_matched {
-                format!(
-                    "resolution is enabled, but URI {:?} matched an exception pattern",
-                    uri
-                )
+        .find_map(|(pattern, mapping)| {
+            if pattern.matches(uri) {
+                Some(mapping.as_ref().map(|x| &x[..]))
             } else {
-                format!(
-                    "resolution is disabled, and URI {:?} did not match an exception pattern",
-                    uri
-                )
-            },
-        ));
+                None
+            }
+        });
+    let is_remapped = remapped_uri.is_some();
+    let remapped_uri = remapped_uri.unwrap_or(Some(uri));
+
+    let remapped_uri = if let Some(remapped_uri) = remapped_uri {
+        remapped_uri
+    } else {
+        return Err(diagnostic::Cause::YamlResolutionDisabled(format!(
+            "YAML resolution for {} was disabled",
+            uri
+        )));
+    };
+
+    // If a custom download function is specified, use it to resolve.
+    if let Some(ref resolver) = config.yaml_uri_resolver {
+        return resolver(remapped_uri).map_err(diagnostic::Cause::YamlResolutionFailed);
     }
 
-    // Resolves the given URI with libcurl.
+    // Parse as a URL.
+    let url = match url::Url::parse(remapped_uri) {
+        Ok(url) => url,
+        Err(e) => {
+            return Err(diagnostic::Cause::YamlResolutionFailed(if is_remapped {
+                format!(
+                    "configured URI remapping ({}) did not parse as URL: {}",
+                    remapped_uri, e
+                )
+            } else {
+                format!("failed to parse {} as URL: {}", remapped_uri, e)
+            }));
+        }
+    };
+
+    // Reject anything that isn't file://-based.
+    if url.scheme() != "file" {
+        return Err(diagnostic::Cause::YamlResolutionFailed(if is_remapped {
+            format!(
+                "configured URI remapping ({}) does not use file:// scheme",
+                remapped_uri
+            )
+        } else {
+            "URI does not use file:// scheme".to_string()
+        }));
+    }
+
+    // Convert to path.
+    let path = match url.to_file_path() {
+        Ok(path) => path,
+        Err(_) => {
+            return Err(diagnostic::Cause::YamlResolutionFailed(if is_remapped {
+                format!(
+                    "configured URI remapping ({}) could not be converted to file path",
+                    remapped_uri
+                )
+            } else {
+                "URI could not be converted to file path".to_string()
+            }));
+        }
+    };
+
+    // Read the file.
+    std::fs::read(path).map_err(|e| {
+        diagnostic::Cause::YamlResolutionFailed(if is_remapped {
+            format!("failed to file remapping for URI ({}): {}", remapped_uri, e)
+        } else {
+            e.to_string()
+        })
+    })
+
+    /*// Resolves the given URI with libcurl.
     let mut binary_data: Vec<u8> = vec![];
     let mut curl_handle = curl::easy::Easy::new();
     curl_handle.url(uri)?;
@@ -114,9 +171,7 @@ fn resolve_yaml_uri(uri: &str, config: &context::Config) -> Result<Vec<u8>> {
             Ok(buf.len())
         })?;
         transfer.perform()?;
-    }
-
-    Ok(binary_data)
+    }*/
 }
 
 /// Attempts to resolve, parse, and validate a simple extension YAML file.
@@ -200,13 +255,15 @@ mod tests {
     fn test_invalid_url() {
         let (result, node) = with_context!(load_simple_extension_yaml, (""));
         assert!(result.is_none());
-        assert_eq!(crate::get_diagnostic(&node).map(|x| x.to_string()), Some("Warning (temp): failed to resolve YAML: [3] URL using bad/illegal format or missing URL".to_string()));
+        assert_eq!(crate::get_diagnostic(&node).map(|x| x.to_string()), Some("Warning (temp): failed to resolve YAML: failed to parse  as URL: relative URL without a base".to_string()));
     }
 
     #[test]
-    fn test_remote_url() {
-        let (result, node) = with_context!(load_simple_extension_yaml, ("https://raw.githubusercontent.com/substrait-io/substrait/9d9805be19c1d606dc2811395f203857db782872/extensions/extension_types.yaml"));
-        assert!(result.is_some());
-        assert_eq!(crate::get_diagnostic(&node), None);
+    fn test_valid_file() {
+        let (result, _) = with_context!(
+            load_simple_extension_yaml,
+            ("file:///this/file/hopefully/does/not/exist")
+        );
+        assert!(result.is_none());
     }
 }
