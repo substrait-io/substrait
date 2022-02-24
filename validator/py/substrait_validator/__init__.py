@@ -1,5 +1,5 @@
 import json
-from collections.abc import Iterable
+from typing import Iterable
 from google.protobuf import json_format
 
 from .substrait_validator import ParseResult
