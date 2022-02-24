@@ -19,7 +19,7 @@ jobs:
         command: build
         args: --release -o dist -m validator/py/Cargo.toml
     - name: Install wheels
-      run: pip install --use-wheel --no-index --find-links=dist substrait-validator
+      run: pip install --find-links=dist substrait-validator
     - name: Test
       working-directory: validator/py/tests
       run: pytest
@@ -42,7 +42,7 @@ jobs:
         command: build
         args: --release --no-sdist -o dist -m validator/py/Cargo.toml
     - name: Install wheels
-      run: pip install --use-wheel --no-index --find-links=dist substrait-validator
+      run: pip install --find-links=dist substrait-validator
     - name: Test
       working-directory: validator/py/tests
       run: pytest
@@ -65,7 +65,7 @@ jobs:
         command: build
         args: --release --no-sdist -o dist --universal2 -m validator/py/Cargo.toml
     - name: Install wheels
-      run: pip install --use-wheel --no-index --find-links=dist substrait-validator
+      run: pip install --find-links=dist substrait-validator
     - name: Test
       working-directory: validator/py/tests
       run: pytest

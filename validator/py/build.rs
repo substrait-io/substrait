@@ -52,13 +52,17 @@ fn main() {
     let mut python_out_arg = OsString::new();
     python_out_arg.push("--python_out=");
     python_out_arg.push(&intermediate_path);
-    let output = Command::new(prost_build::protoc())
-        .arg(proto_path_arg)
-        .arg(python_out_arg)
-        .args(proto_files.iter())
-        .output()
-        .expect("failed to run protoc");
+    let protoc = prost_build::protoc();
+    let mut cmd = Command::new(protoc);
+    cmd.arg(proto_path_arg);
+    cmd.arg(python_out_arg);
+    cmd.args(proto_files.iter());
+    let output = cmd.output().expect("failed to run protoc");
     if !output.status.success() {
+        eprintln!("cmd: {:?}", cmd.get_program());
+        for arg in cmd.get_args() {
+            eprintln!("arg: {:?}", arg);
+        }
         panic!("{:?}", output);
     }
 
