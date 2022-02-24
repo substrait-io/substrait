@@ -4,7 +4,7 @@ use thiserror::Error;
 /// Enumeration for the particular types of diagnostics we might encounter.
 #[derive(Clone, Debug, PartialEq, Error)]
 pub enum Cause {
-    #[error("failed to parse proto format: {0}")]
+    #[error("{0}")]
     ProtoParseFailed(#[from] prost::DecodeError),
     #[error("did not attempt to resolve YAML: {0}")]
     YamlResolutionDisabled(String),
