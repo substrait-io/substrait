@@ -595,7 +595,7 @@ fn format_relation_tree(
         if msg == "substrait.Rel" {
             if let tree::NodeData::Child(child) = node.data.get(0).unwrap() {
                 if let tree::NodeType::ProtoMessage(typ) = child.node.node_type {
-                    Some(typ.rsplit_once(".").unwrap().1.to_string())
+                    Some(typ.rsplit_once('.').unwrap().1.to_string())
                 } else {
                     None
                 }

@@ -107,15 +107,15 @@ fn parse_extension_mapping_data(
             // If we successfully resolved the URI reference to a URI, resolved
             // that URI, and managed to parse the YAML it pointed to, try to
             // resolve the data type in it.
-            let data_type = yaml_info.as_ref().map(|yaml_info| {
-                yaml_info.data.as_ref().map(|data| {
+            let data_type = yaml_info.as_ref().and_then(|yaml_info| {
+                yaml_info.data.as_ref().and_then(|data| {
                     let data_type = data.types.get(&name.to_lowercase()).cloned();
                     if data_type.is_none() {
                         diagnostic!(y, Error, NameResolutionFailed, "failed to resolve data type {:?} in {}", name, yaml_info);
                     }
                     data_type
-                }).flatten()
-            }).flatten();
+                })
+            });
 
             // Construct a reference for this data type.
             let reference = Arc::new(extension::Reference {
@@ -155,15 +155,15 @@ fn parse_extension_mapping_data(
             // If we successfully resolved the URI reference to a URI, resolved
             // that URI, and managed to parse the YAML it pointed to, try to
             // resolve the type variation in it.
-            let type_variation = yaml_info.as_ref().map(|yaml_info| {
-                yaml_info.data.as_ref().map(|data| {
+            let type_variation = yaml_info.as_ref().and_then(|yaml_info| {
+                yaml_info.data.as_ref().and_then(|data| {
                     let type_variation = data.type_variations.get(&name.to_lowercase()).cloned();
                     if type_variation.is_none() {
                         diagnostic!(y, Error, NameResolutionFailed, "failed to resolve type variation {:?} in {}", name, yaml_info);
                     }
                     type_variation
-                }).flatten()
-            }).flatten();
+                })
+            });
 
             // Construct a reference for this type variation.
             let reference = Arc::new(extension::Reference {
@@ -203,15 +203,15 @@ fn parse_extension_mapping_data(
             // If we successfully resolved the URI reference to a URI, resolved
             // that URI, and managed to parse the YAML it pointed to, try to
             // resolve the data type in it.
-            let function = yaml_info.as_ref().map(|yaml_info| {
-                yaml_info.data.as_ref().map(|data| {
+            let function = yaml_info.as_ref().and_then(|yaml_info| {
+                yaml_info.data.as_ref().and_then(|data| {
                     let function = data.functions.get(&name.to_lowercase()).cloned();
                     if function.is_none() {
                         diagnostic!(y, Error, NameResolutionFailed, "failed to resolve function {:?} in {}", name, yaml_info);
                     }
                     function
-                }).flatten()
-            }).flatten();
+                })
+            });
 
             // Construct a reference for this data type.
             let reference = Arc::new(extension::Reference {
