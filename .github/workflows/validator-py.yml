@@ -10,16 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: pip install protobuf pytest
     - name: Build wheels
       uses: messense/maturin-action@v1
       with:
         manylinux: auto
         command: build
         args: --release -o dist -m validator/py/Cargo.toml
-    - name: Install wheels
-      run: pip install --find-links=dist substrait-validator
+    - name: Install runtime dependencies
+      run: python3 -m pip install protobuf pytest
+    - name: Install generated wheel
+      run: python3 -m pip install --no-index --find-links=dist substrait-validator
     - name: Test
       working-directory: validator/py/tests
       run: pytest
@@ -34,15 +34,15 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: pip install protobuf pytest
     - name: Build wheels
       uses: messense/maturin-action@v1
       with:
         command: build
         args: --release --no-sdist -o dist -m validator/py/Cargo.toml
-    - name: Install wheels
-      run: pip install --find-links=dist substrait-validator
+    - name: Install runtime dependencies
+      run: python3 -m pip install protobuf pytest
+    - name: Install generated wheel
+      run: python3 -m pip install --no-index --find-links=dist substrait-validator
     - name: Test
       working-directory: validator/py/tests
       run: pytest
@@ -57,15 +57,15 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: python3 -m pip install protobuf pytest
     - name: Build wheels
       uses: messense/maturin-action@v1
       with:
         command: build
         args: --release --no-sdist -o dist --universal2 -m validator/py/Cargo.toml
-    - name: Install wheels
-      run: python3 -m pip install --find-links=dist substrait-validator
+    - name: Install runtime dependencies
+      run: python3 -m pip install protobuf pytest
+    - name: Install generated wheel
+      run: python3 -m pip install --no-index --find-links=dist substrait-validator
     - name: Test
       working-directory: validator/py/tests
       run: python3 -m pytest
