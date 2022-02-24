@@ -26,7 +26,7 @@ fn main() {
     let python_prefix = "substrait_validator.";
 
     // Canonicalize all paths to prevent ambiguity.
-    let input_path = PathBuf::from(input_path).canonicalize().unwrap();
+    let input_path = dunce::canonicalize(PathBuf::from(input_path)).unwrap();
     let workdir = std::env::current_dir().unwrap();
     let intermediate_path = workdir.join(intermediate_path);
     let output_path = workdir.join(output_path);
@@ -38,7 +38,7 @@ fn main() {
         .filter(|e| {
             e.path().extension() == Some(OsStr::new("proto")) && e.metadata().unwrap().is_file()
         })
-        .map(|e| e.into_path().canonicalize().unwrap())
+        .map(|e| dunce::canonicalize(e.into_path()).unwrap())
         .collect();
 
     // Clean and recreate output directory.

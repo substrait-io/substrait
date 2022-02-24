@@ -15,3 +15,4 @@ pyo3 = { version = "0.15.1", features = ["extension-module"] }
 [build-dependencies]
 prost-build = "0.9"
 walkdir = "2"
+dunce = "1"
