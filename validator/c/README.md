@@ -19,15 +19,16 @@ At which point you can run:
 user@host:/path/to/substrait/validator/c$ cargo build --release
 ```
 
-This will generate a shared library at
-`/path/to/substrait/validator/target/release/libsubstrait_validator_c.so` and
-header at `/path/to/substrait/validator/c/include`.
+This will generate a static and shared library at
+`/path/to/substrait/validator/target/release/libsubstrait_validator_c.[a|so|lib|dll|dylib]`,
+and header at `/path/to/substrait/validator/c/include`.
 
 ### Building using CMake
 
 You can also build via CMake, and in doing so use the validator from within a
 CMake-based project. You should be able to simply add this directory as a
-subdirectory and link against the `substrait-validator-c` target.
+subdirectory and link against the `substrait-validator-c` target. This will
+refer to the static or shared library based on `BUILD_SHARED_LIBS`.
 
 You can also run tests as follows:
 
