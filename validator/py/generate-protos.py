@@ -8,7 +8,7 @@ import subprocess
 import protobuf_gen
 
 # Base directory to which all protobuf import paths are relative.
-PROTO_ROOT = "../../proto"
+PROTO_ROOT = os.path.join("..", "..", "proto")
 
 # Protobuf package name.
 PROTO_PACKAGE = "substrait"
