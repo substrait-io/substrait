@@ -73,7 +73,7 @@ fn main() {
         .filter(|e| {
             e.path().extension() == Some(OsStr::new("py")) && e.metadata().unwrap().is_file()
         })
-        .map(|e| e.into_path().canonicalize().unwrap())
+        .map(|e| dunce::canonicalize(e.into_path()).unwrap())
         .collect();
 
     // Patch the files.
