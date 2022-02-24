@@ -17,7 +17,7 @@ jobs:
         command: build
         args: --release -o dist -m validator/py/Cargo.toml
     - name: Install runtime dependencies
-      run: python3 -m pip install protobuf pytest
+      run: python3 -m pip install --upgrade protobuf pytest
     - name: Install generated wheel
       run: python3 -m pip install --no-index --find-links=dist substrait-validator
     - name: Test
@@ -40,7 +40,7 @@ jobs:
         command: build
         args: --release --no-sdist -o dist -m validator/py/Cargo.toml
     - name: Install runtime dependencies
-      run: python3 -m pip install protobuf pytest
+      run: python3 -m pip install --upgrade protobuf pytest
     - name: Install generated wheel
       run: python3 -m pip install --no-index --find-links=dist substrait-validator
     - name: Test
@@ -63,7 +63,7 @@ jobs:
         command: build
         args: --release --no-sdist -o dist --universal2 -m validator/py/Cargo.toml
     - name: Install runtime dependencies
-      run: python3 -m pip install protobuf pytest
+      run: python3 -m pip install --upgrade protobuf pytest
     - name: Install generated wheel
       run: python3 -m pip install --no-index --find-links=dist substrait-validator
     - name: Test
