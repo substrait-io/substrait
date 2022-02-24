@@ -38,7 +38,7 @@ fn main() {
         .filter(|e| {
             e.path().extension() == Some(OsStr::new("proto")) && e.metadata().unwrap().is_file()
         })
-        .map(|e| e.into_path())
+        .map(|e| e.into_path().canonicalize().unwrap())
         .collect();
 
     // Clean and recreate output directory.
