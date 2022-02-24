@@ -73,3 +73,4 @@ docs/_build/
 
 # Generated Python files
 substrait_validator/substrait/
+protoc_out/

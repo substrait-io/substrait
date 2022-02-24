@@ -1304,8 +1304,10 @@ dependencies = [
 name = "substrait-validator-py"
 version = "0.1.0"
 dependencies = [
+ "prost-build",
  "pyo3",
  "substrait-validator",
+ "walkdir",
 ]
 
 [[package]]

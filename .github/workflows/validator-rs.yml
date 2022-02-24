@@ -15,8 +15,6 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - name: Install dependencies
-        run: pip install protobuf-gen
       - name: Run
         run: cargo check
 
@@ -29,8 +27,6 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - name: Install dependencies
-        run: pip install protobuf-gen
       - name: Run
         run: cargo test
 
@@ -43,8 +39,6 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - name: Install dependencies
-        run: pip install protobuf-gen
       - name: Run
         run: cargo test
 
@@ -57,8 +51,6 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - name: Install dependencies
-        run: pip install protobuf-gen
       - name: Run
         run: cargo test
 
@@ -85,7 +77,5 @@ jobs:
           toolchain: stable
           override: true
           components: clippy
-      - name: Install dependencies
-        run: pip install protobuf-gen
       - name: Run
         run: cargo clippy -- -D warnings

@@ -1,4 +1,5 @@
-use std::{ffi::OsStr, io::Result};
+use std::ffi::OsStr;
+use std::io::Result;
 
 fn main() -> Result<()> {
     let proto_path = "../../proto";
