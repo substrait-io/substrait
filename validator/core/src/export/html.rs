@@ -517,12 +517,20 @@ fn format_span<S: std::fmt::Display>(class: &'static str, text: S) -> String {
 /// diagnostic is defined in, and index should be its index within Node::data.
 /// with_id specifies whether the HTML id parameter should be included.
 fn format_diagnostic(
-    diag: &diagnostic::Diagnostic,
+    diag: &diagnostic::AdjustedDiagnostic,
     path: &path::PathBuf,
     index: usize,
     with_id: bool,
+    with_path: bool,
 ) -> String {
-    let cause = format_span("cause", diag.cause.to_string());
+    let cause = format_span(
+        "cause",
+        if with_path {
+            diag.to_string()
+        } else {
+            format!("{:#}", diag)
+        },
+    );
     let cause = if &diag.path == path {
         cause
     } else {
@@ -537,26 +545,16 @@ fn format_diagnostic(
     };
     let anchor = format_anchor(path, Some(index));
 
-    match diag.level {
-        diagnostic::Level::Error => {
-            format!(
-                "<div {}class=\"card diag_error\">\nError: {}\n{}\n</div>",
-                id, cause, anchor
-            )
-        }
-        diagnostic::Level::Warning => {
-            format!(
-                "<div {}class=\"card diag_warn\">\nWarning: {}\n{}\n</div>",
-                id, cause, anchor
-            )
-        }
-        diagnostic::Level::Info => {
-            format!(
-                "<div {}class=\"card diag_info\">\nInfo: {}\n{}\n</div>",
-                id, cause, anchor
-            )
-        }
-    }
+    let class = match diag.adjusted_level {
+        diagnostic::Level::Info => "diag_info",
+        diagnostic::Level::Warning => "diag_warn",
+        diagnostic::Level::Error => "diag_error",
+    };
+
+    format!(
+        "<div {}class=\"card {}\">\n{}\n{}\n</div>",
+        id, class, cause, anchor
+    )
 }
 
 /// Format a flattened list of diagnostic cards.
@@ -572,8 +570,14 @@ fn format_diagnostics(path: &path::Path, node: &tree::Node) -> (Vec<String>, dia
                 level = std::cmp::max(level, sub_level);
             }
             tree::NodeData::Diagnostic(diag) => {
-                html.push(format_diagnostic(diag, &path.to_path_buf(), index, false));
-                level = std::cmp::max(level, diag.level);
+                html.push(format_diagnostic(
+                    diag,
+                    &path.to_path_buf(),
+                    index,
+                    false,
+                    true,
+                ));
+                level = std::cmp::max(level, diag.adjusted_level);
             }
             _ => {}
         }
@@ -738,8 +742,14 @@ fn format_node_tree(
                 level = std::cmp::max(level, sub_level);
             }
             tree::NodeData::Diagnostic(diag) => {
-                html.push(format_diagnostic(diag, &pathbuf, index, true));
-                level = std::cmp::max(level, diag.level.into());
+                html.push(format_diagnostic(
+                    diag,
+                    &pathbuf,
+                    index,
+                    true,
+                    diag.path != pathbuf,
+                ));
+                level = std::cmp::max(level, diag.adjusted_level.into());
             }
             tree::NodeData::DataType(_data_type) => {
                 // TODO

@@ -1,5 +1,4 @@
 use crate::diagnostic;
-use crate::diagnostic::Cause::MismatchedTypeParameters;
 use crate::extension;
 use crate::primitives;
 use std::collections::HashSet;
@@ -117,8 +116,9 @@ impl ParameterChecker for Class {
                 if params.is_empty() {
                     Ok(())
                 } else {
-                    Err(MismatchedTypeParameters(
-                        "simple types cannot be parameterized".to_string(),
+                    Err(cause!(
+                        TypeMismatchedParameters,
+                        "simple types cannot be parameterized"
                     ))
                 }
             }
@@ -127,8 +127,9 @@ impl ParameterChecker for Class {
                 if params.is_empty() {
                     Ok(())
                 } else {
-                    Err(MismatchedTypeParameters(
-                        "user-defined types cannot currently be parameterized".to_string(),
+                    Err(cause!(
+                        TypeMismatchedParameters,
+                        "user-defined types cannot currently be parameterized"
                     ))
                 }
             }
@@ -179,66 +180,79 @@ impl ParameterChecker for Compound {
         match self {
             Compound::FixedChar | Compound::VarChar | Compound::FixedBinary => {
                 if params.len() != 1 {
-                    return Err(MismatchedTypeParameters(format!(
+                    return Err(cause!(
+                        TypeMismatchedParameters,
                         "{} expects a single parameter (length)",
                         self
-                    )));
+                    ));
                 }
                 if let Parameter::Unsigned(length) = params[0] {
                     if length < 1 && length > 2147483647 {
-                        return Err(MismatchedTypeParameters(format!(
+                        return Err(cause!(
+                            TypeMismatchedParameters,
                             "{} length {} is out of range 1..2147483647",
-                            self, length
-                        )));
+                            self,
+                            length
+                        ));
                     }
                 } else {
-                    return Err(MismatchedTypeParameters(format!(
+                    return Err(cause!(
+                        TypeMismatchedParameters,
                         "{} length parameter must be a positive integer",
                         self
-                    )));
+                    ));
                 }
             }
             Compound::Decimal => {
                 if params.len() != 2 {
-                    return Err(MismatchedTypeParameters(format!(
+                    return Err(cause!(
+                        TypeMismatchedParameters,
                         "{} expects two parameters (precision and scale)",
                         self
-                    )));
+                    ));
                 }
                 if let Parameter::Unsigned(precision) = params[0] {
                     if precision > 38 {
-                        return Err(MismatchedTypeParameters(format!(
+                        return Err(cause!(
+                            TypeMismatchedParameters,
                             "{} precision {} is out of range 0..38",
-                            self, precision
-                        )));
+                            self,
+                            precision
+                        ));
                     }
                     if let Parameter::Unsigned(scale) = params[1] {
                         if scale > precision {
-                            return Err(MismatchedTypeParameters(format!(
+                            return Err(cause!(
+                                TypeMismatchedParameters,
                                 "{} scale {} is out of range 0..{}",
-                                self, scale, precision
-                            )));
+                                self,
+                                scale,
+                                precision
+                            ));
                         }
                     } else {
-                        return Err(MismatchedTypeParameters(format!(
+                        return Err(cause!(
+                            TypeMismatchedParameters,
                             "{} scale parameter must be a positive integer",
                             self
-                        )));
+                        ));
                     }
                 } else {
-                    return Err(MismatchedTypeParameters(format!(
+                    return Err(cause!(
+                        TypeMismatchedParameters,
                         "{} precision parameter must be a positive integer",
                         self
-                    )));
+                    ));
                 }
             }
             Compound::Struct => {
                 for param in params.iter() {
                     if !matches!(param, Parameter::Type(_)) {
-                        return Err(MismatchedTypeParameters(format!(
+                        return Err(cause!(
+                            TypeMismatchedParameters,
                             "{} parameters must be types",
                             self
-                        )));
+                        ));
                     }
                 }
             }
@@ -247,51 +261,59 @@ impl ParameterChecker for Compound {
                 for param in params.iter() {
                     if let Parameter::NamedType(name, _) = &param {
                         if !names.insert(name) {
-                            return Err(MismatchedTypeParameters(format!(
+                            return Err(cause!(
+                                TypeMismatchedParameters,
                                 "duplicate field name in {}: {}",
-                                self, name
-                            )));
+                                self,
+                                name
+                            ));
                         }
                     } else {
-                        return Err(MismatchedTypeParameters(format!(
+                        return Err(cause!(
+                            TypeMismatchedParameters,
                             "{} parameters must be name-types pairs",
                             self
-                        )));
+                        ));
                     }
                 }
             }
             Compound::List => {
                 if params.len() != 1 {
-                    return Err(MismatchedTypeParameters(format!(
+                    return Err(cause!(
+                        TypeMismatchedParameters,
                         "{} expects a single parameter (element type)",
                         self
-                    )));
+                    ));
                 }
                 if !matches!(params[0], Parameter::Type(_)) {
-                    return Err(MismatchedTypeParameters(format!(
+                    return Err(cause!(
+                        TypeMismatchedParameters,
                         "{} element type parameter must be a type",
                         self
-                    )));
+                    ));
                 }
             }
             Compound::Map => {
                 if params.len() != 2 {
-                    return Err(MismatchedTypeParameters(format!(
+                    return Err(cause!(
+                        TypeMismatchedParameters,
                         "{} expects two parameters (key type and value type)",
                         self
-                    )));
+                    ));
                 }
                 if !matches!(params[0], Parameter::Type(_)) {
-                    return Err(MismatchedTypeParameters(format!(
+                    return Err(cause!(
+                        TypeMismatchedParameters,
                         "{} key type parameter must be a type",
                         self
-                    )));
+                    ));
                 }
                 if !matches!(params[1], Parameter::Type(_)) {
-                    return Err(MismatchedTypeParameters(format!(
+                    return Err(cause!(
+                        TypeMismatchedParameters,
                         "{} value type parameter must be a type",
                         self
-                    )));
+                    ));
                 }
             }
         }

@@ -1,12 +1,12 @@
-pub mod data_type;
-
 #[macro_use]
 pub mod diagnostic;
 
 #[macro_use]
 pub mod tree;
+
 pub mod comment;
 pub mod context;
+pub mod data_type;
 pub mod export;
 pub mod extension;
 pub mod path;
@@ -53,25 +53,25 @@ pub fn parse<B: prost::bytes::Buf>(buffer: B) -> tree::Node {
 /// Returns whether the plan represented by the given parse tree is valid.
 pub fn check(root: &tree::Node) -> Validity {
     root.iter_diagnostics()
-        .map(|x| x.level)
+        .map(|x| x.adjusted_level)
         .fold(diagnostic::Level::Info, std::cmp::max)
         .into()
 }
 
 /// Returns the first diagnostic of the highest severity level in the tree.
-pub fn get_diagnostic(root: &tree::Node) -> Option<&diagnostic::Diagnostic> {
-    let mut result: Option<&diagnostic::Diagnostic> = None;
+pub fn get_diagnostic(root: &tree::Node) -> Option<&diagnostic::AdjustedDiagnostic> {
+    let mut result: Option<&diagnostic::AdjustedDiagnostic> = None;
     for diag in root.iter_diagnostics() {
         // We can return immediately for error diagnostics, since this is the
         // highest level.
-        if diag.level == diagnostic::Level::Error {
+        if diag.adjusted_level == diagnostic::Level::Error {
             return Some(diag);
         }
 
         // For other levels, update only if the incoming diagnostic is of a
         // higher level/severity than the current one.
         if let Some(cur) = result.as_mut() {
-            if diag.level > (*cur).level {
+            if diag.adjusted_level > (*cur).adjusted_level {
                 *cur = diag;
             }
         } else {

@@ -223,20 +223,24 @@ message Path {
 // Representation of a diagnostic message.
 message Diagnostic {
 
-  // The error level/severity for this diagnostic.
-  Level level = 1;
+  // The original error level/severity for this diagnostic.
+  Level original_level = 1;
+
+  // The error level/severity for this diagnostic after adjustment according
+  // to the validator configuration.
+  Level adjusted_level = 2;
 
   // The machine-readable message for this diagnostic.
-  Cause cause = 2;
+  Cause cause = 3;
 
   // The human-readable message for this diagnostic.
-  string msg = 3;
+  string msg = 4;
 
   // A path associated with this diagnostic. This is usually the path for
   // the node it is associated with, but not necessarily: for example, a
   // diagnostic message relating to a duplicate definition may refer back
   // to the previous or first definition.
-  Path path = 4;
+  Path path = 5;
 
   // Error level.
   enum Level {

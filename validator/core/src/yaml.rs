@@ -1,5 +1,4 @@
 use crate::context;
-use crate::diagnostic;
 use crate::diagnostic::DiagResult;
 use crate::diagnostic::Result;
 use crate::path;
@@ -13,15 +12,21 @@ fn yaml_to_json(y: Yaml, path: &path::Path) -> DiagResult<Value> {
     match y {
         Yaml::Real(ref s) => Ok(Value::Number(
             serde_json::value::Number::from_f64(y.as_f64().ok_or_else(|| {
-                error!(
+                diag!(
                     path.to_path_buf(),
-                    YamlParseFailed, "failed to parse {} as float", s
+                    Error,
+                    YamlParseFailed,
+                    "failed to parse {} as float",
+                    s
                 )
             })?)
             .ok_or_else(|| {
-                error!(
+                diag!(
                     path.to_path_buf(),
-                    YamlParseFailed, "{} float is not supported", s
+                    Error,
+                    YamlParseFailed,
+                    "{} float is not supported",
+                    s
                 )
             })?,
         )),
@@ -40,9 +45,11 @@ fn yaml_to_json(y: Yaml, path: &path::Path) -> DiagResult<Value> {
                     let key = key
                         .as_str()
                         .ok_or_else(|| {
-                            error!(
+                            diag!(
                                 path.to_path_buf(),
-                                YamlParseFailed, "non-string map keys are not supported"
+                                Error,
+                                YamlParseFailed,
+                                "non-string map keys are not supported"
                             )
                         })?
                         .to_string();
@@ -52,9 +59,11 @@ fn yaml_to_json(y: Yaml, path: &path::Path) -> DiagResult<Value> {
                 })
                 .collect::<DiagResult<serde_json::value::Map<String, Value>>>()?,
         )),
-        Yaml::Alias(_) => Err(error!(
+        Yaml::Alias(_) => Err(diag!(
             path.to_path_buf(),
-            YamlParseFailed, "YAML aliases are not supported"
+            Error,
+            YamlParseFailed,
+            "YAML aliases are not supported"
         )),
         Yaml::Null => Ok(Value::Null),
         Yaml::BadValue => panic!("encountered Yaml::BadValue"),
@@ -98,80 +107,85 @@ fn resolve_yaml_uri(uri: &str, config: &context::Config) -> Result<Vec<u8>> {
     let remapped_uri = if let Some(remapped_uri) = remapped_uri {
         remapped_uri
     } else {
-        return Err(diagnostic::Cause::YamlResolutionDisabled(format!(
+        return Err(cause!(
+            YamlResolutionDisabled,
             "YAML resolution for {} was disabled",
             uri
-        )));
+        ));
     };
 
     // If a custom download function is specified, use it to resolve.
     if let Some(ref resolver) = config.yaml_uri_resolver {
-        return resolver(remapped_uri).map_err(diagnostic::Cause::YamlResolutionFailed);
+        return resolver(remapped_uri).map_err(|x| cause!(YamlResolutionFailed, x));
     }
 
     // Parse as a URL.
     let url = match url::Url::parse(remapped_uri) {
         Ok(url) => url,
         Err(e) => {
-            return Err(diagnostic::Cause::YamlResolutionFailed(if is_remapped {
-                format!(
+            return Err(if is_remapped {
+                cause!(
+                    YamlResolutionFailed,
                     "configured URI remapping ({}) did not parse as URL: {}",
-                    remapped_uri, e
+                    remapped_uri,
+                    e
                 )
             } else {
-                format!("failed to parse {} as URL: {}", remapped_uri, e)
-            }));
+                cause!(
+                    YamlResolutionFailed,
+                    "failed to parse {} as URL: {}",
+                    remapped_uri,
+                    e
+                )
+            });
         }
     };
 
     // Reject anything that isn't file://-based.
     if url.scheme() != "file" {
-        return Err(diagnostic::Cause::YamlResolutionFailed(if is_remapped {
-            format!(
+        return Err(if is_remapped {
+            cause!(
+                YamlResolutionFailed,
                 "configured URI remapping ({}) does not use file:// scheme",
                 remapped_uri
             )
         } else {
-            "URI does not use file:// scheme".to_string()
-        }));
+            cause!(YamlResolutionFailed, "URI does not use file:// scheme")
+        });
     }
 
     // Convert to path.
     let path = match url.to_file_path() {
         Ok(path) => path,
         Err(_) => {
-            return Err(diagnostic::Cause::YamlResolutionFailed(if is_remapped {
-                format!(
+            return Err(if is_remapped {
+                cause!(
+                    YamlResolutionFailed,
                     "configured URI remapping ({}) could not be converted to file path",
                     remapped_uri
                 )
             } else {
-                "URI could not be converted to file path".to_string()
-            }));
+                cause!(
+                    YamlResolutionFailed,
+                    "URI could not be converted to file path"
+                )
+            });
         }
     };
 
     // Read the file.
     std::fs::read(path).map_err(|e| {
-        diagnostic::Cause::YamlResolutionFailed(if is_remapped {
-            format!("failed to file remapping for URI ({}): {}", remapped_uri, e)
+        if is_remapped {
+            cause!(
+                YamlResolutionFailed,
+                "failed to file remapping for URI ({}): {}",
+                remapped_uri,
+                e
+            )
         } else {
-            e.to_string()
-        })
+            cause!(YamlResolutionFailed, e)
+        }
     })
-
-    /*// Resolves the given URI with libcurl.
-    let mut binary_data: Vec<u8> = vec![];
-    let mut curl_handle = curl::easy::Easy::new();
-    curl_handle.url(uri)?;
-    {
-        let mut transfer = curl_handle.transfer();
-        transfer.write_function(|buf| {
-            binary_data.extend_from_slice(buf);
-            Ok(buf.len())
-        })?;
-        transfer.perform()?;
-    }*/
 }
 
 /// Attempts to resolve, parse, and validate a simple extension YAML file.
@@ -191,7 +205,7 @@ pub fn load_simple_extension_yaml(uri: &str, y: &mut context::Context) -> Option
     // Parse as UTF-8.
     let string_data = match std::str::from_utf8(&binary_data) {
         Err(e) => {
-            diagnostic!(y, Error, YamlParseFailed, "{}", e);
+            diagnostic!(y, Error, YamlParseFailed, e);
             return None;
         }
         Ok(x) => x,
@@ -200,7 +214,7 @@ pub fn load_simple_extension_yaml(uri: &str, y: &mut context::Context) -> Option
     // Parse as YAML.
     let yaml_data = match yaml_rust::YamlLoader::load_from_str(string_data) {
         Err(e) => {
-            diagnostic!(y, Error, YamlParseFailed, "{}", e);
+            diagnostic!(y, Error, YamlParseFailed, e);
             return None;
         }
         Ok(x) => {
@@ -239,7 +253,7 @@ pub fn load_simple_extension_yaml(uri: &str, y: &mut context::Context) -> Option
     // Validate with schema.
     if let Err(es) = SIMPLE_EXTENSIONS_SCHEMA.validate(&json_data) {
         for e in es {
-            diagnostic!(y, Error, YamlSchemaValidationFailed, "{}", e);
+            diagnostic!(y, Error, YamlSchemaValidationFailed, e);
         }
         return None;
     }
@@ -255,7 +269,7 @@ mod tests {
     fn test_invalid_url() {
         let (result, node) = with_context!(load_simple_extension_yaml, (""));
         assert!(result.is_none());
-        assert_eq!(crate::get_diagnostic(&node).map(|x| x.to_string()), Some("Warning (temp): failed to resolve YAML: failed to parse  as URL: relative URL without a base".to_string()));
+        assert_eq!(crate::get_diagnostic(&node).map(|x| x.to_string()), Some("Warning at temp: failed to resolve YAML: failed to parse  as URL: relative URL without a base (2002)".to_string()));
     }
 
     #[test]

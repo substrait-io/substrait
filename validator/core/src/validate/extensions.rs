@@ -1,5 +1,4 @@
 use crate::context;
-use crate::diagnostic;
 use crate::diagnostic::Result;
 use crate::extension;
 use crate::proto;
@@ -11,8 +10,9 @@ use std::sync::Arc;
 /// "Parse" an anchor. This just reports an error if the anchor is 0.
 fn parse_anchor(x: &u32, _y: &mut context::Context) -> Result<u32> {
     if *x == 0 {
-        Err(diagnostic::Cause::IllegalValue(
-            "anchor 0 is reserved to disambiguate unspecified optional references".to_string(),
+        Err(cause!(
+            IllegalValue,
+            "anchor 0 is reserved to disambiguate unspecified optional references"
         ))
     } else {
         Ok(*x)
@@ -84,10 +84,11 @@ fn parse_uri_reference(
             }
             Ok(yaml_data)
         }
-        None => Err(diagnostic::Cause::MissingAnchor(format!(
+        None => Err(cause!(
+            LinkMissingAnchor,
             "URI anchor {} does not exist",
             uri_reference
-        ))),
+        )),
     }
 }
 
@@ -111,7 +112,7 @@ fn parse_extension_mapping_data(
                 yaml_info.data.as_ref().and_then(|data| {
                     let data_type = data.types.get(&name.to_lowercase()).cloned();
                     if data_type.is_none() {
-                        diagnostic!(y, Error, NameResolutionFailed, "failed to resolve data type {:?} in {}", name, yaml_info);
+                        diagnostic!(y, Error, LinkMissingTypeName, "failed to resolve data type {:?} in {}", name, yaml_info);
                     }
                     data_type
                 })
@@ -159,7 +160,7 @@ fn parse_extension_mapping_data(
                 yaml_info.data.as_ref().and_then(|data| {
                     let type_variation = data.type_variations.get(&name.to_lowercase()).cloned();
                     if type_variation.is_none() {
-                        diagnostic!(y, Error, NameResolutionFailed, "failed to resolve type variation {:?} in {}", name, yaml_info);
+                        diagnostic!(y, Error, LinkMissingTypeVariationName, "failed to resolve type variation {:?} in {}", name, yaml_info);
                     }
                     type_variation
                 })
@@ -207,7 +208,7 @@ fn parse_extension_mapping_data(
                 yaml_info.data.as_ref().and_then(|data| {
                     let function = data.functions.get(&name.to_lowercase()).cloned();
                     if function.is_none() {
-                        diagnostic!(y, Error, NameResolutionFailed, "failed to resolve function {:?} in {}", name, yaml_info);
+                        diagnostic!(y, Error, LinkMissingFunctionName, "failed to resolve function {:?} in {}", name, yaml_info);
                     }
                     function
                 })
@@ -327,7 +328,7 @@ fn parse_expected_type_url(x: &String, y: &mut context::Context) -> Result<()> {
         diagnostic!(
             y,
             Info,
-            RedundantProtoAnyDeclaration,
+            ProtoRedundantAnyDeclaration,
             "message type {} redeclared",
             x
         );
@@ -336,7 +337,7 @@ fn parse_expected_type_url(x: &String, y: &mut context::Context) -> Result<()> {
         diagnostic!(
             y,
             Info,
-            RedundantProtoAnyDeclaration,
+            ProtoRedundantAnyDeclaration,
             "message type {} is never used",
             x
         );
@@ -365,7 +366,7 @@ pub fn parse_extensions_after_relations(x: &proto::substrait::Plan, y: &mut cont
         &mut y.state.pending_proto_url_dependencies,
     );
     for (url, path) in pending_dependencies.drain() {
-        diagnostic!(y, Error, MissingProtoAnyDeclaration, "{}", url);
+        diagnostic!(y, Error, ProtoMissingAnyDeclaration, url);
         link!(y, path, "message type is first used here");
     }
 }

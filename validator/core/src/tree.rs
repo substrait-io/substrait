@@ -11,14 +11,14 @@ use std::sync::Arc;
 
 /// Convenience/shorthand macro for pushing diagnostic messages to a node.
 macro_rules! diagnostic {
-    ($context:expr, $level:ident, $cause:ident, $($fmts:expr),*) => {
-        diagnostic!($context, $level, crate::diagnostic::Cause::$cause(format!($($fmts),*)))
+    ($context:expr, $level:ident, $class:ident, $($args:expr),*) => {
+        diagnostic!($context, $level, cause!($class, $($args),*))
     };
     ($context:expr, $level:ident, $cause:expr) => {
         crate::tree::push_diagnostic($context, crate::diagnostic::Level::$level, $cause)
     };
     ($context:expr, $diag:expr) => {
-        $context.output.data.push(crate::tree::NodeData::Diagnostic($diag))
+        $context.output.push_diagnostic($diag, &$context.config)
     };
 }
 
@@ -28,14 +28,14 @@ pub fn push_diagnostic(
     level: diagnostic::Level,
     cause: diagnostic::Cause,
 ) {
-    context
-        .output
-        .data
-        .push(NodeData::Diagnostic(diagnostic::Diagnostic {
+    context.output.push_diagnostic(
+        diagnostic::Diagnostic {
             cause,
             level,
             path: context.breadcrumb.path.to_path_buf(),
-        }))
+        },
+        context.config,
+    );
 }
 
 /// Convenience/shorthand macro for pushing comments to a node.
@@ -299,7 +299,7 @@ where
     ) {
         (node, result)
     } else {
-        diagnostic!(context, Error, MissingField, "{}", field_name);
+        diagnostic!(context, Error, ProtoMissingField, field_name);
         (Arc::new(TF::proto_type_to_node()), None)
     }
 }
@@ -418,7 +418,7 @@ fn handle_unknown_fields<T: ProtoDatum>(
         if !fields.is_empty() {
             let fields: String =
                 itertools::Itertools::intersperse(fields.into_iter(), ", ".to_string()).collect();
-            diagnostic!(context, Warning, UnknownField, "{}", fields);
+            diagnostic!(context, Warning, ProtoUnknownField, fields);
         }
     }
 }
@@ -466,6 +466,41 @@ impl From<NodeType> for Node {
 }
 
 impl Node {
+    /// Pushes a diagnostic into the node. This also evaluates its adjusted
+    /// error level.
+    pub fn push_diagnostic(&mut self, diag: diagnostic::Diagnostic, config: &context::Config) {
+        // Get the configured level limits for this diagnostic. First try the
+        // classification of the diagnostic itself, then its group, and then
+        // finally Unclassified. If no entries exist, simply yield
+        // (Info, Error), which is no-op.
+        let (min, max) = config
+            .diagnostic_level_overrides
+            .get(&diag.cause.classification)
+            .or_else(|| {
+                config
+                    .diagnostic_level_overrides
+                    .get(&diag.cause.classification.group())
+            })
+            .or_else(|| {
+                config
+                    .diagnostic_level_overrides
+                    .get(&diagnostic::Classification::Unclassified)
+            })
+            .unwrap_or(&(diagnostic::Level::Info, diagnostic::Level::Error));
+
+        // Adjust the level.
+        let adjusted_level = if diag.level < *min {
+            *min
+        } else if diag.level > *max {
+            *max
+        } else {
+            diag.level
+        };
+        let adjusted = diag.adjust_level(adjusted_level);
+
+        self.data.push(NodeData::Diagnostic(adjusted));
+    }
+
     /// Parses/validates the given binary serialization of a protobuffer using
     /// the given (root) parser/validator.
     pub fn parse_proto<T, F, B>(
@@ -485,16 +520,17 @@ impl Node {
                 // Create a minimal root node with just the prot
 
                 let mut output = T::proto_type_to_node();
-                output
-                    .data
-                    .push(NodeData::Diagnostic(diagnostic::Diagnostic {
-                        cause: err.into(),
+                output.push_diagnostic(
+                    diagnostic::Diagnostic {
+                        cause: cause!(ProtoParseFailed, err),
                         level: diagnostic::Level::Error,
                         path: path::PathBuf {
                             root: root_name,
                             elements: vec![],
                         },
-                    }));
+                    },
+                    config,
+                );
                 output
             }
             Ok(input) => {
@@ -538,7 +574,7 @@ impl Node {
     }
 
     /// Iterates over all diagnostics in the tree.
-    pub fn iter_diagnostics(&self) -> impl Iterator<Item = &diagnostic::Diagnostic> + '_ {
+    pub fn iter_diagnostics(&self) -> impl Iterator<Item = &diagnostic::AdjustedDiagnostic> + '_ {
         self.iter_flattened_node_data().filter_map(|x| match x {
             NodeData::Diagnostic(d) => Some(d),
             _ => None,
@@ -652,8 +688,9 @@ pub enum NodeData {
     Child(Child),
 
     /// Indicates that parsing/validating this message resulted in some
-    /// diagnostic message being emitted.
-    Diagnostic(diagnostic::Diagnostic),
+    /// diagnostic message being emitted. The secondary error level is the
+    /// modified level via
+    Diagnostic(diagnostic::AdjustedDiagnostic),
 
     /// Provides (intermediate) type information for this node. Depending on
     /// the message, this may be a struct or named struct representing a

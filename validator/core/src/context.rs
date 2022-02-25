@@ -1,4 +1,5 @@
 use crate::data_type;
+use crate::diagnostic;
 use crate::extension;
 use crate::path;
 use crate::tree;
@@ -118,6 +119,22 @@ pub struct Config {
     /// i.e. that the caller warrants the existence of in the consumer that
     /// the plan is validated for.
     pub whitelisted_any_urls: HashSet<String>,
+
+    /// Allows the level of diagnostic messages to be overridden based on their
+    /// classification/code. The logic for this is as follows:
+    ///
+    ///  - if an entry exists for the classication of the incoming diagnostic,
+    ///    override its error level to at most the second argument, and then to
+    ///    at least the first argument. Otherwise,
+    ///  - if an entry exists for the group of said classification, use its
+    ///    level limits instead. Otherwise,
+    ///  - if an entry exists for Unclassified (code 0), use its level limits
+    ///    instead. Otherwise, do not adjust the level.
+    ///
+    /// Note that setting an entry to  (Info, Error) leaves the diagnostic
+    /// level unchanged.
+    pub diagnostic_level_overrides:
+        HashMap<diagnostic::Classification, (diagnostic::Level, diagnostic::Level)>,
 
     /// Allows URIs from the plan to be remapped (Some(mapping)) or ignored
     /// (None). All resolution can effectively be disabled by just adding a

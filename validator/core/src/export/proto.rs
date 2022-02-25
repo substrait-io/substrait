@@ -48,10 +48,11 @@ impl From<&tree::Child> for validator::node::Child {
     }
 }
 
-impl From<&diagnostic::Diagnostic> for validator::Diagnostic {
-    fn from(node: &diagnostic::Diagnostic) -> Self {
+impl From<&diagnostic::AdjustedDiagnostic> for validator::Diagnostic {
+    fn from(node: &diagnostic::AdjustedDiagnostic) -> Self {
         Self {
-            level: (&node.level).into(),
+            original_level: (&node.original_level).into(),
+            adjusted_level: (&node.adjusted_level).into(),
             cause: validator::diagnostic::Cause::Unspecified.into(),
             msg: node.cause.to_string(),
             path: Some((&node.path).into()),

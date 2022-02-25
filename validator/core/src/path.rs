@@ -159,8 +159,8 @@ mod tests {
         let d = c.with_variant("d", "e");
         let e = d.with_index(33);
         let buf: PathBuf = e.to_path_buf();
-        assert_eq!(format!("{}", e), "a.b.c[42].d<e>[33]");
-        assert_eq!(format!("{}", buf), "a.b.c[42].d<e>[33]");
+        assert_eq!(e.to_string(), "a.b.c[42].d<e>[33]");
+        assert_eq!(buf.to_string(), "a.b.c[42].d<e>[33]");
     }
 
     #[test]
@@ -171,7 +171,7 @@ mod tests {
         let d = c.with_variant("16", "23");
         let e = d.with_index(42);
         let buf: PathBuf = e.to_path_buf();
-        assert_eq!(format!("{}", e), "a.\"4\".\"8\"[15].\"16\"<\"23\">[42]");
-        assert_eq!(format!("{}", buf), "a.\"4\".\"8\"[15].\"16\"<\"23\">[42]");
+        assert_eq!(e.to_string(), "a.\"4\".\"8\"[15].\"16\"<\"23\">[42]");
+        assert_eq!(buf.to_string(), "a.\"4\".\"8\"[15].\"16\"<\"23\">[42]");
     }
 }

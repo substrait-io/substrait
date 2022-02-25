@@ -41,7 +41,7 @@ impl ParseResult {
     /// validator.
     pub fn check_valid(&self) -> PyResult<()> {
         if let Some(diag) = substrait_validator_core::get_diagnostic(&self.root) {
-            if diag.level >= substrait_validator_core::diagnostic::Level::Warning {
+            if diag.adjusted_level >= substrait_validator_core::diagnostic::Level::Warning {
                 return Err(PyValueError::new_err(diag.to_string()));
             }
         }
@@ -52,7 +52,7 @@ impl ParseResult {
     /// in the plan if the plan was proven to be invalid by the validator.
     pub fn check_not_invalid(&self) -> PyResult<()> {
         if let Some(diag) = substrait_validator_core::get_diagnostic(&self.root) {
-            if diag.level >= substrait_validator_core::diagnostic::Level::Error {
+            if diag.adjusted_level >= substrait_validator_core::diagnostic::Level::Error {
                 return Err(PyValueError::new_err(diag.to_string()));
             }
         }
