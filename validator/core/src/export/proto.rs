@@ -111,7 +111,9 @@ impl From<&tree::NodeType> for validator::node::NodeType {
                     data: Some(data.into()),
                 })
             }
-            tree::NodeType::ProtoMissingOneOf => panic!("found ProtoMissingOneOf in tree!"),
+            tree::NodeType::ProtoMissingOneOf => {
+                validator::node::NodeType::ProtoMissingOneof(validator::Empty::default())
+            }
             tree::NodeType::NodeReference(anchor, node) => {
                 validator::node::NodeType::NodeReference(validator::node::NodeReference {
                     value: *anchor,

@@ -2,9 +2,19 @@ use crate::context;
 use crate::diagnostic::DiagResult;
 use crate::diagnostic::Result;
 use crate::path;
+use crate::primitives;
+use crate::tree;
 
-use serde_json::value::Value;
 use yaml_rust::yaml::Yaml;
+
+/// Type for the type used for arbitrary YAML values.
+pub type Value = serde_json::value::Value;
+
+/// Typedef for the type used for YAML arrays.
+pub type Array = Vec<Value>;
+
+/// Typedef for the type used for YAML maps.
+pub type Map = serde_json::map::Map<String, Value>;
 
 /// Converts a YAML structure into a serde JSON structure, which is needed in
 /// order to run schema validation with jsonschema.
@@ -259,6 +269,30 @@ pub fn load_simple_extension_yaml(uri: &str, y: &mut context::Context) -> Option
     }
 
     Some(json_data)
+}
+
+/// Converts a YAML value to a tree node, similar to
+/// proto::meta::ProtoDatum::proto_data_to_node().
+pub fn yaml_to_node(yaml: &serde_json::value::Value) -> tree::Node {
+    match yaml {
+        serde_json::Value::Null => tree::NodeType::YamlPrimitive(primitives::PrimitiveData::Null),
+        serde_json::Value::Bool(b) => {
+            tree::NodeType::YamlPrimitive(primitives::PrimitiveData::Bool(*b))
+        }
+        serde_json::Value::Number(n) => tree::NodeType::YamlPrimitive(
+            n.as_u64()
+                .map(primitives::PrimitiveData::Unsigned)
+                .or_else(|| n.as_i64().map(primitives::PrimitiveData::Signed))
+                .or_else(|| n.as_f64().map(primitives::PrimitiveData::Float))
+                .unwrap(),
+        ),
+        serde_json::Value::String(s) => {
+            tree::NodeType::YamlPrimitive(primitives::PrimitiveData::String(s.clone()))
+        }
+        serde_json::Value::Array(_) => tree::NodeType::YamlArray,
+        serde_json::Value::Object(_) => tree::NodeType::YamlMap,
+    }
+    .into()
 }
 
 #[cfg(test)]

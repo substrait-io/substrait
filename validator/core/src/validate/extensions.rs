@@ -1,11 +1,19 @@
 use crate::context;
 use crate::diagnostic::Result;
 use crate::extension;
+use crate::parsing;
+use crate::path;
 use crate::proto;
 use crate::tree;
 use crate::yaml;
 use std::collections::HashMap;
 use std::sync::Arc;
+
+/// Toplevel parse function for a simple extension YAML file.
+fn parse_simple_extension_yaml(_x: &yaml::Value, _y: &mut context::Context) -> Result<()> {
+    // TODO
+    Ok(())
+}
 
 /// "Parse" an anchor. This just reports an error if the anchor is 0.
 fn parse_anchor(x: &u32, _y: &mut context::Context) -> Result<u32> {
@@ -20,19 +28,61 @@ fn parse_anchor(x: &u32, _y: &mut context::Context) -> Result<u32> {
 }
 
 /// Parse a YAML extension URI string.
-fn parse_uri<S: AsRef<str>>(x: &S, y: &mut context::Context) -> Result<Arc<extension::YamlInfo>> {
+fn parse_simple_extension_yaml_uri<S: AsRef<str>>(
+    x: &S,
+    y: &mut context::Context,
+) -> Result<Arc<extension::YamlInfo>> {
     let x = x.as_ref();
 
     // Resolve the YAML file.
-    let _ = yaml::load_simple_extension_yaml(x, y);
+    if let Some(root_input) = yaml::load_simple_extension_yaml(x, y) {
+        // Create an empty YamlData object.
+        y.state.yaml_data = Some(extension::YamlData::default());
 
-    // TODO: walk over the contents of the YAML file.
+        // Create the node for the YAML data root.
+        let mut root_output = yaml::yaml_to_node(&root_input);
+
+        // Create the path element for referring to the YAML data root.
+        let path_element = path::PathElement::Field("data".to_string());
+
+        // Create the context for the YAML data root.
+        let mut root_context = context::Context {
+            output: &mut root_output,
+            state: y.state,
+            breadcrumb: &mut y.breadcrumb.next(path_element.clone()),
+            config: y.config,
+        };
+
+        // Create a PathBuf for the root node.
+        let root_path = root_context.breadcrumb.path.to_path_buf();
+
+        // Call the provided root parser.
+        if let Err(cause) = parse_simple_extension_yaml(&root_input, &mut root_context) {
+            diagnostic!(&mut root_context, Error, cause);
+        }
+
+        // Handle any fields not handled by the provided parse function.
+        parsing::handle_unknown_yaml_items(&root_input, &mut root_context, false);
+
+        // Push and return the completed node.
+        let root_output = Arc::new(root_output);
+        y.output.data.push(tree::NodeData::Child(tree::Child {
+            path_element,
+            node: root_output.clone(),
+            recognized: true,
+        }));
+
+        // Configure the reference to the root node in the YamlData object.
+        let mut node_ref = y.state.yaml_data.as_mut().unwrap();
+        node_ref.data.path = root_path;
+        node_ref.data.node = root_output;
+    }
 
     // Construct the YAML data object.
     let yaml_info = Arc::new(extension::YamlInfo {
         uri: x.to_string(),
         anchor_path: y.breadcrumb.parent.map(|x| x.path.to_path_buf()),
-        data: None, // TODO: refer to generated data root node (if any) here
+        data: y.state.yaml_data.take(),
     });
 
     // The node type will have been set as if this is a normal string
@@ -44,13 +94,15 @@ fn parse_uri<S: AsRef<str>>(x: &S, y: &mut context::Context) -> Result<Arc<exten
 }
 
 /// Parse a mapping from a URI anchor to a YAML extension.
-fn parse_extension_uri_mapping(
+fn parse_simple_extension_yaml_uri_mapping(
     x: &proto::substrait::extensions::SimpleExtensionUri,
     y: &mut context::Context,
 ) -> Result<()> {
     // Parse the fields.
     let anchor = proto_primitive_field!(x, y, extension_uri_anchor, parse_anchor).1;
-    let yaml_data = proto_primitive_field!(x, y, uri, parse_uri).1.unwrap();
+    let yaml_data = proto_primitive_field!(x, y, uri, parse_simple_extension_yaml_uri)
+        .1
+        .unwrap();
 
     // If the specified anchor is valid, insert a mapping for it.
     if let Some(anchor) = anchor {
@@ -348,7 +400,12 @@ fn parse_expected_type_url(x: &String, y: &mut context::Context) -> Result<()> {
 /// Parses the extension information in a plan that needs to be parsed *before*
 /// the relations are parsed.
 pub fn parse_extensions_before_relations(x: &proto::substrait::Plan, y: &mut context::Context) {
-    proto_repeated_field!(x, y, extension_uris, parse_extension_uri_mapping);
+    proto_repeated_field!(
+        x,
+        y,
+        extension_uris,
+        parse_simple_extension_yaml_uri_mapping
+    );
     proto_repeated_field!(x, y, extensions, parse_extension_mapping);
 }
 

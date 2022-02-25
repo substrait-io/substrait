@@ -60,6 +60,9 @@ pub struct State {
     /// represents the innermost query, while entries further to the front
     /// of the vector are used to break out of correlated subqueries.
     pub schema: Vec<data_type::DataType>,
+
+    /// The YAML data object under construction, if any.
+    pub yaml_data: Option<extension::YamlData>,
 }
 
 /// Breadcrumbs structure. Each breadcrumb is associated with a node, and

@@ -95,7 +95,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
             if let Some(ident) = &field.ident {
                 let action = match is_repeated(&field.ty) {
                     FieldType::Optional => quote! {
-                        crate::tree::push_proto_field(
+                        crate::parsing::push_proto_field(
                             self,
                             y,
                             &self.#ident.as_ref(),
@@ -106,7 +106,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                         );
                     },
                     FieldType::BoxedOptional => quote! {
-                        crate::tree::push_proto_field(
+                        crate::parsing::push_proto_field(
                             self,
                             y,
                             &self.#ident,
@@ -117,7 +117,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                         );
                     },
                     FieldType::Repeated => quote! {
-                        crate::tree::push_proto_repeated_field(
+                        crate::parsing::push_proto_repeated_field(
                             self,
                             y,
                             &self.#ident.as_ref(),
@@ -130,7 +130,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                     FieldType::Primitive => quote! {
                         use crate::proto::meta::ProtoPrimitive;
                         if !y.config.ignore_unknown_fields_set_to_default || !self.#ident.proto_primitive_is_default() {
-                            crate::tree::push_proto_field(
+                            crate::parsing::push_proto_field(
                                 self,
                                 y,
                                 &Some(&self.#ident),

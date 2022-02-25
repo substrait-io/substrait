@@ -52,6 +52,23 @@ pub struct YamlData {
     pub type_variations: HashMap<String, Arc<TypeVariation>>,
 }
 
+impl Default for YamlData {
+    /// Constructs an empty YamlData object with an invalid reference to the
+    /// data node. Everything still needs to be populated for this to become
+    /// valid.
+    fn default() -> YamlData {
+        YamlData {
+            data: tree::NodeReference {
+                path: path::Path::Root("").to_path_buf(),
+                node: Arc::new(tree::NodeType::YamlMap.into()),
+            },
+            functions: HashMap::default(),
+            types: HashMap::default(),
+            type_variations: HashMap::default(),
+        }
+    }
+}
+
 /// Extension information common to all extension types: URI, name, anchor
 /// resolution information, and references to raw data.
 #[derive(Clone, Debug, PartialEq)]

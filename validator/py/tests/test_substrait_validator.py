@@ -117,12 +117,12 @@ def test_export_diags():
     diags = sv.plan_to_diagnostics_str(_BASIC_PLAN)
     assert type(diags) == str
     lines = list(filter(bool, diags.split('\n')))
-    assert lines[0] == 'Warning at plan: encountered values for field(s) not yet understood by the validator: .relations[0] (1003)'
+    assert lines[0] == 'Warning at plan: encountered values for protobuf field(s) not yet understood by the validator: .relations[0] (1003)'
 
     diags = list(sv.plan_to_diagnostics(_BASIC_PLAN))
     for diag in diags:
         assert type(diag) == sv.Diagnostic
-    assert diags[0].msg == 'encountered values for field(s) not yet understood by the validator: .relations[0] (1003)'
+    assert diags[0].msg == 'encountered values for protobuf field(s) not yet understood by the validator: .relations[0] (1003)'
 
 
 # TODO: check_plan_valid()/check_plan_not_invalid()

@@ -2,7 +2,7 @@
 pub mod diagnostic;
 
 #[macro_use]
-pub mod tree;
+mod parsing;
 
 pub mod comment;
 pub mod context;
@@ -12,6 +12,7 @@ pub mod extension;
 pub mod path;
 pub mod primitives;
 pub mod proto;
+pub mod tree;
 mod validate;
 pub mod yaml;
 

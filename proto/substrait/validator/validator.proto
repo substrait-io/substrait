@@ -42,25 +42,29 @@ message Node {
     // This node represents a protobuf primitive or enum.
     ProtoPrimitive proto_primitive = 2;
 
+    // This node is inserted as a placeholder when a required oneof field was
+    // not populated in the input.
+    Empty proto_missing_oneof = 3;
+
     // Special case of proto_primitive for references to anchors defined
     // elsewhere in the plan.
-    NodeReference node_reference = 3;
+    NodeReference node_reference = 4;
 
     // Special case for proto_primitive for references to YAML files via a URI.
     // If resolved, the keys in the toplevel YAML map are represented using
     // Field messages in data.
-    YamlReference yaml_reference = 4;
+    YamlReference yaml_reference = 5;
 
     // This node represents a YAML map/object. The keys are represented using
     // Field messages in data.
-    Empty yaml_map = 5;
+    Empty yaml_map = 6;
 
     // This node represents a YAML array. The elements are represented using
     // ArrayElement messages in data.
-    Empty yaml_array = 6;
+    Empty yaml_array = 7;
 
     // This node represents a YAML primitive.
-    PrimitiveData yaml_primitive = 7;
+    PrimitiveData yaml_primitive = 8;
   }
 
   // For the following types of nodes, the validator will try to do type

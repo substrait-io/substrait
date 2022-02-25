@@ -62,7 +62,7 @@
 //! converted into an AdjustedDiagnostic, with its adjusted_level set based on
 //! its classification number and the configuration passed to the validator by
 //! the user. This is all handled by the diagnostic!() macro and
-//! push_diagnostic() function, defined in the tree module.
+//! push_diagnostic() function, defined in the parsing module.
 //!
 //! Note that parse functions themselves also return Result<T>, such that the ?
 //! operator can be used in them. The error will then be handled by the parse
@@ -194,7 +194,7 @@ pub enum Classification {
     ProtoMissingField = 1002,
 
     #[strum(props(
-        Description = "encountered values for field(s) not yet understood by the validator"
+        Description = "encountered values for protobuf field(s) not yet understood by the validator"
     ))]
     ProtoUnknownField = 1003,
 
@@ -222,6 +222,22 @@ pub enum Classification {
 
     #[strum(props(Description = "YAML does not conform to schema"))]
     YamlSchemaValidationFailed = 2004,
+
+    #[strum(props(Description = "missing required YAML field"))]
+    YamlMissingField = 2005,
+
+    #[strum(props(
+        Description = "encountered values for YAML field(s) not yet understood by the validator"
+    ))]
+    YamlUnknownField = 2006,
+
+    #[strum(props(Description = "missing required YAML array element"))]
+    YamlMissingElement = 2007,
+
+    #[strum(props(
+        Description = "encountered values for YAML array element(s) not yet understood by the validator"
+    ))]
+    YamlUnknownElement = 2008,
 
     // Link resolution diagnostics (group 3).
     #[strum(props(HiddenDescription = "link resolution diagnostic"))]
