@@ -5,4 +5,4 @@ header:
   paths: 
     - 'proto/substrait/**'  
 
-  comment: on-failure
+  comment: never

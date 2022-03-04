@@ -9,4 +9,6 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Check License Header
-      uses: apache/skywalking-eyes@main 
+      uses: enarx/spdx@master
+      with: 
+        licenses: Apache-2.0 MIT 
