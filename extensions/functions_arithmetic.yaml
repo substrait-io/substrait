@@ -173,6 +173,29 @@ scalar_functions:
           - value: i64
           - value: i64
         return: i64
+  -
+    name: "cast"
+    description: Cast a set of values into another type.
+    impls:
+      - args:
+          - value: i8
+        return: string
+      - args:
+          - value: i16
+        return: string
+      - args:
+          - value: i32
+        return: string
+      - args:
+          - value: i64
+        return: string
+      - args:
+          - value: fp32
+        return: string
+      - args:
+          - value: fp64
+        return: string
+# TODO: Add more kinds of args for cast here.
 aggregate_functions:
   - name: "sum"
     description: Sum a set of values.
