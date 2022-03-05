@@ -1,0 +1,19 @@
+[package]
+name = "substrait"
+description = "Rust bindings for Substrait"
+version = "0.1.0"
+repository = "https://github.com/substrait-io/substrait"
+homepage = "https://github.com/substrait-io/substrait/rust"
+license = "Apache-2.0"
+readme = "README.md"
+edition = "2021"
+build = "build.rs"
+include = [ "build.rs", "src/**/*.rs", "Cargo.lock", "proto/**/*.proto" ]
+keywords = [ "substrait" ]
+
+[dependencies]
+prost = "0.9"
+prost-types = "0.9"
+
+[build-dependencies]
+prost-build = { version = "0.9" }
