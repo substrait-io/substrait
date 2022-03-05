@@ -4,9 +4,9 @@ use std::io::Result;
 use std::path::PathBuf;
 
 fn main() -> Result<()> {
-
     let pwd = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR");
-    let proto_path_root = PathBuf::from(&pwd).join(format!("../proto"));
+    let proto_path_root = PathBuf::from(&pwd).join("../proto");
+    let output_root = PathBuf::from(&pwd).join("proto");
 
     let proto_defs = [
         "substrait/algebra.proto",
@@ -18,8 +18,6 @@ fn main() -> Result<()> {
         "substrait/type_expressions.proto",
         "substrait/type.proto",
     ];
-
-    let output_root = PathBuf::from(&pwd).join(format!("proto"));
 
     // copy proto files into crate directory during build and packaging
     // phase (but not publish phase)
@@ -38,7 +36,7 @@ fn main() -> Result<()> {
 
     let paths: Vec<String> = proto_defs
         .iter()
-        .map(|s| format!("{}", output_root.join(s).display()))
+        .map(|s| output_root.join(s).display().to_string())
         .collect();
 
     // for use in docker build where file changes can be wonky
@@ -49,6 +47,6 @@ fn main() -> Result<()> {
         println!("cargo:rerun-if-changed={}", path);
     }
 
-    let path = format!("{}", output_root.display());
+    let path = output_root.display().to_string();
     prost_build::compile_protos(&paths, &[&path])
 }
