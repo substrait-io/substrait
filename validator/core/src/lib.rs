@@ -41,13 +41,13 @@ impl From<diagnostic::Level> for Validity {
 }
 
 /// Validates the given substrait.Plan message and returns the parse tree.
-pub fn parse<B: prost::bytes::Buf>(buffer: B) -> tree::Node {
+pub fn parse<B: prost::bytes::Buf>(buffer: B, config: &context::Config) -> tree::Node {
     tree::Node::parse_proto::<proto::substrait::Plan, _, _>(
         buffer,
         "plan",
         validate::parse_plan,
         &mut context::State::default(),
-        &context::Config::default(),
+        config,
     )
 }
 
@@ -131,7 +131,7 @@ mod tests {
             10, 4, 18, 2, 8, 8, 26, 8, 18, 6, 10, 4, 18, 2, 8, 9, 26, 10, 10, 6, 18, 4, 10, 2, 18,
             0, 16, 1, 26, 12, 10, 8, 18, 6, 10, 4, 18, 2, 8, 1, 16, 1,
         ]);
-        let root = parse(buffer);
+        let root = parse(buffer, &context::Config::default());
         assert_eq!(check(&root), Validity::Invalid);
         export(&mut std::io::stdout(), export::Format::Diagnostics, &root).unwrap();
 
@@ -180,7 +180,7 @@ mod tests {
             2, 26, 12, 10, 8, 18, 6, 10, 4, 18, 2, 8, 1, 16, 3, 26, 12, 10, 8, 18, 6, 10, 4, 18, 2,
             8, 2, 16, 1, 32, 10,
         ]);
-        let root = parse(buffer);
+        let root = parse(buffer, &context::Config::default());
         assert_eq!(check(&root), Validity::Invalid);
         export(&mut std::io::stdout(), export::Format::Diagnostics, &root).unwrap();
 

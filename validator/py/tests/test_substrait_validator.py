@@ -62,6 +62,17 @@ _BASIC_PLAN = """
 }
 """
 
+_YAML = """---
+types:
+  - name: point
+    structure:
+      latitude: i32
+      longitude: i32
+  - name: line
+    structure:
+      start: point
+      end: point
+"""
 
 def test_proto_roundtrip():
     """Round-trip test a basic Plan using the protobuf wrapper functions."""
@@ -123,6 +134,38 @@ def test_export_diags():
     for diag in diags:
         assert type(diag) == sv.Diagnostic
     assert diags[0].msg == 'encountered values for protobuf field(s) not yet understood by the validator: .relations[0] (1003)'
+
+
+def test_resolver_callback():
+    """Tests whether the YAML URI resolver callback works."""
+
+    def resolver(s):
+        if s == 'test':
+            return _YAML.encode('utf-8')
+        raise ValueError('unknown URI')
+
+    config = sv.Config()
+    config.add_yaml_uri_resolver(resolver)
+
+    diags = list(sv.plan_to_diagnostics({
+        'extensionUris': [{
+            'extension_uri_anchor': 1,
+            'uri': 'test',
+        }]
+    }, config))
+    for diag in diags:
+        print(diag.msg)
+    assert diags[0].msg == 'encountered values for YAML field(s) not yet understood by the validator: types (2006)'
+
+    diags = list(sv.plan_to_diagnostics({
+        'extensionUris': [{
+            'extension_uri_anchor': 1,
+            'uri': 'not-test',
+        }]
+    }, config))
+    for diag in diags:
+        print(diag.msg)
+    assert diags[0].msg == 'failed to resolve YAML: ValueError: unknown URI (2002)'
 
 
 # TODO: check_plan_valid()/check_plan_not_invalid()

@@ -12,3 +12,4 @@ cbindgen = "0.20.0"
 [dependencies]
 substrait-validator-core = { path = "../core" }
 libc = "0.2"
+thiserror = "1.0"

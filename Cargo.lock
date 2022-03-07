@@ -1292,6 +1292,7 @@ dependencies = [
  "cbindgen",
  "libc",
  "substrait-validator-core",
+ "thiserror",
 ]
 
 [[package]]

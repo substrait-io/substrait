@@ -3,6 +3,7 @@ use crate::diagnostic;
 use crate::extension;
 use crate::path;
 use crate::tree;
+pub use glob;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::sync::Arc;
@@ -115,7 +116,7 @@ pub type BinaryData = Box<dyn AsRef<[u8]>>;
 pub type ErrorData = Box<dyn std::error::Error>;
 
 /// Callback function type for resolving/downloading URIs.
-pub type UriResolver = Box<dyn Fn(&str) -> std::result::Result<BinaryData, ErrorData>>;
+pub type UriResolver = Box<dyn Fn(&str) -> std::result::Result<BinaryData, ErrorData> + Send>;
 
 /// Configuration structure.
 #[derive(Default)]
@@ -172,53 +173,49 @@ impl Config {
     /// descriptions, but haven't yet been implemented in the validator) if the
     /// fields are set to their default value. If this option isn't set, or if
     /// an unknown field is not set to its default value, a warning is emitted.
-    pub fn with_ignore_unknown_fields_set_to_default(mut self) -> Self {
+    pub fn ignore_unknown_fields_set_to_default(&mut self) {
         self.ignore_unknown_fields_set_to_default = true;
-        self
     }
 
     /// Whitelists a protobuf message type for use in advanced extensions. If
     /// an advanced extension is encountered that isn't whitelisted, a warning
     /// is emitted.
-    pub fn with_whitelisted_any_url<S: Into<String>>(mut self, url: S) -> Self {
+    pub fn whitelist_any_url<S: Into<String>>(&mut self, url: S) {
         self.whitelisted_any_urls.insert(url.into());
-        self
     }
 
     /// Sets a minimum and/or maximum error level for the given class of
     /// diagnostic messages. Any previous settings for this class are
     /// overridden.
-    pub fn with_diagnostic_level_override(
-        mut self,
+    pub fn override_diagnostic_level(
+        &mut self,
         class: diagnostic::Classification,
         minimum: diagnostic::Level,
         maximum: diagnostic::Level,
-    ) -> Self {
+    ) {
         self.diagnostic_level_overrides
             .insert(class, (minimum, maximum));
-        self
     }
 
     /// Overrides the resolution behavior for YAML URIs matching the given
     /// pattern. If resolve_as is None, the YAML file will not be resolved;
     /// if it is Some(s), it will be resolved as if the URI in the plan had
     /// been s.
-    pub fn with_yaml_uri_override<S: Into<String>>(
-        mut self,
+    pub fn override_yaml_uri<S: Into<String>>(
+        &mut self,
         pattern: glob::Pattern,
         resolve_as: Option<S>,
-    ) -> Self {
+    ) {
         self.yaml_uri_overrides
             .push((pattern, resolve_as.map(|s| s.into())));
-        self
     }
 
     /// Registers a YAML URI resolution function with this configuration. If
     /// the given function fails, any previously registered function will be
     /// used as a fallback.
-    pub fn with_yaml_uri_resolver<F, D, E>(mut self, resolver: F) -> Self
+    pub fn add_yaml_uri_resolver<F, D, E>(&mut self, resolver: F)
     where
-        F: Fn(&str) -> Result<D, E> + 'static,
+        F: Fn(&str) -> Result<D, E> + Send + 'static,
         D: AsRef<[u8]> + 'static,
         E: std::error::Error + 'static,
     {
@@ -230,6 +227,5 @@ impl Config {
                 None => Err(Box::new(e)),
             },
         }));
-        self
     }
 }

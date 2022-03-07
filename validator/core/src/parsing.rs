@@ -714,7 +714,11 @@ pub fn handle_unknown_yaml_items(
         yaml::Value::Array(array) => {
             let mut unknown_indices = vec![];
             for (index, _) in array.iter().enumerate() {
-                if context.breadcrumb.fields_parsed.insert(index.to_string()) {
+                if !context
+                    .breadcrumb
+                    .fields_parsed
+                    .contains(&index.to_string())
+                {
                     unknown_indices.push(index);
                     push_yaml_element(array, context, index, true, |_, _| Ok(()), |_, _, _| Ok(()));
                 }
@@ -733,11 +737,7 @@ pub fn handle_unknown_yaml_items(
             all_fields.sort();
             let mut unknown_fields = vec![];
             for field_name in all_fields.iter() {
-                if context
-                    .breadcrumb
-                    .fields_parsed
-                    .insert((*field_name).clone())
-                {
+                if !context.breadcrumb.fields_parsed.contains(*field_name) {
                     unknown_fields.push((*field_name).clone());
                     push_yaml_field(
                         object,

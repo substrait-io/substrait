@@ -20,14 +20,14 @@ pub fn resolve_with_curl(uri: &str) -> Result<Vec<u8>, curl::Error> {
 }
 
 pub trait WithCurlResolver {
-    fn with_curl_yaml_uri_resolver(self) -> Self;
+    fn add_curl_yaml_uri_resolver(&mut self);
 }
 
 impl WithCurlResolver for context::Config {
     /// Registers the resolve_with_curl() function for resolving YAML URIs.
     /// If libcurl fails, any yaml_uri_resolver registered previously will
     /// be used as a fallback.
-    fn with_curl_yaml_uri_resolver(self) -> Self {
-        self.with_yaml_uri_resolver(resolve_with_curl)
+    fn add_curl_yaml_uri_resolver(&mut self) {
+        self.add_yaml_uri_resolver(resolve_with_curl)
     }
 }

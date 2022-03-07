@@ -12,7 +12,19 @@ fn main() {
     config
         .export
         .rename
-        .insert("Handle".to_string(), "handle".to_string());
+        .insert("ConfigHandle".to_string(), "config_handle".to_string());
+    config
+        .export
+        .rename
+        .insert("ResultHandle".to_string(), "result_handle".to_string());
+    config
+        .export
+        .rename
+        .insert("Resolver".to_string(), "resolver".to_string());
+    config
+        .export
+        .rename
+        .insert("Deleter".to_string(), "deleter".to_string());
 
     cbindgen::Builder::new()
         .with_crate(crate_dir)
