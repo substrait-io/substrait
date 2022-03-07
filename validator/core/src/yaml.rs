@@ -99,7 +99,7 @@ static SIMPLE_EXTENSIONS_SCHEMA: once_cell::sync::Lazy<jsonschema::JSONSchema> =
     });
 
 /// Attempts to resolve a YAML URI.
-fn resolve_yaml_uri(uri: &str, config: &context::Config) -> Result<Vec<u8>> {
+fn resolve_yaml_uri(uri: &str, config: &context::Config) -> Result<context::BinaryData> {
     // Apply yaml_uri_overrides configuration.
     let remapped_uri = config
         .yaml_uri_overrides
@@ -126,7 +126,8 @@ fn resolve_yaml_uri(uri: &str, config: &context::Config) -> Result<Vec<u8>> {
 
     // If a custom download function is specified, use it to resolve.
     if let Some(ref resolver) = config.yaml_uri_resolver {
-        return resolver(remapped_uri).map_err(|x| cause!(YamlResolutionFailed, x));
+        return resolver(remapped_uri)
+            .map_err(|x| cause!(YamlResolutionFailed, x.as_ref().to_string()));
     }
 
     // Parse as a URL.
@@ -184,18 +185,20 @@ fn resolve_yaml_uri(uri: &str, config: &context::Config) -> Result<Vec<u8>> {
     };
 
     // Read the file.
-    std::fs::read(path).map_err(|e| {
-        if is_remapped {
-            cause!(
-                YamlResolutionFailed,
-                "failed to file remapping for URI ({}): {}",
-                remapped_uri,
-                e
-            )
-        } else {
-            cause!(YamlResolutionFailed, e)
-        }
-    })
+    std::fs::read(path)
+        .map_err(|e| {
+            if is_remapped {
+                cause!(
+                    YamlResolutionFailed,
+                    "failed to file remapping for URI ({}): {}",
+                    remapped_uri,
+                    e
+                )
+            } else {
+                cause!(YamlResolutionFailed, e)
+            }
+        })
+        .map(|d| -> context::BinaryData { Box::new(d) })
 }
 
 /// Attempts to resolve, parse, and validate a simple extension YAML file.
@@ -213,7 +216,7 @@ pub fn load_simple_extension_yaml(uri: &str, y: &mut context::Context) -> Option
     };
 
     // Parse as UTF-8.
-    let string_data = match std::str::from_utf8(&binary_data) {
+    let string_data = match std::str::from_utf8(binary_data.as_ref().as_ref()) {
         Err(e) => {
             diagnostic!(y, Error, YamlParseFailed, e);
             return None;

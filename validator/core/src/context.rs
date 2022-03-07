@@ -108,13 +108,19 @@ impl Breadcrumb<'_> {
     }
 }
 
+/// Trait object representing some immutable binary data.
+pub type BinaryData = Box<dyn AsRef<[u8]>>;
+
+/// Trait object representing some error data.
+pub type ErrorData = Box<dyn std::error::Error>;
+
 /// Callback function type for resolving/downloading URIs.
-type UriResolver = Box<dyn Fn(&str) -> std::result::Result<Vec<u8>, String>>;
+pub type UriResolver = Box<dyn Fn(&str) -> std::result::Result<BinaryData, ErrorData>>;
 
 /// Configuration structure.
 #[derive(Default)]
 pub struct Config {
-    /// When set, so not generate warnings for unknown protobuf fields that are
+    /// When set, do not generate warnings for unknown protobuf fields that are
     /// set to their protobuf-defined default value.
     pub ignore_unknown_fields_set_to_default: bool,
 
@@ -153,4 +159,77 @@ pub struct Config {
     /// error. If no downloader is specified, only file:// URLs with an
     /// absolute path are supported.
     pub yaml_uri_resolver: Option<UriResolver>,
+}
+
+impl Config {
+    /// Creates a default configuration.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Instructs the validator to ignore protobuf fields that it doesn't know
+    /// about yet (i.e., that have been added to the Substrait protobuf
+    /// descriptions, but haven't yet been implemented in the validator) if the
+    /// fields are set to their default value. If this option isn't set, or if
+    /// an unknown field is not set to its default value, a warning is emitted.
+    pub fn with_ignore_unknown_fields_set_to_default(mut self) -> Self {
+        self.ignore_unknown_fields_set_to_default = true;
+        self
+    }
+
+    /// Whitelists a protobuf message type for use in advanced extensions. If
+    /// an advanced extension is encountered that isn't whitelisted, a warning
+    /// is emitted.
+    pub fn with_whitelisted_any_url<S: Into<String>>(mut self, url: S) -> Self {
+        self.whitelisted_any_urls.insert(url.into());
+        self
+    }
+
+    /// Sets a minimum and/or maximum error level for the given class of
+    /// diagnostic messages. Any previous settings for this class are
+    /// overridden.
+    pub fn with_diagnostic_level_override(
+        mut self,
+        class: diagnostic::Classification,
+        minimum: diagnostic::Level,
+        maximum: diagnostic::Level,
+    ) -> Self {
+        self.diagnostic_level_overrides
+            .insert(class, (minimum, maximum));
+        self
+    }
+
+    /// Overrides the resolution behavior for YAML URIs matching the given
+    /// pattern. If resolve_as is None, the YAML file will not be resolved;
+    /// if it is Some(s), it will be resolved as if the URI in the plan had
+    /// been s.
+    pub fn with_yaml_uri_override<S: Into<String>>(
+        mut self,
+        pattern: glob::Pattern,
+        resolve_as: Option<S>,
+    ) -> Self {
+        self.yaml_uri_overrides
+            .push((pattern, resolve_as.map(|s| s.into())));
+        self
+    }
+
+    /// Registers a YAML URI resolution function with this configuration. If
+    /// the given function fails, any previously registered function will be
+    /// used as a fallback.
+    pub fn with_yaml_uri_resolver<F, D, E>(mut self, resolver: F) -> Self
+    where
+        F: Fn(&str) -> Result<D, E> + 'static,
+        D: AsRef<[u8]> + 'static,
+        E: std::error::Error + 'static,
+    {
+        let previous = self.yaml_uri_resolver.take();
+        self.yaml_uri_resolver = Some(Box::new(move |uri| match resolver(uri) {
+            Ok(d) => Ok(Box::new(d)),
+            Err(e) => match &previous {
+                Some(f) => f.as_ref()(uri),
+                None => Err(Box::new(e)),
+            },
+        }));
+        self
+    }
 }
