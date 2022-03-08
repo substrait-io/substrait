@@ -11,7 +11,8 @@ TEST(BasicTest, BasicTest) {
 
   // Try parsing nonsense.
   auto handle = substrait_validator_parse(
-      reinterpret_cast<const uint8_t *>(nonsense.c_str()), nonsense.size());
+      reinterpret_cast<const uint8_t *>(nonsense.c_str()), nonsense.size(),
+      nullptr);
   ASSERT_NE(handle, nullptr);
 
   // That should fail.
