@@ -1,12 +1,61 @@
-use crate::comment;
-use crate::context;
-use crate::data_type;
-use crate::diagnostic;
-use crate::extension;
-use crate::parsing;
-use crate::path;
-use crate::primitives;
-use crate::proto::meta::*;
+//! Module for the output tree structure.
+//!
+//! This module provides the types for the tree structure that constitutes
+//! the output of the validator. The nodes in the tree are intended to
+//! correspond exactly to the protobuf messages, primitives, and YAML values
+//! (the latter actually using the JSON object model) that constitute the
+//! incoming plan. Likewise, the structure of the tree is the same as the
+//! input. However, unlike the input:
+//!
+//!  - All nodes and the relations between them are encapsulated in generic
+//!    types, independent from the corresponding messages/values in the
+//!    original tree. This allows the tree to be traversed by generic code
+//!    with no understanding of Substrait.
+//!  - Additional information can be attached to the nodes, edges, and
+//!    between the edges, such as diagnostic messages and data type
+//!    information.
+//!
+//! The node type for the output trees is [`Node`]. This structure contains
+//! a single [`NodeType`] enum variant and zero or more [`NodeData`] enum
+//! variants in an ordered sequence to form the tree structure; [`NodeType`]
+//! includes information about the node itself, while the [`NodeData`]
+//! elements represent edges to other nodes ([`Child`]) or contextual
+//! information. A subtree might look something like this:
+//!
+//! ```text
+//!                 Node ---> ProtoMessage                   } Parent node
+//!                  |
+//!   .--------------'--------------.
+//!   |         |         |         |
+//!   v         v         v         v
+//! Child  Diagnostic  Comment    Child                      } Edges
+//!   |                             |
+//!   v                             v
+//! Node ---> ProtoPrimitive      Node ---> ProtoMessage     } Child nodes
+//!            |                    |
+//!            '-> PrimitiveData    :
+//! ```
+//!
+//! Note that the [`Child`] struct includes information about how the child
+//! node relates to its parent (which field, array element, etc) via
+//! [`PathElement`](path::PathElement), such that the original tree structure
+//! could in theory be completely reconstructed.
+//!
+//! Nevertheless, the conversion from protobuf/YAML to this tree structure is
+//! only intended to be a one-way street; indeed, the output tree is not
+//! intended to ever be treated as some executable query plan by a computer at
+//! all. It serves only as an intermediate format for documentation, debug,
+//! and/or validation output. The [export](mod@crate::export) module deals with
+//! breaking this internal representation down further, into (file) formats
+//! that are not specific to the Substrait validator.
+
+use crate::input::config;
+use crate::output::comment;
+use crate::output::data_type;
+use crate::output::diagnostic;
+use crate::output::extension;
+use crate::output::path;
+use crate::output::primitive_data;
 use std::collections::VecDeque;
 use std::sync::Arc;
 
@@ -55,7 +104,7 @@ impl From<NodeType> for Node {
 impl Node {
     /// Pushes a diagnostic into the node. This also evaluates its adjusted
     /// error level.
-    pub fn push_diagnostic(&mut self, diag: diagnostic::Diagnostic, config: &context::Config) {
+    pub fn push_diagnostic(&mut self, diag: diagnostic::RawDiagnostic, config: &config::Config) {
         // Get the configured level limits for this diagnostic. First try the
         // classification of the diagnostic itself, then its group, and then
         // finally Unclassified. If no entries exist, simply yield
@@ -88,63 +137,6 @@ impl Node {
         self.data.push(NodeData::Diagnostic(adjusted));
     }
 
-    /// Parses/validates the given binary serialization of a protobuffer using
-    /// the given (root) parser/validator.
-    pub fn parse_proto<T, F, B>(
-        buffer: B,
-        root_name: &'static str,
-        root_parser: F,
-        state: &mut context::State,
-        config: &context::Config,
-    ) -> Self
-    where
-        T: prost::Message + ProtoDatum + Default,
-        F: FnOnce(&T, &mut context::Context) -> diagnostic::Result<()>,
-        B: prost::bytes::Buf,
-    {
-        match T::decode(buffer) {
-            Err(err) => {
-                // Create a minimal root node with just the prot
-
-                let mut output = T::proto_type_to_node();
-                output.push_diagnostic(
-                    diagnostic::Diagnostic {
-                        cause: cause!(ProtoParseFailed, err),
-                        level: diagnostic::Level::Error,
-                        path: path::PathBuf {
-                            root: root_name,
-                            elements: vec![],
-                        },
-                    },
-                    config,
-                );
-                output
-            }
-            Ok(input) => {
-                // Create the root node.
-                let mut output = input.proto_data_to_node();
-
-                // Create the root context.
-                let mut context = context::Context {
-                    output: &mut output,
-                    state,
-                    breadcrumb: &mut context::Breadcrumb::new(root_name),
-                    config,
-                };
-
-                // Call the provided parser function.
-                if let Err(cause) = root_parser(&input, &mut context) {
-                    diagnostic!(&mut context, Error, cause);
-                }
-
-                // Handle any fields not handled by the provided parse function.
-                parsing::handle_unknown_proto_fields(&input, &mut context, false);
-
-                output
-            }
-        }
-    }
-
     /// Returns an iterator that iterates over all nodes depth-first.
     pub fn iter_flattened_nodes(&self) -> FlattenedNodeIter {
         FlattenedNodeIter {
@@ -161,7 +153,7 @@ impl Node {
     }
 
     /// Iterates over all diagnostics in the tree.
-    pub fn iter_diagnostics(&self) -> impl Iterator<Item = &diagnostic::AdjustedDiagnostic> + '_ {
+    pub fn iter_diagnostics(&self) -> impl Iterator<Item = &diagnostic::Diagnostic> + '_ {
         self.iter_flattened_node_data().filter_map(|x| match x {
             NodeData::Diagnostic(d) => Some(d),
             _ => None,
@@ -180,7 +172,7 @@ pub enum NodeType {
 
     /// The associated node represents a protobuf primitive value of the given
     /// type and with the given data.
-    ProtoPrimitive(&'static str, primitives::PrimitiveData),
+    ProtoPrimitive(&'static str, primitive_data::PrimitiveData),
 
     /// The associated node represents an unpopulated oneof field. This is used
     /// for an error recovery node when a required oneof field is not
@@ -204,7 +196,7 @@ pub enum NodeType {
     YamlArray,
 
     /// The associated node represents a YAML primitive.
-    YamlPrimitive(primitives::PrimitiveData),
+    YamlPrimitive(primitive_data::PrimitiveData),
 }
 
 /// Information nodes for a parsed protobuf message.
@@ -216,7 +208,7 @@ pub enum NodeData {
     /// Indicates that parsing/validating this message resulted in some
     /// diagnostic message being emitted. The secondary error level is the
     /// modified level via
-    Diagnostic(diagnostic::AdjustedDiagnostic),
+    Diagnostic(diagnostic::Diagnostic),
 
     /// Provides (intermediate) type information for this node. Depending on
     /// the message, this may be a struct or named struct representing a

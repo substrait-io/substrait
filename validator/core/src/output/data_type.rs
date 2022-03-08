@@ -1,6 +1,10 @@
-use crate::diagnostic;
-use crate::extension;
-use crate::primitives;
+//! Module for dealing with Substrait's type system.
+//!
+//! See [`DataType`].
+
+use crate::output::diagnostic;
+use crate::output::extension;
+use crate::output::primitive_data;
 use std::collections::HashSet;
 use std::sync::Arc;
 use strum_macros::{Display, EnumString};
@@ -339,7 +343,12 @@ impl std::fmt::Display for Parameter {
         match self {
             Parameter::Type(data_type) => write!(f, "{}", data_type),
             Parameter::NamedType(name, data_type) => {
-                write!(f, "{}: {}", primitives::as_ident_or_string(name), data_type)
+                write!(
+                    f,
+                    "{}: {}",
+                    primitive_data::as_ident_or_string(name),
+                    data_type
+                )
             }
             Parameter::Unsigned(value) => write!(f, "{}", value),
         }

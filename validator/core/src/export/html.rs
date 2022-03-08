@@ -1,7 +1,9 @@
-use crate::comment;
-use crate::diagnostic;
-use crate::path;
-use crate::tree;
+//! This module provides a human-readable export format based on HTML.
+
+use crate::output::comment;
+use crate::output::diagnostic;
+use crate::output::path;
+use crate::output::tree;
 
 const HEADER: &str = r#"
 <!DOCTYPE html>
@@ -517,7 +519,7 @@ fn format_span<S: std::fmt::Display>(class: &'static str, text: S) -> String {
 /// diagnostic is defined in, and index should be its index within Node::data.
 /// with_id specifies whether the HTML id parameter should be included.
 fn format_diagnostic(
-    diag: &diagnostic::AdjustedDiagnostic,
+    diag: &diagnostic::Diagnostic,
     path: &path::PathBuf,
     index: usize,
     with_id: bool,

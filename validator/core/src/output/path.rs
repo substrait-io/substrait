@@ -1,4 +1,12 @@
-use crate::primitives;
+//! Module for handling tree paths.
+//!
+//! The [`PathElement`], [`Path`], and [`PathBuf`] types are used to uniquely
+//! refer to any node in a Substrait plan (or, more accurately, any
+//! combination of protobuf and YAML data). [`Path`], and [`PathBuf`] work
+//! roughly the same as [`std::path::Path`], and [`std::path::PathBuf`], but
+//! for protobuf/YAML tree paths rather than filesystem paths.
+
+use crate::output::primitive_data;
 
 /// Element of a path to some field of a protobuf message and/or YAML file.
 #[derive(Clone, Debug, PartialEq)]
@@ -23,15 +31,22 @@ pub enum PathElement {
 impl std::fmt::Display for PathElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            PathElement::Field(field) => write!(f, ".{}", primitives::as_ident_or_string(field)),
+            PathElement::Field(field) => {
+                write!(f, ".{}", primitive_data::as_ident_or_string(field))
+            }
             PathElement::Repeated(field, index) => {
-                write!(f, ".{}[{}]", primitives::as_ident_or_string(field), index)
+                write!(
+                    f,
+                    ".{}[{}]",
+                    primitive_data::as_ident_or_string(field),
+                    index
+                )
             }
             PathElement::Variant(field, variant) => write!(
                 f,
                 ".{}<{}>",
-                primitives::as_ident_or_string(field),
-                primitives::as_ident_or_string(variant)
+                primitive_data::as_ident_or_string(field),
+                primitive_data::as_ident_or_string(variant)
             ),
             PathElement::Index(index) => write!(f, "[{}]", index),
         }

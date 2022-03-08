@@ -1,11 +1,12 @@
-use crate::context;
-use crate::diagnostic::Result;
-use crate::extension;
-use crate::parsing;
-use crate::path;
-use crate::proto;
-use crate::tree;
-use crate::yaml;
+//! Module providing parse/validation functions relating to extensions.
+
+use crate::input::proto;
+use crate::input::yaml;
+use crate::output::diagnostic::Result;
+use crate::output::extension;
+use crate::output::path;
+use crate::parse::context;
+use crate::parse::traversal;
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -32,65 +33,30 @@ fn parse_simple_extension_yaml_uri<S: AsRef<str>>(
     x: &S,
     y: &mut context::Context,
 ) -> Result<Arc<extension::YamlInfo>> {
-    let x = x.as_ref();
+    // The schema for YAML extension files.
+    static SCHEMA: once_cell::sync::Lazy<jsonschema::JSONSchema> =
+        once_cell::sync::Lazy::new(|| {
+            jsonschema::JSONSchema::compile(
+                &yaml::yaml_to_json(
+                    yaml_rust::YamlLoader::load_from_str(include_str!(
+                        "../../../../text/simple_extensions_schema.yaml"
+                    ))
+                    .unwrap()
+                    .pop()
+                    .unwrap(),
+                    &path::Path::default(),
+                )
+                .unwrap(),
+            )
+            .unwrap()
+        });
 
-    // Resolve the YAML file.
-    if let Some(root_input) = yaml::load_simple_extension_yaml(x, y) {
-        // Create an empty YamlData object.
-        y.state.yaml_data = Some(extension::YamlData::default());
-
-        // Create the node for the YAML data root.
-        let mut root_output = yaml::yaml_to_node(&root_input);
-
-        // Create the path element for referring to the YAML data root.
-        let path_element = path::PathElement::Field("data".to_string());
-
-        // Create the context for the YAML data root.
-        let mut root_context = context::Context {
-            output: &mut root_output,
-            state: y.state,
-            breadcrumb: &mut y.breadcrumb.next(path_element.clone()),
-            config: y.config,
-        };
-
-        // Create a PathBuf for the root node.
-        let root_path = root_context.breadcrumb.path.to_path_buf();
-
-        // Call the provided root parser.
-        if let Err(cause) = parse_simple_extension_yaml(&root_input, &mut root_context) {
-            diagnostic!(&mut root_context, Error, cause);
-        }
-
-        // Handle any fields not handled by the provided parse function.
-        parsing::handle_unknown_yaml_items(&root_input, &mut root_context, false);
-
-        // Push and return the completed node.
-        let root_output = Arc::new(root_output);
-        y.output.data.push(tree::NodeData::Child(tree::Child {
-            path_element,
-            node: root_output.clone(),
-            recognized: true,
-        }));
-
-        // Configure the reference to the root node in the YamlData object.
-        let mut node_ref = y.state.yaml_data.as_mut().unwrap();
-        node_ref.data.path = root_path;
-        node_ref.data.node = root_output;
-    }
-
-    // Construct the YAML data object.
-    let yaml_info = Arc::new(extension::YamlInfo {
-        uri: x.to_string(),
-        anchor_path: y.breadcrumb.parent.map(|x| x.path.to_path_buf()),
-        data: y.state.yaml_data.take(),
-    });
-
-    // The node type will have been set as if this is a normal string
-    // primitive. We want extra information though, namely the contents of the
-    // YAML file. So we change the node type.
-    y.output.node_type = tree::NodeType::YamlReference(yaml_info.clone());
-
-    Ok(yaml_info)
+    Ok(traversal::parse_yaml(
+        x,
+        y,
+        Some(&SCHEMA),
+        parse_simple_extension_yaml,
+    ))
 }
 
 /// Parse a mapping from a URI anchor to a YAML extension.

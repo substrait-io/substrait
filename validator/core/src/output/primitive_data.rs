@@ -1,3 +1,8 @@
+//! Module for primitive data elements.
+//!
+//! The [`PrimitiveData`] enum is used to represent primitive data in the
+//! input, for use in the leaf nodes of the tree.
+
 /// Enumeration for representing any type of primitive data that can be stored
 /// in YAML or protobuf.
 #[derive(Clone, Debug, PartialEq)]

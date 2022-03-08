@@ -1,18 +1,26 @@
+//! Module for the boilerplate code involved with traversing an input
+//! protobuf/YAML tree to form the output [tree](tree::Node).
+//!
+//! Refer to the documentation for [`parse`](mod@crate::parse) for more
+//! information.
+
 // FIXME: remove once validation code is finished. Also re-evaluate the
 // usefulness of the validator functions at that stage, i.e. remove them if
 // they weren't useful anywhere.
 #![allow(dead_code)]
 #![allow(unused_macros)]
 
-use crate::comment;
-use crate::context;
-use crate::data_type;
-use crate::diagnostic;
-use crate::path;
-use crate::primitives;
-use crate::proto::meta::*;
-use crate::tree;
-use crate::yaml;
+use crate::input::config;
+use crate::input::traits::InputNode;
+use crate::input::yaml;
+use crate::output::comment;
+use crate::output::data_type;
+use crate::output::diagnostic;
+use crate::output::extension;
+use crate::output::path;
+use crate::output::primitive_data;
+use crate::output::tree;
+use crate::parse::context;
 use std::sync::Arc;
 
 //=============================================================================
@@ -25,7 +33,7 @@ macro_rules! diagnostic {
         diagnostic!($context, $level, cause!($class, $($args),*))
     };
     ($context:expr, $level:ident, $cause:expr) => {
-        crate::parsing::push_diagnostic($context, crate::diagnostic::Level::$level, $cause)
+        crate::parse::traversal::push_diagnostic($context, crate::output::diagnostic::Level::$level, $cause)
     };
     ($context:expr, $diag:expr) => {
         $context.output.push_diagnostic($diag, &$context.config)
@@ -39,7 +47,7 @@ pub fn push_diagnostic(
     cause: diagnostic::Cause,
 ) {
     context.output.push_diagnostic(
-        diagnostic::Diagnostic {
+        diagnostic::RawDiagnostic {
             cause,
             level,
             path: context.breadcrumb.path.to_path_buf(),
@@ -51,14 +59,14 @@ pub fn push_diagnostic(
 /// Convenience/shorthand macro for pushing comments to a node.
 macro_rules! comment {
     ($context:expr, $($fmts:expr),*) => {
-        crate::parsing::push_comment($context, format!($($fmts),*), None)
+        crate::parse::traversal::push_comment($context, format!($($fmts),*), None)
     };
 }
 
 /// Convenience/shorthand macro for pushing comments to a node.
 macro_rules! link {
     ($context:expr, $link:expr, $($fmts:expr),*) => {
-        crate::parsing::push_comment($context, format!($($fmts),*), Some($link))
+        crate::parse::traversal::push_comment($context, format!($($fmts),*), Some($link))
     };
 }
 
@@ -83,7 +91,7 @@ pub fn push_comment<S: AsRef<str>>(
 /// exists for symmetry.
 macro_rules! data_type {
     ($context:expr, $typ:expr) => {
-        crate::parsing::push_data_type($context, $typ)
+        crate::parse::traversal::push_data_type($context, $typ)
     };
 }
 
@@ -110,7 +118,7 @@ macro_rules! proto_field {
         proto_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::parsing::push_proto_field(
+        crate::parse::traversal::push_proto_field(
             $input,
             $context,
             &$input.$field.as_ref(),
@@ -132,7 +140,7 @@ macro_rules! proto_boxed_field {
         proto_boxed_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::parsing::push_proto_field(
+        crate::parse::traversal::push_proto_field(
             $input,
             $context,
             &$input.$field,
@@ -155,7 +163,7 @@ pub fn push_proto_field<TP, TF, TR, FP, FV>(
     validator: FV,
 ) -> (Option<Arc<tree::Node>>, Option<TR>)
 where
-    TF: ProtoDatum,
+    TF: InputNode,
     FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
     FV: Fn(&TP, &mut context::Context, &tree::Node) -> diagnostic::Result<()>,
 {
@@ -171,10 +179,10 @@ where
         let field_input = field_input.deref();
 
         // Create the node for the child message.
-        let mut field_output = field_input.proto_data_to_node();
+        let mut field_output = field_input.data_to_node();
 
         // Create the path element for referring to the child node.
-        let path_element = if let Some(variant) = field_input.proto_data_variant() {
+        let path_element = if let Some(variant) = field_input.oneof_variant() {
             path::PathElement::Variant(field_name.to_string(), variant.to_string())
         } else {
             path::PathElement::Field(field_name.to_string())
@@ -230,7 +238,7 @@ macro_rules! proto_required_field {
         proto_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::parsing::push_proto_required_field(
+        crate::parse::traversal::push_proto_required_field(
             $input,
             $context,
             &$input.$field.as_ref(),
@@ -252,7 +260,7 @@ macro_rules! proto_boxed_required_field {
         proto_boxed_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::parsing::push_proto_required_field(
+        crate::parse::traversal::push_proto_required_field(
             $input,
             $context,
             &$input.$field,
@@ -273,7 +281,7 @@ macro_rules! proto_primitive_field {
         proto_primitive_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::parsing::push_proto_required_field(
+        crate::parse::traversal::push_proto_required_field(
             $input,
             $context,
             &Some(&$input.$field),
@@ -298,7 +306,7 @@ pub fn push_proto_required_field<TP, TF, TR, FP, FV>(
     validator: FV,
 ) -> (Arc<tree::Node>, Option<TR>)
 where
-    TF: ProtoDatum,
+    TF: InputNode,
     FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
     FV: Fn(&TP, &mut context::Context, &tree::Node) -> diagnostic::Result<()>,
 {
@@ -314,7 +322,7 @@ where
         (node, result)
     } else {
         diagnostic!(context, Error, ProtoMissingField, field_name);
-        (Arc::new(TF::proto_type_to_node()), None)
+        (Arc::new(TF::type_to_node()), None)
     }
 }
 
@@ -331,7 +339,7 @@ macro_rules! proto_repeated_field {
         proto_repeated_field!($input, $context, $field, $parser, |_, _, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
-        crate::parsing::push_proto_repeated_field(
+        crate::parse::traversal::push_proto_repeated_field(
             $input,
             $context,
             &$input.$field,
@@ -357,7 +365,7 @@ pub fn push_proto_repeated_field<TP, TF, TR, FP, FV>(
     validator: FV,
 ) -> (Vec<Arc<tree::Node>>, Vec<Option<TR>>)
 where
-    TF: ProtoDatum,
+    TF: InputNode,
     FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
     FV: Fn(&TP, &mut context::Context, &tree::Node, usize) -> diagnostic::Result<()>,
 {
@@ -374,7 +382,7 @@ where
         .enumerate()
         .map(|(index, field_input)| {
             // Create the node for the child message.
-            let mut field_output = field_input.proto_data_to_node();
+            let mut field_output = field_input.data_to_node();
 
             // Create the path element for referring to the child node.
             let path_element = path::PathElement::Repeated(field_name.to_string(), index);
@@ -422,12 +430,12 @@ where
 /// Handle all fields that haven't already been handled. If unknown_subtree
 /// is false, this also generates a diagnostic message if there were
 /// populated/non-default unhandled fields.
-pub fn handle_unknown_proto_fields<T: ProtoDatum>(
+pub fn handle_unknown_proto_fields<T: InputNode>(
     input: &T,
     context: &mut context::Context,
     unknown_subtree: bool,
 ) {
-    if input.proto_parse_unknown(context) && !unknown_subtree {
+    if input.parse_unknown(context) && !unknown_subtree {
         let mut fields = vec![];
         for data in context.output.data.iter() {
             if let tree::NodeData::Child(child) = data {
@@ -445,6 +453,67 @@ pub fn handle_unknown_proto_fields<T: ProtoDatum>(
 }
 
 //=============================================================================
+// Protobuf root message handling
+//=============================================================================
+
+/// Parses a serialized protobuf message using the given root parse function,
+/// initial state, and configuration.
+pub fn parse_proto<T, F, B>(
+    buffer: B,
+    root_name: &'static str,
+    root_parser: F,
+    state: &mut context::State,
+    config: &config::Config,
+) -> tree::Node
+where
+    T: prost::Message + InputNode + Default,
+    F: FnOnce(&T, &mut context::Context) -> diagnostic::Result<()>,
+    B: prost::bytes::Buf,
+{
+    match T::decode(buffer) {
+        Err(err) => {
+            // Create a minimal root node with just the decode error
+            // diagnostic.
+            let mut output = T::type_to_node();
+            output.push_diagnostic(
+                diagnostic::RawDiagnostic {
+                    cause: cause!(ProtoParseFailed, err),
+                    level: diagnostic::Level::Error,
+                    path: path::PathBuf {
+                        root: root_name,
+                        elements: vec![],
+                    },
+                },
+                config,
+            );
+            output
+        }
+        Ok(input) => {
+            // Create the root node.
+            let mut output = input.data_to_node();
+
+            // Create the root context.
+            let mut context = context::Context {
+                output: &mut output,
+                state,
+                breadcrumb: &mut context::Breadcrumb::new(root_name),
+                config,
+            };
+
+            // Call the provided parser function.
+            if let Err(cause) = root_parser(&input, &mut context) {
+                diagnostic!(&mut context, Error, cause);
+            }
+
+            // Handle any fields not handled by the provided parse function.
+            handle_unknown_proto_fields(&input, &mut context, false);
+
+            output
+        }
+    }
+}
+
+//=============================================================================
 // YAML optional field handling
 //=============================================================================
 
@@ -457,7 +526,9 @@ macro_rules! yaml_field {
         yaml_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:expr, $parser:expr, $validator:expr) => {
-        crate::parsing::push_yaml_field($input, $context, $field, false, $parser, $validator)
+        crate::parse::traversal::push_yaml_field(
+            $input, $context, $field, false, $parser, $validator,
+        )
     };
 }
 
@@ -486,7 +557,7 @@ where
 
     if let Some(field_input) = input.get(field_name) {
         // Create the node for the child message.
-        let mut field_output = yaml::yaml_to_node(field_input);
+        let mut field_output = field_input.data_to_node();
 
         // Create the path element for referring to the child node.
         let path_element = path::PathElement::Field(field_name.to_string());
@@ -537,7 +608,9 @@ macro_rules! yaml_element {
         yaml_element!($input, $context, $element, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $element:expr, $parser:expr, $validator:expr) => {
-        crate::parsing::push_yaml_element($input, $context, $element, false, $parser, $validator)
+        crate::parse::traversal::push_yaml_element(
+            $input, $context, $element, false, $parser, $validator,
+        )
     };
 }
 
@@ -560,7 +633,7 @@ where
 
     if let Some(field_input) = input.get(index) {
         // Create the node for the child message.
-        let mut field_output = yaml::yaml_to_node(field_input);
+        let mut field_output = field_input.data_to_node();
 
         // Create the path element for referring to the child node.
         let path_element = path::PathElement::Index(index);
@@ -615,7 +688,7 @@ macro_rules! yaml_required_field {
         yaml_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:expr, $parser:expr, $validator:expr) => {
-        crate::parsing::push_yaml_required_field(
+        crate::parse::traversal::push_yaml_required_field(
             $input, $context, $field, false, $parser, $validator,
         )
     };
@@ -647,9 +720,9 @@ where
     ) {
         (node, result)
     } else {
-        diagnostic!(context, Error, YamlMissingField, field_name);
+        diagnostic!(context, Error, YamlMissingKey, field_name);
         (
-            Arc::new(tree::NodeType::YamlPrimitive(primitives::PrimitiveData::Null).into()),
+            Arc::new(tree::NodeType::YamlPrimitive(primitive_data::PrimitiveData::Null).into()),
             None,
         )
     }
@@ -664,7 +737,7 @@ macro_rules! yaml_required_element {
         yaml_required_element!($input, $context, $field, $parser, |_, _, _| Ok(()))
     };
     ($input:expr, $context:expr, $index:expr, $parser:expr, $validator:expr) => {
-        crate::parsing::push_yaml_required_element(
+        crate::parse::traversal::push_yaml_required_element(
             $input, $context, $index, false, $parser, $validator,
         )
     };
@@ -692,7 +765,7 @@ where
     } else {
         diagnostic!(context, Error, YamlMissingElement, "index {}", index);
         (
-            Arc::new(tree::NodeType::YamlPrimitive(primitives::PrimitiveData::Null).into()),
+            Arc::new(tree::NodeType::YamlPrimitive(primitive_data::PrimitiveData::Null).into()),
             None,
         )
     }
@@ -710,116 +783,284 @@ pub fn handle_unknown_yaml_items(
     context: &mut context::Context,
     unknown_subtree: bool,
 ) {
-    match input {
-        yaml::Value::Array(array) => {
-            let mut unknown_indices = vec![];
-            for (index, _) in array.iter().enumerate() {
-                if !context
-                    .breadcrumb
-                    .fields_parsed
-                    .contains(&index.to_string())
-                {
-                    unknown_indices.push(index);
-                    push_yaml_element(array, context, index, true, |_, _| Ok(()), |_, _, _| Ok(()));
+    if input.parse_unknown(context) && !unknown_subtree {
+        let mut fields = vec![];
+        for data in context.output.data.iter() {
+            if let tree::NodeData::Child(child) = data {
+                if !child.recognized {
+                    fields.push(child.path_element.to_string());
                 }
             }
-            if !unknown_subtree && !unknown_indices.is_empty() {
-                let elements: String = itertools::Itertools::intersperse(
-                    unknown_indices.iter().map(|x| x.to_string()),
-                    ", ".to_string(),
-                )
-                .collect();
-                diagnostic!(context, Warning, YamlUnknownElement, elements);
+        }
+        if !fields.is_empty() {
+            let fields: String =
+                itertools::Itertools::intersperse(fields.into_iter(), ", ".to_string()).collect();
+
+            if input.as_array().is_some() {
+                diagnostic!(context, Warning, YamlUnknownElement, fields);
+            } else {
+                diagnostic!(context, Warning, YamlUnknownKey, fields);
             }
         }
-        yaml::Value::Object(object) => {
-            let mut all_fields: Vec<_> = object.keys().collect();
-            all_fields.sort();
-            let mut unknown_fields = vec![];
-            for field_name in all_fields.iter() {
-                if !context.breadcrumb.fields_parsed.contains(*field_name) {
-                    unknown_fields.push((*field_name).clone());
-                    push_yaml_field(
-                        object,
-                        context,
-                        field_name,
-                        true,
-                        |_, _| Ok(()),
-                        |_, _, _| Ok(()),
-                    );
-                }
-            }
-            if !unknown_subtree && !unknown_fields.is_empty() {
-                let fields: String =
-                    itertools::Itertools::intersperse(unknown_fields.into_iter(), ", ".to_string())
-                        .collect();
-                diagnostic!(context, Warning, YamlUnknownField, fields);
-            }
-        }
-        _ => {}
     }
 }
 
 //=============================================================================
-// Utilities for tests
+// YAML root handling
 //=============================================================================
 
-/// Convenience/shorthand macro for the with_context function.
-macro_rules! with_context {
-    ($function:expr, ()) => {
-        with_context!(&mut crate::context::State::default(), $function, ())
+/// Attempts to resolve a URI.
+fn resolve_uri(uri: &str, config: &config::Config) -> diagnostic::Result<config::BinaryData> {
+    // Apply yaml_uri_overrides configuration.
+    let remapped_uri = config
+        .yaml_uri_overrides
+        .iter()
+        .find_map(|(pattern, mapping)| {
+            if pattern.matches(uri) {
+                Some(mapping.as_ref().map(|x| &x[..]))
+            } else {
+                None
+            }
+        });
+    let is_remapped = remapped_uri.is_some();
+    let remapped_uri = remapped_uri.unwrap_or(Some(uri));
+
+    let remapped_uri = if let Some(remapped_uri) = remapped_uri {
+        remapped_uri
+    } else {
+        return Err(cause!(
+            YamlResolutionDisabled,
+            "YAML resolution for {} was disabled",
+            uri
+        ));
     };
-    ($function:expr, ($($args:expr),*)) => {
-        with_context!(&mut crate::context::State::default(), $function, ($($args),*))
+
+    // If a custom download function is specified, use it to resolve.
+    if let Some(ref resolver) = config.yaml_uri_resolver {
+        return resolver(remapped_uri)
+            .map_err(|x| cause!(YamlResolutionFailed, x.as_ref().to_string()));
+    }
+
+    // Parse as a URL.
+    let url = match url::Url::parse(remapped_uri) {
+        Ok(url) => url,
+        Err(e) => {
+            return Err(if is_remapped {
+                cause!(
+                    YamlResolutionFailed,
+                    "configured URI remapping ({}) did not parse as URL: {}",
+                    remapped_uri,
+                    e
+                )
+            } else {
+                cause!(
+                    YamlResolutionFailed,
+                    "failed to parse {} as URL: {}",
+                    remapped_uri,
+                    e
+                )
+            });
+        }
     };
-    (config = $config:expr, $function:expr, ()) => {
-        with_context!(&mut crate::context::State::default(), $config, $function, ())
+
+    // Reject anything that isn't file://-based.
+    if url.scheme() != "file" {
+        return Err(if is_remapped {
+            cause!(
+                YamlResolutionFailed,
+                "configured URI remapping ({}) does not use file:// scheme",
+                remapped_uri
+            )
+        } else {
+            cause!(YamlResolutionFailed, "URI does not use file:// scheme")
+        });
+    }
+
+    // Convert to path.
+    let path = match url.to_file_path() {
+        Ok(path) => path,
+        Err(_) => {
+            return Err(if is_remapped {
+                cause!(
+                    YamlResolutionFailed,
+                    "configured URI remapping ({}) could not be converted to file path",
+                    remapped_uri
+                )
+            } else {
+                cause!(
+                    YamlResolutionFailed,
+                    "URI could not be converted to file path"
+                )
+            });
+        }
     };
-    (config = $config:expr, $function:expr, ($($args:expr),*)) => {
-        with_context!(&mut crate::context::State::default(), $config, $function, ($($args),*))
-    };
-    ($state:expr, $function:expr, ()) => {
-        with_context!($state, &crate::context::Config::default(), $function, ())
-    };
-    ($state:expr, $function:expr, ($($args:expr),*)) => {
-        with_context!($state, &crate::context::Config::default(), $function, ($($args),*))
-    };
-    ($state:expr, $config:expr, $function:expr, ()) => {
-        crate::parsing::with_context(
-            $state,
-            $config,
-            $function,
-        )
-    };
-    ($state:expr, $config:expr, $function:expr, ($($args:expr),*)) => {
-        crate::parsing::with_context(
-            $state,
-            $config,
-            |y| $function($($args),*, y),
-        )
-    };
+
+    // Read the file.
+    std::fs::read(path)
+        .map_err(|e| {
+            if is_remapped {
+                cause!(
+                    YamlResolutionFailed,
+                    "failed to file remapping for URI ({}): {}",
+                    remapped_uri,
+                    e
+                )
+            } else {
+                cause!(YamlResolutionFailed, e)
+            }
+        })
+        .map(|d| -> config::BinaryData { Box::new(d) })
 }
 
-// Creates a temporary context and calls a function with it.
-pub fn with_context<R, F: FnOnce(&mut context::Context) -> R>(
-    state: &mut context::State,
-    config: &context::Config,
-    function: F,
-) -> (R, tree::Node) {
-    // Create the root node for the output.
-    let mut output = tree::NodeType::ProtoMessage("temp").into();
-
-    // Create a temporary context.
-    let mut context = context::Context {
-        output: &mut output,
-        state,
-        breadcrumb: &mut context::Breadcrumb::new("temp"),
-        config,
+/// Resolves a URI to a YAML file, parses the YAML syntax, and optionally
+/// validates it using the given JSON schema.
+fn load_yaml(
+    uri: &str,
+    context: &mut context::Context,
+    schema: Option<&jsonschema::JSONSchema>,
+) -> Option<yaml::Value> {
+    // Try to resolve the YAML file. Note that failure to resolve is a warning,
+    // not an error; it means the plan isn't valid in the current environment,
+    // but it might still be valid in another one, in particular for consumers
+    // that don't need to be able to resolve the YAML files to use the plan.
+    let binary_data = match resolve_uri(uri, context.config) {
+        Err(e) => {
+            diagnostic!(context, Warning, e);
+            return None;
+        }
+        Ok(x) => x,
     };
 
-    // Call the function.
-    let result = function(&mut context);
+    // Parse as UTF-8.
+    let string_data = match std::str::from_utf8(binary_data.as_ref().as_ref()) {
+        Err(e) => {
+            diagnostic!(context, Error, YamlParseFailed, e);
+            return None;
+        }
+        Ok(x) => x,
+    };
 
-    // Return the results.
-    (result, output)
+    // Parse as YAML.
+    let yaml_data = match yaml_rust::YamlLoader::load_from_str(string_data) {
+        Err(e) => {
+            diagnostic!(context, Error, YamlParseFailed, e);
+            return None;
+        }
+        Ok(x) => {
+            if x.len() > 1 {
+                diagnostic!(
+                    context,
+                    Warning,
+                    YamlParseFailed,
+                    "YAML file contains multiple documents; ignoring all but the first"
+                );
+            }
+            match x.into_iter().next() {
+                None => {
+                    diagnostic!(
+                        context,
+                        Error,
+                        YamlParseFailed,
+                        "YAML file contains zero documents"
+                    );
+                    return None;
+                }
+                Some(x) => x,
+            }
+        }
+    };
+
+    // Convert to JSON DOM.
+    let json_data = match yaml::yaml_to_json(yaml_data, &context.breadcrumb.path) {
+        Err(e) => {
+            diagnostic!(context, e);
+            return None;
+        }
+        Ok(x) => x,
+    };
+
+    // Validate with schema.
+    if let Some(schema) = schema {
+        if let Err(es) = schema.validate(&json_data) {
+            for e in es {
+                diagnostic!(context, Error, YamlSchemaValidationFailed, e);
+            }
+            return None;
+        }
+    }
+
+    Some(json_data)
+}
+
+/// Attempt to load and parse a YAML file using the given root parse function,
+/// initial state, and configuration.
+pub fn parse_yaml<TS, FP>(
+    uri: TS,
+    context: &mut context::Context,
+    schema: Option<&jsonschema::JSONSchema>,
+    parser: FP,
+) -> Arc<extension::YamlInfo>
+where
+    TS: AsRef<str>,
+    FP: Fn(&yaml::Value, &mut context::Context) -> diagnostic::Result<()>,
+{
+    let uri = uri.as_ref();
+
+    // Resolve the YAML file.
+    if let Some(root_input) = load_yaml(uri, context, schema) {
+        // Create an empty YamlData object.
+        context.state.yaml_data = Some(extension::YamlData::default());
+
+        // Create the node for the YAML data root.
+        let mut root_output = root_input.data_to_node();
+
+        // Create the path element for referring to the YAML data root.
+        let path_element = path::PathElement::Field("data".to_string());
+
+        // Create the context for the YAML data root.
+        let mut root_context = context::Context {
+            output: &mut root_output,
+            state: context.state,
+            breadcrumb: &mut context.breadcrumb.next(path_element.clone()),
+            config: context.config,
+        };
+
+        // Create a PathBuf for the root node.
+        let root_path = root_context.breadcrumb.path.to_path_buf();
+
+        // Call the provided root parser.
+        if let Err(cause) = parser(&root_input, &mut root_context) {
+            diagnostic!(&mut root_context, Error, cause);
+        }
+
+        // Handle any fields not handled by the provided parse function.
+        handle_unknown_yaml_items(&root_input, &mut root_context, false);
+
+        // Push and return the completed node.
+        let root_output = Arc::new(root_output);
+        context.output.data.push(tree::NodeData::Child(tree::Child {
+            path_element,
+            node: root_output.clone(),
+            recognized: true,
+        }));
+
+        // Configure the reference to the root node in the YamlData object.
+        let mut node_ref = context.state.yaml_data.as_mut().unwrap();
+        node_ref.data.path = root_path;
+        node_ref.data.node = root_output;
+    }
+
+    // Construct the YAML data object.
+    let yaml_info = Arc::new(extension::YamlInfo {
+        uri: uri.to_string(),
+        anchor_path: context.breadcrumb.parent.map(|x| x.path.to_path_buf()),
+        data: context.state.yaml_data.take(),
+    });
+
+    // The node type will have been set as if this is a normal string
+    // primitive. We want extra information though, namely the contents of the
+    // YAML file. So we change the node type.
+    context.output.node_type = tree::NodeType::YamlReference(yaml_info.clone());
+
+    yaml_info
 }

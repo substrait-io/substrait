@@ -1,6 +1,8 @@
-use crate::data_type;
-use crate::path;
-use crate::tree;
+//! Module for dealing with YAML-based Substrait extensions.
+
+use crate::output::data_type;
+use crate::output::path;
+use crate::output::tree;
 use std::collections::HashMap;
 use std::sync::Arc;
 

@@ -3,10 +3,17 @@ name = "substrait-validator-py"
 version = "0.1.0"
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]
-name = "substrait_validator"
 crate-type = ["cdylib"]
+
+# NOTE: we need to set the crate name to substrait_validator, because maturin
+# seems to insist on also using this name for the Python module, and it'd be
+# rather unfortunate if the Python module would need to be named
+# substrait_validator_py...
+name = "substrait_validator"
+
+# cargo doc especially can't deal with name collisions.
+doc = false
 
 [dependencies]
 substrait-validator-core = { path = "../core" }

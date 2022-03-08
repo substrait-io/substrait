@@ -1,8 +1,11 @@
+//! Module dealing with serializing an output [tree](tree::Node) to a byte
+//! stream in various formats.
+
 mod diagnostics;
 mod html;
 mod proto;
 
-use crate::tree;
+use crate::output::tree;
 
 /// Supported output formats for exporting.
 #[derive(Clone, Copy, Debug, PartialEq)]

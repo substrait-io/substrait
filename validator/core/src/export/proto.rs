@@ -1,11 +1,19 @@
-use crate::comment;
-use crate::data_type;
-use crate::diagnostic;
-use crate::extension;
-use crate::path;
-use crate::primitives;
-use crate::proto::substrait::validator;
-use crate::tree;
+//! This module provides an export format based on protobuf, to represent the
+//! output tree as accurately as possible.
+//!
+//! This is primarily intended to be used to cross programming language
+//! boundaries for the validator output, whenever the simplified formats are
+//! not comprehensive enough. The Python bindings specifically make extensive
+//! use of this.
+
+use crate::input::proto::substrait::validator;
+use crate::output::comment;
+use crate::output::data_type;
+use crate::output::diagnostic;
+use crate::output::extension;
+use crate::output::path;
+use crate::output::primitive_data;
+use crate::output::tree;
 use prost::Message;
 
 impl From<&tree::Node> for validator::Node {
@@ -48,8 +56,8 @@ impl From<&tree::Child> for validator::node::Child {
     }
 }
 
-impl From<&diagnostic::AdjustedDiagnostic> for validator::Diagnostic {
-    fn from(node: &diagnostic::AdjustedDiagnostic) -> Self {
+impl From<&diagnostic::Diagnostic> for validator::Diagnostic {
+    fn from(node: &diagnostic::Diagnostic) -> Self {
         Self {
             original_level: (&node.original_level).into(),
             adjusted_level: (&node.adjusted_level).into(),
@@ -138,33 +146,33 @@ impl From<&tree::NodeType> for validator::node::NodeType {
     }
 }
 
-impl From<&primitives::PrimitiveData> for validator::node::PrimitiveData {
-    fn from(node: &primitives::PrimitiveData) -> Self {
+impl From<&primitive_data::PrimitiveData> for validator::node::PrimitiveData {
+    fn from(node: &primitive_data::PrimitiveData) -> Self {
         Self {
             data: match node {
-                primitives::PrimitiveData::Null => None,
-                primitives::PrimitiveData::Bool(x) => {
+                primitive_data::PrimitiveData::Null => None,
+                primitive_data::PrimitiveData::Bool(x) => {
                     Some(validator::node::primitive_data::Data::Boolean(*x))
                 }
-                primitives::PrimitiveData::Unsigned(x) => {
+                primitive_data::PrimitiveData::Unsigned(x) => {
                     Some(validator::node::primitive_data::Data::Unsigned(*x))
                 }
-                primitives::PrimitiveData::Signed(x) => {
+                primitive_data::PrimitiveData::Signed(x) => {
                     Some(validator::node::primitive_data::Data::Signed(*x))
                 }
-                primitives::PrimitiveData::Float(x) => {
+                primitive_data::PrimitiveData::Float(x) => {
                     Some(validator::node::primitive_data::Data::Real(*x))
                 }
-                primitives::PrimitiveData::String(x) => Some(
+                primitive_data::PrimitiveData::String(x) => Some(
                     validator::node::primitive_data::Data::Unicode(x.to_string()),
                 ),
-                primitives::PrimitiveData::Bytes(x) => {
+                primitive_data::PrimitiveData::Bytes(x) => {
                     Some(validator::node::primitive_data::Data::Binary(x.clone()))
                 }
-                primitives::PrimitiveData::Enum(x) => Some(
+                primitive_data::PrimitiveData::Enum(x) => Some(
                     validator::node::primitive_data::Data::Variant(x.to_string()),
                 ),
-                primitives::PrimitiveData::Any(x) => {
+                primitive_data::PrimitiveData::Any(x) => {
                     Some(validator::node::primitive_data::Data::Any(x.clone()))
                 }
             },

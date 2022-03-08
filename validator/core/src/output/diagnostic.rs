@@ -3,7 +3,7 @@
 //! Since diagnostic messages are rather important for a validator (after all,
 //! getting a diagnostic message is hardly an exceptional case), they have
 //! quite a bit of metadata attached to them. Ultimately, the diagnostic
-//! messages attached to the tree (AdjustedDiagnostic) have the following
+//! messages attached to the tree ([`Diagnostic`]) have the following
 //! parameters:
 //!
 //!  - cause.message: an enumeration of various types of error messages, in
@@ -11,21 +11,22 @@
 //!    untyped (they just use String), but error information from other
 //!    crates is retained as much as possible.
 //!  - cause.classification: an enumeration of various bits of the validation
-//!    process where diagnostics might occur. Each Classification enum variant
-//!    can be converted to a unique number, known as the diagnostic code, which
-//!    the user of the library may use to easily programmatically determine
-//!    what caused a diagnostic in a language-agnostic way. The user may also
-//!    configure the validator in advance to promote or reduce the severity of
-//!    diagnostics, indexed by their code. The codes are furthermore organized
-//!    into groups, with up to 999 classes per group: the thousands digit and
-//!    up is the group identifier, and the less-significant digits form the
-//!    sub-code. Sub-code 0 is reserved to refer to the group as a whole.
-//!  - original_level: the error level that the validation code assigned to the
-//!    message. This can be Error, Warning, or Info, which correspond directly
-//!    to "this is definitely wrong," "this may or may not be wrong," and
-//!    "this conforms to the Substrait specification, but it's worth noting
+//!    process where diagnostics might occur. Each [`Classification`] enum
+//!    variant can be converted to a unique number, known as the diagnostic
+//!    code, which the user of the library may use to easily programmatically
+//!    determine what caused a diagnostic in a language-agnostic way. The user
+//!    may also configure the validator in advance to promote or reduce the
+//!    severity of diagnostics, indexed by their code. The codes are
+//!    furthermore organized into groups, with up to 999 classes per group: the
+//!    thousands digit and up is the group identifier, and the less-significant
+//!    digits form the sub-code. Sub-code 0 is reserved to refer to the group
+//!    as a whole.
+//!  - original_level: the error [`Level`] that the validation code assigned to
+//!    the message. This can be `Error`, `Warning`, or `Info`, which correspond
+//!    directly to "this is definitely wrong," "this may or may not be wrong,"
+//!    and "this conforms to the Substrait specification, but it's worth noting
 //!    anyway" respectively.
-//!  - adjusted_level: the error level after configuration-based adjustment.
+//!  - adjusted_level: the error [`Level`] after configuration-based adjustment.
 //!    This level is what's used by the high-level APIs to determine the
 //!    validity of a plan. Thus, a user can choose to ignore a particular error
 //!    if their consumer implementation can deal with it anyway, or they can
@@ -37,38 +38,8 @@
 //!    doesn't), or refer to a different location altogether (for instance to
 //!    point the user to the previous definition in a note following a
 //!    duplicate definition error).
-//!
-//! Most functions return Result<T, Cause> results. This type is abbreviated to
-//! just Result<T> in this module. Cause structs are normally constructed using
-//! the cause!() macro for convenience. This macro takes the name of the
-//! Classification variant as its first argument, and either something that
-//! converts into a supported error type or a set of format!() arguments as
-//! subsequent arguments.
-//!
-//! Some functions need a bit more control, and return Result<T, Diagnostic>
-//! instead, a.k.a. DiagResult<T>. This already includes error level and path
-//! information. The Diagnostic is constructed using the diag!() macro, which
-//! works the same as cause!(), but includes a path and level argument before
-//! the cause!() arguments. You can also pass a preconstructed Cause into it
-//! directly, as returned by an inner function call, for instance.
-//!
-//! Ultimately, the above Result and DiagResult enums end up in a parse
-//! function. The Err variant should then be handled by pushing the diagnostic
-//! into the Node that is being emitted by the parse function. For raw Cause
-//! structs (as returned via Result), the path will be set to that of the node
-//! that is being parsed, and the level will (usually) be set to Error (but
-//! this depends on context; for YAML resolution errors for example the level
-//! will be Warning). During this push operation, the Diagnostic is also
-//! converted into an AdjustedDiagnostic, with its adjusted_level set based on
-//! its classification number and the configuration passed to the validator by
-//! the user. This is all handled by the diagnostic!() macro and
-//! push_diagnostic() function, defined in the parsing module.
-//!
-//! Note that parse functions themselves also return Result<T>, such that the ?
-//! operator can be used in them. The error will then be handled by the parse
-//! function for the parent node.
 
-use crate::path;
+use crate::output::path;
 use num_traits::cast::FromPrimitive;
 use std::sync::Arc;
 use strum::EnumProperty;
@@ -223,13 +194,13 @@ pub enum Classification {
     #[strum(props(Description = "YAML does not conform to schema"))]
     YamlSchemaValidationFailed = 2004,
 
-    #[strum(props(Description = "missing required YAML field"))]
-    YamlMissingField = 2005,
+    #[strum(props(Description = "missing required YAML key"))]
+    YamlMissingKey = 2005,
 
     #[strum(props(
-        Description = "encountered values for YAML field(s) not yet understood by the validator"
+        Description = "encountered values for YAML key(s) not yet understood by the validator"
     ))]
-    YamlUnknownField = 2006,
+    YamlUnknownKey = 2006,
 
     #[strum(props(Description = "missing required YAML array element"))]
     YamlMissingElement = 2007,
@@ -375,9 +346,9 @@ macro_rules! cause {
         cause!($class, format!($format, $($args),*))
     };
     ($class:ident, $message:expr) => {
-        crate::diagnostic::Cause {
+        crate::output::diagnostic::Cause {
             message: std::sync::Arc::new($message.into()),
-            classification: crate::diagnostic::Classification::$class,
+            classification: crate::output::diagnostic::Classification::$class,
         }
     };
 }
@@ -404,7 +375,7 @@ pub enum Level {
 
 /// A diagnostic message, without configuration-based level override.
 #[derive(Clone, Debug, PartialEq, thiserror::Error)]
-pub struct Diagnostic {
+pub struct RawDiagnostic {
     /// The cause of the diagnostic.
     pub cause: Cause,
 
@@ -415,7 +386,7 @@ pub struct Diagnostic {
     pub path: path::PathBuf,
 }
 
-impl std::fmt::Display for Diagnostic {
+impl std::fmt::Display for RawDiagnostic {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self.level)?;
         if !f.alternate() {
@@ -427,7 +398,7 @@ impl std::fmt::Display for Diagnostic {
 
 /// A diagnostic message, including configuration-based level override.
 #[derive(Clone, Debug, PartialEq, thiserror::Error)]
-pub struct AdjustedDiagnostic {
+pub struct Diagnostic {
     /// The cause of the diagnostic.
     pub cause: Cause,
 
@@ -441,7 +412,7 @@ pub struct AdjustedDiagnostic {
     pub path: path::PathBuf,
 }
 
-impl std::fmt::Display for AdjustedDiagnostic {
+impl std::fmt::Display for Diagnostic {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{:?}", self.adjusted_level)?;
         match self.original_level.cmp(&self.adjusted_level) {
@@ -458,10 +429,10 @@ impl std::fmt::Display for AdjustedDiagnostic {
     }
 }
 
-impl Diagnostic {
+impl RawDiagnostic {
     /// Converts to an AdjustedDiagnostic by adding an adjusted level.
-    pub fn adjust_level(self, adjusted_level: Level) -> AdjustedDiagnostic {
-        AdjustedDiagnostic {
+    pub fn adjust_level(self, adjusted_level: Level) -> Diagnostic {
+        Diagnostic {
             cause: self.cause,
             original_level: self.level,
             adjusted_level,
@@ -476,16 +447,16 @@ macro_rules! diag {
         diag!($path, $level, cause!($class, $($args),*))
     };
     ($path:expr, $level:ident, $cause:expr) => {
-        crate::diagnostic::Diagnostic {
+        crate::output::diagnostic::RawDiagnostic {
             cause: $cause,
-            level: crate::diagnostic::Level::$level,
+            level: crate::output::diagnostic::Level::$level,
             path: $path
         }
     };
 }
 
 /// Result type for complete diagnostics, including path.
-pub type DiagResult<T> = std::result::Result<T, Diagnostic>;
+pub type DiagResult<T> = std::result::Result<T, RawDiagnostic>;
 
 #[cfg(test)]
 mod tests {

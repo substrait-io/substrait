@@ -30,7 +30,7 @@ pub extern "C" fn substrait_validator_get_last_error() -> *const libc::c_char {
 
 /// Parser/validator configuration handle.
 pub struct ConfigHandle {
-    pub config: substrait_validator_core::context::Config,
+    pub config: substrait_validator_core::Config,
 }
 
 /// Creates a parser/validator configuration structure.
@@ -38,7 +38,7 @@ pub struct ConfigHandle {
 pub extern "C" fn substrait_validator_config_new() -> *mut ConfigHandle {
     // Create a box to store the return value handle on the stack.
     let handle = Box::new(ConfigHandle {
-        config: substrait_validator_core::context::Config::new(),
+        config: substrait_validator_core::Config::new(),
     });
 
     // Convert the box to its raw pointer and relinquish ownership.
@@ -108,12 +108,11 @@ pub extern "C" fn substrait_validator_config_whitelist_any_url(
 
 /// Converts a positive/zero/negative integer into Info/Warning/Error
 /// respectively.
-fn int_to_level(x: i32) -> substrait_validator_core::diagnostic::Level {
-    use substrait_validator_core::diagnostic::Level;
+fn int_to_level(x: i32) -> substrait_validator_core::Level {
     match x.cmp(&0) {
-        std::cmp::Ordering::Greater => Level::Info,
-        std::cmp::Ordering::Equal => Level::Warning,
-        std::cmp::Ordering::Less => Level::Error,
+        std::cmp::Ordering::Greater => substrait_validator_core::Level::Info,
+        std::cmp::Ordering::Equal => substrait_validator_core::Level::Warning,
+        std::cmp::Ordering::Less => substrait_validator_core::Level::Error,
     }
 }
 
@@ -139,7 +138,7 @@ pub extern "C" fn substrait_validator_config_override_diagnostic_level(
     let config = unsafe { &mut (*config).config };
 
     // Parse the diagnostic class/code.
-    let class = match substrait_validator_core::diagnostic::Classification::from_code(class) {
+    let class = match substrait_validator_core::Classification::from_code(class) {
         Some(c) => c,
         None => {
             set_last_error(format!("unknown diagnostic class {}", class));
@@ -158,7 +157,7 @@ pub extern "C" fn substrait_validator_config_override_diagnostic_level(
 
 /// Overrides the resolution behavior for YAML URIs matching the given
 /// pattern. The pattern may include * and ? wildcards for glob-like matching
-/// (see https://docs.rs/glob/latest/glob/struct.Pattern.html for the complete
+/// (see [`Pattern`](substrait_validator_core::Pattern) for the complete
 /// syntax). If resolve_as is null, the YAML file will not be resolved;
 /// otherwise, it will be resolved as if the URI in the plan had been that
 /// string.
@@ -191,7 +190,7 @@ pub extern "C" fn substrait_validator_config_override_yaml_uri(
             return false;
         }
     };
-    let pattern = match substrait_validator_core::context::glob::Pattern::new(pattern) {
+    let pattern = match substrait_validator_core::Pattern::new(pattern) {
         Ok(p) => p,
         Err(e) => {
             set_last_error(format!("received invalid pattern: {}", e));
@@ -398,7 +397,7 @@ pub extern "C" fn substrait_validator_config_free(handle: *mut ConfigHandle) {
 
 /// Parse/validation result handle.
 pub struct ResultHandle {
-    pub root: substrait_validator_core::tree::Node,
+    pub root: substrait_validator_core::Node,
 }
 
 /// Parses the given byte buffer as a substrait.Plan message, using the given
@@ -426,7 +425,7 @@ pub extern "C" fn substrait_validator_parse(
 
     // Perform the actual parsing.
     let root = if config.is_null() {
-        substrait_validator_core::parse(data, &substrait_validator_core::context::Config::default())
+        substrait_validator_core::parse(data, &substrait_validator_core::Config::default())
     } else {
         substrait_validator_core::parse(data, unsafe { &(*config).config })
     };

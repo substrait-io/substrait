@@ -1,4 +1,11 @@
-use crate::path;
+//! Module for comments.
+//!
+//! [`Comment`]s can be added to nodes between the child edges to attach
+//! additional miscellaneous information that doesn't fit in any of the more
+//! structured types, intended purely to be formatted for and interpreted by
+//! humans.
+
+use crate::output::path;
 
 /// Representation of a comment message intended only for human consumption.
 #[derive(Clone, Debug, PartialEq, Default)]

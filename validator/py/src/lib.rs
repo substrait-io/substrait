@@ -10,7 +10,7 @@ use pyo3::types::PyBytes;
 /// Represents a validator/parser configuration.
 #[pyclass]
 struct Config {
-    config: substrait_validator_core::context::Config,
+    config: substrait_validator_core::Config,
 }
 
 #[pymethods]
@@ -18,7 +18,7 @@ impl Config {
     #[new]
     pub fn new() -> Self {
         Config {
-            config: substrait_validator_core::context::Config::new(),
+            config: substrait_validator_core::Config::new(),
         }
     }
 
@@ -47,18 +47,18 @@ impl Config {
         minimum: &str,
         maximum: &str,
     ) -> PyResult<()> {
-        fn str_to_level(level: &str) -> PyResult<substrait_validator_core::diagnostic::Level> {
+        fn str_to_level(level: &str) -> PyResult<substrait_validator_core::Level> {
             match level {
-                "info" => Ok(substrait_validator_core::diagnostic::Level::Info),
-                "warning" => Ok(substrait_validator_core::diagnostic::Level::Warning),
-                "error" => Ok(substrait_validator_core::diagnostic::Level::Error),
+                "info" => Ok(substrait_validator_core::Level::Info),
+                "warning" => Ok(substrait_validator_core::Level::Warning),
+                "error" => Ok(substrait_validator_core::Level::Error),
                 level => Err(PyValueError::new_err(format!(
                     "invalid level {:?}; must be \"info\", \"warning\", or \"error\"",
                     level
                 ))),
             }
         }
-        let class = match substrait_validator_core::diagnostic::Classification::from_code(class) {
+        let class = match substrait_validator_core::Classification::from_code(class) {
             Some(c) => c,
             None => {
                 return Err(PyValueError::new_err(format!(
@@ -79,7 +79,7 @@ impl Config {
     /// otherwise it should be a string representing the URI it should be
     /// resolved as.
     pub fn override_yaml_uri(&mut self, pattern: &str, resolve_as: Option<&str>) -> PyResult<()> {
-        let pattern = match substrait_validator_core::context::glob::Pattern::new(pattern) {
+        let pattern = match substrait_validator_core::Pattern::new(pattern) {
             Ok(p) => p,
             Err(e) => {
                 return Err(PyValueError::new_err(format!(
@@ -121,7 +121,7 @@ impl Config {
 /// check(), check_valid(), or check_not_invalid() to check validity.
 #[pyclass]
 struct ParseResult {
-    root: substrait_validator_core::tree::Node,
+    root: substrait_validator_core::Node,
 }
 
 #[pymethods]
@@ -132,10 +132,7 @@ impl ParseResult {
             root: if let Some(config) = config {
                 substrait_validator_core::parse(data, &config.config)
             } else {
-                substrait_validator_core::parse(
-                    data,
-                    &substrait_validator_core::context::Config::default(),
-                )
+                substrait_validator_core::parse(data, &substrait_validator_core::Config::default())
             },
         }
     }
@@ -157,7 +154,7 @@ impl ParseResult {
     /// validator.
     pub fn check_valid(&self) -> PyResult<()> {
         if let Some(diag) = substrait_validator_core::get_diagnostic(&self.root) {
-            if diag.adjusted_level >= substrait_validator_core::diagnostic::Level::Warning {
+            if diag.adjusted_level >= substrait_validator_core::Level::Warning {
                 return Err(PyValueError::new_err(diag.to_string()));
             }
         }
@@ -168,7 +165,7 @@ impl ParseResult {
     /// in the plan if the plan was proven to be invalid by the validator.
     pub fn check_not_invalid(&self) -> PyResult<()> {
         if let Some(diag) = substrait_validator_core::get_diagnostic(&self.root) {
-            if diag.adjusted_level >= substrait_validator_core::diagnostic::Level::Error {
+            if diag.adjusted_level >= substrait_validator_core::Level::Error {
                 return Err(PyValueError::new_err(diag.to_string()));
             }
         }
