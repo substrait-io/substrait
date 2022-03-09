@@ -17,12 +17,12 @@ if __name__ == '__main__':
         sys.exit(1)
 
     if sys.argv[1] == 'populate':
-        os.chdir(os.path.dirname(__file__))
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         substrait_validator_build.populate()
         sys.exit(0)
 
     if sys.argv[1] == 'clean':
-        os.chdir(os.path.dirname(__file__))
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         substrait_validator_build.clean()
         sys.exit(0)
 
