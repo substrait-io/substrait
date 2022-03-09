@@ -120,10 +120,10 @@ pub extern "C" fn substrait_validator_config_whitelist_any_url(
 /// Converts a positive/zero/negative integer into Info/Warning/Error
 /// respectively.
 fn int_to_level(x: i32) -> substrait_validator_core::Level {
-    match x.cmp(&0) {
-        std::cmp::Ordering::Greater => substrait_validator_core::Level::Info,
-        std::cmp::Ordering::Equal => substrait_validator_core::Level::Warning,
-        std::cmp::Ordering::Less => substrait_validator_core::Level::Error,
+    match x {
+        1..=i32::MAX => substrait_validator_core::Level::Info,
+        0 => substrait_validator_core::Level::Warning,
+        i32::MIN..=-1 => substrait_validator_core::Level::Error,
     }
 }
 

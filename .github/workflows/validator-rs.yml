@@ -15,7 +15,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - name: Run
+      - name: Check
         run: cargo check
 
   test-linux:
@@ -27,7 +27,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - name: Run
+      - name: Test
         run: cargo test
 
   test-windows:
@@ -64,7 +64,7 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt
-      - name: Run
+      - name: Rustfmt
         run: cargo fmt --all -- --check
 
   lint:
@@ -77,5 +77,5 @@ jobs:
           toolchain: stable
           override: true
           components: clippy
-      - name: Run
+      - name: Clippy
         run: cargo clippy -- -D warnings

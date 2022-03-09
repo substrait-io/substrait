@@ -1,11 +1,11 @@
 # C bindings for validator
 
 This directory contains a Rust/cbindgen project to generate C bindings for
-the validator library.
+the validator crate.
 
 ## Installation
 
-No binaries are published yet at this time.
+No binaries are published yet.
 
 ### Building manually
 

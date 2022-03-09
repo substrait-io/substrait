@@ -36,7 +36,7 @@ impl std::fmt::Display for DataType {
         if let Some(variation) = &self.variation {
             write!(f, "[{}]", variation)?;
         }
-        if self.parameters.is_empty() {
+        if !self.parameters.is_empty() {
             write!(f, "<")?;
             let mut first = true;
             for parameter in self.parameters.iter() {

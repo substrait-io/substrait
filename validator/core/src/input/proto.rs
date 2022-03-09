@@ -40,7 +40,7 @@ impl traits::ProtoPrimitive for bool {
     }
 
     fn proto_primitive_is_default(&self) -> bool {
-        !*self
+        *self == false
     }
 }
 
@@ -58,7 +58,7 @@ impl traits::ProtoPrimitive for u32 {
     }
 
     fn proto_primitive_is_default(&self) -> bool {
-        *self != 0
+        *self == 0
     }
 }
 
@@ -76,7 +76,7 @@ impl traits::ProtoPrimitive for u64 {
     }
 
     fn proto_primitive_is_default(&self) -> bool {
-        *self != 0
+        *self == 0
     }
 }
 
@@ -94,7 +94,7 @@ impl traits::ProtoPrimitive for i32 {
     }
 
     fn proto_primitive_is_default(&self) -> bool {
-        *self != 0
+        *self == 0
     }
 }
 
@@ -112,7 +112,7 @@ impl traits::ProtoPrimitive for i64 {
     }
 
     fn proto_primitive_is_default(&self) -> bool {
-        *self != 0
+        *self == 0
     }
 }
 
@@ -130,7 +130,7 @@ impl traits::ProtoPrimitive for f32 {
     }
 
     fn proto_primitive_is_default(&self) -> bool {
-        *self != 0.0
+        *self == 0.0
     }
 }
 
@@ -148,7 +148,7 @@ impl traits::ProtoPrimitive for f64 {
     }
 
     fn proto_primitive_is_default(&self) -> bool {
-        *self != 0.0
+        *self == 0.0
     }
 }
 
