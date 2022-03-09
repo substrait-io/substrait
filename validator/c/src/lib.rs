@@ -1,7 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // Functions dereferencing raw pointers are kind of par for the course in a C
-// interface.
+// interface, and if we have to mark effectively all functions unsafe here, we
+// can no longer selectively place unsafe {} blocks (there is no way to mark a
+// function as unsafe to use without implicitly allowing unsafe code to be used
+// in its implementation).
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
 use std::cell::RefCell;
@@ -47,6 +50,21 @@ pub extern "C" fn substrait_validator_config_new() -> *mut ConfigHandle {
     Box::into_raw(handle)
 }
 
+/// Frees memory associated with a configuration handle. No-op if given a
+/// nullptr.
+#[no_mangle]
+pub extern "C" fn substrait_validator_config_free(handle: *mut ConfigHandle) {
+    // Ignore null pointers.
+    if handle.is_null() {
+        return;
+    }
+
+    // UNSAFE: recover the box that we created the handle with and drop it.
+    // Assumes that the pointer was created by substrait_validator_config_new().
+    let config = unsafe { Box::from_raw(handle) };
+    drop(config);
+}
+
 /// Instructs the validator to ignore protobuf fields that it doesn't know
 /// about yet (i.e., that have been added to the Substrait protobuf
 /// descriptions, but haven't yet been implemented in the validator) if the
@@ -59,11 +77,14 @@ pub extern "C" fn substrait_validator_config_new() -> *mut ConfigHandle {
 pub extern "C" fn substrait_validator_config_ignore_unknown_fields_set_to_default(
     config: *mut ConfigHandle,
 ) -> bool {
-    // Unpack configuration handle, catching null pointers.
+    // Check for null.
     if config.is_null() {
         set_last_error("received null configuration handle");
         return false;
     }
+
+    // UNSAFE: unpack configuration handle. Assumes that the pointer was
+    // created by substrait_validator_config_new(), or behavior is undefined.
     let config = unsafe { &mut (*config).config };
 
     // Update configuration and return success.
@@ -85,19 +106,25 @@ pub extern "C" fn substrait_validator_config_allow_any_url(
     config: *mut ConfigHandle,
     pattern: *const libc::c_char,
 ) -> bool {
-    // Unpack configuration handle, catching null pointers.
+    // Check for nulls.
     if config.is_null() {
         set_last_error("received null configuration handle");
         return false;
     }
-    let config = unsafe { &mut (*config).config };
-
-    // Unpack URL, catching null pointers.
     if pattern.is_null() {
         set_last_error("received null pattern");
         return false;
     }
+
+    // UNSAFE: unpack configuration handle. Assumes that the pointer was
+    // created by substrait_validator_config_new(), or behavior is undefined.
+    let config = unsafe { &mut (*config).config };
+
+    // UNSAFE: unpack pattern string. Assumes that the pointer points to a
+    // null-terminated string.
     let pattern = unsafe { std::ffi::CStr::from_ptr(pattern) };
+
+    // Parse the pattern.
     let pattern = match pattern.to_str() {
         Ok(u) => u,
         Err(e) => {
@@ -142,11 +169,14 @@ pub extern "C" fn substrait_validator_config_override_diagnostic_level(
     minimum: i32,
     maximum: i32,
 ) -> bool {
-    // Unpack configuration handle, catching null pointers.
+    // Check for null.
     if config.is_null() {
         set_last_error("received null configuration handle");
         return false;
     }
+
+    // UNSAFE: unpack configuration handle. Assumes that the pointer was
+    // created by substrait_validator_config_new(), or behavior is undefined.
     let config = unsafe { &mut (*config).config };
 
     // Parse the diagnostic class/code.
@@ -182,19 +212,25 @@ pub extern "C" fn substrait_validator_config_override_yaml_uri(
     pattern: *const libc::c_char,
     resolve_as: *const libc::c_char,
 ) -> bool {
-    // Unpack configuration handle, catching null pointers.
+    // Check for nulls.
     if config.is_null() {
         set_last_error("received null configuration handle");
         return false;
     }
-    let config = unsafe { &mut (*config).config };
-
-    // Unpack and parse pattern, catching null pointers.
     if pattern.is_null() {
         set_last_error("received null pattern");
         return false;
     }
+
+    // UNSAFE: unpack configuration handle. Assumes that the pointer was
+    // created by substrait_validator_config_new(), or behavior is undefined.
+    let config = unsafe { &mut (*config).config };
+
+    // UNSAFE: unpack pattern string. Assumes that the pointer points to a
+    // null-terminated string.
     let pattern = unsafe { std::ffi::CStr::from_ptr(pattern) };
+
+    // Parse the pattern.
     let pattern = match pattern.to_str() {
         Ok(p) => p,
         Err(e) => {
@@ -214,7 +250,10 @@ pub extern "C" fn substrait_validator_config_override_yaml_uri(
     let resolve_as = if resolve_as.is_null() {
         None
     } else {
+        // UNSAFE: unpack resolve_as string. Assumes that the pointer points to
+        // a null-terminated string.
         let resolve_as = unsafe { std::ffi::CStr::from_ptr(resolve_as) };
+
         Some(match resolve_as.to_str() {
             Ok(p) => p,
             Err(e) => {
@@ -285,6 +324,8 @@ impl Default for ApplicationBuffer {
 impl Drop for ApplicationBuffer {
     fn drop(&mut self) {
         if let Some(deleter) = self.deleter {
+            // UNSAFE: assumes that the deleter function passed by the user is
+            // valid.
             unsafe { deleter(self.deleter_user, self.buf, self.size) }
         }
     }
@@ -292,6 +333,9 @@ impl Drop for ApplicationBuffer {
 
 impl AsRef<[u8]> for ApplicationBuffer {
     fn as_ref(&self) -> &[u8] {
+        // UNSAFE: assumes that the pointer to the buffer returned by the
+        // application is non-null, that the pointed-to byte up to that byte
+        // plus self.size bytes can be dereferenced.
         unsafe { std::slice::from_raw_parts(self.buf, self.size) }
     }
 }
@@ -339,11 +383,14 @@ pub extern "C" fn substrait_validator_config_yaml_uri_resolver(
     config: *mut ConfigHandle,
     resolver: Resolver,
 ) -> bool {
-    // Unpack configuration handle, catching null pointers.
+    // Check for nulls.
     if config.is_null() {
         set_last_error("received null configuration handle");
         return false;
     }
+
+    // UNSAFE: unpack configuration handle. Assumes that the pointer was
+    // created by substrait_validator_config_new(), or behavior is undefined.
     let config = unsafe { &mut (*config).config };
 
     // Unpack resolution function.
@@ -366,6 +413,9 @@ pub extern "C" fn substrait_validator_config_yaml_uri_resolver(
             }
         };
         let mut buffer = ApplicationBuffer::default();
+
+        // UNSAFE: assumes that the resolver function passed by the user is
+        // valid.
         let result = unsafe {
             resolver(
                 uri.as_ptr(),
@@ -375,6 +425,7 @@ pub extern "C" fn substrait_validator_config_yaml_uri_resolver(
                 &mut buffer.deleter_user,
             )
         };
+
         if result {
             if buffer.buf.is_null() {
                 Err(ApplicationError::new(
@@ -390,21 +441,6 @@ pub extern "C" fn substrait_validator_config_yaml_uri_resolver(
         }
     });
     true
-}
-
-/// Frees memory associated with a configuration handle. No-op if given a
-/// nullptr.
-#[no_mangle]
-pub extern "C" fn substrait_validator_config_free(handle: *mut ConfigHandle) {
-    // Ignore null pointers.
-    if handle.is_null() {
-        return;
-    }
-
-    // Recover the box that we created the handle with and drop it.
-    unsafe {
-        drop(Box::from_raw(handle));
-    }
 }
 
 /// Parse/validation result handle.
@@ -432,13 +468,15 @@ pub extern "C" fn substrait_validator_parse(
         return std::ptr::null_mut();
     }
 
-    // Convert the incoming buffer information into a slice.
+    // UNSAFE: convert the incoming buffer information into a slice.
     let data = unsafe { std::slice::from_raw_parts(data, size.try_into().unwrap()) };
 
     // Perform the actual parsing.
     let root = if config.is_null() {
         substrait_validator_core::parse(data, &substrait_validator_core::Config::default())
     } else {
+        // UNSAFE: unpack configuration handle. Assumes that the pointer was
+        // created by substrait_validator_config_new(), or behavior is undefined.
         substrait_validator_core::parse(data, unsafe { &(*config).config })
     };
 
@@ -458,10 +496,10 @@ pub extern "C" fn substrait_validator_free(handle: *mut ResultHandle) {
         return;
     }
 
-    // Recover the box that we created the handle with and drop it.
-    unsafe {
-        drop(Box::from_raw(handle));
-    }
+    // UNSAFE: recover the box that we created the handle with and drop it.
+    // Assumes that the pointer was created by substrait_validator_parse().
+    let handle = unsafe { Box::from_raw(handle) };
+    drop(handle);
 }
 
 /// Returns whether the given parse result handle refers to a valid (positive
@@ -469,7 +507,9 @@ pub extern "C" fn substrait_validator_free(handle: *mut ResultHandle) {
 /// (0 return value).
 #[no_mangle]
 pub extern "C" fn substrait_validator_check(handle: *const ResultHandle) -> i32 {
-    // Dereference the handle.
+    // UNSAFE: dereference the result handle. Assumes that the pointer was
+    // created by substrait_validator_parse(), or that it is null (in which
+    // case an exception is thrown safely).
     let handle = unsafe { handle.as_ref() };
     if handle.is_none() {
         return -1;
@@ -490,7 +530,9 @@ fn export(
     handle: *const ResultHandle,
     size: *mut u64,
 ) -> *mut u8 {
-    // Dereference the handle.
+    // UNSAFE: dereference the result handle. Assumes that the pointer was
+    // created by substrait_validator_parse(), or that it is null (in which
+    // case an exception is thrown safely).
     let handle = unsafe { handle.as_ref() };
     if handle.is_none() {
         set_last_error("received null handle");
@@ -498,10 +540,12 @@ fn export(
     }
     let root = &handle.as_ref().unwrap().root;
 
-    // Create a byte vector as output. The first 8 bytes are reserved: we'll
-    // store the length of the vector in there, and advance the pointer beyond
-    // this length before passing the data to the user.
-    let mut data: Vec<u8> = vec![0, 0, 0, 0, 0, 0, 0, 0];
+    // Create a byte vector as output. The first 16 bytes are reserved: we'll
+    // store the length and capacity of the vector in there, and advance the
+    // pointer beyond this length before passing the data to the user. This
+    // allows us to fully recover the vector from just the returned pointer
+    // later, which we need in order to drop it safely.
+    let mut data: Vec<u8> = vec![0; 16];
 
     // Perform the actual export function.
     if let Err(e) = substrait_validator_core::export(&mut data, format, root) {
@@ -509,34 +553,74 @@ fn export(
         return std::ptr::null_mut();
     }
 
+    // UNSAFE: pass the length to the user, if they wanted to know about it.
+    // Assumes that the size pointer, if non-null, points to a writable and
+    // appropriately aligned memory location.
+    if let Some(size) = unsafe { size.as_mut() } {
+        *size = (data.len() - 16).try_into().unwrap();
+    }
+
     // Append a null character, to prevent pain and misery if the user treats
     // the buffer as a null-terminated string.
     data.push(0);
 
-    // Make sure vec.len() == vec.capacity() so we don't have to store both.
-    data.shrink_to_fit();
-
-    // Save the length (and capacity) of the vector to the start of said
-    // vector. We'll recover it from there in
-    // substrait_validator_free_exported(), so we don't have to rely on the
-    // user to save this data.
+    // Save the length and capacity of the vector to the start of said
+    // vector, so we can recover them later.
     let len: u64 = data.len().try_into().unwrap();
     data[..8].clone_from_slice(&len.to_ne_bytes());
-
-    // Also pass the length to the user, if they wanted to know about it.
-    if let Some(size) = unsafe { size.as_mut() } {
-        // Note that the true size is smaller than the vector because of the
-        // 8-byte length prefix and the 1-byte null-termination character.
-        *size = len - 9;
-    }
+    let capacity: u64 = data.capacity().try_into().unwrap();
+    data[8..16].clone_from_slice(&capacity.to_ne_bytes());
 
     // Get the pointer to the vector, and relinquish ownership.
     let ptr = data.as_mut_ptr();
     std::mem::forget(data);
 
-    // Advance the pointer beyond the bytes that we're using to store the size
-    // of the vector.
-    unsafe { ptr.add(8) }
+    // UNSAFE: advance the pointer beyond the bytes that we're using to store
+    // the size of the vector. This assumes that advancing by 16 bytes doesn't
+    // advance beyond the end of the buffer, which should not be possible, as
+    // the buffer is at least 17 bytes long (8 bytes length, 8 bytes capacity,
+    // and null termination byte).
+    unsafe { ptr.add(16) }
+}
+
+/// Frees memory associated with an exported buffer. No-op if given a nullptr.
+#[no_mangle]
+pub extern "C" fn substrait_validator_free_exported(data: *mut u8) {
+    // Don't do anything if the user passed nullptr.
+    if data.is_null() {
+        return;
+    }
+
+    // UNSAFE: recover the pointer to the vector data. Assumes that the pointer
+    // was (ultimately) created using export(), in which case this just
+    // reverses the pointer arithmetic done at the end of its body.
+    let buffer_ptr = unsafe { data.sub(16) };
+
+    // UNSAFE: recover the vector length from the first 8 bytes. Assumes that
+    // these 8 bytes are readable.
+    let length_ptr = buffer_ptr;
+    let length = u64::from_ne_bytes(
+        unsafe { std::slice::from_raw_parts(length_ptr, 8) }
+            .try_into()
+            .unwrap(),
+    );
+    let length = usize::try_from(length).unwrap();
+
+    // UNSAFE: recover the vector capacity from the next 8 bytes. Assumes that
+    // these 8 bytes are readable.
+    let capacity_ptr = unsafe { buffer_ptr.add(8) };
+    let capacity = u64::from_ne_bytes(
+        unsafe { std::slice::from_raw_parts(capacity_ptr, 8) }
+            .try_into()
+            .unwrap(),
+    );
+    let capacity = usize::try_from(capacity).unwrap();
+
+    // UNSAFE: recover the vector and drop it. Assumes that the recovered
+    // pointer, length, and capacity do indeed form the raw parts of a valid
+    // Vec.
+    let vec = unsafe { Vec::from_raw_parts(buffer_ptr, length, capacity) };
+    drop(vec);
 }
 
 /// Converts the given parse result to a multiline, null-terminated string,
@@ -584,29 +668,4 @@ pub extern "C" fn substrait_validator_export_proto(
         handle,
         size,
     )
-}
-
-/// Frees memory associated with an exported buffer. No-op if given a nullptr.
-#[no_mangle]
-pub extern "C" fn substrait_validator_free_exported(data: *mut u8) {
-    // Don't do anything if the user passed nullptr.
-    if data.is_null() {
-        return;
-    }
-
-    // Point the pointer to the start of the allocated region.
-    let data = unsafe { data.sub(8) };
-
-    // Recover the length of the vector.
-    let len = u64::from_ne_bytes(
-        unsafe { std::slice::from_raw_parts(data, 8) }
-            .try_into()
-            .unwrap(),
-    );
-    let len = usize::try_from(len).unwrap();
-
-    // Recover the vector and drop it.
-    unsafe {
-        drop(Vec::from_raw_parts(data, len, len));
-    }
 }
