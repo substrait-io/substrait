@@ -137,8 +137,14 @@ where
         })
         .ok();
 
-    // Handle any fields not handled by the provided parse function.
-    handle_unknown_proto_fields(child, &mut field_context, unknown_subtree);
+    // Handle any fields not handled by the provided parse function. Only
+    // generate a warning diagnostic for unhandled children if the parse
+    // function succeeded and we're not already in an unknown subtree.
+    handle_unknown_children(
+        child,
+        &mut field_context,
+        result.is_some() && !unknown_subtree,
+    );
 
     // Push and return the completed node.
     let field_output = Arc::new(field_output);
@@ -149,6 +155,39 @@ where
     }));
 
     (field_output, result)
+}
+
+/// Handle all children that haven't already been handled. If with_diagnostic
+/// is set, this also generates a diagnostic message if there were
+/// populated/non-default unhandled fields.
+fn handle_unknown_children<T: InputNode>(
+    input: &T,
+    context: &mut context::Context,
+    with_diagnostic: bool,
+) {
+    if input.parse_unknown(context) && with_diagnostic {
+        let mut fields = vec![];
+        for data in context.output.data.iter() {
+            if let tree::NodeData::Child(child) = data {
+                if !child.recognized {
+                    fields.push(child.path_element.to_string_without_dot());
+                }
+            }
+        }
+        if !fields.is_empty() {
+            let fields: String =
+                itertools::Itertools::intersperse(fields.into_iter(), ", ".to_string()).collect();
+            diagnostic!(
+                context,
+                Warning,
+                NotYetImplemented,
+                format!(
+                    "the following child nodes were not recognized by the validator: {}",
+                    fields
+                )
+            );
+        }
+    }
 }
 
 //=============================================================================
@@ -360,35 +399,6 @@ where
 }
 
 //=============================================================================
-// Unknown protobuf field handling
-//=============================================================================
-
-/// Handle all fields that haven't already been handled. If unknown_subtree
-/// is false, this also generates a diagnostic message if there were
-/// populated/non-default unhandled fields.
-pub fn handle_unknown_proto_fields<T: InputNode>(
-    input: &T,
-    context: &mut context::Context,
-    unknown_subtree: bool,
-) {
-    if input.parse_unknown(context) && !unknown_subtree {
-        let mut fields = vec![];
-        for data in context.output.data.iter() {
-            if let tree::NodeData::Child(child) = data {
-                if !child.recognized {
-                    fields.push(child.path_element.to_string_without_dot());
-                }
-            }
-        }
-        if !fields.is_empty() {
-            let fields: String =
-                itertools::Itertools::intersperse(fields.into_iter(), ", ".to_string()).collect();
-            diagnostic!(context, Warning, ProtoUnknownField, fields);
-        }
-    }
-}
-
-//=============================================================================
 // Protobuf root message handling
 //=============================================================================
 
@@ -437,12 +447,16 @@ where
             };
 
             // Call the provided parser function.
-            if let Err(cause) = root_parser(&input, &mut context) {
-                diagnostic!(&mut context, Error, cause);
-            }
+            let success = root_parser(&input, &mut context)
+                .map_err(|cause| {
+                    diagnostic!(&mut context, Error, cause);
+                })
+                .is_ok();
 
             // Handle any fields not handled by the provided parse function.
-            handle_unknown_proto_fields(&input, &mut context, false);
+            // Only generate a warning diagnostic for unhandled children if the
+            // parse function succeeded.
+            handle_unknown_children(&input, &mut context, success);
 
             output
         }
@@ -612,40 +626,6 @@ where
             Arc::new(tree::NodeType::YamlPrimitive(primitive_data::PrimitiveData::Null).into()),
             None,
         )
-    }
-}
-
-//=============================================================================
-// Unknown YAML field handling
-//=============================================================================
-
-/// Handle all fields that haven't already been handled. If unknown_subtree
-/// is false, this also generates a diagnostic message if there were
-/// populated/non-default unhandled fields.
-pub fn handle_unknown_yaml_items(
-    input: &yaml::Value,
-    context: &mut context::Context,
-    unknown_subtree: bool,
-) {
-    if input.parse_unknown(context) && !unknown_subtree {
-        let mut fields = vec![];
-        for data in context.output.data.iter() {
-            if let tree::NodeData::Child(child) = data {
-                if !child.recognized {
-                    fields.push(child.path_element.to_string_without_dot());
-                }
-            }
-        }
-        if !fields.is_empty() {
-            let fields: String =
-                itertools::Itertools::intersperse(fields.into_iter(), ", ".to_string()).collect();
-
-            if input.as_array().is_some() {
-                diagnostic!(context, Warning, YamlUnknownElement, fields);
-            } else {
-                diagnostic!(context, Warning, YamlUnknownKey, fields);
-            }
-        }
     }
 }
 
@@ -873,12 +853,14 @@ where
         let root_path = root_context.breadcrumb.path.to_path_buf();
 
         // Call the provided root parser.
-        if let Err(cause) = parser(&root_input, &mut root_context) {
-            diagnostic!(&mut root_context, Error, cause);
-        }
+        let success = parser(&root_input, &mut root_context)
+            .map_err(|cause| {
+                diagnostic!(&mut root_context, Error, cause);
+            })
+            .is_ok();
 
         // Handle any fields not handled by the provided parse function.
-        handle_unknown_yaml_items(&root_input, &mut root_context, false);
+        handle_unknown_children(&root_input, &mut root_context, success);
 
         // Push and return the completed node.
         let root_output = Arc::new(root_output);

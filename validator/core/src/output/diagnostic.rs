@@ -164,11 +164,6 @@ pub enum Classification {
     #[strum(props(Description = "missing required protobuf field"))]
     ProtoMissingField = 1002,
 
-    #[strum(props(
-        Description = "encountered values for protobuf field(s) not yet understood by the validator"
-    ))]
-    ProtoUnknownField = 1003,
-
     #[strum(props(Description = "encountered a protobuf \"any\""))]
     ProtoAny = 1004,
 
@@ -197,18 +192,8 @@ pub enum Classification {
     #[strum(props(Description = "missing required YAML key"))]
     YamlMissingKey = 2005,
 
-    #[strum(props(
-        Description = "encountered values for YAML key(s) not yet understood by the validator"
-    ))]
-    YamlUnknownKey = 2006,
-
     #[strum(props(Description = "missing required YAML array element"))]
     YamlMissingElement = 2007,
-
-    #[strum(props(
-        Description = "encountered values for YAML array element(s) not yet understood by the validator"
-    ))]
-    YamlUnknownElement = 2008,
 
     // Link resolution diagnostics (group 3).
     #[strum(props(HiddenDescription = "link resolution diagnostic"))]
