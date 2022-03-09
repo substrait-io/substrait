@@ -104,6 +104,54 @@ pub fn push_data_type(context: &mut context::Context, data_type: data_type::Data
 }
 
 //=============================================================================
+// Generic code for field handling
+//=============================================================================
+
+/// Parses a child node and pushes it into the provided parent context.
+fn push_child<TF, TR, FP>(
+    context: &mut context::Context,
+    child: &TF,
+    path_element: path::PathElement,
+    unknown_subtree: bool,
+    parser: &mut FP,
+) -> (Arc<tree::Node>, Option<TR>)
+where
+    TF: InputNode,
+    FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+{
+    // Create the node for the child.
+    let mut field_output = child.data_to_node();
+
+    // Create the context for calling the parse function for the child.
+    let mut field_context = context::Context {
+        output: &mut field_output,
+        state: context.state,
+        breadcrumb: &mut context.breadcrumb.next(path_element.clone()),
+        config: context.config,
+    };
+
+    // Call the provided parser function.
+    let result = parser(child, &mut field_context)
+        .map_err(|cause| {
+            diagnostic!(&mut field_context, Error, cause);
+        })
+        .ok();
+
+    // Handle any fields not handled by the provided parse function.
+    handle_unknown_proto_fields(child, &mut field_context, unknown_subtree);
+
+    // Push and return the completed node.
+    let field_output = Arc::new(field_output);
+    context.output.data.push(tree::NodeData::Child(tree::Child {
+        path_element,
+        node: field_output.clone(),
+        recognized: !unknown_subtree,
+    }));
+
+    (field_output, result)
+}
+
+//=============================================================================
 // Protobuf optional field handling
 //=============================================================================
 
@@ -146,11 +194,11 @@ pub fn push_proto_field<TF, TR, FP>(
     field: &Option<impl std::ops::Deref<Target = TF>>,
     field_name: &'static str,
     unknown_subtree: bool,
-    parser: FP,
+    mut parser: FP,
 ) -> (Option<Arc<tree::Node>>, Option<TR>)
 where
     TF: InputNode,
-    FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
 {
     if !context
         .breadcrumb
@@ -161,44 +209,18 @@ where
     }
 
     if let Some(field_input) = field {
-        let field_input = field_input.deref();
-
-        // Create the node for the child message.
-        let mut field_output = field_input.data_to_node();
-
-        // Create the path element for referring to the child node.
         let path_element = if let Some(variant) = field_input.oneof_variant() {
             path::PathElement::Variant(field_name.to_string(), variant.to_string())
         } else {
             path::PathElement::Field(field_name.to_string())
         };
-
-        // Create the context for the child message.
-        let mut field_context = context::Context {
-            output: &mut field_output,
-            state: context.state,
-            breadcrumb: &mut context.breadcrumb.next(path_element.clone()),
-            config: context.config,
-        };
-
-        // Call the provided parser function.
-        let result = parser(field_input, &mut field_context)
-            .map_err(|cause| {
-                diagnostic!(&mut field_context, Error, cause);
-            })
-            .ok();
-
-        // Handle any fields not handled by the provided parse function.
-        handle_unknown_proto_fields(field_input, &mut field_context, unknown_subtree);
-
-        // Push and return the completed node.
-        let field_output = Arc::new(field_output);
-        context.output.data.push(tree::NodeData::Child(tree::Child {
+        let (field_output, result) = push_child(
+            context,
+            field_input.deref(),
             path_element,
-            node: field_output.clone(),
-            recognized: !unknown_subtree,
-        }));
-
+            unknown_subtree,
+            &mut parser,
+        );
         (Some(field_output), result)
     } else {
         (None, None)
@@ -266,14 +288,14 @@ pub fn push_proto_required_field<TF, TR, FP>(
     field: &Option<impl std::ops::Deref<Target = TF>>,
     field_name: &'static str,
     unknown_subtree: bool,
-    parser: FP,
+    mut parser: FP,
 ) -> (Arc<tree::Node>, Option<TR>)
 where
     TF: InputNode,
-    FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
 {
     if let (Some(node), result) =
-        push_proto_field(context, field, field_name, unknown_subtree, parser)
+        push_proto_field(context, field, field_name, unknown_subtree, &mut parser)
     {
         (node, result)
     } else {
@@ -308,11 +330,11 @@ pub fn push_proto_repeated_field<TF, TR, FP>(
     field: &[TF],
     field_name: &'static str,
     unknown_subtree: bool,
-    parser: FP,
+    mut parser: FP,
 ) -> (Vec<Arc<tree::Node>>, Vec<Option<TR>>)
 where
     TF: InputNode,
-    FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
 {
     if !context
         .breadcrumb
@@ -325,40 +347,14 @@ where
     field
         .iter()
         .enumerate()
-        .map(|(index, field_input)| {
-            // Create the node for the child message.
-            let mut field_output = field_input.data_to_node();
-
-            // Create the path element for referring to the child node.
-            let path_element = path::PathElement::Repeated(field_name.to_string(), index);
-
-            // Create the context for the child message.
-            let mut field_context = context::Context {
-                output: &mut field_output,
-                state: context.state,
-                breadcrumb: &mut context.breadcrumb.next(path_element.clone()),
-                config: context.config,
-            };
-
-            // Call the provided parser function.
-            let result = parser(field_input, &mut field_context)
-                .map_err(|cause| {
-                    diagnostic!(&mut field_context, Error, cause);
-                })
-                .ok();
-
-            // Handle any fields not handled by the provided parse function.
-            handle_unknown_proto_fields(field_input, &mut field_context, unknown_subtree);
-
-            // Push the completed node.
-            let field_output = Arc::new(field_output);
-            context.output.data.push(tree::NodeData::Child(tree::Child {
-                path_element,
-                node: field_output.clone(),
-                recognized: !unknown_subtree,
-            }));
-
-            (field_output, result)
+        .map(|(index, child)| {
+            push_child(
+                context,
+                child,
+                path::PathElement::Repeated(field_name.to_string(), index),
+                unknown_subtree,
+                &mut parser,
+            )
         })
         .unzip()
 }
@@ -473,11 +469,11 @@ pub fn push_yaml_field<TS, TR, FP>(
     context: &mut context::Context,
     field_name: TS,
     unknown_subtree: bool,
-    parser: FP,
+    mut parser: FP,
 ) -> (Option<Arc<tree::Node>>, Option<TR>)
 where
     TS: AsRef<str>,
-    FP: Fn(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnMut(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
 {
     let field_name = field_name.as_ref();
     if !context
@@ -488,39 +484,14 @@ where
         panic!("field {} was parsed multiple times", field_name);
     }
 
-    if let Some(field_input) = input.get(field_name) {
-        // Create the node for the child message.
-        let mut field_output = field_input.data_to_node();
-
-        // Create the path element for referring to the child node.
-        let path_element = path::PathElement::Field(field_name.to_string());
-
-        // Create the context for the child message.
-        let mut field_context = context::Context {
-            output: &mut field_output,
-            state: context.state,
-            breadcrumb: &mut context.breadcrumb.next(path_element.clone()),
-            config: context.config,
-        };
-
-        // Call the provided parser function.
-        let result = parser(field_input, &mut field_context)
-            .map_err(|cause| {
-                diagnostic!(&mut field_context, Error, cause);
-            })
-            .ok();
-
-        // Handle any fields not handled by the provided parse function.
-        handle_unknown_yaml_items(field_input, &mut field_context, unknown_subtree);
-
-        // Push and return the completed node.
-        let field_output = Arc::new(field_output);
-        context.output.data.push(tree::NodeData::Child(tree::Child {
-            path_element,
-            node: field_output.clone(),
-            recognized: !unknown_subtree,
-        }));
-
+    if let Some(child) = input.get(field_name) {
+        let (field_output, result) = push_child(
+            context,
+            child,
+            path::PathElement::Field(field_name.to_string()),
+            unknown_subtree,
+            &mut parser,
+        );
         (Some(field_output), result)
     } else {
         (None, None)
@@ -543,48 +514,23 @@ pub fn push_yaml_element<TR, FP>(
     context: &mut context::Context,
     index: usize,
     unknown_subtree: bool,
-    parser: FP,
+    mut parser: FP,
 ) -> (Option<Arc<tree::Node>>, Option<TR>)
 where
-    FP: Fn(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnMut(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
 {
     if !context.breadcrumb.fields_parsed.insert(index.to_string()) {
         panic!("element {} was parsed multiple times", index);
     }
 
-    if let Some(field_input) = input.get(index) {
-        // Create the node for the child message.
-        let mut field_output = field_input.data_to_node();
-
-        // Create the path element for referring to the child node.
-        let path_element = path::PathElement::Index(index);
-
-        // Create the context for the child message.
-        let mut field_context = context::Context {
-            output: &mut field_output,
-            state: context.state,
-            breadcrumb: &mut context.breadcrumb.next(path_element.clone()),
-            config: context.config,
-        };
-
-        // Call the provided parser function.
-        let result = parser(field_input, &mut field_context)
-            .map_err(|cause| {
-                diagnostic!(&mut field_context, Error, cause);
-            })
-            .ok();
-
-        // Handle any fields not handled by the provided parse function.
-        handle_unknown_yaml_items(field_input, &mut field_context, unknown_subtree);
-
-        // Push and return the completed node.
-        let field_output = Arc::new(field_output);
-        context.output.data.push(tree::NodeData::Child(tree::Child {
-            path_element,
-            node: field_output.clone(),
-            recognized: !unknown_subtree,
-        }));
-
+    if let Some(child) = input.get(index) {
+        let (field_output, result) = push_child(
+            context,
+            child,
+            path::PathElement::Index(index),
+            unknown_subtree,
+            &mut parser,
+        );
         (Some(field_output), result)
     } else {
         (None, None)
