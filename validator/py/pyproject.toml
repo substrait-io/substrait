@@ -1,13 +1,14 @@
 [build-system]
 requires = ["maturin>=0.12,<0.13"]
-build-backend = "maturin"
+build-backend = "substrait_validator_build"
+backend-path = ["."]
 
 [project]
 name = "substrait-validator"
 version = "0.0.1"
 description = "Validator for Substrait query plans"
 readme = "README.md"
-license = {file = "../../LICENSE"}
+license = {file = "LICENSE"}
 keywords = ["substrait"]
 requires-python = ">=3.6"
 classifiers = [

@@ -5,28 +5,22 @@ validator library.
 
 ## Installation
 
-No wheels are published yet at this time. To build manually, you will need:
+No wheels are published yet at this time, so you have to build manually.
+Running something along the lines of `pip install .` should work. You should
+only need to have a [rust](https://www.rust-lang.org/tools/install) compiler
+installed.
 
- - [rust](https://www.rust-lang.org/tools/install)
- - [maturin](https://github.com/PyO3/maturin)
+## Building wheels and source distributions
 
-At which point you can run:
-
-```console
-user@host:/path/to/substrait/validator/py$ maturin build
-📦 Built wheel for CPython ... to /path/to/substrait/target/wheels/substrait_validator-...whl
-user@host:/path/to/substrait/validator/py$ pip install --force-reinstall /path/to/substrait/target/wheels/substrait_validator-...whl
-```
-
-Note: copy the wheel path from `maturin`'s output.
-
-Note: at this time, `pip install .` does NOT work, nor do source distributions.
-This is because the build process needs context from the parent directories.
-There does not seem to be a way to avoid this without making a separate
-repository for the Python module and using the rest of the Substrait repository
-as a submodule.
-
-If you're using a venv, you can also run `maturin develop`.
+You can build wheels and source distributions using
+[maturin](https://github.com/PyO3/maturin), specifically using the `build` and
+`sdist` commands. However, before you can do this, you must run
+`./prepare_build.py populate`. This makes local copies of some files in the
+repository that live outside of this subdirectory, such as the protobuf
+description files. When you use `pip` or some other tool based on
+`pyproject.toml`, this will be done automatically via build system hooks, but
+unfortunately maturin doesn't itself provide hooks with which this can be
+automated.
 
 ## Running tests
 

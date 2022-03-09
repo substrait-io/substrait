@@ -3,6 +3,18 @@ name = "substrait-validator-py"
 version = "0.1.0"
 edition = "2018"
 license = "Apache-2.0"
+include = [
+    "/LICENSE",
+    "/README.md",
+    "/build.rs",
+    "/pyproject.toml",
+    "/proto",
+    "/text",
+    "/src",
+    "/substrait_validator/*.py",
+    "/substrait_validator_build/*.py",
+    "/tests"
+]
 
 [lib]
 crate-type = ["cdylib"]

@@ -12,8 +12,14 @@ use std::process::Command;
 use walkdir::WalkDir;
 
 fn main() {
-    // Directory that the proto files are stored in.
-    let input_path = "../../proto";
+    // Directory that the proto files are stored in. If the local_dependencies
+    // directory exists, we're building from an sdist package, in which case
+    // the proto files should have been copied to a local directory.
+    let input_path = if std::path::Path::new("local_dependencies").exists() {
+        "proto"
+    } else {
+        "../../proto"
+    };
 
     // Output directory for protoc. This is a temporary directory: it will be
     // completely deleted and then reconstructed. Afterward, the build script

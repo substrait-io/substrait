@@ -71,6 +71,9 @@ docs/_build/
 # Pyenv
 .python-version
 
-# Generated Python files
-substrait_validator/substrait/
-protoc_out/
+# Generated files
+/text/
+/proto/
+/LICENSE
+/protoc_out/
+/substrait_validator/substrait/

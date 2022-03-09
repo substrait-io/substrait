@@ -6,16 +6,42 @@ on:
     branches: [ main ]
 
 jobs:
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Prepare build environment
+      working-directory: validator/py
+      run: python3 prepare_build.py populate
+    - name: Create sdist
+      uses: messense/maturin-action@v1
+      with:
+        command: sdist
+        args: -o dist -m validator/py/Cargo.toml
+    - name: Install runtime dependencies
+      run: python3 -m pip install --upgrade protobuf pytest
+    - name: Install generated wheel
+      run: python3 -m pip install --no-index --find-links=dist substrait-validator
+    - name: Upload wheels
+      if: "startsWith(github.ref, 'refs/tags/')"
+      uses: actions/upload-artifact@v2
+      with:
+        name: wheels
+        path: dist
+
   linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Prepare build environment
+      working-directory: validator/py
+      run: python3 prepare_build.py populate
     - name: Build wheels
       uses: messense/maturin-action@v1
       with:
         manylinux: auto
         command: build
-        args: --release -o dist -m validator/py/Cargo.toml
+        args: --release --no-sdist -o dist -m validator/py/Cargo.toml
     - name: Install runtime dependencies
       run: python3 -m pip install --upgrade protobuf pytest
     - name: Install generated wheel
@@ -34,6 +60,9 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Prepare build environment
+      working-directory: validator/py
+      run: python3 prepare_build.py populate
     - name: Build wheels
       uses: messense/maturin-action@v1
       with:
@@ -57,6 +86,9 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Prepare build environment
+      working-directory: validator/py
+      run: python3 prepare_build.py populate
     - name: Build wheels
       uses: messense/maturin-action@v1
       with:
@@ -80,7 +112,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     if: "startsWith(github.ref, 'refs/tags/')"
-    needs: [ macos, windows, linux ]
+    needs: [ macos, windows, linux, sdist ]
     steps:
       - uses: actions/download-artifact@v2
         with:
