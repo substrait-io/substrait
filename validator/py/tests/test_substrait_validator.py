@@ -128,12 +128,12 @@ def test_export_diags():
     diags = sv.plan_to_diagnostics_str(_BASIC_PLAN)
     assert type(diags) == str
     lines = list(filter(bool, diags.split('\n')))
-    assert lines[0] == 'Warning at plan: encountered values for protobuf field(s) not yet understood by the validator: .relations[0] (1003)'
+    assert lines[0] == 'Warning at plan: encountered values for protobuf field(s) not yet understood by the validator: relations[0] (1003)'
 
     diags = list(sv.plan_to_diagnostics(_BASIC_PLAN))
     for diag in diags:
         assert type(diag) == sv.Diagnostic
-    assert diags[0].msg == 'encountered values for protobuf field(s) not yet understood by the validator: .relations[0] (1003)'
+    assert diags[0].msg == 'encountered values for protobuf field(s) not yet understood by the validator: relations[0] (1003)'
 
 
 def test_resolver_callback():
@@ -155,7 +155,7 @@ def test_resolver_callback():
     }, config))
     for diag in diags:
         print(diag.msg)
-    assert diags[0].msg == 'encountered values for YAML field(s) not yet understood by the validator: types (2006)'
+    assert diags[0].msg == 'encountered values for YAML key(s) not yet understood by the validator: types (2006)'
 
     diags = list(sv.plan_to_diagnostics({
         'extensionUris': [{

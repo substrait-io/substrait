@@ -30,26 +30,36 @@ pub enum PathElement {
 
 impl std::fmt::Display for PathElement {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if !f.alternate() {
+            match self {
+                PathElement::Index(_) => {}
+                _ => write!(f, ".")?,
+            }
+        }
         match self {
-            PathElement::Field(field) => {
-                write!(f, ".{}", primitive_data::as_ident_or_string(field))
-            }
-            PathElement::Repeated(field, index) => {
-                write!(
-                    f,
-                    ".{}[{}]",
-                    primitive_data::as_ident_or_string(field),
-                    index
-                )
-            }
+            PathElement::Field(field) => write!(f, "{}", primitive_data::as_ident_or_string(field)),
+            PathElement::Repeated(field, index) => write!(
+                f,
+                "{}[{}]",
+                primitive_data::as_ident_or_string(field),
+                index
+            ),
             PathElement::Variant(field, variant) => write!(
                 f,
-                ".{}<{}>",
+                "{}<{}>",
                 primitive_data::as_ident_or_string(field),
                 primitive_data::as_ident_or_string(variant)
             ),
             PathElement::Index(index) => write!(f, "[{}]", index),
         }
+    }
+}
+
+impl PathElement {
+    /// Same as to_string(), but doesn't include the dot prefix for the
+    /// variants that would normally have one.
+    pub fn to_string_without_dot(&self) -> String {
+        format!("{:#}", self)
     }
 }
 

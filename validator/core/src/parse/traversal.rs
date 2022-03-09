@@ -440,7 +440,7 @@ pub fn handle_unknown_proto_fields<T: InputNode>(
         for data in context.output.data.iter() {
             if let tree::NodeData::Child(child) = data {
                 if !child.recognized {
-                    fields.push(child.path_element.to_string());
+                    fields.push(child.path_element.to_string_without_dot());
                 }
             }
         }
@@ -788,7 +788,7 @@ pub fn handle_unknown_yaml_items(
         for data in context.output.data.iter() {
             if let tree::NodeData::Child(child) = data {
                 if !child.recognized {
-                    fields.push(child.path_element.to_string());
+                    fields.push(child.path_element.to_string_without_dot());
                 }
             }
         }
