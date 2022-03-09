@@ -71,14 +71,16 @@ pub extern "C" fn substrait_validator_config_ignore_unknown_fields_set_to_defaul
 
 /// Whitelists a protobuf message type for use in advanced extensions. If an
 /// advanced extension is encountered that isn't whitelisted, a warning is
-/// emitted.
+/// emitted. The type URL pattern may include * and ? wildcards for glob-like
+/// matching (see https://docs.rs/glob/latest/glob/struct.Pattern.html for the
+/// complete syntax).
 ///
 /// Returns whether the function was successful. If false is returned, retrieve
 /// the error message with substrait_validator_get_last_error().
 #[no_mangle]
 pub extern "C" fn substrait_validator_config_whitelist_any_url(
     config: *mut ConfigHandle,
-    url: *const libc::c_char,
+    pattern: *const libc::c_char,
 ) -> bool {
     // Unpack configuration handle, catching null pointers.
     if config.is_null() {
@@ -88,21 +90,28 @@ pub extern "C" fn substrait_validator_config_whitelist_any_url(
     let config = unsafe { &mut (*config).config };
 
     // Unpack URL, catching null pointers.
-    if url.is_null() {
-        set_last_error("received null url");
+    if pattern.is_null() {
+        set_last_error("received null pattern");
         return false;
     }
-    let url = unsafe { std::ffi::CStr::from_ptr(url) };
-    let url = match url.to_str() {
+    let pattern = unsafe { std::ffi::CStr::from_ptr(pattern) };
+    let pattern = match pattern.to_str() {
         Ok(u) => u,
         Err(e) => {
-            set_last_error(format!("received invalid URL: {}", e));
+            set_last_error(format!("received invalid pattern: {}", e));
+            return false;
+        }
+    };
+    let pattern = match substrait_validator_core::Pattern::new(pattern) {
+        Ok(p) => p,
+        Err(e) => {
+            set_last_error(format!("received invalid pattern: {}", e));
             return false;
         }
     };
 
     // Update configuration and return success.
-    config.whitelist_any_url(url);
+    config.whitelist_any_url(pattern);
     true
 }
 
@@ -157,7 +166,7 @@ pub extern "C" fn substrait_validator_config_override_diagnostic_level(
 
 /// Overrides the resolution behavior for YAML URIs matching the given
 /// pattern. The pattern may include * and ? wildcards for glob-like matching
-/// (see [`Pattern`](substrait_validator_core::Pattern) for the complete
+/// (see https://docs.rs/glob/latest/glob/struct.Pattern.html for the complete
 /// syntax). If resolve_as is null, the YAML file will not be resolved;
 /// otherwise, it will be resolved as if the URI in the plan had been that
 /// string.
@@ -179,7 +188,7 @@ pub extern "C" fn substrait_validator_config_override_yaml_uri(
 
     // Unpack and parse pattern, catching null pointers.
     if pattern.is_null() {
-        set_last_error("received null url");
+        set_last_error("received null pattern");
         return false;
     }
     let pattern = unsafe { std::ffi::CStr::from_ptr(pattern) };

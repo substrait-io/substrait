@@ -7,7 +7,6 @@
 use crate::output::diagnostic;
 pub use glob;
 use std::collections::HashMap;
-use std::collections::HashSet;
 
 /// Trait object representing some immutable binary data.
 pub type BinaryData = Box<dyn AsRef<[u8]>>;
@@ -28,7 +27,7 @@ pub struct Config {
     /// Protobuf message URLs that are whitelisted for use in "any" messages,
     /// i.e. that the caller warrants the existence of in the consumer that
     /// the plan is validated for.
-    pub whitelisted_any_urls: HashSet<String>,
+    pub whitelisted_any_urls: Vec<glob::Pattern>,
 
     /// Allows the level of diagnostic messages to be overridden based on their
     /// classification/code. The logic for this is as follows:
@@ -80,8 +79,8 @@ impl Config {
     /// Whitelists a protobuf message type for use in advanced extensions. If
     /// an advanced extension is encountered that isn't whitelisted, a warning
     /// is emitted.
-    pub fn whitelist_any_url<S: Into<String>>(&mut self, url: S) {
-        self.whitelisted_any_urls.insert(url.into());
+    pub fn whitelist_any_url(&mut self, pattern: glob::Pattern) {
+        self.whitelisted_any_urls.push(pattern);
     }
 
     /// Sets a minimum and/or maximum error level for the given class of

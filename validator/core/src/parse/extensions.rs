@@ -280,7 +280,10 @@ fn resolve_any(x: &prost_types::Any, y: &mut context::Context) -> bool {
         .pending_proto_url_dependencies
         .entry(x.type_url.clone())
         .or_insert_with(|| y.breadcrumb.path.to_path_buf());
-    y.config.whitelisted_any_urls.contains(&x.type_url)
+    y.config
+        .whitelisted_any_urls
+        .iter()
+        .any(|p| p.matches(&x.type_url))
 }
 
 /// Parse a protobuf "any" message that consumers may ignore.

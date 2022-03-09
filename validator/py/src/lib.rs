@@ -33,9 +33,21 @@ impl Config {
 
     /// Whitelists a protobuf message type for use in advanced extensions. If
     /// an advanced extension is encountered that isn't whitelisted, a warning
-    /// is emitted.
-    pub fn whitelist_any_url(&mut self, url: String) {
-        self.config.whitelist_any_url(url);
+    /// is emitted. The pattern may include * and ? wildcards for glob-like
+    /// matching (see https://docs.rs/glob/latest/glob/struct.Pattern.html
+    /// for the complete syntax).
+    pub fn whitelist_any_url(&mut self, pattern: &str) -> PyResult<()> {
+        let pattern = match substrait_validator_core::Pattern::new(pattern) {
+            Ok(p) => p,
+            Err(e) => {
+                return Err(PyValueError::new_err(format!(
+                    "invalid pattern {:?}: {}",
+                    pattern, e
+                )));
+            }
+        };
+        self.config.whitelist_any_url(pattern);
+        Ok(())
     }
 
     /// Sets a minimum and/or maximum error level for the given class of
@@ -75,9 +87,11 @@ impl Config {
     }
 
     /// Overrides the resolution behavior for YAML URIs matching the given
-    /// pattern. If resolve_as is None, the YAML file will not be resolved;
-    /// otherwise it should be a string representing the URI it should be
-    /// resolved as.
+    /// pattern. The pattern may include * and ? wildcards for glob-like
+    /// matching (see https://docs.rs/glob/latest/glob/struct.Pattern.html
+    /// for the complete syntax). If resolve_as is None, the YAML file will not
+    /// be resolved; otherwise it should be a string representing the URI it
+    /// should be resolved as.
     pub fn override_yaml_uri(&mut self, pattern: &str, resolve_as: Option<&str>) -> PyResult<()> {
         let pattern = match substrait_validator_core::Pattern::new(pattern) {
             Ok(p) => p,
