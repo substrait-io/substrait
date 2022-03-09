@@ -129,48 +129,40 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                 let action = match is_repeated(&field.ty) {
                     FieldType::Optional => quote! {
                         crate::parse::traversal::push_proto_field(
-                            self,
                             y,
                             &self.#ident.as_ref(),
                             stringify!(#ident),
                             true,
                             |_, _| Ok(()),
-                            |_, _, _| Ok(()),
                         );
                     },
                     FieldType::BoxedOptional => quote! {
                         crate::parse::traversal::push_proto_field(
-                            self,
                             y,
                             &self.#ident,
                             stringify!(#ident),
                             true,
                             |_, _| Ok(()),
-                            |_, _, _| Ok(()),
                         );
                     },
                     FieldType::Repeated => quote! {
                         crate::parse::traversal::push_proto_repeated_field(
-                            self,
                             y,
                             &self.#ident.as_ref(),
                             stringify!(#ident),
                             true,
                             |_, _| Ok(()),
-                            |_, _, _, _| Ok(()),
                         );
                     },
                     FieldType::Primitive => quote! {
                         use crate::input::traits::ProtoPrimitive;
                         if !y.config.ignore_unknown_fields_set_to_default || !self.#ident.proto_primitive_is_default() {
                             crate::parse::traversal::push_proto_field(
-                                self,
                                 y,
                                 &Some(&self.#ident),
                                 stringify!(#ident),
                                 true,
                                 |_, _| Ok(()),
-                                |_, _, _| Ok(()),
                             );
                         }
                     },

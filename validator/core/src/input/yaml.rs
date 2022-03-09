@@ -128,14 +128,7 @@ impl crate::input::traits::InputNode for Value {
                         .fields_parsed
                         .contains(&index.to_string())
                     {
-                        traversal::push_yaml_element(
-                            array,
-                            context,
-                            index,
-                            true,
-                            |_, _| Ok(()),
-                            |_, _, _| Ok(()),
-                        );
+                        traversal::push_yaml_element(array, context, index, true, |_, _| Ok(()));
                         any = true;
                     }
                 }
@@ -153,7 +146,6 @@ impl crate::input::traits::InputNode for Value {
                             field_name,
                             true,
                             |_, _| Ok(()),
-                            |_, _, _| Ok(()),
                         );
                         any = true;
                     }

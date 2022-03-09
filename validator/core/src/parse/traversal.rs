@@ -4,9 +4,7 @@
 //! Refer to the documentation for [`parse`](mod@crate::parse) for more
 //! information.
 
-// FIXME: remove once validation code is finished. Also re-evaluate the
-// usefulness of the validator functions at that stage, i.e. remove them if
-// they weren't useful anywhere.
+// FIXME: remove once validation code is finished.
 #![allow(dead_code)]
 #![allow(unused_macros)]
 
@@ -115,17 +113,12 @@ macro_rules! proto_field {
         proto_field!($input, $context, $field, |_, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr) => {
-        proto_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::parse::traversal::push_proto_field(
-            $input,
             $context,
             &$input.$field.as_ref(),
             stringify!($field),
             false,
             $parser,
-            $validator,
         )
     };
 }
@@ -137,35 +130,27 @@ macro_rules! proto_boxed_field {
         proto_boxed_field!($input, $context, $field, |_, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr) => {
-        proto_boxed_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::parse::traversal::push_proto_field(
-            $input,
             $context,
             &$input.$field,
             stringify!($field),
             false,
             $parser,
-            $validator,
         )
     };
 }
 
 /// Parse and push a protobuf optional field.
-pub fn push_proto_field<TP, TF, TR, FP, FV>(
-    input: &TP,
+pub fn push_proto_field<TF, TR, FP>(
     context: &mut context::Context,
     field: &Option<impl std::ops::Deref<Target = TF>>,
     field_name: &'static str,
     unknown_subtree: bool,
     parser: FP,
-    validator: FV,
 ) -> (Option<Arc<tree::Node>>, Option<TR>)
 where
     TF: InputNode,
     FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
-    FV: Fn(&TP, &mut context::Context, &tree::Node) -> diagnostic::Result<()>,
 {
     if !context
         .breadcrumb
@@ -214,11 +199,6 @@ where
             recognized: !unknown_subtree,
         }));
 
-        // Run the validator.
-        if let Err(cause) = validator(input, context, &field_output) {
-            diagnostic!(context, Error, cause);
-        }
-
         (Some(field_output), result)
     } else {
         (None, None)
@@ -235,17 +215,12 @@ macro_rules! proto_required_field {
         proto_required_field!($input, $context, $field, |_, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr) => {
-        proto_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::parse::traversal::push_proto_required_field(
-            $input,
             $context,
             &$input.$field.as_ref(),
             stringify!($field),
             false,
             $parser,
-            $validator,
         )
     };
 }
@@ -257,17 +232,12 @@ macro_rules! proto_boxed_required_field {
         proto_boxed_required_field!($input, $context, $field, |_, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr) => {
-        proto_boxed_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::parse::traversal::push_proto_required_field(
-            $input,
             $context,
             &$input.$field,
             stringify!($field),
             false,
             $parser,
-            $validator,
         )
     };
 }
@@ -278,17 +248,12 @@ macro_rules! proto_primitive_field {
         proto_primitive_field!($input, $context, $field, |x, _| Ok(x.to_owned()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr) => {
-        proto_primitive_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::parse::traversal::push_proto_required_field(
-            $input,
             $context,
             &Some(&$input.$field),
             stringify!($field),
             false,
             $parser,
-            $validator,
         )
     };
 }
@@ -296,29 +261,20 @@ macro_rules! proto_primitive_field {
 /// Parse and push a required field of some message type. If the field is
 /// not populated, a MissingField diagnostic is pushed automatically, and
 /// an empty node is returned as an error recovery placeholder.
-pub fn push_proto_required_field<TP, TF, TR, FP, FV>(
-    input: &TP,
+pub fn push_proto_required_field<TF, TR, FP>(
     context: &mut context::Context,
     field: &Option<impl std::ops::Deref<Target = TF>>,
     field_name: &'static str,
     unknown_subtree: bool,
     parser: FP,
-    validator: FV,
 ) -> (Arc<tree::Node>, Option<TR>)
 where
     TF: InputNode,
     FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
-    FV: Fn(&TP, &mut context::Context, &tree::Node) -> diagnostic::Result<()>,
 {
-    if let (Some(node), result) = push_proto_field(
-        input,
-        context,
-        field,
-        field_name,
-        unknown_subtree,
-        parser,
-        validator,
-    ) {
+    if let (Some(node), result) =
+        push_proto_field(context, field, field_name, unknown_subtree, parser)
+    {
         (node, result)
     } else {
         diagnostic!(context, Error, ProtoMissingField, field_name);
@@ -336,38 +292,27 @@ macro_rules! proto_repeated_field {
         proto_repeated_field!($input, $context, $field, |_, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:ident, $parser:expr) => {
-        proto_repeated_field!($input, $context, $field, $parser, |_, _, _, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $field:ident, $parser:expr, $validator:expr) => {
         crate::parse::traversal::push_proto_repeated_field(
-            $input,
             $context,
             &$input.$field,
             stringify!($field),
             false,
             $parser,
-            $validator,
         )
     };
 }
 
-/// Parse and push a repeated field of some message type. If specified, the
-/// given validator function will be called in the current context
-/// immediately after each repetition of the field is handled, allowing
-/// field-specific validation to be done.
-pub fn push_proto_repeated_field<TP, TF, TR, FP, FV>(
-    input: &TP,
+/// Parse and push a repeated field of some message type.
+pub fn push_proto_repeated_field<TF, TR, FP>(
     context: &mut context::Context,
     field: &[TF],
     field_name: &'static str,
     unknown_subtree: bool,
     parser: FP,
-    validator: FV,
 ) -> (Vec<Arc<tree::Node>>, Vec<Option<TR>>)
 where
     TF: InputNode,
     FP: Fn(&TF, &mut context::Context) -> diagnostic::Result<TR>,
-    FV: Fn(&TP, &mut context::Context, &tree::Node, usize) -> diagnostic::Result<()>,
 {
     if !context
         .breadcrumb
@@ -412,11 +357,6 @@ where
                 node: field_output.clone(),
                 recognized: !unknown_subtree,
             }));
-
-            // Run the validator.
-            if let Err(cause) = validator(input, context, &field_output, index) {
-                diagnostic!(context, Error, cause);
-            }
 
             (field_output, result)
         })
@@ -523,28 +463,21 @@ macro_rules! yaml_field {
         yaml_field!($input, $context, $field, |_, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:expr, $parser:expr) => {
-        yaml_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $field:expr, $parser:expr, $validator:expr) => {
-        crate::parse::traversal::push_yaml_field(
-            $input, $context, $field, false, $parser, $validator,
-        )
+        crate::parse::traversal::push_yaml_field($input, $context, $field, false, $parser)
     };
 }
 
 /// Parse and push an optional YAML field.
-pub fn push_yaml_field<TS, TR, FP, FV>(
+pub fn push_yaml_field<TS, TR, FP>(
     input: &yaml::Map,
     context: &mut context::Context,
     field_name: TS,
     unknown_subtree: bool,
     parser: FP,
-    validator: FV,
 ) -> (Option<Arc<tree::Node>>, Option<TR>)
 where
     TS: AsRef<str>,
     FP: Fn(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
-    FV: Fn(&yaml::Map, &mut context::Context, &tree::Node) -> diagnostic::Result<()>,
 {
     let field_name = field_name.as_ref();
     if !context
@@ -588,11 +521,6 @@ where
             recognized: !unknown_subtree,
         }));
 
-        // Run the validator.
-        if let Err(cause) = validator(input, context, &field_output) {
-            diagnostic!(context, Error, cause);
-        }
-
         (Some(field_output), result)
     } else {
         (None, None)
@@ -605,27 +533,20 @@ macro_rules! yaml_element {
         yaml_element!($input, $context, $element, |_, _| Ok(()))
     };
     ($input:expr, $context:expr, $element:expr, $parser:expr) => {
-        yaml_element!($input, $context, $element, $parser, |_, _, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $element:expr, $parser:expr, $validator:expr) => {
-        crate::parse::traversal::push_yaml_element(
-            $input, $context, $element, false, $parser, $validator,
-        )
+        crate::parse::traversal::push_yaml_element($input, $context, $element, false, $parser)
     };
 }
 
 /// Parse and push an optional YAML array element.
-pub fn push_yaml_element<TR, FP, FV>(
+pub fn push_yaml_element<TR, FP>(
     input: &yaml::Array,
     context: &mut context::Context,
     index: usize,
     unknown_subtree: bool,
     parser: FP,
-    validator: FV,
 ) -> (Option<Arc<tree::Node>>, Option<TR>)
 where
     FP: Fn(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
-    FV: Fn(&yaml::Array, &mut context::Context, &tree::Node) -> diagnostic::Result<()>,
 {
     if !context.breadcrumb.fields_parsed.insert(index.to_string()) {
         panic!("element {} was parsed multiple times", index);
@@ -664,11 +585,6 @@ where
             recognized: !unknown_subtree,
         }));
 
-        // Run the validator.
-        if let Err(cause) = validator(input, context, &field_output) {
-            diagnostic!(context, Error, cause);
-        }
-
         (Some(field_output), result)
     } else {
         (None, None)
@@ -685,39 +601,27 @@ macro_rules! yaml_required_field {
         yaml_required_field!($input, $context, $field, |_, _| Ok(()))
     };
     ($input:expr, $context:expr, $field:expr, $parser:expr) => {
-        yaml_required_field!($input, $context, $field, $parser, |_, _, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $field:expr, $parser:expr, $validator:expr) => {
-        crate::parse::traversal::push_yaml_required_field(
-            $input, $context, $field, false, $parser, $validator,
-        )
+        crate::parse::traversal::push_yaml_required_field($input, $context, $field, false, $parser)
     };
 }
 
 /// Parse and push a required field of a YAML object. If the field does not
 /// exist, a MissingField diagnostic is pushed automatically, and an empty node
 /// is returned as an error recovery placeholder.
-pub fn push_yaml_required_field<TS, TR, FP, FV>(
+pub fn push_yaml_required_field<TS, TR, FP>(
     input: &yaml::Map,
     context: &mut context::Context,
     field_name: &'static str,
     unknown_subtree: bool,
     parser: FP,
-    validator: FV,
 ) -> (Arc<tree::Node>, Option<TR>)
 where
     TS: AsRef<str>,
     FP: Fn(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
-    FV: Fn(&yaml::Map, &mut context::Context, &tree::Node) -> diagnostic::Result<()>,
 {
-    if let (Some(node), result) = push_yaml_field(
-        input,
-        context,
-        field_name,
-        unknown_subtree,
-        parser,
-        validator,
-    ) {
+    if let (Some(node), result) =
+        push_yaml_field(input, context, field_name, unknown_subtree, parser)
+    {
         (node, result)
     } else {
         diagnostic!(context, Error, YamlMissingKey, field_name);
@@ -734,11 +638,8 @@ macro_rules! yaml_required_element {
         yaml_required_element!($input, $context, $field, |_, _| Ok(()))
     };
     ($input:expr, $context:expr, $index:expr, $parser:expr) => {
-        yaml_required_element!($input, $context, $field, $parser, |_, _, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $index:expr, $parser:expr, $validator:expr) => {
         crate::parse::traversal::push_yaml_required_element(
-            $input, $context, $index, false, $parser, $validator,
+            $input, $context, $index, false, $parser,
         )
     };
 }
@@ -746,20 +647,17 @@ macro_rules! yaml_required_element {
 /// Parse and push a required element of a YAML array. If the element does not
 /// exist, a MissingElement diagnostic is pushed automatically, and an empty node
 /// is returned as an error recovery placeholder.
-pub fn push_yaml_required_element<TR, FP, FV>(
+pub fn push_yaml_required_element<TR, FP>(
     input: &yaml::Array,
     context: &mut context::Context,
     index: usize,
     unknown_subtree: bool,
     parser: FP,
-    validator: FV,
 ) -> (Arc<tree::Node>, Option<TR>)
 where
     FP: Fn(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
-    FV: Fn(&yaml::Array, &mut context::Context, &tree::Node) -> diagnostic::Result<()>,
 {
-    if let (Some(node), result) =
-        push_yaml_element(input, context, index, unknown_subtree, parser, validator)
+    if let (Some(node), result) = push_yaml_element(input, context, index, unknown_subtree, parser)
     {
         (node, result)
     } else {
