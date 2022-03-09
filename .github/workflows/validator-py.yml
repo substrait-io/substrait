@@ -23,7 +23,7 @@ jobs:
     - name: Install runtime dependencies
       run: python3 -m pip install --upgrade protobuf pytest
     - name: Install generated wheel
-      run: python3 -m pip install --no-index --find-links=dist substrait-validator
+      run: python3 -m pip install dist/substrait_validator-*.tar.gz
     - name: Upload wheels
       if: "startsWith(github.ref, 'refs/tags/')"
       uses: actions/upload-artifact@v2
