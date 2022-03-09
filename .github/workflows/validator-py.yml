@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Install build dependencies
+      run: python3 -m pip install --upgrade pip maturin
     - name: Prepare build environment
       working-directory: validator/py
       run: python3 prepare_build.py populate
@@ -33,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Install build dependencies
+      run: python3 -m pip install --upgrade pip maturin
     - name: Prepare build environment
       working-directory: validator/py
       run: python3 prepare_build.py populate
@@ -60,6 +64,8 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Install build dependencies
+      run: python3 -m pip install --upgrade pip maturin
     - name: Prepare build environment
       working-directory: validator/py
       run: python3 prepare_build.py populate
@@ -86,6 +92,8 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Install build dependencies
+      run: python3 -m pip install --upgrade pip maturin
     - name: Prepare build environment
       working-directory: validator/py
       run: python3 prepare_build.py populate
