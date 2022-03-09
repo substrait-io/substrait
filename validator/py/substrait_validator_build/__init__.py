@@ -26,20 +26,28 @@ def populate():
             shutil.copyfile(source, path)
 
 
+def _prepare():
+    # If the local_dependencies directory exists, pip is building the package
+    # from a source distribution. In that case, the build environment is
+    # already as it should be.
+    if not os.path.isdir('local_dependencies'):
+        populate()
+
+
 _maturin_prepare_metadata_for_build_wheel = prepare_metadata_for_build_wheel
 def prepare_metadata_for_build_wheel(*args, **kwargs):
-    populate()
+    _prepare()
     return _maturin_prepare_metadata_for_build_wheel(*args, **kwargs)
 
 
 _maturin_build_wheel = build_wheel
 def build_wheel(*args, **kwargs):
-    populate()
+    _prepare()
     return _maturin_build_wheel(*args, **kwargs)
 
 
 _maturin_build_sdist = build_sdist
 def build_sdist(*args, **kwargs):
-    populate()
+    _prepare()
     return _maturin_build_sdist(*args, **kwargs)
 
