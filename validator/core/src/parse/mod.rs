@@ -6,43 +6,59 @@
 //! [`output`](crate::output) module. In doing so, it parses and validates the
 //! plan.
 //!
-//! TODO: document approach
+//! Most of the boilerplate code for tree traversal is handled by the
+//! [`traversal`] module. What remains are "parse functions" of the form
+//! `(x: &T, y: &mut Context) -> Result<R>`, where:
 //!
-//! TODO: put this somewhere:
+//!  - `x` is a reference to the the JSON/YAML value or the prost wrapper for
+//!    the protobuf message that is to be parsed and validated;
+//!  - `y` is the parse context; and
+//!  - `R` is any desired return type.
 //!
-//! Most functions return [`Result<T, Cause>`] results. This type is abbreviated
-//! to just [`diagnostic::Result<T>`] in this module. [`diagnostic::Cause`]
-//! structs are normally constructed using the [`cause!`] macro for convenience.
-//! This macro takes the name of the [`diagnostic::Classification`] variant as
-//! its first argument, and either something that converts into a supported error
-//! type or a set of [`format!`] arguments as subsequent arguments.
+//! The body of the parse function can use a wide variety of function-like
+//! macros from [`traversal`] to traverse the children of `x` in the
+//! appropriate order and with the appropriate parse functions. The macros
+//! return a tuple of a reference to the created [Node](tree::Node) and the `R`
+//! returned by the parse function (depending on the macro, these may be
+//! wrapped in [`Option`]s or [`Vec`]s). Note that any children not traversed
+//! by the parse function will automatically be traversed by [`traversal`]
+//! (along with a warning diagnostic that these children were not validated),
+//! and that traversing a child twice is illegal (this will panic).
 //!
-//! Some functions need a bit more control, and return
-//! [`Result<T, diagnostic::RawDiagnostic>`] instead, a.k.a.
-//! [`diagnostic::DiagResult<T>`]. This already includes error level and path
-//! information. The [`diagnostic::RawDiagnostic`] is constructed using the
-//! [`diag!`] macro, which works the same as [`cause!`], but includes a path
-//! and level argument before the [`cause!`] arguments. You can also pass a
-//! preconstructed [`diagnostic::Cause`] into it directly, as returned by an
-//! inner function call, for instance.
+//! If the parse function fails in an unrecoverable way, it can return Err via
+//! `?`. When it does this, the [`traversal`] macros takes care of pushing an
+//! appropriate diagnostic into the output tree. For recoverable errors or other
+//! diagnostics, [`diagnostic!`] can be used. Miscellaneous information can be
+//! pushed into the output tree via [`comment!`], [`link!`], and
+//! [`data_type!`].
 //!
-//! Ultimately, the above [`diagnostic::Result`] and [`diagnostic::DiagResult`]
-//! enums end up in a parse function. The Err variant should then be handled by
-//! pushing the diagnostic into the [`Node`](crate::Node) that is being emitted
-//! by the parse function. For raw [`diagnostic::Cause`] structs (as returned
-//! via [`diagnostic::Result`]), the path will be set to that of the node that
-//! is being parsed, and the level will (usually) be set to `Error` (but this
-//! depends on context; for YAML resolution errors for example the level will
-//! be `Warning`). During this push operation, the [`diagnostic::RawDiagnostic`]
-//! is also converted into an [`diagnostic::Diagnostic`], with its
-//! `adjusted_level` set based on its classification and the configuration
-//! passed to the validator by the user. This is all handled by the
-//! [`diagnostic!`] macro and [`push_diagnostic()`](traversal::push_diagnostic)
-//! function, defined in the [`traversal`]module.
+//! The reference to the [`context::Context`] object can also be used directly.
+//! It contains the following things:
 //!
-//! Note that parse functions themselves also return [`diagnostic::Result<T>`],
-//! such that the `?` operator can be used in them. This error is handled by
-//! the boilerplate code in [`traversal`].
+//!  - [`output: &mut tree::Node`](tree::Node), a mutable reference to the node
+//!    in the output tree that we're writing to. Note that the [`traversal`]
+//!    macros create a [`Node`](tree::Node) already populated with the default
+//!    [`NodeType`](tree::NodeType) before calling the parse function, including
+//!    a copy of the primitive data element for leaf nodes, and everything else
+//!    can be added using the [`traversal`] macros, so you shouldn't normally
+//!    need to access this. Exceptions exist, however, for example when an
+//!    integer primitive needs to be upgraded to an anchor reference.
+//!  - [`state: &mut context::State`](context::State), a mutable reference to a
+//!    global state structure for the parser. This includes, for instance,
+//!    lookup tables for things previously defined in the plan, such as
+//!    function declarations. The state object is initially constructed by
+//!    [`traversal`] using [`Default`], and is then just recursively passed to
+//!    every parse function.
+//!  - [`breadcrumb: &mut context::Breadcrumb`](context::Breadcrumb). This
+//!    fulfills a similar purpose as `state`, but using a stack-like structure:
+//!    for every child node, a new [`Breadcrumb`](context::Breadcrumb) is
+//!    pushed onto the stack. Note that only the top of the stack is mutable.
+//!    This is mostly used for keeping track of the current
+//!    [`Path`](crate::output::path::Path) and internally by the [`traversal`]
+//!    module; the parse functions can and should just use local variables when
+//!    they need to store something this way.
+//!  - [`config: &config::Config`](config::Config), a reference to the
+//!    configuration structure that the validator was called with.
 
 #[macro_use]
 pub mod traversal;
