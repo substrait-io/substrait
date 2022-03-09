@@ -33,12 +33,14 @@ impl Config {
         self.config.ignore_unknown_fields_set_to_default = true;
     }
 
-    /// Whitelists a protobuf message type for use in advanced extensions. If
-    /// an advanced extension is encountered that isn't whitelisted, a warning
-    /// is emitted. The pattern may include * and ? wildcards for glob-like
-    /// matching (see https://docs.rs/glob/latest/glob/struct.Pattern.html
-    /// for the complete syntax).
-    pub fn whitelist_any_url(&mut self, pattern: &str) -> PyResult<()> {
+    /// Explicitly allows a protobuf message type to be used in advanced
+    /// extensions, despite the fact that the validator can't validate it. If
+    /// an advanced extension is encountered that isn't explicitly allowed, a
+    /// warning is emitted. The pattern may include * and ? wildcards for
+    /// glob-like matching (see
+    /// https://docs.rs/glob/latest/glob/struct.Pattern.html for the complete
+    /// syntax).
+    pub fn allow_any_url(&mut self, pattern: &str) -> PyResult<()> {
         let pattern = match substrait_validator_core::Pattern::new(pattern) {
             Ok(p) => p,
             Err(e) => {
@@ -48,7 +50,7 @@ impl Config {
                 )));
             }
         };
-        self.config.whitelist_any_url(pattern);
+        self.config.allow_any_url(pattern);
         Ok(())
     }
 

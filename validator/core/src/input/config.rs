@@ -26,10 +26,10 @@ pub struct Config {
     /// set to their protobuf-defined default value.
     pub ignore_unknown_fields_set_to_default: bool,
 
-    /// Protobuf message URLs that are whitelisted for use in "any" messages,
-    /// i.e. that the caller warrants the existence of in the consumer that
-    /// the plan is validated for.
-    pub whitelisted_any_urls: Vec<glob::Pattern>,
+    /// Protobuf message URLs that are explicitly allowed for use in "any"
+    /// messages, i.e. that the caller warrants the existence of in the
+    /// consumer that the plan is validated for.
+    pub allowed_any_urls: Vec<glob::Pattern>,
 
     /// Allows the level of diagnostic messages to be overridden based on their
     /// classification/code. The logic for this is as follows:
@@ -78,11 +78,12 @@ impl Config {
         self.ignore_unknown_fields_set_to_default = true;
     }
 
-    /// Whitelists a protobuf message type for use in advanced extensions. If
-    /// an advanced extension is encountered that isn't whitelisted, a warning
-    /// is emitted.
-    pub fn whitelist_any_url(&mut self, pattern: glob::Pattern) {
-        self.whitelisted_any_urls.push(pattern);
+    /// Explicitly allows a protobuf message type to be used in advanced
+    /// extensions, despite the fact that the validator can't validate it. If
+    /// an advanced extension is encountered that isn't explicitly allowed, a
+    /// warning is emitted.
+    pub fn allow_any_url(&mut self, pattern: glob::Pattern) {
+        self.allowed_any_urls.push(pattern);
     }
 
     /// Sets a minimum and/or maximum error level for the given class of

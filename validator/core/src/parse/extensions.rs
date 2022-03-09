@@ -275,15 +275,15 @@ fn parse_extension_mapping(
     Ok(())
 }
 
-/// Resolves a protobuf "any" message. Returns whether it has been whitelisted
-/// for validation.
+/// Resolves a protobuf "any" message. Returns whether the user has explicitly
+/// allowed this message type for use.
 fn resolve_any(x: &prost_types::Any, y: &mut context::Context) -> bool {
     y.state
         .pending_proto_url_dependencies
         .entry(x.type_url.clone())
         .or_insert_with(|| y.breadcrumb.path.to_path_buf());
     y.config
-        .whitelisted_any_urls
+        .allowed_any_urls
         .iter()
         .any(|p| p.matches(&x.type_url))
 }
@@ -291,7 +291,13 @@ fn resolve_any(x: &prost_types::Any, y: &mut context::Context) -> bool {
 /// Parse a protobuf "any" message that consumers may ignore.
 fn parse_hint_any(x: &prost_types::Any, y: &mut context::Context) -> Result<()> {
     if resolve_any(x, y) {
-        diagnostic!(y, Info, ProtoAny, "whitelisted hint of type {}", x.type_url);
+        diagnostic!(
+            y,
+            Info,
+            ProtoAny,
+            "explicitly allowed hint of type {}",
+            x.type_url
+        );
     } else {
         diagnostic!(
             y,
@@ -311,7 +317,7 @@ fn parse_functional_any(x: &prost_types::Any, y: &mut context::Context) -> Resul
             y,
             Info,
             ProtoAny,
-            "whitelisted enhancement of type {}",
+            "explicitly allowed enhancement of type {}",
             x.type_url
         );
     } else {

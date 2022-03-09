@@ -71,8 +71,9 @@ pub extern "C" fn substrait_validator_config_ignore_unknown_fields_set_to_defaul
     true
 }
 
-/// Whitelists a protobuf message type for use in advanced extensions. If an
-/// advanced extension is encountered that isn't whitelisted, a warning is
+/// Explicitly allows a protobuf message type for use in advanced extensions,
+/// despite the fact that the validator can't validate it. If an advanced
+/// extension is encountered that isn't explicitly allowed, a warning is
 /// emitted. The type URL pattern may include * and ? wildcards for glob-like
 /// matching (see https://docs.rs/glob/latest/glob/struct.Pattern.html for the
 /// complete syntax).
@@ -80,7 +81,7 @@ pub extern "C" fn substrait_validator_config_ignore_unknown_fields_set_to_defaul
 /// Returns whether the function was successful. If false is returned, retrieve
 /// the error message with substrait_validator_get_last_error().
 #[no_mangle]
-pub extern "C" fn substrait_validator_config_whitelist_any_url(
+pub extern "C" fn substrait_validator_config_allow_any_url(
     config: *mut ConfigHandle,
     pattern: *const libc::c_char,
 ) -> bool {
@@ -113,7 +114,7 @@ pub extern "C" fn substrait_validator_config_whitelist_any_url(
     };
 
     // Update configuration and return success.
-    config.whitelist_any_url(pattern);
+    config.allow_any_url(pattern);
     true
 }
 
