@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module for dealing with Substrait's type system.
 //!
 //! See [`DataType`].

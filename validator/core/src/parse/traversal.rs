@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module for the boilerplate code involved with traversing an input
 //! protobuf/YAML tree to form the output [tree](tree::Node).
 //!

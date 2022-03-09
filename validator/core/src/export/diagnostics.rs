@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! This module provides a basic export format that's just a listing of the
 //! diagnostic messages contained in the tree.
 

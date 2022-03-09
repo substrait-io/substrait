@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Parsing/validation module.
 //!
 //! Roughly speaking, this module takes a Substrait plan represented using the

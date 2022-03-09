@@ -2,7 +2,8 @@ header:
   license:
     spdx-id: Apache-2.0
 
-  paths: 
-    - 'proto/substrait/**'  
+  paths:
+    - 'proto/substrait/**'
+    - 'proto/validator/**'
 
   comment: never

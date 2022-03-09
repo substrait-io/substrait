@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! This module provides an export format based on protobuf, to represent the
 //! output tree as accurately as possible.
 //!

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module for comments.
 //!
 //! [`Comment`]s can be added to nodes between the child edges to attach

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module providing introspection traits for [`prost`]-generated protobuf
 //! types.
 

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module for dealing with YAML-based Substrait extensions.
 
 use crate::output::data_type;

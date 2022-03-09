@@ -4,6 +4,11 @@ build-backend = "maturin"
 
 [project]
 name = "substrait-validator"
+version = "0.0.1"
+description = "Validator for Substrait query plans"
+readme = "README.md"
+license = {file = "../../LICENSE"}
+keywords = ["substrait"]
 requires-python = ">=3.6"
 classifiers = [
     "Programming Language :: Rust",
@@ -13,3 +18,12 @@ classifiers = [
 dependencies = [
     "protobuf>3.19.3",
 ]
+
+[project.optional-dependencies]
+test = [
+  "pytest < 5.0.0",
+]
+
+[project.urls]
+homepage = "https://substrait.io/"
+repository = "https://github.com/substrait-io/substrait"

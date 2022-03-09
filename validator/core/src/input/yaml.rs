@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module for representing YAML input.
 //!
 //! We (ab)use [`serde_json::value::Value`] for this; the primary reason being

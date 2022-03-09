@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module for the output tree structure.
 //!
 //! This module provides the types for the tree structure that constitutes

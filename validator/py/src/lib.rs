@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 // This happens in PyO3 generated code, and there doesn't seem to be a more
 // narrow scope that this can be disabled in (clippy seems a bit confused about
 // the code causing the warning, in general).

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! This module provides a human-readable export format based on HTML.
 
 use crate::output::comment;

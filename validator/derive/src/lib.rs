@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Procedural macro crate for `substrait-validator-core`.
 //!
 //! The derive macros defined here are essentially an ugly workaround for the

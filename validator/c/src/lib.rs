@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 // Functions dereferencing raw pointers are kind of par for the course in a C
 // interface.
 #![allow(clippy::not_unsafe_ptr_arg_deref)]

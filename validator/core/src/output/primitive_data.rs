@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module for primitive data elements.
 //!
 //! The [`PrimitiveData`] enum is used to represent primitive data in the

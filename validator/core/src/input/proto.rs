@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module for representing Substrait protobuf input.
 //!
 //! The structures here are generated using [`prost`], but have a bunch of

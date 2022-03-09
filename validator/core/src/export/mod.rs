@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module dealing with serializing an output [tree](tree::Node) to a byte
 //! stream in various formats.
 

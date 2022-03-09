@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Output representation module.
 //!
 //! This module provides the data structures for representing the output of the

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 use std::env;
 
 fn main() {
@@ -25,6 +27,7 @@ fn main() {
         .export
         .rename
         .insert("Deleter".to_string(), "deleter".to_string());
+    config.header = Some("// SPDX-License-Identifier: Apache-2.0".to_string());
 
     cbindgen::Builder::new()
         .with_crate(crate_dir)

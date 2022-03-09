@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! This module provides the configuration structure for the validator.
 //!
 //! This structure, [`Config`], is to be constructed by the application using

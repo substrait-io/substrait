@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module providing parse/validation functions relating to extensions.
 
 use crate::input::proto;

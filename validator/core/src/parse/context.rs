@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module providing the types containing contextual information for parse
 //! functions.
 //!

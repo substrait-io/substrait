@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Rust "bindings" for validating [Substrait](https://substrait.io/) plans.
 //!
 //! Note that the functionality of the validator is also written in Rust, but

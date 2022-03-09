@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Core library for validating [Substrait](https://substrait.io/).
 //!
 //! Note that this crate is simply the greatest common denominator of the

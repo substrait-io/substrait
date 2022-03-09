@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module for diagnostic message types.
 //!
 //! Since diagnostic messages are rather important for a validator (after all,

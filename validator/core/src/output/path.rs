@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module for handling tree paths.
 //!
 //! The [`PathElement`], [`Path`], and [`PathBuf`] types are used to uniquely
