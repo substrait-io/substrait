@@ -40,7 +40,7 @@ impl traits::ProtoPrimitive for bool {
     }
 
     fn proto_primitive_is_default(&self) -> bool {
-        *self == false
+        !*self
     }
 }
 
