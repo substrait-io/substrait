@@ -12,7 +12,7 @@ pub fn export<T: std::io::Write>(
     root: &tree::Node,
 ) -> std::io::Result<()> {
     for diag in root.iter_diagnostics() {
-        writeln!(out, "{}", diag)?;
+        writeln!(out, "{diag}")?;
     }
     Ok(())
 }

@@ -460,7 +460,7 @@ fn path_encode<S: AsRef<str>>(text: S) -> String {
 /// Formats a path to a node or diagnostic.
 fn format_path(path: &path::PathBuf, index: Option<usize>) -> String {
     if let Some(index) = index {
-        format!("{}:{}", path, index)
+        format!("{path}:{index}")
     } else {
         path.to_string()
     }
@@ -483,11 +483,7 @@ fn format_reference<S: std::fmt::Display>(
     path: &path::PathBuf,
     index: Option<usize>,
 ) -> String {
-    format!(
-        "<a {}>{}</a>",
-        format_reference_parameters(path, index),
-        text
-    )
+    format!("<a {}>{text}</a>", format_reference_parameters(path, index))
 }
 
 /// Formats an anchor/permalink tag for a node (index = None)
@@ -511,8 +507,7 @@ fn format_id(path: &path::PathBuf, index: Option<usize>) -> String {
 /// Creates a span with the given class name. The text is HTML-escaped.
 fn format_span<S: std::fmt::Display>(class: &'static str, text: S) -> String {
     format!(
-        "<span class=\"{}\">{}</span>",
-        class,
+        "<span class=\"{class}\">{}</span>",
         html_escape(text.to_string())
     )
 }
@@ -555,10 +550,7 @@ fn format_diagnostic(
         diagnostic::Level::Error => "diag_error",
     };
 
-    format!(
-        "<div {}class=\"card {}\">\n{}\n{}\n</div>",
-        id, class, cause, anchor
-    )
+    format!("<div {id}class=\"card {class}\">\n{cause}\n{anchor}\n</div>")
 }
 
 /// Format a flattened list of diagnostic cards.
@@ -709,9 +701,8 @@ fn format_node_tree(
         tree::NodeType::YamlPrimitive(data) => format!("= {}", format_span("value", data)),
     };
     let header = format!(
-        "{} {} {}",
+        "{} {value} {}",
         format_span("field", path.end_to_string()),
-        value,
         format_anchor(&pathbuf, None)
     );
 
@@ -720,10 +711,7 @@ fn format_node_tree(
     if node.data.is_empty() {
         let class = if unknown_subtree { "unknown" } else { "ok" };
         return (
-            vec![format!(
-                "<div {} class=\"card {}\">{}</div>",
-                id, class, header
-            )],
+            vec![format!("<div {id} class=\"card {class}\">{header}</div>")],
             Level::Ok,
         );
     }
@@ -785,10 +773,7 @@ fn format_node_tree(
     } else {
         level.class()
     };
-    html[0] = format!(
-        "<details {} class=\"{}\">\n<summary>\n{}\n</summary>",
-        id, class, header
-    );
+    html[0] = format!("<details {id} class=\"{class}\">\n<summary>\n{header}\n</summary>");
     html.push("</details>".to_string());
 
     // Determine the minimum error level for the parent.
@@ -809,7 +794,7 @@ pub fn export<T: std::io::Write>(
     root: &tree::Node,
 ) -> std::io::Result<()> {
     let path = path::Path::Root(root_name);
-    write!(out, "{}", HEADER)?;
+    write!(out, "{HEADER}")?;
 
     // Emit the node graph.
     writeln!(out, "<details class=\"relation_tree\" open=\"true\">")?;
@@ -820,7 +805,7 @@ pub fn export<T: std::io::Write>(
     )?;
     let mut index = 0;
     for s in format_relation_tree(&path, root, &mut index, true) {
-        writeln!(out, "{}", s)?;
+        writeln!(out, "{s}")?;
     }
     writeln!(out, "</details>")?;
 
@@ -843,8 +828,7 @@ pub fn export<T: std::io::Write>(
     )?;
     writeln!(
         out,
-        "<summary class=\"{}\">{}</summary>",
-        validity_class, validity_summary
+        "<summary class=\"{validity_class}\">{validity_summary}</summary>"
     )?;
     if diag_html.is_empty() {
         writeln!(
@@ -853,15 +837,15 @@ pub fn export<T: std::io::Write>(
         )?;
     } else {
         for s in diag_html {
-            writeln!(out, "{}", s)?;
+            writeln!(out, "{s}")?;
         }
     }
     writeln!(out, "</details>")?;
 
     // Emit protobuf-level raw node tree.
     for s in format_node_tree(&path, false, root).0 {
-        writeln!(out, "{}", s)?;
+        writeln!(out, "{s}")?;
     }
 
-    write!(out, "{}", FOOTER)
+    write!(out, "{FOOTER}")
 }

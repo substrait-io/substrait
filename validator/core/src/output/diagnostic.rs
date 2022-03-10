@@ -286,9 +286,9 @@ impl Classification {
         f: &mut std::fmt::Formatter,
     ) -> std::fmt::Result {
         if let Some(description) = self.get_str("Description") {
-            write!(f, "{}: ", description)?;
+            write!(f, "{description}: ")?;
         }
-        write!(f, "{} ({})", message, self.code())
+        write!(f, "{message} ({})", self.code())
     }
 }
 
@@ -327,16 +327,24 @@ impl std::fmt::Display for Cause {
     }
 }
 
-/// Convenience/shorthand macro for creating error diagnostics.
-macro_rules! cause {
-    ($class:ident, $format:expr, $($args:expr),*) => {
-        cause!($class, format!($format, $($args),*))
-    };
+/// Convenience/shorthand macro for creating error diagnostics. Use this
+/// variant when you have something that can be cast into a Message via into(),
+/// like a pre-formatted string or a compatible Error type from a dependency.
+macro_rules! ecause {
     ($class:ident, $message:expr) => {
         crate::output::diagnostic::Cause {
             message: std::sync::Arc::new($message.into()),
             classification: crate::output::diagnostic::Classification::$class,
         }
+    };
+}
+
+/// Convenience/shorthand macro for creating error diagnostics. Use this
+/// variant when you want to format a string. The argument list beyond the
+/// diagnostic class identifier is passed straight to [`format!`].
+macro_rules! cause {
+    ($class:ident, $($args:expr),*) => {
+        ecause!($class, format!($($args),*))
     };
 }
 
@@ -441,6 +449,11 @@ macro_rules! diag {
         }
     };
 }
+/*macro_rules! ediag {
+    ($path:expr, $level:ident, $class:ident, $err:expr) => {
+        diag!($path, $level, ecause!($class, $err))
+    };
+}*/
 
 /// Result type for complete diagnostics, including path.
 pub type DiagResult<T> = std::result::Result<T, RawDiagnostic>;

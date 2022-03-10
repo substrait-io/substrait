@@ -53,12 +53,12 @@ impl std::fmt::Display for PrimitiveData {
             PrimitiveData::Null => write!(f, "null"),
             PrimitiveData::Bool(true) => write!(f, "true"),
             PrimitiveData::Bool(false) => write!(f, "false"),
-            PrimitiveData::Unsigned(x) => write!(f, "{}", x),
-            PrimitiveData::Signed(x) => write!(f, "{}", x),
-            PrimitiveData::Float(x) => write!(f, "{}", x),
-            PrimitiveData::String(x) => write!(f, "{:?}", x),
+            PrimitiveData::Unsigned(x) => write!(f, "{x}"),
+            PrimitiveData::Signed(x) => write!(f, "{x}"),
+            PrimitiveData::Float(x) => write!(f, "{x}"),
+            PrimitiveData::String(x) => write!(f, "{x:?}"),
             PrimitiveData::Bytes(x) => hexdump(f, x),
-            PrimitiveData::Enum(x) => write!(f, "{}", x),
+            PrimitiveData::Enum(x) => write!(f, "{x}"),
             PrimitiveData::Any(x) => {
                 write!(f, "{}(", x.type_url)?;
                 hexdump(f, &x.value)?;

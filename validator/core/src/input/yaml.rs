@@ -35,8 +35,7 @@ pub fn yaml_to_json(y: Yaml, path: &path::Path) -> diagnostic::DiagResult<Value>
                     path.to_path_buf(),
                     Error,
                     YamlParseFailed,
-                    "failed to parse {} as float",
-                    s
+                    "failed to parse {s} as float"
                 )
             })?)
             .ok_or_else(|| {
@@ -44,8 +43,7 @@ pub fn yaml_to_json(y: Yaml, path: &path::Path) -> diagnostic::DiagResult<Value>
                     path.to_path_buf(),
                     Error,
                     YamlParseFailed,
-                    "{} float is not supported",
-                    s
+                    "{s} float is not supported"
                 )
             })?,
         )),

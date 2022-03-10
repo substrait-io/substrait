@@ -34,7 +34,7 @@ impl std::fmt::Display for DataType {
             write!(f, "?")?;
         }
         if let Some(variation) = &self.variation {
-            write!(f, "[{}]", variation)?;
+            write!(f, "[{variation}]")?;
         }
         if !self.parameters.is_empty() {
             write!(f, "<")?;
@@ -45,7 +45,7 @@ impl std::fmt::Display for DataType {
                 } else {
                     write!(f, ", ")?;
                 }
-                write!(f, "{}", parameter)?;
+                write!(f, "{parameter}")?;
             }
             write!(f, ">")?;
         }
@@ -107,10 +107,10 @@ pub enum Class {
 impl std::fmt::Display for Class {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Class::Simple(simple) => write!(f, "{}", simple),
-            Class::Compound(compound) => write!(f, "{}", compound),
-            Class::UserDefined(user_defined) => write!(f, "{}", user_defined),
-            Class::Unresolved(name) => write!(f, "{}!", name),
+            Class::Simple(simple) => write!(f, "{simple}"),
+            Class::Compound(compound) => write!(f, "{compound}"),
+            Class::UserDefined(user_defined) => write!(f, "{user_defined}"),
+            Class::Unresolved(name) => write!(f, "{name}!"),
         }
     }
 }
@@ -188,17 +188,14 @@ impl ParameterChecker for Compound {
                 if params.len() != 1 {
                     return Err(cause!(
                         TypeMismatchedParameters,
-                        "{} expects a single parameter (length)",
-                        self
+                        "{self} expects a single parameter (length)"
                     ));
                 }
                 if let Parameter::Unsigned(length) = params[0] {
                     if length < 1 && length > 2147483647 {
                         return Err(cause!(
                             TypeMismatchedParameters,
-                            "{} length {} is out of range 1..2147483647",
-                            self,
-                            length
+                            "{self} length {length} is out of range 1..2147483647"
                         ));
                     }
                 } else {
@@ -343,16 +340,15 @@ pub enum Parameter {
 impl std::fmt::Display for Parameter {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Parameter::Type(data_type) => write!(f, "{}", data_type),
+            Parameter::Type(data_type) => write!(f, "{data_type}"),
             Parameter::NamedType(name, data_type) => {
                 write!(
                     f,
-                    "{}: {}",
+                    "{}: {data_type}",
                     primitive_data::as_ident_or_string(name),
-                    data_type
                 )
             }
-            Parameter::Unsigned(value) => write!(f, "{}", value),
+            Parameter::Unsigned(value) => write!(f, "{value}"),
         }
     }
 }

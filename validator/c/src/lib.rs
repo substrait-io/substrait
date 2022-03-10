@@ -128,14 +128,14 @@ pub extern "C" fn substrait_validator_config_allow_any_url(
     let pattern = match pattern.to_str() {
         Ok(u) => u,
         Err(e) => {
-            set_last_error(format!("received invalid pattern: {}", e));
+            set_last_error(format!("received invalid pattern: {e}"));
             return false;
         }
     };
     let pattern = match substrait_validator_core::Pattern::new(pattern) {
         Ok(p) => p,
         Err(e) => {
-            set_last_error(format!("received invalid pattern: {}", e));
+            set_last_error(format!("received invalid pattern: {e}"));
             return false;
         }
     };
@@ -183,7 +183,7 @@ pub extern "C" fn substrait_validator_config_override_diagnostic_level(
     let class = match substrait_validator_core::Classification::from_code(class) {
         Some(c) => c,
         None => {
-            set_last_error(format!("unknown diagnostic class {}", class));
+            set_last_error(format!("unknown diagnostic class {class}"));
             return false;
         }
     };
@@ -234,14 +234,14 @@ pub extern "C" fn substrait_validator_config_override_yaml_uri(
     let pattern = match pattern.to_str() {
         Ok(p) => p,
         Err(e) => {
-            set_last_error(format!("received invalid pattern: {}", e));
+            set_last_error(format!("received invalid pattern: {e}"));
             return false;
         }
     };
     let pattern = match substrait_validator_core::Pattern::new(pattern) {
         Ok(p) => p,
         Err(e) => {
-            set_last_error(format!("received invalid pattern: {}", e));
+            set_last_error(format!("received invalid pattern: {e}"));
             return false;
         }
     };
@@ -257,7 +257,7 @@ pub extern "C" fn substrait_validator_config_override_yaml_uri(
         Some(match resolve_as.to_str() {
             Ok(p) => p,
             Err(e) => {
-                set_last_error(format!("received invalid replacement URI: {}", e));
+                set_last_error(format!("received invalid replacement URI: {e}"));
                 return false;
             }
         })
@@ -357,7 +357,7 @@ impl From<ApplicationBuffer> for ApplicationError {
         ApplicationError {
             msg: match std::str::from_utf8(buf.as_ref()) {
                 Ok(e) => e.to_string(),
-                Err(e) => format!("unknown error (failed to decode error message: {})", e),
+                Err(e) => format!("unknown error (failed to decode error message: {e})"),
             },
         }
     }

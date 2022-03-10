@@ -39,6 +39,11 @@ macro_rules! diagnostic {
         $context.output.push_diagnostic($diag, &$context.config)
     };
 }
+macro_rules! ediagnostic {
+    ($context:expr, $level:ident, $class:ident, $err:expr) => {
+        diagnostic!($context, $level, ecause!($class, $err))
+    };
+}
 
 /// Pushes a diagnostic message to the node information list.
 pub fn push_diagnostic(
@@ -183,10 +188,7 @@ fn handle_unknown_children<T: InputNode>(
                 context,
                 Warning,
                 NotYetImplemented,
-                format!(
-                    "the following child nodes were not recognized by the validator: {}",
-                    fields
-                )
+                "the following child nodes were not recognized by the validator: {fields}"
             );
         }
     }
@@ -246,7 +248,7 @@ where
         .fields_parsed
         .insert(field_name.to_string())
     {
-        panic!("field {} was parsed multiple times", field_name);
+        panic!("field {field_name} was parsed multiple times");
     }
 
     if let Some(field_input) = field {
@@ -340,7 +342,7 @@ where
     {
         (node, result)
     } else {
-        diagnostic!(context, Error, ProtoMissingField, field_name);
+        ediagnostic!(context, Error, ProtoMissingField, field_name);
         (Arc::new(TF::type_to_node()), None)
     }
 }
@@ -382,7 +384,7 @@ where
         .fields_parsed
         .insert(field_name.to_string())
     {
-        panic!("field {} was parsed multiple times", field_name);
+        panic!("field {field_name} was parsed multiple times");
     }
 
     field
@@ -425,7 +427,7 @@ where
             let mut output = T::type_to_node();
             output.push_diagnostic(
                 diagnostic::RawDiagnostic {
-                    cause: cause!(ProtoParseFailed, err),
+                    cause: ecause!(ProtoParseFailed, err),
                     level: diagnostic::Level::Error,
                     path: path::PathBuf {
                         root: root_name,
@@ -497,7 +499,7 @@ where
         .fields_parsed
         .insert(field_name.to_string())
     {
-        panic!("field {} was parsed multiple times", field_name);
+        panic!("field {field_name} was parsed multiple times");
     }
 
     if let Some(child) = input.get(field_name) {
@@ -536,7 +538,7 @@ where
     FP: FnMut(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
 {
     if !context.breadcrumb.fields_parsed.insert(index.to_string()) {
-        panic!("element {} was parsed multiple times", index);
+        panic!("element {index} was parsed multiple times");
     }
 
     if let Some(child) = input.get(index) {
@@ -586,7 +588,7 @@ where
     {
         (node, result)
     } else {
-        diagnostic!(context, Error, YamlMissingKey, field_name);
+        ediagnostic!(context, Error, YamlMissingKey, field_name);
         (
             Arc::new(tree::NodeType::YamlPrimitive(primitive_data::PrimitiveData::Null).into()),
             None,
@@ -623,7 +625,7 @@ where
     {
         (node, result)
     } else {
-        diagnostic!(context, Error, YamlMissingElement, "index {}", index);
+        diagnostic!(context, Error, YamlMissingElement, "index {index}");
         (
             Arc::new(tree::NodeType::YamlPrimitive(primitive_data::PrimitiveData::Null).into()),
             None,
@@ -656,15 +658,14 @@ fn resolve_uri(uri: &str, config: &config::Config) -> diagnostic::Result<config:
     } else {
         return Err(cause!(
             YamlResolutionDisabled,
-            "YAML resolution for {} was disabled",
-            uri
+            "YAML resolution for {uri} was disabled"
         ));
     };
 
     // If a custom download function is specified, use it to resolve.
     if let Some(ref resolver) = config.yaml_uri_resolver {
         return resolver(remapped_uri)
-            .map_err(|x| cause!(YamlResolutionFailed, x.as_ref().to_string()));
+            .map_err(|x| ecause!(YamlResolutionFailed, x.as_ref().to_string()));
     }
 
     // Parse as a URL.
@@ -674,16 +675,12 @@ fn resolve_uri(uri: &str, config: &config::Config) -> diagnostic::Result<config:
             return Err(if is_remapped {
                 cause!(
                     YamlResolutionFailed,
-                    "configured URI remapping ({}) did not parse as URL: {}",
-                    remapped_uri,
-                    e
+                    "configured URI remapping ({remapped_uri}) did not parse as URL: {e}"
                 )
             } else {
                 cause!(
                     YamlResolutionFailed,
-                    "failed to parse {} as URL: {}",
-                    remapped_uri,
-                    e
+                    "failed to parse {remapped_uri} as URL: {e}"
                 )
             });
         }
@@ -694,8 +691,7 @@ fn resolve_uri(uri: &str, config: &config::Config) -> diagnostic::Result<config:
         return Err(if is_remapped {
             cause!(
                 YamlResolutionFailed,
-                "configured URI remapping ({}) does not use file:// scheme",
-                remapped_uri
+                "configured URI remapping ({remapped_uri}) does not use file:// scheme"
             )
         } else {
             cause!(YamlResolutionFailed, "URI does not use file:// scheme")
@@ -709,8 +705,7 @@ fn resolve_uri(uri: &str, config: &config::Config) -> diagnostic::Result<config:
             return Err(if is_remapped {
                 cause!(
                     YamlResolutionFailed,
-                    "configured URI remapping ({}) could not be converted to file path",
-                    remapped_uri
+                    "configured URI remapping ({remapped_uri}) could not be converted to file path"
                 )
             } else {
                 cause!(
@@ -727,12 +722,10 @@ fn resolve_uri(uri: &str, config: &config::Config) -> diagnostic::Result<config:
             if is_remapped {
                 cause!(
                     YamlResolutionFailed,
-                    "failed to file remapping for URI ({}): {}",
-                    remapped_uri,
-                    e
+                    "failed to file remapping for URI ({remapped_uri}): {e}"
                 )
             } else {
-                cause!(YamlResolutionFailed, e)
+                ecause!(YamlResolutionFailed, e)
             }
         })
         .map(|d| -> config::BinaryData { Box::new(d) })
@@ -760,7 +753,7 @@ fn load_yaml(
     // Parse as UTF-8.
     let string_data = match std::str::from_utf8(binary_data.as_ref().as_ref()) {
         Err(e) => {
-            diagnostic!(context, Error, YamlParseFailed, e);
+            ediagnostic!(context, Error, YamlParseFailed, e);
             return None;
         }
         Ok(x) => x,
@@ -769,7 +762,7 @@ fn load_yaml(
     // Parse as YAML.
     let yaml_data = match yaml_rust::YamlLoader::load_from_str(string_data) {
         Err(e) => {
-            diagnostic!(context, Error, YamlParseFailed, e);
+            ediagnostic!(context, Error, YamlParseFailed, e);
             return None;
         }
         Ok(x) => {
@@ -809,7 +802,7 @@ fn load_yaml(
     if let Some(schema) = schema {
         if let Err(es) = schema.validate(&json_data) {
             for e in es {
-                diagnostic!(context, Error, YamlSchemaValidationFailed, e);
+                ediagnostic!(context, Error, YamlSchemaValidationFailed, e);
             }
             return None;
         }

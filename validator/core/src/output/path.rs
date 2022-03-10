@@ -40,19 +40,16 @@ impl std::fmt::Display for PathElement {
         }
         match self {
             PathElement::Field(field) => write!(f, "{}", primitive_data::as_ident_or_string(field)),
-            PathElement::Repeated(field, index) => write!(
-                f,
-                "{}[{}]",
-                primitive_data::as_ident_or_string(field),
-                index
-            ),
+            PathElement::Repeated(field, index) => {
+                write!(f, "{}[{index}]", primitive_data::as_ident_or_string(field))
+            }
             PathElement::Variant(field, variant) => write!(
                 f,
                 "{}<{}>",
                 primitive_data::as_ident_or_string(field),
                 primitive_data::as_ident_or_string(variant)
             ),
-            PathElement::Index(index) => write!(f, "[{}]", index),
+            PathElement::Index(index) => write!(f, "[{index}]"),
         }
     }
 }
@@ -76,7 +73,7 @@ impl std::fmt::Display for PathBuf {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.root)?;
         for element in self.elements.iter() {
-            write!(f, "{}", element)?;
+            write!(f, "{element}")?;
         }
         Ok(())
     }
@@ -138,8 +135,8 @@ impl Path<'_> {
 impl std::fmt::Display for Path<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Path::Root(name) => write!(f, "{}", name),
-            Path::Select(parent, element) => write!(f, "{}{}", parent, element),
+            Path::Root(name) => write!(f, "{name}"),
+            Path::Select(parent, element) => write!(f, "{parent}{element}"),
         }
     }
 }

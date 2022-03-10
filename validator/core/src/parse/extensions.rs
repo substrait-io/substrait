@@ -79,8 +79,7 @@ fn parse_simple_extension_yaml_uri_mapping(
                 y,
                 Error,
                 IllegalValue,
-                "anchor {} is already in use for URI {}",
-                anchor,
+                "anchor {anchor} is already in use for URI {}",
                 prev_data.uri
             );
             if let Some(ref path) = prev_data.anchor_path {
@@ -106,8 +105,7 @@ fn parse_uri_reference(
         }
         None => Err(cause!(
             LinkMissingAnchor,
-            "URI anchor {} does not exist",
-            uri_reference
+            "URI anchor {uri_reference} does not exist"
         )),
     }
 }
@@ -132,7 +130,7 @@ fn parse_extension_mapping_data(
                 yaml_info.data.as_ref().and_then(|data| {
                     let data_type = data.types.get(&name.to_lowercase()).cloned();
                     if data_type.is_none() {
-                        diagnostic!(y, Error, LinkMissingTypeName, "failed to resolve data type {:?} in {}", name, yaml_info);
+                        diagnostic!(y, Error, LinkMissingTypeName, "failed to resolve data type {name:?} in {yaml_info}");
                     }
                     data_type
                 })
@@ -155,9 +153,7 @@ fn parse_extension_mapping_data(
                         y,
                         Error,
                         IllegalValue,
-                        "anchor {} is already in use for data type {}",
-                        anchor,
-                        prev_data
+                        "anchor {anchor} is already in use for data type {prev_data}"
                     );
                     if let Some(ref path) = prev_data.common.anchor_path {
                         link!(y, path.clone(), "previous definition was here");
@@ -180,7 +176,7 @@ fn parse_extension_mapping_data(
                 yaml_info.data.as_ref().and_then(|data| {
                     let type_variation = data.type_variations.get(&name.to_lowercase()).cloned();
                     if type_variation.is_none() {
-                        diagnostic!(y, Error, LinkMissingTypeVariationName, "failed to resolve type variation {:?} in {}", name, yaml_info);
+                        diagnostic!(y, Error, LinkMissingTypeVariationName, "failed to resolve type variation {name:?} in {yaml_info}");
                     }
                     type_variation
                 })
@@ -203,9 +199,7 @@ fn parse_extension_mapping_data(
                         y,
                         Error,
                         IllegalValue,
-                        "anchor {} is already in use for type variation {}",
-                        anchor,
-                        prev_data
+                        "anchor {anchor} is already in use for type variation {prev_data}"
                     );
                     if let Some(ref path) = prev_data.common.anchor_path {
                         link!(y, path.clone(), "previous definition was here");
@@ -228,7 +222,7 @@ fn parse_extension_mapping_data(
                 yaml_info.data.as_ref().and_then(|data| {
                     let function = data.functions.get(&name.to_lowercase()).cloned();
                     if function.is_none() {
-                        diagnostic!(y, Error, LinkMissingFunctionName, "failed to resolve function {:?} in {}", name, yaml_info);
+                        diagnostic!(y, Error, LinkMissingFunctionName, "failed to resolve function {name:?} in {yaml_info}");
                     }
                     function
                 })
@@ -251,9 +245,7 @@ fn parse_extension_mapping_data(
                         y,
                         Error,
                         IllegalValue,
-                        "anchor {} is already in use for function {}",
-                        anchor,
-                        prev_data
+                        "anchor {anchor} is already in use for function {prev_data}"
                     );
                     if let Some(ref path) = prev_data.common.anchor_path {
                         link!(y, path.clone(), "previous definition was here");
@@ -358,8 +350,7 @@ fn parse_expected_type_url(x: &String, y: &mut context::Context) -> Result<()> {
             y,
             Info,
             ProtoRedundantAnyDeclaration,
-            "message type {} redeclared",
-            x
+            "message type {x} redeclared"
         );
         link!(y, path, "previous declaration was here");
     } else {
@@ -367,8 +358,7 @@ fn parse_expected_type_url(x: &String, y: &mut context::Context) -> Result<()> {
             y,
             Info,
             ProtoRedundantAnyDeclaration,
-            "message type {} is never used",
-            x
+            "message type {x} is never used"
         );
     }
     Ok(())
@@ -400,7 +390,7 @@ pub fn parse_extensions_after_relations(x: &proto::substrait::Plan, y: &mut cont
         &mut y.state.pending_proto_url_dependencies,
     );
     for (url, path) in pending_dependencies.drain() {
-        diagnostic!(y, Error, ProtoMissingAnyDeclaration, url);
+        ediagnostic!(y, Error, ProtoMissingAnyDeclaration, url);
         link!(y, path, "message type is first used here");
     }
 }
