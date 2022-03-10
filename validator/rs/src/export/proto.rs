@@ -13,10 +13,19 @@ use crate::output::comment;
 use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::output::extension;
+use crate::output::parse_result;
 use crate::output::path;
 use crate::output::primitive_data;
 use crate::output::tree;
 use prost::Message;
+
+impl From<&parse_result::ParseResult> for validator::ParseResult {
+    fn from(result: &parse_result::ParseResult) -> Self {
+        Self {
+            root: Some((&result.root).into()),
+        }
+    }
+}
 
 impl From<&tree::Node> for validator::Node {
     fn from(node: &tree::Node) -> Self {
@@ -394,9 +403,9 @@ impl From<&data_type::Parameter> for validator::data_type::Parameter {
 pub fn export<T: std::io::Write>(
     out: &mut T,
     _root_name: &'static str,
-    root: &tree::Node,
+    result: &parse_result::ParseResult,
 ) -> std::io::Result<()> {
-    let root = validator::Node::from(root);
+    let root = validator::ParseResult::from(result);
     let buf = root.encode_to_vec();
     if out.write(&buf)? < buf.len() {
         Err(std::io::Error::new(

@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: Apache-2.0
+
+//! Module for the toplevel type representing a parse/validation result.
+
 use crate::export;
 use crate::output::diagnostic;
 use crate::output::tree;
@@ -93,6 +97,6 @@ impl ParseResult {
         out: &mut T,
         format: export::Format,
     ) -> std::io::Result<()> {
-        export::export(out, format, "plan", &self.root)
+        export::export(out, format, "plan", self)
     }
 }

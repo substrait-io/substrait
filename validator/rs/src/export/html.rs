@@ -4,6 +4,7 @@
 
 use crate::output::comment;
 use crate::output::diagnostic;
+use crate::output::parse_result;
 use crate::output::path;
 use crate::output::tree;
 
@@ -791,7 +792,7 @@ fn format_node_tree(
 pub fn export<T: std::io::Write>(
     out: &mut T,
     root_name: &'static str,
-    root: &tree::Node,
+    result: &parse_result::ParseResult,
 ) -> std::io::Result<()> {
     let path = path::Path::Root(root_name);
     write!(out, "{HEADER}")?;
@@ -804,13 +805,13 @@ pub fn export<T: std::io::Write>(
         "<div class=\"note\">Note: data flows upwards in these graphs.</div>"
     )?;
     let mut index = 0;
-    for s in format_relation_tree(&path, root, &mut index, true) {
+    for s in format_relation_tree(&path, &result.root, &mut index, true) {
         writeln!(out, "{s}")?;
     }
     writeln!(out, "</details>")?;
 
     // Emit diagnostics summary.
-    let (diag_html, level) = format_diagnostics(&path, root);
+    let (diag_html, level) = format_diagnostics(&path, &result.root);
     let validity_class = match level {
         diagnostic::Level::Info => "valid",
         diagnostic::Level::Warning => "maybe_valid",
@@ -843,7 +844,7 @@ pub fn export<T: std::io::Write>(
     writeln!(out, "</details>")?;
 
     // Emit protobuf-level raw node tree.
-    for s in format_node_tree(&path, false, root).0 {
+    for s in format_node_tree(&path, false, &result.root).0 {
         writeln!(out, "{s}")?;
     }
 

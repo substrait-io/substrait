@@ -11,8 +11,16 @@ option csharp_namespace = "Substrait.Validator.Protobuf";
 
 // One of the functions of the validator is to convert Substrait plans to a
 // format that is more easy to consume for software geared toward making
-// human-readable representations of Substrait. The validator can be tasked to
-// emit a tree of these nodes for that purpose.
+// human-readable representations of Substrait. The validator has a few
+// builtin text-based exporters, but it can also emit the complete parse
+// result via the binary serialization of this message type.
+message ParseResult {
+
+  // Root node of the parse result tree.
+  Node root = 1;
+}
+
+// Nodes of the validator parse result tree.
 //
 // Note that, unlike substrait.Plan and its children, the nodes in this tree
 // are intentionally devoid of typing information: all nodes are of type Node.

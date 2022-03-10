@@ -7,7 +7,7 @@ mod diagnostics;
 mod html;
 mod proto;
 
-use crate::output::tree;
+use crate::output::parse_result;
 
 /// Supported output formats for exporting.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -28,11 +28,11 @@ pub fn export<T: std::io::Write>(
     out: &mut T,
     format: Format,
     root_name: &'static str,
-    root: &tree::Node,
+    result: &parse_result::ParseResult,
 ) -> std::io::Result<()> {
     match format {
-        Format::Diagnostics => diagnostics::export(out, root_name, root),
-        Format::Html => html::export(out, root_name, root),
-        Format::Proto => proto::export(out, root_name, root),
+        Format::Diagnostics => diagnostics::export(out, root_name, result),
+        Format::Html => html::export(out, root_name, result),
+        Format::Proto => proto::export(out, root_name, result),
     }
 }

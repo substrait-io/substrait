@@ -6,7 +6,7 @@ from google.protobuf import json_format
 
 from .substrait_validator import ParseResult, Config as _Config
 from .substrait.plan_pb2 import Plan
-from .substrait.validator.validator_pb2 import Node, Diagnostic
+from .substrait.validator.validator_pb2 import Node, Diagnostic, ParseResult as ParseResultProto
 
 
 class Config:
@@ -107,12 +107,12 @@ def plan_to_parse_result(plan, config=None) -> ParseResult:
 
 
 def plan_to_parse_tree(plan, config=None) -> Node:
-    """Parses the given plan with the validator, and returns its parse tree.
+    """Parses the given plan with the validator, and returns its parse result.
     plan can be anything supported by load_plan(), a Plan object, or a
     ParseResult object."""
-    root = Node()
-    root.ParseFromString(plan_to_parse_tree_proto(plan, config))
-    return root
+    result = ParseResultProto()
+    result.ParseFromString(plan_to_parse_tree_proto(plan, config))
+    return result.root
 
 
 def plan_to_parse_tree_proto(plan, config=None) -> str:
