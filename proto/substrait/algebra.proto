@@ -225,7 +225,7 @@ message ExtensionMultiRel {
   google.protobuf.Any detail = 3;
 }
 
-// A relation with output field names.
+// A relation with output field names and output format.
 //
 // This is for use at the root of a `Rel` tree.
 message RelRoot {
@@ -233,6 +233,8 @@ message RelRoot {
   Rel input = 1;
   // Field names in depth-first order
   repeated string names = 2;
+  // Output format of the whole computing.
+  string output_format = 3;
 }
 
 message Rel {
