@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use std::collections::HashSet;
+use std::env;
 use std::ffi::OsStr;
 use std::ffi::OsString;
 use std::fs;
@@ -21,6 +22,10 @@ fn main() {
         "../../proto"
     };
 
+    // Ensure above path is relative to the Cargo.toml directory.
+    let pwd = env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR");
+    let input_path = PathBuf::from(&pwd).join(input_path);
+
     // Output directory for protoc. This is a temporary directory: it will be
     // completely deleted and then reconstructed. Afterward, the build script
     // will patch the files in here and then move them to python_out.
@@ -34,7 +39,7 @@ fn main() {
     let python_prefix = "substrait_validator.";
 
     // Canonicalize all paths to prevent ambiguity.
-    let input_path = dunce::canonicalize(PathBuf::from(input_path)).unwrap();
+    let input_path = dunce::canonicalize(input_path).unwrap();
     let workdir = std::env::current_dir().unwrap();
     let intermediate_path = workdir.join(intermediate_path);
     let output_path = workdir.join(output_path);
@@ -48,6 +53,11 @@ fn main() {
         })
         .map(|e| dunce::canonicalize(e.into_path()).unwrap())
         .collect();
+
+    // Inform cargo that changes to the .proto files require a rerun.
+    for path in &proto_files {
+        println!("cargo:rerun-if-changed={}", path.display());
+    }
 
     // Clean and recreate output directory.
     fs::remove_dir_all(&intermediate_path).ok();
