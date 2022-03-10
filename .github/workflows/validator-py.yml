@@ -6,8 +6,16 @@ on:
     branches: [ main ]
 
 jobs:
-  sdist:
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        type: [wheel]
+        include:
+        - os: ubuntu-latest
+          type: sdist
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
     - name: Install build dependencies
@@ -16,95 +24,37 @@ jobs:
       working-directory: validator/py
       run: python3 prepare_build.py populate
     - name: Create sdist
+      if: ${{ matrix.type == 'sdist' }}
       uses: messense/maturin-action@v1
       with:
         command: sdist
         args: -o dist -m validator/py/Cargo.toml
-    - name: Install runtime dependencies
-      run: python3 -m pip install --upgrade protobuf pytest
-    - name: Install generated wheel
-      run: python3 -m pip install dist/substrait_validator-*.tar.gz
-    - name: Upload wheels
-      if: "startsWith(github.ref, 'refs/tags/')"
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
-
-  linux:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Install build dependencies
-      run: python3 -m pip install --upgrade pip maturin
-    - name: Prepare build environment
-      working-directory: validator/py
-      run: python3 prepare_build.py populate
-    - name: Build wheels
+    - name: Build manylinux wheels
+      if: ${{ matrix.type == 'wheel' && matrix.os == 'ubuntu-latest' }}
       uses: messense/maturin-action@v1
       with:
         manylinux: auto
         command: build
         args: --release --no-sdist -o dist -m validator/py/Cargo.toml
-    - name: Install runtime dependencies
-      run: python3 -m pip install --upgrade protobuf pytest
-    - name: Install generated wheel
-      run: python3 -m pip install --no-index --find-links=dist substrait-validator
-    - name: Test
-      working-directory: validator/py/tests
-      run: pytest
-    - name: Upload wheels
-      if: "startsWith(github.ref, 'refs/tags/')"
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
-
-  windows:
-    runs-on: windows-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Install build dependencies
-      run: python3 -m pip install --upgrade pip maturin
-    - name: Prepare build environment
-      working-directory: validator/py
-      run: python3 prepare_build.py populate
-    - name: Build wheels
+    - name: Build Windows wheels
+      if: ${{ matrix.type == 'wheel' && matrix.os == 'windows-latest' }}
       uses: messense/maturin-action@v1
       with:
         command: build
         args: --release --no-sdist -o dist -m validator/py/Cargo.toml
-    - name: Install runtime dependencies
-      run: python3 -m pip install --upgrade protobuf pytest
-    - name: Install generated wheel
-      run: python3 -m pip install --no-index --find-links=dist substrait-validator
-    - name: Test
-      working-directory: validator/py/tests
-      run: pytest
-    - name: Upload wheels
-      if: "startsWith(github.ref, 'refs/tags/')"
-      uses: actions/upload-artifact@v2
-      with:
-        name: wheels
-        path: dist
-
-  macos:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Install build dependencies
-      run: python3 -m pip install --upgrade pip maturin
-    - name: Prepare build environment
-      working-directory: validator/py
-      run: python3 prepare_build.py populate
-    - name: Build wheels
+    - name: Build MacOS wheels
+      if: ${{ matrix.type == 'wheel' && matrix.os == 'macos-latest' }}
       uses: messense/maturin-action@v1
       with:
         command: build
         args: --release --no-sdist -o dist --universal2 -m validator/py/Cargo.toml
     - name: Install runtime dependencies
       run: python3 -m pip install --upgrade protobuf pytest
+    - name: Install generated sdist
+      if: ${{ matrix.type == 'sdist' }}
+      run: python3 -m pip install dist/substrait_validator-*.tar.gz
     - name: Install generated wheel
+      if: ${{ matrix.type == 'wheel' }}
       run: python3 -m pip install --no-index --find-links=dist substrait-validator
     - name: Test
       working-directory: validator/py/tests
@@ -120,7 +70,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     if: "startsWith(github.ref, 'refs/tags/')"
-    needs: [ macos, windows, linux, sdist ]
+    needs: [ build ]
     steps:
       - uses: actions/download-artifact@v2
         with:
