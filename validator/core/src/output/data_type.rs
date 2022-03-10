@@ -192,17 +192,22 @@ impl ParameterChecker for Compound {
                     ));
                 }
                 if let Parameter::Unsigned(length) = params[0] {
-                    if length < 1 && length > 2147483647 {
+                    // Note: 2147483647 = 2^31-1 = maximum value for signed
+                    // 32-bit integer. However, the significance of the number
+                    // is just that the Substrait specification says this is
+                    // the limit.
+                    const MIN_LENGTH: u64 = 1;
+                    const MAX_LENGTH: u64 = 2147483647;
+                    if length < MIN_LENGTH && length > MAX_LENGTH {
                         return Err(cause!(
                             TypeMismatchedParameters,
-                            "{self} length {length} is out of range 1..2147483647"
+                            "{self} length {length} is out of range 1..{MAX_LENGTH}"
                         ));
                     }
                 } else {
                     return Err(cause!(
                         TypeMismatchedParameters,
-                        "{} length parameter must be a positive integer",
-                        self
+                        "{self} length parameter must be a positive integer"
                     ));
                 }
             }
@@ -210,41 +215,34 @@ impl ParameterChecker for Compound {
                 if params.len() != 2 {
                     return Err(cause!(
                         TypeMismatchedParameters,
-                        "{} expects two parameters (precision and scale)",
-                        self
+                        "{self} expects two parameters (precision and scale)"
                     ));
                 }
                 if let Parameter::Unsigned(precision) = params[0] {
-                    if precision > 38 {
+                    const MAX_PRECISION: u64 = 38;
+                    if precision > MAX_PRECISION {
                         return Err(cause!(
                             TypeMismatchedParameters,
-                            "{} precision {} is out of range 0..38",
-                            self,
-                            precision
+                            "{self} precision {precision} is out of range 0..{MAX_PRECISION}"
                         ));
                     }
                     if let Parameter::Unsigned(scale) = params[1] {
                         if scale > precision {
                             return Err(cause!(
                                 TypeMismatchedParameters,
-                                "{} scale {} is out of range 0..{}",
-                                self,
-                                scale,
-                                precision
+                                "{self} scale {scale} is out of range 0..{precision}"
                             ));
                         }
                     } else {
                         return Err(cause!(
                             TypeMismatchedParameters,
-                            "{} scale parameter must be a positive integer",
-                            self
+                            "{self} scale parameter must be a positive integer"
                         ));
                     }
                 } else {
                     return Err(cause!(
                         TypeMismatchedParameters,
-                        "{} precision parameter must be a positive integer",
-                        self
+                        "{self} precision parameter must be a positive integer"
                     ));
                 }
             }
@@ -253,8 +251,7 @@ impl ParameterChecker for Compound {
                     if !matches!(param, Parameter::Type(_)) {
                         return Err(cause!(
                             TypeMismatchedParameters,
-                            "{} parameters must be types",
-                            self
+                            "{self} parameters must be types"
                         ));
                     }
                 }
@@ -266,16 +263,13 @@ impl ParameterChecker for Compound {
                         if !names.insert(name) {
                             return Err(cause!(
                                 TypeMismatchedParameters,
-                                "duplicate field name in {}: {}",
-                                self,
-                                name
+                                "duplicate field name in {self}: {name}"
                             ));
                         }
                     } else {
                         return Err(cause!(
                             TypeMismatchedParameters,
-                            "{} parameters must be name-types pairs",
-                            self
+                            "{self} parameters must be name-types pairs"
                         ));
                     }
                 }
@@ -284,15 +278,13 @@ impl ParameterChecker for Compound {
                 if params.len() != 1 {
                     return Err(cause!(
                         TypeMismatchedParameters,
-                        "{} expects a single parameter (element type)",
-                        self
+                        "{self} expects a single parameter (element type)"
                     ));
                 }
                 if !matches!(params[0], Parameter::Type(_)) {
                     return Err(cause!(
                         TypeMismatchedParameters,
-                        "{} element type parameter must be a type",
-                        self
+                        "{self} element type parameter must be a type"
                     ));
                 }
             }
@@ -300,22 +292,19 @@ impl ParameterChecker for Compound {
                 if params.len() != 2 {
                     return Err(cause!(
                         TypeMismatchedParameters,
-                        "{} expects two parameters (key type and value type)",
-                        self
+                        "{self} expects two parameters (key type and value type)"
                     ));
                 }
                 if !matches!(params[0], Parameter::Type(_)) {
                     return Err(cause!(
                         TypeMismatchedParameters,
-                        "{} key type parameter must be a type",
-                        self
+                        "{self} key type parameter must be a type"
                     ));
                 }
                 if !matches!(params[1], Parameter::Type(_)) {
                     return Err(cause!(
                         TypeMismatchedParameters,
-                        "{} value type parameter must be a type",
-                        self
+                        "{self} value type parameter must be a type"
                     ));
                 }
             }
