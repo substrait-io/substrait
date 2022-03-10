@@ -19,12 +19,12 @@ pub mod export;
 pub mod input;
 
 // Aliases for common types used on the crate interface.
-pub type Config = input::config::Config;
-pub type Pattern = input::config::glob::Pattern;
-pub type Diagnostic = output::diagnostic::Diagnostic;
-pub type Classification = output::diagnostic::Classification;
-pub type Level = output::diagnostic::Level;
-pub type Node = output::tree::Node;
+pub use input::config::glob::Pattern;
+pub use input::config::Config;
+pub use output::diagnostic::Classification;
+pub use output::diagnostic::Diagnostic;
+pub use output::diagnostic::Level;
+pub use output::tree::Node;
 
 /// Validates the given substrait.Plan message and returns the parse tree.
 pub fn parse<B: prost::bytes::Buf>(buffer: B, config: &Config) -> Node {
