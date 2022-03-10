@@ -20,12 +20,13 @@
 //! The body of the parse function can use a wide variety of function-like
 //! macros from [`traversal`] to traverse the children of `x` in the
 //! appropriate order and with the appropriate parse functions. The macros
-//! return a tuple of a reference to the created [Node](tree::Node) and the `R`
-//! returned by the parse function (depending on the macro, these may be
-//! wrapped in [`Option`]s or [`Vec`]s). Note that any children not traversed
-//! by the parse function will automatically be traversed by [`traversal`]
-//! (along with a warning diagnostic that these children were not validated),
-//! and that traversing a child twice is illegal (this will panic).
+//! return a tuple of a reference to the created
+//! [Node](crate::output::tree::Node) and the `R` returned by the parse
+//! function (depending on the macro, these may be wrapped in [`Option`]s or
+//! [`Vec`]s). Note that any children not traversed by the parse function will
+//! automatically be traversed by [`traversal`] (along with a warning
+//! diagnostic that these children were not validated), and that traversing a
+//! child twice is illegal (this will panic).
 //!
 //! If the parse function fails in an unrecoverable way, it can return Err via
 //! `?`. When it does this, the [`traversal`] macros takes care of pushing an
@@ -37,14 +38,16 @@
 //! The reference to the [`context::Context`] object can also be used directly.
 //! It contains the following things:
 //!
-//!  - [`output: &mut tree::Node`](tree::Node), a mutable reference to the node
-//!    in the output tree that we're writing to. Note that the [`traversal`]
-//!    macros create a [`Node`](tree::Node) already populated with the default
-//!    [`NodeType`](tree::NodeType) before calling the parse function, including
-//!    a copy of the primitive data element for leaf nodes, and everything else
-//!    can be added using the [`traversal`] macros, so you shouldn't normally
-//!    need to access this. Exceptions exist, however, for example when an
-//!    integer primitive needs to be upgraded to an anchor reference.
+//!  - [`output: &mut tree::Node`](crate::output::tree::Node), a mutable
+//!    reference to the node in the output tree that we're writing to. Note
+//!    that the [`traversal`] macros create a
+//!    [`Node`](crate::output::tree::Node) already populated with the default
+//!    [`NodeType`](crate::output::tree::NodeType) before calling the parse
+//!    function, including a copy of the primitive data element for leaf nodes,
+//!    and everything else can be added using the [`traversal`] macros, so you
+//!    shouldn't normally need to access this. Exceptions exist, however, for
+//!    example when an integer primitive needs to be upgraded to an anchor
+//!    reference.
 //!  - [`state: &mut context::State`](context::State), a mutable reference to a
 //!    global state structure for the parser. This includes, for instance,
 //!    lookup tables for things previously defined in the plan, such as
@@ -73,7 +76,7 @@ mod extensions;
 use crate::input::config;
 use crate::input::proto;
 use crate::output::diagnostic;
-use crate::output::tree;
+use crate::output::parse_result;
 
 /// Toplevel parse function for a plan.
 fn parse_plan(x: &proto::substrait::Plan, y: &mut context::Context) -> diagnostic::Result<()> {
@@ -84,7 +87,10 @@ fn parse_plan(x: &proto::substrait::Plan, y: &mut context::Context) -> diagnosti
 }
 
 /// Validates the given substrait.Plan message and returns the parse tree.
-pub fn parse<B: prost::bytes::Buf>(buffer: B, config: &config::Config) -> tree::Node {
+pub fn parse<B: prost::bytes::Buf>(
+    buffer: B,
+    config: &config::Config,
+) -> parse_result::ParseResult {
     traversal::parse_proto::<proto::substrait::Plan, _, _>(
         buffer,
         "plan",

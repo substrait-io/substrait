@@ -135,7 +135,7 @@ impl Config {
 /// check(), check_valid(), or check_not_invalid() to check validity.
 #[pyclass]
 struct ParseResult {
-    root: substrait_validator::Node,
+    root: substrait_validator::ParseResult,
 }
 
 #[pymethods]
@@ -156,7 +156,7 @@ impl ParseResult {
     /// plans (i.e. the validator was unable to prove validity either way),
     /// or 1 for valid plans.
     pub fn check(&self) -> i32 {
-        match substrait_validator::check(&self.root) {
+        match self.root.check() {
             substrait_validator::Validity::Valid => 1,
             substrait_validator::Validity::MaybeValid => 0,
             substrait_validator::Validity::Invalid => -1,
@@ -167,7 +167,7 @@ impl ParseResult {
     /// encountered in the plan if the plan was not proven to be valid by the
     /// validator.
     pub fn check_valid(&self) -> PyResult<()> {
-        if let Some(diag) = substrait_validator::get_diagnostic(&self.root) {
+        if let Some(diag) = self.root.get_diagnostic() {
             if diag.adjusted_level >= substrait_validator::Level::Warning {
                 return Err(PyValueError::new_err(diag.to_string()));
             }
@@ -178,7 +178,7 @@ impl ParseResult {
     /// Throws a ValueError exception containing the first error encountered
     /// in the plan if the plan was proven to be invalid by the validator.
     pub fn check_not_invalid(&self) -> PyResult<()> {
-        if let Some(diag) = substrait_validator::get_diagnostic(&self.root) {
+        if let Some(diag) = self.root.get_diagnostic() {
             if diag.adjusted_level >= substrait_validator::Level::Error {
                 return Err(PyValueError::new_err(diag.to_string()));
             }
@@ -190,10 +190,9 @@ impl ParseResult {
     /// multiline string.
     pub fn export_diagnostics(&self) -> PyResult<String> {
         let mut result: Vec<u8> = vec![];
-        substrait_validator::export(
+        self.root.export(
             &mut result,
             substrait_validator::export::Format::Diagnostics,
-            &self.root,
         )?;
         let result = String::from_utf8(result)?;
         Ok(result)
@@ -203,11 +202,8 @@ impl ParseResult {
     /// debugging.
     pub fn export_html(&self) -> PyResult<String> {
         let mut result: Vec<u8> = vec![];
-        substrait_validator::export(
-            &mut result,
-            substrait_validator::export::Format::Html,
-            &self.root,
-        )?;
+        self.root
+            .export(&mut result, substrait_validator::export::Format::Html)?;
         let result = String::from_utf8(result)?;
         Ok(result)
     }
@@ -216,11 +212,8 @@ impl ParseResult {
     /// message, using binary serialization.
     pub fn export_proto(&self, py: Python) -> PyResult<PyObject> {
         let mut result = vec![];
-        substrait_validator::export(
-            &mut result,
-            substrait_validator::export::Format::Proto,
-            &self.root,
-        )?;
+        self.root
+            .export(&mut result, substrait_validator::export::Format::Proto)?;
         let result = PyBytes::new(py, &result).into();
         Ok(result)
     }

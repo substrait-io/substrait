@@ -17,6 +17,7 @@ use crate::output::comment;
 use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::output::extension;
+use crate::output::parse_result;
 use crate::output::path;
 use crate::output::primitive_data;
 use crate::output::tree;
@@ -414,7 +415,7 @@ pub fn parse_proto<T, F, B>(
     root_parser: F,
     state: &mut context::State,
     config: &config::Config,
-) -> tree::Node
+) -> parse_result::ParseResult
 where
     T: prost::Message + InputNode + Default,
     F: FnOnce(&T, &mut context::Context) -> diagnostic::Result<()>,
@@ -424,8 +425,8 @@ where
         Err(err) => {
             // Create a minimal root node with just the decode error
             // diagnostic.
-            let mut output = T::type_to_node();
-            output.push_diagnostic(
+            let mut root = T::type_to_node();
+            root.push_diagnostic(
                 diagnostic::RawDiagnostic {
                     cause: ecause!(ProtoParseFailed, err),
                     level: diagnostic::Level::Error,
@@ -436,15 +437,15 @@ where
                 },
                 config,
             );
-            output
+            parse_result::ParseResult { root }
         }
         Ok(input) => {
             // Create the root node.
-            let mut output = input.data_to_node();
+            let mut root = input.data_to_node();
 
             // Create the root context.
             let mut context = context::Context {
-                output: &mut output,
+                output: &mut root,
                 state,
                 breadcrumb: &mut context::Breadcrumb::new(root_name),
                 config,
@@ -462,7 +463,7 @@ where
             // parse function succeeded.
             handle_unknown_children(&input, &mut context, success);
 
-            output
+            parse_result::ParseResult { root }
         }
     }
 }

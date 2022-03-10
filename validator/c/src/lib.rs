@@ -445,7 +445,7 @@ pub extern "C" fn substrait_validator_config_yaml_uri_resolver(
 
 /// Parse/validation result handle.
 pub struct ResultHandle {
-    pub root: substrait_validator::Node,
+    pub result: substrait_validator::ParseResult,
 }
 
 /// Parses the given byte buffer as a substrait.Plan message, using the given
@@ -472,7 +472,7 @@ pub extern "C" fn substrait_validator_parse(
     let data = unsafe { std::slice::from_raw_parts(data, size.try_into().unwrap()) };
 
     // Perform the actual parsing.
-    let root = if config.is_null() {
+    let result = if config.is_null() {
         substrait_validator::parse(data, &substrait_validator::Config::default())
     } else {
         // UNSAFE: unpack configuration handle. Assumes that the pointer was
@@ -481,7 +481,7 @@ pub extern "C" fn substrait_validator_parse(
     };
 
     // Create a box to store the return value handle on the stack.
-    let handle = Box::new(ResultHandle { root });
+    let handle = Box::new(ResultHandle { result });
 
     // Convert the box to its raw pointer and relinquish ownership.
     Box::into_raw(handle)
@@ -514,10 +514,10 @@ pub extern "C" fn substrait_validator_check(handle: *const ResultHandle) -> i32 
     if handle.is_none() {
         return -1;
     }
-    let root = &handle.as_ref().unwrap().root;
+    let result = &handle.as_ref().unwrap().result;
 
     // Perform the check.
-    match substrait_validator::check(root) {
+    match result.check() {
         substrait_validator::Validity::Valid => 1,
         substrait_validator::Validity::MaybeValid => 0,
         substrait_validator::Validity::Invalid => -1,
@@ -538,7 +538,7 @@ fn export(
         set_last_error("received null handle");
         return std::ptr::null_mut();
     }
-    let root = &handle.as_ref().unwrap().root;
+    let result = &handle.as_ref().unwrap().result;
 
     // Create a byte vector as output. The first 16 bytes are reserved: we'll
     // store the length and capacity of the vector in there, and advance the
@@ -548,7 +548,7 @@ fn export(
     let mut data: Vec<u8> = vec![0; 16];
 
     // Perform the actual export function.
-    if let Err(e) = substrait_validator::export(&mut data, format, root) {
+    if let Err(e) = result.export(&mut data, format) {
         set_last_error(e.to_string());
         return std::ptr::null_mut();
     }
