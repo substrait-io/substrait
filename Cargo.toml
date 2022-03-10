@@ -2,7 +2,6 @@
 
 members = [
     "validator/derive",
-    "validator/core",
     "validator/rs",
     "validator/c",
     "validator/py"

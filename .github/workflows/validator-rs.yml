@@ -16,7 +16,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Check
-        run: cargo check
+        run: cargo check --all-features
 
   test:
     strategy:
@@ -32,7 +32,7 @@ jobs:
           toolchain: stable
           override: true
       - name: Test
-        run: cargo test
+        run: cargo test --all-features
 
   style:
     runs-on: ubuntu-latest
@@ -58,4 +58,4 @@ jobs:
           override: true
           components: clippy
       - name: Clippy
-        run: cargo clippy -- -D warnings
+        run: cargo clippy --all-features -- -D warnings

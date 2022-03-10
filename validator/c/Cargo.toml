@@ -1,6 +1,6 @@
 [package]
 name = "substrait-validator-c"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 license = "Apache-2.0"
 
@@ -12,6 +12,6 @@ doc = false
 cbindgen = "0.20.0"
 
 [dependencies]
-substrait-validator-core = { path = "../core" }
+substrait-validator = { path = "../rs", version = "0.0.1", default-features = false }
 libc = "0.2"
 thiserror = "1.0"

@@ -1,6 +1,10 @@
 [package]
 name = "substrait-validator-derive"
-version = "0.1.0"
+description = "Procedural macros for substrait-validator"
+homepage = "https://substrait.io/"
+repository = "https://github.com/substrait-io/substrait"
+readme = "README.md"
+version = "0.0.1"
 edition = "2021"
 license = "Apache-2.0"
 

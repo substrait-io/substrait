@@ -15,7 +15,7 @@
 //!  - cause.classification: an enumeration of various bits of the validation
 //!    process where diagnostics might occur. Each [`Classification`] enum
 //!    variant can be converted to a unique number, known as the diagnostic
-//!    code, which the user of the library may use to easily programmatically
+//!    code, which the user of the crate may use to easily programmatically
 //!    determine what caused a diagnostic in a language-agnostic way. The user
 //!    may also configure the validator in advance to promote or reduce the
 //!    severity of diagnostics, indexed by their code. The codes are

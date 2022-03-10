@@ -958,26 +958,9 @@ dependencies = [
 
 [[package]]
 name = "substrait-validator"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "curl",
- "substrait-validator-core",
-]
-
-[[package]]
-name = "substrait-validator-c"
-version = "0.1.0"
-dependencies = [
- "cbindgen",
- "libc",
- "substrait-validator-core",
- "thiserror",
-]
-
-[[package]]
-name = "substrait-validator-core"
-version = "0.1.0"
-dependencies = [
  "glob",
  "itertools 0.8.2",
  "jsonschema",
@@ -999,8 +982,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "substrait-validator-c"
+version = "0.0.1"
+dependencies = [
+ "cbindgen",
+ "libc",
+ "substrait-validator",
+ "thiserror",
+]
+
+[[package]]
 name = "substrait-validator-derive"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "heck 0.4.0",
  "quote",
@@ -1009,12 +1002,12 @@ dependencies = [
 
 [[package]]
 name = "substrait-validator-py"
-version = "0.1.0"
+version = "0.0.1"
 dependencies = [
  "dunce",
  "prost-build",
  "pyo3",
- "substrait-validator-core",
+ "substrait-validator",
  "walkdir",
 ]
 
