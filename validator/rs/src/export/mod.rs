@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
-//! Module dealing with serializing an output [tree](tree::Node) to a byte
-//! stream in various formats.
+//! Module dealing with serializing a [ParseResult](parse_result::ParseResult)
+//! to a byte stream in various formats.
 
 mod diagnostics;
 mod html;

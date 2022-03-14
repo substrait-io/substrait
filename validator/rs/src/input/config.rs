@@ -43,12 +43,12 @@ fn resolve_with_curl(uri: &str) -> Result<Vec<u8>, curl::Error> {
 pub struct Config {
     /// When set, do not generate warnings for unknown protobuf fields that are
     /// set to their protobuf-defined default value.
-    pub ignore_unknown_fields_set_to_default: bool,
+    pub ignore_unknown_fields: bool,
 
     /// Protobuf message URLs that are explicitly allowed for use in "any"
     /// messages, i.e. that the caller warrants the existence of in the
     /// consumer that the plan is validated for.
-    pub allowed_any_urls: Vec<glob::Pattern>,
+    pub allowed_proto_any_urls: Vec<glob::Pattern>,
 
     /// Allows the level of diagnostic messages to be overridden based on their
     /// classification/code. The logic for this is as follows:
@@ -71,15 +71,15 @@ pub struct Config {
     /// rule that maps * to None. Furthermore, in the absence of a custom
     /// yaml_uri_resolver function, this can be used to remap URIs to
     /// pre-downloaded files.
-    pub yaml_uri_overrides: Vec<(glob::Pattern, Option<String>)>,
+    pub uri_overrides: Vec<(glob::Pattern, Option<String>)>,
 
-    /// Optional callback function for resolving YAML URIs. If specified, all
+    /// Optional callback function for resolving URIs. If specified, all
     /// URIs (after processing yaml_uri_overrides) are resolved using this
     /// function. The function takes the URI as its argument, and should either
     /// return the download contents as a Vec<u8> or return a String-based
     /// error. If no downloader is specified, only file:// URLs with an
     /// absolute path are supported.
-    pub yaml_uri_resolver: Option<UriResolver>,
+    pub uri_resolver: Option<UriResolver>,
 }
 
 impl Config {
@@ -93,16 +93,16 @@ impl Config {
     /// descriptions, but haven't yet been implemented in the validator) if the
     /// fields are set to their default value. If this option isn't set, or if
     /// an unknown field is not set to its default value, a warning is emitted.
-    pub fn ignore_unknown_fields_set_to_default(&mut self) {
-        self.ignore_unknown_fields_set_to_default = true;
+    pub fn ignore_unknown_fields(&mut self) {
+        self.ignore_unknown_fields = true;
     }
 
     /// Explicitly allows a protobuf message type to be used in advanced
     /// extensions, despite the fact that the validator can't validate it. If
     /// an advanced extension is encountered that isn't explicitly allowed, a
     /// warning is emitted.
-    pub fn allow_any_url(&mut self, pattern: glob::Pattern) {
-        self.allowed_any_urls.push(pattern);
+    pub fn allow_proto_any_url(&mut self, pattern: glob::Pattern) {
+        self.allowed_proto_any_urls.push(pattern);
     }
 
     /// Sets a minimum and/or maximum error level for the given class of
@@ -118,30 +118,26 @@ impl Config {
             .insert(class, (minimum, maximum));
     }
 
-    /// Overrides the resolution behavior for YAML URIs matching the given
-    /// pattern. If resolve_as is None, the YAML file will not be resolved;
+    /// Overrides the resolution behavior for (YAML) URIs matching the given
+    /// pattern. If resolve_as is None, the URI file will not be resolved;
     /// if it is Some(s), it will be resolved as if the URI in the plan had
     /// been s.
-    pub fn override_yaml_uri<S: Into<String>>(
-        &mut self,
-        pattern: glob::Pattern,
-        resolve_as: Option<S>,
-    ) {
-        self.yaml_uri_overrides
+    pub fn override_uri<S: Into<String>>(&mut self, pattern: glob::Pattern, resolve_as: Option<S>) {
+        self.uri_overrides
             .push((pattern, resolve_as.map(|s| s.into())));
     }
 
-    /// Registers a YAML URI resolution function with this configuration. If
+    /// Registers a URI resolution function with this configuration. If
     /// the given function fails, any previously registered function will be
     /// used as a fallback.
-    pub fn add_yaml_uri_resolver<F, D, E>(&mut self, resolver: F)
+    pub fn add_uri_resolver<F, D, E>(&mut self, resolver: F)
     where
         F: Fn(&str) -> Result<D, E> + Send + 'static,
         D: AsRef<[u8]> + 'static,
         E: std::error::Error + 'static,
     {
-        let previous = self.yaml_uri_resolver.take();
-        self.yaml_uri_resolver = Some(Box::new(move |uri| match resolver(uri) {
+        let previous = self.uri_resolver.take();
+        self.uri_resolver = Some(Box::new(move |uri| match resolver(uri) {
             Ok(d) => Ok(Box::new(d)),
             Err(e) => match &previous {
                 Some(f) => f.as_ref()(uri),
@@ -150,11 +146,10 @@ impl Config {
         }));
     }
 
-    /// Registers the resolve_with_curl() function for resolving YAML URIs.
-    /// If libcurl fails, any yaml_uri_resolver registered previously will
-    /// be used as a fallback.
+    /// Registers a URI resolver based on libcurl. If libcurl fails, any
+    /// `uri_resolver` registered previously will be used as a fallback.
     #[cfg(feature = "curl")]
-    pub fn add_curl_yaml_uri_resolver(&mut self) {
-        self.add_yaml_uri_resolver(resolve_with_curl)
+    pub fn add_curl_uri_resolver(&mut self) {
+        self.add_uri_resolver(resolve_with_curl)
     }
 }

@@ -641,16 +641,13 @@ where
 /// Attempts to resolve a URI.
 fn resolve_uri(uri: &str, config: &config::Config) -> diagnostic::Result<config::BinaryData> {
     // Apply yaml_uri_overrides configuration.
-    let remapped_uri = config
-        .yaml_uri_overrides
-        .iter()
-        .find_map(|(pattern, mapping)| {
-            if pattern.matches(uri) {
-                Some(mapping.as_ref().map(|x| &x[..]))
-            } else {
-                None
-            }
-        });
+    let remapped_uri = config.uri_overrides.iter().find_map(|(pattern, mapping)| {
+        if pattern.matches(uri) {
+            Some(mapping.as_ref().map(|x| &x[..]))
+        } else {
+            None
+        }
+    });
     let is_remapped = remapped_uri.is_some();
     let remapped_uri = remapped_uri.unwrap_or(Some(uri));
 
@@ -664,7 +661,7 @@ fn resolve_uri(uri: &str, config: &config::Config) -> diagnostic::Result<config:
     };
 
     // If a custom download function is specified, use it to resolve.
-    if let Some(ref resolver) = config.yaml_uri_resolver {
+    if let Some(ref resolver) = config.uri_resolver {
         return resolver(remapped_uri)
             .map_err(|x| ecause!(YamlResolutionFailed, x.as_ref().to_string()));
     }

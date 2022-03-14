@@ -275,7 +275,7 @@ fn resolve_any(x: &prost_types::Any, y: &mut context::Context) -> bool {
         .entry(x.type_url.clone())
         .or_insert_with(|| y.breadcrumb.path.to_path_buf());
     y.config
-        .allowed_any_urls
+        .allowed_proto_any_urls
         .iter()
         .any(|p| p.matches(&x.type_url))
 }

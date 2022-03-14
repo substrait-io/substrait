@@ -74,7 +74,7 @@ pub extern "C" fn substrait_validator_config_free(handle: *mut ConfigHandle) {
 /// Returns whether the function was successful. If false is returned, retrieve
 /// the error message with substrait_validator_get_last_error().
 #[no_mangle]
-pub extern "C" fn substrait_validator_config_ignore_unknown_fields_set_to_default(
+pub extern "C" fn substrait_validator_config_ignore_unknown_fields(
     config: *mut ConfigHandle,
 ) -> bool {
     // Check for null.
@@ -88,7 +88,7 @@ pub extern "C" fn substrait_validator_config_ignore_unknown_fields_set_to_defaul
     let config = unsafe { &mut (*config).config };
 
     // Update configuration and return success.
-    config.ignore_unknown_fields_set_to_default();
+    config.ignore_unknown_fields();
     true
 }
 
@@ -102,7 +102,7 @@ pub extern "C" fn substrait_validator_config_ignore_unknown_fields_set_to_defaul
 /// Returns whether the function was successful. If false is returned, retrieve
 /// the error message with substrait_validator_get_last_error().
 #[no_mangle]
-pub extern "C" fn substrait_validator_config_allow_any_url(
+pub extern "C" fn substrait_validator_config_allow_proto_any_url(
     config: *mut ConfigHandle,
     pattern: *const libc::c_char,
 ) -> bool {
@@ -141,7 +141,7 @@ pub extern "C" fn substrait_validator_config_allow_any_url(
     };
 
     // Update configuration and return success.
-    config.allow_any_url(pattern);
+    config.allow_proto_any_url(pattern);
     true
 }
 
@@ -197,17 +197,16 @@ pub extern "C" fn substrait_validator_config_override_diagnostic_level(
     true
 }
 
-/// Overrides the resolution behavior for YAML URIs matching the given
+/// Overrides the resolution behavior for (YAML) URIs matching the given
 /// pattern. The pattern may include * and ? wildcards for glob-like matching
 /// (see https://docs.rs/glob/latest/glob/struct.Pattern.html for the complete
-/// syntax). If resolve_as is null, the YAML file will not be resolved;
-/// otherwise, it will be resolved as if the URI in the plan had been that
-/// string.
+/// syntax). If resolve_as is null, the URI will not be resolved; otherwise, it
+/// will be resolved as if the URI in the plan had been that string.
 ///
 /// Returns whether the function was successful. If false is returned, retrieve
 /// the error message with substrait_validator_get_last_error().
 #[no_mangle]
-pub extern "C" fn substrait_validator_config_override_yaml_uri(
+pub extern "C" fn substrait_validator_config_override_uri(
     config: *mut ConfigHandle,
     pattern: *const libc::c_char,
     resolve_as: *const libc::c_char,
@@ -264,7 +263,7 @@ pub extern "C" fn substrait_validator_config_override_yaml_uri(
     };
 
     // Update configuration and return success.
-    config.override_yaml_uri(pattern, resolve_as);
+    config.override_uri(pattern, resolve_as);
     true
 }
 
@@ -369,9 +368,9 @@ impl std::fmt::Display for ApplicationError {
     }
 }
 
-/// Registers a YAML URI resolution function with this configuration. If
-/// the given function fails, any previously registered function will be
-/// used as a fallback.
+/// Registers a URI resolution function with this configuration. If the given
+/// function fails, any previously registered function will be used as a
+/// fallback.
 ///
 /// See the documentation for the substrait_validator_resolver typedef for
 /// more information about the semantics of the callback function.
@@ -379,7 +378,7 @@ impl std::fmt::Display for ApplicationError {
 /// Returns whether the function was successful. If false is returned, retrieve
 /// the error message with substrait_validator_get_last_error().
 #[no_mangle]
-pub extern "C" fn substrait_validator_config_yaml_uri_resolver(
+pub extern "C" fn substrait_validator_config_uri_resolver(
     config: *mut ConfigHandle,
     resolver: Resolver,
 ) -> bool {
@@ -403,7 +402,7 @@ pub extern "C" fn substrait_validator_config_yaml_uri_resolver(
     };
 
     // Update configuration and return success.
-    config.add_yaml_uri_resolver(move |uri| {
+    config.add_uri_resolver(move |uri| {
         let uri = match std::ffi::CString::new(uri) {
             Ok(u) => u,
             Err(_) => {

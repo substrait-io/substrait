@@ -7,7 +7,7 @@
 //!  1) Build a [`Config`] structure to configure the validator. You can also
 //!     just use [`std::default::Default`] if you don't need to configure
 //!     anything, but you might want to at least call
-//!     [`Config::add_curl_yaml_uri_resolver()`] (if you're using the `curl`
+//!     [`Config::add_curl_uri_resolver()`] (if you're using the `curl`
 //!     feature).
 //!  2) Parse the incoming `substrait.Plan` message using [`parse()`]. This
 //!     creates a [ParseResult], containing a [tree](output::tree) structure

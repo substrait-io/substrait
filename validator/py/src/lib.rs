@@ -29,8 +29,8 @@ impl Config {
     /// descriptions, but haven't yet been implemented in the validator) if the
     /// fields are set to their default value. If this option isn't set, or if
     /// an unknown field is not set to its default value, a warning is emitted.
-    pub fn ignore_unknown_fields_set_to_default(&mut self) {
-        self.config.ignore_unknown_fields_set_to_default = true;
+    pub fn ignore_unknown_fields(&mut self) {
+        self.config.ignore_unknown_fields = true;
     }
 
     /// Explicitly allows a protobuf message type to be used in advanced
@@ -40,7 +40,7 @@ impl Config {
     /// glob-like matching (see
     /// https://docs.rs/glob/latest/glob/struct.Pattern.html for the complete
     /// syntax).
-    pub fn allow_any_url(&mut self, pattern: &str) -> PyResult<()> {
+    pub fn allow_proto_any_url(&mut self, pattern: &str) -> PyResult<()> {
         let pattern = match substrait_validator::Pattern::new(pattern) {
             Ok(p) => p,
             Err(e) => {
@@ -49,7 +49,7 @@ impl Config {
                 )));
             }
         };
-        self.config.allow_any_url(pattern);
+        self.config.allow_proto_any_url(pattern);
         Ok(())
     }
 
@@ -87,13 +87,13 @@ impl Config {
         Ok(())
     }
 
-    /// Overrides the resolution behavior for YAML URIs matching the given
+    /// Overrides the resolution behavior for (YAML) URIs matching the given
     /// pattern. The pattern may include * and ? wildcards for glob-like
     /// matching (see https://docs.rs/glob/latest/glob/struct.Pattern.html
-    /// for the complete syntax). If resolve_as is None, the YAML file will not
+    /// for the complete syntax). If resolve_as is None, the URI will not
     /// be resolved; otherwise it should be a string representing the URI it
     /// should be resolved as.
-    pub fn override_yaml_uri(&mut self, pattern: &str, resolve_as: Option<&str>) -> PyResult<()> {
+    pub fn override_uri(&mut self, pattern: &str, resolve_as: Option<&str>) -> PyResult<()> {
         let pattern = match substrait_validator::Pattern::new(pattern) {
             Ok(p) => p,
             Err(e) => {
@@ -102,17 +102,17 @@ impl Config {
                 )));
             }
         };
-        self.config.override_yaml_uri(pattern, resolve_as);
+        self.config.override_uri(pattern, resolve_as);
         Ok(())
     }
 
-    /// Registers a YAML URI resolution function with this configuration. If
+    /// Registers a URI resolution function with this configuration. If
     /// the given function fails, any previously registered function will be
     /// used as a fallback. The callback function must take a single string
     /// argument and return a bytes object, or throw an exception on failure.
-    pub fn add_yaml_uri_resolver(&mut self, callback: PyObject) {
+    pub fn add_uri_resolver(&mut self, callback: PyObject) {
         self.config
-            .add_yaml_uri_resolver(move |uri| -> Result<Vec<u8>, PyErr> {
+            .add_uri_resolver(move |uri| -> Result<Vec<u8>, PyErr> {
                 pyo3::Python::with_gil(|py| {
                     Ok(callback
                         .call1(py, (uri,))?
