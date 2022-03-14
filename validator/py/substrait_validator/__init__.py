@@ -63,20 +63,20 @@ def load_plan_from_dict(data: dict) -> Plan:
     return load_plan_from_json(json.dumps(data))
 
 
-def load_plan_from_yaml(yaml: str) -> Plan:
+def load_plan_from_yaml(data: str) -> Plan:
     """Load a Substrait plan from YAML data mimicking the structure of
     its JSON string representation."""
     if not isinstance(data, str):
         raise TypeError("unsupported type: {}".format(type(data)))
-    return load_plan_from_dict(yaml.safe_load(yaml))
+    return load_plan_from_dict(yaml.safe_load(data))
 
 
-def load_plan_from_jsom(jsom: str) -> Plan:
+def load_plan_from_jsom(data: str) -> Plan:
     """Load a Substrait plan from JSOM data mimicking the structure of
     its JSON string representation."""
     if not isinstance(data, str):
         raise TypeError("unsupported type: {}".format(type(data)))
-    return load_plan_from_dict(jsom.JsomCoder().decode(jsom))
+    return load_plan_from_dict(jsom.JsomCoder().decode(data))
 
 
 def load_plan(data) -> Plan:

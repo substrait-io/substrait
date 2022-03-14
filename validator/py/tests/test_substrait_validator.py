@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import substrait_validator as sv
+import pytest
 
 
 _BASIC_PLAN = """
@@ -99,6 +100,19 @@ def test_proto_roundtrip():
     round_tripped_plan = sv.load_plan(data)
     assert round_tripped_plan == original_plan
 
+    # Round-trip via YAML.
+    data = sv.plan_to_yaml(original_plan)
+    assert type(data) is str
+    round_tripped_plan = sv.load_plan_from_yaml(data)
+    assert round_tripped_plan == original_plan
+
+    # Round-trip via JSOM.
+    data = sv.plan_to_jsom(original_plan)
+    assert type(data) is str
+    # TODO: disabled due to bugs in JSOM
+    #round_tripped_plan = sv.load_plan_from_jsom(data)
+    #assert round_tripped_plan == original_plan
+
     # Check identity.
     round_tripped_plan = sv.load_plan(original_plan)
     assert round_tripped_plan == original_plan
@@ -138,6 +152,38 @@ def test_export_diags():
     assert diags[0].msg == 'not yet implemented: the following child nodes were not recognized by the validator: relations[0] (code 0001)'
 
 
+def test_valid_invalid():
+    """Test the plan validity functions."""
+    # Override all diagnostics to info, so the plan is considered valid.
+    config = sv.Config()
+    config.override_diagnostic_level(0, 'info', 'info')
+    plan = sv.plan_to_result_handle(_BASIC_PLAN, config)
+    assert sv.check_plan(plan) == 1
+    sv.check_plan_valid(plan)
+    sv.check_plan_not_invalid(plan)
+
+    # Override all diagnostics to warning, so the validity is considered to be
+    # unknown.
+    config = sv.Config()
+    config.override_diagnostic_level(0, 'warning', 'warning')
+    plan = sv.plan_to_result_handle(_BASIC_PLAN, config)
+    assert sv.check_plan(plan) == 0
+    with pytest.raises(ValueError):
+        sv.check_plan_valid(plan)
+    sv.check_plan_not_invalid(plan)
+
+    # Override all diagnostics to error, so the plan is considered to be
+    # invalid.
+    config = sv.Config()
+    config.override_diagnostic_level(0, 'error', 'error')
+    plan = sv.plan_to_result_handle(_BASIC_PLAN, config)
+    assert sv.check_plan(plan) == -1
+    with pytest.raises(ValueError):
+        sv.check_plan_valid(plan)
+    with pytest.raises(ValueError):
+        sv.check_plan_not_invalid(plan)
+
+
 def test_resolver_callback():
     """Tests whether the YAML URI resolver callback works."""
 
@@ -168,6 +214,3 @@ def test_resolver_callback():
     for diag in diags:
         print(diag.msg)
     assert diags[0].msg == 'failed to resolve YAML: ValueError: unknown URI (code 2002)'
-
-
-# TODO: check_plan_valid()/check_plan_not_invalid()
