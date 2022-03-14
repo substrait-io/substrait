@@ -490,7 +490,7 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
 
         # Convert the plan directly.
         try:
-            plan = load_plan_from_proto(in_data)
+            in_plan = load_plan_from_proto(in_data)
         except ProtoDecodeError as e:
             fatal(e)
 
@@ -532,7 +532,7 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
     # Handle convert-only mode.
     if mode == 'convert':
         emit_proto(in_plan)
-        return
+        return 0
 
     # Construct parser/validator configuration.
     config = Config()
@@ -597,6 +597,8 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
         emit_output(plan_to_html(result))
     else:
         emit_proto(plan_to_parse_result(result))
+
+    return 0
 
 
 if __name__ == '__main__':

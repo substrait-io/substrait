@@ -2,84 +2,12 @@
 
 import substrait_validator as sv
 import pytest
+from .data import BASIC_PLAN, BASIC_YAML
 
-
-_BASIC_PLAN = """
-{
- "extensionUris": [],
- "extensions": [],
- "relations": [
-  {
-   "rel": {
-    "project": {
-     "input": {
-      "read": {
-       "common": {
-        "direct": {}
-       },
-       "projection": {
-        "select": {
-         "structItems": [
-          {
-           "field": 0
-          },
-          {
-           "field": 1
-          }
-         ]
-        },
-        "maintainSingularStruct": false
-       },
-       "namedTable": {
-        "names": [
-         "person"
-        ]
-       }
-      }
-     },
-     "expressions": [
-      {
-       "selection": {
-        "directReference": {
-         "structField": {
-          "field": 0
-         }
-        }
-       }
-      },
-      {
-       "selection": {
-        "directReference": {
-         "structField": {
-          "field": 1
-         }
-        }
-       }
-      }
-     ]
-    }
-   }
-  }
- ],
- "expectedTypeUrls": []
-}
-"""
-
-_YAML = """---
-types:
-  - name: point
-    structure:
-      latitude: i32
-      longitude: i32
-  - name: line
-    structure:
-      start: point
-      end: point
-"""
 
 def test_proto_roundtrip():
     """Round-trip test a basic Plan using the protobuf wrapper functions."""
-    original_plan = sv.load_plan(_BASIC_PLAN)
+    original_plan = sv.load_plan(BASIC_PLAN)
     assert type(original_plan) is sv.Plan
 
     # Round-trip via binary representation.
@@ -120,19 +48,19 @@ def test_proto_roundtrip():
 
 def test_parsing():
     """Test the parsing function."""
-    result = sv.plan_to_parse_result(_BASIC_PLAN)
+    result = sv.plan_to_parse_result(BASIC_PLAN)
     assert type(result) == sv.ParseResult
 
-    root = sv.parse_plan(_BASIC_PLAN)
+    root = sv.parse_plan(BASIC_PLAN)
     assert type(root) == sv.ParseResult
 
-    root = sv.plan_to_parse_result(_BASIC_PLAN)
+    root = sv.plan_to_parse_result(BASIC_PLAN)
     assert type(root) == sv.ParseResult
 
 
 def test_export_html():
     """Test the HTML export function."""
-    html = sv.plan_to_html(_BASIC_PLAN)
+    html = sv.plan_to_html(BASIC_PLAN)
     assert type(html) == str
     lines = list(filter(bool, html.split('\n')))
     assert lines[0] == '<!DOCTYPE html>'
@@ -141,12 +69,12 @@ def test_export_html():
 
 def test_export_diags():
     """Test the diagnostics export functions."""
-    diags = sv.plan_to_diagnostics_str(_BASIC_PLAN)
+    diags = sv.plan_to_diagnostics_str(BASIC_PLAN)
     assert type(diags) == str
     lines = list(filter(bool, diags.split('\n')))
     assert lines[0] == 'Warning at plan: not yet implemented: the following child nodes were not recognized by the validator: relations[0] (code 0001)'
 
-    diags = list(sv.plan_to_diagnostics(_BASIC_PLAN))
+    diags = list(sv.plan_to_diagnostics(BASIC_PLAN))
     for diag in diags:
         assert type(diag) == sv.Diagnostic
     assert diags[0].msg == 'not yet implemented: the following child nodes were not recognized by the validator: relations[0] (code 0001)'
@@ -157,7 +85,7 @@ def test_valid_invalid():
     # Override all diagnostics to info, so the plan is considered valid.
     config = sv.Config()
     config.override_diagnostic_level(0, 'info', 'info')
-    plan = sv.plan_to_result_handle(_BASIC_PLAN, config)
+    plan = sv.plan_to_result_handle(BASIC_PLAN, config)
     assert sv.check_plan(plan) == 1
     sv.check_plan_valid(plan)
     sv.check_plan_not_invalid(plan)
@@ -166,7 +94,7 @@ def test_valid_invalid():
     # unknown.
     config = sv.Config()
     config.override_diagnostic_level(0, 'warning', 'warning')
-    plan = sv.plan_to_result_handle(_BASIC_PLAN, config)
+    plan = sv.plan_to_result_handle(BASIC_PLAN, config)
     assert sv.check_plan(plan) == 0
     with pytest.raises(ValueError):
         sv.check_plan_valid(plan)
@@ -176,7 +104,7 @@ def test_valid_invalid():
     # invalid.
     config = sv.Config()
     config.override_diagnostic_level(0, 'error', 'error')
-    plan = sv.plan_to_result_handle(_BASIC_PLAN, config)
+    plan = sv.plan_to_result_handle(BASIC_PLAN, config)
     assert sv.check_plan(plan) == -1
     with pytest.raises(ValueError):
         sv.check_plan_valid(plan)
@@ -189,7 +117,7 @@ def test_resolver_callback():
 
     def resolver(s):
         if s == 'test':
-            return _YAML.encode('utf-8')
+            return BASIC_YAML.encode('utf-8')
         raise ValueError('unknown URI')
 
     config = sv.Config()
