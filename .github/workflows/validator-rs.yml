@@ -15,6 +15,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - uses: Swatinem/rust-cache@v1
       - name: Check
         run: cargo check --all-features
 
@@ -31,6 +32,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - uses: Swatinem/rust-cache@v1
       - name: Test
         run: cargo test --all-features
 
@@ -44,6 +46,7 @@ jobs:
           toolchain: stable
           override: true
           components: rustfmt
+      - uses: Swatinem/rust-cache@v1
       - name: Rustfmt
         run: cargo fmt --all -- --check
 
@@ -57,5 +60,20 @@ jobs:
           toolchain: stable
           override: true
           components: clippy
+      - uses: Swatinem/rust-cache@v1
       - name: Clippy
         run: cargo clippy --all-features -- -D warnings
+
+  doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustdoc
+      - uses: Swatinem/rust-cache@v1
+      - name: Doc
+        run: RUSTDOCFLAGS="-Dwarnings" cargo doc --workspace --all-features
