@@ -73,7 +73,6 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-          components: rustdoc
       - uses: Swatinem/rust-cache@v1
       - name: Doc
         run: RUSTDOCFLAGS="-Dwarnings" cargo doc --workspace --all-features
