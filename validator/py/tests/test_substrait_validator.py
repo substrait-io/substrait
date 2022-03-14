@@ -110,10 +110,10 @@ def test_parsing():
     assert type(result) == sv.ParseResult
 
     root = sv.parse_plan(_BASIC_PLAN)
-    assert type(root) == sv.Node
+    assert type(root) == sv.ParseResult
 
-    root = sv.plan_to_parse_tree(_BASIC_PLAN)
-    assert type(root) == sv.Node
+    root = sv.plan_to_parse_result(_BASIC_PLAN)
+    assert type(root) == sv.ParseResult
 
 
 def test_export_html():

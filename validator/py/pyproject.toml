@@ -17,7 +17,10 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-    "protobuf>3.19.3",
+    "protobuf > 3.19.3",
+    "click >= 8",
+    "pyyaml >= 6",
+    "pycurl >= 7"
 ]
 
 [project.optional-dependencies]
@@ -28,3 +31,6 @@ test = [
 [project.urls]
 homepage = "https://substrait.io/"
 repository = "https://github.com/substrait-io/substrait"
+
+[project.scripts]
+substrait-validator = "substrait_validator:cli"

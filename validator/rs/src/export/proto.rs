@@ -72,8 +72,8 @@ impl From<&diagnostic::Diagnostic> for validator::Diagnostic {
         Self {
             original_level: (&node.original_level).into(),
             adjusted_level: (&node.adjusted_level).into(),
-            cause: validator::diagnostic::Cause::Unspecified.into(),
-            msg: node.cause.to_string(),
+            cause: node.cause.classification.into(),
+            msg: node.cause.message.to_string(),
             path: Some((&node.path).into()),
         }
     }

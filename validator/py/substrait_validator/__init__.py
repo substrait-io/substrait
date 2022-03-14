@@ -1,12 +1,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
+import sys
 import json
+import yaml
+import click
 from typing import Iterable
 from google.protobuf import json_format
-
-from .substrait_validator import ParseResult, Config as _Config
+from google.protobuf.message import DecodeError as ProtoDecodeError
+from .substrait_validator import ResultHandle, Config as _Config
 from .substrait.plan_pb2 import Plan
-from .substrait.validator.validator_pb2 import Node, Diagnostic, ParseResult as ParseResultProto
+from .substrait.validator.validator_pb2 import ParseResult, Diagnostic, Path
 
 
 class Config:
@@ -26,6 +29,8 @@ class Config:
             return None
         else:
             raise TypeError("unsupported type: {}".format(type(config)))
+
+    # TODO: add method for resolving URIs via curl here.
 
 
 def load_plan_from_proto(data: bytes) -> Plan:
@@ -68,11 +73,11 @@ def load_plan(data) -> Plan:
         raise TypeError("unsupported type: {}".format(type(data)))
 
 
-def parse_plan(plan) -> Node:
-    """Parses the given plan with the validator, and returns its parse tree.
-    plan can be anything supported by load_plan(), a Plan object, or a
-    ParseResult object. Alternate name for plan_to_parse_tree()."""
-    return plan_to_parse_tree(plan)
+def parse_plan(plan, config=None) -> ParseResult:
+    """Parses the given plan with the validator. plan can be anything
+    supported by load_plan(), a Plan object, or a ResultHandle object. This is
+    just an alternate name for plan_to_parse_result()."""
+    return plan_to_parse_result(plan, config)
 
 
 def plan_to_proto(plan) -> bytes:
@@ -93,38 +98,38 @@ def plan_to_dict(plan) -> dict:
     return json_format.MessageToDict(load_plan(plan))
 
 
-def plan_to_parse_result(plan, config=None) -> ParseResult:
+def plan_to_result_handle(plan, config=None) -> ResultHandle:
     """Parses a Substrait plan using the validator, and returns its result
     handle object. plan can be anything supported by load_plan(). If the
-    input is already a ParseResult, it is returned as-is."""
-    if isinstance(plan, ParseResult):
+    input is already a ResultHandle, it is returned as-is."""
+    if isinstance(plan, ResultHandle):
         return plan
     if isinstance(plan, bytes):
         data = plan
     else:
         data = plan_to_proto(plan)
-    return ParseResult(data, Config._unwrap(config))
+    return ResultHandle(data, Config._unwrap(config))
 
 
-def plan_to_parse_tree(plan, config=None) -> Node:
+def plan_to_parse_result(plan, config=None) -> ParseResult:
     """Parses the given plan with the validator, and returns its parse result.
     plan can be anything supported by load_plan(), a Plan object, or a
-    ParseResult object."""
-    result = ParseResultProto()
-    result.ParseFromString(plan_to_parse_tree_proto(plan, config))
-    return result.root
+    ResultHandle object."""
+    result = ParseResult()
+    result.ParseFromString(plan_to_parse_result_proto(plan, config))
+    return result
 
 
-def plan_to_parse_tree_proto(plan, config=None) -> str:
+def plan_to_parse_result_proto(plan, config=None) -> str:
     """Same as parse_plan(), but returns the binary serialization of the
-    parse tree. This is faster, if you don't plan to use the serialization from
-    python."""
-    return plan_to_parse_result(plan, config).export_proto()
+    parse result. This is faster, if you don't plan to use the serialization
+    from python."""
+    return plan_to_result_handle(plan, config).export_proto()
 
 
 def plan_to_diagnostics(plan, config=None) -> Iterable[Diagnostic]:
     """Converts a plan to an iterable of Diagnostics. plan can be anything
-    supported by plan_to_parse_result()."""
+    supported by plan_to_result_handle()."""
     def walk(node):
         for data in node.data:
             if data.HasField('child'):
@@ -132,41 +137,361 @@ def plan_to_diagnostics(plan, config=None) -> Iterable[Diagnostic]:
                     yield diagnostic
             elif data.HasField('diagnostic'):
                 yield data.diagnostic
-    return walk(plan_to_parse_tree(plan, config))
+    return walk(plan_to_parse_result(plan, config).root)
 
 
 def plan_to_diagnostics_str(plan, config=None) -> str:
     """Converts a plan to a multiline string representing the diagnostic
     messages returned by the validator for that plan. plan can be anything
-    supported by plan_to_parse_result()."""
-    return plan_to_parse_result(plan, config).export_diagnostics()
+    supported by plan_to_result_handle()."""
+    return plan_to_result_handle(plan, config).export_diagnostics()
 
 
 def plan_to_html(plan, config=None) -> str:
     """Generates a HTML page for the given plan to serve as documentation
     while debugging. plan can be anything supported by
-    plan_to_parse_result()."""
-    return plan_to_parse_result(plan, config).export_html()
+    plan_to_result_handle()."""
+    return plan_to_result_handle(plan, config).export_html()
 
 
 def check_plan(plan, config=None) -> int:
     """Returns 1 if the given plan is valid, -1 if it is invalid, or 0 if the
     validator cannot determine validity. plan can be anything supported by
-    load_plan(), a Plan object, or a ParseResult object."""
-    return plan_to_parse_result(plan, config).check()
+    load_plan(), a Plan object, or a ResultHandle object."""
+    return plan_to_result_handle(plan, config).check()
 
 
 def check_plan_valid(plan, config=None):
     """Throws a ValueError exception containing the first error or warning
     encountered in the plan if the validator cannot prove correctness of
     the given plan. plan can be anything supported by load_plan(), a Plan
-    object, or a ParseResult object."""
-    plan_to_parse_result(plan, config).check_valid()
+    object, or a ResultHandle object."""
+    plan_to_result_handle(plan, config).check_valid()
 
 
 def check_plan_not_invalid(plan, config=None):
     """Throws a ValueError exception containing the first error encountered in
     the plan if the validator can prove that the given plan is invalid. plan
-    can be anything supported by load_plan(), a Plan object, or a ParseResult
+    can be anything supported by load_plan(), a Plan object, or a ResultHandle
     object."""
-    plan_to_parse_result(plan, config).check_not_invalid()
+    plan_to_result_handle(plan, config).check_not_invalid()
+
+
+def path_to_string(path: Path) -> str:
+    """Converts a substrait.validator.Path message to a string."""
+    elements = [path.root]
+    for element in path.elements:
+        if element.HasField('field'):
+            elements.append(f'.{element.field.field}')
+        elif element.HasField('repeated_field'):
+            elements.append(f'.{element.repeated_field.field}[{element.repeated_field.index}]')
+        elif element.HasField('oneof_field'):
+            elements.append(f'.{element.oneof_field.field}<{element.oneof_field.variant}>')
+        elif element.HasField('array_element'):
+            elements.append(f'[{element.array_element.index}]')
+        else:
+            raise ValueError('invalid path element')
+    return ''.join(elements)
+
+
+@click.command()
+@click.argument('infile')
+@click.option('--in-type',
+              type=click.Choice(
+                  ['ext', 'proto', 'json', 'yaml'],
+                  case_sensitive=False),
+              default='ext',
+              help=('Input file type. "ext" uses the extension of the input '
+                    'file, defaulting to "proto" if there is none.'))
+@click.option('--verbosity',
+              '-v',
+              type=click.Choice(
+                  ['info', 'warn', 'error', 'fatal', 'quiet'],
+                  case_sensitive=False),
+              default='warn',
+              help=('Specifies the verbosity for writing diagnostics to '
+                    'stderr.'))
+@click.option('--out-file', '-O',
+              default=None,
+              help='Output file. "-" may be used to select stdout.')
+@click.option('--out-type',
+              type=click.Choice(
+                  ['ext', 'diag', 'html', 'proto', 'json', 'yaml'],
+                  case_sensitive=False),
+              default='ext',
+              help=('Output file type. "ext" uses the extension of the output '
+                    'file, defaulting to "diag" if there is none.'))
+@click.option('--mode',
+              '-m',
+              type=click.Choice(
+                  ['convert', 'ignore', 'loose', 'strict'],
+                  case_sensitive=False),
+              default='loose',
+              help=('Validation mode. "convert" disables all but protobuf\'s '
+                    'internal validation, and can be used to convert between '
+                    'different representations of substrait.Plan. "ignore" '
+                    'runs validation, but ignores the result (i.e. the '
+                    'program always returns 0 and emits an output file if '
+                    'requested). "loose" fails only if the validator can '
+                    'prove that the plan is invalid. "strict" fails if it '
+                    'cannot prove that it is valid.'))
+def cli(infile, in_type, out_file, out_type, mode, verbosity):
+    """Validate or convert the substrait.Plan represented by INFILE (or stdin
+    using "-").
+
+    The following formats are supported:
+
+    \b
+     - proto: binary serialization format of protobuf.
+     - json: JSON serialization format of protobuf.
+     - yaml: the above, but represented as YAML.
+     - diag*: list of validator diagnostic messages.
+     - html*: all information known about the plan in HTML format.
+    
+    *output-only, and not supported in -mconvert mode.
+
+    When validation is enabled, the output message type will be
+    substrait.validator.Result. If you just want to convert between different
+    representations of the substrait.Plan message, use -mconvert.
+    """
+    in_file = infile
+
+    # Define various helper functions and constants.
+    INFO = Diagnostic.Level.LEVEL_INFO
+    WARN = Diagnostic.Level.LEVEL_WARNING
+    ERROR = Diagnostic.Level.LEVEL_ERROR
+    FATAL = ERROR + 1
+    QUIET = FATAL + 1
+
+    def level_str_to_int(level):
+        """Converts a string representation of an error level or verbosity to
+        its internal integer representation."""
+        return {
+            'info': INFO,
+            'warn': WARN,
+            'error': ERROR,
+            'fatal': FATAL,
+            'quiet': QUIET,
+        }[level]
+
+    def emit_diagnostic(level, msg, code=None, source=None, original_level=None):
+        """Emits a diagnostic message to stderr."""
+
+        # Only print the diagnostic if the configured verbosity is high enough.
+        if level < verbosity_level:
+            return
+        
+        # Determine the original error level.
+        if original_level is None:
+            original_level = level
+        
+        # Format the level.
+        formatted = [{
+            FATAL: click.style('Fatal error', fg='red', bold=True),
+            ERROR: click.style('Error', fg='red', bold=True),
+            WARN: click.style('Warning', fg='yellow', bold=False),
+            INFO: click.style('Info', fg='green', bold=False),
+        }[level]]
+
+        # Format extra information written within parentheses.
+        parens = []
+        if original_level != level:
+            if original_level > level:
+                mod = 'reduced from '
+            else:
+                mod ='promoted from '
+            mod += {
+                FATAL: 'fatal)',
+                ERROR: 'error)',
+                WARN: 'warning)',
+                INFO: 'info)',
+            }[original_level]
+            parens.append(mod)
+        if code is not None:
+            parens.append(f'code {code:04d}')
+        if parens:
+            formatted.append(' ({})'.format(','.join(parens)))
+        formatted.append(':\n')
+
+        # Append source information, if known.
+        if source is not None:
+            formatted.append(f'  at {source}:\n')
+        
+        # Append the actual message.
+        formatted.append('  ')
+        formatted.append('\n  '.join(str(msg).split('\n')))
+        formatted.append('\n')
+
+        # Print the formatted diagnostic.
+        click.echo(''.join(formatted), err=True)
+
+    def fatal(*args, **kwargs):
+        """Shorthand for emit_diagnostic(FATAL, ...) followed by exiting with
+        code 1."""
+        emit_diagnostic(FATAL, *args, **kwargs)
+        sys.exit(1)
+
+    def deduce_format(fil, typ, remap):
+        """Deduces the file format for fil with type hint typ using the rules
+        in remap."""
+        if typ == 'ext':
+            if fil is None:
+                typ = remap['DEFAULT']
+            else:
+                _, *ext = fil.rsplit('.', maxsplit=1)
+                if ext:
+                    typ = ext[0].lower()
+                typ = remap.get(typ, remap['DEFAULT'])
+        return typ
+    
+    def emit_output(data):
+        """Emits the given output data as specified on the command line."""
+        # Encode text formats as unicode.
+        if not isinstance(data, bytes):
+            data = data.encode('utf-8')
+        
+        # Write to the output.
+        if out_file == '-':
+            try:
+                count = sys.stdout.buffer.write(data)
+            except IOError as e:
+                fatal(f'failed to write to stdout: {e}')
+        elif out_file is not None:
+            try:
+                with open(out_file, 'wb') as f:
+                    count = f.write(data)
+            except IOError as e:
+                fatal(f'failed to write output file: {e}')
+        else:
+            return
+        if count < len(data):
+            fatal(f'failed to write all output')
+
+    def emit_proto(out_message):
+        """Emits the given protobuf message as specified on the command
+        line."""
+
+        # Convert to appropriate data format.
+        if out_type == 'proto':
+            emit_output(out_message.SerializeToString())
+        elif out_type == 'json':
+            emit_output(json_format.MessageToJson(out_message))
+        else:
+            out_dict = json_format.MessageToDict(out_message)
+            if out_type == 'yaml':
+                emit_output(yaml.safe_dump(out_dict))
+            else:
+                fatal(f'cannot emit protobuf message in {out_type} format')
+
+    # Parse verbosity level.
+    verbosity_level = level_str_to_int(verbosity)
+
+    # Handle automatic format deduction.
+    in_type = deduce_format(in_file, in_type, {
+        'DEFAULT': 'proto',
+        'json': 'json',
+        'yaml': 'yaml',
+    })
+    out_type = deduce_format(out_file, out_type, {
+        'DEFAULT': 'proto',
+        'json': 'json',
+        'yaml': 'yaml',
+        'txt': 'diag',
+        'html': 'html',
+        'htm': 'html',
+    })
+
+    # Read input file.
+    if in_file == '-':
+        try:
+            in_data = sys.stdin.buffer.read()
+        except IOError as e:
+            fatal(f'failed to read from stdin: {e}')
+    else:
+        try:
+            with open(in_file, 'rb') as f:
+                in_data = f.read()
+        except IOError as e:
+            fatal(f'failed to read input file: {e}')
+
+    # Parse input format.
+    if in_type == 'proto':
+
+        # Convert the plan directly.
+        try:
+            plan = load_plan_from_proto(in_data)
+        except ProtoDecodeError as e:
+            fatal(e)
+        
+    else:
+
+        # Remaining formats are UTF-8 encoded.
+        try:
+            in_str = in_data.decode('utf8')
+        except UnicodeError as e:
+            fatal(f'failed to decode input file: {e}')
+
+        # Convert from different variations of the JSON object model.
+        if in_type == 'json':
+            try:
+                in_dict = json.loads(in_str)
+            except json.decoder.JSONDecodeError as e:
+                fatal(f'failed to decode input file: {e}')
+        elif in_type =='yaml':
+            try:
+                in_dict = yaml.safe_load(in_str)
+            except yaml.YAMLError as e:
+                fatal(f'failed to decode input file: {e}')
+        else:
+            raise NotImplementedError(in_type)
+
+        # Convert the dict representation of the JSON object model to the
+        # protobuf message wrapper.
+        try:
+            in_plan = load_plan_from_dict(in_dict)
+        except json_format.ParseError as e:
+            fatal(e)
+
+    # Handle convert-only mode.
+    if mode == 'convert':
+        emit_proto(in_plan)
+        return
+
+    # Construct parser/validator configuration.
+    config = Config()
+    # TODO
+
+    # Run the parser/validator.
+    result = plan_to_result_handle(in_plan)
+
+    # Emit diagnostics to stderr.
+    for diagnostic in plan_to_diagnostics(result):
+        emit_diagnostic(
+            msg=diagnostic.msg,
+            code=diagnostic.cause,
+            source=path_to_string(diagnostic.path),
+            level=diagnostic.adjusted_level,
+            original_level=diagnostic.original_level)
+    
+    # Check validity.
+    validity = check_plan(result)
+    if mode == 'loose':
+        if validity < 0:
+            fatal('plan is invalid')
+    elif mode == 'strict':
+        if validity < 1:
+            fatal('failed to prove that plan is valid')
+    elif mode != 'ignore':
+        raise ValueError('mode')
+
+    # Emit output file.
+    if out_type == 'diag':
+        emit_output(plan_to_diagnostics_str(result))
+    elif out_type == 'html':
+        emit_output(plan_to_html(result))
+    else:
+        emit_proto(plan_to_parse_result(result))
+
+
+if __name__ == '__main__':
+    cli()

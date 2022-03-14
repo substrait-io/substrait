@@ -244,7 +244,7 @@ message Diagnostic {
   Level adjusted_level = 2;
 
   // The machine-readable message for this diagnostic.
-  Cause cause = 3;
+  uint32 cause = 3;
 
   // The human-readable message for this diagnostic.
   string msg = 4;
@@ -271,13 +271,6 @@ message Diagnostic {
     // Error diagnostic. The presence of error diagnostics indicates that
     // the plan is invalid.
     LEVEL_ERROR = 3;
-  }
-
-  // Machine-readable cause for a diagnostic message.
-  enum Cause {
-    CAUSE_UNSPECIFIED = 0;
-    // TODO: once diagnostic causes stabilize a bit, start defining them
-    // here.
   }
 }
 

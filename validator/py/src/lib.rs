@@ -130,16 +130,16 @@ impl Config {
 /// To construct a parse tree (and in doing so, validate the Substrait plan),
 /// simply pass a bytes object containing the substrait.plan message to the
 /// constructor. Note that this "never fails:" any failures to parse the
-/// bytes object will be embedded as diagnostics in the ParseResult object.
+/// bytes object will be embedded as diagnostics in the ResultHandle object.
 /// This allows multiple error messages to be contained within the object. Use
 /// check(), check_valid(), or check_not_invalid() to check validity.
 #[pyclass]
-struct ParseResult {
+struct ResultHandle {
     root: substrait_validator::ParseResult,
 }
 
 #[pymethods]
-impl ParseResult {
+impl ResultHandle {
     #[new]
     pub fn new(data: &[u8], config: Option<&Config>) -> Self {
         Self {
@@ -223,6 +223,6 @@ impl ParseResult {
 #[pymodule]
 fn substrait_validator(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<Config>()?;
-    m.add_class::<ParseResult>()?;
+    m.add_class::<ResultHandle>()?;
     Ok(())
 }
