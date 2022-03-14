@@ -639,15 +639,22 @@ where
 //=============================================================================
 
 /// Attempts to resolve a URI.
-fn resolve_uri(uri: &str, config: &config::Config) -> diagnostic::Result<config::BinaryData> {
+fn resolve_uri(
+    uri: &str,
+    context: &mut context::Context,
+) -> diagnostic::Result<config::BinaryData> {
     // Apply yaml_uri_overrides configuration.
-    let remapped_uri = config.uri_overrides.iter().find_map(|(pattern, mapping)| {
-        if pattern.matches(uri) {
-            Some(mapping.as_ref().map(|x| &x[..]))
-        } else {
-            None
-        }
-    });
+    let remapped_uri = context
+        .config
+        .uri_overrides
+        .iter()
+        .find_map(|(pattern, mapping)| {
+            if pattern.matches(uri) {
+                Some(mapping.as_ref().map(|x| &x[..]))
+            } else {
+                None
+            }
+        });
     let is_remapped = remapped_uri.is_some();
     let remapped_uri = remapped_uri.unwrap_or(Some(uri));
 
@@ -659,9 +666,12 @@ fn resolve_uri(uri: &str, config: &config::Config) -> diagnostic::Result<config:
             "YAML resolution for {uri} was disabled"
         ));
     };
+    if is_remapped {
+        diagnostic!(context, Info, Yaml, "URI was remapped to {remapped_uri}");
+    }
 
     // If a custom download function is specified, use it to resolve.
-    if let Some(ref resolver) = config.uri_resolver {
+    if let Some(ref resolver) = context.config.uri_resolver {
         return resolver(remapped_uri)
             .map_err(|x| ecause!(YamlResolutionFailed, x.as_ref().to_string()));
     }
@@ -740,7 +750,7 @@ fn load_yaml(
     // not an error; it means the plan isn't valid in the current environment,
     // but it might still be valid in another one, in particular for consumers
     // that don't need to be able to resolve the YAML files to use the plan.
-    let binary_data = match resolve_uri(uri, context.config) {
+    let binary_data = match resolve_uri(uri, context) {
         Err(e) => {
             diagnostic!(context, Warning, e);
             return None;

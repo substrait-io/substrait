@@ -288,7 +288,7 @@ impl Classification {
         if let Some(description) = self.get_str("Description") {
             write!(f, "{description}: ")?;
         }
-        write!(f, "{message} ({})", self.code())
+        write!(f, "{message} (code {:04})", self.code())
     }
 }
 

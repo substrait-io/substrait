@@ -4,6 +4,9 @@ import sys
 import json
 import yaml
 import click
+import pycurl
+import certifi
+from io import BytesIO
 from typing import Iterable
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
@@ -30,7 +33,17 @@ class Config:
         else:
             raise TypeError("unsupported type: {}".format(type(config)))
 
-    # TODO: add method for resolving URIs via curl here.
+    def add_curl_uri_resolver(self):
+        def curl_resolver(uri):
+            buf = BytesIO()
+            c = pycurl.Curl()
+            c.setopt(c.URL, uri)
+            c.setopt(c.WRITEDATA, buf)
+            c.setopt(c.CAINFO, certifi.where())
+            c.perform()
+            c.close()
+            return buf.getvalue()
+        self._config.add_uri_resolver(curl_resolver)
 
 
 def load_plan_from_proto(data: bytes) -> Plan:
@@ -235,7 +248,37 @@ def path_to_string(path: Path) -> str:
                     'requested). "loose" fails only if the validator can '
                     'prove that the plan is invalid. "strict" fails if it '
                     'cannot prove that it is valid.'))
-def cli(infile, in_type, out_file, out_type, mode, verbosity):
+@click.option('--ignore-unknown-fields',
+              help=('Do not generate warnings for unknown protobuf fields '
+                    'that are set to their protobuf-defined default value.'))
+@click.option('--allow-proto-any',
+              multiple=True,
+              help=('Explicitly allow the given protobuf type URL(s) to be '
+                    'used in protobuf Any messages. Supports glob syntax.'))
+@click.option('--diagnostic-level',
+              nargs=3,
+              multiple=True,
+              help=('Clamps the error level of diagnostics with diagnostic '
+                    'code or class [0] to at least [1] and at most [2]. '
+                    'For example, --diagnostic-level 1 warn error will '
+                    'override the level of info diagnostics with code 1 '
+                    'to warning, leaving the other levels unchanged.'))
+@click.option('--override-uri',
+              nargs=2,
+              multiple=True,
+              help=('Overrides URIs in the plan that match [0] with [1]. Set '
+                    '[1] to "-" to disable resolution of matching URIs. '
+                    'Supports glob syntax. For example, '
+                    '"--override-uri http://* -" disables resolution via '
+                    'http.'))
+@click.option('--use-curl/--no-use-curl',
+              default=True,
+              help=('Enable URI resolution via libcurl. Enabled by default. '
+                    'If disabled, only file:// URIs will resolve (after '
+                    'application of any --override-uri options).'))
+def cli(infile, in_type, out_file, out_type, mode, verbosity,
+        ignore_unknown_fields, allow_proto_any, diagnostic_level,
+        override_uri, use_curl):
     """Validate or convert the substrait.Plan represented by INFILE (or stdin
     using "-").
 
@@ -247,7 +290,7 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity):
      - yaml: the above, but represented as YAML.
      - diag*: list of validator diagnostic messages.
      - html*: all information known about the plan in HTML format.
-    
+
     *output-only, and not supported in -mconvert mode.
 
     When validation is enabled, the output message type will be
@@ -280,11 +323,11 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity):
         # Only print the diagnostic if the configured verbosity is high enough.
         if level < verbosity_level:
             return
-        
+
         # Determine the original error level.
         if original_level is None:
             original_level = level
-        
+
         # Format the level.
         formatted = [{
             FATAL: click.style('Fatal error', fg='red', bold=True),
@@ -301,22 +344,22 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity):
             else:
                 mod ='promoted from '
             mod += {
-                FATAL: 'fatal)',
-                ERROR: 'error)',
-                WARN: 'warning)',
-                INFO: 'info)',
+                FATAL: 'fatal',
+                ERROR: 'error',
+                WARN: 'warning',
+                INFO: 'info',
             }[original_level]
             parens.append(mod)
         if code is not None:
             parens.append(f'code {code:04d}')
         if parens:
-            formatted.append(' ({})'.format(','.join(parens)))
+            formatted.append(' ({})'.format(', '.join(parens)))
         formatted.append(':\n')
 
         # Append source information, if known.
         if source is not None:
             formatted.append(f'  at {source}:\n')
-        
+
         # Append the actual message.
         formatted.append('  ')
         formatted.append('\n  '.join(str(msg).split('\n')))
@@ -343,13 +386,13 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity):
                     typ = ext[0].lower()
                 typ = remap.get(typ, remap['DEFAULT'])
         return typ
-    
+
     def emit_output(data):
         """Emits the given output data as specified on the command line."""
         # Encode text formats as unicode.
         if not isinstance(data, bytes):
             data = data.encode('utf-8')
-        
+
         # Write to the output.
         if out_file == '-':
             try:
@@ -422,7 +465,7 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity):
             plan = load_plan_from_proto(in_data)
         except ProtoDecodeError as e:
             fatal(e)
-        
+
     else:
 
         # Remaining formats are UTF-8 encoded.
@@ -459,10 +502,39 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity):
 
     # Construct parser/validator configuration.
     config = Config()
-    # TODO
+    if ignore_unknown_fields:
+        config.ignore_unknown_fields()
+    for pattern in allow_proto_any:
+        try:
+            config.allow_proto_any_url(pattern)
+        except ValueError as e:
+            fatal(e)
+    for code, minimum, maximum in diagnostic_level:
+        try:
+            code = int(code, 10)
+            if code < 0:
+                raise ValueError()
+            minimum = minimum.lower()
+            if minimum == 'warn':
+                minimum = 'warning'
+            maximum = maximum.lower()
+            if maximum == 'warn':
+                maximum = 'warning'
+            config.override_diagnostic_level(code, minimum, maximum)
+        except ValueError as e:
+            fatal(e)
+    for pattern, resolve_as in override_uri:
+        if resolve_as == '-':
+            resolve_as = None
+        try:
+            config.override_uri(pattern, resolve_as)
+        except ValueError as e:
+            fatal(e)
+    if use_curl:
+        config.add_curl_uri_resolver()
 
     # Run the parser/validator.
-    result = plan_to_result_handle(in_plan)
+    result = plan_to_result_handle(in_plan, config)
 
     # Emit diagnostics to stderr.
     for diagnostic in plan_to_diagnostics(result):
@@ -472,7 +544,7 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity):
             source=path_to_string(diagnostic.path),
             level=diagnostic.adjusted_level,
             original_level=diagnostic.original_level)
-    
+
     # Check validity.
     validity = check_plan(result)
     if mode == 'loose':

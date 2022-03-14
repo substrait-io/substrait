@@ -33,7 +33,7 @@ TEST(BasicTest, BasicTest) {
   EXPECT_EQ(strlen(reinterpret_cast<const char *>(data_ptr)), data_size);
   EXPECT_EQ(reinterpret_cast<const char *>(data_ptr),
             std::string("Error at plan: failed to decode Protobuf message: "
-                        "invalid wire type value: 7 (1001)\n"));
+                        "invalid wire type value: 7 (code 1001)\n"));
 
   // Free the buffer.
   substrait_validator_free_exported(data_ptr);

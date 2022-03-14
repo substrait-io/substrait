@@ -73,7 +73,7 @@ impl From<&diagnostic::Diagnostic> for validator::Diagnostic {
             original_level: (&node.original_level).into(),
             adjusted_level: (&node.adjusted_level).into(),
             cause: node.cause.classification.into(),
-            msg: node.cause.message.to_string(),
+            msg: node.cause.to_string(),
             path: Some((&node.path).into()),
         }
     }

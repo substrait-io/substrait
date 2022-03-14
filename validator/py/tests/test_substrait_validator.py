@@ -130,12 +130,12 @@ def test_export_diags():
     diags = sv.plan_to_diagnostics_str(_BASIC_PLAN)
     assert type(diags) == str
     lines = list(filter(bool, diags.split('\n')))
-    assert lines[0] == 'Warning at plan: not yet implemented: the following child nodes were not recognized by the validator: relations[0] (1)'
+    assert lines[0] == 'Warning at plan: not yet implemented: the following child nodes were not recognized by the validator: relations[0] (code 0001)'
 
     diags = list(sv.plan_to_diagnostics(_BASIC_PLAN))
     for diag in diags:
         assert type(diag) == sv.Diagnostic
-    assert diags[0].msg == 'not yet implemented: the following child nodes were not recognized by the validator: relations[0] (1)'
+    assert diags[0].msg == 'not yet implemented: the following child nodes were not recognized by the validator: relations[0] (code 0001)'
 
 
 def test_resolver_callback():
@@ -157,7 +157,7 @@ def test_resolver_callback():
     }, config))
     for diag in diags:
         print(diag.msg)
-    assert diags[0].msg == 'not yet implemented: the following child nodes were not recognized by the validator: types (1)'
+    assert diags[0].msg == 'not yet implemented: the following child nodes were not recognized by the validator: types (code 0001)'
 
     diags = list(sv.plan_to_diagnostics({
         'extensionUris': [{
@@ -167,7 +167,7 @@ def test_resolver_callback():
     }, config))
     for diag in diags:
         print(diag.msg)
-    assert diags[0].msg == 'failed to resolve YAML: ValueError: unknown URI (2002)'
+    assert diags[0].msg == 'failed to resolve YAML: ValueError: unknown URI (code 2002)'
 
 
 # TODO: check_plan_valid()/check_plan_not_invalid()
