@@ -2,7 +2,7 @@
 
 from click.testing import CliRunner
 from substrait_validator import cli
-from .data import BASIC_PLAN
+from data import BASIC_PLAN
 import tempfile
 import json
 import pprint

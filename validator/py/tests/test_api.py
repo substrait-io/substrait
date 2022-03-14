@@ -2,7 +2,7 @@
 
 import substrait_validator as sv
 import pytest
-from .data import BASIC_PLAN, BASIC_YAML
+from data import BASIC_PLAN, BASIC_YAML
 
 
 def test_proto_roundtrip():
