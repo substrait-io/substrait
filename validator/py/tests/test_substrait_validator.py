@@ -147,7 +147,7 @@ def test_resolver_callback():
         raise ValueError('unknown URI')
 
     config = sv.Config()
-    config.add_yaml_uri_resolver(resolver)
+    config.add_uri_resolver(resolver)
 
     diags = list(sv.plan_to_diagnostics({
         'extensionUris': [{
