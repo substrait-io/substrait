@@ -8,6 +8,7 @@ import json
 import pprint
 from os.path import join as pjoin
 from os.path import isfile
+import platform
 
 
 def run(*args):
@@ -183,6 +184,12 @@ def test_uri_resolution():
                 ]
             }))
 
+        # Obtain a valid file:// URL for the above JSON file as well.
+        if platform.system() == 'Windows':
+            local_url = 'file:///' + pjoin(tmp, 'plan.json').replace('\\', '/')
+        else:
+            local_url = 'file://' + pjoin(tmp, 'plan.json')
+
         def x(*args):
             return run(pjoin(tmp, 'plan.json'), '-verror',              # verbosity error
                        '--diagnostic-level', '2002', 'error', 'error',  # YAML resolution failure -> error
@@ -199,7 +206,7 @@ def test_uri_resolution():
         # fallback resolution logic. Note that plan.json is obviously not
         # valid YAML, but all diagnostics not related to URI resolution are
         # overridden to info, so we don't have to care.
-        assert x('--no-use-urllib', '--override-uri', '*', 'file://' + pjoin(tmp, 'plan.json')) == 0
+        assert x('--no-use-urllib', '--override-uri', '*', local_url) == 0
 
         # urllib should also support file://.
-        assert x('--use-urllib', '--override-uri', '*', 'file://' + pjoin(tmp, 'plan.json')) == 0
+        assert x('--use-urllib', '--override-uri', '*', local_url) == 0
