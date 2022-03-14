@@ -49,7 +49,7 @@ jobs:
         command: build
         args: --release --no-sdist -o dist --universal2 -m validator/py/Cargo.toml
     - name: Install runtime dependencies
-      run: python3 -m pip install --upgrade protobuf pytest click pyyaml
+      run: python3 -m pip install --upgrade protobuf pytest click pyyaml pycurl
     - name: Install generated sdist
       if: ${{ matrix.type == 'sdist' }}
       run: python3 -m pip install dist/substrait_validator-*.tar.gz
