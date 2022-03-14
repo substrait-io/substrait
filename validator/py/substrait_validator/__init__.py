@@ -2,10 +2,10 @@
 
 import sys
 import json
+import jsom
 import yaml
 import click
-import pycurl
-import certifi
+import urllib.request
 from io import BytesIO
 from typing import Iterable
 from google.protobuf import json_format
@@ -33,17 +33,11 @@ class Config:
         else:
             raise TypeError("unsupported type: {}".format(type(config)))
 
-    def add_curl_uri_resolver(self):
-        def curl_resolver(uri):
-            buf = BytesIO()
-            c = pycurl.Curl()
-            c.setopt(c.URL, uri)
-            c.setopt(c.WRITEDATA, buf)
-            c.setopt(c.CAINFO, certifi.where())
-            c.perform()
-            c.close()
-            return buf.getvalue()
-        self._config.add_uri_resolver(curl_resolver)
+    def add_urllib_resolver(self):
+        """Adds a URI resolver based on urllib."""
+        def urllib_resolver(uri):
+            return urllib.request.urlopen(uri).read()
+        self._config.add_uri_resolver(urllib_resolver)
 
 
 def load_plan_from_proto(data: bytes) -> Plan:
@@ -67,6 +61,22 @@ def load_plan_from_dict(data: dict) -> Plan:
     if not isinstance(data, dict):
         raise TypeError("unsupported type: {}".format(type(data)))
     return load_plan_from_json(json.dumps(data))
+
+
+def load_plan_from_yaml(yaml: str) -> Plan:
+    """Load a Substrait plan from YAML data mimicking the structure of
+    its JSON string representation."""
+    if not isinstance(data, str):
+        raise TypeError("unsupported type: {}".format(type(data)))
+    return load_plan_from_dict(yaml.safe_load(yaml))
+
+
+def load_plan_from_jsom(jsom: str) -> Plan:
+    """Load a Substrait plan from JSOM data mimicking the structure of
+    its JSON string representation."""
+    if not isinstance(data, str):
+        raise TypeError("unsupported type: {}".format(type(data)))
+    return load_plan_from_dict(jsom.JsomCoder().decode(jsom))
 
 
 def load_plan(data) -> Plan:
@@ -109,6 +119,18 @@ def plan_to_dict(plan) -> dict:
     """Converts a plan to its JSON serialization, returned as a dict. plan can
     be anything supported by load_plan()."""
     return json_format.MessageToDict(load_plan(plan))
+
+
+def plan_to_yaml(plan) -> str:
+    """Converts a plan to the YAML equivalent of its JSON serialization,
+    returned as a string. plan can be anything supported by load_plan()."""
+    return yaml.safe_dump(plan_to_dict(plan))
+
+
+def plan_to_jsom(plan) -> str:
+    """Converts a plan to the JSOM equivalent of its JSON serialization,
+    returned as a string. plan can be anything supported by load_plan()."""
+    return jsom.JsomCoder().encode(plan_to_dict(plan))
 
 
 def plan_to_result_handle(plan, config=None) -> ResultHandle:
@@ -211,7 +233,7 @@ def path_to_string(path: Path) -> str:
 @click.argument('infile')
 @click.option('--in-type',
               type=click.Choice(
-                  ['ext', 'proto', 'json', 'yaml'],
+                  ['ext', 'proto', 'json', 'yaml', 'jsom'],
                   case_sensitive=False),
               default='ext',
               help=('Input file type. "ext" uses the extension of the input '
@@ -229,7 +251,7 @@ def path_to_string(path: Path) -> str:
               help='Output file. "-" may be used to select stdout.')
 @click.option('--out-type',
               type=click.Choice(
-                  ['ext', 'diag', 'html', 'proto', 'json', 'yaml'],
+                  ['ext', 'diag', 'html', 'proto', 'json', 'yaml', 'jsom'],
                   case_sensitive=False),
               default='ext',
               help=('Output file type. "ext" uses the extension of the output '
@@ -271,14 +293,14 @@ def path_to_string(path: Path) -> str:
                     'Supports glob syntax. For example, '
                     '"--override-uri http://* -" disables resolution via '
                     'http.'))
-@click.option('--use-curl/--no-use-curl',
+@click.option('--use-urllib/--no-use-urllib',
               default=True,
-              help=('Enable URI resolution via libcurl. Enabled by default. '
+              help=('Enable URI resolution via urllib. Enabled by default. '
                     'If disabled, only file:// URIs will resolve (after '
                     'application of any --override-uri options).'))
 def cli(infile, in_type, out_file, out_type, mode, verbosity,
         ignore_unknown_fields, allow_proto_any, diagnostic_level,
-        override_uri, use_curl):
+        override_uri, use_urllib):
     """Validate or convert the substrait.Plan represented by INFILE (or stdin
     using "-").
 
@@ -287,7 +309,9 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
     \b
      - proto: binary serialization format of protobuf.
      - json: JSON serialization format of protobuf.
-     - yaml: the above, but represented as YAML.
+     - yaml: like JSON, but represented as YAML.
+     - jsom: like JSON, but represented as JSOM (still highly experimental,
+       see https://github.com/saulpw/jsom).
      - diag*: list of validator diagnostic messages.
      - html*: all information known about the plan in HTML format.
 
@@ -423,6 +447,8 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
             out_dict = json_format.MessageToDict(out_message)
             if out_type == 'yaml':
                 emit_output(yaml.safe_dump(out_dict))
+            elif out_type == 'jsom':
+                emit_output(jsom.JsomCoder().encode(out_dict))
             else:
                 fatal(f'cannot emit protobuf message in {out_type} format')
 
@@ -434,11 +460,13 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
         'DEFAULT': 'proto',
         'json': 'json',
         'yaml': 'yaml',
+        'jsom': 'jsom',
     })
     out_type = deduce_format(out_file, out_type, {
         'DEFAULT': 'proto',
         'json': 'json',
         'yaml': 'yaml',
+        'jsom': 'jsom',
         'txt': 'diag',
         'html': 'html',
         'htm': 'html',
@@ -480,11 +508,17 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
                 in_dict = json.loads(in_str)
             except json.decoder.JSONDecodeError as e:
                 fatal(f'failed to decode input file: {e}')
-        elif in_type =='yaml':
+        elif in_type == 'yaml':
             try:
                 in_dict = yaml.safe_load(in_str)
             except yaml.YAMLError as e:
                 fatal(f'failed to decode input file: {e}')
+        elif in_type == 'jsom':
+            # TODO: currently jsom just calls print() when there's an error?
+            try:
+                in_dict = jsom.JsomCoder().decode(in_str)
+            except Exception as e:
+                sys.exit(1)
         else:
             raise NotImplementedError(in_type)
 
@@ -530,8 +564,8 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
             config.override_uri(pattern, resolve_as)
         except ValueError as e:
             fatal(e)
-    if use_curl:
-        config.add_curl_uri_resolver()
+    if use_urllib:
+        config.add_urllib_resolver()
 
     # Run the parser/validator.
     result = plan_to_result_handle(in_plan, config)

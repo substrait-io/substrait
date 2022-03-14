@@ -20,8 +20,7 @@ dependencies = [
     "protobuf > 3.19.3",
     "click >= 8",
     "pyyaml >= 6",
-    "pycurl >= 7",
-    "certifi >= 2021.10.08"
+    "jsom@git+https://github.com/saulpw/jsom.git@f41db1c"
 ]
 
 [project.optional-dependencies]
