@@ -6,7 +6,7 @@
 //! output. It pairs every record from the left input with every record of the
 //! right input.
 //!
-//! See https://substrait.io/relations/logical_relations/#cross-product-operation
+//! See <https://substrait.io/relations/logical_relations/#cross-product-operation>
 
 use crate::input::proto::substrait;
 use crate::output::diagnostic;

@@ -5,7 +5,7 @@
 //! The read operator is an operator that produces one output. A simple example
 //! would be the reading of a Parquet file.
 //!
-//! See https://substrait.io/relations/logical_relations/#read-operator
+//! See <https://substrait.io/relations/logical_relations/#read-operator>
 
 use crate::input::proto::substrait;
 use crate::output::diagnostic;

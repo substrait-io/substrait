@@ -6,7 +6,7 @@
 //! combining datasets based, possibly excluding records based on various
 //! types of record level matching.
 //!
-//! See https://substrait.io/relations/logical_relations/#set-operation
+//! See <https://substrait.io/relations/logical_relations/#set-operation>
 
 use crate::input::proto::substrait;
 use crate::output::diagnostic;

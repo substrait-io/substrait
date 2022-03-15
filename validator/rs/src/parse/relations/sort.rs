@@ -5,7 +5,7 @@
 //! The sort operator reorders a dataset based on one or more identified
 //! sort fields as well as a sorting function.
 //!
-//! See https://substrait.io/relations/logical_relations/#sort-operation
+//! See <https://substrait.io/relations/logical_relations/#sort-operation>
 
 use crate::input::proto::substrait;
 use crate::output::diagnostic;

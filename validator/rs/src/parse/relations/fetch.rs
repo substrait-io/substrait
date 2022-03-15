@@ -5,7 +5,7 @@
 //! The fetch operation eliminates records outside a desired window. Typically
 //! corresponds to a fetch/offset SQL clause.
 //!
-//! See https://substrait.io/relations/logical_relations/#fetch-operation
+//! See <https://substrait.io/relations/logical_relations/#fetch-operation>
 
 use crate::input::proto::substrait;
 use crate::output::diagnostic;

@@ -5,7 +5,7 @@
 //! The filter operator eliminates one or more records from the input data
 //! based on a boolean filter expression.
 //!
-//! See https://substrait.io/relations/logical_relations/#filter-operation
+//! See <https://substrait.io/relations/logical_relations/#filter-operation>
 
 use crate::input::proto::substrait;
 use crate::output::diagnostic;

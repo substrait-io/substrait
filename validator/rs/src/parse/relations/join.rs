@@ -7,7 +7,7 @@
 //! where the join expression is constrained to a list of equality (or
 //! equality + null equality) conditions between the two inputs of the join.
 //!
-//! See https://substrait.io/relations/logical_relations/#join-operation
+//! See <https://substrait.io/relations/logical_relations/#join-operation>
 
 use crate::input::proto::substrait;
 use crate::output::diagnostic;

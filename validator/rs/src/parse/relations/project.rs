@@ -5,7 +5,7 @@
 //! The project operation will produce one or more additional expressions based
 //! on the inputs of the dataset.
 //!
-//! See https://substrait.io/relations/logical_relations/#project-operation
+//! See <https://substrait.io/relations/logical_relations/#project-operation>
 
 use crate::input::proto::substrait;
 use crate::output::diagnostic;
