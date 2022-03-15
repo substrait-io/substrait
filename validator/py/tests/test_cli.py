@@ -37,7 +37,7 @@ def test_mconvert_auto():
 
         convert('plan.proto', 'plan.yaml')
         convert('plan.yaml', 'plan.jsom')
-        convert('plan.yaml', 'plan.json') # TODO: convert from JSOM when JSOM is fixed
+        convert('plan.jsom', 'plan.json')
         convert('plan.json', 'plan.bin')
 
         with open(pjoin(tmp, 'plan.bin'), 'rb') as f:
@@ -62,38 +62,8 @@ def test_mconvert_manual():
             a = f.read()
 
         convert('proto', 'yaml')
-        # TODO: enable JSOM when JSOM is fixed
-        #convert('yaml', 'jsom')
-        #convert('jsom', 'yaml')
-        convert('yaml', 'json')
-        convert('json', 'proto')
-
-        with open(pjoin(tmp, 'data'), 'rb') as f:
-            b = f.read()
-
-        assert a == b
-
-
-def test_mconvert_manual():
-    """Test -mconvert with automatic format deduction from file extensions."""
-    with tempfile.TemporaryDirectory() as tmp:
-        with open(pjoin(tmp, 'data'), 'w') as f:
-            f.write(BASIC_PLAN)
-
-        def convert(in_type, out_type):
-            assert run(pjoin(tmp, 'data'), '-O', pjoin(tmp, 'data'), '-mconvert',
-                       '--in-type', in_type, '--out-type', out_type).exit_code == 0
-
-        convert('json', 'proto')
-
-        with open(pjoin(tmp, 'data'), 'rb') as f:
-            a = f.read()
-
-        convert('proto', 'yaml')
-        # TODO: enable JSOM when JSOM is fixed
-        #convert('yaml', 'jsom')
-        #convert('jsom', 'yaml')
-        convert('yaml', 'json')
+        convert('yaml', 'jsom')
+        convert('jsom', 'json')
         convert('json', 'proto')
 
         with open(pjoin(tmp, 'data'), 'rb') as f:
