@@ -11,25 +11,29 @@ use std::collections::HashSet;
 use std::sync::Arc;
 use strum_macros::{Display, EnumString};
 
-/// A Substrait data type.
+/// Typedef for type variations.
+pub type Variation = Option<Arc<extension::Reference<extension::TypeVariation>>>;
+
+/// A Substrait data type. Includes facilities for storing unresolved or
+/// partially-resolved types.
 #[derive(Clone, Debug, PartialEq)]
 pub struct DataType {
     /// Type class (simple, compound, or user-defined).
-    pub class: Class,
+    class: Class,
 
     /// Nullability.
     pub nullable: bool,
 
     /// Type variation, if any.
-    pub variation: Option<Arc<extension::Reference<extension::TypeVariation>>>,
+    variation: Variation,
 
     /// Type parameters for non-simple types.
-    pub parameters: Vec<Parameter>,
+    parameters: Vec<Parameter>,
 }
 
 impl std::fmt::Display for DataType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.class)?;
+        self.class.fmt(f)?;
         if self.nullable {
             write!(f, "?")?;
         }
@@ -50,6 +54,222 @@ impl std::fmt::Display for DataType {
             write!(f, ">")?;
         }
         Ok(())
+    }
+}
+
+impl DataType {
+    /// Creates a new type.
+    pub fn new(
+        class: Class,
+        nullable: bool,
+        variation: Variation,
+        parameters: Vec<Parameter>,
+    ) -> diagnostic::Result<DataType> {
+        // Check whether class and parameters work together.
+        class.check_parameters(&parameters)?;
+
+        // TODO: check whether the specified type variation is applicable to
+        // this type?
+
+        Ok(DataType {
+            class,
+            nullable,
+            variation,
+            parameters,
+        })
+    }
+
+    /// Creates a new unresolved type with no information known.
+    pub fn new_unresolved<S: ToString>(description: S) -> DataType {
+        DataType {
+            class: Class::Unresolved(description.to_string()),
+            nullable: false,
+            variation: None,
+            parameters: vec![],
+        }
+    }
+
+    /// Creates a new struct type.
+    pub fn new_struct<T: IntoIterator<Item = DataType>>(fields: T, nullable: bool) -> DataType {
+        DataType {
+            class: Class::Compound(Compound::Struct),
+            nullable,
+            variation: None,
+            parameters: fields.into_iter().map(Parameter::from).collect(),
+        }
+    }
+
+    /// Returns the type class.
+    pub fn class(&self) -> &Class {
+        &self.class
+    }
+
+    /// Returns the type variation.
+    pub fn variation(&self) -> &Variation {
+        &self.variation
+    }
+
+    /// Returns the type parameters.
+    pub fn parameters(&self) -> &Vec<Parameter> {
+        &self.parameters
+    }
+
+    /// Returns whether this is an unresolved type.
+    pub fn is_unresolved(&self) -> bool {
+        matches!(self.class, Class::Unresolved(_))
+    }
+
+    /// Returns whether any part of this type tree is an unresolved type.
+    pub fn is_unresolved_deep(&self) -> bool {
+        self.is_unresolved()
+            || self.parameters.iter().any(|p| match p {
+                Parameter::Type(t) => t.is_unresolved_deep(),
+                Parameter::NamedType(_, t) => t.is_unresolved_deep(),
+                _ => false,
+            })
+    }
+
+    /// Returns whether this is a STRUCT or NSTRUCT type.
+    pub fn is_struct(&self) -> bool {
+        matches!(
+            self.class,
+            Class::Compound(Compound::Struct) | Class::Compound(Compound::NamedStruct)
+        )
+    }
+
+    /// Returns whether this is the base type for this type, i.e. it does
+    /// not have a variation.
+    pub fn is_base_type(&self) -> bool {
+        self.variation.is_none()
+    }
+
+    /// Returns the type of the nth field of this struct. Returns None if
+    /// out of range or if this is known to not be a struct. Returns self
+    /// if this is an unresolved type.
+    pub fn index_struct(&self, index: usize) -> Option<&DataType> {
+        if self.is_unresolved() {
+            Some(self)
+        } else if self.is_struct() {
+            match self.parameters.get(index) {
+                Some(Parameter::Type(t)) => Some(t),
+                Some(Parameter::NamedType(_, t)) => Some(t),
+                _ => None,
+            }
+        } else {
+            None
+        }
+    }
+
+    /// Internal helper for split_field_names() and strip_field_names().
+    fn split_field_names_internal<F: FnMut(String)>(self, namer: &mut F) -> DataType {
+        let is_struct = self.is_struct();
+        let parameters = self
+            .parameters
+            .into_iter()
+            .enumerate()
+            .map(|(i, p)| {
+                let p = if is_struct {
+                    let (p, name) = p.split_name();
+                    namer(name.unwrap_or_else(|| i.to_string()));
+                    p
+                } else {
+                    p
+                };
+                p.map_type(|t| t.split_field_names_internal(namer))
+            })
+            .collect();
+        DataType {
+            class: self.class,
+            nullable: self.nullable,
+            variation: self.variation,
+            parameters,
+        }
+    }
+
+    /// Converts all NSTRUCT types in the tree to STRUCT, and returns the
+    /// flattened list of field names encountered. The fields of STRUCT types
+    /// are also returned, to ensure that the returned Vec is applicable to
+    /// apply_field_names(); their names are simply their zero-based index
+    /// converted to a string.
+    pub fn split_field_names(self) -> (DataType, Vec<String>) {
+        let mut names = vec![];
+        let data_type = self.split_field_names_internal(&mut |s| names.push(s));
+        (data_type, names)
+    }
+
+    /// Like split_field_names(), but drops the name strings.
+    pub fn strip_field_names(self) -> DataType {
+        self.split_field_names_internal(&mut |_| ())
+    }
+
+    /// Internal helper function for apply_field_names().
+    fn apply_field_names_internal<F: FnMut() -> diagnostic::Result<String>>(
+        self,
+        mut namer: &mut F,
+    ) -> diagnostic::Result<DataType> {
+        if self.is_struct() {
+            let parameters: Result<Vec<_>, _> = self
+                .parameters
+                .into_iter()
+                .map(|p| {
+                    p.with_name(&mut namer)?
+                        .map_type_result(|t| t.apply_field_names_internal(namer))
+                })
+                .collect();
+
+            // The data type may be invalid after renaming, so we need to
+            // call new() to perform check validity.
+            DataType::new(
+                Class::Compound(Compound::NamedStruct),
+                self.nullable,
+                self.variation,
+                parameters?,
+            )
+        } else {
+            let parameters: Result<Vec<_>, _> = self
+                .parameters
+                .into_iter()
+                .map(|p| p.map_type_result(|t| t.apply_field_names_internal(namer)))
+                .collect();
+
+            // Data types generated this way can never become invalid, so we
+            // can construct directly.
+            Ok(DataType {
+                class: self.class,
+                nullable: self.nullable,
+                variation: self.variation,
+                parameters: parameters?,
+            })
+        }
+    }
+
+    /// Applies names to STRUCTs, or renames the names in NSTRUCTs, based on a
+    /// flattened vector of names.
+    pub fn apply_field_names<S: ToString>(self, names: &[S]) -> diagnostic::Result<DataType> {
+        let mut names = names.iter();
+        let mut namer = || {
+            names.next().map(|s| s.to_string()).ok_or(cause!(
+                TypeMismatchedFieldNames,
+                "received too few field name(s)"
+            ))
+        };
+        let new_type = self.apply_field_names_internal(&mut namer)?;
+        let remainder = names.count();
+        if remainder > 0 {
+            Err(cause!(
+                TypeMismatchedFieldNames,
+                "received {} too many field name(s)",
+                remainder
+            ))
+        } else {
+            Ok(new_type)
+        }
+    }
+}
+
+impl Default for DataType {
+    fn default() -> Self {
+        Self::new_unresolved("")
     }
 }
 
@@ -100,7 +320,8 @@ pub enum Class {
     /// User-defined type.
     UserDefined(Arc<extension::Reference<extension::DataType>>),
 
-    /// Unresolved type. Used for error recovery.
+    /// Unresolved type. Used for error recovery. The string is an optional
+    /// description for why the type is unresolved.
     Unresolved(String),
 }
 
@@ -110,7 +331,13 @@ impl std::fmt::Display for Class {
             Class::Simple(simple) => write!(f, "{simple}"),
             Class::Compound(compound) => write!(f, "{compound}"),
             Class::UserDefined(user_defined) => write!(f, "{user_defined}"),
-            Class::Unresolved(name) => write!(f, "{name}!"),
+            Class::Unresolved(description) => {
+                write!(f, "!")?;
+                if f.alternate() && !description.is_empty() {
+                    write!(f, "({description})")?;
+                }
+                Ok(())
+            }
         }
     }
 }
@@ -339,5 +566,62 @@ impl std::fmt::Display for Parameter {
             }
             Parameter::Unsigned(value) => write!(f, "{value}"),
         }
+    }
+}
+
+impl Parameter {
+    /// Splits the name annotation off from a named type parameter.
+    pub fn split_name(self) -> (Parameter, Option<String>) {
+        match self {
+            Parameter::NamedType(n, t) => (Parameter::Type(t), Some(n)),
+            p => (p, None),
+        }
+    }
+
+    /// Annotates the parameter with a name, if applicable. If the parameter
+    /// was already named, the name is replaced. The function is only called
+    /// for Types and NamedTypes. None is returned only if the function was
+    /// called and returned None.
+    pub fn with_name<E, F: FnOnce() -> Result<String, E>>(self, f: F) -> Result<Parameter, E> {
+        Ok(match self {
+            Parameter::Type(t) => Parameter::NamedType(f()?, t),
+            Parameter::NamedType(_, t) => Parameter::NamedType(f()?, t),
+            p => p,
+        })
+    }
+
+    /// Modifies the contained type using the given function, if applicable. If
+    /// this is not a type parameter, the function is not called.
+    pub fn map_type_result<E, F: FnOnce(DataType) -> Result<DataType, E>>(
+        self,
+        f: F,
+    ) -> Result<Parameter, E> {
+        Ok(match self {
+            Parameter::Type(t) => Parameter::Type(f(t)?),
+            Parameter::NamedType(n, t) => Parameter::NamedType(n, f(t)?),
+            p => p,
+        })
+    }
+
+    /// Modifies the contained type using the given function, if applicable. If
+    /// this is not a type parameter, the function is not called.
+    pub fn map_type<F: FnOnce(DataType) -> DataType>(self, f: F) -> Parameter {
+        match self {
+            Parameter::Type(t) => Parameter::Type(f(t)),
+            Parameter::NamedType(n, t) => Parameter::NamedType(n, f(t)),
+            p => p,
+        }
+    }
+}
+
+impl From<DataType> for Parameter {
+    fn from(t: DataType) -> Self {
+        Parameter::Type(t)
+    }
+}
+
+impl From<u64> for Parameter {
+    fn from(x: u64) -> Self {
+        Parameter::Unsigned(x)
     }
 }

@@ -72,19 +72,13 @@ pub mod traversal;
 pub mod context;
 
 mod extensions;
+mod plan;
+mod relations;
+mod types;
 
 use crate::input::config;
 use crate::input::proto;
-use crate::output::diagnostic;
 use crate::output::parse_result;
-
-/// Toplevel parse function for a plan.
-fn parse_plan(x: &proto::substrait::Plan, y: &mut context::Context) -> diagnostic::Result<()> {
-    extensions::parse_extensions_before_relations(x, y);
-    // TODO
-    extensions::parse_extensions_after_relations(x, y);
-    Ok(())
-}
 
 /// Validates the given substrait.Plan message and returns the parse tree.
 pub fn parse<B: prost::bytes::Buf>(
@@ -94,7 +88,7 @@ pub fn parse<B: prost::bytes::Buf>(
     traversal::parse_proto::<proto::substrait::Plan, _, _>(
         buffer,
         "plan",
-        parse_plan,
+        plan::parse_plan,
         &mut context::State::default(),
         config,
     )

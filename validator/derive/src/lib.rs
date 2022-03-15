@@ -346,6 +346,10 @@ fn proto_meta_derive_enum(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Token
                     #(#variant_matches),*
                 }
             }
+
+            fn proto_enum_from_i32(x: i32) -> Option<Self> {
+                Self::from_i32(x)
+            }
         }
     )
     .into()

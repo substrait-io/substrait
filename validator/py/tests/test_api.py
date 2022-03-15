@@ -71,13 +71,10 @@ def test_export_diags():
     """Test the diagnostics export functions."""
     diags = sv.plan_to_diagnostics_str(BASIC_PLAN)
     assert type(diags) == str
-    lines = list(filter(bool, diags.split('\n')))
-    assert lines[0] == 'Warning at plan: not yet implemented: the following child nodes were not recognized by the validator: relations[0] (code 0001)'
 
     diags = list(sv.plan_to_diagnostics(BASIC_PLAN))
     for diag in diags:
         assert type(diag) == sv.Diagnostic
-    assert diags[0].msg == 'not yet implemented: the following child nodes were not recognized by the validator: relations[0] (code 0001)'
 
 
 def test_valid_invalid():

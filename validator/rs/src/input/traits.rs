@@ -72,6 +72,12 @@ pub trait ProtoEnum: ProtoPrimitive {
 
     /// Returns the name of the selected variant of an enum.
     fn proto_enum_variant(&self) -> &'static str;
+
+    /// Returns the enumeration entry corresponding to the given integer
+    /// value, if any.
+    fn proto_enum_from_i32(x: i32) -> Option<Self>
+    where
+        Self: Sized;
 }
 
 /// Blanket implementation to make all protobuf enums behave like

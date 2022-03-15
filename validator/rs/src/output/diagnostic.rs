@@ -156,6 +156,9 @@ pub enum Classification {
     #[strum(props(Description = "illegal value"))]
     IllegalValue = 2,
 
+    #[strum(props(Description = "illegal value in hint"))]
+    IllegalValueInHint = 3,
+
     // Protobuf-related diagnostics (group 1).
     #[strum(props(HiddenDescription = "protobuf-related diagnostic"))]
     Proto = 1000,
@@ -222,6 +225,19 @@ pub enum Classification {
 
     #[strum(props(Description = "mismatched type parameters"))]
     TypeMismatchedParameters = 4002,
+
+    #[strum(props(Description = "mismatched field names"))]
+    TypeMismatchedFieldNames = 4003,
+
+    #[strum(props(Description = "invalid swizzle operation"))]
+    TypeInvalidSwizzle = 4004,
+
+    // Relation-related diagnostics (group 5).
+    #[strum(props(HiddenDescription = "relation-related diagnostics"))]
+    Relation = 5000,
+
+    #[strum(props(Description = "missing root relation"))]
+    RelationRootMissing = 5001,
 }
 
 impl Classification {

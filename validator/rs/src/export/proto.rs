@@ -234,10 +234,10 @@ impl From<&path::PathElement> for validator::path::Element {
 impl From<&data_type::DataType> for validator::DataType {
     fn from(node: &data_type::DataType) -> Self {
         Self {
-            kind: Some((&node.class).into()),
+            kind: Some(node.class().into()),
             nullable: node.nullable,
-            variation: node.variation.as_ref().map(|x| x.as_ref().into()),
-            parameters: node.parameters.iter().map(|x| x.into()).collect(),
+            variation: node.variation().as_ref().map(|x| x.as_ref().into()),
+            parameters: node.parameters().iter().map(|x| x.into()).collect(),
         }
     }
 }

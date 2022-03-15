@@ -2,7 +2,7 @@
 
 //! Module providing parse/validation functions relating to extensions.
 
-use crate::input::proto;
+use crate::input::proto::substrait;
 use crate::input::yaml;
 use crate::output::diagnostic::Result;
 use crate::output::extension;
@@ -63,7 +63,7 @@ fn parse_simple_extension_yaml_uri<S: AsRef<str>>(
 
 /// Parse a mapping from a URI anchor to a YAML extension.
 fn parse_simple_extension_yaml_uri_mapping(
-    x: &proto::substrait::extensions::SimpleExtensionUri,
+    x: &substrait::extensions::SimpleExtensionUri,
     y: &mut context::Context,
 ) -> Result<()> {
     // Parse the fields.
@@ -92,31 +92,79 @@ fn parse_simple_extension_yaml_uri_mapping(
 }
 
 /// Parse an URI reference and resolve it.
-fn parse_uri_reference(
-    uri_reference: &u32,
-    y: &mut context::Context,
-) -> Result<Arc<extension::YamlInfo>> {
-    match y.state.uris.get(uri_reference).cloned() {
+fn parse_uri_reference(x: &u32, y: &mut context::Context) -> Result<Arc<extension::YamlInfo>> {
+    match y.state.uris.get(x).cloned() {
         Some(yaml_data) => {
             if let Some(ref path) = yaml_data.anchor_path {
                 link!(y, path.clone(), "URI anchor is defined here");
             }
             Ok(yaml_data)
         }
+        None => Err(cause!(LinkMissingAnchor, "URI anchor {x} does not exist")),
+    }
+}
+
+/// Parse a type variation reference and resolve it.
+pub fn parse_type_variation_reference(
+    x: &u32,
+    y: &mut context::Context,
+) -> Result<Arc<extension::Reference<extension::TypeVariation>>> {
+    match y.state.type_variations.get(x).cloned() {
+        Some(variation) => {
+            if let Some(ref path) = variation.common.anchor_path {
+                link!(y, path.clone(), "Type variation anchor is defined here");
+            }
+            Ok(variation)
+        }
         None => Err(cause!(
             LinkMissingAnchor,
-            "URI anchor {uri_reference} does not exist"
+            "type variation anchor {x} does not exist"
         )),
     }
 }
 
+/// Parse a type reference and resolve it.
+pub fn parse_type_reference(
+    x: &u32,
+    y: &mut context::Context,
+) -> Result<Arc<extension::Reference<extension::DataType>>> {
+    match y.state.types.get(x).cloned() {
+        Some(data_type) => {
+            if let Some(ref path) = data_type.common.anchor_path {
+                link!(y, path.clone(), "Type anchor is defined here");
+            }
+            Ok(data_type)
+        }
+        None => Err(cause!(LinkMissingAnchor, "type anchor {x} does not exist")),
+    }
+}
+/*
+/// Parse a function reference and resolve it.
+pub fn parse_function_reference(
+    x: &u32,
+    y: &mut context::Context,
+) -> Result<Arc<extension::Reference<extension::Function>>> {
+    match y.state.functions.get(x).cloned() {
+        Some(function) => {
+            if let Some(ref path) = function.common.anchor_path {
+                link!(y, path.clone(), "Type variation anchor is defined here");
+            }
+            Ok(function)
+        }
+        None => Err(cause!(
+            LinkMissingAnchor,
+            "type variation anchor {x} does not exist"
+        )),
+    }
+}
+*/
 /// Parse a mapping from a function/type/variation anchor to an extension.
 fn parse_extension_mapping_data(
-    x: &proto::substrait::extensions::simple_extension_declaration::MappingType,
+    x: &substrait::extensions::simple_extension_declaration::MappingType,
     y: &mut context::Context,
 ) -> Result<()> {
     match x {
-        proto::substrait::extensions::simple_extension_declaration::MappingType::ExtensionType(x) => {
+        substrait::extensions::simple_extension_declaration::MappingType::ExtensionType(x) => {
 
             // Parse the fields.
             let yaml_info = proto_primitive_field!(x, y, extension_uri_reference, parse_uri_reference).1;
@@ -162,7 +210,7 @@ fn parse_extension_mapping_data(
             }
 
         }
-        proto::substrait::extensions::simple_extension_declaration::MappingType::ExtensionTypeVariation(x) => {
+        substrait::extensions::simple_extension_declaration::MappingType::ExtensionTypeVariation(x) => {
 
             // Parse the fields.
             let yaml_info = proto_primitive_field!(x, y, extension_uri_reference, parse_uri_reference).1;
@@ -208,7 +256,7 @@ fn parse_extension_mapping_data(
             }
 
         }
-        proto::substrait::extensions::simple_extension_declaration::MappingType::ExtensionFunction(x) => {
+        substrait::extensions::simple_extension_declaration::MappingType::ExtensionFunction(x) => {
 
             // Parse the fields.
             let yaml_info = proto_primitive_field!(x, y, extension_uri_reference, parse_uri_reference).1;
@@ -260,7 +308,7 @@ fn parse_extension_mapping_data(
 
 /// Parse a mapping from a function/type/variation anchor to an extension.
 fn parse_extension_mapping(
-    x: &proto::substrait::extensions::SimpleExtensionDeclaration,
+    x: &substrait::extensions::SimpleExtensionDeclaration,
     y: &mut context::Context,
 ) -> Result<()> {
     proto_required_field!(x, y, mapping_type, parse_extension_mapping_data);
@@ -281,7 +329,7 @@ fn resolve_any(x: &prost_types::Any, y: &mut context::Context) -> bool {
 }
 
 /// Parse a protobuf "any" message that consumers may ignore.
-fn parse_hint_any(x: &prost_types::Any, y: &mut context::Context) -> Result<()> {
+pub fn parse_hint_any(x: &prost_types::Any, y: &mut context::Context) -> Result<()> {
     if resolve_any(x, y) {
         diagnostic!(
             y,
@@ -303,7 +351,7 @@ fn parse_hint_any(x: &prost_types::Any, y: &mut context::Context) -> Result<()> 
 }
 
 /// Parse a protobuf "any" message that consumers are not allowed to ignore.
-fn parse_functional_any(x: &prost_types::Any, y: &mut context::Context) -> Result<()> {
+pub fn parse_functional_any(x: &prost_types::Any, y: &mut context::Context) -> Result<()> {
     if resolve_any(x, y) {
         diagnostic!(
             y,
@@ -326,13 +374,15 @@ fn parse_functional_any(x: &prost_types::Any, y: &mut context::Context) -> Resul
 }
 
 /// Parse an advanced extension message (based on protobuf "any" messages).
-fn parse_advanced_extension(
-    x: &proto::substrait::extensions::AdvancedExtension,
+/// Returns whether an enhancement was specified.
+pub fn parse_advanced_extension(
+    x: &substrait::extensions::AdvancedExtension,
     y: &mut context::Context,
-) -> Result<()> {
+) -> Result<bool> {
     proto_field!(x, y, optimization, parse_hint_any);
-    proto_field!(x, y, enhancement, parse_functional_any);
-    Ok(())
+    Ok(proto_field!(x, y, enhancement, parse_functional_any)
+        .0
+        .is_some())
 }
 
 /// Parse a protobuf "any" type declaration, after all "any" dependencies have
@@ -366,7 +416,7 @@ fn parse_expected_type_url(x: &String, y: &mut context::Context) -> Result<()> {
 
 /// Parses the extension information in a plan that needs to be parsed *before*
 /// the relations are parsed.
-pub fn parse_extensions_before_relations(x: &proto::substrait::Plan, y: &mut context::Context) {
+pub fn parse_extensions_before_relations(x: &substrait::Plan, y: &mut context::Context) {
     proto_repeated_field!(
         x,
         y,
@@ -378,7 +428,7 @@ pub fn parse_extensions_before_relations(x: &proto::substrait::Plan, y: &mut con
 
 /// Parses the extension information in a plan that needs to be parsed *after*
 /// the relations are parsed.
-pub fn parse_extensions_after_relations(x: &proto::substrait::Plan, y: &mut context::Context) {
+pub fn parse_extensions_after_relations(x: &substrait::Plan, y: &mut context::Context) {
     proto_field!(x, y, advanced_extensions, parse_advanced_extension);
     proto_repeated_field!(x, y, expected_type_urls, parse_expected_type_url);
 

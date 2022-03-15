@@ -12,6 +12,7 @@
 
 use crate::input::config;
 use crate::input::traits::InputNode;
+use crate::input::traits::ProtoEnum;
 use crate::input::yaml;
 use crate::output::comment;
 use crate::output::data_type;
@@ -92,9 +93,7 @@ pub fn push_comment<S: AsRef<str>>(
     context.output.data.push(tree::NodeData::Comment(comment))
 }
 
-/// Convenience/shorthand macro for pushing type information to a node. Note
-/// that this macro isn't shorter than just using push_data_type() directly; it
-/// exists for symmetry.
+/// Convenience/shorthand macro for pushing type information to a node.
 macro_rules! data_type {
     ($context:expr, $typ:expr) => {
         crate::parse::traversal::push_data_type($context, $typ)
@@ -121,11 +120,11 @@ fn push_child<TF, TR, FP>(
     child: &TF,
     path_element: path::PathElement,
     unknown_subtree: bool,
-    parser: &mut FP,
+    parser: FP,
 ) -> (Arc<tree::Node>, Option<TR>)
 where
     TF: InputNode,
-    FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnOnce(&TF, &mut context::Context) -> diagnostic::Result<TR>,
 {
     // Create the node for the child.
     let mut field_output = child.data_to_node();
@@ -213,6 +212,9 @@ macro_rules! proto_field {
             $parser,
         )
     };
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $($args:expr),*) => {
+        proto_field!($input, $context, $field, |x, y| $parser(x, y, $($args),*))
+    };
 }
 
 /// Convenience/shorthand macro for parsing optional protobuf fields that were
@@ -230,6 +232,9 @@ macro_rules! proto_boxed_field {
             $parser,
         )
     };
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $($args:expr),*) => {
+        proto_boxed_field!($input, $context, $field, |x, y| $parser(x, y, $($args),*))
+    };
 }
 
 /// Parse and push a protobuf optional field.
@@ -238,11 +243,11 @@ pub fn push_proto_field<TF, TR, FP>(
     field: &Option<impl std::ops::Deref<Target = TF>>,
     field_name: &'static str,
     unknown_subtree: bool,
-    mut parser: FP,
+    parser: FP,
 ) -> (Option<Arc<tree::Node>>, Option<TR>)
 where
     TF: InputNode,
-    FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnOnce(&TF, &mut context::Context) -> diagnostic::Result<TR>,
 {
     if !context
         .breadcrumb
@@ -263,7 +268,7 @@ where
             field_input.deref(),
             path_element,
             unknown_subtree,
-            &mut parser,
+            parser,
         );
         (Some(field_output), result)
     } else {
@@ -289,6 +294,9 @@ macro_rules! proto_required_field {
             $parser,
         )
     };
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $($args:expr),*) => {
+        proto_required_field!($input, $context, $field, |x, y| $parser(x, y, $($args),*))
+    };
 }
 
 /// Convenience/shorthand macro for parsing required protobuf fields that were
@@ -306,6 +314,9 @@ macro_rules! proto_boxed_required_field {
             $parser,
         )
     };
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $($args:expr),*) => {
+        proto_boxed_required_field!($input, $context, $field, |x, y| $parser(x, y, $($args),*))
+    };
 }
 
 /// Convenience/shorthand macro for parsing primitive protobuf fields.
@@ -322,6 +333,9 @@ macro_rules! proto_primitive_field {
             $parser,
         )
     };
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $($args:expr),*) => {
+        proto_primitive_field!($input, $context, $field, |x, y| $parser(x, y, $($args),*))
+    };
 }
 
 /// Parse and push a required field of some message type. If the field is
@@ -332,19 +346,78 @@ pub fn push_proto_required_field<TF, TR, FP>(
     field: &Option<impl std::ops::Deref<Target = TF>>,
     field_name: &'static str,
     unknown_subtree: bool,
-    mut parser: FP,
+    parser: FP,
 ) -> (Arc<tree::Node>, Option<TR>)
 where
     TF: InputNode,
-    FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnOnce(&TF, &mut context::Context) -> diagnostic::Result<TR>,
 {
     if let (Some(node), result) =
-        push_proto_field(context, field, field_name, unknown_subtree, &mut parser)
+        push_proto_field(context, field, field_name, unknown_subtree, parser)
     {
         (node, result)
     } else {
         ediagnostic!(context, Error, ProtoMissingField, field_name);
         (Arc::new(TF::type_to_node()), None)
+    }
+}
+
+/// Convenience/shorthand macro for parsing enumeration protobuf fields.
+macro_rules! proto_enum_field {
+    ($input:expr, $context:expr, $field:ident, $typ:ty) => {
+        proto_enum_field!($input, $context, $field, $typ, |x, _| Ok(x.to_owned()))
+    };
+    ($input:expr, $context:expr, $field:ident, $typ:ty, $parser:expr) => {
+        crate::parse::traversal::push_proto_enum_field::<$typ, _, _>(
+            $context,
+            $input.$field,
+            stringify!($field),
+            false,
+            $parser,
+        )
+    };
+    ($input:expr, $context:expr, $field:ident, $typ:ty, $parser:expr, $($args:expr),*) => {
+        proto_enum_field!($input, $context, $field, $typ, |x, y| $parser(x, y, $($args),*))
+    };
+}
+
+/// Parse and push an enumeration field of some message type. The i32 in the
+/// struct generated by prost is automatically converted to the enum; if the
+/// value is out of range, an error is generated.
+pub fn push_proto_enum_field<TF, TR, FP>(
+    context: &mut context::Context,
+    field: i32,
+    field_name: &'static str,
+    unknown_subtree: bool,
+    parser: FP,
+) -> (Arc<tree::Node>, Option<TR>)
+where
+    TF: ProtoEnum,
+    FP: FnOnce(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+{
+    if let Some(field) = TF::proto_enum_from_i32(field) {
+        push_proto_required_field(context, &Some(&field), field_name, unknown_subtree, parser)
+    } else {
+        (
+            push_proto_required_field(
+                context,
+                &Some(&field),
+                field_name,
+                unknown_subtree,
+                |x, y| {
+                    diagnostic!(
+                        y,
+                        Error,
+                        IllegalValue,
+                        "unknown value {x} for {}",
+                        TF::proto_enum_type()
+                    );
+                    Ok(())
+                },
+            )
+            .0,
+            None,
+        )
     }
 }
 
@@ -365,6 +438,9 @@ macro_rules! proto_repeated_field {
             false,
             $parser,
         )
+    };
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $($args:expr),*) => {
+        proto_repeated_field!($input, $context, $field, |x, y| $parser(x, y, $($args),*))
     };
 }
 
