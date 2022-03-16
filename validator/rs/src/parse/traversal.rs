@@ -14,8 +14,6 @@ use crate::input::config;
 use crate::input::traits::InputNode;
 use crate::input::traits::ProtoEnum;
 use crate::input::yaml;
-use crate::output::comment;
-use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::output::extension;
 use crate::output::parse_result;
@@ -38,7 +36,7 @@ macro_rules! diagnostic {
         crate::parse::traversal::push_diagnostic($context, crate::output::diagnostic::Level::$level, $cause)
     };
     ($context:expr, $diag:expr) => {
-        $context.output.push_diagnostic($diag, &$context.config)
+        $context.push_diagnostic($diag)
     };
 }
 macro_rules! ediagnostic {
@@ -53,182 +51,26 @@ pub fn push_diagnostic(
     level: diagnostic::Level,
     cause: diagnostic::Cause,
 ) {
-    context.output.push_diagnostic(
-        diagnostic::RawDiagnostic {
-            cause,
-            level,
-            path: context.breadcrumb.path.to_path_buf(),
-        },
-        context.config,
-    );
+    context.push_diagnostic(diagnostic::RawDiagnostic {
+        cause,
+        level,
+        path: context.path_buf(),
+    });
 }
 
-/// Convenience/shorthand macro for pushing comments to a node.
+/// Convenience/shorthand macro for pushing formatted comments to a node.
 macro_rules! comment {
     ($context:expr, $($fmts:expr),*) => {
-        crate::parse::traversal::push_comment($context, format!($($fmts),*), None)
+        $context.push_comment(format!($($fmts),*))
     };
 }
 
-/// Convenience/shorthand macro for pushing comments to a node.
+/// Convenience/shorthand macro for pushing formatted comments that link to
+/// some path to a node.
 macro_rules! link {
-    ($context:expr, $link:expr, $($fmts:expr),*) => {
-        crate::parse::traversal::push_comment($context, format!($($fmts),*), Some($link))
+    ($context:expr, $path:expr, $($fmts:expr),*) => {
+        $context.push_comment(crate::output::comment::Comment::new().link(format!($($fmts),*), $path))
     };
-}
-
-/// Pushes a comment to the node information list.
-pub fn push_comment<S: AsRef<str>>(
-    context: &mut context::Context,
-    text: S,
-    path: Option<path::PathBuf>,
-) {
-    let text = text.as_ref().to_string();
-    let comment = comment::Comment::new();
-    let comment = if let Some(path) = path {
-        comment.with_link_to_path(text, path)
-    } else {
-        comment.with_plain(text)
-    };
-    context.output.data.push(tree::NodeData::Comment(comment))
-}
-
-/// Macro form of push_data_type().
-///
-/// Note: this only exists in macro form for symmetry with the other traversal
-/// related macros.
-macro_rules! data_type {
-    ($context:expr, $typ:expr) => {
-        crate::parse::traversal::push_data_type($context, $typ)
-    };
-}
-
-/// Pushes a data type to the node information list, and saves it in the
-/// current context.
-pub fn push_data_type(context: &mut context::Context, data_type: data_type::DataType) {
-    context
-        .output
-        .data
-        .push(tree::NodeData::DataType(data_type.clone()));
-    context.output.data_type = Some(data_type);
-}
-
-/// Macro form of set_schema().
-///
-/// Note: this only exists in macro form for symmetry with the other traversal
-/// related macros.
-macro_rules! schema {
-    ($context:expr, $typ:expr) => {
-        crate::parse::traversal::set_schema($context, $typ)
-    };
-}
-
-/// Updates the current schema. This also pushes the data type to the current
-/// node. Relation parsers *must* use this after traversing their inputs, but
-/// before they start to parse any expressions based on that schema; after
-/// all, the schema defines how (column) references behave. If the schema isn't
-/// known, it may be set to an unresolved type.
-pub fn set_schema(context: &mut context::Context, schema: data_type::DataType) {
-    *context
-        .state
-        .schema
-        .last_mut()
-        .expect("no schema present on schema stack") = Some(schema.clone());
-    push_data_type(context, schema);
-}
-
-/// Macro form of clear_schema().
-///
-/// Note: this only exists in macro form for symmetry with the other traversal
-/// related macros.
-macro_rules! clear_schema {
-    ($context:expr) => {
-        crate::parse::traversal::clear_schema($context)
-    };
-}
-
-/// Clears the current schema, requiring schema!() to be called before
-/// expressions can be parsed again.
-pub fn clear_schema(context: &mut context::Context) {
-    *context
-        .state
-        .schema
-        .last_mut()
-        .expect("no schema present on schema stack") = None;
-}
-
-/// Macro form of get_schema().
-///
-/// Note: this only exists in macro form for symmetry with the other traversal
-/// related macros.
-macro_rules! get_schema {
-    ($context:expr) => {
-        crate::parse::traversal::get_schema($context, 0)
-    };
-    ($context:expr, $depth:expr) => {
-        crate::parse::traversal::get_schema($context, $depth)
-    };
-}
-
-/// Returns the current schema. depth specifies for which subquery the schema
-/// should be selected; depth 0 is the current query, depth 1 would be its
-/// parent query, 2 would be its grandparent, etc. Returns Err when the
-/// referenced schema semantically doesn't exist; returns Ok(unresolved type)
-/// when it does but the actual type isn't known.
-pub fn get_schema(
-    context: &mut context::Context,
-    depth: usize,
-) -> diagnostic::Result<data_type::DataType> {
-    let len = context.state.schema.len();
-    if depth >= len {
-        Err(cause!(
-            ExpressionFieldRefMissingStream,
-            "indexing query beyond current query depth ({len})"
-        ))
-    } else if let Some(Some(schema)) = context.state.schema.get(len - depth - 1) {
-        Ok(schema.clone())
-    } else {
-        Err(cause!(
-            ExpressionFieldRefMissingStream,
-            "query data stream has not yet been instantiated"
-        ))
-    }
-}
-
-/// Macro form of enter_relation_root().
-///
-/// Note: this only exists in macro form for symmetry with the other traversal
-/// related macros.
-macro_rules! relation_root {
-    ($context:expr, $parser:expr) => {
-        crate::parse::traversal::enter_relation_root($context, $parser)
-    };
-}
-
-/// This pushes an empty slot for the schema of the relation tree onto the
-/// schema stack, allowing schema!() to be used. This must be used when
-/// traversing into the root of a relation tree; i.e., the root must be parsed
-/// within the context of the provided function.
-pub fn enter_relation_root<R, F: FnOnce(&mut context::Context) -> R>(
-    context: &mut context::Context,
-    f: F,
-) -> R {
-    // Push a schema slot onto the stack for the relation tree to fill
-    // in.
-    context.state.schema.push(None);
-
-    // Ensure that return statements can't break out of the context
-    // early by wrapping the block in a closure first.
-    let result = f(context);
-
-    // Pop the schema again.
-    context
-        .state
-        .schema
-        .pop()
-        .expect("no schema present on schema stack");
-
-    result
 }
 
 //=============================================================================
@@ -251,12 +93,7 @@ where
     let mut field_output = child.data_to_node();
 
     // Create the context for calling the parse function for the child.
-    let mut field_context = context::Context {
-        output: &mut field_output,
-        state: context.state,
-        breadcrumb: &mut context.breadcrumb.next(path_element.clone()),
-        config: context.config,
-    };
+    let mut field_context = context.child(&mut field_output, path_element.clone());
 
     // Call the provided parser function.
     let result = parser(child, &mut field_context)
@@ -276,7 +113,7 @@ where
 
     // Push and return the completed node.
     let field_output = Arc::new(field_output);
-    context.output.data.push(tree::NodeData::Child(tree::Child {
+    context.push(tree::NodeData::Child(tree::Child {
         path_element,
         node: field_output.clone(),
         recognized: !unknown_subtree,
@@ -295,7 +132,7 @@ fn handle_unknown_children<T: InputNode>(
 ) {
     if input.parse_unknown(context) && with_diagnostic {
         let mut fields = vec![];
-        for data in context.output.data.iter() {
+        for data in context.node_data().iter() {
             if let tree::NodeData::Child(child) = data {
                 if !child.recognized {
                     fields.push(child.path_element.to_string_without_dot());
@@ -370,11 +207,7 @@ where
     TF: InputNode,
     FP: FnOnce(&TF, &mut context::Context) -> diagnostic::Result<TR>,
 {
-    if !context
-        .breadcrumb
-        .fields_parsed
-        .insert(field_name.to_string())
-    {
+    if !context.set_field_parsed(field_name) {
         panic!("field {field_name} was parsed multiple times");
     }
 
@@ -577,11 +410,7 @@ where
     TF: InputNode,
     FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
 {
-    if !context
-        .breadcrumb
-        .fields_parsed
-        .insert(field_name.to_string())
-    {
+    if !context.set_field_parsed(field_name) {
         panic!("field {field_name} was parsed multiple times");
     }
 
@@ -623,17 +452,20 @@ where
             // Create a minimal root node with just the decode error
             // diagnostic.
             let mut root = T::type_to_node();
-            root.push_diagnostic(
-                diagnostic::RawDiagnostic {
-                    cause: ecause!(ProtoParseFailed, err),
-                    level: diagnostic::Level::Error,
-                    path: path::PathBuf {
-                        root: root_name,
-                        elements: vec![],
-                    },
+
+            // Create a root context for it.
+            let mut context = context::Context::new(root_name, &mut root, state, config);
+
+            // Push the diagnostic using the context.
+            context.push_diagnostic(diagnostic::RawDiagnostic {
+                cause: ecause!(ProtoParseFailed, err),
+                level: diagnostic::Level::Error,
+                path: path::PathBuf {
+                    root: root_name,
+                    elements: vec![],
                 },
-                config,
-            );
+            });
+
             parse_result::ParseResult { root }
         }
         Ok(input) => {
@@ -641,12 +473,7 @@ where
             let mut root = input.data_to_node();
 
             // Create the root context.
-            let mut context = context::Context {
-                output: &mut root,
-                state,
-                breadcrumb: &mut context::Breadcrumb::new(root_name),
-                config,
-            };
+            let mut context = context::Context::new(root_name, &mut root, state, config);
 
             // Call the provided parser function.
             let success = root_parser(&input, &mut context)
@@ -692,11 +519,7 @@ where
     FP: FnMut(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
 {
     let field_name = field_name.as_ref();
-    if !context
-        .breadcrumb
-        .fields_parsed
-        .insert(field_name.to_string())
-    {
+    if !context.set_field_parsed(field_name) {
         panic!("field {field_name} was parsed multiple times");
     }
 
@@ -735,7 +558,7 @@ pub fn push_yaml_element<TR, FP>(
 where
     FP: FnMut(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
 {
-    if !context.breadcrumb.fields_parsed.insert(index.to_string()) {
+    if !context.set_field_parsed(index) {
         panic!("element {index} was parsed multiple times");
     }
 
@@ -856,7 +679,7 @@ fn resolve_uri(
     let remapped_uri = remapped_uri.unwrap_or(Some(uri));
 
     let remapped_uri = if let Some(remapped_uri) = remapped_uri {
-        remapped_uri
+        remapped_uri.to_owned()
     } else {
         return Err(cause!(
             YamlResolutionDisabled,
@@ -869,12 +692,12 @@ fn resolve_uri(
 
     // If a custom download function is specified, use it to resolve.
     if let Some(ref resolver) = context.config.uri_resolver {
-        return resolver(remapped_uri)
+        return resolver(&remapped_uri)
             .map_err(|x| ecause!(YamlResolutionFailed, x.as_ref().to_string()));
     }
 
     // Parse as a URL.
-    let url = match url::Url::parse(remapped_uri) {
+    let url = match url::Url::parse(&remapped_uri) {
         Ok(url) => url,
         Err(e) => {
             return Err(if is_remapped {
@@ -995,7 +818,7 @@ fn load_yaml(
     };
 
     // Convert to JSON DOM.
-    let json_data = match yaml::yaml_to_json(yaml_data, &context.breadcrumb.path) {
+    let json_data = match yaml::yaml_to_json(yaml_data, context.path()) {
         Err(e) => {
             diagnostic!(context, e);
             return None;
@@ -1033,7 +856,7 @@ where
     // Resolve the YAML file.
     if let Some(root_input) = load_yaml(uri, context, schema) {
         // Create an empty YamlData object.
-        context.state.yaml_data = Some(extension::YamlData::default());
+        *context.yaml_data() = Some(extension::YamlData::default());
 
         // Create the node for the YAML data root.
         let mut root_output = root_input.data_to_node();
@@ -1042,15 +865,10 @@ where
         let path_element = path::PathElement::Field("data".to_string());
 
         // Create the context for the YAML data root.
-        let mut root_context = context::Context {
-            output: &mut root_output,
-            state: context.state,
-            breadcrumb: &mut context.breadcrumb.next(path_element.clone()),
-            config: context.config,
-        };
+        let mut root_context = context.child(&mut root_output, path_element.clone());
 
         // Create a PathBuf for the root node.
-        let root_path = root_context.breadcrumb.path.to_path_buf();
+        let root_path = root_context.path_buf();
 
         // Call the provided root parser.
         let success = parser(&root_input, &mut root_context)
@@ -1064,14 +882,14 @@ where
 
         // Push and return the completed node.
         let root_output = Arc::new(root_output);
-        context.output.data.push(tree::NodeData::Child(tree::Child {
+        context.push(tree::NodeData::Child(tree::Child {
             path_element,
             node: root_output.clone(),
             recognized: true,
         }));
 
         // Configure the reference to the root node in the YamlData object.
-        let mut node_ref = context.state.yaml_data.as_mut().unwrap();
+        let mut node_ref = context.yaml_data().as_mut().unwrap();
         node_ref.data.path = root_path;
         node_ref.data.node = root_output;
     }
@@ -1079,14 +897,14 @@ where
     // Construct the YAML data object.
     let yaml_info = Arc::new(extension::YamlInfo {
         uri: uri.to_string(),
-        anchor_path: context.breadcrumb.parent.map(|x| x.path.to_path_buf()),
-        data: context.state.yaml_data.take(),
+        anchor_path: context.parent_path_buf(),
+        data: context.yaml_data().take(),
     });
 
     // The node type will have been set as if this is a normal string
     // primitive. We want extra information though, namely the contents of the
     // YAML file. So we change the node type.
-    context.output.node_type = tree::NodeType::YamlReference(yaml_info.clone());
+    context.replace_node_type(tree::NodeType::YamlReference(yaml_info.clone()));
 
     yaml_info
 }

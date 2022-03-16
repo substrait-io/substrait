@@ -29,7 +29,7 @@ fn parse_rel_type(
 
 /// Parse a PlanRel node.
 fn parse_plan_rel(x: &substrait::PlanRel, y: &mut context::Context) -> diagnostic::Result<()> {
-    relation_root!(y, |y| {
+    y.enter_relation_root(|y| {
         proto_required_field!(x, y, rel_type, parse_rel_type);
     });
     Ok(())

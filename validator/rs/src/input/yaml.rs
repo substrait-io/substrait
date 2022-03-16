@@ -123,11 +123,7 @@ impl crate::input::traits::InputNode for Value {
             Value::Array(array) => {
                 let mut any = false;
                 for (index, _) in array.iter().enumerate() {
-                    if !context
-                        .breadcrumb
-                        .fields_parsed
-                        .contains(&index.to_string())
-                    {
+                    if !context.field_parsed(index.to_string()) {
                         traversal::push_yaml_element(array, context, index, true, |_, _| Ok(()));
                         any = true;
                     }
@@ -139,7 +135,7 @@ impl crate::input::traits::InputNode for Value {
                 let mut keys: Vec<_> = object.keys().collect();
                 keys.sort();
                 for field_name in keys {
-                    if !context.breadcrumb.fields_parsed.contains(field_name) {
+                    if !context.field_parsed(field_name) {
                         traversal::push_yaml_field(
                             object,
                             context,

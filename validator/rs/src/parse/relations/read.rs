@@ -85,8 +85,8 @@ pub fn parse_read_rel(x: &substrait::ReadRel, y: &mut context::Context) -> diagn
         (None, None) => data_type::DataType::default(),
     };
 
-    // Set the schema.
-    schema!(y, schema);
+    // Set the schema to the merged data type.
+    y.set_schema(schema);
 
     // Handle the common field.
     handle_rel_common!(x, y);

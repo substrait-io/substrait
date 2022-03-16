@@ -170,7 +170,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                     },
                 };
                 quote! {
-                    if !y.breadcrumb.fields_parsed.contains(stringify!(#ident)) {
+                    if !y.field_parsed(stringify!(#ident)) {
                         unknowns = true;
                         #action
                     }

@@ -23,7 +23,7 @@ use crate::parse::context;
 fn parse_rel_type(x: &substrait::rel::RelType, y: &mut context::Context) -> diagnostic::Result<()> {
     // Ensure that the top of the schema stack exists and it set to an
     // unresolved type.
-    clear_schema!(y);
+    y.clear_schema();
 
     // NOTE: if you're here because you added a relation type and now CI is
     // failing, you can just add "_ => Ok(())," to the end of this list. The

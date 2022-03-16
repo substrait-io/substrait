@@ -82,7 +82,7 @@ macro_rules! parse_simple_type {
         };
 
         // Attach the type to the node.
-        data_type!($context, data_type);
+        $context.set_data_type(data_type);
 
         Ok(())
     }};
@@ -228,7 +228,7 @@ macro_rules! parse_compound_type_with_length {
         };
 
         // Attach the type to the node.
-        data_type!($context, data_type);
+        $context.set_data_type(data_type);
 
         Ok(())
     }};
@@ -299,7 +299,7 @@ pub fn parse_decimal(
     };
 
     // Attach the type to the node.
-    data_type!(y, data_type);
+    y.set_data_type(data_type);
 
     Ok(())
 }
@@ -346,7 +346,7 @@ pub fn parse_struct(
     };
 
     // Attach the type to the node.
-    data_type!(y, data_type);
+    y.set_data_type(data_type);
 
     Ok(())
 }
@@ -390,7 +390,7 @@ pub fn parse_list(x: &substrait::r#type::List, y: &mut context::Context) -> diag
     };
 
     // Attach the type to the node.
-    data_type!(y, data_type);
+    y.set_data_type(data_type);
 
     Ok(())
 }
@@ -439,7 +439,7 @@ pub fn parse_map(x: &substrait::r#type::Map, y: &mut context::Context) -> diagno
     };
 
     // Attach the type to the node.
-    data_type!(y, data_type);
+    y.set_data_type(data_type);
 
     Ok(())
 }
@@ -466,7 +466,7 @@ pub fn parse_user_defined(x: &u32, y: &mut context::Context) -> diagnostic::Resu
     };
 
     // Attach the type to the node.
-    data_type!(y, data_type);
+    y.set_data_type(data_type);
 
     Ok(())
 }
@@ -513,7 +513,7 @@ pub fn parse_type(x: &substrait::Type, y: &mut context::Context) -> diagnostic::
         .clone();
 
     // Attach the type to the node.
-    data_type!(y, data_type);
+    y.set_data_type(data_type);
 
     Ok(())
 }
@@ -537,7 +537,7 @@ pub fn parse_named_struct(
     };
 
     // Attach the type to the node.
-    data_type!(y, data_type);
+    y.set_data_type(data_type);
 
     Ok(())
 }

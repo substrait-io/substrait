@@ -41,25 +41,25 @@ impl Comment {
     }
 
     /// Adds a piece of plain text to the comment.
-    pub fn with_plain(mut self, text: String) -> Self {
-        self.spans.push(text.into());
+    pub fn plain<S: ToString>(mut self, text: S) -> Self {
+        self.spans.push(text.to_string().into());
         self
     }
 
     /// Adds a piece of text to the comment that links to the given path.
-    pub fn with_link_to_path(mut self, text: String, path: path::PathBuf) -> Self {
+    pub fn link<S: ToString>(mut self, text: S, path: path::PathBuf) -> Self {
         self.spans.push(Span {
-            text,
+            text: text.to_string(),
             link: Some(Link::Path(path)),
         });
         self
     }
 
     /// Adds a piece of text to the comment that links to the given URL.
-    pub fn with_link_to_url(mut self, text: String, url: String) -> Self {
+    pub fn url<S: ToString, U: ToString>(mut self, text: S, url: U) -> Self {
         self.spans.push(Span {
-            text,
-            link: Some(Link::Url(url)),
+            text: text.to_string(),
+            link: Some(Link::Url(url.to_string())),
         });
         self
     }

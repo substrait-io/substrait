@@ -18,7 +18,7 @@ pub fn parse_extension_single_rel(
     let _in_type = handle_rel_input!(x, y);
 
     // Set schema to an unresolved type.
-    schema!(y, data_type::DataType::default());
+    y.set_schema(data_type::DataType::default());
 
     // Parse the extension data.
     proto_required_field!(x, y, detail, extensions::parse_functional_any);
@@ -38,7 +38,7 @@ pub fn parse_extension_multi_rel(
     let _in_types: Vec<_> = handle_rel_inputs!(x, y).collect();
 
     // Set schema to an unresolved type.
-    schema!(y, data_type::DataType::default());
+    y.set_schema(data_type::DataType::default());
 
     // Parse the extension data.
     proto_required_field!(x, y, detail, extensions::parse_functional_any);
@@ -55,7 +55,7 @@ pub fn parse_extension_leaf_rel(
     y: &mut context::Context,
 ) -> diagnostic::Result<()> {
     // Set schema to an unresolved type.
-    schema!(y, data_type::DataType::default());
+    y.set_schema(data_type::DataType::default());
 
     // Parse the extension data.
     proto_required_field!(x, y, detail, extensions::parse_functional_any);

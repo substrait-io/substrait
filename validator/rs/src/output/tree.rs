@@ -51,7 +51,6 @@
 //! breaking this internal representation down further, into (file) formats
 //! that are not specific to the Substrait validator.
 
-use crate::input::config;
 use crate::output::comment;
 use crate::output::data_type;
 use crate::output::diagnostic;
@@ -104,41 +103,6 @@ impl From<NodeType> for Node {
 }
 
 impl Node {
-    /// Pushes a diagnostic into the node. This also evaluates its adjusted
-    /// error level.
-    pub fn push_diagnostic(&mut self, diag: diagnostic::RawDiagnostic, config: &config::Config) {
-        // Get the configured level limits for this diagnostic. First try the
-        // classification of the diagnostic itself, then its group, and then
-        // finally Unclassified. If no entries exist, simply yield
-        // (Info, Error), which is no-op.
-        let (min, max) = config
-            .diagnostic_level_overrides
-            .get(&diag.cause.classification)
-            .or_else(|| {
-                config
-                    .diagnostic_level_overrides
-                    .get(&diag.cause.classification.group())
-            })
-            .or_else(|| {
-                config
-                    .diagnostic_level_overrides
-                    .get(&diagnostic::Classification::Unclassified)
-            })
-            .unwrap_or(&(diagnostic::Level::Info, diagnostic::Level::Error));
-
-        // Adjust the level.
-        let adjusted_level = if diag.level < *min {
-            *min
-        } else if diag.level > *max {
-            *max
-        } else {
-            diag.level
-        };
-        let adjusted = diag.adjust_level(adjusted_level);
-
-        self.data.push(NodeData::Diagnostic(adjusted));
-    }
-
     /// Returns an iterator that iterates over all nodes depth-first.
     pub fn iter_flattened_nodes(&self) -> FlattenedNodeIter {
         FlattenedNodeIter {

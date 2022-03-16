@@ -141,12 +141,7 @@ pub fn parse_rel_common(
 /// rest of the relation has processed, as it can transmute the data type.
 macro_rules! handle_rel_common {
     ($input:expr, $context:expr) => {
-        // RelCommon can modify the schema by swizzling the columns. In order
-        // to pass the data type to the parse function, we'll need to obtain
-        // ownership first, because a mutable reference to $context is needed
-        // to call it. To avoid a clone here, we just take the value, and
-        // restore it later.
-        let data_type = $context.output.data_type.take();
+        let data_type = $context.data_type().clone();
 
         // Call the parser.
         let result = proto_field!(
@@ -154,17 +149,14 @@ macro_rules! handle_rel_common {
             $context,
             common,
             crate::parse::relations::common::parse_rel_common,
-            data_type.clone().unwrap_or_default()
+            data_type
         )
         .1;
-
-        // Restore the previous type information.
-        $context.output.data_type = data_type;
 
         // If common was populated and its parser succeeded (it should always
         // do that), update the type information.
         if let Some(data_type) = result {
-            schema!($context, data_type);
+            $context.set_schema(data_type);
         }
     };
 }
@@ -181,7 +173,7 @@ macro_rules! handle_advanced_extension {
         .1
         .unwrap_or_default()
         {
-            schema!($context, crate::output::data_type::DataType::default());
+            $context.set_schema(crate::output::data_type::DataType::default());
         }
     };
 }

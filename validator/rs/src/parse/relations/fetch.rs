@@ -21,7 +21,7 @@ pub fn parse_fetch_rel(
     let _in_type = handle_rel_input!(x, y);
 
     // TODO: derive schema.
-    schema!(y, data_type::DataType::default());
+    y.set_schema(data_type::DataType::default());
 
     // Handle the common field.
     handle_rel_common!(x, y);

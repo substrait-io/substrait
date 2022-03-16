@@ -16,36 +16,36 @@
 //!
 //!  - `x` is a reference to the the JSON/YAML value or the prost wrapper for
 //!    the protobuf message that is to be parsed and validated;
-//!  - `y` is the parse context ([`context::Context`]); and
+//!  - `y` is the parse context ([`context::Context`], see next section); and
 //!  - `R` is any desired return type.
 //!
 //! The body of the parse function can use a wide variety of function-like
 //! macros from [`traversal`] to traverse the children of `x` in the
 //! appropriate order and with the appropriate parse functions. The macros
 //! return a tuple of a reference to the created
-//! [Node](crate::output::tree::Node) and the `R` returned by the parse
+//! [`Node`](crate::output::tree::Node) and the `R` returned by the parse
 //! function (depending on the macro, these may be wrapped in [`Option`]s or
 //! [`Vec`]s). Note that any children not traversed by the parse function will
 //! automatically be traversed by [`traversal`] (along with a warning
 //! diagnostic that these children were not validated), and that traversing a
 //! child twice is illegal (this will panic).
 //!
-//!
-//!
-//! If the parse function fails in an unrecoverable way, it can return Err via
-//! `?`. When it does this, the [`traversal`] macros takes care of pushing an
-//! appropriate diagnostic into the output tree. For recoverable errors or other
-//! diagnostics, [`diagnostic!`] can be used. Miscellaneous information can be
-//! pushed into the output tree via [`comment!`], [`link!`], and
-//! [`data_type!`].
-//!
 //! # Parser context
 //!
 //! The mutable [`context::Context`] reference that is passed into every parse
 //! function and is needed for every traversal macro stores all contextual
-//! information needed for parsing (except for the input). In most cases, it
-//! doesn't have to be accessed directly; the [`traversal`] macros hide as much
-//! of the grunt work as possible.
+//! information needed for parsing, except for the input. Any and all results
+//! of the parse process need to eventually end up in here, and as such it has
+//! quite a few functions defined on it. It also has a reference to the
+//! configuration structure; it's kind of the odd one out here since the
+//! configuration is more of an input than output or state; it's simply
+//! convenient to pass it along with the context object to save on some typing
+//! when defining parse functions.
+//!
+//! Besides macros strictly intended for traversal, the [`traversal`] module
+//! also defines some convenience macros for pushing things other than child
+//! nodes into the context, particularly for things that regularly involve
+//! [format!].
 //!
 //! ## Diagnostics
 //!
@@ -74,10 +74,8 @@
 //! found in the docs for the [diagnostic](crate::output::diagnostic) module.
 //!
 //! Beyond diagnostics, it's also possible to push comments into the context.
-//! This can be done using the [`comment!`] and [`link!`] macros. (TODO at the
-//! time of writing: comments actually support an arbitrary list of
-//! plaintext/node link/URL spans, but the macros only support a single span
-//! so far).
+//! This can be done using the [`comment!`] and [`link!`] macros, or, for more
+//! control, by pushing a []
 //!
 //! ## Data types
 //!
@@ -90,20 +88,25 @@
 //!
 //!  - type nodes: the represented type;
 //!  - expression nodes: the returned type;
-//!  - relation nodes: the schema (automatically set by [schema!]).
+//!  - relation nodes: the schema (automatically set by
+//!    [`set_schema()`](context::Context::set_schema())).
 //!
-//! The data type can be set using the [data_type!] macro. Note that all
-//! of the parsers for the above node types should call [data_type!] at
+//! The data type can be set using the
+//! [`set_data_type()`](context::Context::set_data_type()) method. Note that
+//! all of the parsers for the above node types should call
+//! [`set_data_type()`](context::Context::set_data_type()) at
 //! least once, even if they're unable to determine what the actual type is;
 //! in the latter case they can just push an unresolved type (for example
 //! using `Default`, but additional information can be attached using
-//! `new_unresolved()`).
+//! [`new_unresolved()`](crate::output::data_type::DataType::new_unresolved()).
 //!
-//! [data_type!] may be called more than once for a single node. The data
-//! type of the node will simply be the last one that was set when parsing
-//! for that node completes. However, each call also records the data type
-//! as a special type of child of the node, making the complete history of
-//! [data_type!] calls visible in the resulting parse tree.
+//! [`set_data_type()`](context::Context::set_data_type()) may be called more
+//! than once for a single node. The data type of the node will simply be the
+//! last one that was set when parsing for that node completes. However, each
+//! call also records the data type as a special type of child of the node,
+//! making the complete history of
+//! [`set_data_type()`](context::Context::set_data_type()) calls visible in the
+//! resulting parse tree.
 //!
 //! ## Schemas
 //!
@@ -114,36 +117,37 @@
 //! which an expression is evaluated may contain more than one schema when
 //! subqueries get involved.
 //!
-//! This information is tracked in the schema stack. The logic for mutating
-//! this stack is fully contained in the [relation_root!], [schema!], an
-//!  [clear_schema!] macros, which are to be used as follows.
+//! This information is tracked in the schema stack. The stack can be
+//! manipulated using the following functions.
 //!
 //!  - The root node of a relation tree must be parsed within the context
-//!    created by [relation_root!]. This macro ensures that a schema is pushed
-//!    onto the stack prior to traversal of the relation tree, and popped after
-//!    traversal completes. Initially, the schema is set to an unresolved type,
-//!    but the actual type should not matter at this stage, because it
-//!    semantically doesn't exist until the first leaf in the relation tree is
-//!    parsed.
-//!  - All relations call [clear_schema!] prior to any relation-specific logic
-//!    (this is done by the RelType parse function), because semantically, no
-//!    schema exists prior to parsing a relation.
-//!  - [schema!] sets or updates the current schema. It must be called every
-//!    time the data stream is functionally updated, and just after the data
-//!    stream is first created by leaf relations. Relations that combine data
-//!    streams should call it just after traversal of its data sources
-//!    completes (otherwise the active schema will be whatever the schema of
-//!    the most recently parsed data source turned out to be). Doing so will
-//!    also push the data type corresponding to the schema to the node, such
-//!    that the final tree contains a type node for every semantic change of
-//!    the data stream for debugging/documentation purposes.
+//!    created by
+//!    [`enter_relation_root()`](context::Context::enter_relation_root()). This
+//!    macro ensures that a schema is pushed onto the stack prior to traversal
+//!    of the relation tree, and popped after traversal completes. Initially,
+//!    the schema is set to an unresolved type, but the actual type should not
+//!    matter at this stage, because it semantically doesn't exist until the
+//!    first leaf in the relation tree is parsed.
+//!  - All relations call [`clear_schema()`](context::Context::clear_schema())
+//!    prior to any relation-specific logic (this is done by the RelType parse
+//!    function), because semantically, no schema exists prior to parsing a
+//!    relation.
+//!  - [`set_schema()`](context::Context::set_schema()) sets or updates the
+//!    current schema. It must be called every time the data stream is
+//!    functionally updated, and just after the data stream is first created
+//!    by leaf relations. Relations that combine data streams should call it
+//!    just after traversal of its data sources completes (otherwise the
+//!    active schema will be whatever the schema of the most recently parsed
+//!    data source turned out to be). Doing so will also push the data type
+//!    corresponding to the schema to the node, such that the final tree
+//!    contains a type node for every semantic change of the data stream for
+//!    debugging/documentation purposes.
 //!
-//! The current schema information can be retrieved using [get_schema!].
-//! Calling it with only the current parse context as argument yields the
-//! schema of the current query; i.e., the innermost subquery. An integer
-//! argument can be added to specify how many subqueries to break out of; 0
-//! is (again) the current subquery, 1 is its parent query, 2 is its
-//! grandparent, and so on.
+//! The current schema information can be retrieved using
+//! [`schema()`](context::Context::schema()). Its integer argument specifies
+//! how many subqueries to break out of; 0 is used to refer to the schema of
+//! the current (sub)query, 1 is its parent query, 2 is its grandparent, and
+//! so on.
 //!
 //! ## How the parser context works
 //!

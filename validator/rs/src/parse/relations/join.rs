@@ -21,7 +21,7 @@ pub fn parse_join_rel(x: &substrait::JoinRel, y: &mut context::Context) -> diagn
     let _right_type = handle_rel_input!(x, y, right);
 
     // TODO: derive schema.
-    schema!(y, data_type::DataType::default());
+    y.set_schema(data_type::DataType::default());
 
     // Handle the common field.
     handle_rel_common!(x, y);

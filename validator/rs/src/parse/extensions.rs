@@ -74,7 +74,7 @@ fn parse_simple_extension_yaml_uri_mapping(
 
     // If the specified anchor is valid, insert a mapping for it.
     if let Some(anchor) = anchor {
-        if let Some(prev_data) = y.state.uris.insert(anchor, yaml_data) {
+        if let Some(prev_data) = y.register_uri(anchor, yaml_data) {
             diagnostic!(
                 y,
                 Error,
@@ -93,7 +93,7 @@ fn parse_simple_extension_yaml_uri_mapping(
 
 /// Parse an URI reference and resolve it.
 fn parse_uri_reference(x: &u32, y: &mut context::Context) -> Result<Arc<extension::YamlInfo>> {
-    match y.state.uris.get(x).cloned() {
+    match y.resolve_uri(*x).cloned() {
         Some(yaml_data) => {
             if let Some(ref path) = yaml_data.anchor_path {
                 link!(y, path.clone(), "URI anchor is defined here");
@@ -109,7 +109,7 @@ pub fn parse_type_variation_reference(
     x: &u32,
     y: &mut context::Context,
 ) -> Result<Arc<extension::Reference<extension::TypeVariation>>> {
-    match y.state.type_variations.get(x).cloned() {
+    match y.resolve_tvar(*x).cloned() {
         Some(variation) => {
             if let Some(ref path) = variation.common.anchor_path {
                 link!(y, path.clone(), "Type variation anchor is defined here");
@@ -128,7 +128,7 @@ pub fn parse_type_reference(
     x: &u32,
     y: &mut context::Context,
 ) -> Result<Arc<extension::Reference<extension::DataType>>> {
-    match y.state.types.get(x).cloned() {
+    match y.resolve_type(*x).cloned() {
         Some(data_type) => {
             if let Some(ref path) = data_type.common.anchor_path {
                 link!(y, path.clone(), "Type anchor is defined here");
@@ -144,7 +144,7 @@ pub fn parse_function_reference(
     x: &u32,
     y: &mut context::Context,
 ) -> Result<Arc<extension::Reference<extension::Function>>> {
-    match y.state.functions.get(x).cloned() {
+    match y.resolve_fn(x).cloned() {
         Some(function) => {
             if let Some(ref path) = function.common.anchor_path {
                 link!(y, path.clone(), "Type variation anchor is defined here");
@@ -189,14 +189,14 @@ fn parse_extension_mapping_data(
                 common: extension::Common {
                     name,
                     yaml_info,
-                    anchor_path: Some(y.breadcrumb.path.to_path_buf())
+                    anchor_path: Some(y.path_buf())
                 },
                 definition: data_type
             });
 
             // If the specified anchor is valid, insert a mapping for it.
             if let Some(anchor) = anchor {
-                if let Some(prev_data) = y.state.types.insert(anchor, reference) {
+                if let Some(prev_data) = y.register_type(anchor, reference) {
                     diagnostic!(
                         y,
                         Error,
@@ -235,14 +235,14 @@ fn parse_extension_mapping_data(
                 common: extension::Common {
                     name,
                     yaml_info,
-                    anchor_path: Some(y.breadcrumb.path.to_path_buf())
+                    anchor_path: Some(y.path_buf())
                 },
                 definition: type_variation
             });
 
             // If the specified anchor is valid, insert a mapping for it.
             if let Some(anchor) = anchor {
-                if let Some(prev_data) = y.state.type_variations.insert(anchor, reference) {
+                if let Some(prev_data) = y.register_tvar(anchor, reference) {
                     diagnostic!(
                         y,
                         Error,
@@ -281,14 +281,14 @@ fn parse_extension_mapping_data(
                 common: extension::Common {
                     name,
                     yaml_info,
-                    anchor_path: Some(y.breadcrumb.path.to_path_buf())
+                    anchor_path: Some(y.path_buf())
                 },
                 definition: function
             });
 
             // If the specified anchor is valid, insert a mapping for it.
             if let Some(anchor) = anchor {
-                if let Some(prev_data) = y.state.functions.insert(anchor, reference) {
+                if let Some(prev_data) = y.register_fn(anchor, reference) {
                     diagnostic!(
                         y,
                         Error,
@@ -315,22 +315,9 @@ fn parse_extension_mapping(
     Ok(())
 }
 
-/// Resolves a protobuf "any" message. Returns whether the user has explicitly
-/// allowed this message type for use.
-fn resolve_any(x: &prost_types::Any, y: &mut context::Context) -> bool {
-    y.state
-        .pending_proto_url_dependencies
-        .entry(x.type_url.clone())
-        .or_insert_with(|| y.breadcrumb.path.to_path_buf());
-    y.config
-        .allowed_proto_any_urls
-        .iter()
-        .any(|p| p.matches(&x.type_url))
-}
-
 /// Parse a protobuf "any" message that consumers may ignore.
 pub fn parse_hint_any(x: &prost_types::Any, y: &mut context::Context) -> Result<()> {
-    if resolve_any(x, y) {
+    if y.resolve_any(x) {
         diagnostic!(
             y,
             Info,
@@ -352,7 +339,7 @@ pub fn parse_hint_any(x: &prost_types::Any, y: &mut context::Context) -> Result<
 
 /// Parse a protobuf "any" message that consumers are not allowed to ignore.
 pub fn parse_functional_any(x: &prost_types::Any, y: &mut context::Context) -> Result<()> {
-    if resolve_any(x, y) {
+    if y.resolve_any(x) {
         diagnostic!(
             y,
             Info,
@@ -389,13 +376,10 @@ pub fn parse_advanced_extension(
 /// already been gathered.
 #[allow(clippy::ptr_arg)]
 fn parse_expected_type_url(x: &String, y: &mut context::Context) -> Result<()> {
-    if let Some(path) = y.state.pending_proto_url_dependencies.remove(x) {
+    let path_buf = y.path_buf();
+    if let Some(path) = y.pending_proto_url_dependencies().remove(x) {
         link!(y, path, "message type is first used here");
-    } else if let Some(path) = y
-        .state
-        .proto_url_declarations
-        .insert(x.clone(), y.breadcrumb.path.to_path_buf())
-    {
+    } else if let Some(path) = y.proto_url_declarations().insert(x.clone(), path_buf) {
         diagnostic!(
             y,
             Info,
@@ -437,7 +421,7 @@ pub fn parse_extensions_after_relations(x: &substrait::Plan, y: &mut context::Co
     let mut pending_dependencies = HashMap::new();
     std::mem::swap(
         &mut pending_dependencies,
-        &mut y.state.pending_proto_url_dependencies,
+        y.pending_proto_url_dependencies(),
     );
     for (url, path) in pending_dependencies.drain() {
         ediagnostic!(y, Error, ProtoMissingAnyDeclaration, url);

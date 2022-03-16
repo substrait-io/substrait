@@ -19,7 +19,7 @@ pub fn parse_set_rel(x: &substrait::SetRel, y: &mut context::Context) -> diagnos
     let _in_types: Vec<_> = handle_rel_inputs!(x, y).collect();
 
     // TODO: derive schema.
-    schema!(y, data_type::DataType::default());
+    y.set_schema(data_type::DataType::default());
 
     // Handle the common field.
     handle_rel_common!(x, y);

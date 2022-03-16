@@ -18,7 +18,7 @@ pub fn parse_sort_rel(x: &substrait::SortRel, y: &mut context::Context) -> diagn
     let _in_type = handle_rel_input!(x, y);
 
     // TODO: derive schema.
-    schema!(y, data_type::DataType::default());
+    y.set_schema(data_type::DataType::default());
 
     // Handle the common field.
     handle_rel_common!(x, y);
