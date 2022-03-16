@@ -26,13 +26,5 @@ scalar_functions:
           - value: "string"
           - value: "string"
         return: "boolean"
-  -
-    name: alias
-    description: Used to assign a new name to a computation.
-    impls:
-      - args:
-          - value: "any"
-          - value: "string"
-        return: "string"
 
 # TODO: substring, string specific cross type equalities.
