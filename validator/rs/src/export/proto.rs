@@ -31,7 +31,7 @@ impl From<&tree::Node> for validator::Node {
     fn from(node: &tree::Node) -> Self {
         Self {
             node_type: Some((&node.node_type).into()),
-            data_type: node.data_type.as_ref().map(|x| x.into()),
+            data_type: node.data_type.as_ref().map(|x| x.as_ref().into()),
             relation: None, // TODO, doesn't exist in tree yet
             data: node.data.iter().map(|x| x.into()).collect(),
         }
@@ -47,7 +47,7 @@ impl From<&tree::NodeData> for validator::node::Data {
                     validator::node::data::Kind::Diagnostic(diagnostic.into())
                 }
                 tree::NodeData::DataType(data_type) => {
-                    validator::node::data::Kind::DataType(data_type.into())
+                    validator::node::data::Kind::DataType(data_type.as_ref().into())
                 }
                 tree::NodeData::Comment(comment) => {
                     validator::node::data::Kind::Comment(comment.into())
@@ -383,12 +383,12 @@ impl From<&data_type::Parameter> for validator::data_type::Parameter {
         Self {
             kind: Some(match node {
                 data_type::Parameter::Type(data_type) => {
-                    validator::data_type::parameter::Kind::DataType(data_type.into())
+                    validator::data_type::parameter::Kind::DataType(data_type.as_ref().into())
                 }
                 data_type::Parameter::NamedType(name, data_type) => {
                     validator::data_type::parameter::Kind::NamedType(validator::data_type::Named {
                         name: name.to_string(),
-                        data_type: Some(data_type.into()),
+                        data_type: Some(data_type.as_ref().into()),
                     })
                 }
                 data_type::Parameter::Unsigned(unsigned) => {

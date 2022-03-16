@@ -2,6 +2,8 @@
 
 //! Module for parsing logic common to all relation types.
 
+use std::sync::Arc;
+
 use crate::input::proto::substrait;
 use crate::output::data_type;
 use crate::output::diagnostic;
@@ -74,14 +76,13 @@ fn parse_hint(x: &substrait::rel_common::Hint, y: &mut context::Context) -> diag
 fn parse_emit_mapping(
     x: &i32,
     _: &mut context::Context,
-    data_type: &data_type::DataType,
-) -> diagnostic::Result<data_type::DataType> {
+    data_type: Arc<data_type::DataType>,
+) -> diagnostic::Result<Arc<data_type::DataType>> {
     let x: usize = (*x)
         .try_into()
         .map_err(|_| cause!(TypeInvalidSwizzle, "index cannot be negative"))?;
     data_type
         .index_struct(x)
-        .cloned()
         .ok_or_else(|| cause!(TypeInvalidSwizzle, "index out of range"))
 }
 
@@ -89,16 +90,17 @@ fn parse_emit_mapping(
 fn parse_emit_kind(
     x: &substrait::rel_common::EmitKind,
     y: &mut context::Context,
-    data_type: &data_type::DataType,
-) -> diagnostic::Result<data_type::DataType> {
+    data_type: Arc<data_type::DataType>,
+) -> diagnostic::Result<Arc<data_type::DataType>> {
     match x {
-        substrait::rel_common::EmitKind::Direct(_) => Ok(data_type.clone()),
+        substrait::rel_common::EmitKind::Direct(_) => Ok(data_type),
         substrait::rel_common::EmitKind::Emit(x) => {
-            let fields = proto_repeated_field!(x, y, output_mapping, parse_emit_mapping, data_type)
-                .1
-                .into_iter()
-                .map(|x| x.unwrap_or_default())
-                .collect::<Vec<_>>();
+            let fields =
+                proto_repeated_field!(x, y, output_mapping, parse_emit_mapping, data_type.clone())
+                    .1
+                    .into_iter()
+                    .map(|x| x.unwrap_or_default())
+                    .collect::<Vec<_>>();
             Ok(data_type::DataType::new_struct(fields, false))
         }
     }
@@ -109,8 +111,8 @@ fn parse_emit_kind(
 pub fn parse_rel_common(
     x: &substrait::RelCommon,
     y: &mut context::Context,
-    data_type: data_type::DataType,
-) -> diagnostic::Result<data_type::DataType> {
+    data_type: Arc<data_type::DataType>,
+) -> diagnostic::Result<Arc<data_type::DataType>> {
     // Handle hint.
     proto_field!(x, y, hint, parse_hint);
 
@@ -130,7 +132,7 @@ pub fn parse_rel_common(
     };
 
     // Parse emit kind.
-    let data_type = proto_field!(x, y, emit_kind, parse_emit_kind, &data_type)
+    let data_type = proto_field!(x, y, emit_kind, parse_emit_kind, data_type)
         .1
         .unwrap_or_default();
 
@@ -141,7 +143,7 @@ pub fn parse_rel_common(
 /// rest of the relation has processed, as it can transmute the data type.
 macro_rules! handle_rel_common {
     ($input:expr, $context:expr) => {
-        let data_type = $context.data_type().clone();
+        let data_type = $context.data_type();
 
         // Call the parser.
         let result = proto_field!(
@@ -173,7 +175,7 @@ macro_rules! handle_advanced_extension {
         .1
         .unwrap_or_default()
         {
-            $context.set_schema(crate::output::data_type::DataType::default());
+            $context.set_schema(std::sync::Arc::default());
         }
     };
 }

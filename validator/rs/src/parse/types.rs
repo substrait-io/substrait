@@ -2,6 +2,8 @@
 
 //! Module providing parse/validation functions for types.
 
+use std::sync::Arc;
+
 use crate::input::proto::substrait;
 use crate::output::data_type;
 use crate::output::data_type::ParameterInfo;
@@ -78,7 +80,7 @@ macro_rules! parse_simple_type {
             .map_err(|e| diagnostic!($context, Error, e))
             .unwrap_or_default()
         } else {
-            data_type::DataType::default()
+            Arc::default()
         };
 
         // Attach the type to the node.
@@ -224,7 +226,7 @@ macro_rules! parse_compound_type_with_length {
             .map_err(|e| diagnostic!($context, Error, e))
             .unwrap_or_default()
         } else {
-            data_type::DataType::default()
+            Arc::default()
         };
 
         // Attach the type to the node.
@@ -295,7 +297,7 @@ pub fn parse_decimal(
         .map_err(|e| diagnostic!(y, Error, e))
         .unwrap_or_default()
     } else {
-        data_type::DataType::default()
+        Arc::default()
     };
 
     // Attach the type to the node.
@@ -342,7 +344,7 @@ pub fn parse_struct(
         .map_err(|e| diagnostic!(y, Error, e))
         .unwrap_or_default()
     } else {
-        data_type::DataType::default()
+        Arc::default()
     };
 
     // Attach the type to the node.
@@ -386,7 +388,7 @@ pub fn parse_list(x: &substrait::r#type::List, y: &mut context::Context) -> diag
         .map_err(|e| diagnostic!(y, Error, e))
         .unwrap_or_default()
     } else {
-        data_type::DataType::default()
+        Arc::default()
     };
 
     // Attach the type to the node.
@@ -435,7 +437,7 @@ pub fn parse_map(x: &substrait::r#type::Map, y: &mut context::Context) -> diagno
         .map_err(|e| diagnostic!(y, Error, e))
         .unwrap_or_default()
     } else {
-        data_type::DataType::default()
+        Arc::default()
     };
 
     // Attach the type to the node.
@@ -462,7 +464,7 @@ pub fn parse_user_defined(x: &u32, y: &mut context::Context) -> diagnostic::Resu
         .map_err(|e| diagnostic!(y, Error, e))
         .unwrap_or_default()
     } else {
-        data_type::DataType::default()
+        Arc::default()
     };
 
     // Attach the type to the node.
@@ -509,8 +511,7 @@ pub fn parse_type(x: &substrait::Type, y: &mut context::Context) -> diagnostic::
     // Parse fields.
     let data_type = proto_required_field!(x, y, kind, parse_type_kind)
         .0
-        .data_type()
-        .clone();
+        .data_type();
 
     // Attach the type to the node.
     y.set_data_type(data_type);
@@ -528,10 +529,10 @@ pub fn parse_named_struct(
     let node = proto_required_field!(x, y, r#struct, parse_struct).0;
 
     // Try to apply the names to the data type.
-    let data_type = match node.data_type().clone().apply_field_names(&x.names) {
+    let data_type = match node.data_type().apply_field_names(&x.names) {
         Err(e) => {
             diagnostic!(y, Error, e);
-            node.data_type().clone()
+            node.data_type()
         }
         Ok(data_type) => data_type,
     };
@@ -549,11 +550,11 @@ pub fn parse_named_struct(
 /// unresolved, base is returned.
 fn assert_equal_internal(
     context: &mut context::Context,
-    other: data_type::DataType,
-    base: data_type::DataType,
+    other: Arc<data_type::DataType>,
+    base: Arc<data_type::DataType>,
     message: &str,
     path: &str,
-) -> data_type::DataType {
+) -> Arc<data_type::DataType> {
     if other.is_unresolved() {
         base
     } else if base.is_unresolved() {
@@ -648,25 +649,25 @@ fn assert_equal_internal(
         // parameter, such that information present in only one of the
         // parameters ends up in the final parameter, regardless of which
         // it is.
-        let (base_class, nullable, variation, base_parameters) = base.into_parts();
-        let (other_class, _, _, other_parameters) = other.into_parts();
-        let parameters = other_parameters
-            .into_iter()
-            .zip(base_parameters.into_iter())
+        let parameters = other
+            .parameters()
+            .iter()
+            .cloned()
+            .zip(base.parameters().iter().cloned())
             .enumerate()
-            .map(|(index, (other, base))| {
-                let path_element = base
+            .map(|(index, (other_param, base_param))| {
+                let path_element = base_param
                     .get_name()
-                    .or_else(|| other.get_name())
+                    .or_else(|| other_param.get_name())
                     .map(String::from)
-                    .or_else(|| base_class.parameter_name(index))
+                    .or_else(|| base.class().parameter_name(index))
                     .unwrap_or_else(|| String::from("!"));
                 let path = if path.is_empty() {
                     format!(" on parameter path {path_element}")
                 } else {
                     format!("{path}.{path_element}")
                 };
-                match (other, base) {
+                match (other_param, base_param) {
                     (data_type::Parameter::Type(other), data_type::Parameter::Type(base)) => {
                         data_type::Parameter::Type(assert_equal_internal(
                             context, other, base, message, &path,
@@ -723,7 +724,7 @@ fn assert_equal_internal(
         // If either type is a named struct, the result should be a named
         // struct, since we'll have taken the field names from the type that
         // has them in the loop above.
-        let class = match (other_class, base_class) {
+        let class = match (other.class(), base.class()) {
             (
                 data_type::Class::Compound(data_type::Compound::Struct),
                 data_type::Class::Compound(data_type::Compound::NamedStruct),
@@ -732,10 +733,10 @@ fn assert_equal_internal(
                 data_type::Class::Compound(data_type::Compound::NamedStruct),
                 data_type::Class::Compound(data_type::Compound::Struct),
             ) => data_type::Class::Compound(data_type::Compound::NamedStruct),
-            (a, _) => a,
+            (a, _) => a.clone(),
         };
 
-        data_type::DataType::new(class, nullable, variation, parameters)
+        data_type::DataType::new(class, base.nullable(), base.variation().clone(), parameters)
             .expect("assert_equal() failed to correctly combine types")
     }
 }
@@ -747,9 +748,9 @@ fn assert_equal_internal(
 /// unresolved, base is returned.
 pub fn assert_equal<S: AsRef<str>>(
     context: &mut context::Context,
-    other: data_type::DataType,
-    base: data_type::DataType,
+    other: Arc<data_type::DataType>,
+    base: Arc<data_type::DataType>,
     message: S,
-) -> data_type::DataType {
+) -> Arc<data_type::DataType> {
     assert_equal_internal(context, other, base, message.as_ref(), "")
 }

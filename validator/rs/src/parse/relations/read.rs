@@ -7,6 +7,8 @@
 //!
 //! See <https://substrait.io/relations/logical_relations/#read-operator>
 
+use std::sync::Arc;
+
 use crate::input::proto::substrait;
 use crate::output::data_type;
 use crate::output::diagnostic;
@@ -17,7 +19,7 @@ use crate::parse::types;
 fn parse_virtual_table(
     _x: &substrait::read_rel::VirtualTable,
     _y: &mut context::Context,
-) -> diagnostic::Result<Option<data_type::DataType>> {
+) -> diagnostic::Result<Option<Arc<data_type::DataType>>> {
     // TODO
     Ok(None)
 }
@@ -26,7 +28,7 @@ fn parse_virtual_table(
 fn parse_local_files(
     _x: &substrait::read_rel::LocalFiles,
     _y: &mut context::Context,
-) -> diagnostic::Result<Option<data_type::DataType>> {
+) -> diagnostic::Result<Option<Arc<data_type::DataType>>> {
     // TODO
     Ok(None)
 }
@@ -35,7 +37,7 @@ fn parse_local_files(
 fn parse_named_table(
     _x: &substrait::read_rel::NamedTable,
     _y: &mut context::Context,
-) -> diagnostic::Result<Option<data_type::DataType>> {
+) -> diagnostic::Result<Option<Arc<data_type::DataType>>> {
     // TODO
     Ok(None)
 }
@@ -44,7 +46,7 @@ fn parse_named_table(
 fn parse_extension_table(
     _x: &substrait::read_rel::ExtensionTable,
     _y: &mut context::Context,
-) -> diagnostic::Result<Option<data_type::DataType>> {
+) -> diagnostic::Result<Option<Arc<data_type::DataType>>> {
     // TODO
     Ok(None)
 }
@@ -53,7 +55,7 @@ fn parse_extension_table(
 fn parse_read_type(
     x: &substrait::read_rel::ReadType,
     y: &mut context::Context,
-) -> diagnostic::Result<Option<data_type::DataType>> {
+) -> diagnostic::Result<Option<Arc<data_type::DataType>>> {
     match x {
         substrait::read_rel::ReadType::VirtualTable(x) => parse_virtual_table(x, y),
         substrait::read_rel::ReadType::LocalFiles(x) => parse_local_files(x, y),
@@ -82,7 +84,7 @@ pub fn parse_read_rel(x: &substrait::ReadRel, y: &mut context::Context) -> diagn
         }
         (Some(data_type), None) => data_type,
         (None, Some(schema)) => schema,
-        (None, None) => data_type::DataType::default(),
+        (None, None) => Arc::default(),
     };
 
     // Set the schema to the merged data type.

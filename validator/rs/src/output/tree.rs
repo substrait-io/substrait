@@ -79,7 +79,7 @@ pub struct Node {
     /// The type of data returned by this node, if any. Depending on the
     /// message and context, this may represent a table schema or scalar
     /// data.
-    pub data_type: Option<data_type::DataType>,
+    pub data_type: Option<Arc<data_type::DataType>>,
 
     /// The information gathered about the message.
     ///
@@ -129,8 +129,8 @@ impl Node {
     /// Returns a reference to the data type that this node returns at runtime
     /// or (for type nodes) represents. If no type information is attached, a
     /// reference to a default-generated unresolved type is returned.
-    pub fn data_type(&self) -> &data_type::DataType {
-        self.data_type.as_ref().unwrap_or_default()
+    pub fn data_type(&self) -> Arc<data_type::DataType> {
+        self.data_type.clone().unwrap_or_default()
     }
 }
 
@@ -191,7 +191,7 @@ pub enum NodeData {
     /// emit). The TypeInfo and operation description *Field nodes are then
     /// ordered by data flow. In particular, the last TypeInfo node always
     /// represents the type of the final result of a node.
-    DataType(data_type::DataType),
+    DataType(Arc<data_type::DataType>),
 
     /// Used for adding unstructured additional information to a message,
     /// wherever this may aid human understanding of a message.

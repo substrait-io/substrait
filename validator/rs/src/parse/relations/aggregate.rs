@@ -7,8 +7,9 @@
 //!
 //! See <https://substrait.io/relations/logical_relations/#aggregate-operation>
 
+use std::sync::Arc;
+
 use crate::input::proto::substrait;
-use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::parse::context;
 
@@ -21,7 +22,7 @@ pub fn parse_aggregate_rel(
     let _in_type = handle_rel_input!(x, y);
 
     // TODO: derive schema.
-    y.set_schema(data_type::DataType::default());
+    y.set_schema(Arc::default());
 
     // Handle the common field.
     handle_rel_common!(x, y);

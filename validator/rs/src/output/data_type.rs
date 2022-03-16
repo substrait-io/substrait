@@ -64,49 +64,52 @@ impl DataType {
         nullable: bool,
         variation: Variation,
         parameters: Vec<Parameter>,
-    ) -> diagnostic::Result<DataType> {
+    ) -> diagnostic::Result<Arc<DataType>> {
         // Check whether class and parameters work together.
         class.check_parameters(&parameters)?;
 
         // TODO: check whether the specified type variation is applicable to
         // this type?
 
-        Ok(DataType {
+        Ok(Arc::new(DataType {
             class,
             nullable,
             variation,
             parameters,
-        })
+        }))
     }
 
     /// Creates a new unresolved type with the given description.
-    pub fn new_unresolved<S: ToString>(description: S) -> DataType {
-        DataType {
+    pub fn new_unresolved<S: ToString>(description: S) -> Arc<DataType> {
+        Arc::new(DataType {
             class: Class::Unresolved(description.to_string()),
             nullable: false,
             variation: None,
             parameters: vec![],
-        }
+        })
     }
 
     /// Creates a new unresolved type without description.
-    pub const fn new_default() -> DataType {
-        DataType {
+    pub fn new_default() -> Arc<DataType> {
+        Arc::new(DataType {
             class: Class::Unresolved(String::new()),
             nullable: false,
             variation: None,
             parameters: vec![],
-        }
+        })
     }
 
     /// Creates a new struct type.
-    pub fn new_struct<T: IntoIterator<Item = DataType>>(fields: T, nullable: bool) -> DataType {
-        DataType {
+    pub fn new_struct<T: IntoIterator<Item = Arc<DataType>>>(
+        fields: T,
+        nullable: bool,
+    ) -> Arc<DataType> {
+        Arc::new(DataType {
             class: Class::Compound(Compound::Struct),
             nullable,
             variation: None,
             parameters: fields.into_iter().map(Parameter::from).collect(),
-        }
+        })
     }
 
     /// Returns the type class.
@@ -127,12 +130,6 @@ impl DataType {
     /// Returns the type parameters.
     pub fn parameters(&self) -> &Vec<Parameter> {
         &self.parameters
-    }
-
-    /// Unpacks the data type into its raw parts, in the same way they are
-    /// passed to new().
-    pub fn into_parts(self) -> (Class, bool, Variation, Vec<Parameter>) {
-        (self.class, self.nullable, self.variation, self.parameters)
     }
 
     /// Returns whether this is an unresolved type.
@@ -165,15 +162,14 @@ impl DataType {
     }
 
     /// Returns the type of the nth field of this struct. Returns None if
-    /// out of range or if this is known to not be a struct. Returns self
-    /// if this is an unresolved type.
-    pub fn index_struct(&self, index: usize) -> Option<&DataType> {
+    /// out of range or if this is known to not be a struct.
+    pub fn index_struct(&self, index: usize) -> Option<Arc<DataType>> {
         if self.is_unresolved() {
-            Some(self)
+            Some(DataType::new_default())
         } else if self.is_struct() {
             match self.parameters.get(index) {
-                Some(Parameter::Type(t)) => Some(t),
-                Some(Parameter::NamedType(_, t)) => Some(t),
+                Some(Parameter::Type(t)) => Some(t.clone()),
+                Some(Parameter::NamedType(_, t)) => Some(t.clone()),
                 _ => None,
             }
         } else {
@@ -182,11 +178,12 @@ impl DataType {
     }
 
     /// Internal helper for split_field_names() and strip_field_names().
-    fn split_field_names_internal<F: FnMut(String)>(self, namer: &mut F) -> DataType {
+    fn split_field_names_internal<F: FnMut(String)>(&self, namer: &mut F) -> Arc<DataType> {
         let is_struct = self.is_struct();
         let parameters = self
             .parameters
-            .into_iter()
+            .iter()
+            .cloned()
             .enumerate()
             .map(|(i, p)| {
                 let p = if is_struct {
@@ -199,12 +196,12 @@ impl DataType {
                 p.map_type(|t| t.split_field_names_internal(namer))
             })
             .collect();
-        DataType {
-            class: self.class,
+        Arc::new(DataType {
+            class: self.class.clone(),
             nullable: self.nullable,
-            variation: self.variation,
+            variation: self.variation.clone(),
             parameters,
-        }
+        })
     }
 
     /// Converts all NSTRUCT types in the tree to STRUCT, and returns the
@@ -212,26 +209,27 @@ impl DataType {
     /// are also returned, to ensure that the returned Vec is applicable to
     /// apply_field_names(); their names are simply their zero-based index
     /// converted to a string.
-    pub fn split_field_names(self) -> (DataType, Vec<String>) {
+    pub fn split_field_names(&self) -> (Arc<DataType>, Vec<String>) {
         let mut names = vec![];
         let data_type = self.split_field_names_internal(&mut |s| names.push(s));
         (data_type, names)
     }
 
     /// Like split_field_names(), but drops the name strings.
-    pub fn strip_field_names(self) -> DataType {
+    pub fn strip_field_names(&self) -> Arc<DataType> {
         self.split_field_names_internal(&mut |_| ())
     }
 
     /// Internal helper function for apply_field_names().
     fn apply_field_names_internal<F: FnMut() -> diagnostic::Result<String>>(
-        self,
+        &self,
         mut namer: &mut F,
-    ) -> diagnostic::Result<DataType> {
+    ) -> diagnostic::Result<Arc<DataType>> {
         if self.is_struct() {
             let parameters: Result<Vec<_>, _> = self
                 .parameters
-                .into_iter()
+                .iter()
+                .cloned()
                 .map(|p| {
                     p.with_name(&mut namer)?
                         .map_type_result(|t| t.apply_field_names_internal(namer))
@@ -243,30 +241,31 @@ impl DataType {
             DataType::new(
                 Class::Compound(Compound::NamedStruct),
                 self.nullable,
-                self.variation,
+                self.variation.clone(),
                 parameters?,
             )
         } else {
             let parameters: Result<Vec<_>, _> = self
                 .parameters
-                .into_iter()
+                .iter()
+                .cloned()
                 .map(|p| p.map_type_result(|t| t.apply_field_names_internal(namer)))
                 .collect();
 
             // Data types generated this way can never become invalid, so we
             // can construct directly.
-            Ok(DataType {
-                class: self.class,
+            Ok(Arc::new(DataType {
+                class: self.class.clone(),
                 nullable: self.nullable,
-                variation: self.variation,
+                variation: self.variation.clone(),
                 parameters: parameters?,
-            })
+            }))
         }
     }
 
     /// Applies names to STRUCTs, or renames the names in NSTRUCTs, based on a
     /// flattened vector of names.
-    pub fn apply_field_names<S: ToString>(self, names: &[S]) -> diagnostic::Result<DataType> {
+    pub fn apply_field_names<S: ToString>(&self, names: &[S]) -> diagnostic::Result<Arc<DataType>> {
         let mut names = names.iter();
         let mut namer = || {
             names.next().map(|s| s.to_string()).ok_or(cause!(
@@ -290,14 +289,12 @@ impl DataType {
 
 impl Default for DataType {
     fn default() -> Self {
-        Self::new_default()
-    }
-}
-
-impl Default for &DataType {
-    fn default() -> Self {
-        static DEFAULT: DataType = DataType::new_default();
-        &DEFAULT
+        DataType {
+            class: Class::Unresolved(String::new()),
+            nullable: false,
+            variation: None,
+            parameters: vec![],
+        }
     }
 }
 
@@ -599,10 +596,10 @@ impl ParameterInfo for Compound {
 #[derive(Clone, Debug, PartialEq)]
 pub enum Parameter {
     /// Type parameter (list element type, struct element types, etc).
-    Type(DataType),
+    Type(Arc<DataType>),
 
     /// Named type parameter (named struct/schema pseudotype elements).
-    NamedType(String, DataType),
+    NamedType(String, Arc<DataType>),
 
     /// Integral type parameter (varchar length, etc.).
     Unsigned(u64),
@@ -655,7 +652,7 @@ impl Parameter {
 
     /// Modifies the contained type using the given function, if applicable. If
     /// this is not a type parameter, the function is not called.
-    pub fn map_type_result<E, F: FnOnce(DataType) -> Result<DataType, E>>(
+    pub fn map_type_result<E, F: FnOnce(Arc<DataType>) -> Result<Arc<DataType>, E>>(
         self,
         f: F,
     ) -> Result<Parameter, E> {
@@ -668,7 +665,7 @@ impl Parameter {
 
     /// Modifies the contained type using the given function, if applicable. If
     /// this is not a type parameter, the function is not called.
-    pub fn map_type<F: FnOnce(DataType) -> DataType>(self, f: F) -> Parameter {
+    pub fn map_type<F: FnOnce(Arc<DataType>) -> Arc<DataType>>(self, f: F) -> Parameter {
         match self {
             Parameter::Type(t) => Parameter::Type(f(t)),
             Parameter::NamedType(n, t) => Parameter::NamedType(n, f(t)),
@@ -679,6 +676,12 @@ impl Parameter {
 
 impl From<DataType> for Parameter {
     fn from(t: DataType) -> Self {
+        Parameter::Type(Arc::new(t))
+    }
+}
+
+impl From<Arc<DataType>> for Parameter {
+    fn from(t: Arc<DataType>) -> Self {
         Parameter::Type(t)
     }
 }

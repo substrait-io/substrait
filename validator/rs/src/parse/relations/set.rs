@@ -8,8 +8,9 @@
 //!
 //! See <https://substrait.io/relations/logical_relations/#set-operation>
 
+use std::sync::Arc;
+
 use crate::input::proto::substrait;
-use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::parse::context;
 
@@ -19,7 +20,7 @@ pub fn parse_set_rel(x: &substrait::SetRel, y: &mut context::Context) -> diagnos
     let _in_types: Vec<_> = handle_rel_inputs!(x, y).collect();
 
     // TODO: derive schema.
-    y.set_schema(data_type::DataType::default());
+    y.set_schema(Arc::default());
 
     // Handle the common field.
     handle_rel_common!(x, y);

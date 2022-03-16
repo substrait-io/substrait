@@ -96,10 +96,11 @@ impl<'a> Context<'a> {
     /// Returns the data type currently associated with the current node. If no
     /// data type was associated yet, this silently returns a reference to an
     /// unresolved type object.
-    pub fn data_type(&self) -> &data_type::DataType {
-        self.output.data_type.as_ref().unwrap_or_default()
+    pub fn data_type(&self) -> Arc<data_type::DataType> {
+        self.output.data_type.clone().unwrap_or_default()
     }
 
+    /*
     /// Replaces the data type associated with this node, including the
     /// information indicating whether this node semantically *has* a data
     /// type.
@@ -107,10 +108,11 @@ impl<'a> Context<'a> {
     /// This is only used by the traversal macros. Don't use it directly.
     pub fn replace_data_type(
         &mut self,
-        data_type: Option<data_type::DataType>,
-    ) -> Option<data_type::DataType> {
+        data_type: Option<Arc<data_type::DataType>>,
+    ) -> Option<Arc<data_type::DataType>> {
         std::mem::replace(&mut self.output.data_type, data_type)
     }
+    */
 
     /// Pushes data into the current node.
     ///
@@ -171,7 +173,7 @@ impl<'a> Context<'a> {
     /// Can be called multiple times; only the data type specified for the
     /// final call attached to the node's "return type", but each time a
     /// NodeData::DataType is pushed into the node data as well.
-    pub fn set_data_type(&mut self, data_type: data_type::DataType) {
+    pub fn set_data_type(&mut self, data_type: Arc<data_type::DataType>) {
         self.push(tree::NodeData::DataType(data_type.clone()));
         self.output.data_type = Some(data_type);
     }
@@ -181,7 +183,7 @@ impl<'a> Context<'a> {
     /// inputs, but before they start to parse any expressions based on that
     /// schema; after all, the schema defines how (column) references behave.
     /// If the schema isn't known, it may be set to an unresolved type.
-    pub fn set_schema(&mut self, schema: data_type::DataType) {
+    pub fn set_schema(&mut self, schema: Arc<data_type::DataType>) {
         *self
             .state
             .schema_stack
@@ -205,7 +207,7 @@ impl<'a> Context<'a> {
     /// be its parent query, 2 would be its grandparent, etc. Returns Err when
     /// the referenced schema semantically doesn't exist; returns Ok(unresolved
     /// type) when it does but the actual type isn't known.
-    pub fn schema(&self, depth: usize) -> diagnostic::Result<data_type::DataType> {
+    pub fn schema(&self, depth: usize) -> diagnostic::Result<Arc<data_type::DataType>> {
         let len = self.state.schema_stack.len();
         if depth >= len {
             Err(cause!(
@@ -416,7 +418,7 @@ pub struct State {
     /// a relation tree, but no schema is known yet (in terms of dataflow,
     /// we're still in the time before the input relation has created a
     /// stream).
-    pub schema_stack: Vec<Option<data_type::DataType>>,
+    pub schema_stack: Vec<Option<Arc<data_type::DataType>>>,
 
     /// The YAML data object under construction, if any.
     pub yaml_data: Option<extension::YamlData>,
