@@ -4,7 +4,9 @@
 
 use crate::input::proto::substrait;
 use crate::output::data_type;
+use crate::output::data_type::ParameterInfo;
 use crate::output::diagnostic;
+use crate::output::primitive_data;
 use crate::parse::context;
 use crate::parse::extensions;
 
@@ -507,9 +509,8 @@ pub fn parse_type(x: &substrait::Type, y: &mut context::Context) -> diagnostic::
     // Parse fields.
     let data_type = proto_required_field!(x, y, kind, parse_type_kind)
         .0
-        .data_type
-        .clone()
-        .unwrap_or_default();
+        .data_type()
+        .clone();
 
     // Attach the type to the node.
     data_type!(y, data_type);
@@ -524,17 +525,13 @@ pub fn parse_named_struct(
 ) -> diagnostic::Result<()> {
     // Parse fields.
     proto_repeated_field!(x, y, names);
-    let data_type = proto_required_field!(x, y, r#struct, parse_struct)
-        .0
-        .data_type
-        .clone()
-        .unwrap_or_default();
+    let node = proto_required_field!(x, y, r#struct, parse_struct).0;
 
     // Try to apply the names to the data type.
-    let data_type = match data_type.clone().apply_field_names(&x.names) {
+    let data_type = match node.data_type().clone().apply_field_names(&x.names) {
         Err(e) => {
             diagnostic!(y, Error, e);
-            data_type
+            node.data_type().clone()
         }
         Ok(data_type) => data_type,
     };
@@ -543,4 +540,216 @@ pub fn parse_named_struct(
     data_type!(y, data_type);
 
     Ok(())
+}
+
+/// Asserts that two types are equal, and returns the combined type, pushing
+/// diagnostics if there is a mismatch. Warnings are used for field name
+/// mismatches, errors are used for any other difference. If either type is
+/// unresolved at any point in the tree, the other is returned. If both are
+/// unresolved, base is returned.
+fn assert_equal_internal(
+    context: &mut context::Context,
+    other: data_type::DataType,
+    base: data_type::DataType,
+    message: &str,
+    path: &str,
+) -> data_type::DataType {
+    if other.is_unresolved() {
+        base
+    } else if base.is_unresolved() {
+        other
+    } else {
+        // Match base types.
+        let base_types_match = match (other.class(), base.class()) {
+            (
+                data_type::Class::Compound(data_type::Compound::Struct),
+                data_type::Class::Compound(data_type::Compound::NamedStruct),
+            ) => true,
+            (
+                data_type::Class::Compound(data_type::Compound::NamedStruct),
+                data_type::Class::Compound(data_type::Compound::Struct),
+            ) => true,
+            (a, b) => a == b,
+        };
+        if !base_types_match {
+            diagnostic!(
+                context,
+                Error,
+                TypeMismatch,
+                "{message}: {} vs. {}{path}",
+                other.class(),
+                base.class()
+            );
+
+            // No sense in comparing parameters if the base type is already
+            // different, so just return here.
+            return base;
+        }
+
+        // Match nullability.
+        match (other.nullable(), base.nullable()) {
+            (true, false) => diagnostic!(
+                context,
+                Error,
+                TypeMismatch,
+                "{message}: nullable vs. required{path}"
+            ),
+            (false, true) => diagnostic!(
+                context,
+                Error,
+                TypeMismatch,
+                "{message}: required vs. nullable{path}"
+            ),
+            (_, _) => {}
+        }
+
+        // Match variations.
+        match (other.variation(), base.variation()) {
+            (Some(other), Some(base)) => {
+                if base != other {
+                    diagnostic!(
+                        context,
+                        Error,
+                        TypeMismatch,
+                        "{message}: variation {other} vs. {base}{path}"
+                    );
+                }
+            }
+            (Some(other), None) => diagnostic!(
+                context,
+                Error,
+                TypeMismatch,
+                "{message}: variation {other} vs. no variation{path}"
+            ),
+            (None, Some(base)) => diagnostic!(
+                context,
+                Error,
+                TypeMismatch,
+                "{message}: no variation vs. variation {base}{path}"
+            ),
+            (None, None) => {}
+        }
+
+        // Match parameter count.
+        let other_len = other.parameters().len();
+        let base_len = base.parameters().len();
+        if other_len != base_len {
+            diagnostic!(
+                context,
+                Error,
+                TypeMismatch,
+                "{message}: {other_len} parameters vs. {base_len} parameters{path}"
+            );
+            return base;
+        }
+
+        // Now match the parameters. We call ourselves recursively for each
+        // type parameter, using the combined type to form the new type
+        // parameter, such that information present in only one of the
+        // parameters ends up in the final parameter, regardless of which
+        // it is.
+        let (base_class, nullable, variation, base_parameters) = base.into_parts();
+        let (other_class, _, _, other_parameters) = other.into_parts();
+        let parameters = other_parameters
+            .into_iter()
+            .zip(base_parameters.into_iter())
+            .enumerate()
+            .map(|(index, (other, base))| {
+                let path_element = base
+                    .get_name()
+                    .or_else(|| other.get_name())
+                    .map(String::from)
+                    .or_else(|| base_class.parameter_name(index))
+                    .unwrap_or_else(|| String::from("!"));
+                let path = if path.is_empty() {
+                    format!(" on parameter path {path_element}")
+                } else {
+                    format!("{path}.{path_element}")
+                };
+                match (other, base) {
+                    (data_type::Parameter::Type(other), data_type::Parameter::Type(base)) => {
+                        data_type::Parameter::Type(assert_equal_internal(
+                            context, other, base, message, &path,
+                        ))
+                    }
+                    (
+                        data_type::Parameter::Type(other),
+                        data_type::Parameter::NamedType(name, base),
+                    ) => data_type::Parameter::NamedType(
+                        name,
+                        assert_equal_internal(context, other, base, message, &path),
+                    ),
+                    (
+                        data_type::Parameter::NamedType(name, other),
+                        data_type::Parameter::Type(base),
+                    ) => data_type::Parameter::NamedType(
+                        name,
+                        assert_equal_internal(context, other, base, message, &path),
+                    ),
+                    (
+                        data_type::Parameter::NamedType(other_name, other),
+                        data_type::Parameter::NamedType(base_name, base),
+                    ) => {
+                        if other_name != base_name {
+                            diagnostic!(
+                                context,
+                                Warning,
+                                TypeMismatch,
+                                "{message}: field name {} vs. {}{path}",
+                                primitive_data::as_ident_or_string(&other_name),
+                                primitive_data::as_ident_or_string(&base_name)
+                            );
+                        }
+                        data_type::Parameter::NamedType(
+                            base_name,
+                            assert_equal_internal(context, other, base, message, &path),
+                        )
+                    }
+                    (base, other) => {
+                        if other != base {
+                            diagnostic!(
+                                context,
+                                Error,
+                                TypeMismatch,
+                                "{message}: {other} vs. {base}{path}"
+                            );
+                        }
+                        base
+                    }
+                }
+            })
+            .collect();
+
+        // If either type is a named struct, the result should be a named
+        // struct, since we'll have taken the field names from the type that
+        // has them in the loop above.
+        let class = match (other_class, base_class) {
+            (
+                data_type::Class::Compound(data_type::Compound::Struct),
+                data_type::Class::Compound(data_type::Compound::NamedStruct),
+            ) => data_type::Class::Compound(data_type::Compound::NamedStruct),
+            (
+                data_type::Class::Compound(data_type::Compound::NamedStruct),
+                data_type::Class::Compound(data_type::Compound::Struct),
+            ) => data_type::Class::Compound(data_type::Compound::NamedStruct),
+            (a, _) => a,
+        };
+
+        data_type::DataType::new(class, nullable, variation, parameters)
+            .expect("assert_equal() failed to correctly combine types")
+    }
+}
+
+/// Asserts that two types are equal, and returns the combined type, pushing
+/// diagnostics if there is a mismatch. Warnings are used for field name
+/// mismatches, errors are used for any other difference. If either type is
+/// unresolved at any point in the tree, the other is returned. If both are
+/// unresolved, base is returned.
+pub fn assert_equal<S: AsRef<str>>(
+    context: &mut context::Context,
+    other: data_type::DataType,
+    base: data_type::DataType,
+    message: S,
+) -> data_type::DataType {
+    assert_equal_internal(context, other, base, message.as_ref(), "")
 }

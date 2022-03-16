@@ -164,7 +164,7 @@ macro_rules! handle_rel_common {
         // If common was populated and its parser succeeded (it should always
         // do that), update the type information.
         if let Some(data_type) = result {
-            data_type!($context, data_type);
+            schema!($context, data_type);
         }
     };
 }
@@ -181,10 +181,7 @@ macro_rules! handle_advanced_extension {
         .1
         .unwrap_or_default()
         {
-            data_type!(
-                $context,
-                crate::output::data_type::DataType::new_unresolved("")
-            );
+            schema!($context, crate::output::data_type::DataType::default());
         }
     };
 }

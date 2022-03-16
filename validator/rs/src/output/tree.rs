@@ -161,6 +161,13 @@ impl Node {
             _ => None,
         })
     }
+
+    /// Returns a reference to the data type that this node returns at runtime
+    /// or (for type nodes) represents. If no type information is attached, a
+    /// reference to a default-generated unresolved type is returned.
+    pub fn data_type(&self) -> &data_type::DataType {
+        self.data_type.as_ref().unwrap_or_default()
+    }
 }
 
 /// The original data type that the node represents, to (in theory) allow the

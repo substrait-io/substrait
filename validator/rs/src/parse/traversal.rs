@@ -93,7 +93,10 @@ pub fn push_comment<S: AsRef<str>>(
     context.output.data.push(tree::NodeData::Comment(comment))
 }
 
-/// Convenience/shorthand macro for pushing type information to a node.
+/// Macro form of push_data_type().
+///
+/// Note: this only exists in macro form for symmetry with the other traversal
+/// related macros.
 macro_rules! data_type {
     ($context:expr, $typ:expr) => {
         crate::parse::traversal::push_data_type($context, $typ)
@@ -108,6 +111,124 @@ pub fn push_data_type(context: &mut context::Context, data_type: data_type::Data
         .data
         .push(tree::NodeData::DataType(data_type.clone()));
     context.output.data_type = Some(data_type);
+}
+
+/// Macro form of set_schema().
+///
+/// Note: this only exists in macro form for symmetry with the other traversal
+/// related macros.
+macro_rules! schema {
+    ($context:expr, $typ:expr) => {
+        crate::parse::traversal::set_schema($context, $typ)
+    };
+}
+
+/// Updates the current schema. This also pushes the data type to the current
+/// node. Relation parsers *must* use this after traversing their inputs, but
+/// before they start to parse any expressions based on that schema; after
+/// all, the schema defines how (column) references behave. If the schema isn't
+/// known, it may be set to an unresolved type.
+pub fn set_schema(context: &mut context::Context, schema: data_type::DataType) {
+    *context
+        .state
+        .schema
+        .last_mut()
+        .expect("no schema present on schema stack") = Some(schema.clone());
+    push_data_type(context, schema);
+}
+
+/// Macro form of clear_schema().
+///
+/// Note: this only exists in macro form for symmetry with the other traversal
+/// related macros.
+macro_rules! clear_schema {
+    ($context:expr) => {
+        crate::parse::traversal::clear_schema($context)
+    };
+}
+
+/// Clears the current schema, requiring schema!() to be called before
+/// expressions can be parsed again.
+pub fn clear_schema(context: &mut context::Context) {
+    *context
+        .state
+        .schema
+        .last_mut()
+        .expect("no schema present on schema stack") = None;
+}
+
+/// Macro form of get_schema().
+///
+/// Note: this only exists in macro form for symmetry with the other traversal
+/// related macros.
+macro_rules! get_schema {
+    ($context:expr) => {
+        crate::parse::traversal::get_schema($context, 0)
+    };
+    ($context:expr, $depth:expr) => {
+        crate::parse::traversal::get_schema($context, $depth)
+    };
+}
+
+/// Returns the current schema. depth specifies for which subquery the schema
+/// should be selected; depth 0 is the current query, depth 1 would be its
+/// parent query, 2 would be its grandparent, etc. Returns Err when the
+/// referenced schema semantically doesn't exist; returns Ok(unresolved type)
+/// when it does but the actual type isn't known.
+pub fn get_schema(
+    context: &mut context::Context,
+    depth: usize,
+) -> diagnostic::Result<data_type::DataType> {
+    let len = context.state.schema.len();
+    if depth >= len {
+        Err(cause!(
+            ExpressionFieldRefMissingStream,
+            "indexing query beyond current query depth ({len})"
+        ))
+    } else if let Some(Some(schema)) = context.state.schema.get(len - depth - 1) {
+        Ok(schema.clone())
+    } else {
+        Err(cause!(
+            ExpressionFieldRefMissingStream,
+            "query data stream has not yet been instantiated"
+        ))
+    }
+}
+
+/// Macro form of enter_relation_root().
+///
+/// Note: this only exists in macro form for symmetry with the other traversal
+/// related macros.
+macro_rules! relation_root {
+    ($context:expr, $parser:expr) => {
+        crate::parse::traversal::enter_relation_root($context, $parser)
+    };
+}
+
+/// This pushes an empty slot for the schema of the relation tree onto the
+/// schema stack, allowing schema!() to be used. This must be used when
+/// traversing into the root of a relation tree; i.e., the root must be parsed
+/// within the context of the provided function.
+pub fn enter_relation_root<R, F: FnOnce(&mut context::Context) -> R>(
+    context: &mut context::Context,
+    f: F,
+) -> R {
+    // Push a schema slot onto the stack for the relation tree to fill
+    // in.
+    context.state.schema.push(None);
+
+    // Ensure that return statements can't break out of the context
+    // early by wrapping the block in a closure first.
+    let result = f(context);
+
+    // Pop the schema again.
+    context
+        .state
+        .schema
+        .pop()
+        .expect("no schema present on schema stack");
+
+    result
 }
 
 //=============================================================================

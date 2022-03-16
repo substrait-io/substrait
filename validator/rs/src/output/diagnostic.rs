@@ -226,11 +226,14 @@ pub enum Classification {
     #[strum(props(Description = "mismatched type parameters"))]
     TypeMismatchedParameters = 4002,
 
-    #[strum(props(Description = "mismatched field names"))]
-    TypeMismatchedFieldNames = 4003,
+    #[strum(props(Description = "mismatched field name associations"))]
+    TypeMismatchedFieldNameAssociations = 4003,
 
     #[strum(props(Description = "invalid swizzle operation"))]
     TypeInvalidSwizzle = 4004,
+
+    #[strum(props(Description = "mismatched types"))]
+    TypeMismatch = 4005,
 
     // Relation-related diagnostics (group 5).
     #[strum(props(HiddenDescription = "relation-related diagnostics"))]
@@ -238,6 +241,13 @@ pub enum Classification {
 
     #[strum(props(Description = "missing root relation"))]
     RelationRootMissing = 5001,
+
+    // Expression-related diagnostics (group 6).
+    #[strum(props(HiddenDescription = "expression-related diagnostics"))]
+    Expression = 6000,
+
+    #[strum(props(Description = "field reference into non-existent stream"))]
+    ExpressionFieldRefMissingStream = 6001,
 }
 
 impl Classification {

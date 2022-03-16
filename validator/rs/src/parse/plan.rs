@@ -12,6 +12,7 @@ use crate::parse::relations;
 // information.
 fn parse_rel_root(x: &substrait::RelRoot, y: &mut context::Context) -> diagnostic::Result<()> {
     proto_required_field!(x, y, input, relations::parse_rel);
+    proto_repeated_field!(x, y, names);
     Ok(())
 }
 
@@ -28,7 +29,9 @@ fn parse_rel_type(
 
 /// Parse a PlanRel node.
 fn parse_plan_rel(x: &substrait::PlanRel, y: &mut context::Context) -> diagnostic::Result<()> {
-    proto_required_field!(x, y, rel_type, parse_rel_type);
+    relation_root!(y, |y| {
+        proto_required_field!(x, y, rel_type, parse_rel_type);
+    });
     Ok(())
 }
 

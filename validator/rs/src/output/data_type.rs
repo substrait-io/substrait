@@ -22,7 +22,7 @@ pub struct DataType {
     class: Class,
 
     /// Nullability.
-    pub nullable: bool,
+    nullable: bool,
 
     /// Type variation, if any.
     variation: Variation,
@@ -79,10 +79,20 @@ impl DataType {
         })
     }
 
-    /// Creates a new unresolved type with no information known.
+    /// Creates a new unresolved type with the given description.
     pub fn new_unresolved<S: ToString>(description: S) -> DataType {
         DataType {
             class: Class::Unresolved(description.to_string()),
+            nullable: false,
+            variation: None,
+            parameters: vec![],
+        }
+    }
+
+    /// Creates a new unresolved type without description.
+    pub const fn new_default() -> DataType {
+        DataType {
+            class: Class::Unresolved(String::new()),
             nullable: false,
             variation: None,
             parameters: vec![],
@@ -104,6 +114,11 @@ impl DataType {
         &self.class
     }
 
+    /// Returns whether the type is nullable.
+    pub fn nullable(&self) -> bool {
+        self.nullable
+    }
+
     /// Returns the type variation.
     pub fn variation(&self) -> &Variation {
         &self.variation
@@ -112,6 +127,12 @@ impl DataType {
     /// Returns the type parameters.
     pub fn parameters(&self) -> &Vec<Parameter> {
         &self.parameters
+    }
+
+    /// Unpacks the data type into its raw parts, in the same way they are
+    /// passed to new().
+    pub fn into_parts(self) -> (Class, bool, Variation, Vec<Parameter>) {
+        (self.class, self.nullable, self.variation, self.parameters)
     }
 
     /// Returns whether this is an unresolved type.
@@ -249,7 +270,7 @@ impl DataType {
         let mut names = names.iter();
         let mut namer = || {
             names.next().map(|s| s.to_string()).ok_or(cause!(
-                TypeMismatchedFieldNames,
+                TypeMismatchedFieldNameAssociations,
                 "received too few field name(s)"
             ))
         };
@@ -257,7 +278,7 @@ impl DataType {
         let remainder = names.count();
         if remainder > 0 {
             Err(cause!(
-                TypeMismatchedFieldNames,
+                TypeMismatchedFieldNameAssociations,
                 "received {} too many field name(s)",
                 remainder
             ))
@@ -269,7 +290,14 @@ impl DataType {
 
 impl Default for DataType {
     fn default() -> Self {
-        Self::new_unresolved("")
+        Self::new_default()
+    }
+}
+
+impl Default for &DataType {
+    fn default() -> Self {
+        static DEFAULT: DataType = DataType::new_default();
+        &DEFAULT
     }
 }
 
@@ -287,9 +315,12 @@ pub trait TypeResolver {
 }
 
 /// Trait for checking the type parameters for a base type.
-trait ParameterChecker {
+pub trait ParameterInfo {
     /// Checks whether the given parameter set is valid for this base type.
     fn check_parameters(&self, params: &[Parameter]) -> diagnostic::Result<()>;
+
+    /// Returns the logical name of the given parameter.
+    fn parameter_name(&self, index: usize) -> Option<String>;
 }
 
 impl DataType {
@@ -342,7 +373,7 @@ impl std::fmt::Display for Class {
     }
 }
 
-impl ParameterChecker for Class {
+impl ParameterInfo for Class {
     fn check_parameters(&self, params: &[Parameter]) -> diagnostic::Result<()> {
         match self {
             Class::Simple(_) => {
@@ -367,6 +398,14 @@ impl ParameterChecker for Class {
                 }
             }
             Class::Unresolved(_) => Ok(()),
+        }
+    }
+
+    fn parameter_name(&self, index: usize) -> Option<String> {
+        if let Class::Compound(compound) = self {
+            compound.parameter_name(index)
+        } else {
+            None
         }
     }
 }
@@ -408,7 +447,7 @@ pub enum Compound {
     Map,
 }
 
-impl ParameterChecker for Compound {
+impl ParameterInfo for Compound {
     fn check_parameters(&self, params: &[Parameter]) -> diagnostic::Result<()> {
         match self {
             Compound::FixedChar | Compound::VarChar | Compound::FixedBinary => {
@@ -538,6 +577,22 @@ impl ParameterChecker for Compound {
         }
         Ok(())
     }
+
+    fn parameter_name(&self, index: usize) -> Option<String> {
+        match (self, index) {
+            (Compound::FixedChar, 0) => Some(String::from("length")),
+            (Compound::VarChar, 0) => Some(String::from("length")),
+            (Compound::FixedBinary, 0) => Some(String::from("length")),
+            (Compound::Decimal, 0) => Some(String::from("precision")),
+            (Compound::Decimal, 1) => Some(String::from("scale")),
+            (Compound::Struct, i) => Some(format!("{}", i)),
+            (Compound::NamedStruct, i) => Some(format!("{}", i)),
+            (Compound::List, 0) => Some(String::from("element")),
+            (Compound::Map, 0) => Some(String::from("key")),
+            (Compound::Map, 1) => Some(String::from("value")),
+            (_, _) => None,
+        }
+    }
 }
 
 /// Parameter for parameterized types.
@@ -575,6 +630,14 @@ impl Parameter {
         match self {
             Parameter::NamedType(n, t) => (Parameter::Type(t), Some(n)),
             p => (p, None),
+        }
+    }
+
+    /// Returns the name of a named type parameter.
+    pub fn get_name(&self) -> Option<&str> {
+        match self {
+            Parameter::NamedType(n, _) => Some(n),
+            _ => None,
         }
     }
 

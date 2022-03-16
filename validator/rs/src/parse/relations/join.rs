@@ -10,6 +10,7 @@
 //! See <https://substrait.io/relations/logical_relations/#join-operation>
 
 use crate::input::proto::substrait;
+use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::parse::context;
 
@@ -19,7 +20,8 @@ pub fn parse_join_rel(x: &substrait::JoinRel, y: &mut context::Context) -> diagn
     let _left_type = handle_rel_input!(x, y, left);
     let _right_type = handle_rel_input!(x, y, right);
 
-    // TODO
+    // TODO: derive schema.
+    schema!(y, data_type::DataType::default());
 
     // Handle the common field.
     handle_rel_common!(x, y);

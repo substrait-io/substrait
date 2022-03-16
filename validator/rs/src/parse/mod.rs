@@ -8,13 +8,15 @@
 //! [`output`](crate::output) module. In doing so, it parses and validates the
 //! plan.
 //!
+//! # Traversal
+//!
 //! Most of the boilerplate code for tree traversal is handled by the
 //! [`traversal`] module. What remains are "parse functions" of the form
 //! `(x: &T, y: &mut Context) -> Result<R>`, where:
 //!
 //!  - `x` is a reference to the the JSON/YAML value or the prost wrapper for
 //!    the protobuf message that is to be parsed and validated;
-//!  - `y` is the parse context; and
+//!  - `y` is the parse context ([`context::Context`]); and
 //!  - `R` is any desired return type.
 //!
 //! The body of the parse function can use a wide variety of function-like
@@ -28,6 +30,8 @@
 //! diagnostic that these children were not validated), and that traversing a
 //! child twice is illegal (this will panic).
 //!
+//!
+//!
 //! If the parse function fails in an unrecoverable way, it can return Err via
 //! `?`. When it does this, the [`traversal`] macros takes care of pushing an
 //! appropriate diagnostic into the output tree. For recoverable errors or other
@@ -35,8 +39,115 @@
 //! pushed into the output tree via [`comment!`], [`link!`], and
 //! [`data_type!`].
 //!
-//! The reference to the [`context::Context`] object can also be used directly.
-//! It contains the following things:
+//! # Parser context
+//!
+//! The mutable [`context::Context`] reference that is passed into every parse
+//! function and is needed for every traversal macro stores all contextual
+//! information needed for parsing (except for the input). In most cases, it
+//! doesn't have to be accessed directly; the [`traversal`] macros hide as much
+//! of the grunt work as possible.
+//!
+//! ## Diagnostics
+//!
+//! Rather than just passing `Result`s around, diagnostics are used to
+//! communicate whether a plan is valid or not. This solves two problems:
+//!
+//!  - distinguishing between messages signalling provable invalidity
+//!    (errors), messages signalling inability to determine validity
+//!    (warnings), and messages that are just intended to provide extra
+//!    information to the user;
+//!  - returning as many diagnostics as possible, rather than just stopping
+//!    at the first sight of trouble.
+//!
+//! Diagnostics can be pushed into the parser context using the [`diagnostic!`]
+//! and [`ediagnostic!`] macros. The latter allows third-party `Err` types to
+//! be pushed as the message, the former uses a [format!] syntax. However,
+//! sometimes it also very useful to just use the `?` operator for something.
+//! Therefore, parse functions also return
+//! [`diagnostic::Result<T>`](crate::output::diagnostic::Result). This result
+//! is taken care of by the traversal macros; when `Err`, the diagnostic cause
+//! is simply pushed as an error. This also suppresses the usual "unknown
+//! field" warning emitted when a parse function failed to traverse all its
+//! children; after all, it probably exited early.
+//!
+//! More information about all the information recorded in a diagnostic can be
+//! found in the docs for the [diagnostic](crate::output::diagnostic) module.
+//!
+//! Beyond diagnostics, it's also possible to push comments into the context.
+//! This can be done using the [`comment!`] and [`link!`] macros. (TODO at the
+//! time of writing: comments actually support an arbitrary list of
+//! plaintext/node link/URL spans, but the macros only support a single span
+//! so far).
+//!
+//! ## Data types
+//!
+//! Data type information gets some special treatment, because it is so
+//! important for validation. It's also very useful to have when debugging a
+//! tree. It's considered so important that each
+//! [`Node`](crate::output::tree::Node) has a place where it can store its
+//! "return type". What this type actually represents depends on the type of
+//! node:
+//!
+//!  - type nodes: the represented type;
+//!  - expression nodes: the returned type;
+//!  - relation nodes: the schema (automatically set by [schema!]).
+//!
+//! The data type can be set using the [data_type!] macro. Note that all
+//! of the parsers for the above node types should call [data_type!] at
+//! least once, even if they're unable to determine what the actual type is;
+//! in the latter case they can just push an unresolved type (for example
+//! using `Default`, but additional information can be attached using
+//! `new_unresolved()`).
+//!
+//! [data_type!] may be called more than once for a single node. The data
+//! type of the node will simply be the last one that was set when parsing
+//! for that node completes. However, each call also records the data type
+//! as a special type of child of the node, making the complete history of
+//! [data_type!] calls visible in the resulting parse tree.
+//!
+//! ## Schemas
+//!
+//! Perhaps even more important than data types in general are schemas; in
+//! general, in order to be able to determine the data type returned by an
+//! expression, contextual information about the schema(s) of the data
+//! stream(s) being operated on needs to be known. Moreover, the context in
+//! which an expression is evaluated may contain more than one schema when
+//! subqueries get involved.
+//!
+//! This information is tracked in the schema stack. The logic for mutating
+//! this stack is fully contained in the [relation_root!], [schema!], an
+//!  [clear_schema!] macros, which are to be used as follows.
+//!
+//!  - The root node of a relation tree must be parsed within the context
+//!    created by [relation_root!]. This macro ensures that a schema is pushed
+//!    onto the stack prior to traversal of the relation tree, and popped after
+//!    traversal completes. Initially, the schema is set to an unresolved type,
+//!    but the actual type should not matter at this stage, because it
+//!    semantically doesn't exist until the first leaf in the relation tree is
+//!    parsed.
+//!  - All relations call [clear_schema!] prior to any relation-specific logic
+//!    (this is done by the RelType parse function), because semantically, no
+//!    schema exists prior to parsing a relation.
+//!  - [schema!] sets or updates the current schema. It must be called every
+//!    time the data stream is functionally updated, and just after the data
+//!    stream is first created by leaf relations. Relations that combine data
+//!    streams should call it just after traversal of its data sources
+//!    completes (otherwise the active schema will be whatever the schema of
+//!    the most recently parsed data source turned out to be). Doing so will
+//!    also push the data type corresponding to the schema to the node, such
+//!    that the final tree contains a type node for every semantic change of
+//!    the data stream for debugging/documentation purposes.
+//!
+//! The current schema information can be retrieved using [get_schema!].
+//! Calling it with only the current parse context as argument yields the
+//! schema of the current query; i.e., the innermost subquery. An integer
+//! argument can be added to specify how many subqueries to break out of; 0
+//! is (again) the current subquery, 1 is its parent query, 2 is its
+//! grandparent, and so on.
+//!
+//! ## How the parser context works
+//!
+//! A context object contains the following things:
 //!
 //!  - [`output: &mut tree::Node`](crate::output::tree::Node), a mutable
 //!    reference to the node in the output tree that we're writing to. Note
@@ -44,9 +155,9 @@
 //!    [`Node`](crate::output::tree::Node) already populated with the default
 //!    [`NodeType`](crate::output::tree::NodeType) before calling the parse
 //!    function, including a copy of the primitive data element for leaf nodes,
-//!    and everything else can be added using the [`traversal`] macros, so you
-//!    shouldn't normally need to access this. Exceptions exist, however, for
-//!    example when an integer primitive needs to be upgraded to an anchor
+//!    and almost everything else can be added using the [`traversal`] macros,
+//!    so you shouldn't normally have to mutate this. Exceptions exist, however,
+//!    for example when an integer primitive needs to be upgraded to an anchor
 //!    reference.
 //!  - [`state: &mut context::State`](context::State), a mutable reference to a
 //!    global state structure for the parser. This includes, for instance,

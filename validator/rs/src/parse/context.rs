@@ -6,10 +6,6 @@
 //! Refer to the documentation for [`parse`](mod@crate::parse) for more
 //! information.
 
-// FIXME: remove once validation code is finished.
-#![allow(dead_code)]
-#![allow(unused_macros)]
-
 use crate::input::config;
 use crate::output::data_type;
 use crate::output::extension;
@@ -71,7 +67,11 @@ pub struct State {
     /// determine the return type of the FieldRef. The back of the vector
     /// represents the innermost query, while entries further to the front
     /// of the vector are used to break out of correlated subqueries.
-    pub schema: Vec<data_type::DataType>,
+    /// None is used only for the top of the stack, and only when we're inside
+    /// a relation tree, but no schema is known yet (in terms of dataflow,
+    /// we're still in the time before the input relation has created a
+    /// stream).
+    pub schema: Vec<Option<data_type::DataType>>,
 
     /// The YAML data object under construction, if any.
     pub yaml_data: Option<extension::YamlData>,
@@ -118,65 +118,4 @@ impl Breadcrumb<'_> {
             fields_parsed: HashSet::new(),
         }
     }
-}
-
-/// Convenience/shorthand macro for the with_context function. Intended for use
-/// within tests, where a temporary parse context is needed.
-macro_rules! with_context {
-    ($function:expr, ()) => {
-        with_context!(&mut crate::parse::context::State::default(), $function, ())
-    };
-    ($function:expr, ($($args:expr),*)) => {
-        with_context!(&mut crate::parse::context::State::default(), $function, ($($args),*))
-    };
-    (config = $config:expr, $function:expr, ()) => {
-        with_context!(&mut crate::parse::context::State::default(), $config, $function, ())
-    };
-    (config = $config:expr, $function:expr, ($($args:expr),*)) => {
-        with_context!(&mut crate::parse::context::State::default(), $config, $function, ($($args),*))
-    };
-    ($state:expr, $function:expr, ()) => {
-        with_context!($state, &crate::parse::context::Config::default(), $function, ())
-    };
-    ($state:expr, $function:expr, ($($args:expr),*)) => {
-        with_context!($state, &crate::parse::context::Config::default(), $function, ($($args),*))
-    };
-    ($state:expr, $config:expr, $function:expr, ()) => {
-        crate::parse::context::with_context(
-            $state,
-            $config,
-            $function,
-        )
-    };
-    ($state:expr, $config:expr, $function:expr, ($($args:expr),*)) => {
-        crate::parse::context::with_context(
-            $state,
-            $config,
-            |y| $function($($args),*, y),
-        )
-    };
-}
-
-// Creates a temporary context and calls a function with it.
-pub fn with_context<R, F: FnOnce(&mut Context) -> R>(
-    state: &mut State,
-    config: &config::Config,
-    function: F,
-) -> (R, tree::Node) {
-    // Create the root node for the output.
-    let mut output = tree::NodeType::ProtoMessage("temp").into();
-
-    // Create a temporary context.
-    let mut context = Context {
-        output: &mut output,
-        state,
-        breadcrumb: &mut Breadcrumb::new("temp"),
-        config,
-    };
-
-    // Call the function.
-    let result = function(&mut context);
-
-    // Return the results.
-    (result, output)
 }
