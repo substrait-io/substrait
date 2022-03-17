@@ -186,6 +186,7 @@ pub mod traversal;
 #[macro_use]
 pub mod context;
 
+mod expressions;
 mod extensions;
 mod plan;
 mod relations;

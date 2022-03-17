@@ -132,6 +132,24 @@ impl DataType {
         &self.parameters
     }
 
+    /// Returns the value of the given integer parameter.
+    pub fn int_parameter(&self, index: usize) -> Option<u64> {
+        if let Some(Parameter::Unsigned(value)) = self.parameters.get(index) {
+            Some(*value)
+        } else {
+            None
+        }
+    }
+
+    /// Returns the value of the given type parameter.
+    pub fn type_parameter(&self, index: usize) -> Option<Arc<DataType>> {
+        match self.parameters.get(index) {
+            Some(Parameter::Type(t)) => Some(t.clone()),
+            Some(Parameter::NamedType(_, t)) => Some(t.clone()),
+            _ => None,
+        }
+    }
+
     /// Returns whether this is an unresolved type.
     pub fn is_unresolved(&self) -> bool {
         matches!(self.class, Class::Unresolved(_))

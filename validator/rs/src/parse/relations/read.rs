@@ -14,6 +14,7 @@ use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::output::primitive_data;
 use crate::parse::context;
+use crate::parse::expressions::field_reference;
 use crate::parse::extensions;
 use crate::parse::types;
 
@@ -154,6 +155,7 @@ pub fn parse_read_rel(x: &substrait::ReadRel, y: &mut context::Context) -> diagn
 
     // Handle projection.
     // TODO
+    proto_field!(x, y, projection, field_reference::parse_mask_expression);
 
     // Describe the relation.
     match (x.filter.is_some(), x.projection.is_some()) {
