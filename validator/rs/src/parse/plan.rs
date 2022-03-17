@@ -37,9 +37,9 @@ fn parse_plan_rel(x: &substrait::PlanRel, y: &mut context::Context) -> diagnosti
 
 /// Toplevel parse function for a plan.
 pub fn parse_plan(x: &substrait::Plan, y: &mut context::Context) -> diagnostic::Result<()> {
-    // Handle extensions that we need in order to understand the relations
-    // first.
-    extensions::parse_extensions_before_relations(x, y);
+    // Handle extensions first, because we'll need their declarations to
+    // correctly interpret the relations.
+    extensions::parse_plan(x, y);
 
     // Handle the relations.
     let num_relations = proto_repeated_field!(x, y, relations, parse_plan_rel)
@@ -54,8 +54,9 @@ pub fn parse_plan(x: &substrait::Plan, y: &mut context::Context) -> diagnostic::
         );
     }
 
-    // Handle the remainder of the extensions after parsing.
-    extensions::parse_extensions_after_relations(x, y);
+    // Generate an Info diagnostic for every extension definition that wasn't
+    // used at any point, and can thus be safely removed.
+    extensions::check_unused_definitions(y);
 
     Ok(())
 }

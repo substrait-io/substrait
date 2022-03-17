@@ -172,9 +172,6 @@ pub enum Classification {
     #[strum(props(Description = "encountered a protobuf \"any\""))]
     ProtoAny = 1004,
 
-    #[strum(props(Description = "redundant protobuf \"any\" declaration"))]
-    ProtoRedundantAnyDeclaration = 1005,
-
     #[strum(props(Description = "missing protobuf \"any\" declaration"))]
     ProtoMissingAnyDeclaration = 1006,
 
@@ -248,6 +245,27 @@ pub enum Classification {
 
     #[strum(props(Description = "field reference into non-existent stream"))]
     ExpressionFieldRefMissingStream = 6001,
+
+    // Redundant declarations (group 7).
+    #[strum(props(
+        HiddenDescription = "diagnostics for pointing out parts of the plan that can be removed without changing its semantics"
+    ))]
+    Redundant = 7000,
+
+    #[strum(props(Description = "redundant protobuf \"any\" declaration"))]
+    RedundantProtoAnyDeclaration = 7001,
+
+    #[strum(props(Description = "redundant extension URI definition"))]
+    RedundantExtensionDefition = 7002,
+
+    #[strum(props(Description = "redundant function declaration"))]
+    RedundantFunctionDeclaration = 7003,
+
+    #[strum(props(Description = "redundant type declaration"))]
+    RedundantTypeDeclaration = 7004,
+
+    #[strum(props(Description = "redundant type variation declaration"))]
+    RedundantTypeVariationDeclaration = 7005,
 }
 
 impl Classification {

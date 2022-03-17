@@ -35,7 +35,7 @@ fn parse_type_variation_reference(
     if *x == 0 {
         Ok(None)
     } else {
-        Some(extensions::parse_type_variation_reference(x, y)).transpose()
+        Some(extensions::simple::parse_type_variation_reference(x, y)).transpose()
     }
 }
 
@@ -449,7 +449,7 @@ pub fn parse_map(x: &substrait::r#type::Map, y: &mut context::Context) -> diagno
 /// Parses a user-defined type.
 pub fn parse_user_defined(x: &u32, y: &mut context::Context) -> diagnostic::Result<()> {
     // Parse fields.
-    let user_type = extensions::parse_type_reference(x, y)
+    let user_type = extensions::simple::parse_type_reference(x, y)
         .map_err(|e| diagnostic!(y, Error, e))
         .ok();
 

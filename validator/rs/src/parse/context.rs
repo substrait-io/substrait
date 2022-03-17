@@ -15,6 +15,8 @@ use crate::output::path;
 use crate::output::tree;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::fmt::Debug;
+use std::hash::Hash;
 use std::sync::Arc;
 
 /// Parse/validation context and output node, passed to parser functions along
@@ -251,105 +253,136 @@ impl<'a> Context<'a> {
         &self.output.data
     }
 
-    /// Registers a URI anchor. If the anchor index was already defined, this
-    /// returns the conflicting entry.
-    pub fn register_uri(
+    /// Returns the resolver for URI anchors and references.
+    pub fn extension_uris(&mut self) -> &mut Resolver<u32, Arc<extension::YamlInfo>> {
+        &mut self.state.extension_uris
+    }
+
+    /// Registers an extension URI definition. Shorthand for uris().define(),
+    /// using the current path as the registration path.
+    pub fn define_extension_uri(
         &mut self,
         anchor: u32,
         uri: Arc<extension::YamlInfo>,
-    ) -> Option<Arc<extension::YamlInfo>> {
-        self.state.uris.insert(anchor, uri)
+    ) -> Result<(), (Arc<extension::YamlInfo>, path::PathBuf)> {
+        self.state
+            .extension_uris
+            .define(anchor, uri, self.breadcrumb.path.to_path_buf())
     }
 
-    /// Resolves a URI reference.
-    pub fn resolve_uri(&self, reference: u32) -> Option<&Arc<extension::YamlInfo>> {
-        self.state.uris.get(&reference)
+    /// Returns the resolver for function anchors and references.
+    pub fn fns(&mut self) -> &mut Resolver<u32, Arc<extension::Reference<extension::Function>>> {
+        &mut self.state.functions
     }
 
-    /// Registers a function anchor. If the anchor index was already defined,
-    /// this returns the conflicting entry.
-    pub fn register_fn(
+    /// Registers a function definition. Shorthand for fns().define(), using
+    /// the current path as the registration path.
+    pub fn define_fn(
         &mut self,
         anchor: u32,
         uri: Arc<extension::Reference<extension::Function>>,
-    ) -> Option<Arc<extension::Reference<extension::Function>>> {
-        self.state.functions.insert(anchor, uri)
+    ) -> Result<
+        (),
+        (
+            Arc<extension::Reference<extension::Function>>,
+            path::PathBuf,
+        ),
+    > {
+        self.state
+            .functions
+            .define(anchor, uri, self.breadcrumb.path.to_path_buf())
     }
 
-    /// Resolves a function reference.
-    pub fn resolve_fn(
-        &self,
-        reference: u32,
-    ) -> Option<&Arc<extension::Reference<extension::Function>>> {
-        self.state.functions.get(&reference)
+    /// Returns the resolver for type anchors and references.
+    pub fn types(&mut self) -> &mut Resolver<u32, Arc<extension::Reference<extension::DataType>>> {
+        &mut self.state.types
     }
 
-    /// Registers a type anchor. If the anchor index was already defined, this
-    /// returns the conflicting entry.
-    pub fn register_type(
+    /// Registers a type definition. Shorthand for fns().define(), using the
+    /// current path as the registration path.
+    pub fn define_type(
         &mut self,
         anchor: u32,
         uri: Arc<extension::Reference<extension::DataType>>,
-    ) -> Option<Arc<extension::Reference<extension::DataType>>> {
-        self.state.types.insert(anchor, uri)
+    ) -> Result<
+        (),
+        (
+            Arc<extension::Reference<extension::DataType>>,
+            path::PathBuf,
+        ),
+    > {
+        self.state
+            .types
+            .define(anchor, uri, self.breadcrumb.path.to_path_buf())
     }
 
-    /// Resolves a type reference.
-    pub fn resolve_type(
-        &self,
-        reference: u32,
-    ) -> Option<&Arc<extension::Reference<extension::DataType>>> {
-        self.state.types.get(&reference)
+    /// Returns the resolver for type variation anchors and references.
+    pub fn tvars(
+        &mut self,
+    ) -> &mut Resolver<u32, Arc<extension::Reference<extension::TypeVariation>>> {
+        &mut self.state.type_variations
     }
 
-    /// Registers a type variation anchor. If the anchor index was already
-    /// defined, this returns the conflicting entry.
-    pub fn register_tvar(
+    /// Registers a type definition. Shorthand for fns().define(), using the
+    /// current path as the registration path.
+    pub fn define_tvar(
         &mut self,
         anchor: u32,
         uri: Arc<extension::Reference<extension::TypeVariation>>,
-    ) -> Option<Arc<extension::Reference<extension::TypeVariation>>> {
-        self.state.type_variations.insert(anchor, uri)
+    ) -> Result<
+        (),
+        (
+            Arc<extension::Reference<extension::TypeVariation>>,
+            path::PathBuf,
+        ),
+    > {
+        self.state
+            .type_variations
+            .define(anchor, uri, self.breadcrumb.path.to_path_buf())
     }
 
-    /// Resolves a type variation reference.
-    pub fn resolve_tvar(
-        &self,
-        reference: u32,
-    ) -> Option<&Arc<extension::Reference<extension::TypeVariation>>> {
-        self.state.type_variations.get(&reference)
+    /// Returns the resolver for protobuf Any types present in the
+    /// `expected_type_urls` manifest.
+    pub fn proto_any_types(&mut self) -> &mut Resolver<String, ()> {
+        &mut self.state.proto_any_types
+    }
+
+    /// Defines a protobuf Any type URL, allowing it for use within the plan.
+    /// If the type was already declared, this returns the path that defined
+    /// it in the form of an Err result.
+    pub fn define_proto_any_type<S: ToString>(&mut self, url: S) -> Result<(), path::PathBuf> {
+        self.state
+            .proto_any_types
+            .define(url.to_string(), (), self.breadcrumb.path.to_path_buf())
+            .map_err(|(_, p)| p)
+    }
+
+    /// Resolves a protobuf "any" message. The first return value specifies
+    /// whether usage of the type was explicitly allowed in the validator
+    /// configuration. The second return value specifies the path to the
+    /// manifest entry for the type, if it was defined. If the type URL does
+    /// not exist in the manifest, a suitable error is generated automatically.
+    pub fn resolve_proto_any(&mut self, x: &prost_types::Any) -> (bool, Option<path::PathBuf>) {
+        let path = self
+            .state
+            .proto_any_types
+            .resolve(&x.type_url)
+            .map(|(_, path)| path.clone());
+        if path.is_none() {
+            diagnostic!(self, Error, ProtoMissingAnyDeclaration, "{}", x.type_url);
+        }
+        let allowed = self
+            .config
+            .allowed_proto_any_urls
+            .iter()
+            .any(|p| p.matches(&x.type_url));
+        (allowed, path)
     }
 
     /// Returns a mutable reference to the YAML data object under construction,
     /// if any.
     pub fn yaml_data(&mut self) -> &mut Option<extension::YamlData> {
         &mut self.state.yaml_data
-    }
-
-    /// Resolves a protobuf "any" message. Returns whether the user has
-    /// explicitly allowed this message type for use.
-    pub fn resolve_any(&mut self, x: &prost_types::Any) -> bool {
-        self.state
-            .pending_proto_url_dependencies
-            .entry(x.type_url.clone())
-            .or_insert_with(|| self.breadcrumb.path.to_path_buf());
-        self.config
-            .allowed_proto_any_urls
-            .iter()
-            .any(|p| p.matches(&x.type_url))
-    }
-
-    /// Protobuf "any" URLs depended on, that we have not encountered a
-    /// declaration for yet (we check the declarations at the end). The
-    /// path refers to the first use of that URL.
-    pub fn pending_proto_url_dependencies(&mut self) -> &mut HashMap<String, path::PathBuf> {
-        &mut self.state.pending_proto_url_dependencies
-    }
-
-    /// Protobuf "any" URLs that have been declared in the plan. The path
-    /// refers to the declaration.
-    pub fn proto_url_declarations(&mut self) -> &mut HashMap<String, path::PathBuf> {
-        &mut self.state.proto_url_declarations
     }
 
     /// Returns the path leading up to the current node.
@@ -386,29 +419,85 @@ impl<'a> Context<'a> {
     }
 }
 
+#[derive(Clone, Debug, Default)]
+pub struct Resolver<K, V>
+where
+    K: Clone + Debug + Default + Eq + Hash,
+    V: Clone + Debug + Default,
+{
+    /// Map of keys that have been registered thus far to their value and to
+    /// the path from which they were registered.
+    map: HashMap<K, (V, path::PathBuf)>,
+
+    /// The set of keys for which resolve() was called at least once. Used to
+    /// detect unused keys.
+    used: HashSet<K>,
+}
+
+impl<K, V> Resolver<K, V>
+where
+    K: Clone + Debug + Default + Eq + Hash,
+    V: Clone + Debug + Default,
+{
+    /// Creates a new resolver.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Defines a key-value-path triplet. If a key was previously defined, its
+    /// entry is overridden, and the previous value-path pair is returned
+    /// in the form of an Err result.
+    pub fn define(
+        &mut self,
+        key: K,
+        value: V,
+        path: path::PathBuf,
+    ) -> Result<(), (V, path::PathBuf)> {
+        if let Some(previous) = self.map.insert(key, (value, path)) {
+            Err(previous)
+        } else {
+            Ok(())
+        }
+    }
+
+    /// Resolves the given key to its value-path pair. If no value was
+    /// registered for the given key, None is returned. If this was the first
+    /// use of this key (regardless of whether or not a value was registered
+    /// for it yet), it is recorded in the set of used keys.
+    pub fn resolve(&mut self, key: &K) -> Option<&(V, path::PathBuf)> {
+        self.used.insert(key.clone());
+        self.map.get(key)
+    }
+
+    /// Iterates over all key-value-path triplets corresponding to def
+    pub fn iter_unused(&self) -> impl Iterator<Item = (K, V, path::PathBuf)> + '_ {
+        self.map.iter().filter_map(|(k, (v, p))| {
+            if self.used.contains(k) {
+                Some((k.clone(), v.clone(), p.clone()))
+            } else {
+                None
+            }
+        })
+    }
+}
+
 /// Global state information tracked by the validation logic.
 #[derive(Default)]
 pub struct State {
-    /// YAML extension URI map.
-    pub uris: HashMap<u32, Arc<extension::YamlInfo>>,
+    /// URI anchor resolver.
+    pub extension_uris: Resolver<u32, Arc<extension::YamlInfo>>,
 
-    /// YAML-defined function set, indexed by anchor.
-    pub functions: HashMap<u32, Arc<extension::Reference<extension::Function>>>,
+    /// YAML-defined function anchor resolver.
+    pub functions: Resolver<u32, Arc<extension::Reference<extension::Function>>>,
 
-    /// YAML-defined function set, indexed by anchor.
-    pub types: HashMap<u32, Arc<extension::Reference<extension::DataType>>>,
+    /// YAML-defined data type anchor resolver.
+    pub types: Resolver<u32, Arc<extension::Reference<extension::DataType>>>,
 
-    /// YAML-defined function set, indexed by anchor.
-    pub type_variations: HashMap<u32, Arc<extension::Reference<extension::TypeVariation>>>,
+    /// YAML-defined type variation anchor resolver.
+    pub type_variations: Resolver<u32, Arc<extension::Reference<extension::TypeVariation>>>,
 
-    /// Protobuf "any" URLs depended on, that we have not encountered a
-    /// declaration for yet (we check the declarations at the end). The
-    /// path refers to the first use of that URL.
-    pub pending_proto_url_dependencies: HashMap<String, path::PathBuf>,
-
-    /// Protobuf "any" URLs that have been declared in the plan. The path
-    /// refers to the declaration.
-    pub proto_url_declarations: HashMap<String, path::PathBuf>,
+    /// Protobuf Any type URL resolver.
+    pub proto_any_types: Resolver<String, ()>,
 
     /// Schema stack. This is what the validator for FieldRefs uses to
     /// determine the return type of the FieldRef. The back of the vector

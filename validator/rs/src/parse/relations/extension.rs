@@ -22,7 +22,7 @@ pub fn parse_extension_single_rel(
     y.set_schema(Arc::default());
 
     // Parse the extension data.
-    proto_required_field!(x, y, detail, extensions::parse_functional_any);
+    proto_required_field!(x, y, detail, extensions::advanced::parse_functional_any);
 
     // Handle the common field.
     handle_rel_common!(x, y);
@@ -42,7 +42,7 @@ pub fn parse_extension_multi_rel(
     y.set_schema(Arc::default());
 
     // Parse the extension data.
-    proto_required_field!(x, y, detail, extensions::parse_functional_any);
+    proto_required_field!(x, y, detail, extensions::advanced::parse_functional_any);
 
     // Handle the common field.
     handle_rel_common!(x, y);
@@ -59,7 +59,7 @@ pub fn parse_extension_leaf_rel(
     y.set_schema(Arc::default());
 
     // Parse the extension data.
-    proto_required_field!(x, y, detail, extensions::parse_functional_any);
+    proto_required_field!(x, y, detail, extensions::advanced::parse_functional_any);
 
     // Handle the common field.
     handle_rel_common!(x, y);

@@ -40,7 +40,7 @@ fn parse_stats(
         x,
         y,
         advanced_extension,
-        crate::parse::extensions::parse_advanced_extension
+        crate::parse::extensions::advanced::parse_advanced_extension
     );
     Ok(())
 }
@@ -54,7 +54,7 @@ fn parse_runtime_constraint(
         x,
         y,
         advanced_extension,
-        crate::parse::extensions::parse_advanced_extension
+        crate::parse::extensions::advanced::parse_advanced_extension
     );
     Ok(())
 }
@@ -67,7 +67,7 @@ fn parse_hint(x: &substrait::rel_common::Hint, y: &mut context::Context) -> diag
         x,
         y,
         advanced_extension,
-        crate::parse::extensions::parse_advanced_extension
+        crate::parse::extensions::advanced::parse_advanced_extension
     );
     Ok(())
 }
@@ -121,7 +121,7 @@ pub fn parse_rel_common(
         x,
         y,
         advanced_extension,
-        crate::parse::extensions::parse_advanced_extension
+        crate::parse::extensions::advanced::parse_advanced_extension
     )
     .1
     .unwrap_or_default()
@@ -170,7 +170,7 @@ macro_rules! handle_advanced_extension {
             $input,
             $context,
             advanced_extension,
-            crate::parse::extensions::parse_advanced_extension
+            crate::parse::extensions::advanced::parse_advanced_extension
         )
         .1
         .unwrap_or_default()
