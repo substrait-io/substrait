@@ -73,6 +73,29 @@ macro_rules! link {
     };
 }
 
+/// Convenience/shorthand macro for setting descriptive information for a node.
+macro_rules! describe {
+    ($context:expr, $class:ident, $($fmts:expr),*) => {
+        $context.set_description(crate::output::tree::Class::$class, Some(format!($($fmts),*)))
+    };
+}
+
+/// Convenience/shorthand macro for appending plain text to the summary of a
+/// node.
+macro_rules! summary {
+    ($context:expr, $($fmts:expr),*) => {
+        $context.push_summary(format!($($fmts),*))
+    };
+}
+
+/// Convenience/shorthand macro for appending linked text to the summary of a
+/// node.
+macro_rules! summary_link {
+    ($context:expr, $path:expr, $($fmts:expr),*) => {
+        $context.push_summary(crate::output::comment::Comment::new().link(format!($($fmts),*), $path))
+    };
+}
+
 //=============================================================================
 // Generic code for field handling
 //=============================================================================

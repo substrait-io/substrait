@@ -31,10 +31,24 @@ impl From<&tree::Node> for validator::Node {
     fn from(node: &tree::Node) -> Self {
         Self {
             node_type: Some((&node.node_type).into()),
+            class: (&node.class).into(),
+            brief: node.brief.as_ref().map(|x| x.into()),
+            summary: node.summary.as_ref().map(|x| x.into()),
             data_type: node.data_type.as_ref().map(|x| x.as_ref().into()),
-            relation: None, // TODO, doesn't exist in tree yet
             data: node.data.iter().map(|x| x.into()).collect(),
         }
+    }
+}
+
+impl From<&tree::Class> for i32 {
+    fn from(class: &tree::Class) -> Self {
+        match class {
+            tree::Class::Misc => validator::node::Class::Unspecified,
+            tree::Class::Type => validator::node::Class::Type,
+            tree::Class::Expression => validator::node::Class::Expression,
+            tree::Class::Relation => validator::node::Class::Relation,
+        }
+        .into()
     }
 }
 
@@ -93,7 +107,45 @@ impl From<&diagnostic::Level> for i32 {
 impl From<&comment::Comment> for validator::Comment {
     fn from(node: &comment::Comment) -> Self {
         Self {
-            spans: node.spans.iter().map(|x| x.into()).collect(),
+            elements: node.elements.iter().map(|x| x.into()).collect(),
+        }
+    }
+}
+
+impl From<&comment::Brief> for validator::Comment {
+    fn from(node: &comment::Brief) -> Self {
+        Self {
+            elements: node
+                .spans
+                .iter()
+                .map(|x| validator::comment::Element {
+                    kind: Some(validator::comment::element::Kind::Span(x.into())),
+                })
+                .collect(),
+        }
+    }
+}
+
+impl From<&comment::Element> for validator::comment::Element {
+    fn from(node: &comment::Element) -> Self {
+        validator::comment::Element {
+            kind: Some(match node {
+                comment::Element::Span(span) => {
+                    validator::comment::element::Kind::Span(span.into())
+                }
+                comment::Element::NewLine => {
+                    validator::comment::element::Kind::NewLine(validator::Empty {})
+                }
+                comment::Element::ListOpen => {
+                    validator::comment::element::Kind::ListOpen(validator::Empty {})
+                }
+                comment::Element::ListNext => {
+                    validator::comment::element::Kind::ListNext(validator::Empty {})
+                }
+                comment::Element::ListClose => {
+                    validator::comment::element::Kind::ListClose(validator::Empty {})
+                }
+            }),
         }
     }
 }

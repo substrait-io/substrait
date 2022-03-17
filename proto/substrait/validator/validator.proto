@@ -76,6 +76,31 @@ message Node {
     PrimitiveData yaml_primitive = 8;
   }
 
+  // Semantic classification of this node.
+  Class class = 13;
+
+  // Semantic classification of a node.
+  enum Class {
+    CLASS_UNSPECIFIED = 0;
+
+    // This node represents a data type.
+    CLASS_TYPE = 1;
+
+    // This node represents an expression.
+    CLASS_EXPRESSION = 2;
+
+    // This node represents a relation.
+    CLASS_RELATION = 3;
+  }
+
+  // Optional brief description of the node. Should not contain newlines or
+  // other non-span formatting information.
+  Comment brief = 14;
+
+  // Optional summary of the node. Unlike brief, this may contain
+  // paragraph-level formatting information.
+  Comment summary = 15;
+
   // For the following types of nodes, the validator will try to do type
   // resolution:
   //  - type-like nodes resolve to said type;
@@ -87,11 +112,6 @@ message Node {
   // will be set to "unresolved." The field will not be populated for nodes
   // that don't have a logical Substrait type.
   DataType data_type = 16;
-
-  // For relation nodes, the validator will emit additional information, to
-  // allow consumers to easily build a relation tree. This field is only
-  // populated for relation-like nodes.
-  Relation relation = 17;
 
   // Data associated with this node.
   repeated Data data = 31;
@@ -278,13 +298,38 @@ message Diagnostic {
 // to be interpreted by people.
 message Comment {
 
-  // Comments consist of one or more "spans," each of which may have some
-  // additional link-like data associated with it.
-  repeated Span spans = 1;
+  // Comments consist of one or more "elements," defining formatting
+  // information.
+  repeated Element elements = 1;
 
+  // A comment element.
+  message Element {
+    oneof kind {
+      // A span of text.
+      Span span = 1;
+
+      // A newline, i.e. the next span should start on the next line.
+      Empty new_line = 2;
+
+      // Opens a new unordered list. The next span is the start of the text for
+      // the next item. list_next elements are used to advance to the next list
+      // item; newlines can be used to add paragraphs without bullet points.
+      // Each list_open should be matched with a list_close. Lists may be
+      // nested.
+      Empty list_open = 3;
+
+      // Advances to the next list item.
+      Empty list_next = 4;
+
+      // Closes the current list.
+      Empty list_close = 5;
+    }
+  }
+
+  // A span of text.
   message Span {
 
-    // Text for this span.
+    // Text for this span. Should not include newlines.
     string text = 1;
 
     // Specified if this span of text should link to something.
@@ -455,35 +500,6 @@ message DataType {
 
     // Data type of the struct element.
     DataType data_type = 2;
-  }
-}
-
-// Additional information for relation nodes.
-message Relation {
-
-  // The type of relation.
-  RelationType relation_type = 1;
-
-  // The child relations, i.e. the data sources for this relation.
-  repeated Path children = 2;
-
-  // Additional unstructured information about this relation.
-  Comment comment = 31;
-
-  // Basic information about the type of relation. Note that the enum variant
-  // indices correspond to the Rel.rel_type oneof message indices.
-  enum RelationType {
-    RELATION_TYPE_UNSPECIFIED = 0;
-    RELATION_TYPE_READ = 1;
-    RELATION_TYPE_FILTER = 2;
-    RELATION_TYPE_FETCH = 3;
-    RELATION_TYPE_AGGREGATE = 4;
-    RELATION_TYPE_SORT = 5;
-    RELATION_TYPE_JOIN = 6;
-    RELATION_TYPE_PROJECT = 7;
-    RELATION_TYPE_SET = 8;
-    RELATION_TYPE_EXTENSION = 9;
-    RELATION_TYPE_CROSS = 12;
   }
 }
 

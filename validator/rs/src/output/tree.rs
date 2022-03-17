@@ -73,7 +73,22 @@ use std::sync::Arc;
 /// for this!
 #[derive(Clone, Debug, PartialEq)]
 pub struct Node {
-    /// The type of node.
+    /// The type of a node in terms of plan semantics.
+    pub class: Class,
+
+    /// An optional brief description of the node. This can be regarded as
+    /// a comment placed at the start of the data vector, but it is usually
+    /// only set at the end of the parse function.
+    pub brief: Option<comment::Brief>,
+
+    /// An optional comment summarizing what this node does. This can be
+    /// regarded as a comment placed at the start of the data vector (just
+    /// after brief, if brief is also defined), but it is usually only set
+    /// at the end of the parse function.
+    pub summary: Option<comment::Comment>,
+
+    /// The type of node in terms of what it represents in the original
+    /// data structure.
     pub node_type: NodeType,
 
     /// The type of data returned by this node, if any. Depending on the
@@ -95,6 +110,9 @@ pub struct Node {
 impl From<NodeType> for Node {
     fn from(node_type: NodeType) -> Self {
         Node {
+            class: Class::Misc,
+            brief: None,
+            summary: None,
             node_type,
             data_type: None,
             data: vec![],
@@ -170,6 +188,26 @@ pub enum NodeType {
 
     /// The associated node represents a YAML primitive.
     YamlPrimitive(primitive_data::PrimitiveData),
+}
+
+/// Semantical information about a node.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Class {
+    /// Used for nodes for which no better classification exists.
+    Misc,
+
+    /// Used for nodes that define a type. The data_type field signifies this
+    /// data type.
+    Type,
+
+    /// Used for nodes that represent scalar expressions or literals. The
+    /// data_type field signifies the type of the value returned by the
+    /// expression.
+    Expression,
+
+    /// Used for nodes that represent relations. The data_type field signifies
+    /// the schema for the data returned by the relation.
+    Relation,
 }
 
 /// Information nodes for a parsed protobuf message.

@@ -102,19 +102,24 @@ impl<'a> Context<'a> {
         self.output.data_type.clone().unwrap_or_default()
     }
 
-    /*
-    /// Replaces the data type associated with this node, including the
-    /// information indicating whether this node semantically *has* a data
-    /// type.
-    ///
-    /// This is only used by the traversal macros. Don't use it directly.
-    pub fn replace_data_type(
+    /// Sets the semantic description of the current node.
+    pub fn set_description<B: Into<comment::Brief>>(
         &mut self,
-        data_type: Option<Arc<data_type::DataType>>,
-    ) -> Option<Arc<data_type::DataType>> {
-        std::mem::replace(&mut self.output.data_type, data_type)
+        class: tree::Class,
+        brief: Option<B>,
+    ) {
+        self.output.class = class;
+        self.output.brief = brief.map(|c| c.into());
     }
-    */
+
+    /// Appends to the summary of this node.
+    pub fn push_summary<C: Into<comment::Comment>>(&mut self, comment: C) {
+        if let Some(summary) = self.output.summary.as_mut() {
+            summary.elements.extend(comment.into().elements.into_iter())
+        } else {
+            self.output.summary = Some(comment.into())
+        }
+    }
 
     /// Pushes data into the current node.
     ///

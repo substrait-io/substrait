@@ -215,6 +215,11 @@ span.value {
     color: #000;
 }
 
+span.brief {
+    font-style: italic;
+    color: #000;
+}
+
 span.type {
     font-style: italic;
     font-size: 80%;
@@ -582,36 +587,95 @@ fn format_diagnostics(path: &path::Path, node: &tree::Node) -> (Vec<String>, dia
     (html, level)
 }
 
+/// Formats a comment span.
+fn format_comment_span(span: &comment::Span) -> String {
+    match &span.link {
+        None => html_escape(&span.text),
+        Some(comment::Link::Path(path)) => format_reference(html_escape(&span.text), path, None),
+        Some(comment::Link::Url(url)) => format!(
+            "<a href=\"{}\">{}</a>",
+            html_escape(url),
+            html_escape(&span.text)
+        ),
+    }
+}
+
+/// Formats a comment using HTML markup.
+fn format_comment(comment: &comment::Comment) -> String {
+    let mut result = String::new();
+    let mut p_open = false;
+    for element in comment.elements.iter() {
+        match element {
+            comment::Element::Span(span) => {
+                if !p_open {
+                    result += "<p>";
+                    p_open = true;
+                }
+                result += &format_comment_span(span);
+            }
+            comment::Element::NewLine => {
+                if p_open {
+                    result += "</p>";
+                    p_open = false;
+                }
+            }
+            comment::Element::ListOpen => {
+                if p_open {
+                    result += "</p>";
+                    p_open = false;
+                }
+                result += "<ul><li>";
+            }
+            comment::Element::ListNext => {
+                if p_open {
+                    result += "</p>";
+                    p_open = false;
+                }
+                result += "</li><li>";
+            }
+            comment::Element::ListClose => {
+                if p_open {
+                    result += "</p>";
+                    p_open = false;
+                }
+                result += "</li></ul>";
+            }
+        }
+    }
+    if p_open {
+        result += "</p>";
+    }
+    result
+}
+
+/// Formats a brief comment using HTML markup.
+fn format_brief(brief: &comment::Brief) -> String {
+    let mut result = String::new();
+    for span in brief.spans.iter() {
+        result += &format_comment_span(span);
+    }
+    result
+}
+
 // Format the relation trees.
 fn format_relation_tree(
     path: &path::Path,
     node: &tree::Node,
     index: &mut usize,
     is_root: bool,
+    in_expression: bool,
 ) -> Vec<String> {
     let mut html = vec![];
 
-    // TODO: this is still nonsense
-    let relation_info = if let tree::NodeType::ProtoMessage(msg) = node.node_type {
-        if msg == "substrait.Rel" {
-            if let tree::NodeData::Child(child) = node.data.get(0).unwrap() {
-                if let tree::NodeType::ProtoMessage(typ) = child.node.node_type {
-                    Some(typ.rsplit_once('.').unwrap().1.to_string())
-                } else {
-                    None
-                }
-            } else {
-                None
-            }
-        } else {
-            None
-        }
-    } else {
-        None
-    };
-    let is_relation = relation_info.is_some();
+    let text = node
+        .brief
+        .as_ref()
+        .map(format_brief)
+        .unwrap_or_else(|| String::from("unknown"));
+    let is_relation = matches!(node.class, tree::Class::Relation);
+    let is_expression = matches!(node.class, tree::Class::Expression);
 
-    if let Some(info) = relation_info {
+    if is_relation {
         if is_root {
             html.push("<details class=\"relation_tree\">".to_string());
             html.push(format!(
@@ -621,8 +685,13 @@ fn format_relation_tree(
             html.push("<ul class=\"tree\"><li><span class=\"root\">Sink</span><ul>".to_string());
         };
         html.push(format!(
-            "<li><span class=\"data_source\">{}</span>",
-            format_reference(info, &path.to_path_buf(), None)
+            "<li><span class=\"{}\">{text} ({})</span>",
+            if in_expression {
+                "subquery"
+            } else {
+                "data_source"
+            },
+            format_reference("link", &path.to_path_buf(), None)
         ));
     }
 
@@ -634,6 +703,7 @@ fn format_relation_tree(
                 &child.node,
                 index,
                 is_root && !is_relation,
+                (in_expression && !is_relation) || is_expression,
             );
             if !sub_html.is_empty() {
                 if is_relation && !has_children {
@@ -671,11 +741,18 @@ fn format_node_tree(
     let id = format_id(&pathbuf, None);
 
     // Format the card header.
+    let brief = if let Some(brief) = &node.brief {
+        format_span("brief", format_brief(brief))
+    } else {
+        String::from("")
+    };
     let value = match &node.node_type {
-        tree::NodeType::ProtoMessage(proto_type) => format_span("type", proto_type),
+        tree::NodeType::ProtoMessage(proto_type) => {
+            format!("{brief} {}", format_span("type", proto_type))
+        }
         tree::NodeType::ProtoPrimitive(proto_type, data) => {
             format!(
-                "= {} {}",
+                "= {}{brief} {}",
                 format_span("value", data),
                 format_span("type", proto_type)
             )
@@ -683,7 +760,7 @@ fn format_node_tree(
         tree::NodeType::ProtoMissingOneOf => "?".to_string(),
         tree::NodeType::NodeReference(num, target) => format_reference(
             format!(
-                "= {} {}",
+                "= {}{brief} {}",
                 format_span("value", num),
                 format_span("type", "uint32, reference")
             ),
@@ -692,14 +769,14 @@ fn format_node_tree(
         ),
         tree::NodeType::YamlReference(yaml) => {
             format!(
-                "= {} {}",
+                "= {}{brief} {}",
                 format_span("value", &yaml.uri),
                 format_span("type", "string, resolved to YAML")
             )
         }
-        tree::NodeType::YamlMap => format_span("type", "YAML map"),
-        tree::NodeType::YamlArray => format_span("type", "YAML array"),
-        tree::NodeType::YamlPrimitive(data) => format!("= {}", format_span("value", data)),
+        tree::NodeType::YamlMap => format!("{brief} {}", format_span("type", "YAML map")),
+        tree::NodeType::YamlArray => format!("{brief} {}", format_span("type", "YAML array")),
+        tree::NodeType::YamlPrimitive(data) => format!("= {}{brief}", format_span("value", data)),
     };
     let header = format!(
         "{} {value} {}",
@@ -709,7 +786,7 @@ fn format_node_tree(
 
     // If the node doesn't have any additional data associated with it, output
     // a normal <div> rather than a <details> card.
-    if node.data.is_empty() {
+    if node.data.is_empty() && node.summary.is_none() {
         let class = if unknown_subtree { "unknown" } else { "ok" };
         return (
             vec![format!("<div {id} class=\"card {class}\">{header}</div>")],
@@ -721,6 +798,11 @@ fn format_node_tree(
     // the open tags, which we don't have all the information for just yet.
     let mut html = vec![String::new()];
     let mut level = Level::Ok;
+
+    // Add the summary.
+    if let Some(ref summary) = node.summary {
+        html.push(format_comment(summary));
+    }
 
     // Iterate over node data here, recursively entering children.
     for (index, data) in node.data.iter().enumerate() {
@@ -744,24 +826,24 @@ fn format_node_tree(
                 ));
                 level = std::cmp::max(level, diag.adjusted_level.into());
             }
-            tree::NodeData::DataType(_data_type) => {
-                // TODO
+            tree::NodeData::DataType(data_type) => {
+                // TODO: print an actual tree structure for nested types
+                html.push("<div class=\"card data_type\">\n".to_string());
+                let prefix = if matches!(node.class, tree::Class::Relation) {
+                    "Schema"
+                } else {
+                    "Data type"
+                };
+                html.push(format!(
+                    "{}: {}",
+                    prefix,
+                    html_escape(data_type.to_string())
+                ));
+                html.push("\n</div>".to_string());
             }
             tree::NodeData::Comment(comment) => {
                 html.push("<div class=\"card comment\">\n".to_string());
-                for span in comment.spans.iter() {
-                    html.push(match &span.link {
-                        None => html_escape(&span.text),
-                        Some(comment::Link::Path(path)) => {
-                            format_reference(html_escape(&span.text), path, None)
-                        }
-                        Some(comment::Link::Url(url)) => format!(
-                            "<a href=\"{}\">{}</a>",
-                            html_escape(url),
-                            html_escape(&span.text)
-                        ),
-                    })
-                }
+                html.push(format_comment(comment));
                 html.push("\n</div>".to_string());
             }
         }
@@ -805,7 +887,7 @@ pub fn export<T: std::io::Write>(
         "<div class=\"note\">Note: data flows upwards in these graphs.</div>"
     )?;
     let mut index = 0;
-    for s in format_relation_tree(&path, &result.root, &mut index, true) {
+    for s in format_relation_tree(&path, &result.root, &mut index, true, false) {
         writeln!(out, "{s}")?;
     }
     writeln!(out, "</details>")?;

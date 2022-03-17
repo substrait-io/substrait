@@ -140,6 +140,9 @@ mod tests {
         assert_eq!(
             substrait::Plan::type_to_node(),
             tree::Node {
+                class: tree::Class::Misc,
+                brief: None,
+                summary: None,
                 node_type: tree::NodeType::ProtoMessage("substrait.Plan"),
                 data_type: None,
                 data: vec![],
@@ -150,6 +153,9 @@ mod tests {
         assert_eq!(
             msg.data_to_node(),
             tree::Node {
+                class: tree::Class::Misc,
+                brief: None,
+                summary: None,
                 node_type: tree::NodeType::ProtoMessage("substrait.Plan"),
                 data_type: None,
                 data: vec![],
@@ -163,6 +169,9 @@ mod tests {
         assert_eq!(
             substrait::plan_rel::RelType::type_to_node(),
             tree::Node {
+                class: tree::Class::Misc,
+                brief: None,
+                summary: None,
                 node_type: tree::NodeType::ProtoMissingOneOf,
                 data_type: None,
                 data: vec![],
@@ -174,6 +183,9 @@ mod tests {
         assert_eq!(
             oneof.data_to_node(),
             tree::Node {
+                class: tree::Class::Misc,
+                brief: None,
+                summary: None,
                 node_type: tree::NodeType::ProtoMessage("substrait.Rel"),
                 data_type: None,
                 data: vec![],
@@ -213,6 +225,9 @@ mod tests {
         assert_eq!(
             substrait::AggregationPhase::type_to_node(),
             tree::Node {
+                class: tree::Class::Misc,
+                brief: None,
+                summary: None,
                 node_type: tree::NodeType::ProtoPrimitive(
                     "substrait.AggregationPhase",
                     primitive_data::PrimitiveData::Enum("AGGREGATION_PHASE_UNSPECIFIED")
@@ -224,6 +239,9 @@ mod tests {
         assert_eq!(
             substrait::AggregationPhase::Unspecified.data_to_node(),
             tree::Node {
+                class: tree::Class::Misc,
+                brief: None,
+                summary: None,
                 node_type: tree::NodeType::ProtoPrimitive(
                     "substrait.AggregationPhase",
                     primitive_data::PrimitiveData::Enum("AGGREGATION_PHASE_UNSPECIFIED")
@@ -253,6 +271,9 @@ mod tests {
         assert_eq!(
             u32::type_to_node(),
             tree::Node {
+                class: tree::Class::Misc,
+                brief: None,
+                summary: None,
                 node_type: tree::NodeType::ProtoPrimitive(
                     "uint32",
                     primitive_data::PrimitiveData::Unsigned(0)
@@ -264,6 +285,9 @@ mod tests {
         assert_eq!(
             42u32.data_to_node(),
             tree::Node {
+                class: tree::Class::Misc,
+                brief: None,
+                summary: None,
                 node_type: tree::NodeType::ProtoPrimitive(
                     "uint32",
                     primitive_data::PrimitiveData::Unsigned(42)

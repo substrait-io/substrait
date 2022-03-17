@@ -16,6 +16,7 @@ mod set;
 mod sort;
 
 use crate::input::proto::substrait;
+use crate::input::traits::ProtoOneOf;
 use crate::output::diagnostic;
 use crate::parse::context;
 
@@ -24,6 +25,10 @@ fn parse_rel_type(x: &substrait::rel::RelType, y: &mut context::Context) -> diag
     // Ensure that the top of the schema stack exists and it set to an
     // unresolved type.
     y.clear_schema();
+
+    // Set a basic description, to ensure that these nodes are always marked
+    // as relations.
+    describe!(y, Relation, "{} relation", x.proto_oneof_variant());
 
     // NOTE: if you're here because you added a relation type and now CI is
     // failing, you can just add "_ => Ok(())," to the end of this list. The
