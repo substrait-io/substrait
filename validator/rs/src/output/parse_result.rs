@@ -60,25 +60,7 @@ impl ParseResult {
 
     /// Returns the first diagnostic of the highest severity level in the tree.
     pub fn get_diagnostic(&self) -> Option<&diagnostic::Diagnostic> {
-        let mut result: Option<&diagnostic::Diagnostic> = None;
-        for diag in self.iter_diagnostics() {
-            // We can return immediately for error diagnostics, since this is the
-            // highest level.
-            if diag.adjusted_level == diagnostic::Level::Error {
-                return Some(diag);
-            }
-
-            // For other levels, update only if the incoming diagnostic is of a
-            // higher level/severity than the current one.
-            if let Some(cur) = result.as_mut() {
-                if diag.adjusted_level > (*cur).adjusted_level {
-                    *cur = diag;
-                }
-            } else {
-                result = Some(diag);
-            }
-        }
-        result
+        self.root.get_diagnostic()
     }
 
     /// Returns whether the plan represented by the given parse tree is valid.

@@ -4,5 +4,6 @@ members = [
     "validator/derive",
     "validator/rs",
     "validator/c",
-    "validator/py"
+    "validator/py",
+    "validator/tests"
 ]
