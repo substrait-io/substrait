@@ -36,7 +36,7 @@ jobs:
       - name: Run unit tests
         run: cargo test --all-features
       - name: Install test runner dependencies
-        run: python3 -m pip install --upgrade pip protobuf
+        run: python3 -m pip install --upgrade pip protobuf pyyaml
       - name: Run validation tests
         working-directory: validator/tests
         run: python3 run.py

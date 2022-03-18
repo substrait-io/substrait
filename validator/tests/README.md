@@ -17,7 +17,7 @@ Usage
 To run the tests, you will need:
 
  - Rust/cargo, in order to compile the validator and the test runner; and
- - Python 3.x, with `protobuf` installed.
+ - Python 3.x, with `protobuf` and `pyyaml` installed.
 
 After that, just run `python3 run.py`. This will "compile" the test
 descriptions in the tests folder to a format more easy to understand by the
