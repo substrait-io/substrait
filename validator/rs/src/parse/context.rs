@@ -181,7 +181,9 @@ impl<'a> Context<'a> {
     /// final call attached to the node's "return type", but each time a
     /// NodeData::DataType is pushed into the node data as well.
     pub fn set_data_type(&mut self, data_type: Arc<data_type::DataType>) {
-        self.push(tree::NodeData::DataType(data_type.clone()));
+        if !data_type.is_unresolved() {
+            self.push(tree::NodeData::DataType(data_type.clone()));
+        }
         self.output.data_type = Some(data_type);
     }
 
