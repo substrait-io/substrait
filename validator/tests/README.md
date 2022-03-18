@@ -16,7 +16,6 @@ Usage
 
 To run the tests, you will need:
 
- - protoc, in order to compile the protobuf files;
  - Rust/cargo, in order to compile the validator and the test runner; and
  - Python 3.x, with `protobuf` installed.
 

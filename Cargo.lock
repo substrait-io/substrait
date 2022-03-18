@@ -1041,6 +1041,7 @@ name = "test-runner"
 version = "0.0.1"
 dependencies = [
  "glob",
+ "prost-build",
  "serde",
  "serde_json",
  "substrait-validator",

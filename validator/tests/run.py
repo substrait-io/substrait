@@ -330,7 +330,18 @@ def resolve_path(path, msg_desc):
 
 if __name__ == '__main__':
 
+    # Run cargo build without capturing output.
+    code = subprocess.run(['cargo', 'build']).returncode
+    if code:
+        sys.exit(code)
+
+    # Find the path to a protoc executable. We rely on prost for this, which is
+    # capable of shipping it for most operating systems.
+    print(f'Finding protoc location...')
+    protoc = subprocess.run(['cargo', 'run', '-q', '--bin', 'find_protoc'], capture_output=True).stdout.strip()
+
     # (Re)generate and import protobuf files and import them.
+    print(f'Generating protobuf bindings...')
     script_path = os.path.dirname(os.path.realpath(__file__))
     repo_path = os.path.realpath(os.path.join(script_path, '..', '..'))
     proto_path = os.path.join(repo_path, 'proto')
@@ -338,7 +349,7 @@ if __name__ == '__main__':
     output_path = os.path.join(script_path, 'substrait')
     if os.path.isdir(output_path):
         shutil.rmtree(output_path)
-    subprocess.check_call(['protoc', '-I', proto_path, '--python_out', script_path, *proto_files])
+    subprocess.check_call([protoc, '-I', proto_path, '--python_out', script_path, *proto_files])
     for subdir in ('.', 'extensions', 'validator'):
         fname = os.path.join(output_path, subdir, '__init__.py')
         with open(fname, 'w') as f:
@@ -356,6 +367,7 @@ if __name__ == '__main__':
     errors = {}
 
     # Deserialize test input files (multiple input formats can be added here).
+    print(f'Looking for test description files...')
     suite_path = os.path.join(script_path, 'tests')
     test_inputs = {}
     for fname in pathlib.Path(suite_path).rglob('*.yaml'):
