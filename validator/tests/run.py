@@ -329,6 +329,9 @@ def resolve_path(path, msg_desc):
 
 
 if __name__ == '__main__':
+    def fprint(*args, **kwargs):
+        print(*args, **kwargs)
+        sys.stdout.flush()
 
     # Run cargo build without capturing output.
     code = subprocess.run(['cargo', 'build']).returncode
@@ -337,11 +340,11 @@ if __name__ == '__main__':
 
     # Find the path to a protoc executable. We rely on prost for this, which is
     # capable of shipping it for most operating systems.
-    print(f'Finding protoc location...')
+    fprint(f'Finding protoc location...')
     protoc = subprocess.run(['cargo', 'run', '-q', '--bin', 'find_protoc'], capture_output=True).stdout.strip()
 
     # (Re)generate and import protobuf files and import them.
-    print(f'Generating protobuf bindings...')
+    fprint(f'Generating protobuf bindings...')
     script_path = os.path.dirname(os.path.realpath(__file__))
     repo_path = os.path.realpath(os.path.join(script_path, '..', '..'))
     proto_path = os.path.join(repo_path, 'proto')
@@ -367,7 +370,7 @@ if __name__ == '__main__':
     errors = {}
 
     # Deserialize test input files (multiple input formats can be added here).
-    print(f'Looking for test description files...')
+    fprint(f'Looking for test description files...')
     suite_path = os.path.join(script_path, 'tests')
     test_inputs = {}
     for fname in pathlib.Path(suite_path).rglob('*.yaml'):
@@ -380,7 +383,7 @@ if __name__ == '__main__':
             errors[fname] = ('reading', e)
 
     # Compile the contents of the test input files.
-    print(f'Parsing {len(test_inputs)} test description(s)...')
+    fprint(f'Parsing {len(test_inputs)} test description(s)...')
     for fname, test_input in test_inputs.items():
         output_fname = str(fname) + '.test'
         try:
@@ -394,7 +397,7 @@ if __name__ == '__main__':
     if errors:
         for fname, (action, error) in errors.items():
             rel_path = os.path.relpath(fname, suite_path)
-            print(f'{type(error).__name__} while {action} {rel_path}: {error}')
+            fprint(f'{type(error).__name__} while {action} {rel_path}: {error}')
         sys.exit(1)
 
     # Now run the test suite.
