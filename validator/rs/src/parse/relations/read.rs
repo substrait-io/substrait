@@ -12,11 +12,11 @@ use std::sync::Arc;
 use crate::input::proto::substrait;
 use crate::output::data_type;
 use crate::output::diagnostic;
-use crate::output::primitive_data;
 use crate::parse::context;
-use crate::parse::expressions::field_reference;
+use crate::parse::expressions::references::mask;
 use crate::parse::extensions;
 use crate::parse::types;
+use crate::string_util;
 
 /// Information about a data source.
 struct SourceInfo {
@@ -82,7 +82,7 @@ fn parse_named_table(
         }
         format!(
             "table {}",
-            primitive_data::as_ident_or_string(x.names.first().unwrap())
+            string_util::as_ident_or_string(x.names.first().unwrap())
         )
     };
 
@@ -138,7 +138,7 @@ pub fn parse_read_rel(x: &substrait::ReadRel, y: &mut context::Context) -> diagn
         .clone();
 
     // If both data_type and schema are known, verify that they are the same.
-    let schema = match (source.data_type, schema) {
+    let mut schema = match (source.data_type, schema) {
         (Some(data_type), Some(schema)) => {
             types::assert_equal(y, schema, data_type, "data differs from schema")
         }
@@ -148,14 +148,19 @@ pub fn parse_read_rel(x: &substrait::ReadRel, y: &mut context::Context) -> diagn
     };
 
     // Set the schema to the merged data type.
-    y.set_schema(schema);
+    y.set_schema(schema.clone());
 
     // Handle filter.
     // TODO
 
     // Handle projection.
-    // TODO
-    proto_field!(x, y, projection, field_reference::parse_mask_expression);
+    if x.projection.is_some() {
+        schema =
+            proto_required_field!(x, y, projection, mask::parse_mask_expression, &schema, true)
+                .0
+                .data_type();
+        y.set_schema(schema.clone());
+    }
 
     // Describe the relation.
     match (x.filter.is_some(), x.projection.is_some()) {

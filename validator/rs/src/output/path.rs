@@ -8,7 +8,7 @@
 //! roughly the same as [`std::path::Path`], and [`std::path::PathBuf`], but
 //! for protobuf/YAML tree paths rather than filesystem paths.
 
-use crate::output::primitive_data;
+use crate::string_util;
 
 /// Element of a path to some field of a protobuf message and/or YAML file.
 #[derive(Clone, Debug, PartialEq)]
@@ -39,15 +39,15 @@ impl std::fmt::Display for PathElement {
             }
         }
         match self {
-            PathElement::Field(field) => write!(f, "{}", primitive_data::as_ident_or_string(field)),
+            PathElement::Field(field) => write!(f, "{}", string_util::as_ident_or_string(field)),
             PathElement::Repeated(field, index) => {
-                write!(f, "{}[{index}]", primitive_data::as_ident_or_string(field))
+                write!(f, "{}[{index}]", string_util::as_ident_or_string(field))
             }
             PathElement::Variant(field, variant) => write!(
                 f,
                 "{}<{}>",
-                primitive_data::as_ident_or_string(field),
-                primitive_data::as_ident_or_string(variant)
+                string_util::as_ident_or_string(field),
+                string_util::as_ident_or_string(variant)
             ),
             PathElement::Index(index) => write!(f, "[{index}]"),
         }

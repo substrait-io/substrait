@@ -6,8 +6,8 @@
 use crate::input::proto::substrait;
 use crate::output::diagnostic::Result;
 use crate::output::extension;
-use crate::output::primitive_data;
 use crate::parse::context;
+use crate::string_util;
 use std::sync::Arc;
 
 mod yaml;
@@ -284,7 +284,7 @@ pub fn check_unused_definitions(y: &mut context::Context) {
             Info,
             RedundantFunctionDeclaration,
             "anchor {anchor} for function {} is not present in the plan",
-            primitive_data::as_ident_or_string(&info.common.name)
+            string_util::as_ident_or_string(&info.common.name)
         );
         link!(y, path, "Declaration was here.");
     }
@@ -296,7 +296,7 @@ pub fn check_unused_definitions(y: &mut context::Context) {
             Info,
             RedundantTypeDeclaration,
             "anchor {anchor} for type {} is not present in the plan",
-            primitive_data::as_ident_or_string(&info.common.name)
+            string_util::as_ident_or_string(&info.common.name)
         );
         link!(y, path, "Declaration was here.");
     }
@@ -308,7 +308,7 @@ pub fn check_unused_definitions(y: &mut context::Context) {
             Info,
             RedundantTypeVariationDeclaration,
             "anchor {anchor} for type variation {} is not present in the plan",
-            primitive_data::as_ident_or_string(&info.common.name)
+            string_util::as_ident_or_string(&info.common.name)
         );
         link!(y, path, "Declaration was here.");
     }

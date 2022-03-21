@@ -10,9 +10,9 @@ use crate::output::data_type;
 use crate::output::data_type::ParameterInfo;
 use crate::output::diagnostic;
 use crate::output::extension;
-use crate::output::primitive_data;
 use crate::parse::context;
 use crate::parse::extensions;
+use crate::string_util;
 
 /// Parses a required nullability enum.
 fn parse_required_nullability(
@@ -681,12 +681,12 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
             String::from("Map type")
         }
         data_type::Class::UserDefined(u) => {
-            let name = primitive_data::as_ident_or_string(&u.common.name);
+            let name = string_util::as_ident_or_string(&u.common.name);
             let uri = u
                 .common
                 .yaml_info
                 .as_ref()
-                .map(|x| primitive_data::as_ident_or_string(&x.uri))
+                .map(|x| string_util::as_ident_or_string(&x.uri))
                 .unwrap_or_else(|| String::from("?"));
             summary!(y, "Extension type {uri}::{name}.");
             if let Some(x) = &u.definition {
@@ -702,7 +702,7 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
                     } else {
                         y.push_summary(comment::Comment::new().li());
                     }
-                    summary!(y, "{}: {}", primitive_data::as_ident_or_string(name), class);
+                    summary!(y, "{}: {}", string_util::as_ident_or_string(name), class);
                 }
                 y.push_summary(comment::Comment::new().lc());
             }
@@ -736,12 +736,12 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
         );
     }
     let variation = if let Some(u) = data_type.variation() {
-        let name = primitive_data::as_ident_or_string(&u.common.name);
+        let name = string_util::as_ident_or_string(&u.common.name);
         let uri = u
             .common
             .yaml_info
             .as_ref()
-            .map(|x| primitive_data::as_ident_or_string(&x.uri))
+            .map(|x| string_util::as_ident_or_string(&x.uri))
             .unwrap_or_else(|| String::from("?"));
         let mut variation = format!("This is the {uri}::{name} variation of this type");
         if let Some(tv) = &u.definition {
@@ -959,8 +959,8 @@ fn assert_equal_internal(
                                 Warning,
                                 TypeMismatch,
                                 "{message}: field name {} vs. {}{path}",
-                                primitive_data::as_ident_or_string(&other_name),
-                                primitive_data::as_ident_or_string(&base_name)
+                                string_util::as_ident_or_string(&other_name),
+                                string_util::as_ident_or_string(&base_name)
                             );
                         }
                         data_type::Parameter::NamedType(

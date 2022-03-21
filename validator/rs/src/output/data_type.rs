@@ -6,7 +6,7 @@
 
 use crate::output::diagnostic;
 use crate::output::extension;
-use crate::output::primitive_data;
+use crate::string_util;
 use std::collections::HashSet;
 use std::sync::Arc;
 use strum_macros::{Display, EnumString};
@@ -108,7 +108,27 @@ impl DataType {
             class: Class::Compound(Compound::Struct),
             nullable,
             variation: None,
-            parameters: fields.into_iter().map(Parameter::from).collect(),
+            parameters: fields.into_iter().map(Parameter::Type).collect(),
+        })
+    }
+
+    /// Creates a new list type.
+    pub fn new_list(element: Arc<DataType>, nullable: bool) -> Arc<DataType> {
+        Arc::new(DataType {
+            class: Class::Compound(Compound::List),
+            nullable,
+            variation: None,
+            parameters: vec![Parameter::Type(element)],
+        })
+    }
+
+    /// Creates a new map type.
+    pub fn new_map(key: Arc<DataType>, value: Arc<DataType>, nullable: bool) -> Arc<DataType> {
+        Arc::new(DataType {
+            class: Class::Compound(Compound::List),
+            nullable,
+            variation: None,
+            parameters: vec![Parameter::Type(key), Parameter::Type(value)],
         })
     }
 
@@ -171,6 +191,56 @@ impl DataType {
             self.class,
             Class::Compound(Compound::Struct) | Class::Compound(Compound::NamedStruct)
         )
+    }
+
+    /// Returns Some(T) when this is a STRUCT or NSTRUCT type with only a
+    /// single element of type T, or None otherwise.
+    pub fn unwrap_singular_struct(&self) -> Option<Arc<DataType>> {
+        if self.is_struct() && self.parameters.len() == 1 {
+            self.type_parameter(0)
+        } else {
+            None
+        }
+    }
+
+    /// Returns whether this is a LIST type.
+    pub fn is_list(&self) -> bool {
+        matches!(self.class, Class::Compound(Compound::List))
+    }
+
+    /// Returns Some(T) when this is a LIST type with element type T, or None
+    /// otherwise.
+    pub fn unwrap_list(&self) -> Option<Arc<DataType>> {
+        if self.is_list() {
+            self.type_parameter(0)
+        } else {
+            None
+        }
+    }
+
+    /// Returns whether this is a MAP type.
+    pub fn is_map(&self) -> bool {
+        matches!(self.class, Class::Compound(Compound::Map))
+    }
+
+    /// Returns Some(T) when this is a MAP type with value type T, or None
+    /// otherwise.
+    pub fn unwrap_map(&self) -> Option<Arc<DataType>> {
+        if self.is_map() {
+            self.type_parameter(1)
+        } else {
+            None
+        }
+    }
+
+    /// Returns Some(T) when this is a MAP type with key type T, or None
+    /// otherwise.
+    pub fn unwrap_map_key(&self) -> Option<Arc<DataType>> {
+        if self.is_map() {
+            self.type_parameter(0)
+        } else {
+            None
+        }
     }
 
     /// Returns whether this is the base type for this type, i.e. it does
@@ -628,11 +698,7 @@ impl std::fmt::Display for Parameter {
         match self {
             Parameter::Type(data_type) => write!(f, "{data_type}"),
             Parameter::NamedType(name, data_type) => {
-                write!(
-                    f,
-                    "{}: {data_type}",
-                    primitive_data::as_ident_or_string(name),
-                )
+                write!(f, "{}: {data_type}", string_util::as_ident_or_string(name),)
             }
             Parameter::Unsigned(value) => write!(f, "{value}"),
         }

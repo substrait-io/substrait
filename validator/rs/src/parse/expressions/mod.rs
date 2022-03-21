@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-//! Module for parsing/validation expressions.
+//! Module for parsing/validating expressions.
 
-pub mod field_reference;
+pub mod literals;
+pub mod references;

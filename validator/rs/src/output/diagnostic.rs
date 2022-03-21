@@ -232,6 +232,9 @@ pub enum Classification {
     #[strum(props(Description = "mismatched types"))]
     TypeMismatch = 4005,
 
+    #[strum(props(Description = "struct type is required"))]
+    TypeStructRequired = 4006,
+
     // Relation-related diagnostics (group 5).
     #[strum(props(HiddenDescription = "relation-related diagnostics"))]
     Relation = 5000,
@@ -245,6 +248,9 @@ pub enum Classification {
 
     #[strum(props(Description = "field reference into non-existent stream"))]
     ExpressionFieldRefMissingStream = 6001,
+
+    #[strum(props(Description = "illegal literal value"))]
+    ExpressionIllegalLiteralValue = 6002,
 
     // Redundant declarations (group 7).
     #[strum(props(
@@ -266,6 +272,9 @@ pub enum Classification {
 
     #[strum(props(Description = "redundant type variation declaration"))]
     RedundantTypeVariationDeclaration = 7005,
+
+    #[strum(props(Description = "redundant list slice"))]
+    RedundantListSlice = 7006,
 }
 
 impl Classification {
