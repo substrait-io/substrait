@@ -119,6 +119,11 @@ div.comment::before {
     padding-right: .2em;
 }
 
+details > p {
+    margin: 0 0 0.2em;
+    font-style: italic;
+}
+
 details.relation_tree {
     background-color: #bdf;
 }
@@ -604,7 +609,7 @@ fn format_comment_span(span: &comment::Span) -> String {
 fn format_comment(comment: &comment::Comment) -> String {
     let mut result = String::new();
     let mut p_open = false;
-    for element in comment.elements.iter() {
+    for element in comment.elements().iter() {
         match element {
             comment::Element::Span(span) => {
                 if !p_open {
@@ -651,7 +656,7 @@ fn format_comment(comment: &comment::Comment) -> String {
 /// Formats a brief comment using HTML markup.
 fn format_brief(brief: &comment::Brief) -> String {
     let mut result = String::new();
-    for span in brief.spans.iter() {
+    for span in brief.spans().iter() {
         result += &format_comment_span(span);
     }
     result

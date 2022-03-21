@@ -107,7 +107,7 @@ impl From<&diagnostic::Level> for i32 {
 impl From<&comment::Comment> for validator::Comment {
     fn from(node: &comment::Comment) -> Self {
         Self {
-            elements: node.elements.iter().map(|x| x.into()).collect(),
+            elements: node.elements().iter().map(|x| x.into()).collect(),
         }
     }
 }
@@ -116,7 +116,7 @@ impl From<&comment::Brief> for validator::Comment {
     fn from(node: &comment::Brief) -> Self {
         Self {
             elements: node
-                .spans
+                .spans()
                 .iter()
                 .map(|x| validator::comment::Element {
                     kind: Some(validator::comment::element::Kind::Span(x.into())),

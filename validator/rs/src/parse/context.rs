@@ -115,7 +115,7 @@ impl<'a> Context<'a> {
     /// Appends to the summary of this node.
     pub fn push_summary<C: Into<comment::Comment>>(&mut self, comment: C) {
         if let Some(summary) = self.output.summary.as_mut() {
-            summary.elements.extend(comment.into().elements.into_iter())
+            summary.extend(comment.into())
         } else {
             self.output.summary = Some(comment.into())
         }
