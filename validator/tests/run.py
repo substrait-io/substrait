@@ -293,10 +293,8 @@ def resolve_path(path, msg_desc):
     from the prost-generated structures."""
     def corrode(name):
         # TODO: this should be fixed in Rust instead!
-        if name == 'type':
-            return 'r#type'
-        if name == 'struct':
-            return 'r#struct'
+        if name in ('type', 'struct', 'enum', 'if', 'else', 'match'):
+            return f'r#{name}'
         return name
     while path:
         el, *path = path

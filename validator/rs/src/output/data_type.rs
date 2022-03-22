@@ -7,7 +7,9 @@
 use crate::output::diagnostic;
 use crate::output::extension;
 use crate::string_util;
+use crate::string_util::Describe;
 use std::collections::HashSet;
+use std::fmt::Write;
 use std::sync::Arc;
 use strum_macros::{Display, EnumString};
 
@@ -31,29 +33,40 @@ pub struct DataType {
     parameters: Vec<Parameter>,
 }
 
-impl std::fmt::Display for DataType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.class.fmt(f)?;
+impl Describe for DataType {
+    fn describe(
+        &self,
+        f: &mut std::fmt::Formatter<'_>,
+        limit: string_util::Limit,
+    ) -> std::fmt::Result {
+        let mut name = String::new();
+        write!(&mut name, "{}", self.class)?;
         if self.nullable {
-            write!(f, "?")?;
+            write!(&mut name, "?")?;
         }
         if let Some(variation) = &self.variation {
-            write!(f, "[{variation}]")?;
+            write!(&mut name, "[{variation}]")?;
         }
+        write!(f, "{}", name)?;
+        let (_, limit) = limit.split(name.len());
         if !self.parameters.is_empty() {
             write!(f, "<")?;
-            let mut first = true;
-            for parameter in self.parameters.iter() {
-                if first {
-                    first = false;
-                } else {
-                    write!(f, ", ")?;
-                }
-                write!(f, "{parameter}")?;
-            }
+            string_util::describe_sequence(
+                f,
+                &self.parameters,
+                limit,
+                20,
+                |f, param, _, limit| param.describe(f, limit),
+            )?;
             write!(f, ">")?;
         }
         Ok(())
+    }
+}
+
+impl std::fmt::Display for DataType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.display().fmt(f)
     }
 }
 
@@ -129,6 +142,16 @@ impl DataType {
             nullable,
             variation: None,
             parameters: vec![Parameter::Type(key), Parameter::Type(value)],
+        })
+    }
+
+    /// Returns a nullable variant of this type.
+    pub fn make_nullable(&self) -> Arc<DataType> {
+        Arc::new(DataType {
+            class: self.class.clone(),
+            nullable: true,
+            variation: self.variation.clone(),
+            parameters: self.parameters.clone(),
         })
     }
 
@@ -693,15 +716,28 @@ pub enum Parameter {
     Unsigned(u64),
 }
 
-impl std::fmt::Display for Parameter {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Describe for Parameter {
+    fn describe(
+        &self,
+        f: &mut std::fmt::Formatter<'_>,
+        limit: string_util::Limit,
+    ) -> std::fmt::Result {
         match self {
-            Parameter::Type(data_type) => write!(f, "{data_type}"),
+            Parameter::Type(data_type) => data_type.describe(f, limit),
             Parameter::NamedType(name, data_type) => {
-                write!(f, "{}: {data_type}", string_util::as_ident_or_string(name),)
+                let (name_limit, type_limit) = limit.split(name.len());
+                string_util::describe_identifier(f, name, name_limit)?;
+                write!(f, ": ")?;
+                data_type.describe(f, type_limit)
             }
             Parameter::Unsigned(value) => write!(f, "{value}"),
         }
+    }
+}
+
+impl std::fmt::Display for Parameter {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.display().fmt(f)
     }
 }
 

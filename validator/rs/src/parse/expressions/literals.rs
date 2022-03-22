@@ -8,6 +8,7 @@ use crate::output::diagnostic;
 use crate::parse::context;
 use crate::parse::types;
 use crate::string_util;
+use crate::string_util::Describe;
 use std::sync::Arc;
 
 /// The value of a literal, not including type information.
@@ -60,131 +61,6 @@ pub struct Literal {
     data_type: Arc<data_type::DataType>,
 }
 
-/// If only N items of a sequence longer than N can be printed, print this many
-/// elements from the front and this many from the back. The two returned
-/// values always sum to the input. For small values, returns:
-///
-///  - 0 -> (0, 0) because it's the only valid option;
-///  - 1 -> (1, 0) because the start of a sequence is usually more interesting
-///    than the end;
-///  - 2 -> (1, 1) because the start and end of a sequence are probably the
-///    most interesting values.
-///
-/// For N -> infinity, the 2x as many elements are printed on the left as on
-/// the right.
-///
-/// Note that this is all just heuristics. Anything goes for where the split is
-/// made.
-fn heuristic_split(n: usize) -> (usize, usize) {
-    let n_right = (n + 1) / 3;
-    let n_left = n - n_right;
-    (n_left, n_right)
-}
-
-/// Represent data as a quoted string. If the string is too long, abbreviate
-/// it. limit specifies the rough resulting string length that is considered
-/// to be "too long."
-fn repr_string(f: &mut std::fmt::Formatter<'_>, data: &str, limit: usize) -> std::fmt::Result {
-    // ~1 characters per character (limiting case), so print limit characters.
-    let n = limit;
-
-    if data.len() > n {
-        let (l, r) = heuristic_split(n);
-        write!(
-            f,
-            "{}..{}",
-            string_util::as_quoted_string(&data[..l]),
-            string_util::as_quoted_string(&data[data.len() - r..])
-        )
-    } else {
-        write!(f, "{}", string_util::as_quoted_string(data))
-    }
-}
-
-/// Represent data as a complete hexdump.
-fn repr_binary_all(f: &mut std::fmt::Formatter<'_>, data: &[u8]) -> std::fmt::Result {
-    for byte in data {
-        write!(f, "{byte:08X}")?;
-    }
-    Ok(())
-}
-
-/// Represent data as a hexdump. If the resulting dump is too long, abbreviate
-/// it. limit specifies the rough resulting string length that is considered
-/// to be "too long."
-fn repr_binary(f: &mut std::fmt::Formatter<'_>, data: &[u8], limit: usize) -> std::fmt::Result {
-    // 2 characters per byte, so divide limit by 2 to get number of bytes to
-    // be printed.
-    let n = limit / 2;
-
-    if data.len() > n {
-        let (l, r) = heuristic_split(n);
-        repr_binary_all(f, &data[..l])?;
-        write!(f, "..")?;
-        repr_binary_all(f, &data[data.len() - r..])
-    } else {
-        repr_binary_all(f, data)
-    }
-}
-
-/// Represent the given sequence completely.
-fn repr_sequence_all<T, F>(
-    f: &mut std::fmt::Formatter<'_>,
-    values: &[T],
-    offset: usize,
-    el_limit: usize,
-    repr: &F,
-) -> std::fmt::Result
-where
-    F: Fn(&mut std::fmt::Formatter<'_>, &T, usize, usize) -> std::fmt::Result,
-{
-    let mut first = true;
-    for (index, value) in values.iter().enumerate() {
-        if first {
-            first = false;
-        } else {
-            write!(f, ", ")?;
-        }
-        repr(f, value, index + offset, el_limit)?;
-    }
-    Ok(())
-}
-
-/// Represent the given sequence with heuristic length limits.
-fn repr_sequence<T, F>(
-    f: &mut std::fmt::Formatter<'_>,
-    values: &[T],
-    limit: usize,
-    repr: F,
-) -> std::fmt::Result
-where
-    F: Fn(&mut std::fmt::Formatter<'_>, &T, usize, usize) -> std::fmt::Result,
-{
-    // We get to decide how many characters we want to devote to each element.
-    // 20 seems like a nice number.
-    const TARGET_ELEMENT_LIMIT: usize = 20;
-    let n = limit / TARGET_ELEMENT_LIMIT;
-
-    if values.len() > n {
-        let (l, r) = heuristic_split(n);
-        let el_limit = limit / n;
-        repr_sequence_all(f, &values[..l], 0, el_limit, &repr)?;
-        if l > 0 {
-            write!(f, ", ")?;
-        }
-        write!(f, "..")?;
-        if r > 0 {
-            write!(f, ", ")?;
-        }
-        let offset = values.len() - r;
-        repr_sequence_all(f, &values[offset..], offset, el_limit, &repr)?;
-    } else {
-        let el_limit = limit / values.len();
-        repr_sequence_all(f, values, 0, el_limit, &repr)?;
-    }
-    Ok(())
-}
-
 /// Converts a value in microseconds since the epoch to a chrono::NaiveDateTime.
 fn to_date_time(micros: i64) -> chrono::NaiveDateTime {
     let secs = micros / 1_000_000;
@@ -193,6 +69,14 @@ fn to_date_time(micros: i64) -> chrono::NaiveDateTime {
 }
 
 impl Literal {
+    /// Shorthand for a new null literal.
+    pub fn new_null(data_type: Arc<data_type::DataType>) -> Literal {
+        Literal {
+            value: LiteralValue::Null,
+            data_type,
+        }
+    }
+
     /// Shorthand for a new simple literal.
     fn new_simple(
         value: LiteralValue,
@@ -232,11 +116,17 @@ impl Literal {
     pub fn data_type(&self) -> &Arc<data_type::DataType> {
         &self.data_type
     }
+}
 
+impl Describe for Literal {
     /// Represents the value of this literal with some size limit. The size
     /// limit very roughly corresponds to a number of characters, but this is
     /// purely a heuristic thing.
-    pub fn fmt2(&self, f: &mut std::fmt::Formatter<'_>, limit: usize) -> std::fmt::Result {
+    fn describe(
+        &self,
+        f: &mut std::fmt::Formatter<'_>,
+        limit: string_util::Limit,
+    ) -> std::fmt::Result {
         match &self.value {
             LiteralValue::Null => {
                 if self.data_type.is_unresolved() {
@@ -285,7 +175,7 @@ impl Literal {
                         let s = 10u128.pow(scale as u32);
                         write!(f, "{0}.{1:02$}", d / s, d % s, scale as usize)
                     } else {
-                        repr_binary(f, &d.to_le_bytes(), limit)
+                        string_util::describe_binary(f, &d.to_le_bytes(), limit)
                     }
                 }
                 data_type::Class::Simple(data_type::Simple::Uuid) => {
@@ -296,10 +186,10 @@ impl Literal {
                         b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]
                     )
                 }
-                _ => repr_binary(f, &d.to_le_bytes(), limit),
+                _ => string_util::describe_binary(f, &d.to_le_bytes(), limit),
             },
-            LiteralValue::String(s) => repr_string(f, s, limit),
-            LiteralValue::Binary(b) => repr_binary(f, b, limit),
+            LiteralValue::String(s) => string_util::describe_string(f, s, limit),
+            LiteralValue::Binary(b) => string_util::describe_binary(f, b, limit),
             LiteralValue::Interval(a, b) => match self.data_type.class() {
                 data_type::Class::Simple(data_type::Simple::IntervalYear) => {
                     write!(f, "{a}y{b:+}m")
@@ -310,15 +200,15 @@ impl Literal {
             LiteralValue::Items(x) => match self.data_type.class() {
                 data_type::Class::Compound(data_type::Compound::Struct) => {
                     write!(f, "(")?;
-                    repr_sequence(f, x, limit, |f, value, index, limit| {
+                    string_util::describe_sequence(f, x, limit, 20, |f, value, index, limit| {
                         write!(f, ".{index}: ")?;
-                        value.fmt2(f, limit)
+                        value.describe(f, limit)
                     })?;
                     write!(f, ")")
                 }
                 data_type::Class::Compound(data_type::Compound::NamedStruct) => {
                     write!(f, "(")?;
-                    repr_sequence(f, x, limit, |f, value, index, limit| {
+                    string_util::describe_sequence(f, x, limit, 20, |f, value, index, limit| {
                         if let Some(name) = self
                             .data_type
                             .parameters()
@@ -329,42 +219,58 @@ impl Literal {
                         } else {
                             write!(f, ".{index}: ")?;
                         }
-                        value.fmt2(f, limit)
+                        value.describe(f, limit)
                     })?;
                     write!(f, ")")
                 }
                 data_type::Class::Compound(data_type::Compound::List) => {
                     write!(f, "[")?;
-                    repr_sequence(f, x, limit, |f, value, _, limit| value.fmt2(f, limit))?;
+                    string_util::describe_sequence(f, x, limit, 20, |f, value, _, limit| {
+                        value.describe(f, limit)
+                    })?;
                     write!(f, "]")
                 }
                 _ => {
                     write!(f, "(")?;
-                    repr_sequence(f, x, limit, |f, value, _, limit| value.fmt2(f, limit))?;
+                    string_util::describe_sequence(f, x, limit, 20, |f, value, _, limit| {
+                        value.describe(f, limit)
+                    })?;
                     write!(f, ")")
                 }
             },
             LiteralValue::Pairs(x) => match self.data_type.class() {
                 data_type::Class::Compound(data_type::Compound::Map) => {
                     write!(f, "{{")?;
-                    repr_sequence(f, x, limit, |f, (key, value), _, limit| {
-                        let (key_limit, value_limit) = heuristic_split(limit);
-                        key.fmt2(f, key_limit)?;
-                        write!(f, ": ")?;
-                        value.fmt2(f, value_limit)
-                    })?;
+                    string_util::describe_sequence(
+                        f,
+                        x,
+                        limit,
+                        40,
+                        |f, (key, value), _, limit| {
+                            let (key_limit, value_limit) = limit.split(20);
+                            key.describe(f, key_limit)?;
+                            write!(f, ": ")?;
+                            value.describe(f, value_limit)
+                        },
+                    )?;
                     write!(f, "}}")
                 }
                 _ => {
                     write!(f, "(")?;
-                    repr_sequence(f, x, limit, |f, (key, value), _, limit| {
-                        write!(f, "(")?;
-                        let (key_limit, value_limit) = heuristic_split(limit);
-                        key.fmt2(f, key_limit)?;
-                        write!(f, ": ")?;
-                        value.fmt2(f, value_limit)?;
-                        write!(f, ")")
-                    })?;
+                    string_util::describe_sequence(
+                        f,
+                        x,
+                        limit,
+                        40,
+                        |f, (key, value), _, limit| {
+                            write!(f, "(")?;
+                            let (key_limit, value_limit) = limit.split(20);
+                            key.describe(f, key_limit)?;
+                            write!(f, ": ")?;
+                            value.describe(f, value_limit)?;
+                            write!(f, ")")
+                        },
+                    )?;
                     write!(f, ")")
                 }
             },
@@ -373,16 +279,8 @@ impl Literal {
 }
 
 impl std::fmt::Display for Literal {
-    /// Represents the literal. The default representation strives to print
-    /// about 100 characters that represent data, while the alternate
-    /// representation prints (basically) everything. Use repr() for more
-    /// control.
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if f.alternate() {
-            self.fmt2(f, usize::MAX)
-        } else {
-            self.fmt2(f, 100)
-        }
+        self.display().fmt(f)
     }
 }
 
@@ -666,17 +564,12 @@ pub fn parse_literal_type(
             )
         }
         substrait::expression::literal::LiteralType::List(x) => {
-            let (values, types): (Vec<_>, Vec<_>) =
-                proto_repeated_field!(x, y, values, parse_literal)
-                    .1
-                    .into_iter()
-                    .map(|x| {
-                        let x = x.unwrap_or_default();
-                        let data_type = x.data_type.clone();
-                        (x, data_type)
-                    })
-                    .unzip();
-            if x.values.is_empty() {
+            let values: Vec<_> = proto_repeated_field!(x, y, values, parse_literal)
+                .1
+                .into_iter()
+                .map(|x| x.unwrap_or_default())
+                .collect();
+            if values.is_empty() {
                 diagnostic!(
                     y,
                     Error,
@@ -685,10 +578,10 @@ pub fn parse_literal_type(
                 );
             }
             let mut data_type = Arc::default();
-            for (index, field_type) in types.into_iter().enumerate() {
+            for (index, value) in values.iter().enumerate() {
                 data_type = types::assert_equal(
                     y,
-                    field_type,
+                    value.data_type().clone(),
                     data_type,
                     format!("unexpected type for index {index}"),
                 );
@@ -700,10 +593,78 @@ pub fn parse_literal_type(
                 vec![data_type],
             )
         }
-        substrait::expression::literal::LiteralType::Map(x) => todo!(),
-        substrait::expression::literal::LiteralType::EmptyList(x) => todo!(),
-        substrait::expression::literal::LiteralType::EmptyMap(x) => todo!(),
-        substrait::expression::literal::LiteralType::Null(x) => todo!(),
+        substrait::expression::literal::LiteralType::Map(x) => {
+            let values: Vec<_> = proto_repeated_field!(x, y, key_values, |x, y| {
+                let key = proto_required_field!(x, y, key, parse_literal)
+                    .1
+                    .unwrap_or_default();
+                let value = proto_required_field!(x, y, value, parse_literal)
+                    .1
+                    .unwrap_or_default();
+                Ok((key, value))
+            })
+            .1
+            .into_iter()
+            .map(|x| x.unwrap_or_default())
+            .collect();
+            if values.is_empty() {
+                diagnostic!(
+                    y,
+                    Error,
+                    ExpressionIllegalLiteralValue,
+                    "need at least one key-value pair to derive types (use EmptyMap instead)"
+                );
+            }
+            let mut key_type = Arc::default();
+            let mut value_type = Arc::default();
+            for (index, value) in values.iter().enumerate() {
+                key_type = types::assert_equal(
+                    y,
+                    value.0.data_type().clone(),
+                    key_type,
+                    format!("unexpected key type for index {index}"),
+                );
+                value_type = types::assert_equal(
+                    y,
+                    value.1.data_type().clone(),
+                    value_type,
+                    format!("unexpected value type for index {index}"),
+                );
+            }
+            Literal::new_compound(
+                LiteralValue::Pairs(values),
+                data_type::Compound::Map,
+                nullable,
+                vec![key_type, value_type],
+            )
+        }
+        substrait::expression::literal::LiteralType::EmptyList(x) => {
+            // FIXME: nullability is redundantly specified, and the type
+            // variation reference would be if it had gotten the same
+            // treatment as nullability. Why doesn't EmptyList just map to only
+            // the element data type?
+            types::parse_list(x, y)?;
+            Ok(Literal {
+                value: LiteralValue::Items(vec![]),
+                data_type: y.data_type(),
+            })
+        }
+        substrait::expression::literal::LiteralType::EmptyMap(x) => {
+            // FIXME: same note as for EmptyList.
+            types::parse_map(x, y)?;
+            Ok(Literal {
+                value: LiteralValue::Pairs(vec![]),
+                data_type: y.data_type(),
+            })
+        }
+        substrait::expression::literal::LiteralType::Null(x) => {
+            // FIXME: same note as for EmptyList.
+            types::parse_type(x, y)?;
+            Ok(Literal {
+                value: LiteralValue::Null,
+                data_type: y.data_type(),
+            })
+        }
     }
 }
 
@@ -712,11 +673,53 @@ pub fn parse_literal(
     x: &substrait::expression::Literal,
     y: &mut context::Context,
 ) -> diagnostic::Result<Literal> {
-    // Parse type parameters that apply to all literals.
-    proto_primitive_field!(x, y, nullable);
+    // Parse type parameters that apply to all literals (except empty objects
+    // and null...).
+    if !matches!(
+        x.literal_type,
+        Some(substrait::expression::literal::LiteralType::EmptyList(_))
+            | Some(substrait::expression::literal::LiteralType::EmptyMap(_))
+            | Some(substrait::expression::literal::LiteralType::Null(_))
+    ) {
+        // FIXME: why isn't the nullability enum used here? Especially
+        // considering nullability here actually should be unspecified when
+        // above match yields false, while it must be specified everywhere
+        // else. Better yet, change the semantics as described in the other
+        // fixmes such that it is always mandatory everywhere, and then use
+        // a boolean everywhere? If the point of the enum is to allow types
+        // to be "partially unresolved," then the type system is pretty
+        // fundamentally broken, since overload resolution depends on it.
+        proto_primitive_field!(x, y, nullable);
 
-    // FIXME: why would literals not support type variations? Feels like there
-    // should be a type variation reference here.
+        // FIXME: why would literals not support type variations? Feels like
+        // there should be a type variation reference here.
+    } else {
+        // FIXME: this is all very ugly. Since all types can be made nullable
+        // anyway, why isn't the nullability field taken out of the type kind
+        // for types as well? Then the "empty" values can just refer to the
+        // type kind rather than the whole type message, and the problem would
+        // be solved. Likewise, I don't see why type variations should get
+        // special treatment in the sense that (currently) user-defined types
+        // can't also have variations. Why explicitly disallow that?
+        proto_primitive_field!(x, y, nullable, |x, y| {
+            // Send diagnostic only when x is not set to its default value,
+            // since the default value is indistinguishable from unspecified.
+            if *x {
+                diagnostic!(
+                    y,
+                    Info,
+                    RedundantField,
+                    "this field is inoperative for empty lists, empty maps, and null."
+                );
+            } else {
+                comment!(
+                    y,
+                    "This field is inoperative for empty lists, empty maps, and null."
+                );
+            }
+            Ok(())
+        });
+    }
 
     // Parse the literal value.
     let literal = proto_required_field!(x, y, literal_type, parse_literal_type, x.nullable)

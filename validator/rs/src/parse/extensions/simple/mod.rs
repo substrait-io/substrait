@@ -94,7 +94,6 @@ pub fn parse_type_reference(
     }
 }
 
-/*
 /// Parse a function reference and resolve it.
 pub fn parse_function_reference(
     x: &u32,
@@ -111,7 +110,6 @@ pub fn parse_function_reference(
         )),
     }
 }
-*/
 
 /// Parse a mapping from a function/type/variation anchor to an extension.
 fn parse_extension_mapping_data(

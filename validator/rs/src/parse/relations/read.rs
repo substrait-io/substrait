@@ -13,6 +13,7 @@ use crate::input::proto::substrait;
 use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::parse::context;
+use crate::parse::expressions;
 use crate::parse::expressions::references::mask;
 use crate::parse::extensions;
 use crate::parse::types;
@@ -151,7 +152,7 @@ pub fn parse_read_rel(x: &substrait::ReadRel, y: &mut context::Context) -> diagn
     y.set_schema(schema.clone());
 
     // Handle filter.
-    // TODO
+    proto_boxed_field!(x, y, filter, expressions::parse_predicate);
 
     // Handle projection.
     if x.projection.is_some() {

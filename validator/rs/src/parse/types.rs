@@ -651,8 +651,8 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
         data_type::Class::Compound(data_type::Compound::Struct)
         | data_type::Class::Compound(data_type::Compound::NamedStruct) => {
             let n = data_type.parameters().len();
-            summary!(y, "Product type with {n} fields.");
-            format!("Product type with {n} fields")
+            summary!(y, "Structure with {n} fields.");
+            format!("Structure with {n} fields")
         }
         data_type::Class::Compound(data_type::Compound::List) => {
             let e = data_type

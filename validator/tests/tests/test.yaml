@@ -2,8 +2,6 @@ name: meta-test
 diags:
 - code: 3
 plan:
-  "@test":
-  - level: i
   extensionUris:
   - extensionUriAnchor: 1
     uri@yaml:
@@ -21,8 +19,6 @@ plan:
   relations:
   - rel:
       project:
-        "@test":
-        - diag: { code: 1, level: w }
         expressions:
         - selection:
             directReference:
@@ -53,8 +49,6 @@ plan:
               names:
               - person
             projection:
-              "@test":
-              - diag: { code: 1, level: w }
               select:
                 structItems:
                 - {}

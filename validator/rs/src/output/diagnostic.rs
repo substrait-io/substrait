@@ -252,6 +252,9 @@ pub enum Classification {
     #[strum(props(Description = "illegal literal value"))]
     ExpressionIllegalLiteralValue = 6002,
 
+    #[strum(props(Description = "function definition unavailable"))]
+    ExpressionFunctionDefinitionUnavailable = 6003,
+
     // Redundant declarations (group 7).
     #[strum(props(
         HiddenDescription = "diagnostics for pointing out parts of the plan that can be removed without changing its semantics"
@@ -275,6 +278,9 @@ pub enum Classification {
 
     #[strum(props(Description = "redundant list slice"))]
     RedundantListSlice = 7006,
+
+    #[strum(props(Description = "redundant field"))]
+    RedundantField = 7007,
 }
 
 impl Classification {
