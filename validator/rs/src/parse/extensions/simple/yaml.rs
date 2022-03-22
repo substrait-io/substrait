@@ -9,6 +9,7 @@ use crate::output::extension;
 use crate::output::path;
 use crate::parse::context;
 use crate::parse::traversal;
+use crate::string_util;
 use std::sync::Arc;
 
 /// Toplevel parse function for a simple extension YAML file.
@@ -22,6 +23,12 @@ pub fn parse_uri<S: AsRef<str>>(
     x: &S,
     y: &mut context::Context,
 ) -> Result<Arc<extension::YamlInfo>> {
+    // Check URI syntax.
+    let x = x.as_ref();
+    if !string_util::is_uri(x) {
+        diagnostic!(y, Error, IllegalUri, "uri does not conform to RFC 3986");
+    }
+
     // The schema for YAML extension files.
     static SCHEMA: once_cell::sync::Lazy<jsonschema::JSONSchema> =
         once_cell::sync::Lazy::new(|| {

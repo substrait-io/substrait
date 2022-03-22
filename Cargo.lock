@@ -206,6 +206,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "fancy-regex"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d95b4efe5be9104a4a18a9916e86654319895138be727b229820c39257c30dda"
+dependencies = [
+ "bit-set",
+ "regex",
+]
+
+[[package]]
 name = "fastrand"
 version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -383,7 +393,7 @@ dependencies = [
  "anyhow",
  "base64",
  "bytecount",
- "fancy-regex",
+ "fancy-regex 0.7.1",
  "fraction",
  "iso8601",
  "itoa",
@@ -975,6 +985,7 @@ version = "0.0.1"
 dependencies = [
  "chrono",
  "curl",
+ "fancy-regex 0.8.0",
  "glob",
  "itertools 0.8.2",
  "jsonschema",
@@ -984,7 +995,6 @@ dependencies = [
  "prost",
  "prost-build",
  "prost-types",
- "regex",
  "serde_json",
  "strum",
  "strum_macros",

@@ -159,6 +159,9 @@ pub enum Classification {
     #[strum(props(Description = "illegal value in hint"))]
     IllegalValueInHint = 3,
 
+    #[strum(props(Description = "illegal URI"))]
+    IllegalUri = 4,
+
     // Protobuf-related diagnostics (group 1).
     #[strum(props(HiddenDescription = "protobuf-related diagnostic"))]
     Proto = 1000,

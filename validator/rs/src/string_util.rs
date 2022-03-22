@@ -2,6 +2,132 @@
 
 //! Some misc. string utility functions.
 
+/// Returns whether the given string is a valid identifier.
+pub fn is_identifier(s: &str) -> bool {
+    static IDENTIFIER_RE: once_cell::sync::Lazy<fancy_regex::Regex> =
+        once_cell::sync::Lazy::new(|| fancy_regex::Regex::new("[a-zA-Z_][a-zA-Z0-9_]*").unwrap());
+    IDENTIFIER_RE.is_match(s).unwrap_or_default()
+}
+
+/// Returns whether the given string is a valid RFC 3986 URI.
+pub fn is_uri(s: &str) -> bool {
+    // This monster is derived from
+    // https://github.com/wizard04wsu/URI_Parsing/blob/6570cfffc932158d8209e4c904b34f2d078e7f67/src/uri_parsing.mjs#L420
+    // (MIT-licensed by Andrew Harrison)
+    static URI_RE: once_cell::sync::Lazy<fancy_regex::Regex> = once_cell::sync::Lazy::new(|| {
+        let mut re = String::new();
+        re += "^";
+        re += "(?=([a-z][a-z\\d+.-]*))\\1:"; // 1 = scheme
+        re += "(?:";
+        {
+            re += "//";
+            re += "(";
+            {
+                re += "(?:";
+                {
+                    re += "(?=((?:[-\\w.~!$&'()*+,;=:]|%[\\dA-F]{2})*))\\3"; // 3 = userinfo
+                    re += "@";
+                }
+                re += ")?";
+                re += "(?=(\\[[\\dA-F:.]{2,}\\]|(?:[-\\w.~!$&'()*+,;=]|%[\\dA-F]{2})*))\\4"; // 4 = host (loose check)
+                re += "(?:";
+                {
+                    re += ":";
+                    re += "(?=(\\d*))\\5"; // 5 = port
+                }
+                re += ")?";
+            }
+            re += ")"; // 2 = authority
+            re += "(/(?=((?:[-\\w.~!$&'()*+,;=:@]|%[\\dA-F]{2})*))\\7)?"; // 6 = path (after authority)
+            re += "|";
+            re += "(/?(?!/)(?=((?:[-\\w.~!$&'()*+,;=:@]|%[\\dA-F]{2})*))\\9)?"; // 8 = path (no authority)
+        }
+        re += ")";
+        re += "(?:";
+        {
+            re += "\\?";
+            re += "(?=((?:[-\\w.~!$&'()*+,;=:@?]|%[\\dA-F]{2})*))\\10"; // 10 = query
+        }
+        re += ")?";
+        re += "(?:";
+        {
+            re += "#";
+            re += "(?=((?:[-\\w.~!$&'()*+,;=:@?]|%[\\dA-F]{2})*))\\11"; // 11 = fragment
+        }
+        re += ")?";
+        re += "$";
+        fancy_regex::Regex::new(&re).unwrap()
+    });
+
+    URI_RE.is_match(s).unwrap_or_default()
+}
+
+/// Returns whether the given string is a valid RFC 3986 URI, with the
+/// exception that glob syntax is allowed for the path part.
+pub fn is_uri_glob(s: &str) -> bool {
+    // This monster is derived from
+    // https://github.com/wizard04wsu/URI_Parsing/blob/6570cfffc932158d8209e4c904b34f2d078e7f67/src/uri_parsing.mjs#L420
+    // (MIT-licensed by Andrew Harrison)
+    static URI_RE: once_cell::sync::Lazy<fancy_regex::Regex> = once_cell::sync::Lazy::new(|| {
+        let mut re = String::new();
+        re += "^";
+        re += "(?=([a-z][a-z\\d+.-]*))\\1:"; // 1 = scheme
+        re += "(?:";
+        {
+            re += "//";
+            re += "(";
+            {
+                re += "(?:";
+                {
+                    re += "(?=((?:[-\\w.~!$&'()*+,;=:]|%[\\dA-F]{2})*))\\3"; // 3 = userinfo
+                    re += "@";
+                }
+                re += ")?";
+                re += "(?=(\\[[\\dA-F:.]{2,}\\]|(?:[-\\w.~!$&'()*+,;=]|%[\\dA-F]{2})*))\\4"; // 4 = host (loose check)
+                re += "(?:";
+                {
+                    re += ":";
+                    re += "(?=(\\d*))\\5"; // 5 = port
+                }
+                re += ")?";
+            }
+            re += ")"; // 2 = authority
+            re += "(/(?=((?:[-\\w.~!$&'()*+,;=:@?[\\]]|%[\\dA-F]{2})*))\\7)?"; // 6 = path (after authority)
+            re += "|";
+            re += "(/?(?!/)(?=((?:[-\\w.~!$&'()*+,;=:@?[\\]]|%[\\dA-F]{2})*))\\9)?";
+            // 8 = path (no authority)
+        }
+        re += ")";
+        re += "(?:";
+        {
+            re += "\\?";
+            re += "(?=((?:[-\\w.~!$&'()*+,;=:@?]|%[\\dA-F]{2})*))\\10"; // 10 = query
+        }
+        re += ")?";
+        re += "(?:";
+        {
+            re += "#";
+            re += "(?=((?:[-\\w.~!$&'()*+,;=:@?]|%[\\dA-F]{2})*))\\11"; // 11 = fragment
+        }
+        re += ")?";
+        re += "$";
+        fancy_regex::Regex::new(&re).unwrap()
+    });
+
+    URI_RE
+        .captures(s)
+        .ok()
+        .flatten()
+        .map(|c| {
+            if let Some(path) = c.get(6).or_else(|| c.get(8)) {
+                glob::Pattern::new(path.as_str()).is_ok()
+            } else {
+                true
+            }
+        })
+        .unwrap_or_default()
+}
+
 /// Returns the given string as a quoted string.
 pub fn as_quoted_string<S: AsRef<str>>(s: S) -> String {
     let s = s.as_ref();
@@ -18,15 +144,12 @@ pub fn as_quoted_string<S: AsRef<str>>(s: S) -> String {
     result
 }
 
-static IDENTIFIER_RE: once_cell::sync::Lazy<regex::Regex> =
-    once_cell::sync::Lazy::new(|| regex::Regex::new("[a-zA-Z_][a-zA-Z0-9_]*").unwrap());
-
 /// Returns the given string as-is if it's a valid identifier (i.e. if it
 /// matches `[a-zA-Z_][a-zA-Z0-9_]*`), or returns it as an escaped string
 /// otherwise, using (only) \" and \\ as escape sequences.
 pub fn as_ident_or_string<S: AsRef<str>>(s: S) -> String {
     let s = s.as_ref();
-    if IDENTIFIER_RE.is_match(s) {
+    if is_identifier(s) {
         s.to_string()
     } else {
         as_quoted_string(s)
@@ -224,7 +347,7 @@ pub fn describe_identifier(
     data: &str,
     limit: Limit,
 ) -> std::fmt::Result {
-    if IDENTIFIER_RE.is_match(data) {
+    if is_identifier(data) {
         let (n_left, n_right, _) = limit.split_n(data.len(), 1);
         if n_left > 0 || n_right.is_none() {
             write!(f, "{}", &data[..n_left])?;

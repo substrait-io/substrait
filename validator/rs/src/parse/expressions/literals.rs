@@ -284,387 +284,544 @@ impl std::fmt::Display for Literal {
     }
 }
 
+/// Parses a boolean literal.
+fn parse_boolean(
+    x: &bool,
+    _y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    Literal::new_simple(
+        LiteralValue::Boolean(*x),
+        data_type::Simple::Boolean,
+        nullable,
+    )
+}
+
+/// Parses an i8 literal.
+fn parse_i8(x: &i32, _y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
+    let x = i8::try_from(*x)
+        .map_err(|_| cause!(ExpressionIllegalLiteralValue, "i8 value out of range"))?;
+    Literal::new_simple(
+        LiteralValue::Integer(x as i64),
+        data_type::Simple::I8,
+        nullable,
+    )
+}
+
+/// Parses an i16 literal.
+fn parse_i16(x: &i32, _y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
+    let x = i16::try_from(*x)
+        .map_err(|_| cause!(ExpressionIllegalLiteralValue, "i16 value out of range"))?;
+    Literal::new_simple(
+        LiteralValue::Integer(x as i64),
+        data_type::Simple::I16,
+        nullable,
+    )
+}
+
+/// Parses an i32 literal.
+fn parse_i32(x: &i32, _y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
+    Literal::new_simple(
+        LiteralValue::Integer(*x as i64),
+        data_type::Simple::I32,
+        nullable,
+    )
+}
+
+/// Parses an i64 literal.
+fn parse_i64(x: &i64, _y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
+    Literal::new_simple(LiteralValue::Integer(*x), data_type::Simple::I64, nullable)
+}
+
+/// Parses an fp32 literal.
+fn parse_fp32(x: &f32, _y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
+    Literal::new_simple(
+        LiteralValue::Float(*x as f64),
+        data_type::Simple::Fp32,
+        nullable,
+    )
+}
+
+/// Parses an fp64 literal.
+fn parse_fp64(x: &f64, _y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
+    Literal::new_simple(LiteralValue::Float(*x), data_type::Simple::Fp64, nullable)
+}
+
+/// Parses a string literal.
+fn parse_string(x: &str, _y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
+    Literal::new_simple(
+        LiteralValue::String(x.to_string()),
+        data_type::Simple::String,
+        nullable,
+    )
+}
+
+/// Parses a binary literal.
+fn parse_binary(
+    x: &[u8],
+    _y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    Literal::new_simple(
+        LiteralValue::Binary(x.to_owned()),
+        data_type::Simple::Binary,
+        nullable,
+    )
+}
+
+/// Parses a timestamp literal.
+fn parse_timestamp(
+    x: &i64,
+    y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    let dt = to_date_time(*x);
+    if dt < chrono::NaiveDate::from_ymd(1000, 1, 1).and_hms(0, 0, 0)
+        || dt >= chrono::NaiveDate::from_ymd(10000, 1, 1).and_hms(0, 0, 0)
+    {
+        diagnostic!(
+            y,
+            Error,
+            ExpressionIllegalLiteralValue,
+            "timestamp out of range 1000-01-01 to 9999-12-31"
+        );
+    }
+    Literal::new_simple(
+        LiteralValue::Integer(*x),
+        data_type::Simple::Timestamp,
+        nullable,
+    )
+}
+
+/// Parses a UTC timestamp literal.
+fn parse_timestamp_tz(
+    x: &i64,
+    y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    let dt = to_date_time(*x);
+    if dt < chrono::NaiveDate::from_ymd(1000, 1, 1).and_hms(0, 0, 0)
+        || dt >= chrono::NaiveDate::from_ymd(10000, 1, 1).and_hms(0, 0, 0)
+    {
+        diagnostic!(
+            y,
+            Error,
+            ExpressionIllegalLiteralValue,
+            "timestamp out of range 1000-01-01 UTC to 9999-12-31 UTC"
+        );
+    }
+    Literal::new_simple(
+        LiteralValue::Integer(*x),
+        data_type::Simple::TimestampTz,
+        nullable,
+    )
+}
+
+/// Parses a date literal.
+fn parse_date(x: &i32, y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
+    let dt = to_date_time((*x as i64) * 24 * 60 * 60 * 1_000_000);
+    if dt < chrono::NaiveDate::from_ymd(1000, 1, 1).and_hms(0, 0, 0)
+        || dt >= chrono::NaiveDate::from_ymd(10000, 1, 1).and_hms(0, 0, 0)
+    {
+        diagnostic!(
+            y,
+            Error,
+            ExpressionIllegalLiteralValue,
+            "date out of range 1000-01-01 UTC to 9999-12-31 UTC"
+        );
+    }
+    Literal::new_simple(
+        LiteralValue::Integer(*x as i64),
+        data_type::Simple::Date,
+        nullable,
+    )
+}
+
+/// Parses a time literal.
+fn parse_time(x: &i64, y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
+    if *x < 0 || *x >= 24 * 60 * 60 * 1_000_000 {
+        diagnostic!(
+            y,
+            Error,
+            ExpressionIllegalLiteralValue,
+            "time of day out of range 00:00:00.000000 to 23:59:59.999999"
+        );
+    }
+    Literal::new_simple(LiteralValue::Integer(*x), data_type::Simple::Time, nullable)
+}
+
+/// Parses a year to month interval literal.
+fn parse_interval_year_to_month(
+    x: &substrait::expression::literal::IntervalYearToMonth,
+    y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    // FIXME: see FIXME for associated type.
+    proto_primitive_field!(x, y, years, |x, _| {
+        if *x < -10000 || *x > 10000 {
+            Err(cause!(
+                ExpressionIllegalLiteralValue,
+                "year count out of range -10000 to 10000"
+            ))
+        } else {
+            Ok(())
+        }
+    });
+    proto_primitive_field!(x, y, months, |x, _| {
+        if *x < -120000 || *x > 120000 {
+            Err(cause!(
+                ExpressionIllegalLiteralValue,
+                "month count out of range -120000 to 120000"
+            ))
+        } else {
+            Ok(())
+        }
+    });
+    let months = x.months + 12 * x.years;
+    if months < -120000 || months > 120000 {
+        diagnostic!(
+            y,
+            Error,
+            ExpressionIllegalLiteralValue,
+            "combined interval out of range -10000 to 10000 years"
+        );
+    }
+    Literal::new_simple(
+        LiteralValue::Interval(x.years, x.months),
+        data_type::Simple::IntervalYear,
+        nullable,
+    )
+}
+
+/// Parses a day to second interval literal.
+fn parse_interval_day_to_second(
+    x: &substrait::expression::literal::IntervalDayToSecond,
+    y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    // FIXME: see FIXME for associated type.
+    proto_primitive_field!(x, y, days, |x, _| {
+        if *x < -3650000 || *x > 3650000 {
+            Err(cause!(
+                ExpressionIllegalLiteralValue,
+                "day count out of range -3_650_000 to 3_650_000"
+            ))
+        } else {
+            Ok(())
+        }
+    });
+
+    // FIXME: according to the docs, day to second supports microsecond
+    // precision. The literal doesn't. The i32 seconds also doesn't
+    // support the full specified range (but that range is weird
+    // anyway).
+    proto_primitive_field!(x, y, seconds);
+    Literal::new_simple(
+        LiteralValue::Interval(x.days, x.seconds),
+        data_type::Simple::IntervalDay,
+        nullable,
+    )
+}
+
+/// Parses a UUID literal.
+fn parse_uuid(x: &[u8], _y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
+    let uuid = if let Ok(x) = x.try_into() {
+        i128::from_ne_bytes(x)
+    } else {
+        0
+    };
+    Literal::new_simple(
+        LiteralValue::Data16(uuid),
+        data_type::Simple::Uuid,
+        nullable,
+    )
+}
+
+/// Parses a fixed-length string literal.
+fn parse_fixed_char(
+    x: &str,
+    _y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    Literal::new_compound(
+        LiteralValue::String(x.to_string()),
+        data_type::Compound::FixedChar,
+        nullable,
+        vec![x.len() as u64],
+    )
+}
+
+/// Parses a variable-length string literal.
+fn parse_var_char(
+    x: &substrait::expression::literal::VarChar,
+    y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    proto_primitive_field!(x, y, length);
+    let len = x.length as usize;
+    proto_primitive_field!(x, y, value, |x, _| {
+        if x.len() > len {
+            Err(cause!(
+                ExpressionIllegalLiteralValue,
+                "varchar literal value is longer than specified length"
+            ))
+        } else {
+            Ok(())
+        }
+    });
+    Literal::new_compound(
+        LiteralValue::String(x.value.clone()),
+        data_type::Compound::VarChar,
+        nullable,
+        vec![len as u64],
+    )
+}
+
+/// Parses a fixed-length binary literal.
+fn parse_fixed_binary(
+    x: &[u8],
+    _y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    Literal::new_compound(
+        LiteralValue::Binary(x.to_owned()),
+        data_type::Compound::FixedBinary,
+        nullable,
+        vec![x.len() as u64],
+    )
+}
+
+/// Parses a decimal literal.
+fn parse_decimal(
+    x: &substrait::expression::literal::Decimal,
+    y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    proto_primitive_field!(x, y, precision, |x, _| {
+        if *x < 0 {
+            Err(cause!(
+                IllegalValue,
+                "negative type parameters are not supported"
+            ))
+        } else {
+            Ok(())
+        }
+    });
+    proto_primitive_field!(x, y, scale);
+    proto_primitive_field!(x, y, value, |x, _| {
+        if x.len() != 16 {
+            Err(cause!(
+                ExpressionIllegalLiteralValue,
+                "decimal literal value must be 16 bytes in length"
+            ))
+        } else {
+            Ok(())
+        }
+    });
+    let mut val = 0i128;
+    for byte in x.value.iter() {
+        val <<= 8;
+        val |= *byte as i128;
+    }
+    let precision = u64::try_from(x.precision).unwrap_or_default();
+    let scale = u64::try_from(x.scale).unwrap_or_default();
+    Literal::new_compound(
+        LiteralValue::Data16(val),
+        data_type::Compound::Decimal,
+        nullable,
+        vec![precision, scale],
+    )
+}
+
+/// Parses a struct literal.
+pub fn parse_struct(
+    x: &substrait::expression::literal::Struct,
+    y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    let (values, types): (Vec<_>, Vec<_>) = proto_repeated_field!(x, y, fields, parse_literal)
+        .1
+        .into_iter()
+        .map(|x| {
+            let x = x.unwrap_or_default();
+            let data_type = x.data_type.clone();
+            (x, data_type)
+        })
+        .unzip();
+    Literal::new_compound(
+        LiteralValue::Items(values),
+        data_type::Compound::Struct,
+        nullable,
+        types,
+    )
+}
+
+/// Parses a list literal.
+fn parse_list(
+    x: &substrait::expression::literal::List,
+    y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    let values: Vec<_> = proto_repeated_field!(x, y, values, parse_literal)
+        .1
+        .into_iter()
+        .map(|x| x.unwrap_or_default())
+        .collect();
+    if values.is_empty() {
+        diagnostic!(
+            y,
+            Error,
+            ExpressionIllegalLiteralValue,
+            "need at least one list element to derive type (use EmptyList instead)"
+        );
+    }
+    let mut data_type = Arc::default();
+    for (index, value) in values.iter().enumerate() {
+        data_type = types::assert_equal(
+            y,
+            value.data_type().clone(),
+            data_type,
+            format!("unexpected type for index {index}"),
+        );
+    }
+    Literal::new_compound(
+        LiteralValue::Items(values),
+        data_type::Compound::List,
+        nullable,
+        vec![data_type],
+    )
+}
+
+/// Parses a map literal.
+fn parse_map(
+    x: &substrait::expression::literal::Map,
+    y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    let values: Vec<_> = proto_repeated_field!(x, y, key_values, |x, y| {
+        let key = proto_required_field!(x, y, key, parse_literal)
+            .1
+            .unwrap_or_default();
+        let value = proto_required_field!(x, y, value, parse_literal)
+            .1
+            .unwrap_or_default();
+        Ok((key, value))
+    })
+    .1
+    .into_iter()
+    .map(|x| x.unwrap_or_default())
+    .collect();
+    if values.is_empty() {
+        diagnostic!(
+            y,
+            Error,
+            ExpressionIllegalLiteralValue,
+            "need at least one key-value pair to derive types (use EmptyMap instead)"
+        );
+    }
+    let mut key_type = Arc::default();
+    let mut value_type = Arc::default();
+    for (index, value) in values.iter().enumerate() {
+        key_type = types::assert_equal(
+            y,
+            value.0.data_type().clone(),
+            key_type,
+            format!("unexpected key type for index {index}"),
+        );
+        value_type = types::assert_equal(
+            y,
+            value.1.data_type().clone(),
+            value_type,
+            format!("unexpected value type for index {index}"),
+        );
+    }
+    Literal::new_compound(
+        LiteralValue::Pairs(values),
+        data_type::Compound::Map,
+        nullable,
+        vec![key_type, value_type],
+    )
+}
+
+/// Parses an empty list literal.
+fn parse_empty_list(
+    x: &substrait::r#type::List,
+    y: &mut context::Context,
+    _nullable: bool,
+) -> diagnostic::Result<Literal> {
+    // FIXME: nullability is redundantly specified, and the type
+    // variation reference would be if it had gotten the same
+    // treatment as nullability. Why doesn't EmptyList just map to only
+    // the element data type?
+    types::parse_list(x, y)?;
+    Ok(Literal {
+        value: LiteralValue::Items(vec![]),
+        data_type: y.data_type(),
+    })
+}
+
+/// Parses an empty map literal.
+fn parse_empty_map(
+    x: &substrait::r#type::Map,
+    y: &mut context::Context,
+    _nullable: bool,
+) -> diagnostic::Result<Literal> {
+    // FIXME: same note as for EmptyList.
+    types::parse_map(x, y)?;
+    Ok(Literal {
+        value: LiteralValue::Pairs(vec![]),
+        data_type: y.data_type(),
+    })
+}
+
+/// Parses a null literal.
+fn parse_null(
+    x: &substrait::Type,
+    y: &mut context::Context,
+    _nullable: bool,
+) -> diagnostic::Result<Literal> {
+    // FIXME: same note as for EmptyList.
+    types::parse_type(x, y)?;
+    Ok(Literal {
+        value: LiteralValue::Null,
+        data_type: y.data_type(),
+    })
+}
+
 /// Parse a literal value. Returns the parsed literal.
-pub fn parse_literal_type(
+fn parse_literal_type(
     x: &substrait::expression::literal::LiteralType,
     y: &mut context::Context,
     nullable: bool,
 ) -> diagnostic::Result<Literal> {
+    use substrait::expression::literal::LiteralType;
     match x {
-        substrait::expression::literal::LiteralType::Boolean(x) => Literal::new_simple(
-            LiteralValue::Boolean(*x),
-            data_type::Simple::Boolean,
-            nullable,
-        ),
-        substrait::expression::literal::LiteralType::I8(x) => {
-            let x = i8::try_from(*x)
-                .map_err(|_| cause!(ExpressionIllegalLiteralValue, "i8 value out of range"))?;
-            Literal::new_simple(
-                LiteralValue::Integer(x as i64),
-                data_type::Simple::I8,
-                nullable,
-            )
-        }
-        substrait::expression::literal::LiteralType::I16(x) => {
-            let x = i16::try_from(*x)
-                .map_err(|_| cause!(ExpressionIllegalLiteralValue, "i16 value out of range"))?;
-            Literal::new_simple(
-                LiteralValue::Integer(x as i64),
-                data_type::Simple::I16,
-                nullable,
-            )
-        }
-        substrait::expression::literal::LiteralType::I32(x) => Literal::new_simple(
-            LiteralValue::Integer(*x as i64),
-            data_type::Simple::I32,
-            nullable,
-        ),
-        substrait::expression::literal::LiteralType::I64(x) => {
-            Literal::new_simple(LiteralValue::Integer(*x), data_type::Simple::I64, nullable)
-        }
-        substrait::expression::literal::LiteralType::Fp32(x) => Literal::new_simple(
-            LiteralValue::Float(*x as f64),
-            data_type::Simple::Fp32,
-            nullable,
-        ),
-        substrait::expression::literal::LiteralType::Fp64(x) => {
-            Literal::new_simple(LiteralValue::Float(*x), data_type::Simple::Fp64, nullable)
-        }
-        substrait::expression::literal::LiteralType::String(x) => Literal::new_simple(
-            LiteralValue::String(x.clone()),
-            data_type::Simple::String,
-            nullable,
-        ),
-        substrait::expression::literal::LiteralType::Binary(x) => Literal::new_simple(
-            LiteralValue::Binary(x.clone()),
-            data_type::Simple::Binary,
-            nullable,
-        ),
-        substrait::expression::literal::LiteralType::Timestamp(x) => {
-            let dt = to_date_time(*x);
-            if dt < chrono::NaiveDate::from_ymd(1000, 1, 1).and_hms(0, 0, 0)
-                || dt >= chrono::NaiveDate::from_ymd(10000, 1, 1).and_hms(0, 0, 0)
-            {
-                diagnostic!(
-                    y,
-                    Error,
-                    ExpressionIllegalLiteralValue,
-                    "timestamp out of range 1000-01-01 to 9999-12-31"
-                );
-            }
-            Literal::new_simple(
-                LiteralValue::Integer(*x),
-                data_type::Simple::Timestamp,
-                nullable,
-            )
-        }
-        substrait::expression::literal::LiteralType::TimestampTz(x) => {
-            let dt = to_date_time(*x);
-            if dt < chrono::NaiveDate::from_ymd(1000, 1, 1).and_hms(0, 0, 0)
-                || dt >= chrono::NaiveDate::from_ymd(10000, 1, 1).and_hms(0, 0, 0)
-            {
-                diagnostic!(
-                    y,
-                    Error,
-                    ExpressionIllegalLiteralValue,
-                    "timestamp out of range 1000-01-01 UTC to 9999-12-31 UTC"
-                );
-            }
-            Literal::new_simple(
-                LiteralValue::Integer(*x),
-                data_type::Simple::TimestampTz,
-                nullable,
-            )
-        }
-        substrait::expression::literal::LiteralType::Date(x) => {
-            let dt = to_date_time((*x as i64) * 24 * 60 * 60 * 1_000_000);
-            if dt < chrono::NaiveDate::from_ymd(1000, 1, 1).and_hms(0, 0, 0)
-                || dt >= chrono::NaiveDate::from_ymd(10000, 1, 1).and_hms(0, 0, 0)
-            {
-                diagnostic!(
-                    y,
-                    Error,
-                    ExpressionIllegalLiteralValue,
-                    "date out of range 1000-01-01 UTC to 9999-12-31 UTC"
-                );
-            }
-            Literal::new_simple(
-                LiteralValue::Integer(*x as i64),
-                data_type::Simple::Date,
-                nullable,
-            )
-        }
-        substrait::expression::literal::LiteralType::Time(x) => {
-            if *x < 0 || *x >= 24 * 60 * 60 * 1_000_000 {
-                diagnostic!(
-                    y,
-                    Error,
-                    ExpressionIllegalLiteralValue,
-                    "time of day out of range 00:00:00.000000 to 23:59:59.999999"
-                );
-            }
-            Literal::new_simple(LiteralValue::Integer(*x), data_type::Simple::Time, nullable)
-        }
-        substrait::expression::literal::LiteralType::IntervalYearToMonth(x) => {
-            // FIXME: see FIXME for associated type.
-            proto_primitive_field!(x, y, years, |x, _| {
-                if *x < -10000 || *x > 10000 {
-                    Err(cause!(
-                        ExpressionIllegalLiteralValue,
-                        "year count out of range -10000 to 10000"
-                    ))
-                } else {
-                    Ok(())
-                }
-            });
-            proto_primitive_field!(x, y, months, |x, _| {
-                if *x < -120000 || *x > 120000 {
-                    Err(cause!(
-                        ExpressionIllegalLiteralValue,
-                        "month count out of range -120000 to 120000"
-                    ))
-                } else {
-                    Ok(())
-                }
-            });
-            let months = x.months + 12 * x.years;
-            if months < -120000 || months > 120000 {
-                diagnostic!(
-                    y,
-                    Error,
-                    ExpressionIllegalLiteralValue,
-                    "combined interval out of range -10000 to 10000 years"
-                );
-            }
-            Literal::new_simple(
-                LiteralValue::Interval(x.years, x.months),
-                data_type::Simple::IntervalYear,
-                nullable,
-            )
-        }
-        substrait::expression::literal::LiteralType::IntervalDayToSecond(x) => {
-            // FIXME: see FIXME for associated type.
-            proto_primitive_field!(x, y, days, |x, _| {
-                if *x < -3650000 || *x > 3650000 {
-                    Err(cause!(
-                        ExpressionIllegalLiteralValue,
-                        "day count out of range -3_650_000 to 3_650_000"
-                    ))
-                } else {
-                    Ok(())
-                }
-            });
-            // FIXME: according to the docs, day to second supports microsecond
-            // precision. The literal doesn't. The i32 seconds also doesn't
-            // support the full specified range (but that range is weird
-            // anyway).
-            proto_primitive_field!(x, y, seconds);
-            Literal::new_simple(
-                LiteralValue::Interval(x.days, x.seconds),
-                data_type::Simple::IntervalDay,
-                nullable,
-            )
-        }
-        substrait::expression::literal::LiteralType::Uuid(x) => {
-            let uuid = if let Ok(x) = (&x[..]).try_into() {
-                i128::from_ne_bytes(x)
-            } else {
-                0
-            };
-            Literal::new_simple(
-                LiteralValue::Data16(uuid),
-                data_type::Simple::Uuid,
-                nullable,
-            )
-        }
-        substrait::expression::literal::LiteralType::FixedChar(x) => Literal::new_compound(
-            LiteralValue::String(x.clone()),
-            data_type::Compound::FixedChar,
-            nullable,
-            vec![x.len() as u64],
-        ),
-        substrait::expression::literal::LiteralType::VarChar(x) => {
-            proto_primitive_field!(x, y, length);
-            let len = x.length as usize;
-            proto_primitive_field!(x, y, value, |x, _| {
-                if x.len() > len {
-                    Err(cause!(
-                        ExpressionIllegalLiteralValue,
-                        "varchar literal value is longer than specified length"
-                    ))
-                } else {
-                    Ok(())
-                }
-            });
-            Literal::new_compound(
-                LiteralValue::String(x.value.clone()),
-                data_type::Compound::VarChar,
-                nullable,
-                vec![len as u64],
-            )
-        }
-        substrait::expression::literal::LiteralType::FixedBinary(x) => Literal::new_compound(
-            LiteralValue::Binary(x.clone()),
-            data_type::Compound::FixedBinary,
-            nullable,
-            vec![x.len() as u64],
-        ),
-        substrait::expression::literal::LiteralType::Decimal(x) => {
-            proto_primitive_field!(x, y, precision, |x, _| {
-                if *x < 0 {
-                    Err(cause!(
-                        IllegalValue,
-                        "negative type parameters are not supported"
-                    ))
-                } else {
-                    Ok(())
-                }
-            });
-            proto_primitive_field!(x, y, scale);
-            proto_primitive_field!(x, y, value, |x, _| {
-                if x.len() != 16 {
-                    Err(cause!(
-                        ExpressionIllegalLiteralValue,
-                        "decimal literal value must be 16 bytes in length"
-                    ))
-                } else {
-                    Ok(())
-                }
-            });
-            let mut val = 0i128;
-            for byte in x.value.iter() {
-                val <<= 8;
-                val |= *byte as i128;
-            }
-            let precision = u64::try_from(x.precision).unwrap_or_default();
-            let scale = u64::try_from(x.scale).unwrap_or_default();
-            Literal::new_compound(
-                LiteralValue::Data16(val),
-                data_type::Compound::Decimal,
-                nullable,
-                vec![precision, scale],
-            )
-        }
-        substrait::expression::literal::LiteralType::Struct(x) => {
-            let (values, types): (Vec<_>, Vec<_>) =
-                proto_repeated_field!(x, y, fields, parse_literal)
-                    .1
-                    .into_iter()
-                    .map(|x| {
-                        let x = x.unwrap_or_default();
-                        let data_type = x.data_type.clone();
-                        (x, data_type)
-                    })
-                    .unzip();
-            Literal::new_compound(
-                LiteralValue::Items(values),
-                data_type::Compound::Struct,
-                nullable,
-                types,
-            )
-        }
-        substrait::expression::literal::LiteralType::List(x) => {
-            let values: Vec<_> = proto_repeated_field!(x, y, values, parse_literal)
-                .1
-                .into_iter()
-                .map(|x| x.unwrap_or_default())
-                .collect();
-            if values.is_empty() {
-                diagnostic!(
-                    y,
-                    Error,
-                    ExpressionIllegalLiteralValue,
-                    "need at least one list element to derive type (use EmptyList instead)"
-                );
-            }
-            let mut data_type = Arc::default();
-            for (index, value) in values.iter().enumerate() {
-                data_type = types::assert_equal(
-                    y,
-                    value.data_type().clone(),
-                    data_type,
-                    format!("unexpected type for index {index}"),
-                );
-            }
-            Literal::new_compound(
-                LiteralValue::Items(values),
-                data_type::Compound::List,
-                nullable,
-                vec![data_type],
-            )
-        }
-        substrait::expression::literal::LiteralType::Map(x) => {
-            let values: Vec<_> = proto_repeated_field!(x, y, key_values, |x, y| {
-                let key = proto_required_field!(x, y, key, parse_literal)
-                    .1
-                    .unwrap_or_default();
-                let value = proto_required_field!(x, y, value, parse_literal)
-                    .1
-                    .unwrap_or_default();
-                Ok((key, value))
-            })
-            .1
-            .into_iter()
-            .map(|x| x.unwrap_or_default())
-            .collect();
-            if values.is_empty() {
-                diagnostic!(
-                    y,
-                    Error,
-                    ExpressionIllegalLiteralValue,
-                    "need at least one key-value pair to derive types (use EmptyMap instead)"
-                );
-            }
-            let mut key_type = Arc::default();
-            let mut value_type = Arc::default();
-            for (index, value) in values.iter().enumerate() {
-                key_type = types::assert_equal(
-                    y,
-                    value.0.data_type().clone(),
-                    key_type,
-                    format!("unexpected key type for index {index}"),
-                );
-                value_type = types::assert_equal(
-                    y,
-                    value.1.data_type().clone(),
-                    value_type,
-                    format!("unexpected value type for index {index}"),
-                );
-            }
-            Literal::new_compound(
-                LiteralValue::Pairs(values),
-                data_type::Compound::Map,
-                nullable,
-                vec![key_type, value_type],
-            )
-        }
-        substrait::expression::literal::LiteralType::EmptyList(x) => {
-            // FIXME: nullability is redundantly specified, and the type
-            // variation reference would be if it had gotten the same
-            // treatment as nullability. Why doesn't EmptyList just map to only
-            // the element data type?
-            types::parse_list(x, y)?;
-            Ok(Literal {
-                value: LiteralValue::Items(vec![]),
-                data_type: y.data_type(),
-            })
-        }
-        substrait::expression::literal::LiteralType::EmptyMap(x) => {
-            // FIXME: same note as for EmptyList.
-            types::parse_map(x, y)?;
-            Ok(Literal {
-                value: LiteralValue::Pairs(vec![]),
-                data_type: y.data_type(),
-            })
-        }
-        substrait::expression::literal::LiteralType::Null(x) => {
-            // FIXME: same note as for EmptyList.
-            types::parse_type(x, y)?;
-            Ok(Literal {
-                value: LiteralValue::Null,
-                data_type: y.data_type(),
-            })
-        }
+        LiteralType::Boolean(x) => parse_boolean(x, y, nullable),
+        LiteralType::I8(x) => parse_i8(x, y, nullable),
+        LiteralType::I16(x) => parse_i16(x, y, nullable),
+        LiteralType::I32(x) => parse_i32(x, y, nullable),
+        LiteralType::I64(x) => parse_i64(x, y, nullable),
+        LiteralType::Fp32(x) => parse_fp32(x, y, nullable),
+        LiteralType::Fp64(x) => parse_fp64(x, y, nullable),
+        LiteralType::String(x) => parse_string(x, y, nullable),
+        LiteralType::Binary(x) => parse_binary(x, y, nullable),
+        LiteralType::Timestamp(x) => parse_timestamp(x, y, nullable),
+        LiteralType::TimestampTz(x) => parse_timestamp_tz(x, y, nullable),
+        LiteralType::Date(x) => parse_date(x, y, nullable),
+        LiteralType::Time(x) => parse_time(x, y, nullable),
+        LiteralType::IntervalYearToMonth(x) => parse_interval_year_to_month(x, y, nullable),
+        LiteralType::IntervalDayToSecond(x) => parse_interval_day_to_second(x, y, nullable),
+        LiteralType::Uuid(x) => parse_uuid(x, y, nullable),
+        LiteralType::FixedChar(x) => parse_fixed_char(x, y, nullable),
+        LiteralType::VarChar(x) => parse_var_char(x, y, nullable),
+        LiteralType::FixedBinary(x) => parse_fixed_binary(x, y, nullable),
+        LiteralType::Decimal(x) => parse_decimal(x, y, nullable),
+        LiteralType::Struct(x) => parse_struct(x, y, nullable),
+        LiteralType::List(x) => parse_list(x, y, nullable),
+        LiteralType::Map(x) => parse_map(x, y, nullable),
+        LiteralType::EmptyList(x) => parse_empty_list(x, y, nullable),
+        LiteralType::EmptyMap(x) => parse_empty_map(x, y, nullable),
+        LiteralType::Null(x) => parse_null(x, y, nullable),
     }
 }
 

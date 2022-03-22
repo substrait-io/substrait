@@ -14,6 +14,7 @@ use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::parse::context;
 use crate::parse::expressions;
+use crate::parse::expressions::literals;
 use crate::parse::expressions::references::mask;
 use crate::parse::extensions;
 use crate::parse::types;
@@ -31,22 +32,185 @@ struct SourceInfo {
 
 /// Parse virtual table.
 fn parse_virtual_table(
-    _x: &substrait::read_rel::VirtualTable,
-    _y: &mut context::Context,
+    x: &substrait::read_rel::VirtualTable,
+    y: &mut context::Context,
 ) -> diagnostic::Result<SourceInfo> {
-    // TODO
+    let mut data_type: Arc<data_type::DataType> = Arc::default();
+
+    // Parse rows, ensuring that they all have the same type.
+    proto_repeated_field!(x, y, values, |x, y| {
+        let result = literals::parse_struct(x, y, false);
+        data_type = types::assert_equal(
+            y,
+            y.data_type(),
+            data_type.clone(),
+            "virtual table rows must have the same type",
+        );
+        result
+    });
+
+    // Describe the node.
+    describe!(y, Misc, "Virtual table");
     Ok(SourceInfo {
         name: String::from("virtual table"),
-        data_type: None,
+        data_type: Some(data_type),
     })
+}
+
+/// Parse file entry. Returns whether this matches multiple files.
+fn parse_path_type(
+    x: &substrait::read_rel::local_files::file_or_files::PathType,
+    y: &mut context::Context,
+) -> diagnostic::Result<bool> {
+    use substrait::read_rel::local_files::file_or_files::PathType;
+    match x {
+        PathType::UriPath(x) => {
+            if !string_util::is_uri(x) {
+                diagnostic!(y, Error, IllegalUri, "uri does not conform to RFC 3986");
+            }
+            Ok(false)
+        }
+        PathType::UriPathGlob(x) => {
+            if !string_util::is_uri_glob(x) {
+                diagnostic!(
+                    y,
+                    Error,
+                    IllegalUri,
+                    "uri does not conform to RFC 3986 (allowing for glob syntax for the path part)"
+                );
+            }
+            Ok(true)
+        }
+        PathType::UriFile(x) => {
+            if !string_util::is_uri(x) {
+                diagnostic!(y, Error, IllegalUri, "uri does not conform to RFC 3986");
+            }
+            Ok(false)
+        }
+        PathType::UriFolder(x) => {
+            if !string_util::is_uri(x) {
+                diagnostic!(y, Error, IllegalUri, "uri does not conform to RFC 3986");
+            }
+            Ok(true)
+        }
+    }
+}
+
+/// Parse file entry.
+fn parse_file_or_files(
+    x: &substrait::read_rel::local_files::FileOrFiles,
+    y: &mut context::Context,
+    extension_present: bool,
+) -> diagnostic::Result<()> {
+    // Parse path.
+    let multiple = proto_required_field!(x, y, path_type, parse_path_type)
+        .1
+        .unwrap_or_default();
+
+    // Parse read configuration.
+    let format = proto_enum_field!(
+        x,
+        y,
+        format,
+        substrait::read_rel::local_files::file_or_files::FileFormat,
+        |x, y| {
+            if !extension_present
+                && matches!(
+                    x,
+                    substrait::read_rel::local_files::file_or_files::FileFormat::Unspecified
+                )
+            {
+                diagnostic!(
+                    y,
+                    Error,
+                    IllegalValue,
+                    "file format must be specified when no enhancement extension is present"
+                );
+            }
+            Ok(*x)
+        }
+    )
+    .1
+    .unwrap_or_default();
+    proto_primitive_field!(x, y, partition_index);
+    proto_primitive_field!(x, y, start);
+    proto_primitive_field!(x, y, length);
+
+    // Having nonzero file offsets makes no sense when this entry refers to
+    // multiple files.
+    if multiple && (x.start > 0 || x.length > 0) {
+        diagnostic!(
+            y,
+            Error,
+            IllegalValue,
+            "file offsets are not allowed in conjunction with multiple files"
+        );
+    }
+
+    // Describe the node.
+    if multiple {
+        describe!(y, Misc, "Multiple files");
+    } else {
+        describe!(y, Misc, "Single file");
+    }
+    summary!(y, "Read");
+    if x.partition_index != 0 {
+        summary!(y, "partition {}", x.partition_index);
+    }
+    summary!(y, "from");
+    if multiple {
+        summary!(y, "multiple");
+    } else {
+        if x.start > 0 {
+            if x.length > 0 {
+                summary!(y, "byte offset {} to {} of", x.start, x.start + x.length);
+            } else {
+                summary!(y, "byte offset {} to the end of", x.start);
+            }
+        } else if x.length > 0 {
+            summary!(y, "the first {} byte(s) of", x.length);
+        }
+        summary!(y, "a single");
+    }
+    match format {
+        substrait::read_rel::local_files::file_or_files::FileFormat::Unspecified => {}
+        substrait::read_rel::local_files::file_or_files::FileFormat::Parquet => {
+            summary!(y, "Parquet");
+        }
+    }
+    if multiple {
+        summary!(y, "files");
+    } else {
+        summary!(y, "file");
+    }
+
+    Ok(())
 }
 
 /// Parse local files.
 fn parse_local_files(
-    _x: &substrait::read_rel::LocalFiles,
-    _y: &mut context::Context,
+    x: &substrait::read_rel::LocalFiles,
+    y: &mut context::Context,
 ) -> diagnostic::Result<SourceInfo> {
-    // TODO
+    // Parse fields.
+    let extension_present = x
+        .advanced_extension
+        .as_ref()
+        .and_then(|x| x.enhancement.as_ref())
+        .is_some();
+    proto_repeated_field!(x, y, items, parse_file_or_files, extension_present);
+    if x.items.is_empty() {
+        diagnostic!(y, Error, ProtoMissingField, "items");
+    }
+    proto_field!(
+        x,
+        y,
+        advanced_extension,
+        extensions::advanced::parse_advanced_extension
+    );
+
+    // Describe the node.
+    describe!(y, Misc, "Table from file(s)");
     Ok(SourceInfo {
         name: String::from("local files"),
         data_type: None,
@@ -87,6 +251,13 @@ fn parse_named_table(
         )
     };
 
+    // Describe the node.
+    describe!(
+        y,
+        Misc,
+        "Named table {}",
+        string_util::as_ident_or_string(&name)
+    );
     Ok(SourceInfo {
         name,
         data_type: None,
@@ -99,6 +270,17 @@ fn parse_extension_table(
     y: &mut context::Context,
 ) -> diagnostic::Result<SourceInfo> {
     proto_required_field!(x, y, detail, extensions::advanced::parse_functional_any);
+
+    // Describe the node.
+    describe!(
+        y,
+        Misc,
+        "{} extension",
+        x.detail
+            .as_ref()
+            .map(|x| x.type_url.clone())
+            .unwrap_or_else(|| String::from("Unknown"))
+    );
     Ok(SourceInfo {
         name: x
             .detail
