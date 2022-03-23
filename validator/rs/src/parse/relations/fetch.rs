@@ -49,16 +49,20 @@ pub fn parse_fetch_rel(
                 .unwrap_or_else(|_| String::from("?"))
         );
     } else if x.count > 1 {
-        describe!(
-            y,
-            Relation,
-            "Propagate only {} rows, starting from the {}",
-            x.count,
-            (x.offset + 1)
-                .try_into()
-                .map(string_util::describe_nth)
-                .unwrap_or_else(|_| String::from("?"))
-        );
+        if x.offset > 1 {
+            describe!(
+                y,
+                Relation,
+                "Propagate only {} rows, starting from the {}",
+                x.count,
+                (x.offset + 1)
+                    .try_into()
+                    .map(string_util::describe_nth)
+                    .unwrap_or_else(|_| String::from("?"))
+            );
+        } else {
+            describe!(y, Relation, "Propagate only the first {} rows", x.count);
+        }
     } else if x.offset == 1 {
         describe!(y, Relation, "Discard the first row");
     } else if x.offset > 1 {
