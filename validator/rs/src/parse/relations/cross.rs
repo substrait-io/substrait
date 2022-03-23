@@ -11,6 +11,7 @@
 use std::sync::Arc;
 
 use crate::input::proto::substrait;
+use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::parse::context;
 
@@ -20,11 +21,26 @@ pub fn parse_cross_rel(
     y: &mut context::Context,
 ) -> diagnostic::Result<()> {
     // Parse input.
-    let _left_type = handle_rel_input!(x, y, left);
-    let _right_type = handle_rel_input!(x, y, right);
+    let left = handle_rel_input!(x, y, left);
+    let right = handle_rel_input!(x, y, right);
 
-    // TODO: derive schema.
-    y.set_schema(Arc::default());
+    // Derive schema.
+    if let (Some(mut fields), Some(additional_fields)) =
+        (left.unwrap_struct(), right.unwrap_struct())
+    {
+        fields.extend(additional_fields.into_iter());
+        let schema = data_type::DataType::new_struct(fields, false);
+        y.set_schema(schema);
+    } else {
+        y.set_schema(Arc::default());
+    }
+
+    // Describe the relation.
+    describe!(y, Relation, "Cross product");
+    summary!(
+        y,
+        "This relation computes the cross product of its two input datasets."
+    );
 
     // Handle the common field.
     handle_rel_common!(x, y);

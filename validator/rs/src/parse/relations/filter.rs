@@ -7,11 +7,10 @@
 //!
 //! See <https://substrait.io/relations/logical_relations/#filter-operation>
 
-use std::sync::Arc;
-
 use crate::input::proto::substrait;
 use crate::output::diagnostic;
 use crate::parse::context;
+use crate::parse::expressions;
 
 /// Parse filter relation.
 pub fn parse_filter_rel(
@@ -19,10 +18,23 @@ pub fn parse_filter_rel(
     y: &mut context::Context,
 ) -> diagnostic::Result<()> {
     // Parse input.
-    let _in_type = handle_rel_input!(x, y);
+    let in_type = handle_rel_input!(x, y);
 
-    // TODO: derive schema.
-    y.set_schema(Arc::default());
+    // Filters pass through their input schema unchanged.
+    y.set_schema(in_type);
+
+    // Check the filter predicate.
+    let predicate = proto_boxed_required_field!(x, y, condition, expressions::parse_predicate)
+        .1
+        .unwrap_or_default();
+
+    // Describe the relation.
+    describe!(y, Relation, "Filter by {}", &predicate);
+    summary!(
+        y,
+        "This relation discards all rows for which {} yields false.",
+        &predicate
+    );
 
     // Handle the common field.
     handle_rel_common!(x, y);

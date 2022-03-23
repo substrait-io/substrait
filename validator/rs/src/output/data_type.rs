@@ -226,6 +226,21 @@ impl DataType {
         )
     }
 
+    /// Returns Some(Vec<T>)) when this is a STRUCT or NSTRUCT type, where the
+    /// vector contains the field types. Returns None otherwise.
+    pub fn unwrap_struct(&self) -> Option<Vec<Arc<DataType>>> {
+        if self.is_struct() {
+            Some(
+                self.parameters
+                    .iter()
+                    .map(|x| x.get_type().cloned().unwrap_or_default())
+                    .collect(),
+            )
+        } else {
+            None
+        }
+    }
+
     /// Returns Some(T) when this is a STRUCT or NSTRUCT type with only a
     /// single element of type T, or None otherwise.
     pub fn unwrap_singular_struct(&self) -> Option<Arc<DataType>> {
@@ -764,6 +779,15 @@ impl Parameter {
     pub fn get_name(&self) -> Option<&str> {
         match self {
             Parameter::NamedType(n, _) => Some(n),
+            _ => None,
+        }
+    }
+
+    /// Returns the type of a type parameter.
+    pub fn get_type(&self) -> Option<&Arc<DataType>> {
+        match self {
+            Parameter::Type(t) => Some(t),
+            Parameter::NamedType(_, t) => Some(t),
             _ => None,
         }
     }

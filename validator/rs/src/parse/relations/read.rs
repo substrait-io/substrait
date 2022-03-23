@@ -223,7 +223,14 @@ fn parse_local_files(
         .as_ref()
         .and_then(|x| x.enhancement.as_ref())
         .is_some();
-    proto_required_repeated_field!(x, y, items, parse_file_or_files, extension_present);
+    proto_required_repeated_field!(
+        x,
+        y,
+        items,
+        parse_file_or_files,
+        |_, _, _, _, _| (),
+        extension_present
+    );
     proto_field!(
         x,
         y,

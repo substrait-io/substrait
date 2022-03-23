@@ -60,11 +60,18 @@ fn parse_struct_select(
     }
 
     // Parse fields.
-    let fields = proto_repeated_field!(x, y, struct_items, parse_struct_item, root)
-        .0
-        .iter()
-        .map(|x| x.data_type())
-        .collect::<Vec<_>>();
+    let fields = proto_repeated_field!(
+        x,
+        y,
+        struct_items,
+        parse_struct_item,
+        |_, _, _, _, _| (),
+        root
+    )
+    .0
+    .iter()
+    .map(|x| x.data_type())
+    .collect::<Vec<_>>();
 
     // Create struct.
     y.set_data_type(data_type::DataType::new_struct(fields, root.nullable()));

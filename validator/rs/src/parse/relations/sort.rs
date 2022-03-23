@@ -24,7 +24,12 @@ pub fn parse_sort_rel(x: &substrait::SortRel, y: &mut context::Context) -> diagn
     let keys = proto_required_repeated_field!(x, y, sorts, sorts::parse_sort_field).1;
 
     // Describe the relation.
-    describe!(y, Relation, "Sort dataset");
+    describe!(
+        y,
+        Relation,
+        "Order by {}",
+        keys.first().cloned().flatten().unwrap_or_default()
+    );
     if x.sorts.len() > 1 {
         summary!(
             y,

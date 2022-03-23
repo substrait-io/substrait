@@ -95,12 +95,18 @@ fn parse_emit_kind(
     match x {
         substrait::rel_common::EmitKind::Direct(_) => Ok(data_type),
         substrait::rel_common::EmitKind::Emit(x) => {
-            let fields =
-                proto_repeated_field!(x, y, output_mapping, parse_emit_mapping, data_type.clone())
-                    .1
-                    .into_iter()
-                    .map(|x| x.unwrap_or_default())
-                    .collect::<Vec<_>>();
+            let fields = proto_repeated_field!(
+                x,
+                y,
+                output_mapping,
+                parse_emit_mapping,
+                |_, _, _, _, _| (),
+                data_type.clone()
+            )
+            .1
+            .into_iter()
+            .map(|x| x.unwrap_or_default())
+            .collect::<Vec<_>>();
             Ok(data_type::DataType::new_struct(fields, false))
         }
     }
@@ -205,6 +211,6 @@ macro_rules! handle_rel_inputs {
         proto_repeated_field!($input, $context, $field, crate::parse::relations::parse_rel)
             .0
             .iter()
-            .map(|x| x.data_type.as_ref())
+            .map(|x| x.data_type())
     };
 }

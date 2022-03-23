@@ -167,6 +167,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                             #ident_str,
                             true,
                             |_, _| Ok(()),
+                            |_, _, _, _, _| (),
                         );
                     },
                     FieldType::Primitive => quote! {

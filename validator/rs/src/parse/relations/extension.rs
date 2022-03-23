@@ -24,6 +24,13 @@ pub fn parse_extension_single_rel(
     // Parse the extension data.
     proto_required_field!(x, y, detail, extensions::advanced::parse_functional_any);
 
+    // Describe the relation.
+    if let Some(x) = &x.detail {
+        describe!(y, Relation, "{} extension", x.type_url);
+    } else {
+        describe!(y, Relation, "Unknown extension");
+    }
+
     // Handle the common field.
     handle_rel_common!(x, y);
 
@@ -44,6 +51,13 @@ pub fn parse_extension_multi_rel(
     // Parse the extension data.
     proto_required_field!(x, y, detail, extensions::advanced::parse_functional_any);
 
+    // Describe the relation.
+    if let Some(x) = &x.detail {
+        describe!(y, Relation, "{} extension", x.type_url);
+    } else {
+        describe!(y, Relation, "Unknown extension");
+    }
+
     // Handle the common field.
     handle_rel_common!(x, y);
 
@@ -60,6 +74,13 @@ pub fn parse_extension_leaf_rel(
 
     // Parse the extension data.
     proto_required_field!(x, y, detail, extensions::advanced::parse_functional_any);
+
+    // Describe the relation.
+    if let Some(x) = &x.detail {
+        describe!(y, Relation, "{} extension", x.type_url);
+    } else {
+        describe!(y, Relation, "Unknown extension");
+    }
 
     // Handle the common field.
     handle_rel_common!(x, y);
