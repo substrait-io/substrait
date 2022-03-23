@@ -101,11 +101,15 @@ div.comment::before {
     color: #084;
     content: "\f249";
     padding-right: .2em;
+    float: left;
+}
+
+div.comment > p {
+    margin: 0 0 0.2em;
 }
 
 details > p {
     margin: 0 0 0.2em;
-    font-style: italic;
 }
 
 details.relation_tree {
