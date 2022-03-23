@@ -170,11 +170,12 @@ fn parse_expression_internal(
     enum_allowed: bool,
 ) -> diagnostic::Result<Expression> {
     // Parse the expression.
-    let expression = proto_required_field!(x, y, rex_type, parse_expression_type, enum_allowed)
-        .1
-        .unwrap_or_default();
+    let (n, e) = proto_required_field!(x, y, rex_type, parse_expression_type, enum_allowed);
+    let expression = e.unwrap_or_default();
+    let data_type = n.data_type();
 
     // Describe node.
+    y.set_data_type(data_type);
     describe!(y, Expression, "{}", expression);
     summary!(y, "Expression: {:#}", expression);
     Ok(expression)

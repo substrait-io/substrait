@@ -28,6 +28,7 @@ url = "2.2"
 curl = { version = "0.4", optional = true }
 chrono = "0.4"
 heck = "0.4"
+base64 = "0.13"
 
 [build-dependencies]
 prost-build = "0.9"

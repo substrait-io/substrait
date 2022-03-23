@@ -46,7 +46,7 @@ pub fn parse_project_rel(
     .1;
 
     // Describe the relation.
-    describe!(y, Relation, "Project dataset");
+    describe!(y, Relation, "Projection");
     if expressions.len() > 1 {
         summary!(
             y,

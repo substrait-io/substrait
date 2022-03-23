@@ -262,7 +262,7 @@ fn parse_named_table(
 
     // Determine and check consistency of the table name.
     let name = if x.names.is_empty() {
-        String::from("unknown table")
+        String::from("?")
     } else {
         if x.names.len() > 1 {
             // FIXME: what does this mean?
@@ -273,10 +273,7 @@ fn parse_named_table(
                 "named tables with multiple names"
             );
         }
-        format!(
-            "table {}",
-            string_util::as_ident_or_string(x.names.first().unwrap())
-        )
+        string_util::as_ident_or_string(x.names.first().unwrap())
     };
 
     // Describe the node.

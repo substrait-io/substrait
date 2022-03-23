@@ -21,9 +21,11 @@ plan:
       project:
         expressions:
         - selection:
+            rootReference: {}
             directReference:
               structField: {}
         - selection:
+            rootReference: {}
             directReference:
               structField:
                 field: 1

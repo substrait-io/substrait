@@ -54,6 +54,9 @@ fn parse_rel_type(x: &substrait::rel::RelType, y: &mut context::Context) -> diag
 /// Parse a relation root, i.e. a toplevel relation that includes field name
 /// information.
 pub fn parse_rel(x: &substrait::Rel, y: &mut context::Context) -> diagnostic::Result<()> {
-    proto_required_field!(x, y, rel_type, parse_rel_type);
+    let schema = proto_required_field!(x, y, rel_type, parse_rel_type)
+        .0
+        .data_type();
+    y.set_schema(schema);
     Ok(())
 }
