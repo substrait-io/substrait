@@ -987,6 +987,7 @@ dependencies = [
  "curl",
  "fancy-regex 0.8.0",
  "glob",
+ "heck 0.4.0",
  "itertools 0.8.2",
  "jsonschema",
  "num-derive",

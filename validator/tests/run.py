@@ -291,11 +291,6 @@ def strip_test_tags(data, path=(), yaml_counter=None):
 def resolve_path(path, msg_desc):
     """Converts a JSON path to the protobuf path elements that Rust derives
     from the prost-generated structures."""
-    def corrode(name):
-        # TODO: this should be fixed in Rust instead!
-        if name in ('type', 'struct', 'enum', 'if', 'else', 'match'):
-            return f'r#{name}'
-        return name
     while path:
         el, *path = path
         if isinstance(el, int):
@@ -317,12 +312,12 @@ def resolve_path(path, msg_desc):
                 el2, *path = path
                 if not isinstance(el2, int):
                     raise Exception(f'found non-index path element for repeated {msg_desc.full_name}')
-                yield path_element_repeated(corrode(field_desc.name), el2)
+                yield path_element_repeated(field_desc.name, el2)
             else:
                 if field_desc.containing_oneof is not None:
-                    yield path_element_oneof(corrode(field_desc.containing_oneof.name), corrode(field_desc.name))
+                    yield path_element_oneof(field_desc.containing_oneof.name, field_desc.name)
                 else:
-                    yield path_element_field(corrode(field_desc.name))
+                    yield path_element_field(field_desc.name)
             msg_desc = field_desc.message_type
 
 

@@ -15,6 +15,8 @@
 use crate::input::traits;
 use crate::output::primitive_data;
 
+use heck::ToUpperCamelCase;
+
 #[allow(clippy::large_enum_variant)]
 pub mod substrait {
     include!(concat!(env!("OUT_DIR"), "/substrait.rs"));
@@ -23,6 +25,36 @@ pub mod substrait {
     }
     pub mod validator {
         include!(concat!(env!("OUT_DIR"), "/substrait.validator.rs"));
+    }
+}
+
+/// Converts a Rust module path and name (the latter already processed by
+/// cook_ident()) to a protobuf type path.
+pub fn cook_path(module_path: &str, type_name: &str) -> String {
+    let mut iter = module_path
+        .split("::")
+        .skip(module_path!().split("::").count())
+        .map(cook_ident)
+        .chain(::std::iter::once(type_name))
+        .peekable();
+    let mut items = vec![];
+    if matches!(iter.peek(), Some(&"substrait")) {
+        items.push(iter.next().unwrap().to_string());
+        if matches!(iter.peek(), Some(&"extensions") | Some(&"validator")) {
+            items.push(iter.next().unwrap().to_string());
+        }
+    }
+    items.extend(iter.map(|x| x.to_upper_camel_case()));
+    ::itertools::Itertools::intersperse(items.iter().map(|x| x.as_ref()), ".").collect()
+}
+
+/// Converts a Rust identifier string generated via stringify!() to the
+/// original identifier by "cooking" raw identifiers.
+pub fn cook_ident(ident: &str) -> &str {
+    if let Some((_, keyword)) = ident.split_once('#') {
+        keyword
+    } else {
+        ident
     }
 }
 

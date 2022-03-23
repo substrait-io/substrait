@@ -188,7 +188,7 @@ macro_rules! proto_field {
         crate::parse::traversal::push_proto_field(
             $context,
             &$input.$field.as_ref(),
-            stringify!($field),
+            crate::input::proto::cook_ident(stringify!($field)),
             false,
             $parser,
         )
@@ -208,7 +208,7 @@ macro_rules! proto_boxed_field {
         crate::parse::traversal::push_proto_field(
             $context,
             &$input.$field,
-            stringify!($field),
+            crate::input::proto::cook_ident(stringify!($field)),
             false,
             $parser,
         )
@@ -266,7 +266,7 @@ macro_rules! proto_required_field {
         crate::parse::traversal::push_proto_required_field(
             $context,
             &$input.$field.as_ref(),
-            stringify!($field),
+            crate::input::proto::cook_ident(stringify!($field)),
             false,
             $parser,
         )
@@ -286,7 +286,7 @@ macro_rules! proto_boxed_required_field {
         crate::parse::traversal::push_proto_required_field(
             $context,
             &$input.$field,
-            stringify!($field),
+            crate::input::proto::cook_ident(stringify!($field)),
             false,
             $parser,
         )
@@ -305,7 +305,7 @@ macro_rules! proto_primitive_field {
         crate::parse::traversal::push_proto_required_field(
             $context,
             &Some(&$input.$field),
-            stringify!($field),
+            crate::input::proto::cook_ident(stringify!($field)),
             false,
             $parser,
         )
@@ -348,7 +348,7 @@ macro_rules! proto_enum_field {
         crate::parse::traversal::push_proto_enum_field::<$typ, _, _>(
             $context,
             $input.$field,
-            stringify!($field),
+            crate::input::proto::cook_ident(stringify!($field)),
             false,
             $parser,
         )
@@ -411,7 +411,7 @@ macro_rules! proto_repeated_field {
         crate::parse::traversal::push_proto_repeated_field(
             $context,
             &$input.$field,
-            stringify!($field),
+            crate::input::proto::cook_ident(stringify!($field)),
             false,
             $parser,
         )

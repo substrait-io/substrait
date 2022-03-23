@@ -113,7 +113,7 @@ def test_resolver_callback():
     """Tests whether the YAML URI resolver callback works."""
 
     def resolver(s):
-        if s == 'test':
+        if s == 'test:hello':
             return BASIC_YAML.encode('utf-8')
         raise ValueError('unknown URI')
 
@@ -123,7 +123,7 @@ def test_resolver_callback():
     diags = list(sv.plan_to_diagnostics({
         'extensionUris': [{
             'extension_uri_anchor': 1,
-            'uri': 'test',
+            'uri': 'test:hello',
         }]
     }, config))
     for diag in diags:
@@ -133,7 +133,7 @@ def test_resolver_callback():
     diags = list(sv.plan_to_diagnostics({
         'extensionUris': [{
             'extension_uri_anchor': 1,
-            'uri': 'not-test',
+            'uri': 'test:bye',
         }]
     }, config))
     for diag in diags:

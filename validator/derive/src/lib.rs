@@ -39,6 +39,17 @@ use heck::{ToShoutySnakeCase, ToSnakeCase};
 use proc_macro::TokenStream;
 use quote::quote;
 
+/// Converts a Rust identifier string generated via stringify!() to the
+/// original identifier by "cooking" raw identifiers.
+fn cook_ident(ident: &syn::Ident) -> String {
+    let ident = ident.to_string();
+    if let Some((_, keyword)) = ident.split_once('#') {
+        keyword.to_string()
+    } else {
+        ident
+    }
+}
+
 #[doc(hidden)]
 #[proc_macro_derive(ProtoMeta, attributes(proto_meta))]
 pub fn proto_meta(input: TokenStream) -> TokenStream {
@@ -121,6 +132,7 @@ fn is_repeated(typ: &syn::Type) -> FieldType {
 
 fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> TokenStream {
     let name = &ast.ident;
+    let name_str = cook_ident(name);
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
     let parse_unknown_matches: Vec<_> = data
@@ -128,12 +140,13 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
         .iter()
         .map(|field| {
             if let Some(ident) = &field.ident {
+                let ident_str = cook_ident(ident);
                 let action = match is_repeated(&field.ty) {
                     FieldType::Optional => quote! {
                         crate::parse::traversal::push_proto_field(
                             y,
                             &self.#ident.as_ref(),
-                            stringify!(#ident),
+                            #ident_str,
                             true,
                             |_, _| Ok(()),
                         );
@@ -142,7 +155,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                         crate::parse::traversal::push_proto_field(
                             y,
                             &self.#ident,
-                            stringify!(#ident),
+                            #ident_str,
                             true,
                             |_, _| Ok(()),
                         );
@@ -151,7 +164,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                         crate::parse::traversal::push_proto_repeated_field(
                             y,
                             &self.#ident.as_ref(),
-                            stringify!(#ident),
+                            #ident_str,
                             true,
                             |_, _| Ok(()),
                         );
@@ -162,7 +175,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                             crate::parse::traversal::push_proto_field(
                                 y,
                                 &Some(&self.#ident),
-                                stringify!(#ident),
+                                #ident_str,
                                 true,
                                 |_, _| Ok(()),
                             );
@@ -170,7 +183,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
                     },
                 };
                 quote! {
-                    if !y.field_parsed(stringify!(#ident)) {
+                    if !y.field_parsed(#ident_str) {
                         unknowns = true;
                         #action
                     }
@@ -186,11 +199,7 @@ fn proto_meta_derive_message(ast: &syn::DeriveInput, data: &syn::DataStruct) -> 
             fn proto_message_type() -> &'static str {
                 use ::once_cell::sync::Lazy;
                 static TYPE_NAME: Lazy<::std::string::String> = Lazy::new(|| {
-                    let iter = module_path!()
-                        .split("::")
-                        .skip(3)
-                        .chain(::std::iter::once(stringify!(#name)));
-                    ::itertools::Itertools::intersperse(iter, ".").collect()
+                    crate::input::proto::cook_path(module_path!(), #name_str)
                 });
                 &TYPE_NAME
             }
@@ -233,7 +242,7 @@ fn proto_meta_derive_oneof(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Toke
         .iter()
         .map(|variant| {
             let ident = &variant.ident;
-            let proto_name = ident.to_string().to_snake_case();
+            let proto_name = cook_ident(ident).to_snake_case();
             quote! { #name::#ident (_) => #proto_name }
         })
         .collect();
@@ -296,9 +305,10 @@ fn proto_meta_derive_oneof(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Toke
 
 fn proto_meta_derive_enum(ast: &syn::DeriveInput, data: &syn::DataEnum) -> TokenStream {
     let name = &ast.ident;
+    let name_str = cook_ident(name);
     let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
 
-    let upper_name = name.to_string().to_shouty_snake_case();
+    let upper_name = name_str.to_shouty_snake_case();
 
     let variant_names: Vec<_> = data
         .variants
@@ -308,7 +318,7 @@ fn proto_meta_derive_enum(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Token
             let proto_name = format!(
                 "{}_{}",
                 upper_name,
-                ident.to_string().to_shouty_snake_case()
+                cook_ident(ident).to_shouty_snake_case()
             );
             (ident, proto_name)
         })
@@ -328,11 +338,7 @@ fn proto_meta_derive_enum(ast: &syn::DeriveInput, data: &syn::DataEnum) -> Token
             fn proto_enum_type() -> &'static str {
                 use ::once_cell::sync::Lazy;
                 static TYPE_NAME: Lazy<::std::string::String> = Lazy::new(|| {
-                    let iter = module_path!()
-                        .split("::")
-                        .skip(3)
-                        .chain(::std::iter::once(stringify!(#name)));
-                    ::itertools::Itertools::intersperse(iter, ".").collect()
+                    crate::input::proto::cook_path(module_path!(), #name_str)
                 });
                 &TYPE_NAME
             }

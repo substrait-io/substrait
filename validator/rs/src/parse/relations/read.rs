@@ -62,6 +62,16 @@ fn parse_path_type(
     x: &substrait::read_rel::local_files::file_or_files::PathType,
     y: &mut context::Context,
 ) -> diagnostic::Result<bool> {
+    // FIXME: I'm not sure these paths should even be URIs. These are supposed
+    // to be local files after all, so shouldn't they just be paths? But they
+    // really shouldn't be called URIs if they're not going to conform to the
+    // standard governing them, and if they're paths, there should still be
+    // some specification about what kind of paths they can be (POSIX? Windows
+    // with slashes? UNC? etc).
+    //
+    // Note that the diagnostics for this have their own code, so if a user
+    // disagrees with the syntax they can just downgrade these errors to
+    // warnings or infos.
     use substrait::read_rel::local_files::file_or_files::PathType;
     match x {
         PathType::UriPath(x) => {
