@@ -60,12 +60,23 @@ pub fn is_uri(s: &str) -> bool {
         fancy_regex::Regex::new(&re).unwrap()
     });
 
+    // TODO: this regex seems somewhat incomplete compared to
+    // https://jmrware.com/articles/2009/uri_regexp/URI_regex.html
+    // which actually seems to be methodologically based on RFC 3986. However,
+    // while the summary seems to imply that it can be freely used, no license
+    // is provided. Worth noting especially here is that above regex doesn't
+    // match relative URIs, which we probably do want to do here.
+
     URI_RE.is_match(s).unwrap_or_default()
 }
 
 /// Returns whether the given string is a valid RFC 3986 URI, with the
 /// exception that glob syntax is allowed for the path part.
 pub fn is_uri_glob(s: &str) -> bool {
+    // FIXME: this kinda doesn't make sense; you can't really glob a URI
+    // without destroying its syntax (especially ). See
+    // also the FIXME in the read relation path parsing.
+
     // This monster is derived from
     // https://github.com/wizard04wsu/URI_Parsing/blob/6570cfffc932158d8209e4c904b34f2d078e7f67/src/uri_parsing.mjs#L420
     // (MIT-licensed by Andrew Harrison)
@@ -93,9 +104,9 @@ pub fn is_uri_glob(s: &str) -> bool {
                 re += ")?";
             }
             re += ")"; // 2 = authority
-            re += "(/(?=((?:[-\\w.~!$&'()*+,;=:@/?[\\]]|%[\\dA-F]{2})*))\\7)?"; // 6 = path (after authority)
-            re += "|";
-            re += "(/?(?!/)(?=((?:[-\\w.~!$&'()*+,;=:@/?[\\]]|%[\\dA-F]{2})*))\\9)?";
+            re += "(/(?=((?:[-\\w.~!$&'()*+,;=:@/?]|\\[(?:[^\\]]+|\\])\\]|%[\\dA-F]{2})*))\\7)?"; // 6 = path (after authority)
+            re += "|"; // added ? and [...] captures here ^ and here v
+            re += "(/?(?!/)(?=((?:[-\\w.~!$&'()*+,;=:@/?]|\\[(?:[^\\]]+|\\])\\]|%[\\dA-F]{2})*))\\9)?";
             // 8 = path (no authority)
         }
         re += ")";

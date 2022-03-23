@@ -26,7 +26,12 @@ pub fn parse_uri<S: AsRef<str>>(
     // Check URI syntax.
     let x = x.as_ref();
     if !string_util::is_uri(x) {
-        diagnostic!(y, Error, IllegalUri, "uri does not conform to RFC 3986");
+        diagnostic!(
+            y,
+            Warning,
+            IllegalUri,
+            "this URI may not be valid according to RFC 3986"
+        );
     }
 
     // The schema for YAML extension files.

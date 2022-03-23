@@ -70,13 +70,18 @@ fn parse_path_type(
     // with slashes? UNC? etc).
     //
     // Note that the diagnostics for this have their own code, so if a user
-    // disagrees with the syntax they can just downgrade these errors to
-    // warnings or infos.
+    // disagrees with the syntax they can just downgrade these warnings to
+    // infos.
     use substrait::read_rel::local_files::file_or_files::PathType;
     match x {
         PathType::UriPath(x) => {
             if !string_util::is_uri(x) {
-                diagnostic!(y, Error, IllegalUri, "uri does not conform to RFC 3986");
+                diagnostic!(
+                    y,
+                    Warning,
+                    IllegalUri,
+                    "this URI may not be valid according to RFC 3986"
+                );
             }
             Ok(false)
         }
@@ -84,22 +89,32 @@ fn parse_path_type(
             if !string_util::is_uri_glob(x) {
                 diagnostic!(
                     y,
-                    Error,
+                    Warning,
                     IllegalUri,
-                    "uri does not conform to RFC 3986 (allowing for glob syntax for the path part)"
+                    "this URI may not be valid according to RFC 3986 + globs for paths"
                 );
             }
             Ok(true)
         }
         PathType::UriFile(x) => {
             if !string_util::is_uri(x) {
-                diagnostic!(y, Error, IllegalUri, "uri does not conform to RFC 3986");
+                diagnostic!(
+                    y,
+                    Warning,
+                    IllegalUri,
+                    "this URI may not be valid according to RFC 3986"
+                );
             }
             Ok(false)
         }
         PathType::UriFolder(x) => {
             if !string_util::is_uri(x) {
-                diagnostic!(y, Error, IllegalUri, "uri does not conform to RFC 3986");
+                diagnostic!(
+                    y,
+                    Warning,
+                    IllegalUri,
+                    "this URI may not be valid according to RFC 3986"
+                );
             }
             Ok(true)
         }
