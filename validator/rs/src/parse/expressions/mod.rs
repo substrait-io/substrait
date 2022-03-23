@@ -18,6 +18,7 @@ pub mod references;
 pub mod subqueries;
 
 /// Description of an expression.
+#[derive(Clone)]
 pub enum Expression {
     /// Used for unknown expression types.
     Unresolved,
@@ -31,6 +32,9 @@ pub enum Expression {
     /// Used for function calls and conditionals (which, really, are just
     /// builtin function calls).
     Function(String, Vec<Expression>),
+
+    /// Used to represent the values of a MultiOrList.
+    Tuple(Vec<Expression>),
 
     /// Used for type casts.
     Cast(Arc<data_type::DataType>, Box<Expression>),
@@ -78,6 +82,13 @@ impl Describe for Expression {
                 string_util::describe_identifier(f, name, name_limit)?;
                 write!(f, "(")?;
                 string_util::describe_sequence(f, args, args_limit, 20, |f, expr, _, limit| {
+                    expr.describe(f, limit)
+                })?;
+                write!(f, ")")
+            }
+            Expression::Tuple(items) => {
+                write!(f, "(")?;
+                string_util::describe_sequence(f, items, limit, 20, |f, expr, _, limit| {
                     expr.describe(f, limit)
                 })?;
                 write!(f, ")")

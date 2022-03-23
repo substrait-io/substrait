@@ -180,9 +180,8 @@ macro_rules! handle_advanced_extension {
     };
 }
 
-/// Shorthand for handling the input field of a relation. Returns a reference
-/// to the data type corresponding to the schema returned by the relation, or
-/// None if schema type deduction failed.
+/// Shorthand for handling the input field of a relation. Returns a the data
+/// type corresponding to the schema returned by the relation.
 macro_rules! handle_rel_input {
     ($input:expr, $context:expr) => {
         handle_rel_input!($input, $context, input)
@@ -190,8 +189,7 @@ macro_rules! handle_rel_input {
     ($input:expr, $context:expr, $field:ident) => {
         proto_boxed_required_field!($input, $context, $field, crate::parse::relations::parse_rel)
             .0
-            .data_type
-            .as_ref()
+            .data_type()
     };
 }
 

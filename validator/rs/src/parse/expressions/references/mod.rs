@@ -16,6 +16,7 @@ pub mod mask;
 pub mod scalar;
 
 /// Description of the root of a reference.
+#[derive(Clone)]
 enum Root {
     Unresolved,
     Expression(expressions::Expression),
@@ -35,6 +36,7 @@ impl Default for Root {
 }
 
 /// Description of a reference path.
+#[derive(Clone)]
 pub struct ReferencePath {
     // *Reversed* list of segments.
     segments: Vec<String>,
@@ -92,6 +94,7 @@ impl std::fmt::Display for ReferencePath {
 }
 
 /// Description of a reference.
+#[derive(Clone)]
 pub struct Reference {
     root: Root,
     path: ReferencePath,

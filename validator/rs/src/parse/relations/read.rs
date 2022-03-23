@@ -42,8 +42,8 @@ fn parse_virtual_table(
         let result = literals::parse_struct(x, y, false);
         data_type = types::assert_equal(
             y,
-            y.data_type(),
-            data_type.clone(),
+            &y.data_type(),
+            &data_type,
             "virtual table rows must have the same type",
         );
         result
@@ -223,10 +223,7 @@ fn parse_local_files(
         .as_ref()
         .and_then(|x| x.enhancement.as_ref())
         .is_some();
-    proto_repeated_field!(x, y, items, parse_file_or_files, extension_present);
-    if x.items.is_empty() {
-        diagnostic!(y, Error, ProtoMissingField, "items");
-    }
+    proto_required_repeated_field!(x, y, items, parse_file_or_files, extension_present);
     proto_field!(
         x,
         y,
@@ -248,7 +245,7 @@ fn parse_named_table(
     y: &mut context::Context,
 ) -> diagnostic::Result<SourceInfo> {
     // Parse fields.
-    proto_repeated_field!(x, y, names);
+    proto_required_repeated_field!(x, y, names);
     proto_field!(
         x,
         y,
@@ -258,7 +255,6 @@ fn parse_named_table(
 
     // Determine and check consistency of the table name.
     let name = if x.names.is_empty() {
-        diagnostic!(y, Error, ProtoMissingField, "names");
         String::from("unknown table")
     } else {
         if x.names.len() > 1 {
@@ -348,7 +344,7 @@ pub fn parse_read_rel(x: &substrait::ReadRel, y: &mut context::Context) -> diagn
     // If both data_type and schema are known, verify that they are the same.
     let mut schema = match (source.data_type, schema) {
         (Some(data_type), Some(schema)) => {
-            types::assert_equal(y, schema, data_type, "data differs from schema")
+            types::assert_equal(y, &schema, &data_type, "data differs from schema")
         }
         (Some(data_type), None) => data_type,
         (None, Some(schema)) => schema,

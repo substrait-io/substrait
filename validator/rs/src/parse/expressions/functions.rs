@@ -10,32 +10,31 @@ use crate::output::tree;
 use crate::parse::context;
 use crate::parse::expressions;
 use crate::parse::extensions;
+use crate::parse::sorts;
 use crate::parse::types;
 use std::sync::Arc;
 
-/// Matches a function call with its YAML definition.
-fn check_function(
+/// Matches a function call with its YAML definition, yielding its return type.
+/// Yields an unresolved type if resolution fails.
+pub fn check_function(
     y: &mut context::Context,
     _function: &extension::Function,
     _options: &[Option<String>],
     _arg_types: &[Arc<data_type::DataType>],
-    _return_type: &Arc<data_type::DataType>,
-) {
+) -> Arc<data_type::DataType> {
     // TODO: check consistency of:
-    //  - _function (function definition information from the YAML
-    //    file);
-    //  - _options: number of options passed to the function, and
-    //    validity of their values;
-    //  - _arg_types: whether an overload exists for this set of
-    //    argument types;
-    //  - _return_type: whether the return type in the plan matches
-    //    above overload (type expression evaluation???).
+    //  - _function (function definition information from the YAML file);
+    //  - _options: number of options passed to the function, and validity of
+    //    their values;
+    //  - _arg_types: whether an overload exists for this set of argument
+    //    types;
     diagnostic!(
         y,
         Warning,
         NotYetImplemented,
         "matching function calls with their definitions"
     );
+    Arc::default()
 }
 
 /// Parsing logic common to scalar and window functions.
@@ -44,7 +43,7 @@ fn parse_function(
     function: Option<Arc<extension::Reference<extension::Function>>>,
     arguments: (Vec<Arc<tree::Node>>, Vec<Option<expressions::Expression>>),
     return_type: Arc<data_type::DataType>,
-) -> expressions::Expression {
+) -> (Arc<data_type::DataType>, expressions::Expression) {
     // Determine the name of the function.
     let name = function
         .as_ref()
@@ -84,9 +83,15 @@ fn parse_function(
     let arg_types = arg_types;
 
     // If the function was resolved, check whether it's valid.
-    if let Some(reference) = function {
+    let return_type = if let Some(reference) = function {
         if let Some(function) = &reference.definition {
-            check_function(y, function, &opt_values, &arg_types, &return_type);
+            let derived = check_function(y, function, &opt_values, &arg_types);
+            types::assert_equal(
+                y,
+                &return_type,
+                &derived,
+                "specified return type must match derived",
+            )
         } else {
             diagnostic!(
                 y,
@@ -94,10 +99,13 @@ fn parse_function(
                 ExpressionFunctionDefinitionUnavailable,
                 "cannot check validity of call"
             );
+            return_type
         }
-    }
+    } else {
+        return_type
+    };
 
-    expression
+    (return_type, expression)
 }
 
 /// Parse a scalar function. Returns a description of the function call
@@ -120,12 +128,30 @@ pub fn parse_scalar_function(
         .data_type();
 
     // Check function information.
-    let expression = parse_function(y, function, arguments, return_type);
+    let (return_type, expression) = parse_function(y, function, arguments, return_type);
 
     // Describe node.
+    y.set_data_type(return_type);
     describe!(y, Expression, "{}", expression);
     summary!(y, "Scalar function call: {:#}", expression);
     Ok(expression)
+}
+
+/// Parse a window function bound.
+fn parse_bound(
+    _x: &substrait::expression::window_function::Bound,
+    y: &mut context::Context,
+) -> diagnostic::Result<()> {
+    // TODO: check window function bound.
+    // FIXME: I have no idea what these bounds signify. The spec doesn't
+    // seem to specify.
+    diagnostic!(
+        y,
+        Warning,
+        NotYetImplemented,
+        "validation of window function bounds"
+    );
+    Ok(())
 }
 
 /// Parse a window function. Returns a description of the function call
@@ -148,11 +174,29 @@ pub fn parse_window_function(
         .data_type();
 
     // Check function information.
-    let expression = parse_function(y, function, arguments, return_type);
+    let (return_type, expression) = parse_function(y, function, arguments, return_type);
+
+    // Parse modifiers.
+    proto_repeated_field!(x, y, partitions, expressions::parse_expression);
+    proto_repeated_field!(x, y, sorts, sorts::parse_sort_field);
+    proto_field!(x, y, upper_bound, parse_bound);
+    proto_field!(x, y, lower_bound, parse_bound);
+    proto_enum_field!(x, y, phase, substrait::AggregationPhase);
 
     // TODO: check window function configuration.
+    // FIXME: I have no idea what these partitions signify. The spec doesn't
+    // seem to specify.
+    if !x.partitions.is_empty() {
+        diagnostic!(
+            y,
+            Warning,
+            NotYetImplemented,
+            "validation of partitions field"
+        );
+    }
 
     // Describe node.
+    y.set_data_type(return_type);
     describe!(y, Expression, "{}", expression);
     summary!(y, "Window function call: {:#}", expression);
     Ok(expression)

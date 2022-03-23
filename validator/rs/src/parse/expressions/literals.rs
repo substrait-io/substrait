@@ -12,6 +12,7 @@ use crate::string_util::Describe;
 use std::sync::Arc;
 
 /// The value of a literal, not including type information.
+#[derive(Clone)]
 enum LiteralValue {
     /// May be used for any nullable type.
     Null,
@@ -51,7 +52,7 @@ impl Default for LiteralValue {
 }
 
 /// A complete literal, including type information.
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct Literal {
     /// The value of the literal.
     value: LiteralValue,
@@ -662,25 +663,23 @@ fn parse_list(
     y: &mut context::Context,
     nullable: bool,
 ) -> diagnostic::Result<Literal> {
-    let values: Vec<_> = proto_repeated_field!(x, y, values, parse_literal)
+    let values: Vec<_> = proto_required_repeated_field!(x, y, values, parse_literal)
         .1
         .into_iter()
         .map(|x| x.unwrap_or_default())
         .collect();
     if values.is_empty() {
-        diagnostic!(
+        comment!(
             y,
-            Error,
-            ExpressionIllegalLiteralValue,
-            "need at least one list element to derive type (use EmptyList instead)"
+            "At least one list element is required to derive type. Use EmptyList instead."
         );
     }
     let mut data_type = Arc::default();
     for (index, value) in values.iter().enumerate() {
         data_type = types::assert_equal(
             y,
-            value.data_type().clone(),
-            data_type,
+            value.data_type(),
+            &data_type,
             format!("unexpected type for index {index}"),
         );
     }
@@ -698,7 +697,7 @@ fn parse_map(
     y: &mut context::Context,
     nullable: bool,
 ) -> diagnostic::Result<Literal> {
-    let values: Vec<_> = proto_repeated_field!(x, y, key_values, |x, y| {
+    let values: Vec<_> = proto_required_repeated_field!(x, y, key_values, |x, y| {
         let key = proto_required_field!(x, y, key, parse_literal)
             .1
             .unwrap_or_default();
@@ -712,11 +711,9 @@ fn parse_map(
     .map(|x| x.unwrap_or_default())
     .collect();
     if values.is_empty() {
-        diagnostic!(
+        comment!(
             y,
-            Error,
-            ExpressionIllegalLiteralValue,
-            "need at least one key-value pair to derive types (use EmptyMap instead)"
+            "At least one key-value pair is required to derive types. Use EmptyMap instead."
         );
     }
     let mut key_type = Arc::default();
@@ -724,14 +721,14 @@ fn parse_map(
     for (index, value) in values.iter().enumerate() {
         key_type = types::assert_equal(
             y,
-            value.0.data_type().clone(),
-            key_type,
+            value.0.data_type(),
+            &key_type,
             format!("unexpected key type for index {index}"),
         );
         value_type = types::assert_equal(
             y,
-            value.1.data_type().clone(),
-            value_type,
+            value.1.data_type(),
+            &value_type,
             format!("unexpected value type for index {index}"),
         );
     }

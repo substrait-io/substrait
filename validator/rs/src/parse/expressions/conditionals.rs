@@ -20,7 +20,7 @@ pub fn parse_if_then(
     let mut args = vec![];
 
     // Handle branches.
-    proto_repeated_field!(x, y, ifs, |x, y| {
+    proto_required_repeated_field!(x, y, ifs, |x, y| {
         // Parse fields.
         let condition = proto_required_field!(x, y, r#if, expressions::parse_predicate)
             .1
@@ -31,8 +31,8 @@ pub fn parse_if_then(
         // Check that the type is the same for each branch.
         return_type = types::assert_equal(
             y,
-            n.data_type(),
-            return_type.clone(),
+            &n.data_type(),
+            &return_type,
             "branches must yield the same type",
         );
 
@@ -56,8 +56,8 @@ pub fn parse_if_then(
         // Check that the type is the same for each branch.
         return_type = types::assert_equal(
             y,
-            n.data_type(),
-            return_type.clone(),
+            &n.data_type(),
+            &return_type,
             "branches must yield the same type",
         );
 
@@ -103,7 +103,7 @@ pub fn parse_switch(
     args.push(e.unwrap_or_default());
 
     // Handle branches.
-    proto_repeated_field!(x, y, ifs, |x, y| {
+    proto_required_repeated_field!(x, y, ifs, |x, y| {
         // Parse match field.
         let (n, e) = proto_required_field!(x, y, r#if, literals::parse_literal);
         let match_value = e.unwrap_or_default();
@@ -111,8 +111,8 @@ pub fn parse_switch(
         // Check that the type is the same for each branch.
         match_type = types::assert_equal(
             y,
-            n.data_type(),
-            match_type.clone(),
+            &n.data_type(),
+            &match_type,
             "literal type must match switch expression",
         );
 
@@ -123,8 +123,8 @@ pub fn parse_switch(
         // Check that the type is the same for each branch.
         return_type = types::assert_equal(
             y,
-            n.data_type(),
-            return_type.clone(),
+            &n.data_type(),
+            &return_type,
             "branches must yield the same type",
         );
 
@@ -148,8 +148,8 @@ pub fn parse_switch(
         // Check that the type is the same for each branch.
         return_type = types::assert_equal(
             y,
-            n.data_type(),
-            return_type.clone(),
+            &n.data_type(),
+            &return_type,
             "branches must yield the same type",
         );
 
@@ -185,21 +185,50 @@ pub fn parse_switch(
 /// Parse a "singular or list", i.e. something of the form
 /// `x in (a, ..., c)`.
 pub fn parse_singular_or_list(
-    _x: &substrait::expression::SingularOrList,
-    _y: &mut context::Context,
+    x: &substrait::expression::SingularOrList,
+    y: &mut context::Context,
 ) -> diagnostic::Result<expressions::Expression> {
-    // TODO
-    Ok(expressions::Expression::Function(
-        String::from("in"),
-        vec![],
-    ))
+    let mut args = vec![];
+
+    // Parse value to match.
+    let (n, e) = proto_boxed_required_field!(x, y, value, expressions::parse_expression);
+    let match_type = n.data_type();
+    args.push(e.unwrap_or_default());
+
+    // Handle allowed values.
+    proto_required_repeated_field!(x, y, options, |x, y| {
+        let expression = expressions::parse_expression(x, y)?;
+        let value_type = y.data_type();
+        args.push(expression);
+
+        // Check that the type is the same as the value.
+        types::assert_equal(
+            y,
+            &value_type,
+            &match_type,
+            "option type must match value type",
+        );
+
+        Ok(())
+    });
+
+    // Describe node.
+    y.set_data_type(data_type::DataType::new_predicate(false));
+    summary!(
+        y,
+        "Returns true if and only if {} is equal to any of the options.",
+        args.first().unwrap()
+    );
+    let expression = expressions::Expression::Function(String::from("match"), args);
+    describe!(y, Expression, "{}", expression);
+    Ok(expression)
 }
 
 /// Parse a "multi or list", i.e. something of the form
 /// `(x, .., z) in ((ax, .., az), .., (cx, .., cz))`.
 pub fn parse_multi_or_list(
-    _x: &substrait::expression::MultiOrList,
-    _y: &mut context::Context,
+    x: &substrait::expression::MultiOrList,
+    y: &mut context::Context,
 ) -> diagnostic::Result<expressions::Expression> {
     // FIXME: why is there not just an expression that forms a struct from a
     // number of expressions? Then this could go away. Alternatively, why does
@@ -208,9 +237,54 @@ pub fn parse_multi_or_list(
     // (a in b, contains(a, b), matches(a, b) etc. would all make more sense
     // to me... at least add a comment in the protobuf descriptions)
 
-    // TODO
-    Ok(expressions::Expression::Function(
-        String::from("in"),
-        vec![],
-    ))
+    let mut args = vec![];
+
+    // Parse value to match.
+    let (ns, es) = proto_required_repeated_field!(x, y, value, expressions::parse_expression);
+    let match_types = ns.iter().map(|x| x.data_type()).collect::<Vec<_>>();
+    args.push(expressions::Expression::Tuple(
+        es.into_iter().map(|x| x.unwrap_or_default()).collect(),
+    ));
+
+    // Handle allowed values.
+    proto_required_repeated_field!(x, y, options, |x, y| {
+        let (ns, es) = proto_required_repeated_field!(x, y, fields, expressions::parse_expression);
+        let value_types = ns.iter().map(|x| x.data_type()).collect::<Vec<_>>();
+        args.push(expressions::Expression::Tuple(
+            es.into_iter().map(|x| x.unwrap_or_default()).collect(),
+        ));
+
+        // Check that the type is the same as the value.
+        if match_types.len() != value_types.len() {
+            diagnostic!(
+                y,
+                Error,
+                TypeMismatch,
+                "option types must match value types: numbers of fields differ"
+            )
+        }
+        for (index, (value_type, match_type)) in
+            value_types.iter().zip(match_types.iter()).enumerate()
+        {
+            types::assert_equal(
+                y,
+                value_type,
+                match_type,
+                format!("option type must match value type for field {index}"),
+            );
+        }
+
+        Ok(())
+    });
+
+    // Describe node.
+    y.set_data_type(data_type::DataType::new_predicate(false));
+    summary!(
+        y,
+        "Returns true if and only if {} is equal to any of the options.",
+        args.first().unwrap()
+    );
+    let expression = expressions::Expression::Function(String::from("match"), args);
+    describe!(y, Expression, "{}", expression);
+    Ok(expression)
 }

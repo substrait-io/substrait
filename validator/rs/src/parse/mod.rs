@@ -190,6 +190,7 @@ mod expressions;
 mod extensions;
 mod plan;
 mod relations;
+mod sorts;
 mod types;
 
 use crate::input::config;

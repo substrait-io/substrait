@@ -145,6 +145,16 @@ impl DataType {
         })
     }
 
+    /// Creates the type of a predicate, i.e. a boolean.
+    pub fn new_predicate(nullable: bool) -> Arc<DataType> {
+        Arc::new(DataType {
+            class: Class::Simple(Simple::Boolean),
+            nullable,
+            variation: None,
+            parameters: vec![],
+        })
+    }
+
     /// Returns a nullable variant of this type.
     pub fn make_nullable(&self) -> Arc<DataType> {
         Arc::new(DataType {

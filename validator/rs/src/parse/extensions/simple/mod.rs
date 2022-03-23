@@ -56,11 +56,27 @@ fn parse_simple_extension_yaml_uri_mapping(
 fn parse_uri_reference(x: &u32, y: &mut context::Context) -> Result<Arc<extension::YamlInfo>> {
     match y.extension_uris().resolve(x).cloned() {
         Some((yaml_data, path)) => {
+            describe!(y, Misc, "{}", yaml_data.uri);
             link!(y, path, "URI anchor is defined here");
             Ok(yaml_data)
         }
-        None => Err(cause!(LinkMissingAnchor, "URI anchor {x} does not exist")),
+        None => {
+            describe!(y, Misc, "Unresolved URI");
+            Err(cause!(LinkMissingAnchor, "URI anchor {x} does not exist"))
+        }
     }
+}
+
+/// Adds a description to a resolved function/type/variation reference node.
+fn describe_reference<T>(y: &mut context::Context, reference: &Arc<extension::Reference<T>>) {
+    let scope = reference
+        .common
+        .yaml_info
+        .as_ref()
+        .map(|x| string_util::as_ident_or_string(&x.uri))
+        .unwrap_or_else(|| String::from("?"));
+    let name = &reference.common.name;
+    describe!(y, Misc, "{scope}::{name}");
 }
 
 /// Parse a type variation reference and resolve it.
@@ -70,13 +86,17 @@ pub fn parse_type_variation_reference(
 ) -> Result<Arc<extension::Reference<extension::TypeVariation>>> {
     match y.tvars().resolve(x).cloned() {
         Some((variation, path)) => {
+            describe_reference(y, &variation);
             link!(y, path, "Type variation anchor is defined here");
             Ok(variation)
         }
-        None => Err(cause!(
-            LinkMissingAnchor,
-            "type variation anchor {x} does not exist"
-        )),
+        None => {
+            describe!(y, Misc, "Unresolved type variation");
+            Err(cause!(
+                LinkMissingAnchor,
+                "Type variation anchor {x} does not exist"
+            ))
+        }
     }
 }
 
@@ -87,10 +107,14 @@ pub fn parse_type_reference(
 ) -> Result<Arc<extension::Reference<extension::DataType>>> {
     match y.types().resolve(x).cloned() {
         Some((data_type, path)) => {
+            describe_reference(y, &data_type);
             link!(y, path, "Type anchor is defined here");
             Ok(data_type)
         }
-        None => Err(cause!(LinkMissingAnchor, "type anchor {x} does not exist")),
+        None => {
+            describe!(y, Misc, "Unresolved type");
+            Err(cause!(LinkMissingAnchor, "Type anchor {x} does not exist"))
+        }
     }
 }
 
@@ -101,13 +125,17 @@ pub fn parse_function_reference(
 ) -> Result<Arc<extension::Reference<extension::Function>>> {
     match y.fns().resolve(x).cloned() {
         Some((function, path)) => {
+            describe_reference(y, &function);
             link!(y, path, "Function anchor is defined here");
             Ok(function)
         }
-        None => Err(cause!(
-            LinkMissingAnchor,
-            "Function anchor {x} does not exist"
-        )),
+        None => {
+            describe!(y, Misc, "Unresolved function");
+            Err(cause!(
+                LinkMissingAnchor,
+                "Function anchor {x} does not exist"
+            ))
+        }
     }
 }
 

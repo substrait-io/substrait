@@ -7,19 +7,39 @@
 //!
 //! See <https://substrait.io/relations/logical_relations/#sort-operation>
 
-use std::sync::Arc;
-
 use crate::input::proto::substrait;
 use crate::output::diagnostic;
 use crate::parse::context;
+use crate::parse::sorts;
 
 /// Parse sort relation.
 pub fn parse_sort_rel(x: &substrait::SortRel, y: &mut context::Context) -> diagnostic::Result<()> {
     // Parse input.
-    let _in_type = handle_rel_input!(x, y);
+    let in_type = handle_rel_input!(x, y);
 
-    // TODO: derive schema.
-    y.set_schema(Arc::default());
+    // Sorts pass through their input schema unchanged.
+    y.set_schema(in_type);
+
+    // Check the sorts.
+    let keys = proto_required_repeated_field!(x, y, sorts, sorts::parse_sort_field).1;
+
+    // Describe the relation.
+    describe!(y, Relation, "Sort dataset");
+    if x.sorts.len() > 1 {
+        summary!(
+            y,
+            "This relation reorders or coalesces a dataset based on {} keys.",
+            x.sorts.len()
+        );
+        summary!(y, "The first key has greatest priority; only if finds");
+        summary!(y, "two keys equivalent will the next key be checked.");
+    } else {
+        summary!(
+            y,
+            "This relation reorders or coalesces a dataset based on the value of {}.",
+            keys.first().cloned().flatten().unwrap_or_default()
+        );
+    }
 
     // Handle the common field.
     handle_rel_common!(x, y);

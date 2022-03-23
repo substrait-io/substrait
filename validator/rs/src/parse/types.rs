@@ -812,15 +812,15 @@ pub fn parse_named_struct(
 /// unresolved, base is returned.
 fn assert_equal_internal(
     context: &mut context::Context,
-    other: Arc<data_type::DataType>,
-    base: Arc<data_type::DataType>,
+    other: &Arc<data_type::DataType>,
+    base: &Arc<data_type::DataType>,
     message: &str,
     path: &str,
 ) -> Arc<data_type::DataType> {
     if other.is_unresolved() {
-        base
+        base.clone()
     } else if base.is_unresolved() {
-        other
+        other.clone()
     } else {
         // Match base types.
         let base_types_match = match (other.class(), base.class()) {
@@ -846,7 +846,7 @@ fn assert_equal_internal(
 
             // No sense in comparing parameters if the base type is already
             // different, so just return here.
-            return base;
+            return base.clone();
         }
 
         // Match nullability.
@@ -903,7 +903,7 @@ fn assert_equal_internal(
                 TypeMismatch,
                 "{message}: {other_len} parameters vs. {base_len} parameters{path}"
             );
-            return base;
+            return base.clone();
         }
 
         // Now match the parameters. We call ourselves recursively for each
@@ -914,8 +914,7 @@ fn assert_equal_internal(
         let parameters = other
             .parameters()
             .iter()
-            .cloned()
-            .zip(base.parameters().iter().cloned())
+            .zip(base.parameters().iter())
             .enumerate()
             .map(|(index, (other_param, base_param))| {
                 let path_element = base_param
@@ -939,14 +938,14 @@ fn assert_equal_internal(
                         data_type::Parameter::Type(other),
                         data_type::Parameter::NamedType(name, base),
                     ) => data_type::Parameter::NamedType(
-                        name,
+                        name.clone(),
                         assert_equal_internal(context, other, base, message, &path),
                     ),
                     (
                         data_type::Parameter::NamedType(name, other),
                         data_type::Parameter::Type(base),
                     ) => data_type::Parameter::NamedType(
-                        name,
+                        name.clone(),
                         assert_equal_internal(context, other, base, message, &path),
                     ),
                     (
@@ -964,7 +963,7 @@ fn assert_equal_internal(
                             );
                         }
                         data_type::Parameter::NamedType(
-                            base_name,
+                            base_name.clone(),
                             assert_equal_internal(context, other, base, message, &path),
                         )
                     }
@@ -977,7 +976,7 @@ fn assert_equal_internal(
                                 "{message}: {other} vs. {base}{path}"
                             );
                         }
-                        base
+                        base.clone()
                     }
                 }
             })
@@ -1010,8 +1009,8 @@ fn assert_equal_internal(
 /// unresolved, base is returned.
 pub fn assert_equal<S: AsRef<str>>(
     context: &mut context::Context,
-    other: Arc<data_type::DataType>,
-    base: Arc<data_type::DataType>,
+    other: &Arc<data_type::DataType>,
+    base: &Arc<data_type::DataType>,
     message: S,
 ) -> Arc<data_type::DataType> {
     assert_equal_internal(context, other, base, message.as_ref(), "")

@@ -452,6 +452,45 @@ where
         .unzip()
 }
 
+/// Convenience/shorthand macro for parsing repeated protobuf fields for which
+/// at least one element must exist.
+macro_rules! proto_required_repeated_field {
+    ($input:expr, $context:expr, $field:ident) => {
+        proto_required_repeated_field!($input, $context, $field, |_, _| Ok(()))
+    };
+    ($input:expr, $context:expr, $field:ident, $parser:expr) => {
+        crate::parse::traversal::push_proto_required_repeated_field(
+            $context,
+            &$input.$field,
+            crate::input::proto::cook_ident(stringify!($field)),
+            false,
+            $parser,
+        )
+    };
+    ($input:expr, $context:expr, $field:ident, $parser:expr, $($args:expr),*) => {
+        proto_required_repeated_field!($input, $context, $field, |x, y| $parser(x, y, $($args),*))
+    };
+}
+
+/// Parse and push a repeated field of some message type, and check that at
+/// least one element exists.
+pub fn push_proto_required_repeated_field<TF, TR, FP>(
+    context: &mut context::Context,
+    field: &[TF],
+    field_name: &'static str,
+    unknown_subtree: bool,
+    parser: FP,
+) -> (Vec<Arc<tree::Node>>, Vec<Option<TR>>)
+where
+    TF: InputNode,
+    FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
+{
+    if field.is_empty() {
+        ediagnostic!(context, Error, ProtoMissingField, field_name);
+    }
+    push_proto_repeated_field(context, field, field_name, unknown_subtree, parser)
+}
+
 //=============================================================================
 // Protobuf root message handling
 //=============================================================================
