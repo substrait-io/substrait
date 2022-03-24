@@ -11,8 +11,22 @@ use crate::parse::relations;
 // Parse a relation root, i.e. a toplevel relation that includes field name
 // information.
 fn parse_rel_root(x: &substrait::RelRoot, y: &mut context::Context) -> diagnostic::Result<()> {
-    proto_required_field!(x, y, input, relations::parse_rel);
+    // Parse the fields.
+    let schema = proto_required_field!(x, y, input, relations::parse_rel)
+        .0
+        .data_type();
     proto_repeated_field!(x, y, names);
+
+    // Relate the names to the schema.
+    let schema = schema
+        .apply_field_names(&x.names)
+        .map_err(|x| diagnostic!(y, Error, x))
+        .unwrap_or_default();
+    y.set_schema(schema);
+
+    // Describe the node.
+    describe!(y, Misc, "Relation root");
+    summary!(y, "Attaches names to result schema");
     Ok(())
 }
 
