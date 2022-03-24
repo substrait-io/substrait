@@ -881,7 +881,13 @@ pub fn parse_literal(
         .unwrap_or_default();
 
     // Describe node.
+    y.set_data_type(literal.data_type().clone());
     describe!(y, Expression, "{}", literal);
-    summary!(y, "Literal with value {:#}", literal);
+    summary!(
+        y,
+        "Literal of type {:#} with value {:#}",
+        literal.data_type(),
+        literal
+    );
     Ok(literal)
 }

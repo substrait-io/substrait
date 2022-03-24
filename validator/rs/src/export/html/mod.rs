@@ -458,7 +458,7 @@ fn format_node_tree(
         }
         tree::NodeType::ProtoPrimitive(proto_type, data) => {
             format!(
-                "= {}{brief} {}",
+                "= {} {brief} {}",
                 format_span("value", data),
                 format_span("type", proto_type)
             )
@@ -466,7 +466,7 @@ fn format_node_tree(
         tree::NodeType::ProtoMissingOneOf => "?".to_string(),
         tree::NodeType::NodeReference(num, target) => format_reference(
             format!(
-                "= {}{brief} {}",
+                "= {} {brief} {}",
                 format_span("value", num),
                 format_span("type", "uint32, reference")
             ),
@@ -475,7 +475,7 @@ fn format_node_tree(
         ),
         tree::NodeType::YamlReference(yaml) => {
             format!(
-                "= {}{brief} {}",
+                "= {} {brief} {}",
                 format_span("value", &yaml.uri),
                 format_span("type", "string, resolved to YAML")
             )

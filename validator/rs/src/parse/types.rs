@@ -268,8 +268,8 @@ pub fn parse_decimal(
     y: &mut context::Context,
 ) -> diagnostic::Result<()> {
     // Parse fields.
-    let scale = proto_primitive_field!(x, y, scale, parse_integral_type_parameter).1;
     let precision = proto_primitive_field!(x, y, precision, parse_integral_type_parameter).1;
+    let scale = proto_primitive_field!(x, y, scale, parse_integral_type_parameter).1;
     let nullable = proto_required_enum_field!(
         x,
         y,
@@ -287,14 +287,14 @@ pub fn parse_decimal(
     .1;
 
     // Convert to internal type object.
-    let data_type = if let (Some(scale), Some(precision), Some(nullable), Some(variation)) =
-        (scale, precision, nullable, variation)
+    let data_type = if let (Some(precision), Some(scale), Some(nullable), Some(variation)) =
+        (precision, scale, nullable, variation)
     {
         data_type::DataType::new(
             data_type::Class::Compound(data_type::Compound::Decimal),
             nullable,
             variation,
-            vec![scale, precision],
+            vec![precision, scale],
         )
         .map_err(|e| diagnostic!(y, Error, e))
         .unwrap_or_default()

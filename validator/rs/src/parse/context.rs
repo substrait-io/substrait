@@ -480,9 +480,9 @@ where
     pub fn iter_unused(&self) -> impl Iterator<Item = (K, V, path::PathBuf)> + '_ {
         self.map.iter().filter_map(|(k, (v, p))| {
             if self.used.contains(k) {
-                Some((k.clone(), v.clone(), p.clone()))
-            } else {
                 None
+            } else {
+                Some((k.clone(), v.clone(), p.clone()))
             }
         })
     }
