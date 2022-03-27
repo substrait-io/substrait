@@ -83,9 +83,16 @@ message ReadRel {
     // the midpoint of the chunk)
     message FileOrFiles {
       oneof path_type {
+        // A URI that can refer to either a single folder or a single file
         string uri_path = 1;
+        // A URI where the path portion is a glob expression that can
+        // identify zero or more paths.
+        // Consumers should support the POSIX syntax.  The recursive
+        // globstar (**) may not be supported.
         string uri_path_glob = 2;
+        // A URI that refers to a single file
         string uri_file = 3;
+        // A URI that refers to a single folder
         string uri_folder = 4;
       }
 
