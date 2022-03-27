@@ -120,7 +120,6 @@ public class CalciteLiteralTest extends CalciteObjs {
 
   @Test
   void tDecimalLiteral() {
-    var val = "my test".getBytes(StandardCharsets.UTF_8);
     BigDecimal bd = BigDecimal.valueOf(-123.45789);
     test(decimal(false, bd, 32, 10), c(bd, SqlTypeName.DECIMAL, 32, 10));
   }

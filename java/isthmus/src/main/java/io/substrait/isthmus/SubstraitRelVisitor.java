@@ -137,7 +137,7 @@ public class SubstraitRelVisitor extends RelNodeVisitor<Rel, RuntimeException> {
     var input = apply(aggregate.getInput());
     Stream<ImmutableBitSet> sets;
     if (aggregate.groupSets != null) {
-      sets = Stream.concat(Stream.of(aggregate.getGroupSet()), aggregate.groupSets.stream());
+      sets = aggregate.groupSets.stream();
     } else {
       sets = Stream.of(aggregate.getGroupSet());
     }
