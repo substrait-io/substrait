@@ -12,11 +12,12 @@ scalar_functions:
           - value: decimal<P2,S2>
         return: |-
           init_scale = max(S1,S2)
-          init_prec = init_scale + max(P1 - S1, P2-S2) + 1
+          init_prec = init_scale + max(P1 - S1, P2 - S2) + 1
           min_scale = min(init_scale, 6)
           delta = init_prec - 38
-          prec = min(init_prec,38)
-          scale = init_prec > 38 ? scale - init_prec + 38 : min_scale
+          prec = min(init_prec, 38)
+          scale_after_borrow = max(init_scale - delta, min_scale)
+          scale = init_prec > 38 ? scale_after_borrow : init_scale
           DECIMAL<prec, scale>
   -
     name: "subtract"
@@ -28,11 +29,12 @@ scalar_functions:
           - value: decimal<P2,S2>
         return: |-
           init_scale = max(S1,S2)
-          init_prec = init_scale + max(P1 - S1, P2-S2) + 1
+          init_prec = init_scale + max(P1 - S1, P2 - S2) + 1
           min_scale = min(init_scale, 6)
           delta = init_prec - 38
-          prec = min(init_prec,38)
-          scale = init_prec > 38 ? scale - init_prec + 38 : min_scale
+          prec = min(init_prec, 38)
+          scale_after_borrow = max(init_scale - delta, min_scale)
+          scale = init_prec > 38 ? scale_after_borrow : init_scale
           DECIMAL<prec, scale>
   -
     name: "multiply"
@@ -47,8 +49,9 @@ scalar_functions:
           init_prec = P1 + P2 + 1
           min_scale = min(init_scale, 6)
           delta = init_prec - 38
-          prec = min(init_prec,38)
-          scale = init_prec > 38 ? scale - init_prec + 38 : min_scale
+          prec = min(init_prec, 38)
+          scale_after_borrow = max(init_scale - delta, min_scale)
+          scale = init_prec > 38 ? scale_after_borrow : init_scale
           DECIMAL<prec, scale>
   -
     name: "divide"
@@ -63,8 +66,9 @@ scalar_functions:
           init_prec = P1 - S1 + P2 + init_scale
           min_scale = min(init_scale, 6)
           delta = init_prec - 38
-          prec = min(init_prec,38)
-          scale = init_prec > 38 ? scale - init_prec + 38 : min_scale
+          prec = min(init_prec, 38)
+          scale_after_borrow = max(init_scale - delta, min_scale)
+          scale = init_prec > 38 ? scale_after_borrow : init_scale
           DECIMAL<prec, scale>
   -
     name: "modulus"
@@ -79,8 +83,9 @@ scalar_functions:
           init_prec = min(P1 - S1, P2 - S2) + init_scale
           min_scale = min(init_scale, 6)
           delta = init_prec - 38
-          prec = min(init_prec,38)
-          scale = init_prec > 38 ? scale - init_prec + 38 : min_scale
+          prec = min(init_prec, 38)
+          scale_after_borrow = max(init_scale - delta, min_scale)
+          scale = init_prec > 38 ? scale_after_borrow : init_scale
           DECIMAL<prec, scale>
 aggregate_functions:
   - name: "sum"
