@@ -62,6 +62,6 @@ WHERE x < ANY(SELECT y from t2)
 | Property              | Description                                    | Required |
 | --------------------- | ---------------------------------------------- | -------- |
 | Reduction operation   | The kind of reduction to use over the subquery | Yes      |
-| Comparision operation | The kind of comparison operation to use        | Yes      |
+| Comparison operation  | The kind of comparison operation to use        | Yes      |
 | Expression            | Left hand side expression to check             | Yes      |
 | Subquery              | Subquery to check                              | Yes      |

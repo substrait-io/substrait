@@ -1,6 +1,6 @@
 # Window Functions
 
-Window functions are functions that define an operation which consumes values from multiple records to a produce a single output. They are similar to aggregate functions but also have a focused window of analysis to compare to their partition window. The function similar to scalar values to an end user, producing a single value for each input record. However, their consumption visibility for each record production can be many records.
+Window functions are functions which consume values from multiple records to produce a single output. They are similar to aggregate functions but also have a focused window of analysis to compare to their partition window.  Window functions are similar to scalar values to an end user, producing a single value for each input record. However, the consumption visibility for the production of each single record can be many records.
 
 
 

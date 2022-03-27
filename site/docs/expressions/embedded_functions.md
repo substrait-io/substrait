@@ -27,7 +27,7 @@ The binary representation of an embedded function is:
 
 ## Function Details
 
-There are many type of types of possible stored functions. For each, Substrait works to expose the function in as descriptive a way as possible to support the largest number of consumers.
+There are many types of possible stored functions. For each, Substrait works to expose the function in as descriptive a way as possible to support the largest number of consumers.
 
 
 
