@@ -15,7 +15,8 @@ scalar_functions:
     impls:
       - args:
           - value: boolean
-          - value: boolean
+        variadic:
+          min: 2
         return: boolean
   -
     name: and
@@ -23,7 +24,8 @@ scalar_functions:
     impls:
       - args:
           - value: boolean
-          - value: boolean
+        variadic:
+          min: 2
         return: boolean
   -
     name: xor
@@ -31,5 +33,12 @@ scalar_functions:
     impls:
       - args:
           - value: boolean
+          - value: boolean
+        return: boolean
+  -
+    name: not
+    description: The not of a boolean value.
+    impls:
+      - args:
           - value: boolean
         return: boolean
