@@ -16,70 +16,23 @@ pub fn check_uri(s: &str) -> diagnostic::Result<uriparse::URIReference> {
     uriparse::URIReference::try_from(s).map_err(|e| ecause!(IllegalUri, e))
 }
 
-/// Checks an URI that may include globs for validity.
+/// Checks an URI that may include glob syntax in its path for validity.
 pub fn check_uri_glob(s: &str) -> diagnostic::Result<()> {
-    // FIXME: this kinda doesn't make sense; you can't really glob a URI
-    // without destroying its syntax. Probably they were never *actually*
-    // intended to be URIs, but if they were intended to be paths, they
-    // really should just be called paths.
+    // Parse as URI first, then obtain the path.
+    let uri = check_uri(s)?;
+    let path = uri.path().to_string();
 
-    // Check glob syntax.
-    glob::Pattern::new(s).map_err(|e| ecause!(IllegalGlob, e))?;
+    // The glob characters `?`, `[`, and `]` are reserved in URIs, so they must
+    // be percent-encoded. So, in order to check the glob syntax, we must first
+    // percent-decode the string. Without loss of generality we use the lossy
+    // decode function because we don't really care about characters other than
+    // `*?[]` for syntax-checking the glob.
+    let decoded_path = percent_encoding::percent_decode_str(&path).decode_utf8_lossy();
 
-    // Just replace match groups with random letters that match the glob and
-    // check that this yields a valid URI. This is by no means an exhaustive
-    // search for checking that any or all strings matching the glob are valid,
-    // though. We just pick the candidate match that is most likely to be a
-    // valid URI. As long as the groups are not supposed to match
-    // syntax-changing elements of the URI and are only used to match path
-    // elements and such (which is really the only thing they should be used
-    // for, let's be honest) this is a valid approach, but it may lead to
-    // false negatives for contrived cases.
-    let mut in_character_set = false;
-    let mut first_option = false;
-    let s = s
-        .chars()
-        .filter_map(|c| {
-            if in_character_set {
-                // Note: a character set always has at least one option. []] is a
-                // valid sequence for escaping a ] character.
-                if first_option {
-                    // First option, always chosen for constructing the candidate
-                    // string.
-                    first_option = false;
-                    Some(c)
-                } else if c != ']' {
-                    // Additional options are ignored.
-                    None
-                } else {
-                    // Exit character set.
-                    in_character_set = false;
-                    None
-                }
-            } else {
-                match c {
-                    '[' => {
-                        // Enter character set.
-                        in_character_set = true;
-                        first_option = true;
-                        None
-                    }
-                    '*' | '?' => {
-                        // Replace * and ? with 'a', a hex digit and letter. Most
-                        // likely to yield a valid URI.
-                        Some('a')
-                    }
-                    c => {
-                        // Literal character for as far as the glob is concerned.
-                        Some(c)
-                    }
-                }
-            }
-        })
-        .collect::<String>();
+    // Check the glob syntax.
+    glob::Pattern::new(&decoded_path).map_err(|e| ecause!(IllegalGlob, e))?;
 
-    // Check that what we got is a valid URI.
-    check_uri(&s).map(|_| ())
+    Ok(())
 }
 
 /// Returns the given string as a quoted string.

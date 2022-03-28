@@ -30,6 +30,7 @@ chrono = "0.4"
 heck = "0.4"
 base64 = "0.13"
 uriparse = "0.6"
+percent-encoding = "2.1"
 
 [build-dependencies]
 prost-build = "0.9"

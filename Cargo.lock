@@ -1000,6 +1000,7 @@ dependencies = [
  "num-derive",
  "num-traits",
  "once_cell",
+ "percent-encoding",
  "prost",
  "prost-build",
  "prost-types",
