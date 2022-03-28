@@ -411,7 +411,7 @@ impl DataType {
         };
         let new_type = self.apply_field_names_internal(&mut namer)?;
         let remainder = names.count();
-        if remainder > 0 {
+        if remainder > 0 && !self.is_unresolved_deep() {
             Err(cause!(
                 TypeMismatchedFieldNameAssociations,
                 "received {} too many field name(s)",
