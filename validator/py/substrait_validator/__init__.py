@@ -15,12 +15,31 @@ from .substrait.plan_pb2 import Plan
 from .substrait.validator.validator_pb2 import ParseResult, Diagnostic, Path
 
 
+def _populate_config(cfg):
+    """We can't derive from _Config to add the add_urllib_resolver() function,
+    so we'll just have to monkey-patch it."""
+    def generate_method(cls, name, fn):
+        def x(self, *args, **kwargs):
+            return fn(self._config, *args, **kwargs)
+        x.__name__ = name
+        x.__doc__ = f.__doc__
+        setattr(cls, name, x)
+
+    for name in dir(_Config):
+        if name.startswith('_'):
+            continue
+        f = getattr(_Config, name)
+        if not callable(f):
+            continue
+        generate_method(cfg, name, f)
+    cfg.__doc__ = _Config.__doc__
+    return cfg
+
+
+@_populate_config
 class Config:
     def __init__(self):
         self._config = _Config()
-
-    def __getattr__(self, key):
-        return getattr(self._config, key)
 
     @staticmethod
     def _unwrap(config):
@@ -521,6 +540,10 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
                 sys.exit(1)
         else:
             raise NotImplementedError(in_type)
+
+        # The outermost structure must be a dict for anything to work at all.
+        if not isinstance(in_dict, dict):
+            fatal('toplevel structure of decoded JSON-like input is not a object')
 
         # Convert the dict representation of the JSON object model to the
         # protobuf message wrapper.

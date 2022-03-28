@@ -26,6 +26,36 @@ automated.
 
 You can test the module using `pytest` after you install it.
 
-## Usage
+## Command-line usage
 
-TODO
+The module exposes a command-line program named `substrait-validator` for
+running the validator manually. You can also use the tool to convert between
+various serialization formats of the `substrait.Plan` message. Run
+`substrait-validator --help` for more information.
+
+## Library usage
+
+The library essentially provides a bunch of type conversion functions at
+module scope to convert between the various representations of a Substrait
+plan, including the result of the validator. The most important functions are
+arguably `check_plan_valid(plan, config=None)` and
+`check_plan_not_invalid(plan, config=None)`, which run validation on the given
+plan and throw a Python exception corresponding to the first diagnostic
+returned by the validator of the highest severity encountered if the plan is
+not strictly or loosely valid respectively. That is, `check_plan_valid` will
+throw an exception if the plan could not be proven to be valid, while
+`check_plan_not_invalid` will only throw if it could be proven to be invalid.
+
+The `plan` argument can be a number of things:
+
+ - `bytes`: treated as a binary serialization of `substrait.Plan`.
+ - `str`: treated as a protobuf JSON serialization of `substrait.Plan`.
+ - `dict`: treated as the above using Python's data model (JSON objects map
+   to `dict`s, JSON arrays map to `list`s).
+ - `substrait_validator.substrait.Plan`: a previously deserialized plan.
+ - `substrait_validator.ResultHandle`: a previously validated plan.
+
+`config` can be `None`/unspecified, or can be set to a
+`substrait_validator.Config` object to configure the validator with.
+
+For more information, use Python's `help()` function.
