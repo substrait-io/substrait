@@ -3,10 +3,13 @@
 //! This module provides a human-readable export format based on HTML.
 
 use crate::output::comment;
+use crate::output::data_type;
+use crate::output::data_type::ParameterInfo;
 use crate::output::diagnostic;
 use crate::output::parse_result;
 use crate::output::path;
 use crate::output::tree;
+use std::sync::Arc;
 
 const HEADER1: &str = concat!(
     r#"
@@ -436,6 +439,47 @@ fn format_relation_tree(
     html
 }
 
+// Format a data type parameter card.
+fn format_data_type_card(content: &str) -> String {
+    format!(
+        "<div class=\"card data_type\">\n{}\n</div>",
+        html_escape(content),
+    )
+}
+
+// Format a data type.
+fn format_data_type(prefix: &str, data_type: &Arc<data_type::DataType>) -> Vec<String> {
+    let mut html = vec![];
+
+    if data_type.parameters().is_empty() {
+        html.push(format_data_type_card(&format!("{prefix}: {:#}", data_type)));
+    } else {
+        html.push("<details class=\"data_type\">\n<summary>".to_string());
+        html.push(format!("{prefix}: {}", html_escape(data_type.to_string())));
+        html.push("</summary>".to_string());
+        for (index, parameter) in data_type.parameters().iter().enumerate() {
+            let name = data_type
+                .class()
+                .parameter_name(index)
+                .unwrap_or_else(|| "?".to_string());
+            match parameter {
+                data_type::Parameter::Type(t) => {
+                    html.extend(format_data_type(&format!(".{name}"), t))
+                }
+                data_type::Parameter::NamedType(n, t) => {
+                    html.extend(format_data_type(&format!(".{n}"), t))
+                }
+                data_type::Parameter::Unsigned(i) => {
+                    html.push(format_data_type_card(&format!(".{name}: {i}")))
+                }
+            }
+        }
+        html.push("</details>".to_string());
+    }
+
+    html
+}
+
 // Format the node tree.
 fn format_node_tree(
     path: &path::Path,
@@ -533,19 +577,14 @@ fn format_node_tree(
                 level = std::cmp::max(level, diag.adjusted_level.into());
             }
             tree::NodeData::DataType(data_type) => {
-                // TODO: print an actual tree structure for nested types
-                html.push("<div class=\"card data_type\">\n".to_string());
-                let prefix = if matches!(node.class, tree::Class::Relation) {
-                    "Schema"
-                } else {
-                    "Data type"
-                };
-                html.push(format!(
-                    "{}: {}",
-                    prefix,
-                    html_escape(data_type.to_string())
+                html.extend(format_data_type(
+                    if matches!(node.class, tree::Class::Relation) {
+                        "Schema"
+                    } else {
+                        "Data type"
+                    },
+                    data_type,
                 ));
-                html.push("\n</div>".to_string());
             }
             tree::NodeData::Comment(comment) => {
                 html.push("<div class=\"card comment\">\n".to_string());
