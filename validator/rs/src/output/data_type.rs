@@ -155,6 +155,16 @@ impl DataType {
         })
     }
 
+    /// Creates the type of a (default) integer, i.e. i32.
+    pub fn new_integer(nullable: bool) -> Arc<DataType> {
+        Arc::new(DataType {
+            class: Class::Simple(Simple::I32),
+            nullable,
+            variation: None,
+            parameters: vec![],
+        })
+    }
+
     /// Returns a nullable variant of this type.
     pub fn make_nullable(&self) -> Arc<DataType> {
         Arc::new(DataType {
@@ -403,19 +413,26 @@ impl DataType {
     /// flattened vector of names.
     pub fn apply_field_names<S: ToString>(&self, names: &[S]) -> diagnostic::Result<Arc<DataType>> {
         let mut names = names.iter();
+        let mut num_too_few = 0;
         let mut namer = || {
-            names.next().map(|s| s.to_string()).ok_or(cause!(
-                TypeMismatchedFieldNameAssociations,
-                "received too few field name(s)"
-            ))
+            Ok(names.next().map(|s| s.to_string()).unwrap_or_else(|| {
+                num_too_few += 1;
+                format!("unnamed{num_too_few}")
+            }))
         };
         let new_type = self.apply_field_names_internal(&mut namer)?;
         let remainder = names.count();
-        if remainder > 0 && !self.is_unresolved_deep() {
+        if self.is_unresolved_deep() {
+            Ok(new_type)
+        } else if remainder > 0 {
             Err(cause!(
                 TypeMismatchedFieldNameAssociations,
-                "received {} too many field name(s)",
-                remainder
+                "received {remainder} too many field name(s)"
+            ))
+        } else if num_too_few > 0 {
+            Err(cause!(
+                TypeMismatchedFieldNameAssociations,
+                "received {num_too_few} too few field name(s)"
             ))
         } else {
             Ok(new_type)

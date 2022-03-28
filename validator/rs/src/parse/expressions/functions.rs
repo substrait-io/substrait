@@ -201,3 +201,36 @@ pub fn parse_window_function(
     summary!(y, "Window function call: {:#}", expression);
     Ok(expression)
 }
+
+/// Parse an aggregate function. Returns a description of the function call
+/// expression.
+pub fn parse_aggregate_function(
+    x: &substrait::AggregateFunction,
+    y: &mut context::Context,
+) -> diagnostic::Result<expressions::Expression> {
+    // Parse function information.
+    let function = proto_primitive_field!(
+        x,
+        y,
+        function_reference,
+        extensions::simple::parse_function_reference
+    )
+    .1;
+    let arguments = proto_repeated_field!(x, y, args, expressions::parse_function_argument);
+    let return_type = proto_required_field!(x, y, output_type, types::parse_type)
+        .0
+        .data_type();
+
+    // Check function information.
+    let (return_type, expression) = parse_function(y, function, arguments, return_type);
+
+    // Parse modifiers.
+    proto_repeated_field!(x, y, sorts, sorts::parse_sort_field);
+    proto_enum_field!(x, y, phase, substrait::AggregationPhase);
+
+    // Describe node.
+    y.set_data_type(return_type);
+    describe!(y, Expression, "{}", expression);
+    summary!(y, "Aggregate function call: {:#}", expression);
+    Ok(expression)
+}

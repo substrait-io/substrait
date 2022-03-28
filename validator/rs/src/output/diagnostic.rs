@@ -257,6 +257,9 @@ pub enum Classification {
     #[strum(props(Description = "missing relation"))]
     RelationMissing = 5002,
 
+    #[strum(props(Description = "invalid relation"))]
+    RelationInvalid = 5003,
+
     // Expression-related diagnostics (group 6).
     #[strum(props(HiddenDescription = "expression-related diagnostics"))]
     Expression = 6000,
