@@ -365,32 +365,54 @@ fn parse_maintain_singular_struct(
             // Okay: maintain struct.
             summary!(
                 y,
-                "Mask expression yields a singular struct, which is maintained as-is."
+                "Mask expression yields a singular struct, which is \
+                maintained as-is."
             );
             Ok(false)
         }
         (true, false, true) => {
             // Error: request to remove struct, but context requires a struct.
-            summary!(y, "Mask expression yields a singular struct, which would be reduced to its element type, but its context does not allow this.");
-            diagnostic!(y, Error, TypeStructRequired, "context requires a struct type and type is a singular struct, maintain_singular_struct must be set");
+            summary!(
+                y,
+                "Mask expression yields a singular struct, which would be \
+                reduced to its element type, but its context does not allow \
+                this."
+            );
+            diagnostic!(
+                y,
+                Error,
+                TypeStructRequired,
+                "context requires a struct type and type is a singular \
+                struct, maintain_singular_struct must be set"
+            );
             Ok(false)
         }
         (true, false, false) => {
             // Okay: remove singular struct wrapper.
             summary!(
                 y,
-                "Mask expression yields a singular struct, which is reduced to its element type."
+                "Mask expression yields a singular struct, which is reduced \
+                to its element type."
             );
             Ok(true)
         }
         (false, true, _) => {
             // Okay: not a singular struct, so there is nothing to strip.
-            summary!(y, "Data type of mask expression is not a singular struct, so there is nothing to strip or maintain. The explicit true is redundant.");
+            summary!(
+                y,
+                "Data type of mask expression is not a singular struct, so \
+                there is nothing to strip or maintain. The explicit true is \
+                redundant."
+            );
             Ok(false)
         }
         (false, false, _) => {
             // Okay: not a singular struct, so there is nothing to strip.
-            summary!(y, "Data type of mask expression is not a singular struct, so there is nothing to strip or maintain.");
+            summary!(
+                y,
+                "Data type of mask expression is not a singular struct, so \
+                there is nothing to strip or maintain."
+            );
             Ok(false)
         }
     }

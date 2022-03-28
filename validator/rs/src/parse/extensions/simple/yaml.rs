@@ -25,13 +25,8 @@ pub fn parse_uri<S: AsRef<str>>(
 ) -> Result<Arc<extension::YamlInfo>> {
     // Check URI syntax.
     let x = x.as_ref();
-    if !string_util::is_uri(x) {
-        diagnostic!(
-            y,
-            Warning,
-            IllegalUri,
-            "this URI may not be valid according to RFC 3986"
-        );
+    if let Err(e) = string_util::check_uri(x) {
+        diagnostic!(y, Error, e);
     }
 
     // The schema for YAML extension files.

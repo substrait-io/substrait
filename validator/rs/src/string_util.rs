@@ -2,6 +2,8 @@
 
 //! Some misc. string utility functions.
 
+use crate::output::diagnostic;
+
 /// Returns whether the given string is a valid identifier.
 pub fn is_identifier(s: &str) -> bool {
     static IDENTIFIER_RE: once_cell::sync::Lazy<fancy_regex::Regex> =
@@ -9,135 +11,75 @@ pub fn is_identifier(s: &str) -> bool {
     IDENTIFIER_RE.is_match(s).unwrap_or_default()
 }
 
-/// Returns whether the given string is a valid RFC 3986 URI.
-pub fn is_uri(s: &str) -> bool {
-    // This monster is derived from
-    // https://github.com/wizard04wsu/URI_Parsing/blob/6570cfffc932158d8209e4c904b34f2d078e7f67/src/uri_parsing.mjs#L420
-    // (MIT-licensed by Andrew Harrison)
-    static URI_RE: once_cell::sync::Lazy<fancy_regex::Regex> = once_cell::sync::Lazy::new(|| {
-        let mut re = String::new();
-        re += "^";
-        re += "(?=([a-z][a-z\\d+.-]*))\\1:"; // 1 = scheme
-        re += "(?:";
-        {
-            re += "//";
-            re += "(";
-            {
-                re += "(?:";
-                {
-                    re += "(?=((?:[-\\w.~!$&'()*+,;=:]|%[\\dA-F]{2})*))\\3"; // 3 = userinfo
-                    re += "@";
-                }
-                re += ")?";
-                re += "(?=(\\[[\\dA-F:.]{2,}\\]|(?:[-\\w.~!$&'()*+,;=]|%[\\dA-F]{2})*))\\4"; // 4 = host (loose check)
-                re += "(?:";
-                {
-                    re += ":";
-                    re += "(?=(\\d*))\\5"; // 5 = port
-                }
-                re += ")?";
-            }
-            re += ")"; // 2 = authority
-            re += "(/(?=((?:[-\\w.~!$&'()*+,;=:@/]|%[\\dA-F]{2})*))\\7)?"; // 6 = path (after authority)
-            re += "|";
-            re += "(/?(?!/)(?=((?:[-\\w.~!$&'()*+,;=:@/]|%[\\dA-F]{2})*))\\9)?";
-            // 8 = path (no authority)
-        }
-        re += ")";
-        re += "(?:";
-        {
-            re += "\\?";
-            re += "(?=((?:[-\\w.~!$&'()*+,;=:@/?]|%[\\dA-F]{2})*))\\10"; // 10 = query
-        }
-        re += ")?";
-        re += "(?:";
-        {
-            re += "#";
-            re += "(?=((?:[-\\w.~!$&'()*+,;=:@/?]|%[\\dA-F]{2})*))\\11"; // 11 = fragment
-        }
-        re += ")?";
-        re += "$";
-        fancy_regex::Regex::new(&re).unwrap()
-    });
-
-    // TODO: this regex seems somewhat incomplete compared to
-    // https://jmrware.com/articles/2009/uri_regexp/URI_regex.html
-    // which actually seems to be methodologically based on RFC 3986. However,
-    // while the summary seems to imply that it can be freely used, no license
-    // is provided. Worth noting especially here is that above regex doesn't
-    // match relative URIs, which we probably do want to do here.
-
-    URI_RE.is_match(s).unwrap_or_default()
+/// Checks an URI for validity.
+pub fn check_uri(s: &str) -> diagnostic::Result<uriparse::URIReference> {
+    uriparse::URIReference::try_from(s).map_err(|e| ecause!(IllegalUri, e))
 }
 
-/// Returns whether the given string is a valid RFC 3986 URI, with the
-/// exception that glob syntax is allowed for the path part.
-pub fn is_uri_glob(s: &str) -> bool {
+/// Checks an URI that may include globs for validity.
+pub fn check_uri_glob(s: &str) -> diagnostic::Result<()> {
     // FIXME: this kinda doesn't make sense; you can't really glob a URI
-    // without destroying its syntax (especially ). See
-    // also the FIXME in the read relation path parsing.
+    // without destroying its syntax. Probably they were never *actually*
+    // intended to be URIs, but if they were intended to be paths, they
+    // really should just be called paths.
 
-    // This monster is derived from
-    // https://github.com/wizard04wsu/URI_Parsing/blob/6570cfffc932158d8209e4c904b34f2d078e7f67/src/uri_parsing.mjs#L420
-    // (MIT-licensed by Andrew Harrison)
-    static URI_RE: once_cell::sync::Lazy<fancy_regex::Regex> = once_cell::sync::Lazy::new(|| {
-        let mut re = String::new();
-        re += "^";
-        re += "(?=([a-z][a-z\\d+.-]*))\\1:"; // 1 = scheme
-        re += "(?:";
-        {
-            re += "//";
-            re += "(";
-            {
-                re += "(?:";
-                {
-                    re += "(?=((?:[-\\w.~!$&'()*+,;=:]|%[\\dA-F]{2})*))\\3"; // 3 = userinfo
-                    re += "@";
-                }
-                re += ")?";
-                re += "(?=(\\[[\\dA-F:.]{2,}\\]|(?:[-\\w.~!$&'()*+,;=]|%[\\dA-F]{2})*))\\4"; // 4 = host (loose check)
-                re += "(?:";
-                {
-                    re += ":";
-                    re += "(?=(\\d*))\\5"; // 5 = port
-                }
-                re += ")?";
-            }
-            re += ")"; // 2 = authority
-            re += "(/(?=((?:[-\\w.~!$&'()*+,;=:@/?]|\\[(?:[^\\]]+|\\])\\]|%[\\dA-F]{2})*))\\7)?"; // 6 = path (after authority)
-            re += "|"; // added ? and [...] captures here ^ and here v
-            re += "(/?(?!/)(?=((?:[-\\w.~!$&'()*+,;=:@/?]|\\[(?:[^\\]]+|\\])\\]|%[\\dA-F]{2})*))\\9)?";
-            // 8 = path (no authority)
-        }
-        re += ")";
-        re += "(?:";
-        {
-            re += "\\?";
-            re += "(?=((?:[-\\w.~!$&'()*+,;=:@/?]|%[\\dA-F]{2})*))\\10"; // 10 = query
-        }
-        re += ")?";
-        re += "(?:";
-        {
-            re += "#";
-            re += "(?=((?:[-\\w.~!$&'()*+,;=:@/?]|%[\\dA-F]{2})*))\\11"; // 11 = fragment
-        }
-        re += ")?";
-        re += "$";
-        fancy_regex::Regex::new(&re).unwrap()
-    });
+    // Check glob syntax.
+    glob::Pattern::new(s).map_err(|e| ecause!(IllegalGlob, e))?;
 
-    URI_RE
-        .captures(s)
-        .ok()
-        .flatten()
-        .map(|c| {
-            if let Some(path) = c.get(6).or_else(|| c.get(8)) {
-                glob::Pattern::new(path.as_str()).is_ok()
+    // Just replace match groups with random letters that match the glob and
+    // check that this yields a valid URI. This is by no means an exhaustive
+    // search for checking that any or all strings matching the glob are valid,
+    // though. We just pick the candidate match that is most likely to be a
+    // valid URI. As long as the groups are not supposed to match
+    // syntax-changing elements of the URI and are only used to match path
+    // elements and such (which is really the only thing they should be used
+    // for, let's be honest) this is a valid approach, but it may lead to
+    // false negatives for contrived cases.
+    let mut in_character_set = false;
+    let mut first_option = false;
+    let s = s
+        .chars()
+        .filter_map(|c| {
+            if in_character_set {
+                // Note: a character set always has at least one option. []] is a
+                // valid sequence for escaping a ] character.
+                if first_option {
+                    // First option, always chosen for constructing the candidate
+                    // string.
+                    first_option = false;
+                    Some(c)
+                } else if c != ']' {
+                    // Additional options are ignored.
+                    None
+                } else {
+                    // Exit character set.
+                    in_character_set = false;
+                    None
+                }
             } else {
-                true
+                match c {
+                    '[' => {
+                        // Enter character set.
+                        in_character_set = true;
+                        first_option = true;
+                        None
+                    }
+                    '*' | '?' => {
+                        // Replace * and ? with 'a', a hex digit and letter. Most
+                        // likely to yield a valid URI.
+                        Some('a')
+                    }
+                    c => {
+                        // Literal character for as far as the glob is concerned.
+                        Some(c)
+                    }
+                }
             }
         })
-        .unwrap_or_default()
+        .collect::<String>();
+
+    // Check that what we got is a valid URI.
+    check_uri(&s).map(|_| ())
 }
 
 /// Returns the given string as a quoted string.

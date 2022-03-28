@@ -250,7 +250,12 @@ pub fn parse_field_reference(
                 "Here, <> is used to refer to the row currently being processed."
             );
         } else {
-            summary!(y, "Here, <{depth}> is used to refer to the row being processed by the {} outer query.", string_util::describe_nth(depth as u32));
+            summary!(
+                y,
+                "Here, <{depth}> is used to refer to the row being processed \
+                by the {} outer query.",
+                string_util::describe_nth(depth as u32)
+            );
         }
     }
     Ok(reference)

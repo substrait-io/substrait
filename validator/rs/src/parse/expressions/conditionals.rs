@@ -77,11 +77,8 @@ pub fn parse_if_then(
     y.set_data_type(return_type);
     summary!(
         y,
-        "Selects the value corresponding to the first condition that yields true."
-    );
-    summary!(
-        y,
-        "If none of the conditions yield true, return {}.",
+        "Selects the value corresponding to the first condition that yields \
+        true. If none of the conditions yield true, return {}.",
         args.last().unwrap()
     );
     let expression = expressions::Expression::Function(String::from("if_then"), args);
@@ -169,12 +166,9 @@ pub fn parse_switch(
     y.set_data_type(return_type);
     summary!(
         y,
-        "Selects the value corresponding to the switch case that matches {}.",
-        args.first().unwrap()
-    );
-    summary!(
-        y,
-        "If none of the cases match, return {}.",
+        "Selects the value corresponding to the switch case that matches {}. \
+        If none of the cases match, return {}.",
+        args.first().unwrap(),
         args.last().unwrap()
     );
     let expression = expressions::Expression::Function(String::from("switch"), args);

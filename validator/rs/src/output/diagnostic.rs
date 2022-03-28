@@ -95,6 +95,12 @@ pub enum Message {
 
     #[error("{0}")]
     JsonSchemaValidationError(#[from] JsonSchemaValidationError),
+
+    #[error("{0}")]
+    UriError(#[from] uriparse::URIReferenceError),
+
+    #[error("{0}")]
+    GlobError(#[from] glob::PatternError),
 }
 
 impl From<&str> for Message {
@@ -161,6 +167,9 @@ pub enum Classification {
 
     #[strum(props(Description = "illegal URI"))]
     IllegalUri = 4,
+
+    #[strum(props(Description = "illegal glob"))]
+    IllegalGlob = 5,
 
     // Protobuf-related diagnostics (group 1).
     #[strum(props(HiddenDescription = "protobuf-related diagnostic"))]

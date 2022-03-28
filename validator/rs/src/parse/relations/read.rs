@@ -75,46 +75,28 @@ fn parse_path_type(
     use substrait::read_rel::local_files::file_or_files::PathType;
     match x {
         PathType::UriPath(x) => {
-            if !string_util::is_uri(x) {
-                diagnostic!(
-                    y,
-                    Warning,
-                    IllegalUri,
-                    "this URI may not be valid according to RFC 3986"
-                );
+            if let Err(e) = string_util::check_uri(x) {
+                diagnostic!(y, Error, e);
             }
             Ok(false)
         }
         PathType::UriPathGlob(x) => {
-            if !string_util::is_uri_glob(x) {
-                diagnostic!(
-                    y,
-                    Warning,
-                    IllegalUri,
-                    "this URI may not be valid according to RFC 3986 + globs for paths"
-                );
+            if let Err(e) = string_util::check_uri_glob(x) {
+                // May yield false negatives due to the weird combination of
+                // glob and URI syntax. See associated FIXME in string_util.
+                diagnostic!(y, Warning, e);
             }
             Ok(true)
         }
         PathType::UriFile(x) => {
-            if !string_util::is_uri(x) {
-                diagnostic!(
-                    y,
-                    Warning,
-                    IllegalUri,
-                    "this URI may not be valid according to RFC 3986"
-                );
+            if let Err(e) = string_util::check_uri(x) {
+                diagnostic!(y, Error, e);
             }
             Ok(false)
         }
         PathType::UriFolder(x) => {
-            if !string_util::is_uri(x) {
-                diagnostic!(
-                    y,
-                    Warning,
-                    IllegalUri,
-                    "this URI may not be valid according to RFC 3986"
-                );
+            if let Err(e) = string_util::check_uri(x) {
+                diagnostic!(y, Error, e);
             }
             Ok(true)
         }
