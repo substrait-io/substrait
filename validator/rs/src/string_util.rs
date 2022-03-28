@@ -159,7 +159,7 @@ impl Limit {
         min_element_size: usize,
     ) -> (usize, Option<usize>, Limit) {
         if let Some(limit) = self.limit {
-            let n = limit / min_element_size;
+            let n = limit.checked_div(min_element_size).unwrap_or(usize::MAX);
             if n < num_elements {
                 // Apply heuristics for how many elements to print on either
                 // side. For some small values, this yields:
@@ -174,14 +174,14 @@ impl Limit {
                 // right.
                 let n_right = (n + 1) / 3;
                 let n_left = n - n_right;
-                let limit = if n == 0 {
-                    Self::new(limit)
-                } else {
-                    Self::new(limit / n)
-                };
+                let limit = Self::new(limit.checked_div(n).unwrap_or(limit));
                 (n_left, Some(n_right), limit)
             } else {
-                (num_elements, None, Self::new(limit / num_elements))
+                (
+                    num_elements,
+                    None,
+                    Self::new(limit.checked_div(num_elements).unwrap_or(limit)),
+                )
             }
         } else {
             (num_elements, None, Self::unlimited())
