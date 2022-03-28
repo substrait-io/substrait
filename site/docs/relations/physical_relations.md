@@ -70,9 +70,9 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.                      |
 | Join Type           | One of the join types defined in the Join operator.          | Required                                      |
 
-## Distribute Operator
+## Exchange Operator
 
-The distribute operator will redistribute data based on zero or more distribution expressions. Applying this operation will lead to an output that presents the desired distribution.
+The exchange operator will redistribute data based on an exchange type definition. Applying this operation will lead to an output that presents the desired distribution.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -81,14 +81,24 @@ The distribute operator will redistribute data based on zero or more distributio
 | Property Maintenance | Orderedness is maintained. Distribution is overwritten based on configuration. |
 | Direct Output Order  | Order of the input.                                          |
 
-### Distribute Properties
+### Exchange Types
+
+|Type|Description|
+|--|--|
+|Scatter|Distribute data using a system defined hashing function that considers one or more fields. For the same type of fields and same ordering of values, the same partition target should be identified for different ExchangeRels|
+|Single Bucket|Define an expression that provides a single `i32` bucket number. Optionally define whether the expression will only return values within the valid number of partition counts. If not, the system should modulo the return value to determine a target patition.|
+|Multi Bucket|Define an expression that provides an `List<i32>`a bucket number. Optionally define whether the expression will only return values within the valid number of partition counts. If not, the system should modulo the return value to determine a target patition. The records should be sent to all bucket numbers provided by the expression.|
+|Broadcast|Send all records to all partitions.|
+|Round Robin|Send records to each target in sequence. Can follow either exact or approximate behavior. Approximate will attempt to balance the number of records sent to each destination but may not exactly distribute evenly and may send batches of records to each target before moving to the next.|
+
+### Exchange Properties
 
 | Property           | Description                                                  | Required                                                     |
 | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Input              | The relational input                                         | Required.                                                    |
-| Expressions        | A list of expressions that describe how the data should be distributed. | Optional. If undefined, data is expected to be distributed fairly evenly amongst destinations. |
-| Partition Count    | The number of partitions targeted for output                 | Optional, defaults to the number of discrete values produced by the expressions. |
-| Expression Mapping | A set of distribution expression tuples that are mapped to particular destinations. | Optional, expressions of the same type are expected to be mapped to the destination given a consistent number of target partitions. |
+| Distribution Type  | One of the distribution types defined above                  | Required.                                                    |
+| Partition Count    | The number of partitions targeted for output                 | Optional. If not defined, implementation system should decide the number of partitions. Note that when not defined, single or multi bucket expressions should not be constrained to count. |
+| Expression Mapping | Describes a relationship between each partition id and the destination that partition should be sent to. | Optional. A partition may be sent to 0..N locations. Value can either be a URI or arbitrary value. |
 
 
 

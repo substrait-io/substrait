@@ -6,3 +6,4 @@ pymdown-extensions==8.2
 mkdocs-awesome-pages-plugin==2.5.0
 mkdocs-markdownextradata-plugin==0.2.4
 mkdocs-protobuf==0.0.8
+jinja2==3.0.3

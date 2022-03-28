@@ -40,7 +40,7 @@ Read definition types are built by the community and added to the specification.
 
 | Property                    | Description                                                       | Required |
 | --------------------------- | ----------------------------------------------------------------- | -------- |
-| Items                       | An array Items (path or path glob) associated with the read       | Required |
+| Items                       | An array of Items (path or path glob) associated with the read    | Required |
 | Format per item             | Enumeration of available formats. Only current option is PARQUET. | Required |
 | Slicing parameters per item | Information to use when reading a slice of a file.                | Optional |
 
@@ -261,7 +261,7 @@ The write operator is an operator that consumes one output and writes it to stor
 | Field names                 | The names of all struct fields in breadth-first order.       | Required                    |
 | Masked Complex Expression   | The masking expression applied to the input record prior to write. | Optional, defaults to all   |
 | Rotation description fields | A list of fields that can be used for stream description whenever a stream is reset | Optional, defaults to none. |
-| Rotation indicator          | An input field id that describes when the current stream should be "rotated". Individual write definition types may support the ability to rotate the output into one or more streams. This could mean closing and opening a new file, finishing and restarting a TCP connection, etc. If a rotation indicator is available, it will be 0 except when a rotation should occur. Rotation indication are frequently defined by things like discrete partition values but could be done based on number of records or other arbitrary criteria. Typically | Optional, defaults to none. |
+| Rotation indicator          | An input field id that describes when the current stream should be "rotated". Individual write definition types may support the ability to rotate the output into one or more streams. This could mean closing and opening a new file, finishing and restarting a TCP connection, etc. If a rotation indicator is available, it will be 0 except when a rotation should occur. Rotation indication are frequently defined by things like discrete partition values but could be done based on number of records or other arbitrary criteria. | Optional, defaults to none. |
 
 ### Write Definition Types
 
@@ -271,7 +271,7 @@ Write definition types are built by the community and added to the specification
 
 | Property | Description                                                  | Required                     |
 | -------- | ------------------------------------------------------------ | ---------------------------- |
-| Name     | The in memory name to give the dataset. When used in tandem  | Required                     |
+| Name     | The in-memory name to give the dataset.                      | Required                     |
 | Pin      | Whether it is okay to remove this dataset from memory or it should be kept in memory. | Optional, defaults to false. |
 
 

@@ -97,3 +97,99 @@ scalar_functions:
           - value: date
           - value: interval_day
         return: date
+  -
+    name: "lte"
+    description: less than or equal to
+    impls:
+      - args:
+          - value: timestamp
+          - value: timestamp
+        return: boolean
+      - args:
+          - value: timestamp_tz
+          - value: timestamp_tz
+        return: boolean
+      - args:
+          - value: date
+          - value: date
+        return: boolean
+      - args:
+          - value: interval_day
+          - value: interval_day
+        return: boolean
+      - args:
+          - value: interval_year
+          - value: interval_year
+        return: boolean
+  -
+    name: "lt"
+    description: less than
+    impls:
+      - args:
+          - value: timestamp
+          - value: timestamp
+        return: boolean
+      - args:
+          - value: timestamp_tz
+          - value: timestamp_tz
+        return: boolean
+      - args:
+          - value: date
+          - value: date
+        return: boolean
+      - args:
+          - value: interval_day
+          - value: interval_day
+        return: boolean
+      - args:
+          - value: interval_year
+          - value: interval_year
+        return: boolean
+  -
+    name: "gte"
+    description: less than or equal to
+    impls:
+      - args:
+          - value: timestamp
+          - value: timestamp
+        return: boolean
+      - args:
+          - value: timestamp_tz
+          - value: timestamp_tz
+        return: boolean
+      - args:
+          - value: date
+          - value: date
+        return: boolean
+      - args:
+          - value: interval_day
+          - value: interval_day
+        return: boolean
+      - args:
+          - value: interval_year
+          - value: interval_year
+        return: boolean
+  -
+    name: "gt"
+    description: less than
+    impls:
+      - args:
+          - value: timestamp
+          - value: timestamp
+        return: boolean
+      - args:
+          - value: timestamp_tz
+          - value: timestamp_tz
+        return: boolean
+      - args:
+          - value: date
+          - value: date
+        return: boolean
+      - args:
+          - value: interval_day
+          - value: interval_day
+        return: boolean
+      - args:
+          - value: interval_year
+          - value: interval_year
+        return: boolean

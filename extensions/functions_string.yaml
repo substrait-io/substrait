@@ -13,4 +13,34 @@ scalar_functions:
           - value: "string"
           - value: "string"
         return: "string"
-# TODO: add like, concat, substring, string specific cross type equalities.
+  -
+    name: like
+    description: Are two strings like each other.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: "varchar<L2>"
+        return: "BOOLEAN"
+      - args:
+          - value: "string"
+          - value: "string"
+        return: "BOOLEAN"
+  -
+    name: substring
+    description: Extract a portion of a string from another string.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: i32
+          - value: i32
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+          - value: i32
+          - value: i32
+        return: "string"
+      - args:
+          - value: "fixedchar<l1>"
+          - value: i32
+          - value: i32
+        return: "string"

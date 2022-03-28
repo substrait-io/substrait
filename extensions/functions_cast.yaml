@@ -1,0 +1,11 @@
+%YAML 1.2
+---
+scalar_functions:
+  -
+    name: cast
+    description: Cast one type to another.
+    impls:
+      - args:
+          - value: any1
+          - type: output
+        return: output

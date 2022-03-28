@@ -83,9 +83,16 @@ message ReadRel {
     // the midpoint of the chunk)
     message FileOrFiles {
       oneof path_type {
+        // A URI that can refer to either a single folder or a single file
         string uri_path = 1;
+        // A URI where the path portion is a glob expression that can
+        // identify zero or more paths.
+        // Consumers should support the POSIX syntax.  The recursive
+        // globstar (**) may not be supported.
         string uri_path_glob = 2;
+        // A URI that refers to a single file
         string uri_file = 3;
+        // A URI that refers to a single folder
         string uri_folder = 4;
       }
 
@@ -223,6 +230,56 @@ message ExtensionMultiRel {
   RelCommon common = 1;
   repeated Rel inputs = 2;
   google.protobuf.Any detail = 3;
+}
+
+// A redistribution operation
+message ExchangeRel {
+  RelCommon common = 1;
+  Rel input = 2;
+  int32 partition_count = 3;
+  repeated ExchangeTarget targets = 4;
+
+  oneof exchange_kind {
+    ScatterFields scatter_by_fields = 5;
+    SingleBucketExpression single_target = 6;
+    MultiBucketExpression multi_target = 7;
+    RoundRobin round_robin = 8;
+    Broadcast broadcast = 9;
+  }
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+
+  message ScatterFields { repeated Expression.FieldReference fields = 1; }
+
+  // Returns a single bucket number per record.
+  message SingleBucketExpression { Expression expression = 1; }
+
+  // Returns zero or more bucket numbers per record
+  message MultiBucketExpression {
+    Expression expression = 1;
+    bool constrained_to_count = 2;
+  }
+
+  // Send all data to every target.
+  message Broadcast {}
+
+  // Route approximately
+  message RoundRobin {
+    // whether the round robin behavior is required to exact (per record) or
+    // approximate. Defaults to approximate.
+    bool exact = 1;
+  }
+
+  message ExchangeTarget {
+    // Describes the partition id(s) to send. If this is empty, all data is sent
+    // to this target.
+    repeated int32 partition_id = 1;
+
+    oneof target_type {
+      string uri = 2;
+      google.protobuf.Any extended = 3;
+    }
+  }
 }
 
 // A relation with output field names.

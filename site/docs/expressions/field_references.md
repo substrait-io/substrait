@@ -23,14 +23,14 @@ References must validate against the schema of the record being referenced. If n
 
 ### Masked Complex Expression 
 
-A masked complex expression is used to do a subselect of a portion of a complex record. It allows a user to specify the portion of the complex object to consume. Imagine you have a schema of (note that structs are lists fields here, as they are in general in Substrait as field names are not used internally in Substrait):
+A masked complex expression is used to do a subselect of a portion of a complex record. It allows a user to specify the portion of the complex object to consume. Imagine you have a schema of (note that structs are lists of fields here, as they are in general in Substrait as field names are not used internally in Substrait):
 
 ```
 struct:
   - struct:
     - integer
     - list:
-      struct: 
+      struct:
         - i32
         - string
         - string
@@ -40,7 +40,7 @@ struct:
   - i64
 ```
 
-Given this schema, you could declare a mask in pseudo code such as:
+Given this schema, you could declare a mask in pseudo-code such as:
 
 ```
 0:[0,1:[..5:[0,2]]],2,3
