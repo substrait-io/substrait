@@ -33,6 +33,11 @@ pub enum Expression {
     /// builtin function calls).
     Function(String, Vec<Expression>),
 
+    /// Used for subqueries, or anything else where the "arguments" are too
+    /// extensive to be reasonably described; the argument list is always
+    /// simply represented with an ellipsis.
+    BigFunction(String),
+
     /// Used to represent the values of a MultiOrList.
     Tuple(Vec<Expression>),
 
@@ -43,10 +48,6 @@ pub enum Expression {
     /// expressions, as they have no associated type. See FIXME at the bottom
     /// of this file.
     EnumVariant(Option<String>),
-
-    /// Used for subqueries. These don't carry any description with them,
-    /// because the structure is so extensive.
-    SubQuery,
 }
 
 impl Default for Expression {
@@ -86,6 +87,7 @@ impl Describe for Expression {
                 })?;
                 write!(f, ")")
             }
+            Expression::BigFunction(name) => string_util::describe_identifier(f, name, limit),
             Expression::Tuple(items) => {
                 write!(f, "(")?;
                 string_util::describe_sequence(f, items, limit, 20, |f, expr, _, limit| {
@@ -103,7 +105,6 @@ impl Describe for Expression {
             }
             Expression::EnumVariant(Some(x)) => string_util::describe_identifier(f, x, limit),
             Expression::EnumVariant(None) => write!(f, "-"),
-            Expression::SubQuery => write!(f, "subquery(..)"),
         }
     }
 }
@@ -156,10 +157,7 @@ fn parse_expression_type(
             misc::parse_enum(x, y)
         }
         substrait::expression::RexType::Cast(x) => misc::parse_cast(x.as_ref(), y),
-        substrait::expression::RexType::Subquery(x) => {
-            subqueries::parse_subquery(x.as_ref(), y)?;
-            Ok(Expression::SubQuery)
-        }
+        substrait::expression::RexType::Subquery(x) => subqueries::parse_subquery(x.as_ref(), y),
     }
 }
 

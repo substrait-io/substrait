@@ -261,6 +261,9 @@ pub enum Classification {
     #[strum(props(Description = "function definition unavailable"))]
     ExpressionFunctionDefinitionUnavailable = 6003,
 
+    #[strum(props(Description = "illegal subquery"))]
+    ExpressionIllegalSubquery = 6004,
+
     // Redundant declarations (group 7).
     #[strum(props(
         HiddenDescription = "diagnostics for pointing out parts of the plan that can be removed without changing its semantics"
