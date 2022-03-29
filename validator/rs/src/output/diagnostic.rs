@@ -359,6 +359,17 @@ impl Classification {
         Self::from_u32(group * 1000)
     }
 
+    /// Returns the "parent" code for the given code. For non-group codes, this
+    /// is the code of their group (code rounded down to thousands). For group
+    /// codes, this is 0.
+    pub fn parent(code: u32) -> u32 {
+        if code % 1000 != 0 {
+            (code / 1000) * 1000
+        } else {
+            0
+        }
+    }
+
     /// Formats a Message with this classification.
     pub fn format_message(
         &self,

@@ -34,6 +34,8 @@ pub mod input;
 
 mod string_util;
 
+use strum::IntoEnumIterator;
+
 // Aliases for common types used on the crate interface.
 pub use input::config::glob::Pattern;
 pub use input::config::Config;
@@ -46,4 +48,9 @@ pub use output::parse_result::Validity;
 /// Validates the given substrait.Plan message and returns the parse tree.
 pub fn parse<B: prost::bytes::Buf>(buffer: B, config: &Config) -> ParseResult {
     parse::parse(buffer, config)
+}
+
+/// Returns an iterator that yields all known diagnostic classes.
+pub fn iter_diagnostics() -> impl Iterator<Item = Classification> {
+    Classification::iter()
 }

@@ -18,7 +18,7 @@ def run(*args):
 def test_no_args():
     result = run()
     assert result.exit_code == 2
-    assert 'Usage: cli [OPTIONS] INFILE' in result.output
+    assert 'Missing input file.' in result.output
 
 
 def test_mconvert_auto():

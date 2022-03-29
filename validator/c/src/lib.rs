@@ -65,6 +65,136 @@ pub extern "C" fn substrait_validator_config_free(handle: *mut ConfigHandle) {
     drop(config);
 }
 
+/// Queries which diagnostic codes are defined. If buf is non-null and size is
+/// nonzero, up to size entries in buf are filled with valid diagnostic codes.
+/// Regardless of how many entries were populated, the number of defined
+/// diagnostic codes is returned.
+pub extern "C" fn substrait_validator_diag_codes(buf: *mut u32, size: usize) -> usize {
+    if !buf.is_null() && size > 0 {
+        // UNSAFE: assumes that buf is properly aligned, that there is
+        // read/write access to a region of size u32s from buf onwards, and
+        // that nothing else is mutating the buffer.
+        let slice = unsafe { std::slice::from_raw_parts_mut(buf, size) };
+
+        for (code, class) in slice
+            .iter_mut()
+            .zip(substrait_validator::iter_diagnostics())
+        {
+            *code = class.code();
+        }
+    }
+
+    substrait_validator::iter_diagnostics().count()
+}
+
+/// For the given diagnostic code, returns the code for the group it belongs
+/// to. Configuring a level override for the parent of a group of diagnostic
+/// codes will set the default override for all diagnostics contained within
+/// that group.
+pub extern "C" fn substrait_validator_diag_parent(code: u32) -> u32 {
+    substrait_validator::Classification::parent(code)
+}
+
+/// Returns the name of the given diagnostic code. If buf is non-null and size
+/// is nonzero, up to size-1 characters in buf are filled with this name,
+/// followed by a null termination character. The null termination character is
+/// considered to be part of size. If buf is non-null, size is nonzero, and
+/// code is valid, it is always written, even if this means that the name is
+/// cut short. Bytes in buf beyond the resulting string length but within the
+/// size limit may be clobbered.
+///
+/// If code is valid, the function returns the minimum buffer size needed to
+/// contain the complete name (being its string length + 1), regardless of the
+/// supplied buffer. If code is invalid, 0 is returned, and an error message
+/// can be retrieved with substrait_validator_get_last_error().
+pub extern "C" fn substrait_validator_diag_name(
+    code: u32,
+    buf: *mut libc::c_char,
+    size: usize,
+) -> usize {
+    if let Some(class) = substrait_validator::Classification::from_code(code) {
+        let name = class.name();
+        let name_bytes = name.as_bytes();
+
+        if !buf.is_null() && size > 0 {
+            // UNSAFE: assumes that buf is properly aligned, that there is
+            // read/write access to a region of size bytes from buf onwards,
+            // and that nothing else is mutating the buffer.
+            let slice = unsafe { std::slice::from_raw_parts_mut(buf as *mut u8, size) };
+
+            // Try to write name followed by a 0 to the first size-1 bytes
+            // of the buffer.
+            for (buf_byte, name_byte) in slice[..size - 1]
+                .iter_mut()
+                .zip(name_bytes.iter().cloned().chain(std::iter::once(0)))
+            {
+                *buf_byte = name_byte;
+            }
+
+            // Pessimistically always write a 0 to the last byte of the buffer,
+            // even though we may already have written an early termination
+            // character.
+            slice[size - 1] = 0;
+        }
+
+        // Return the minimum buffer size.
+        name_bytes.len() + 1
+    } else {
+        set_last_error(format!("{code} is not a valid diagnostic code"));
+        0
+    }
+}
+
+/// Returns the description of the given diagnostic code. If buf is non-null
+/// and size is nonzero, up to size-1 characters in buf are filled with this
+/// description, followed by a null termination character. The null
+/// termination character is considered to be part of size. If buf is
+/// non-null, size is nonzero, and code is valid, it is always written, even
+/// if this means that the name is cut short. Bytes in buf beyond the
+/// resulting string length but within the size limit may be clobbered.
+///
+/// If code is valid, the function returns the minimum buffer size needed to
+/// contain the complete description (being its string length + 1), regardless
+/// of the supplied buffer. If code is invalid, 0 is returned, and an error
+/// message can be retrieved with substrait_validator_get_last_error().
+pub extern "C" fn substrait_validator_diag_desc(
+    code: u32,
+    buf: *mut libc::c_char,
+    size: usize,
+) -> usize {
+    if let Some(class) = substrait_validator::Classification::from_code(code) {
+        let description = class.description();
+        let description_bytes = description.as_bytes();
+
+        if !buf.is_null() && size > 0 {
+            // UNSAFE: assumes that buf is properly aligned, that there is
+            // read/write access to a region of size bytes from buf onwards,
+            // and that nothing else is mutating the buffer.
+            let slice = unsafe { std::slice::from_raw_parts_mut(buf as *mut u8, size) };
+
+            // Try to write name followed by a 0 to the first size-1 bytes
+            // of the buffer.
+            for (buf_byte, name_byte) in slice[..size - 1]
+                .iter_mut()
+                .zip(description_bytes.iter().cloned().chain(std::iter::once(0)))
+            {
+                *buf_byte = name_byte;
+            }
+
+            // Pessimistically always write a 0 to the last byte of the buffer,
+            // even though we may already have written an early termination
+            // character.
+            slice[size - 1] = 0;
+        }
+
+        // Return the minimum buffer size.
+        description_bytes.len() + 1
+    } else {
+        set_last_error(format!("{code} is not a valid diagnostic code"));
+        0
+    }
+}
+
 /// Instructs the validator to ignore protobuf fields that it doesn't know
 /// about yet (i.e., that have been added to the Substrait protobuf
 /// descriptions, but haven't yet been implemented in the validator) if the

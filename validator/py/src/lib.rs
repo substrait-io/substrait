@@ -7,7 +7,7 @@
 
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
-use pyo3::types::PyBytes;
+use pyo3::types::{PyBytes, PyDict, PyTuple};
 
 /// Represents a validator/parser configuration.
 #[pyclass]
@@ -222,6 +222,35 @@ impl ResultHandle {
 /// Rust-native module for the validator.
 #[pymodule]
 fn substrait_validator(_py: Python, m: &PyModule) -> PyResult<()> {
+    /// Returns a dictionary mapping all diagnostic codes currently defined
+    /// to three-tuples consisting of:
+    ///  - the name of the diagnostic as a str;
+    ///  - its description as a str; and
+    ///  - the diagnostic code of its parent as an integer, or None for code 0.
+    #[pyfn(m)]
+    #[pyo3(name = "get_diagnostic_codes")]
+    fn get_diagnostic_codes_py(py: Python) -> PyResult<PyObject> {
+        let dict = PyDict::new(py);
+        for class in substrait_validator::iter_diagnostics() {
+            dict.set_item(
+                class.code(),
+                PyTuple::new(
+                    py,
+                    [
+                        class.name().to_object(py),
+                        class.description().to_object(py),
+                        if class.code() == 0 {
+                            py.None()
+                        } else {
+                            substrait_validator::Classification::parent(class.code()).to_object(py)
+                        },
+                    ],
+                ),
+            )?;
+        }
+        Ok(dict.into())
+    }
+
     m.add_class::<Config>()?;
     m.add_class::<ResultHandle>()?;
     Ok(())

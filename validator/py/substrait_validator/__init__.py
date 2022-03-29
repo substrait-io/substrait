@@ -10,7 +10,7 @@ from io import BytesIO
 from typing import Iterable
 from google.protobuf import json_format
 from google.protobuf.message import DecodeError as ProtoDecodeError
-from .substrait_validator import ResultHandle, Config as _Config
+from .substrait_validator import ResultHandle, Config as _Config, get_diagnostic_codes
 from .substrait.plan_pb2 import Plan
 from .substrait.validator.validator_pb2 import ParseResult, Diagnostic, Path
 
@@ -249,7 +249,7 @@ def path_to_string(path: Path) -> str:
 
 
 @click.command()
-@click.argument('infile')
+@click.argument('infile', required=False)
 @click.option('--in-type',
               type=click.Choice(
                   ['ext', 'proto', 'json', 'yaml', 'jsom'],
@@ -317,9 +317,12 @@ def path_to_string(path: Path) -> str:
               help=('Enable URI resolution via urllib. Enabled by default. '
                     'If disabled, only file:// URIs will resolve (after '
                     'application of any --override-uri options).'))
+@click.option('--help-diagnostics',
+              is_flag=True,
+              help=('Show a list of all known diagnostic codes and exit.'))
 def cli(infile, in_type, out_file, out_type, mode, verbosity,
         ignore_unknown_fields, allow_proto_any, diagnostic_level,
-        override_uri, use_urllib):
+        override_uri, use_urllib, help_diagnostics):
     """Validate or convert the substrait.Plan represented by INFILE (or stdin
     using "-").
 
@@ -340,7 +343,6 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
     substrait.validator.Result. If you just want to convert between different
     representations of the substrait.Plan message, use -mconvert.
     """
-    in_file = infile
 
     # Define various helper functions and constants.
     INFO = Diagnostic.Level.LEVEL_INFO
@@ -471,8 +473,33 @@ def cli(infile, in_type, out_file, out_type, mode, verbosity,
             else:
                 fatal(f'cannot emit protobuf message in {out_type} format')
 
+    # Print diagnostic code help if requested.
+    if help_diagnostics:
+        click.echo('The following diagnostic codes are defined:\n')
+        diags = {}
+        for code, (name, desc, parent) in sorted(get_diagnostic_codes().items()):
+            diag = (code, name, desc, [])
+            diags[code] = diag
+            if parent is not None:
+                diags[parent][3].append(diag)
+        def print_diag(diag, first_prefix='', next_prefix=''):
+            code, name, desc, children = diag
+            click.echo(f'{first_prefix}{code:04d} ({name}): {desc}.')
+            for child in children[:-1]:
+                print_diag(child, f'{next_prefix} |- ', f'{next_prefix} |  ')
+            if children:
+                print_diag(children[-1], f'{next_prefix} \'- ', f'{next_prefix}    ')
+        print_diag(diags[0])
+        sys.exit(0)
+
     # Parse verbosity level.
     verbosity_level = level_str_to_int(verbosity)
+
+    # Check input file.
+    in_file = infile
+    if in_file is None:
+        click.echo('Missing input file. Try --help for usage information.', err=True)
+        sys.exit(2)
 
     # Handle automatic format deduction.
     in_type = deduce_format(in_file, in_type, {

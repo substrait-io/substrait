@@ -16,10 +16,7 @@ be able to run:
 
 ```console
 user@host:~$ substrait-validator
-Usage: substrait-validator [OPTIONS] INFILE
-Try 'substrait-validator --help' for help.
-
-Error: Missing argument 'INFILE'.
+Missing input file. Try --help for usage information.
 ```
 
 If that doesn't work, try `python3 -m substrait-validator`.
@@ -87,8 +84,6 @@ gathered by the validator annotated to the nodes. The HTML format is pretty
 much just a pretty-printed version of this format. More information about this
 type is available in the associated `.proto` file.
 
-TODO: diagnostics. Need to expose function to obtain a list of 'em.
-
 For more information, use the `--help` option.
 
 Library usage
@@ -96,3 +91,61 @@ Library usage
 
 For library usage information, refer to the readme files for the language that
 you want to use the library from.
+
+Diagnostics
+-----------
+
+The primary output of the validator (beyond its validity verdict) is a list of
+diagnostics. In fact, the validator derives its verdict from this list. Each
+diagnostic consists of the following bits of information:
+
+ - a severity, being either info, warning, or error;
+ - a classification, represented using a 4-digit diagnostic code;
+ - a cause description; and
+ - a path into the protobuf/YAML tree, pointing to the node that the diagnostic
+   originated from.
+
+The severity levels strictly map as follows:
+
+ - an error means that something is invalid;
+ - a warning means that something may or may not be invalid (i.e. validity
+   could not be determined for some reason); and
+ - info has no effect on validity.
+
+Once the validator as gathered all diagnostics, the validity of the plan is
+simply determined by the above mapping applied to the highest severity level
+encountered.
+
+Note that the command line interface specifically could be said to have an
+extra "fatal" level. Such fatal diagnostics are not strictly diagnostics in the
+sense that they are validation results; they simply indicate that the CLI
+returned a non-zero exit code and why.
+
+Severity levels can be clamped to a certain range, distinguished by their
+classification. This allows you to, for example, disable warnings of a certain
+type by clamping them down to info when you know that those particular warnings
+are not of interest to your application, or raise severity to error if you want
+the validator to be extra pedantic about something. Because the validator
+derives its verdict from the highest-severity diagnostic encountered, clamping
+severity levels may also change the verdict.
+
+You can request the list of diagnostic codes from the command-line interface
+using the `--help-diagnostics` flag:
+
+```console
+user@host:~$ substrait-validator --help-diagnostics
+The following diagnostic codes are defined:
+
+0000 (Unclassified): unclassified diagnostic.
+ |- 0001 (NotYetImplemented): not yet implemented.
+ |- 0002 (IllegalValue): illegal value.
+...
+```
+
+Diagnostic codes are organized in a tree. When you configure the severity range
+of a diagnostic code with children, its children will inherit this
+configuration, unless they themselves are also explicitly configured. For
+example, you can disable all warnings and errors except for those corresponding
+to one particular diagnostic by clamping code 0000 down to info only, and then
+overriding the configuration for the diagnostic you're interested in back to
+the full info to error range.
