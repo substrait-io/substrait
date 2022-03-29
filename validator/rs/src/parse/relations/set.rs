@@ -79,29 +79,40 @@ pub fn parse_set_rel(x: &substrait::SetRel, y: &mut context::Context) -> diagnos
             describe!(y, Relation, "Set subtraction");
             summary!(
                 y,
-                "Yields all rows from the first dataset that do not exist in the second dataset."
+                "Yields all rows from the first dataset that do not exist \
+                in the second dataset."
             );
         }
         Operation::SubtractByUnion => {
             describe!(y, Relation, "Set subtract by union");
-            summary!(y, "Yields all rows from the first dataset that do not exist in any of the other datasets.");
+            summary!(
+                y,
+                "Yields all rows from the first dataset that do not exist \
+                in any of the other datasets."
+            );
         }
         Operation::SubtractByIntersection => {
             describe!(y, Relation, "Set subtract by intersection");
-            summary!(y, "Yields all rows from the first dataset that do not exist in all of the other datasets.");
+            summary!(
+                y,
+                "Yields all rows from the first dataset that do not exist in \
+                all of the other datasets."
+            );
         }
         Operation::Intersect => {
             describe!(y, Relation, "Set intersection");
             summary!(
                 y,
-                "Yields all rows from the first dataset that exist in all datasets."
+                "Yields all rows from the first dataset that exist in all \
+                datasets."
             );
         }
         Operation::IntersectWithUnion => {
             describe!(y, Relation, "Set intersect with union");
             summary!(
                 y,
-                "Yields all rows from the first dataset that exist in any of the other datasets."
+                "Yields all rows from the first dataset that exist in any of \
+                the other datasets."
             );
         }
         Operation::Union => {

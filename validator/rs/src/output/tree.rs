@@ -199,7 +199,7 @@ pub enum NodeType {
     /// Used for resolved YAML URIs, in order to include the parse result and
     /// documentation for the referenced YAML (if available), in addition to
     /// the URI itself.
-    YamlReference(Arc<extension::YamlInfo>),
+    YamlReference(Arc<extension::YamlData>),
 
     /// The associated node represents a YAML map. The contents of the map are
     /// described using Field and UnknownField.

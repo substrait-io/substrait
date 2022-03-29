@@ -89,10 +89,7 @@ impl DataType {
                 if !base.weak_equals(&class) {
                     return Err(cause!(
                         TypeMismatchedVariation,
-                        "variation {} is derived from {}, not {}",
-                        variation.common.name,
-                        base,
-                        class
+                        "variation {variation} is derived from {base}, not {class}"
                     ));
                 }
             }
@@ -455,19 +452,6 @@ impl Default for DataType {
     }
 }
 
-/// Trait for things that can resolve user-defined types and type variations.
-pub trait TypeResolver {
-    /// Resolves a user-defined type from its name.
-    fn resolve_type<S: AsRef<str>>(&self, s: S) -> diagnostic::Result<Arc<extension::DataType>>;
-
-    /// Resolves a type variation from its name and base type.
-    fn resolve_type_variation<S: AsRef<str>>(
-        &self,
-        s: S,
-        base_type: Class,
-    ) -> diagnostic::Result<Arc<extension::TypeVariation>>;
-}
-
 /// Trait for checking the type parameters for a base type.
 pub trait ParameterInfo {
     /// Checks whether the given parameter set is valid for this base type.
@@ -475,22 +459,6 @@ pub trait ParameterInfo {
 
     /// Returns the logical name of the given parameter.
     fn parameter_name(&self, index: usize) -> Option<String>;
-}
-
-impl DataType {
-    /// Parse a string as a type.
-    pub fn parse<S: AsRef<str>, R: TypeResolver>(
-        _s: S,
-        _type_resolver: R,
-    ) -> diagnostic::Result<DataType> {
-        todo!(
-            "use nom or some other parser to implement this;
-            also run ParameterChecker. then make round-trip tests.
-            this should probably also not return Result; the
-            prototype should allow returning some best-effort/error
-            type for recovery in addition to any number of diagnostics"
-        )
-    }
 }
 
 /// Type class.

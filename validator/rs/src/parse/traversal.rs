@@ -6,7 +6,7 @@
 //! Refer to the documentation for [`parse`](mod@crate::parse) for more
 //! information.
 
-// FIXME: remove once validation code is finished.
+// TODO: remove once validation code is finished.
 #![allow(dead_code)]
 #![allow(unused_macros)]
 
@@ -22,6 +22,28 @@ use crate::output::primitive_data;
 use crate::output::tree;
 use crate::parse::context;
 use std::sync::Arc;
+
+//=============================================================================
+// Type definitions
+//=============================================================================
+
+// Return value for parse macros for optional fields. The first element refers
+// to the node for the field, if the field was present. The second is the
+// return value of the supplied parse function, if it was called and didn't
+// fail.
+type OptionalResult<T> = (Option<Arc<tree::Node>>, Option<T>);
+
+// Return value for parse macros for required fields. The first element refers
+// to the node for the field; if the required field wasn't actually specified,
+// a dummy node would have been made, so this is not an Option. The second is
+// the return value of the supplied parse function, if it was called and didn't
+// fail, just like for OptionalResult<T>.
+type RequiredResult<T> = (Arc<tree::Node>, Option<T>);
+
+// Return value for parse macros for repeated fields. Same as RequiredResult,
+// but with each tuple entry wrapped in a vector. Both vectors will have equal
+// length.
+type RepeatedResult<T> = (Vec<Arc<tree::Node>>, Vec<Option<T>>);
 
 //=============================================================================
 // Macros for pushing annotations
@@ -88,14 +110,6 @@ macro_rules! summary {
     };
 }
 
-/// Convenience/shorthand macro for appending linked text to the summary of a
-/// node.
-macro_rules! summary_link {
-    ($context:expr, $path:expr, $($fmts:expr),*) => {
-        $context.push_summary(crate::output::comment::Comment::new().link(format!($($fmts),*), $path))
-    };
-}
-
 //=============================================================================
 // Generic code for field handling
 //=============================================================================
@@ -107,7 +121,7 @@ fn push_child<TF, TR, FP>(
     path_element: path::PathElement,
     unknown_subtree: bool,
     parser: FP,
-) -> (Arc<tree::Node>, Option<TR>)
+) -> RequiredResult<TR>
 where
     TF: InputNode,
     FP: FnOnce(&TF, &mut context::Context) -> diagnostic::Result<TR>,
@@ -225,7 +239,7 @@ pub fn push_proto_field<TF, TR, FP>(
     field_name: &'static str,
     unknown_subtree: bool,
     parser: FP,
-) -> (Option<Arc<tree::Node>>, Option<TR>)
+) -> OptionalResult<TR>
 where
     TF: InputNode,
     FP: FnOnce(&TF, &mut context::Context) -> diagnostic::Result<TR>,
@@ -324,7 +338,7 @@ pub fn push_proto_required_field<TF, TR, FP>(
     field_name: &'static str,
     unknown_subtree: bool,
     parser: FP,
-) -> (Arc<tree::Node>, Option<TR>)
+) -> RequiredResult<TR>
 where
     TF: InputNode,
     FP: FnOnce(&TF, &mut context::Context) -> diagnostic::Result<TR>,
@@ -367,7 +381,7 @@ pub fn push_proto_enum_field<TF, TR, FP>(
     field_name: &'static str,
     unknown_subtree: bool,
     parser: FP,
-) -> (Arc<tree::Node>, Option<TR>)
+) -> RequiredResult<TR>
 where
     TF: ProtoEnum,
     FP: FnOnce(&TF, &mut context::Context) -> diagnostic::Result<TR>,
@@ -427,7 +441,7 @@ pub fn push_proto_required_enum_field<TF, TR, FP>(
     field_name: &'static str,
     unknown_subtree: bool,
     parser: FP,
-) -> (Arc<tree::Node>, Option<TR>)
+) -> RequiredResult<TR>
 where
     TF: ProtoEnum,
     FP: FnOnce(&TF, &mut context::Context) -> diagnostic::Result<TR>,
@@ -480,7 +494,7 @@ pub fn push_proto_repeated_field<TF, TR, FP, FV>(
     unknown_subtree: bool,
     mut parser: FP,
     mut validator: FV,
-) -> (Vec<Arc<tree::Node>>, Vec<Option<TR>>)
+) -> RepeatedResult<TR>
 where
     TF: InputNode,
     FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
@@ -540,7 +554,7 @@ pub fn push_proto_required_repeated_field<TF, TR, FP, FV>(
     unknown_subtree: bool,
     parser: FP,
     validator: FV,
-) -> (Vec<Arc<tree::Node>>, Vec<Option<TR>>)
+) -> RepeatedResult<TR>
 where
     TF: InputNode,
     FP: FnMut(&TF, &mut context::Context) -> diagnostic::Result<TR>,
@@ -623,7 +637,7 @@ where
 }
 
 //=============================================================================
-// YAML optional field handling
+// YAML object handling
 //=============================================================================
 
 /// Convenience/shorthand macro for parsing optional YAML fields.
@@ -638,77 +652,38 @@ macro_rules! yaml_field {
 
 /// Parse and push an optional YAML field.
 pub fn push_yaml_field<TS, TR, FP>(
-    input: &yaml::Map,
+    input: &yaml::Value,
     context: &mut context::Context,
     field_name: TS,
     unknown_subtree: bool,
-    mut parser: FP,
-) -> (Option<Arc<tree::Node>>, Option<TR>)
+    parser: FP,
+) -> diagnostic::Result<OptionalResult<TR>>
 where
     TS: AsRef<str>,
-    FP: FnMut(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnOnce(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
 {
-    let field_name = field_name.as_ref();
-    if !context.set_field_parsed(field_name) {
-        panic!("field {field_name} was parsed multiple times");
-    }
+    if let serde_json::Value::Object(input) = input {
+        let field_name = field_name.as_ref();
+        if !context.set_field_parsed(field_name) {
+            panic!("field {field_name} was parsed multiple times");
+        }
 
-    if let Some(child) = input.get(field_name) {
-        let (field_output, result) = push_child(
-            context,
-            child,
-            path::PathElement::Field(field_name.to_string()),
-            unknown_subtree,
-            &mut parser,
-        );
-        (Some(field_output), result)
+        if let Some(child) = input.get(field_name) {
+            let (field_output, result) = push_child(
+                context,
+                child,
+                path::PathElement::Field(field_name.to_string()),
+                unknown_subtree,
+                parser,
+            );
+            Ok((Some(field_output), result))
+        } else {
+            Ok((None, None))
+        }
     } else {
-        (None, None)
+        Err(cause!(YamlInvalidType, "object expected"))
     }
 }
-
-/// Convenience/shorthand macro for parsing optional YAML array elements.
-macro_rules! yaml_element {
-    ($input:expr, $context:expr, $element:expr) => {
-        yaml_element!($input, $context, $element, |_, _| Ok(()))
-    };
-    ($input:expr, $context:expr, $element:expr, $parser:expr) => {
-        crate::parse::traversal::push_yaml_element($input, $context, $element, false, $parser)
-    };
-}
-
-/// Parse and push an optional YAML array element.
-pub fn push_yaml_element<TR, FP>(
-    input: &yaml::Array,
-    context: &mut context::Context,
-    index: usize,
-    unknown_subtree: bool,
-    mut parser: FP,
-) -> (Option<Arc<tree::Node>>, Option<TR>)
-where
-    FP: FnMut(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
-{
-    if !context.set_field_parsed(index) {
-        panic!("element {index} was parsed multiple times");
-    }
-
-    if let Some(child) = input.get(index) {
-        let (field_output, result) = push_child(
-            context,
-            child,
-            path::PathElement::Index(index),
-            unknown_subtree,
-            &mut parser,
-        );
-        (Some(field_output), result)
-    } else {
-        (None, None)
-    }
-}
-
-//=============================================================================
-// YAML required field handling
-//=============================================================================
 
 /// Convenience/shorthand macro for parsing required YAML fields.
 macro_rules! yaml_required_field {
@@ -724,39 +699,85 @@ macro_rules! yaml_required_field {
 /// exist, a MissingField diagnostic is pushed automatically, and an empty node
 /// is returned as an error recovery placeholder.
 pub fn push_yaml_required_field<TS, TR, FP>(
-    input: &yaml::Map,
+    input: &yaml::Value,
     context: &mut context::Context,
-    field_name: &'static str,
+    field_name: TS,
     unknown_subtree: bool,
     parser: FP,
-) -> (Arc<tree::Node>, Option<TR>)
+) -> diagnostic::Result<RequiredResult<TR>>
 where
     TS: AsRef<str>,
-    FP: Fn(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnOnce(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
 {
+    let field_name = field_name.as_ref();
     if let (Some(node), result) =
-        push_yaml_field(input, context, field_name, unknown_subtree, parser)
+        push_yaml_field(input, context, field_name, unknown_subtree, parser)?
     {
-        (node, result)
+        Ok((node, result))
     } else {
         ediagnostic!(context, Error, YamlMissingKey, field_name);
-        (
+        Ok((
             Arc::new(tree::NodeType::YamlPrimitive(primitive_data::PrimitiveData::Null).into()),
             None,
-        )
+        ))
     }
 }
 
-/// Convenience/shorthand macro for parsing required YAML array elements.
-macro_rules! yaml_required_element {
-    ($input:expr, $context:expr, $index:expr) => {
-        yaml_required_element!($input, $context, $field, |_, _| Ok(()))
+//=============================================================================
+// YAML array handling
+//=============================================================================
+
+/// Convenience/shorthand macro for parsing a YAML array that may be empty.
+macro_rules! yaml_array {
+    ($input:expr, $context:expr) => {
+        yaml_array!($input, $context, $field, |_, _| Ok(()))
     };
-    ($input:expr, $context:expr, $index:expr, $parser:expr) => {
-        crate::parse::traversal::push_yaml_required_element(
-            $input, $context, $index, false, $parser,
-        )
+    ($input:expr, $context:expr, $parser:expr) => {
+        yaml_array!($input, $context, $field, $parser, 0)
     };
+    ($input:expr, $context:expr, $parser:expr, $min_size:expr) => {
+        crate::parse::traversal::push_yaml_array($input, $context, $min_size, false, $parser)
+    };
+}
+
+/// Convenience/shorthand macro for parsing a YAML array that must have at
+/// least one value.
+macro_rules! yaml_required_array {
+    ($input:expr, $context:expr) => {
+        yaml_required_array!($input, $context, |_, _| Ok(()))
+    };
+    ($input:expr, $context:expr, $parser:expr) => {
+        yaml_array!($input, $context, $parser, 1)
+    };
+}
+
+/// Parse and push an optional YAML array element.
+pub fn push_yaml_element<TR, FP>(
+    input: &yaml::Array,
+    context: &mut context::Context,
+    index: usize,
+    unknown_subtree: bool,
+    parser: FP,
+) -> OptionalResult<TR>
+where
+    FP: FnOnce(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
+{
+    if !context.set_field_parsed(index) {
+        panic!("element {index} was parsed multiple times");
+    }
+
+    if let Some(child) = input.get(index) {
+        let (field_output, result) = push_child(
+            context,
+            child,
+            path::PathElement::Index(index),
+            unknown_subtree,
+            parser,
+        );
+        (Some(field_output), result)
+    } else {
+        (None, None)
+    }
 }
 
 /// Parse and push a required element of a YAML array. If the element does not
@@ -768,9 +789,9 @@ pub fn push_yaml_required_element<TR, FP>(
     index: usize,
     unknown_subtree: bool,
     parser: FP,
-) -> (Arc<tree::Node>, Option<TR>)
+) -> RequiredResult<TR>
 where
-    FP: Fn(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
+    FP: FnOnce(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
 {
     if let (Some(node), result) = push_yaml_element(input, context, index, unknown_subtree, parser)
     {
@@ -781,6 +802,192 @@ where
             Arc::new(tree::NodeType::YamlPrimitive(primitive_data::PrimitiveData::Null).into()),
             None,
         )
+    }
+}
+
+/// Parse and push a complete YAML array. If a required element does not exist,
+/// a MissingElement diagnostic is pushed automatically, and an empty node is
+/// returned as an error recovery placeholder.
+pub fn push_yaml_array<TR, FP>(
+    input: &yaml::Value,
+    context: &mut context::Context,
+    min_size: usize,
+    unknown_subtree: bool,
+    mut parser: FP,
+) -> diagnostic::Result<RepeatedResult<TR>>
+where
+    FP: FnMut(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
+{
+    if let serde_json::Value::Array(input) = input {
+        let size = std::cmp::max(min_size, input.len());
+        Ok((0..size)
+            .into_iter()
+            .map(|index| {
+                push_yaml_required_element(input, context, index, unknown_subtree, &mut parser)
+            })
+            .unzip())
+    } else {
+        Err(cause!(YamlInvalidType, "array expected"))
+    }
+}
+
+/// Shorthand for fields that must be arrays if specified.
+macro_rules! yaml_repeated_field {
+    ($input:expr, $context:expr, $field:expr) => {
+        yaml_repeated_field!($input, $context, $field, |_, _| Ok(()))
+    };
+    ($input:expr, $context:expr, $field:expr, $parser:expr) => {
+        yaml_repeated_field!($input, $context, $field, $parser, 0)
+    };
+    ($input:expr, $context:expr, $field:expr, $parser:expr, $min_size:expr) => {
+        crate::parse::traversal::push_yaml_repeated_field(
+            $input, $context, $field, false, $min_size, false, $parser,
+        )
+    };
+}
+
+/// Shorthand for fields that must be arrays.
+macro_rules! yaml_required_repeated_field {
+    ($input:expr, $context:expr, $field:expr) => {
+        yaml_required_repeated_field!($input, $context, $field, |_, _| Ok(()))
+    };
+    ($input:expr, $context:expr, $field:expr, $parser:expr) => {
+        yaml_required_repeated_field!($input, $context, $field, $parser, 1)
+    };
+    ($input:expr, $context:expr, $field:expr, $parser:expr, $min_size:expr) => {
+        crate::parse::traversal::push_yaml_repeated_field(
+            $input, $context, $field, true, $min_size, false, $parser,
+        )
+    };
+}
+
+/// Parse and push a complete YAML array. If a required element does not exist,
+/// a MissingElement diagnostic is pushed automatically, and an empty node is
+/// returned as an error recovery placeholder.
+pub fn push_yaml_repeated_field<TR, FP>(
+    input: &yaml::Value,
+    context: &mut context::Context,
+    field_name: &'static str,
+    field_required: bool,
+    min_size: usize,
+    unknown_subtree: bool,
+    parser: FP,
+) -> diagnostic::Result<RepeatedResult<TR>>
+where
+    FP: FnMut(&yaml::Value, &mut context::Context) -> diagnostic::Result<TR>,
+{
+    Ok(if field_required {
+        push_yaml_required_field(input, context, field_name, unknown_subtree, |x, y| {
+            yaml_array!(x, y, parser, min_size)
+        })?
+        .1
+    } else {
+        push_yaml_field(input, context, field_name, unknown_subtree, |x, y| {
+            yaml_array!(x, y, parser, min_size)
+        })?
+        .1
+    }
+    .unwrap_or_else(|| (vec![], vec![])))
+}
+
+//=============================================================================
+// YAML primitive handling
+//=============================================================================
+
+/// Convenience/shorthand macro for parsing optional YAML fields.
+macro_rules! yaml_prim {
+    ($typ:ident) => {
+        |x, y| crate::parse::traversal::yaml_primitive_parsers::$typ(x, y, |x, _| Ok(x.to_owned()))
+    };
+    ($typ:ident, $parser:expr) => {
+        |x, y| crate::parse::traversal::yaml_primitive_parsers::$typ(x, y, $parser)
+    };
+}
+
+pub mod yaml_primitive_parsers {
+    use super::*;
+
+    /// Boolean primitive helper.
+    pub fn bool<TR, FP>(
+        x: &yaml::Value,
+        y: &mut context::Context,
+        parser: FP,
+    ) -> diagnostic::Result<TR>
+    where
+        FP: FnOnce(&bool, &mut context::Context) -> diagnostic::Result<TR>,
+    {
+        if let serde_json::Value::Bool(x) = x {
+            parser(x, y)
+        } else {
+            Err(cause!(YamlInvalidType, "string expected"))
+        }
+    }
+
+    /// Signed integer primitive helper.
+    pub fn i64<TR, FP>(
+        x: &yaml::Value,
+        y: &mut context::Context,
+        parser: FP,
+    ) -> diagnostic::Result<TR>
+    where
+        FP: FnOnce(&i64, &mut context::Context) -> diagnostic::Result<TR>,
+    {
+        if let serde_json::Value::Number(x) = x {
+            if let Some(x) = x.as_i64() {
+                return parser(&x, y);
+            }
+        }
+        Err(cause!(YamlInvalidType, "signed integer expected"))
+    }
+
+    /// Unsigned integer primitive helper.
+    pub fn u64<TR, FP>(
+        x: &yaml::Value,
+        y: &mut context::Context,
+        parser: FP,
+    ) -> diagnostic::Result<TR>
+    where
+        FP: FnOnce(&u64, &mut context::Context) -> diagnostic::Result<TR>,
+    {
+        if let serde_json::Value::Number(x) = x {
+            if let Some(x) = x.as_u64() {
+                return parser(&x, y);
+            }
+        }
+        Err(cause!(YamlInvalidType, "unsigned integer expected"))
+    }
+
+    /// Float primitive helper.
+    pub fn f64<TR, FP>(
+        x: &yaml::Value,
+        y: &mut context::Context,
+        parser: FP,
+    ) -> diagnostic::Result<TR>
+    where
+        FP: FnOnce(&f64, &mut context::Context) -> diagnostic::Result<TR>,
+    {
+        if let serde_json::Value::Number(x) = x {
+            if let Some(x) = x.as_f64() {
+                return parser(&x, y);
+            }
+        }
+        Err(cause!(YamlInvalidType, "floating point number expected"))
+    }
+
+    /// String primitive helper.
+    pub fn str<TR, FP>(
+        x: &yaml::Value,
+        y: &mut context::Context,
+        parser: FP,
+    ) -> diagnostic::Result<TR>
+    where
+        FP: FnOnce(&str, &mut context::Context) -> diagnostic::Result<TR>,
+    {
+        if let serde_json::Value::String(x) = x {
+            parser(x, y)
+        } else {
+            Err(cause!(YamlInvalidType, "string expected"))
+        }
     }
 }
 
@@ -982,11 +1189,12 @@ where
     FP: Fn(&yaml::Value, &mut context::Context) -> diagnostic::Result<()>,
 {
     let uri = uri.as_ref();
+    let uri_reference = extension::NamedReference::new(Some(uri), context.parent_path_buf());
 
     // Resolve the YAML file.
-    if let Some(root_input) = load_yaml(uri, context, schema) {
+    let yaml_info = Arc::new(if let Some(root_input) = load_yaml(uri, context, schema) {
         // Create an empty YamlData object.
-        *context.yaml_data() = Some(extension::YamlData::default());
+        *context.yaml_data_opt() = Some(extension::YamlData::new(uri_reference));
 
         // Create the node for the YAML data root.
         let mut root_output = root_input.data_to_node();
@@ -1018,23 +1226,26 @@ where
             recognized: true,
         }));
 
+        // Take the constructed YAML data object from the context.
+        let mut yaml_data = context.yaml_data_opt().take().unwrap();
+
         // Configure the reference to the root node in the YamlData object.
-        let mut node_ref = context.yaml_data().as_mut().unwrap();
-        node_ref.data.path = root_path;
-        node_ref.data.node = root_output;
-    }
+        yaml_data.data.path = root_path;
+        yaml_data.data.node = root_output;
 
-    // Construct the YAML data object.
-    let yaml_info = Arc::new(extension::YamlInfo {
-        uri: uri.to_string(),
-        anchor_path: context.parent_path_buf(),
-        data: context.yaml_data().take(),
+        // Wrap the completed YAML data object in an Arc.
+        let yaml_data = Arc::new(yaml_data);
+
+        // The node type will have been set as if this is a normal string
+        // primitive. We want extra information though, namely the contents of
+        // the YAML file. So we change the node type.
+        context.replace_node_type(tree::NodeType::YamlReference(yaml_data.clone()));
+
+        // Construct the YAML information object.
+        extension::YamlInfo::Resolved(yaml_data)
+    } else {
+        extension::YamlInfo::Unresolved(uri_reference)
     });
-
-    // The node type will have been set as if this is a normal string
-    // primitive. We want extra information though, namely the contents of the
-    // YAML file. So we change the node type.
-    context.replace_node_type(tree::NodeType::YamlReference(yaml_info.clone()));
 
     yaml_info
 }

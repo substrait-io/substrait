@@ -47,7 +47,7 @@ fn parse_function(
     // Determine the name of the function.
     let name = function
         .as_ref()
-        .map(|x| x.common.name.clone())
+        .map(|x| x.name.to_string())
         .unwrap_or_else(|| String::from("?"));
 
     // Unpack the arguments into the function's enum options and regular

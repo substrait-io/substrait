@@ -193,7 +193,7 @@ impl From<&tree::NodeType> for validator::node::NodeType {
             }
             tree::NodeType::YamlReference(info) => {
                 validator::node::NodeType::YamlReference(validator::node::YamlReference {
-                    uri: info.uri.clone(),
+                    uri: info.uri.name().unwrap_or_default().to_string(),
                 })
             }
             tree::NodeType::YamlMap => {
@@ -358,13 +358,8 @@ impl From<&data_type::Compound> for i32 {
 impl From<&extension::Reference<extension::DataType>> for validator::data_type::UserDefinedType {
     fn from(node: &extension::Reference<extension::DataType>) -> Self {
         Self {
-            uri: node
-                .common
-                .yaml_info
-                .as_ref()
-                .map(|x| x.uri.clone())
-                .unwrap_or_default(),
-            name: node.common.name.to_string(),
+            uri: node.uri.name().unwrap_or_default().to_string(),
+            name: node.name.name().unwrap_or_default().to_string(),
             definition: node.definition.as_ref().map(|x| x.as_ref().into()),
         }
     }
@@ -392,13 +387,8 @@ impl From<&extension::Reference<extension::TypeVariation>> for validator::data_t
         if let Some(ref definition) = node.definition {
             validator::data_type::Variation::UserDefinedVariation(
                 validator::data_type::UserDefinedVariation {
-                    uri: node
-                        .common
-                        .yaml_info
-                        .as_ref()
-                        .map(|x| x.uri.clone())
-                        .unwrap_or_default(),
-                    name: node.common.name.to_string(),
+                    uri: node.uri.name().unwrap_or_default().to_string(),
+                    name: node.name.name().unwrap_or_default().to_string(),
                     definition: Some(Box::new(definition.as_ref().into())),
                 },
             )

@@ -785,14 +785,7 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
             String::from("Map type")
         }
         data_type::Class::UserDefined(u) => {
-            let name = string_util::as_ident_or_string(&u.common.name);
-            let uri = u
-                .common
-                .yaml_info
-                .as_ref()
-                .map(|x| string_util::as_ident_or_string(&x.uri))
-                .unwrap_or_else(|| String::from("?"));
-            summary!(y, "Extension type {uri}::{name}.");
+            summary!(y, "Extension type {u}.");
             if let Some(x) = &u.definition {
                 y.push_summary(
                     comment::Comment::new()
@@ -810,7 +803,7 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
                 }
                 y.push_summary(comment::Comment::new().lc());
             }
-            format!("Extension type {name}")
+            format!("Extension type {}", u.name)
         }
         data_type::Class::Unresolved => {
             summary!(
@@ -834,14 +827,7 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
         );
     }
     let variation = if let Some(u) = data_type.variation() {
-        let name = string_util::as_ident_or_string(&u.common.name);
-        let uri = u
-            .common
-            .yaml_info
-            .as_ref()
-            .map(|x| string_util::as_ident_or_string(&x.uri))
-            .unwrap_or_else(|| String::from("?"));
-        let mut variation = format!("This is the {uri}::{name} variation of this type");
+        let mut variation = format!("This is the {u} variation of this type");
         if let Some(tv) = &u.definition {
             if tv.function_behavior == extension::FunctionBehavior::Inherits {
                 variation +=

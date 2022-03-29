@@ -209,6 +209,9 @@ pub enum Classification {
     #[strum(props(Description = "missing required YAML array element"))]
     YamlMissingElement = 2007,
 
+    #[strum(props(Description = "invalid YAML value type"))]
+    YamlInvalidType = 2008,
+
     // Link resolution diagnostics (group 3).
     #[strum(props(HiddenDescription = "link resolution diagnostic"))]
     Link = 3000,

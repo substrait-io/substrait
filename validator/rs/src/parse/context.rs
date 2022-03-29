@@ -386,10 +386,16 @@ impl<'a> Context<'a> {
         (allowed, path)
     }
 
-    /// Returns a mutable reference to the YAML data object under construction,
-    /// if any.
-    pub fn yaml_data(&mut self) -> &mut Option<extension::YamlData> {
+    /// Returns a mutable reference to the Option that possibly contains the
+    /// YAML data object under construction.
+    pub fn yaml_data_opt(&mut self) -> &mut Option<extension::YamlData> {
         &mut self.state.yaml_data
+    }
+
+    /// Returns a mutable reference to the YAML data object under construction.
+    /// Panics if we're not currently constructing YAML data.
+    pub fn yaml_data(&mut self) -> &mut extension::YamlData {
+        self.state.yaml_data.as_mut().unwrap()
     }
 
     /// Returns the path leading up to the current node.

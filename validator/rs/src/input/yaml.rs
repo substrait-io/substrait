@@ -136,13 +136,8 @@ impl crate::input::traits::InputNode for Value {
                 keys.sort();
                 for field_name in keys {
                     if !context.field_parsed(field_name) {
-                        traversal::push_yaml_field(
-                            object,
-                            context,
-                            field_name,
-                            true,
-                            |_, _| Ok(()),
-                        );
+                        traversal::push_yaml_field(self, context, field_name, true, |_, _| Ok(()))
+                            .unwrap();
                         any = true;
                     }
                 }

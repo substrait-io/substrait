@@ -7,10 +7,25 @@ use crate::input::proto::substrait;
 use crate::output::diagnostic::Result;
 use crate::output::extension;
 use crate::parse::context;
-use crate::string_util;
 use std::sync::Arc;
 
+mod function_decls;
+mod type_decls;
+mod type_variation_decls;
 mod yaml;
+
+/// Parse a user-defined name. Note that names are matched case-insensitively
+/// because we return the name as lowercase.
+#[allow(clippy::ptr_arg)]
+pub fn parse_name(x: &String, _y: &mut context::Context) -> Result<String> {
+    // FIXME: nothing seems to say anything about the validity of names for
+    // things, but this seems rather important to define.
+    if x.is_empty() {
+        Err(cause!(IllegalValue, "names cannot be empty"))
+    } else {
+        Ok(x.to_lowercase())
+    }
+}
 
 /// "Parse" an anchor. This just reports an error if the anchor is 0.
 fn parse_anchor(x: &u32, _y: &mut context::Context) -> Result<u32> {
@@ -43,7 +58,7 @@ fn parse_simple_extension_yaml_uri_mapping(
                 Error,
                 IllegalValue,
                 "anchor {anchor} is already in use for URI {}",
-                prev_data.uri
+                prev_data.uri()
             );
             link!(y, prev_path, "Previous definition was here.");
         }
@@ -56,7 +71,7 @@ fn parse_simple_extension_yaml_uri_mapping(
 fn parse_uri_reference(x: &u32, y: &mut context::Context) -> Result<Arc<extension::YamlInfo>> {
     match y.extension_uris().resolve(x).cloned() {
         Some((yaml_data, path)) => {
-            describe!(y, Misc, "{}", yaml_data.uri);
+            describe!(y, Misc, "{}", yaml_data.uri());
             link!(y, path, "URI anchor is defined here");
             Ok(yaml_data)
         }
@@ -69,14 +84,7 @@ fn parse_uri_reference(x: &u32, y: &mut context::Context) -> Result<Arc<extensio
 
 /// Adds a description to a resolved function/type/variation reference node.
 fn describe_reference<T>(y: &mut context::Context, reference: &Arc<extension::Reference<T>>) {
-    let scope = reference
-        .common
-        .yaml_info
-        .as_ref()
-        .map(|x| string_util::as_ident_or_string(&x.uri))
-        .unwrap_or_else(|| String::from("?"));
-    let name = &reference.common.name;
-    describe!(y, Misc, "{scope}::{name}");
+    describe!(y, Misc, "{}", reference);
 }
 
 /// Parse a type variation reference and resolve it.
@@ -150,28 +158,27 @@ fn parse_extension_mapping_data(
             // Parse the fields.
             let yaml_info = proto_primitive_field!(x, y, extension_uri_reference, parse_uri_reference).1;
             let anchor = proto_primitive_field!(x, y, type_anchor, parse_anchor).1;
-            let name = proto_primitive_field!(x, y, name).1.unwrap();
+            let name = proto_primitive_field!(x, y, name, parse_name).1;
 
             // If we successfully resolved the URI reference to a URI, resolved
             // that URI, and managed to parse the YAML it pointed to, try to
             // resolve the data type in it.
             let data_type = yaml_info.as_ref().and_then(|yaml_info| {
-                yaml_info.data.as_ref().and_then(|data| {
-                    let data_type = data.types.get(&name.to_lowercase()).cloned();
-                    if data_type.is_none() {
-                        diagnostic!(y, Error, LinkMissingTypeName, "failed to resolve data type {name:?} in {yaml_info}");
-                    }
-                    data_type
+                yaml_info.data().and_then(|data| {
+                    name.as_ref().and_then(|name| {
+                        let data_type = data.types.get(name).cloned();
+                        if data_type.is_none() {
+                            diagnostic!(y, Error, LinkMissingTypeName, "failed to resolve data type {name:?} in {yaml_info}");
+                        }
+                        data_type
+                    })
                 })
             });
 
             // Construct a reference for this data type.
             let reference = Arc::new(extension::Reference {
-                common: extension::Common {
-                    name,
-                    yaml_info,
-                    anchor_path: Some(y.path_buf())
-                },
+                name: extension::NamedReference::new(name, Some(y.path_buf())),
+                uri: yaml_info.as_ref().map(|x| x.uri().clone()).unwrap_or_default(),
                 definition: data_type
             });
 
@@ -194,28 +201,27 @@ fn parse_extension_mapping_data(
             // Parse the fields.
             let yaml_info = proto_primitive_field!(x, y, extension_uri_reference, parse_uri_reference).1;
             let anchor = proto_primitive_field!(x, y, type_variation_anchor, parse_anchor).1;
-            let name = proto_primitive_field!(x, y, name).1.unwrap();
+            let name = proto_primitive_field!(x, y, name, parse_name).1;
 
             // If we successfully resolved the URI reference to a URI, resolved
             // that URI, and managed to parse the YAML it pointed to, try to
             // resolve the type variation in it.
             let type_variation = yaml_info.as_ref().and_then(|yaml_info| {
-                yaml_info.data.as_ref().and_then(|data| {
-                    let type_variation = data.type_variations.get(&name.to_lowercase()).cloned();
-                    if type_variation.is_none() {
-                        diagnostic!(y, Error, LinkMissingTypeVariationName, "failed to resolve type variation {name:?} in {yaml_info}");
-                    }
-                    type_variation
+                yaml_info.data().and_then(|data| {
+                    name.as_ref().and_then(|name| {
+                        let type_variation = data.type_variations.get(name).cloned();
+                        if type_variation.is_none() {
+                            diagnostic!(y, Error, LinkMissingTypeVariationName, "failed to resolve type variation {name:?} in {yaml_info}");
+                        }
+                        type_variation
+                    })
                 })
             });
 
             // Construct a reference for this type variation.
             let reference = Arc::new(extension::Reference {
-                common: extension::Common {
-                    name,
-                    yaml_info,
-                    anchor_path: Some(y.path_buf())
-                },
+                name: extension::NamedReference::new(name, Some(y.path_buf())),
+                uri: yaml_info.as_ref().map(|x| x.uri().clone()).unwrap_or_default(),
                 definition: type_variation
             });
 
@@ -238,28 +244,27 @@ fn parse_extension_mapping_data(
             // Parse the fields.
             let yaml_info = proto_primitive_field!(x, y, extension_uri_reference, parse_uri_reference).1;
             let anchor = proto_primitive_field!(x, y, function_anchor, parse_anchor).1;
-            let name = proto_primitive_field!(x, y, name).1.unwrap();
+            let name = proto_primitive_field!(x, y, name).1;
 
             // If we successfully resolved the URI reference to a URI, resolved
             // that URI, and managed to parse the YAML it pointed to, try to
             // resolve the data type in it.
             let function = yaml_info.as_ref().and_then(|yaml_info| {
-                yaml_info.data.as_ref().and_then(|data| {
-                    let function = data.functions.get(&name.to_lowercase()).cloned();
-                    if function.is_none() {
-                        diagnostic!(y, Error, LinkMissingFunctionName, "failed to resolve function {name:?} in {yaml_info}");
-                    }
-                    function
+                yaml_info.data().and_then(|data| {
+                    name.as_ref().and_then(|name| {
+                        let function = data.functions.get(name).cloned();
+                        if function.is_none() {
+                            diagnostic!(y, Error, LinkMissingFunctionName, "failed to resolve function {name:?} in {yaml_info}");
+                        }
+                        function
+                    })
                 })
             });
 
             // Construct a reference for this data type.
             let reference = Arc::new(extension::Reference {
-                common: extension::Common {
-                    name,
-                    yaml_info,
-                    anchor_path: Some(y.path_buf())
-                },
+                name: extension::NamedReference::new(name, Some(y.path_buf())),
+                uri: yaml_info.as_ref().map(|x| x.uri().clone()).unwrap_or_default(),
                 definition: function
             });
 
@@ -309,8 +314,7 @@ pub fn check_unused_definitions(y: &mut context::Context) {
             y,
             Info,
             RedundantFunctionDeclaration,
-            "anchor {anchor} for function {} is not present in the plan",
-            string_util::as_ident_or_string(&info.common.name)
+            "anchor {anchor} for function {info} is not present in the plan"
         );
         link!(y, path, "Declaration was here.");
     }
@@ -321,8 +325,7 @@ pub fn check_unused_definitions(y: &mut context::Context) {
             y,
             Info,
             RedundantTypeDeclaration,
-            "anchor {anchor} for type {} is not present in the plan",
-            string_util::as_ident_or_string(&info.common.name)
+            "anchor {anchor} for type {info} is not present in the plan"
         );
         link!(y, path, "Declaration was here.");
     }
@@ -333,8 +336,7 @@ pub fn check_unused_definitions(y: &mut context::Context) {
             y,
             Info,
             RedundantTypeVariationDeclaration,
-            "anchor {anchor} for type variation {} is not present in the plan",
-            string_util::as_ident_or_string(&info.common.name)
+            "anchor {anchor} for type variation {info} is not present in the plan"
         );
         link!(y, path, "Declaration was here.");
     }
