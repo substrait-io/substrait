@@ -1,12 +1,10 @@
 name: meta-test
-diags:
-- code: 3
 plan:
+  "@test":
+  - level: wi
   extensionUris:
   - extensionUriAnchor: 1
     uri@yaml:
-      "@test":
-      - diag: { code: 1, level: w }
       types:
         - name: point
           structure:
