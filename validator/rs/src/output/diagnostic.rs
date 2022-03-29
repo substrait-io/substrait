@@ -247,6 +247,9 @@ pub enum Classification {
     #[strum(props(Description = "struct type is required"))]
     TypeStructRequired = 4006,
 
+    #[strum(props(Description = "mismatched type variation"))]
+    TypeMismatchedVariation = 4007,
+
     // Relation-related diagnostics (group 5).
     #[strum(props(HiddenDescription = "relation-related diagnostics"))]
     Relation = 5000,

@@ -132,7 +132,7 @@ pub fn parse_rel_common(
     .1
     .unwrap_or_default()
     {
-        data_type::DataType::new_unresolved("result of unknown enhancement")
+        data_type::DataType::new_unresolved()
     } else {
         data_type
     };

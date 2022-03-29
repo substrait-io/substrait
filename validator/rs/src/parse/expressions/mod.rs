@@ -198,7 +198,7 @@ pub fn parse_predicate(
     let data_type = y.data_type();
     if !matches!(
         data_type.class(),
-        data_type::Class::Simple(data_type::Simple::Boolean) | data_type::Class::Unresolved(_)
+        data_type::Class::Simple(data_type::Simple::Boolean) | data_type::Class::Unresolved
     ) {
         diagnostic!(
             y,

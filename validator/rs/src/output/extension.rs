@@ -132,11 +132,44 @@ pub struct DataType {
     pub structure: Vec<(String, data_type::Simple)>,
 }
 
+/// The base type of a type variation.
+#[derive(Clone, Debug, PartialEq)]
+pub enum TypeVariationBase {
+    /// The type variation is immediately based in a physical type.
+    Physical(data_type::Class),
+
+    /// The type variation is based in another logical type variation.
+    Logical(Arc<TypeVariation>),
+
+    /// The base type is unknown.
+    Unresolved,
+}
+
+impl Default for TypeVariationBase {
+    fn default() -> Self {
+        TypeVariationBase::Unresolved
+    }
+}
+
 /// Type variation extension.
 #[derive(Clone, Debug, PartialEq, Default)]
 pub struct TypeVariation {
+    /// The base type for this variation.
+    pub base: TypeVariationBase,
+
     /// Function behavior for this variation.
-    pub behavior: FunctionBehavior,
+    pub function_behavior: FunctionBehavior,
+}
+
+impl TypeVariation {
+    /// Return the base class for this type variation, if known.
+    pub fn get_base_class(&self) -> data_type::Class {
+        match &self.base {
+            TypeVariationBase::Physical(x) => x.clone(),
+            TypeVariationBase::Logical(x) => x.get_base_class(),
+            TypeVariationBase::Unresolved => data_type::Class::Unresolved,
+        }
+    }
 }
 
 /// Type variation function behavior.

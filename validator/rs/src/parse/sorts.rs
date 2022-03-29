@@ -80,7 +80,7 @@ fn parse_comparison_function_reference(
                 | data_type::Class::Simple(data_type::Simple::I16)
                 | data_type::Class::Simple(data_type::Simple::I32)
                 | data_type::Class::Simple(data_type::Simple::I64)
-                | data_type::Class::Unresolved(_)
+                | data_type::Class::Unresolved
         ) {
             diagnostic!(
                 y,

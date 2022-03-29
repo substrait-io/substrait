@@ -286,7 +286,7 @@ impl From<&path::PathElement> for validator::path::Element {
 impl From<&data_type::DataType> for validator::DataType {
     fn from(node: &data_type::DataType) -> Self {
         Self {
-            kind: Some(node.class().into()),
+            class: Some(node.class().into()),
             nullable: node.nullable(),
             variation: node.variation().as_ref().map(|x| x.as_ref().into()),
             parameters: node.parameters().iter().map(|x| x.into()).collect(),
@@ -294,21 +294,23 @@ impl From<&data_type::DataType> for validator::DataType {
     }
 }
 
-impl From<&data_type::Class> for validator::data_type::Kind {
+impl From<&data_type::Class> for validator::data_type::Class {
     fn from(node: &data_type::Class) -> Self {
-        match node {
-            data_type::Class::Simple(simple) => validator::data_type::Kind::Simple(simple.into()),
-            data_type::Class::Compound(compound) => {
-                validator::data_type::Kind::Compound(compound.into())
-            }
-            data_type::Class::UserDefined(user_defined) => {
-                validator::data_type::Kind::UserDefinedType(user_defined.as_ref().into())
-            }
-            data_type::Class::Unresolved(description) => {
-                validator::data_type::Kind::UnresolvedType(validator::data_type::Unresolved {
-                    description: description.to_string(),
-                })
-            }
+        validator::data_type::Class {
+            kind: Some(match node {
+                data_type::Class::Simple(simple) => {
+                    validator::data_type::class::Kind::Simple(simple.into())
+                }
+                data_type::Class::Compound(compound) => {
+                    validator::data_type::class::Kind::Compound(compound.into())
+                }
+                data_type::Class::UserDefined(user_defined) => {
+                    validator::data_type::class::Kind::UserDefinedType(user_defined.as_ref().into())
+                }
+                data_type::Class::Unresolved => {
+                    validator::data_type::class::Kind::UnresolvedType(validator::Empty {})
+                }
+            }),
         }
     }
 }
@@ -397,13 +399,11 @@ impl From<&extension::Reference<extension::TypeVariation>> for validator::data_t
                         .map(|x| x.uri.clone())
                         .unwrap_or_default(),
                     name: node.common.name.to_string(),
-                    definition: Some(definition.as_ref().into()),
+                    definition: Some(Box::new(definition.as_ref().into())),
                 },
             )
         } else {
-            validator::data_type::Variation::UnresolvedVariation(validator::data_type::Unresolved {
-                description: node.common.name.to_string(),
-            })
+            validator::data_type::Variation::UnresolvedVariation(validator::Empty {})
         }
     }
 }
@@ -411,7 +411,8 @@ impl From<&extension::Reference<extension::TypeVariation>> for validator::data_t
 impl From<&extension::TypeVariation> for validator::data_type::user_defined_variation::Definition {
     fn from(node: &extension::TypeVariation) -> Self {
         Self {
-            function_behavior: (&node.behavior).into(),
+            base_type: None,
+            function_behavior: (&node.function_behavior).into(),
         }
     }
 }

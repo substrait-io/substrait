@@ -348,12 +348,7 @@ message Comment {
 message DataType {
 
   // Type class.
-  oneof kind {
-    Simple simple = 1;
-    Compound compound = 2;
-    UserDefinedType user_defined_type = 3;
-    Unresolved unresolved_type = 7;
-  }
+  Class class = 1;
 
   // Nullability.
   bool nullable = 8;
@@ -361,11 +356,21 @@ message DataType {
   // Type variation, if any.
   oneof variation {
     UserDefinedVariation user_defined_variation = 9;
-    Unresolved unresolved_variation = 15;
+    Empty unresolved_variation = 15;
   }
 
   // Type parameters for non-simple types.
   repeated Parameter parameters = 16;
+
+  // A type class.
+  message Class {
+    oneof kind {
+      Simple simple = 1;
+      Compound compound = 2;
+      UserDefinedType user_defined_type = 3;
+      Empty unresolved_type = 7;
+    }
+  }
 
   // Enumeration of simple types. Message numbers correspond to the ones in
   // substrait.Type. Note that UNSPECIFIED should never be emitted by the
@@ -454,8 +459,15 @@ message DataType {
     // Type definition information from a YAML file for a user-defined type.
     message Definition {
 
+      // Base type.
+      oneof base_type {
+        Class physical = 1;
+        UserDefinedVariation logical = 2;
+        Empty unresolved = 7;
+      }
+
       // Function behavior for this type variation.
-      FunctionBehavior function_behavior = 1;
+      FunctionBehavior function_behavior = 8;
     }
 
     // Function behavior for a type variation.
@@ -464,15 +476,6 @@ message DataType {
       FUNCTION_BEHAVIOR_INHERITS = 1;
       FUNCTION_BEHAVIOR_SEPARATE = 2;
     }
-  }
-
-  // Emitted by the validator when a node should logically have type
-  // information associated with it, but it failed to resolve the type for
-  // whatever reason.
-  message Unresolved {
-
-    // Some best-effort name or description of this type.
-    string description = 1;
   }
 
   // Type parameter.

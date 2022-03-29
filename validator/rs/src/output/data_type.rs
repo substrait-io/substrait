@@ -81,8 +81,22 @@ impl DataType {
         // Check whether class and parameters work together.
         class.check_parameters(&parameters)?;
 
-        // TODO: check whether the specified type variation is applicable to
-        // this type?
+        // Check whether the specified type variation is applicable to this
+        // type.
+        if let Some(variation) = &variation {
+            if let Some(definition) = &variation.definition {
+                let base = definition.get_base_class();
+                if !base.weak_equals(&class) {
+                    return Err(cause!(
+                        TypeMismatchedVariation,
+                        "variation {} is derived from {}, not {}",
+                        variation.common.name,
+                        base,
+                        class
+                    ));
+                }
+            }
+        }
 
         Ok(Arc::new(DataType {
             class,
@@ -93,19 +107,9 @@ impl DataType {
     }
 
     /// Creates a new unresolved type with the given description.
-    pub fn new_unresolved<S: ToString>(description: S) -> Arc<DataType> {
+    pub fn new_unresolved() -> Arc<DataType> {
         Arc::new(DataType {
-            class: Class::Unresolved(description.to_string()),
-            nullable: false,
-            variation: None,
-            parameters: vec![],
-        })
-    }
-
-    /// Creates a new unresolved type without description.
-    pub fn new_default() -> Arc<DataType> {
-        Arc::new(DataType {
-            class: Class::Unresolved(String::new()),
+            class: Class::Unresolved,
             nullable: false,
             variation: None,
             parameters: vec![],
@@ -215,7 +219,7 @@ impl DataType {
 
     /// Returns whether this is an unresolved type.
     pub fn is_unresolved(&self) -> bool {
-        matches!(self.class, Class::Unresolved(_))
+        matches!(self.class, Class::Unresolved)
     }
 
     /// Returns whether any part of this type tree is an unresolved type.
@@ -311,7 +315,7 @@ impl DataType {
     /// out of range or if this is known to not be a struct.
     pub fn index_struct(&self, index: usize) -> Option<Arc<DataType>> {
         if self.is_unresolved() {
-            Some(DataType::new_default())
+            Some(DataType::new_unresolved())
         } else if self.is_struct() {
             match self.parameters.get(index) {
                 Some(Parameter::Type(t)) => Some(t.clone()),
@@ -443,7 +447,7 @@ impl DataType {
 impl Default for DataType {
     fn default() -> Self {
         DataType {
-            class: Class::Unresolved(String::new()),
+            class: Class::Unresolved,
             nullable: false,
             variation: None,
             parameters: vec![],
@@ -501,9 +505,8 @@ pub enum Class {
     /// User-defined type.
     UserDefined(Arc<extension::Reference<extension::DataType>>),
 
-    /// Unresolved type. Used for error recovery. The string is an optional
-    /// description for why the type is unresolved.
-    Unresolved(String),
+    /// Unresolved type. Used for error recovery.
+    Unresolved,
 }
 
 impl std::fmt::Display for Class {
@@ -512,13 +515,7 @@ impl std::fmt::Display for Class {
             Class::Simple(simple) => write!(f, "{simple}"),
             Class::Compound(compound) => write!(f, "{compound}"),
             Class::UserDefined(user_defined) => write!(f, "{user_defined}"),
-            Class::Unresolved(description) => {
-                write!(f, "!")?;
-                if f.alternate() && !description.is_empty() {
-                    write!(f, "({description})")?;
-                }
-                Ok(())
-            }
+            Class::Unresolved => write!(f, "!"),
         }
     }
 }
@@ -547,7 +544,7 @@ impl ParameterInfo for Class {
                     ))
                 }
             }
-            Class::Unresolved(_) => Ok(()),
+            Class::Unresolved => Ok(()),
         }
     }
 
@@ -556,6 +553,17 @@ impl ParameterInfo for Class {
             compound.parameter_name(index)
         } else {
             None
+        }
+    }
+}
+
+impl Class {
+    /// Checks whether two classes are equal, also returning true if either or
+    /// both are unresolved.
+    pub fn weak_equals(&self, rhs: &Class) -> bool {
+        match (self, rhs) {
+            (_, Class::Unresolved) | (Class::Unresolved, _) => true,
+            (a, b) => a == b,
         }
     }
 }

@@ -517,52 +517,105 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
         data_type::Class::Simple(data_type::Simple::I8) => {
             summary!(
                 y,
-                "Implementations of this type must support all integers in the range [-2^7, 2^7)."
+                "Implementations of this type must support all integers in \
+                the range [-2^7, 2^7)."
             );
             String::from("8-bit signed integer type")
         }
         data_type::Class::Simple(data_type::Simple::I16) => {
-            summary!(y, "Implementations of this type must support all integers in the range [-2^15, 2^15).");
+            summary!(
+                y,
+                "Implementations of this type must support all integers in \
+                the range [-2^15, 2^15)."
+            );
             String::from("16-bit signed integer type")
         }
         data_type::Class::Simple(data_type::Simple::I32) => {
-            summary!(y, "Implementations of this type must support all integers in the range [-2^31, 2^31).");
+            summary!(
+                y,
+                "Implementations of this type must support all integers in \
+                the range [-2^31, 2^31)."
+            );
             String::from("32-bit signed integer type")
         }
         data_type::Class::Simple(data_type::Simple::I64) => {
-            summary!(y, "Implementations of this type must support all integers in the range [-2^63, 2^63).");
+            summary!(
+                y,
+                "Implementations of this type must support all integers in \
+                the range [-2^63, 2^63)."
+            );
             String::from("64-bit signed integer type")
         }
         data_type::Class::Simple(data_type::Simple::Fp32) => {
-            summary!(y, "Implementations of this type must support a superset of the values representable using IEEE 754 binary32.");
+            summary!(
+                y,
+                "Implementations of this type must support a superset of the \
+                values representable using IEEE 754 binary32."
+            );
             String::from("single-precision float type")
         }
         data_type::Class::Simple(data_type::Simple::Fp64) => {
-            summary!(y, "Implementations of this type must support a superset of the values representable using IEEE 754 binary64.");
+            summary!(
+                y,
+                "Implementations of this type must support a superset of the \
+                values representable using IEEE 754 binary64."
+            );
             String::from("double-precision float type")
         }
         data_type::Class::Simple(data_type::Simple::String) => {
-            summary!(y, "Implementations of this type must support all strings representable using UTF-8 encoding and up to 2^31-1 bytes of storage.");
+            summary!(
+                y,
+                "Implementations of this type must support all strings \
+                representable using UTF-8 encoding and up to 2^31-1 bytes of \
+                storage."
+            );
             String::from("Unicode string type")
         }
         data_type::Class::Simple(data_type::Simple::Binary) => {
-            summary!(y, "Implementations of this type must support all byte strings of up to 2^31-1 bytes in length.");
+            summary!(
+                y,
+                "Implementations of this type must support all byte strings \
+                of up to 2^31-1 bytes in length."
+            );
             String::from("Binary string type")
         }
         data_type::Class::Simple(data_type::Simple::Timestamp) => {
-            summary!(y, "Implementations of this type must support all timestamps within the range [1000-01-01 00:00:00.000000, 9999-12-31 23:59:59.999999] with microsecond precision. Timezone information is however not encoded, so contextual information would be needed to map the timestamp to a fixed point in time.");
+            summary!(
+                y,
+                "Implementations of this type must support all timestamps \
+                within the range [1000-01-01 00:00:00.000000, \
+                9999-12-31 23:59:59.999999] with microsecond precision. \
+                Timezone information is however not encoded, so contextual \
+                information would be needed to map the timestamp to a fixed \
+                point in time."
+            );
             String::from("Timezone-naive timestamp type")
         }
         data_type::Class::Simple(data_type::Simple::TimestampTz) => {
-            summary!(y, "Implementations of this type must support all timestamps within the range [1000-01-01 00:00:00.000000 UTC, 9999-12-31 23:59:59.999999 UTC] with microsecond precision.");
+            summary!(
+                y,
+                "Implementations of this type must support all timestamps \
+                within the range [1000-01-01 00:00:00.000000 UTC, \
+                9999-12-31 23:59:59.999999 UTC] with microsecond precision."
+            );
             String::from("Timezone-aware timestamp type")
         }
         data_type::Class::Simple(data_type::Simple::Date) => {
-            summary!(y, "Implementations of this type must support all dates within the range [1000-01-01, 9999-12-31].");
+            summary!(
+                y,
+                "Implementations of this type must support all dates within \
+                the range [1000-01-01, 9999-12-31]."
+            );
             String::from("Date type")
         }
         data_type::Class::Simple(data_type::Simple::Time) => {
-            summary!(y, "Implementations of this type must support all times of day with microsecond precision, not counting leap seconds; that is, any integer number of microseconds since the start of a day in the range [0, 24*60*60*10^6].");
+            summary!(
+                y,
+                "Implementations of this type must support all times of day \
+                with microsecond precision, not counting leap seconds; that \
+                is, any integer number of microseconds since the start of a \
+                day in the range [0, 24*60*60*10^6]."
+            );
             String::from("Time-of-day type")
         }
         data_type::Class::Simple(data_type::Simple::IntervalYear) => {
@@ -587,7 +640,13 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
             // Renaming it to interval_month makes a lot more sense then too,
             // i.e. a signed interval with at least month precision and
             // +/- 10000 year range, and that's it.
-            summary!(y, "Implementations of this type must support a range of any combination of years and months that total less than or equal to 10000 years. Each component can be specified as positive or negative.");
+            summary!(
+                y,
+                "Implementations of this type must support a range of any \
+                combination of years and months that total less than or equal \
+                to 10000 years. Each component can be specified as positive or \
+                negative."
+            );
             String::from("Year/month interval type")
         }
         data_type::Class::Simple(data_type::Simple::IntervalDay) => {
@@ -599,11 +658,21 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
             // than 10000 years. It doesn't make much sense to me to use
             // I64 limits (for a different precision to boot) when all the
             // other limits are based around +/- 10000 years.
-            summary!(y, "Implementations of this type must support a range of any combination of [-365*10000, 365*10000] days and [ceil(-2^63/1000), floor(2^63/1000)] integer microseconds.");
+            summary!(
+                y,
+                "Implementations of this type must support a range of any \
+                combination of [-365*10000, 365*10000] days and \
+                [ceil(-2^63/1000), floor(2^63/1000)] integer microseconds."
+            );
             String::from("Day/microsecond interval type")
         }
         data_type::Class::Simple(data_type::Simple::Uuid) => {
-            summary!(y, "Implementations of this type must support 2^128 different values, typically represented using the following hex format: c48ffa9e-64f4-44cb-ae47-152b4e60e77b.");
+            summary!(
+                y,
+                "Implementations of this type must support 2^128 different \
+                values, typically represented using the following hex format: \
+                c48ffa9e-64f4-44cb-ae47-152b4e60e77b."
+            );
             String::from("128-bit identifier type")
         }
         data_type::Class::Compound(data_type::Compound::FixedChar) => {
@@ -612,7 +681,12 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
                 .get(0)
                 .map(|x| x.to_string())
                 .unwrap_or_else(|| String::from("?"));
-            summary!(y, "Implementations of this type must support all unicode strings with exactly {length} characters (i.e. code points). Values shorter than that must be right-padded with spaces.");
+            summary!(
+                y,
+                "Implementations of this type must support all unicode \
+                strings with exactly {length} characters (i.e. code points). \
+                Values shorter than that must be right-padded with spaces."
+            );
             format!("Fixed-length ({length}) unicode string type")
         }
         data_type::Class::Compound(data_type::Compound::VarChar) => {
@@ -621,7 +695,11 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
                 .get(0)
                 .map(|x| x.to_string())
                 .unwrap_or_else(|| String::from("?"));
-            summary!(y, "Implementations of this type must support all unicode strings with 0 to {length} characters (i.e. code points).");
+            summary!(
+                y,
+                "Implementations of this type must support all unicode \
+                strings with 0 to {length} characters (i.e. code points)."
+            );
             format!("Variable-length ({length}) unicode string type")
         }
         data_type::Class::Compound(data_type::Compound::FixedBinary) => {
@@ -630,7 +708,12 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
                 .get(0)
                 .map(|x| x.to_string())
                 .unwrap_or_else(|| String::from("?"));
-            summary!(y, "Implementations of this type must support all binary strings of exactly {length} bytes in length. Values shorter than that must be right-padded with zero bytes.");
+            summary!(
+                y,
+                "Implementations of this type must support all binary \
+                strings of exactly {length} bytes in length. Values shorter \
+                than that must be right-padded with zero bytes."
+            );
             format!("Fixed-length ({length}) binary string type")
         }
         data_type::Class::Compound(data_type::Compound::Decimal) => {
@@ -645,7 +728,12 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
             } else {
                 (String::from("?"), String::from("?"), String::from("?"))
             };
-            summary!(y, "Implementations of this type must support all decimal numbers with {i} integer digits and {s} fractional digits (precision = {p}, scale = {s}).");
+            summary!(
+                y,
+                "Implementations of this type must support all decimal \
+                numbers with {i} integer digits and {s} fractional digits \
+                (precision = {p}, scale = {s})."
+            );
             format!("Decimal number type with {i} integer and {s} fractional digits")
         }
         data_type::Class::Compound(data_type::Compound::Struct)
@@ -664,7 +752,11 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
                 .type_parameter(0)
                 .map(|t| t.to_string())
                 .unwrap_or_else(|| String::from("?"));
-            summary!(y, "Implementations of this type must support all sequences of 0 to 2^31-1 {e} elements.");
+            summary!(
+                y,
+                "Implementations of this type must support all sequences of \
+                0 to 2^31-1 {e} elements."
+            );
             String::from("List type")
         }
         data_type::Class::Compound(data_type::Compound::Map) => {
@@ -682,7 +774,14 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
                 .type_parameter(1)
                 .map(|t| t.to_string())
                 .unwrap_or_else(|| String::from("?"));
-            summary!(y, "Implementations of this type must support any mapping from {k} keys to {v} values, consisting of up to 2^31-1 key-value pairs. No key uniqueness check is required on insertion, but resolving the mapping for a key for which multiple values are defined is undefined behavior.");
+            summary!(
+                y,
+                "Implementations of this type must support any mapping from \
+                {k} keys to {v} values, consisting of up to 2^31-1 key-value \
+                pairs. No key uniqueness check is required on insertion, but \
+                resolving the mapping for a key for which multiple values are \
+                defined is undefined behavior."
+            );
             String::from("Map type")
         }
         data_type::Class::UserDefined(u) => {
@@ -713,18 +812,12 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
             }
             format!("Extension type {name}")
         }
-        data_type::Class::Unresolved(d) => {
-            if d.is_empty() {
-                summary!(
-                    y,
-                    "Failed to resolve information about this type due to validation errors."
-                );
-            } else {
-                summary!(
-                    y,
-                    "Failed to resolve information about this type due to validation errors: {d}."
-                );
-            }
+        data_type::Class::Unresolved => {
+            summary!(
+                y,
+                "Failed to resolve information about this type due to \
+                validation errors."
+            );
             String::from("Unresolved type")
         }
     };
@@ -750,7 +843,7 @@ fn describe_type(y: &mut context::Context, data_type: &Arc<data_type::DataType>)
             .unwrap_or_else(|| String::from("?"));
         let mut variation = format!("This is the {uri}::{name} variation of this type");
         if let Some(tv) = &u.definition {
-            if tv.behavior == extension::FunctionBehavior::Inherits {
+            if tv.function_behavior == extension::FunctionBehavior::Inherits {
                 variation +=
                     ", which behaves the same as the base type w.r.t. overload resolution.";
             } else {
