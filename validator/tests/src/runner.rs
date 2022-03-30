@@ -176,7 +176,7 @@ impl TestCase {
     /// Runs this test case. path must be set to the test filename in order to
     /// resolve test-local YAML files properly and in order to write the HTML
     /// representation of the output for debugging.
-    pub fn run(&self, path: &std::path::Path) -> Result<(), String> {
+    pub fn run(&self, path: &std::path::Path, enable_html: bool) -> Result<(), String> {
         // Create validator configuration.
         let mut cfg = sv::Config::new();
         for diag_override in self.diag_overrides.iter() {
@@ -209,13 +209,15 @@ impl TestCase {
         let result = sv::parse(&self.plan[..], &cfg);
 
         // Export result to HTML for debugging.
-        let mut html_path = path.as_os_str().to_owned();
-        html_path.push(".html");
-        if let Err(e) = std::fs::File::create(html_path)
-            .and_then(|mut f| result.export(&mut f, sv::export::Format::Html))
-        {
-            println!("Error while attempting to write HTML output: {e}");
-        };
+        if enable_html {
+            let mut html_path = path.as_os_str().to_owned();
+            html_path.push(".html");
+            if let Err(e) = std::fs::File::create(html_path)
+                .and_then(|mut f| result.export(&mut f, sv::export::Format::Html))
+            {
+                println!("Error while attempting to write HTML output: {e}");
+            };
+        }
 
         // Execute test instructions.
         let mut root = result.root;
@@ -338,18 +340,29 @@ impl TestCase {
     }
 }
 
+fn print_usage_and_fail() -> ! {
+    let me = std::env::args()
+        .next()
+        .unwrap_or_else(|| String::from("test_runner"));
+    println!("Usage: {me} <test-directory> <enable-html>");
+    println!("Runs all *.test files in the test directory.");
+    std::process::exit(2);
+}
+
 pub fn main() {
     // "Parse" command line arguments.
     let args: Vec<_> = std::env::args().collect();
-    if args.len() != 2 {
-        let me = args
-            .get(0)
-            .cloned()
-            .unwrap_or_else(|| String::from("test_runner"));
-        println!("Usage: {me} <test-directory>");
-        println!("Runs all *.test files in the test directory.");
-        std::process::exit(2);
+    if args.len() != 3 {
+        print_usage_and_fail();
     }
+
+    // Determine whether we should be emitting HTML files (disabling this makes
+    // the runner a lot faster).
+    let enable_html = match &args[2][..] {
+        "1" => true,
+        "0" => false,
+        _ => print_usage_and_fail(),
+    };
 
     // Find all test cases and run them.
     println!("Running test suite...");
@@ -377,7 +390,7 @@ pub fn main() {
                 Ok(tc) => {
                     let name = &tc.name;
                     println!("Running test {name} ({fname_str})...");
-                    if let Err(s) = tc.run(&fname) {
+                    if let Err(s) = tc.run(&fname, enable_html) {
                         println!("Test {name} ({fname_str}) failed: {s}");
                         failures.push(name.clone());
                     } else {

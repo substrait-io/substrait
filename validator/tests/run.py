@@ -334,14 +334,14 @@ if __name__ == '__main__':
         sys.stdout.flush()
 
     # Run cargo build without capturing output.
-    code = subprocess.run(['cargo', 'build']).returncode
+    code = subprocess.run(['cargo', 'build', '--release']).returncode
     if code:
         sys.exit(code)
 
     # Find the path to a protoc executable. We rely on prost for this, which is
     # capable of shipping it for most operating systems.
     fprint(f'Finding protoc location...')
-    protoc = subprocess.run(['cargo', 'run', '-q', '--bin', 'find_protoc'], capture_output=True).stdout.strip()
+    protoc = subprocess.run(['cargo', 'run', '--release', '-q', '--bin', 'find_protoc'], capture_output=True).stdout.strip()
 
     # (Re)generate and import protobuf files and import them.
     fprint(f'Generating protobuf bindings...')
@@ -401,4 +401,5 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # Now run the test suite.
-    sys.exit(subprocess.run(['cargo', 'run', '-q', suite_path]).returncode)
+    enable_html = '--no-html' not in sys.argv
+    sys.exit(subprocess.run(['cargo', 'run', '--release', '-q', suite_path, str(int(enable_html))]).returncode)

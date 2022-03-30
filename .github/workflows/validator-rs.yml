@@ -39,7 +39,7 @@ jobs:
         run: python3 -m pip install --upgrade pip protobuf pyyaml
       - name: Run validation tests
         working-directory: validator/tests
-        run: python3 run.py
+        run: python3 run.py --no-html
 
   style:
     runs-on: ubuntu-latest
