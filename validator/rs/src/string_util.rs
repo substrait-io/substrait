@@ -6,9 +6,9 @@ use crate::output::diagnostic;
 
 /// Returns whether the given string is a valid identifier.
 pub fn is_identifier(s: &str) -> bool {
-    static IDENTIFIER_RE: once_cell::sync::Lazy<fancy_regex::Regex> =
-        once_cell::sync::Lazy::new(|| fancy_regex::Regex::new("[a-zA-Z_][a-zA-Z0-9_]*").unwrap());
-    IDENTIFIER_RE.is_match(s).unwrap_or_default()
+    static IDENTIFIER_RE: once_cell::sync::Lazy<regex::Regex> =
+        once_cell::sync::Lazy::new(|| regex::Regex::new("[a-zA-Z_][a-zA-Z0-9_]*").unwrap());
+    IDENTIFIER_RE.is_match(s)
 }
 
 /// Checks an URI for validity.
