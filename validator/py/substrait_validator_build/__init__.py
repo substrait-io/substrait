@@ -6,10 +6,11 @@ import os
 
 
 _LOCALIZED_PATHS = ('proto', 'text', 'LICENSE')
+_ADDITIONAL_PATHS_TO_CLEAN = ('protoc_out', 'substrait_validator/substrait', 'substrait_validator/__pycache__')
 
 
 def clean():
-    for path in _LOCALIZED_PATHS:
+    for path in _LOCALIZED_PATHS + _ADDITIONAL_PATHS_TO_CLEAN:
         if os.path.isdir(path):
             shutil.rmtree(path)
         elif os.path.isfile(path):
