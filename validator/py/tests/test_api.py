@@ -118,24 +118,27 @@ def test_resolver_callback():
         raise ValueError('unknown URI')
 
     config = sv.Config()
+
+    # Disable "not yet implemented" warnings.
+    config.override_diagnostic_level(1, 'info', 'info')
+
+    # Disable missing root relation error, so we don't have to supply one.
+    config.override_diagnostic_level(5001, 'info', 'info')
+
+    # Add the resolver.
     config.add_uri_resolver(resolver)
 
-    diags = list(sv.plan_to_diagnostics({
+    sv.check_plan_valid({
         'extensionUris': [{
             'extension_uri_anchor': 1,
             'uri': 'test:hello',
         }]
-    }, config))
-    for diag in diags:
-        print(diag.msg)
-    assert diags[0].msg == 'not yet implemented: the following child nodes were not recognized by the validator: types (code 0001)'
+    }, config)
 
-    diags = list(sv.plan_to_diagnostics({
-        'extensionUris': [{
-            'extension_uri_anchor': 1,
-            'uri': 'test:bye',
-        }]
-    }, config))
-    for diag in diags:
-        print(diag.msg)
-    assert diags[0].msg == 'failed to resolve YAML: ValueError: unknown URI (code 2002)'
+    with pytest.raises(ValueError, match=r'failed to resolve YAML: ValueError: unknown URI \(code 2002\)'):
+        sv.check_plan_valid({
+            'extensionUris': [{
+                'extension_uri_anchor': 1,
+                'uri': 'test:bye',
+            }]
+        }, config)
