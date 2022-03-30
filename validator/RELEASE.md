@@ -13,9 +13,11 @@ important:
  - `derive/Cargo.toml` and its reference as dependency in `rs/Cargo.toml`:
    these two version numbers must be kept in sync, but only need to be
    incremented when anything changes in `substrait-validator-derive`.
- - `rs/Cargo.toml` and its references in `rs/README.md` for the Cargo
-   dependency copypasta: must be kept in sync and incremented when
-   `substrait-validator` is updated.
+ - `rs/Cargo.toml` and its references as dependencies in `py/Cargo.toml`,
+   `c/Cargo.toml`, and `tests/Cargo.toml`, as well as in `rs/README.md` for
+   the Cargo dependency copypasta: these must be kept in sync and incremented
+   when the `substrait-validator` sources, the protobuf files, OR the YAML
+   schema files are updated.
  - `py/Cargo.toml` and `py/pyproject.toml`: must be kept in sync, and must be
    incremented whenever the `substrait-validator` crate is updated OR the
    Python bindings are modified.
@@ -50,7 +52,11 @@ The release steps are as follows.
  - Run `cargo build` locally for `substrait-validator` to recreate above
    directory using the protobuf and schema files from outside the validator
    folder.
- - Release `substrait-validator` per normal procedures.
+ - Run `cargo package`. Verify that it ONLY complains about files in
+   `src/resources` not being committed yet. This is unavoidable without
+   checking in the protobuf files in multiple places.
+ - Release `substrait-validator` per normal procedures, but using
+   `--allow-dirty` to suppress the above.
 
 Pushing to PyPI
 ---------------

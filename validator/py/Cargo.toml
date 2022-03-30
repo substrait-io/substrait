@@ -29,7 +29,7 @@ name = "substrait_validator"
 doc = false
 
 [dependencies]
-substrait-validator = { path = "../rs" }
+substrait-validator = { path = "../rs", version = "0.0.1" }
 pyo3 = { version = "0.15.1", features = ["extension-module"] }
 
 [build-dependencies]
