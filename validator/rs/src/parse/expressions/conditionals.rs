@@ -11,6 +11,12 @@ use crate::parse::expressions::literals;
 use crate::parse::types;
 use std::sync::Arc;
 
+// FIXME: what promotions are allowed and when? I saw Isthmus output an
+// if/else with branches differing in nullability, and that makes sense to me
+// as something to support. But on the other hand, explicit type casts for
+// everything might be nicer for a machine format. Either way, I'm not sure
+// the specification has anything to say about this?
+
 /// Parse an if-then expression. Returns a description of said expression.
 pub fn parse_if_then(
     x: &substrait::expression::IfThen,
@@ -29,7 +35,7 @@ pub fn parse_if_then(
         let value = e.unwrap_or_default();
 
         // Check that the type is the same for each branch.
-        return_type = types::assert_equal(
+        return_type = types::promote_and_assert_equal(
             y,
             &n.data_type(),
             &return_type,
@@ -54,7 +60,7 @@ pub fn parse_if_then(
         let value = e.unwrap_or_default();
 
         // Check that the type is the same for each branch.
-        return_type = types::assert_equal(
+        return_type = types::promote_and_assert_equal(
             y,
             &n.data_type(),
             &return_type,
@@ -106,7 +112,7 @@ pub fn parse_switch(
         let match_value = e.unwrap_or_default();
 
         // Check that the type is the same for each branch.
-        match_type = types::assert_equal(
+        match_type = types::promote_and_assert_equal(
             y,
             &n.data_type(),
             &match_type,
@@ -118,7 +124,7 @@ pub fn parse_switch(
         let value = e.unwrap_or_default();
 
         // Check that the type is the same for each branch.
-        return_type = types::assert_equal(
+        return_type = types::promote_and_assert_equal(
             y,
             &n.data_type(),
             &return_type,
@@ -143,7 +149,7 @@ pub fn parse_switch(
         let value = e.unwrap_or_default();
 
         // Check that the type is the same for each branch.
-        return_type = types::assert_equal(
+        return_type = types::promote_and_assert_equal(
             y,
             &n.data_type(),
             &return_type,

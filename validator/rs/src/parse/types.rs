@@ -897,7 +897,9 @@ pub fn parse_named_struct(
 fn assert_equal_internal(
     context: &mut context::Context,
     other: &Arc<data_type::DataType>,
+    promote_other: bool,
     base: &Arc<data_type::DataType>,
+    promote_base: bool,
     message: &str,
     path: &str,
 ) -> Arc<data_type::DataType> {
@@ -934,21 +936,33 @@ fn assert_equal_internal(
         }
 
         // Match nullability.
-        match (other.nullable(), base.nullable()) {
-            (true, false) => diagnostic!(
-                context,
-                Error,
-                TypeMismatch,
-                "{message}: nullable vs. required{path}"
-            ),
-            (false, true) => diagnostic!(
-                context,
-                Error,
-                TypeMismatch,
-                "{message}: required vs. nullable{path}"
-            ),
-            (_, _) => {}
-        }
+        let nullable = match (other.nullable(), base.nullable()) {
+            (true, false) => {
+                if promote_base {
+                    true
+                } else {
+                    diagnostic!(
+                        context,
+                        Error,
+                        TypeMismatch,
+                        "{message}: nullable vs. required{path}"
+                    );
+                    false
+                }
+            }
+            (false, true) => {
+                if !promote_other {
+                    diagnostic!(
+                        context,
+                        Error,
+                        TypeMismatch,
+                        "{message}: required vs. nullable{path}"
+                    );
+                }
+                true
+            }
+            (_, x) => x,
+        };
 
         // Match variations.
         match (other.variation(), base.variation()) {
@@ -1015,7 +1029,13 @@ fn assert_equal_internal(
                 match (other_param, base_param) {
                     (data_type::Parameter::Type(other), data_type::Parameter::Type(base)) => {
                         data_type::Parameter::Type(assert_equal_internal(
-                            context, other, base, message, &path,
+                            context,
+                            other,
+                            promote_other,
+                            base,
+                            promote_base,
+                            message,
+                            &path,
                         ))
                     }
                     (
@@ -1023,14 +1043,30 @@ fn assert_equal_internal(
                         data_type::Parameter::NamedType(name, base),
                     ) => data_type::Parameter::NamedType(
                         name.clone(),
-                        assert_equal_internal(context, other, base, message, &path),
+                        assert_equal_internal(
+                            context,
+                            other,
+                            promote_other,
+                            base,
+                            promote_base,
+                            message,
+                            &path,
+                        ),
                     ),
                     (
                         data_type::Parameter::NamedType(name, other),
                         data_type::Parameter::Type(base),
                     ) => data_type::Parameter::NamedType(
                         name.clone(),
-                        assert_equal_internal(context, other, base, message, &path),
+                        assert_equal_internal(
+                            context,
+                            other,
+                            promote_other,
+                            base,
+                            promote_base,
+                            message,
+                            &path,
+                        ),
                     ),
                     (
                         data_type::Parameter::NamedType(other_name, other),
@@ -1048,7 +1084,15 @@ fn assert_equal_internal(
                         }
                         data_type::Parameter::NamedType(
                             base_name.clone(),
-                            assert_equal_internal(context, other, base, message, &path),
+                            assert_equal_internal(
+                                context,
+                                other,
+                                promote_other,
+                                base,
+                                promote_base,
+                                message,
+                                &path,
+                            ),
                         )
                     }
                     (base, other) => {
@@ -1081,7 +1125,7 @@ fn assert_equal_internal(
             (a, _) => a.clone(),
         };
 
-        data_type::DataType::new(class, base.nullable(), base.variation().clone(), parameters)
+        data_type::DataType::new(class, nullable, base.variation().clone(), parameters)
             .expect("assert_equal() failed to correctly combine types")
     }
 }
@@ -1097,5 +1141,16 @@ pub fn assert_equal<S: AsRef<str>>(
     base: &Arc<data_type::DataType>,
     message: S,
 ) -> Arc<data_type::DataType> {
-    assert_equal_internal(context, other, base, message.as_ref(), "")
+    assert_equal_internal(context, other, false, base, false, message.as_ref(), "")
+}
+
+/// Like assert_equal, but will first promote either input to try to make them
+/// match.
+pub fn promote_and_assert_equal<S: AsRef<str>>(
+    context: &mut context::Context,
+    other: &Arc<data_type::DataType>,
+    base: &Arc<data_type::DataType>,
+    message: S,
+) -> Arc<data_type::DataType> {
+    assert_equal_internal(context, other, true, base, true, message.as_ref(), "")
 }
