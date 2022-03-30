@@ -38,6 +38,9 @@ jobs:
       - name: Install test runner dependencies
         run: python3 -m pip install --upgrade pip protobuf pyyaml
       - name: Run validation tests
+        # No need to run validation tests for all operating systems, and Linux
+        # runners are the fastest of the bunch.
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         working-directory: validator/tests
         run: python3 run.py --no-html
 

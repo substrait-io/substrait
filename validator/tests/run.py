@@ -333,15 +333,21 @@ if __name__ == '__main__':
         print(*args, **kwargs)
         sys.stdout.flush()
 
+    # Build and run with optimizations if --release is passed.
+    if '--release' in sys.argv:
+        release = ['--release']
+    else:
+        release = []
+
     # Run cargo build without capturing output.
-    code = subprocess.run(['cargo', 'build', '--release']).returncode
+    code = subprocess.run(['cargo', 'build'] + release).returncode
     if code:
         sys.exit(code)
 
     # Find the path to a protoc executable. We rely on prost for this, which is
     # capable of shipping it for most operating systems.
     fprint(f'Finding protoc location...')
-    protoc = subprocess.run(['cargo', 'run', '--release', '-q', '--bin', 'find_protoc'], capture_output=True).stdout.strip()
+    protoc = subprocess.run(['cargo', 'run'] + release + ['-q', '--bin', 'find_protoc'], capture_output=True).stdout.strip()
 
     # (Re)generate and import protobuf files and import them.
     fprint(f'Generating protobuf bindings...')
@@ -402,4 +408,4 @@ if __name__ == '__main__':
 
     # Now run the test suite.
     enable_html = '--no-html' not in sys.argv
-    sys.exit(subprocess.run(['cargo', 'run', '--release', '-q', suite_path, str(int(enable_html))]).returncode)
+    sys.exit(subprocess.run(['cargo', 'run'] + release + ['-q', suite_path, str(int(enable_html))]).returncode)
