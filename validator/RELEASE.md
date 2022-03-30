@@ -65,6 +65,9 @@ The release steps are as follows, though they should probably be performed by
 CI to use the appropriate environment.
 
  - Update version numbers (see section above).
+ - Remove the `rs/src/resources` directory, if one exists.
+ - Run `cargo build` to recreate above directory using the protobuf and schema
+   files from outside the validator folder.
  - Run `python3 prepare_build.py clean`.
  - Run `python3 prepare_build.py populate`. This makes a local copy of the
    protobuf files for inclusion in an sdist.
