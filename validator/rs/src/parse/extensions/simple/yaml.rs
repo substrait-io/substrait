@@ -56,7 +56,7 @@ pub fn parse_uri<S: AsRef<str>>(
             jsonschema::JSONSchema::compile(
                 &yaml::yaml_to_json(
                     yaml_rust::YamlLoader::load_from_str(include_str!(
-                        "../../../../../../text/simple_extensions_schema.yaml"
+                        "../../../resources/text/simple_extensions_schema.yaml"
                     ))
                     .unwrap()
                     .pop()

@@ -1,0 +1,4 @@
+This file serves as a marker for build.rs that it's building from within the
+git repository, which will make it synchronize the protobuf and schema files
+with the repo locations. It is not included in the release package, so a build
+from crates.io will not try to look for files in parent directories.
