@@ -1,0 +1,432 @@
+# select
+#   100.00 * sum(case
+#     when p.p_type like 'PROMO%'
+#       then l.l_extendedprice * (1 - l.l_discount)
+#     else 0
+#   end) / sum(l.l_extendedprice * (1 - l.l_discount)) as promo_revenue
+# from
+#   "lineitem" l,
+#   "part" p
+# where
+#   l.l_partkey = p.p_partkey
+#   and l.l_shipdate >= date '1994-08-01'
+#   and l.l_shipdate < date '1994-08-01' + interval '1' month
+
+name: TPC-H14
+diags:
+- { code: 0001, max: i } # Suppress "not yet implemented" warnings
+- { code: 3002, max: i } # Suppress function name resolution errors (function parsing isn't implemented yet)
+- { code: 6003, max: i } # Suppress function definition check warnings (function parsing isn't implemented yet)
+plan:
+  __test:
+  - level: i
+  extensionUris:
+  - extensionUriAnchor: 1
+    uri: /functions_boolean.yaml
+  - extensionUriAnchor: 4
+    uri: /functions_string.yaml
+  - extensionUriAnchor: 5
+    uri: /functions_arithmetic_decimal.yaml
+  - extensionUriAnchor: 3
+    uri: /functions_datetime.yaml
+  - extensionUriAnchor: 2
+    uri: /functions_comparison.yaml
+  extensions:
+  - extensionFunction:
+      extensionUriReference: 1
+      functionAnchor: 1
+      name: and:bool
+  - extensionFunction:
+      extensionUriReference: 2
+      functionAnchor: 2
+      name: equal:any1_any1
+  - extensionFunction:
+      extensionUriReference: 3
+      functionAnchor: 3
+      name: gte:date_date
+  - extensionFunction:
+      extensionUriReference: 3
+      functionAnchor: 4
+      name: lt:date_date
+  - extensionFunction:
+      extensionUriReference: 3
+      functionAnchor: 5
+      name: add:date_year
+  - extensionFunction:
+      extensionUriReference: 4
+      functionAnchor: 6
+      name: like:vchar_vchar
+  - extensionFunction:
+      extensionUriReference: 5
+      functionAnchor: 7
+      name: multiply:opt_decimal_decimal
+  - extensionFunction:
+      extensionUriReference: 5
+      functionAnchor: 8
+      name: subtract:opt_decimal_decimal
+  - extensionFunction:
+      extensionUriReference: 5
+      functionAnchor: 9
+      name: sum:opt_decimal
+  - extensionFunction:
+      extensionUriReference: 5
+      functionAnchor: 10
+      name: divide:opt_decimal_decimal
+  relations:
+  - root:
+      __test:
+      - type: "NSTRUCT<PROMO_REVENUE: i32>"
+      input:
+        project:
+          common:
+            emit:
+              outputMapping:
+              - 2
+          expressions:
+          - scalarFunction:
+              args:
+              - scalarFunction:
+                  args:
+                  - literal:
+                      decimal:
+                        precision: 5
+                        scale: 2
+                        value: AAAAAAAAAAAAAAAAAAAAAA==
+                  - selection:
+                      directReference:
+                        structField: {}
+                      rootReference: {}
+                  functionReference: 7
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+                      scale: 2
+              - selection:
+                  directReference:
+                    structField:
+                      field: 1
+                  rootReference: {}
+              functionReference: 10
+              outputType:
+                decimal:
+                  nullability: NULLABILITY_NULLABLE
+                  precision: 19
+                  scale: 2
+          input:
+            aggregate:
+              common:
+                direct: {}
+              input:
+                project:
+                  common:
+                    emit:
+                      outputMapping:
+                      - 25
+                      - 26
+                  expressions:
+                  - ifThen:
+                      else:
+                        literal:
+                          decimal:
+                            precision: 19
+                            value: AAAAAAAAAAAAAAAAAAAAAA==
+                      ifs:
+                      - if:
+                          scalarFunction:
+                            args:
+                            - selection:
+                                directReference:
+                                  structField:
+                                    field: 20
+                                rootReference: {}
+                            - cast:
+                                input:
+                                  literal:
+                                    fixedChar: PROMO%
+                                type:
+                                  varchar:
+                                    length: 25
+                                    nullability: NULLABILITY_NULLABLE
+                            functionReference: 6
+                            outputType:
+                              bool:
+                                nullability: NULLABILITY_NULLABLE
+                        then:
+                          scalarFunction:
+                            args:
+                            - selection:
+                                directReference:
+                                  structField:
+                                    field: 5
+                                rootReference: {}
+                            - scalarFunction:
+                                args:
+                                - cast:
+                                    input:
+                                      literal:
+                                        i32: 1
+                                    type:
+                                      decimal:
+                                        nullability: NULLABILITY_NULLABLE
+                                        precision: 19
+                                - selection:
+                                    directReference:
+                                      structField:
+                                        field: 6
+                                    rootReference: {}
+                                functionReference: 8
+                                outputType:
+                                  decimal:
+                                    nullability: NULLABILITY_NULLABLE
+                                    precision: 19
+                            functionReference: 7
+                            outputType:
+                              decimal:
+                                nullability: NULLABILITY_NULLABLE
+                                precision: 19
+                  - scalarFunction:
+                      args:
+                      - selection:
+                          directReference:
+                            structField:
+                              field: 5
+                          rootReference: {}
+                      - scalarFunction:
+                          args:
+                          - cast:
+                              input:
+                                literal:
+                                  i32: 1
+                              type:
+                                decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                          - selection:
+                              directReference:
+                                structField:
+                                  field: 6
+                              rootReference: {}
+                          functionReference: 8
+                          outputType:
+                            decimal:
+                              nullability: NULLABILITY_NULLABLE
+                              precision: 19
+                      functionReference: 7
+                      outputType:
+                        decimal:
+                          nullability: NULLABILITY_NULLABLE
+                          precision: 19
+                  input:
+                    filter:
+                      common:
+                        direct: {}
+                      condition:
+                        scalarFunction:
+                          args:
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 1
+                                  rootReference: {}
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 16
+                                  rootReference: {}
+                              functionReference: 2
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_REQUIRED
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 10
+                                  rootReference: {}
+                              - literal:
+                                  date: 8978
+                              functionReference: 3
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 10
+                                  rootReference: {}
+                              - scalarFunction:
+                                  args:
+                                  - literal:
+                                      date: 8978
+                                  - literal:
+                                      intervalYearToMonth:
+                                        months: 1
+                                  functionReference: 5
+                                  outputType:
+                                    date:
+                                      nullability: NULLABILITY_REQUIRED
+                              functionReference: 4
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          functionReference: 1
+                          outputType:
+                            bool:
+                              nullability: NULLABILITY_NULLABLE
+                      input:
+                        join:
+                          common:
+                            direct: {}
+                          expression:
+                            literal:
+                              boolean: true
+                          left:
+                            read:
+                              baseSchema:
+                                names:
+                                - L_ORDERKEY
+                                - L_PARTKEY
+                                - L_SUPPKEY
+                                - L_LINENUMBER
+                                - L_QUANTITY
+                                - L_EXTENDEDPRICE
+                                - L_DISCOUNT
+                                - L_TAX
+                                - L_RETURNFLAG
+                                - L_LINESTATUS
+                                - L_SHIPDATE
+                                - L_COMMITDATE
+                                - L_RECEIPTDATE
+                                - L_SHIPINSTRUCT
+                                - L_SHIPMODE
+                                - L_COMMENT
+                                struct:
+                                  nullability: NULLABILITY_REQUIRED
+                                  types:
+                                  - i64:
+                                      nullability: NULLABILITY_REQUIRED
+                                  - i64:
+                                      nullability: NULLABILITY_REQUIRED
+                                  - i64:
+                                      nullability: NULLABILITY_REQUIRED
+                                  - i32:
+                                      nullability: NULLABILITY_NULLABLE
+                                  - decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                                  - decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                                  - decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                                  - decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                                  - fixedChar:
+                                      length: 1
+                                      nullability: NULLABILITY_NULLABLE
+                                  - fixedChar:
+                                      length: 1
+                                      nullability: NULLABILITY_NULLABLE
+                                  - date:
+                                      nullability: NULLABILITY_NULLABLE
+                                  - date:
+                                      nullability: NULLABILITY_NULLABLE
+                                  - date:
+                                      nullability: NULLABILITY_NULLABLE
+                                  - fixedChar:
+                                      length: 25
+                                      nullability: NULLABILITY_NULLABLE
+                                  - fixedChar:
+                                      length: 10
+                                      nullability: NULLABILITY_NULLABLE
+                                  - varchar:
+                                      length: 44
+                                      nullability: NULLABILITY_NULLABLE
+                              common:
+                                direct: {}
+                              namedTable:
+                                names:
+                                - LINEITEM
+                          right:
+                            read:
+                              baseSchema:
+                                names:
+                                - P_PARTKEY
+                                - P_NAME
+                                - P_MFGR
+                                - P_BRAND
+                                - P_TYPE
+                                - P_SIZE
+                                - P_CONTAINER
+                                - P_RETAILPRICE
+                                - P_COMMENT
+                                struct:
+                                  nullability: NULLABILITY_REQUIRED
+                                  types:
+                                  - i64:
+                                      nullability: NULLABILITY_REQUIRED
+                                  - varchar:
+                                      length: 55
+                                      nullability: NULLABILITY_NULLABLE
+                                  - fixedChar:
+                                      length: 25
+                                      nullability: NULLABILITY_NULLABLE
+                                  - fixedChar:
+                                      length: 10
+                                      nullability: NULLABILITY_NULLABLE
+                                  - varchar:
+                                      length: 25
+                                      nullability: NULLABILITY_NULLABLE
+                                  - i32:
+                                      nullability: NULLABILITY_NULLABLE
+                                  - fixedChar:
+                                      length: 10
+                                      nullability: NULLABILITY_NULLABLE
+                                  - decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                                  - varchar:
+                                      length: 23
+                                      nullability: NULLABILITY_NULLABLE
+                              common:
+                                direct: {}
+                              namedTable:
+                                names:
+                                - PART
+                          type: JOIN_TYPE_INNER
+              measures:
+              - measure:
+                  args:
+                  - selection:
+                      directReference:
+                        structField: {}
+                      rootReference: {}
+                  functionReference: 9
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+                  phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+              - measure:
+                  args:
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 1
+                      rootReference: {}
+                  functionReference: 9
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+                  phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+      names:
+      - PROMO_REVENUE

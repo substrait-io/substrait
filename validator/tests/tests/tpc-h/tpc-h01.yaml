@@ -1,0 +1,462 @@
+# select
+#   l_returnflag,
+#   l_linestatus,
+#   sum(l_quantity) as sum_qty,
+#   sum(l_extendedprice) as sum_base_price,
+#   sum(l_extendedprice * (1 - l_discount)) as sum_disc_price,
+#   sum(l_extendedprice * (1 - l_discount) * (1 + l_tax)) as sum_charge,
+#   avg(l_quantity) as avg_qty,
+#   avg(l_extendedprice) as avg_price,
+#   avg(l_discount) as avg_disc,
+#   count(*) as count_order
+# from
+#   lineitem
+# where
+#   l_shipdate <= date '1998-12-01' - interval '120' day (3)
+# group by
+#   l_returnflag,
+#   l_linestatus
+# order by
+#   l_returnflag,
+#   l_linestatus
+
+name: TPC-H01
+diags:
+- { code: 0001, max: i } # Suppress "not yet implemented" warnings
+- { code: 3002, max: i } # Suppress function name resolution errors (function parsing isn't implemented yet)
+- { code: 6003, max: i } # Suppress function definition check warnings (function parsing isn't implemented yet)
+plan:
+  __test:
+  - level: i
+  extensionUris:
+  - extensionUriAnchor: 3
+    uri: /functions_aggregate_generic.yaml
+  - extensionUriAnchor: 2
+    uri: /functions_arithmetic_decimal.yaml
+  - extensionUriAnchor: 1
+    uri: /functions_datetime.yaml
+  extensions:
+  - extensionFunction:
+      extensionUriReference: 1
+      functionAnchor: 1
+      name: lte:date_date
+  - extensionFunction:
+      extensionUriReference: 1
+      functionAnchor: 2
+      name: subtract:date_day
+  - extensionFunction:
+      extensionUriReference: 2
+      functionAnchor: 3
+      name: multiply:opt_decimal_decimal
+  - extensionFunction:
+      extensionUriReference: 2
+      functionAnchor: 4
+      name: subtract:opt_decimal_decimal
+  - extensionFunction:
+      extensionUriReference: 2
+      functionAnchor: 5
+      name: add:opt_decimal_decimal
+  - extensionFunction:
+      extensionUriReference: 2
+      functionAnchor: 6
+      name: sum:opt_decimal
+  - extensionFunction:
+      extensionUriReference: 2
+      functionAnchor: 7
+      name: avg:opt_decimal
+  - extensionFunction:
+      extensionUriReference: 3
+      functionAnchor: 8
+      name: count:opt
+  relations:
+  - root:
+      __test:
+      - type: "NSTRUCT<L_RETURNFLAG: FIXEDCHAR?<1>, L_LINESTATUS: FIXEDCHAR?<1>, SUM_QTY: DECIMAL?<19, 0>, SUM_BASE_PRICE: DECIMAL?<19, 0>, SUM_DISC_PRICE: DECIMAL?<19, 0>, SUM_CHARGE: DECIMAL?<19, 0>, AVG_QTY: DECIMAL?<19, 0>, AVG_PRICE: DECIMAL?<19, 0>, AVG_DISC: DECIMAL?<19, 0>, COUNT_ORDER: i64>"
+      input:
+        sort:
+          common:
+            direct: {}
+          input:
+            aggregate:
+              common:
+                emit:
+                  outputMapping:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 5
+                  - 6
+                  - 7
+                  - 8
+                  - 9
+              groupings:
+              - groupingExpressions:
+                - selection:
+                    directReference:
+                      structField: {}
+                    rootReference: {}
+                - selection:
+                    directReference:
+                      structField:
+                        field: 1
+                    rootReference: {}
+              - groupingExpressions:
+                - selection:
+                    directReference:
+                      structField: {}
+                    rootReference: {}
+                - selection:
+                    directReference:
+                      structField:
+                        field: 1
+                    rootReference: {}
+              input:
+                project:
+                  common:
+                    emit:
+                      outputMapping:
+                      - 16
+                      - 17
+                      - 18
+                      - 19
+                      - 20
+                      - 21
+                      - 22
+                  expressions:
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 8
+                      rootReference: {}
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 9
+                      rootReference: {}
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 4
+                      rootReference: {}
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 5
+                      rootReference: {}
+                  - scalarFunction:
+                      args:
+                      - selection:
+                          directReference:
+                            structField:
+                              field: 5
+                          rootReference: {}
+                      - scalarFunction:
+                          args:
+                          - cast:
+                              input:
+                                literal:
+                                  i32: 1
+                              type:
+                                decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                          - selection:
+                              directReference:
+                                structField:
+                                  field: 6
+                              rootReference: {}
+                          functionReference: 4
+                          outputType:
+                            decimal:
+                              nullability: NULLABILITY_NULLABLE
+                              precision: 19
+                      functionReference: 3
+                      outputType:
+                        decimal:
+                          nullability: NULLABILITY_NULLABLE
+                          precision: 19
+                  - scalarFunction:
+                      args:
+                      - scalarFunction:
+                          args:
+                          - selection:
+                              directReference:
+                                structField:
+                                  field: 5
+                              rootReference: {}
+                          - scalarFunction:
+                              args:
+                              - cast:
+                                  input:
+                                    literal:
+                                      i32: 1
+                                  type:
+                                    decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 6
+                                  rootReference: {}
+                              functionReference: 4
+                              outputType:
+                                decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                          functionReference: 3
+                          outputType:
+                            decimal:
+                              nullability: NULLABILITY_NULLABLE
+                              precision: 19
+                      - scalarFunction:
+                          args:
+                          - cast:
+                              input:
+                                literal:
+                                  i32: 1
+                              type:
+                                decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                          - selection:
+                              directReference:
+                                structField:
+                                  field: 7
+                              rootReference: {}
+                          functionReference: 5
+                          outputType:
+                            decimal:
+                              nullability: NULLABILITY_NULLABLE
+                              precision: 19
+                      functionReference: 3
+                      outputType:
+                        decimal:
+                          nullability: NULLABILITY_NULLABLE
+                          precision: 19
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 6
+                      rootReference: {}
+                  input:
+                    filter:
+                      common:
+                        direct: {}
+                      condition:
+                        scalarFunction:
+                          args:
+                          - selection:
+                              directReference:
+                                structField:
+                                  field: 10
+                              rootReference: {}
+                          - scalarFunction:
+                              args:
+                              - literal:
+                                  date: 10561
+                              - literal:
+                                  intervalDayToSecond:
+                                    days: 120
+                              functionReference: 2
+                              outputType:
+                                date:
+                                  nullability: NULLABILITY_REQUIRED
+                          functionReference: 1
+                          outputType:
+                            bool:
+                              nullability: NULLABILITY_NULLABLE
+                      input:
+                        read:
+                          baseSchema:
+                            names:
+                            - L_ORDERKEY
+                            - L_PARTKEY
+                            - L_SUPPKEY
+                            - L_LINENUMBER
+                            - L_QUANTITY
+                            - L_EXTENDEDPRICE
+                            - L_DISCOUNT
+                            - L_TAX
+                            - L_RETURNFLAG
+                            - L_LINESTATUS
+                            - L_SHIPDATE
+                            - L_COMMITDATE
+                            - L_RECEIPTDATE
+                            - L_SHIPINSTRUCT
+                            - L_SHIPMODE
+                            - L_COMMENT
+                            struct:
+                              nullability: NULLABILITY_REQUIRED
+                              types:
+                              - i64:
+                                  nullability: NULLABILITY_REQUIRED
+                              - i64:
+                                  nullability: NULLABILITY_REQUIRED
+                              - i64:
+                                  nullability: NULLABILITY_REQUIRED
+                              - i32:
+                                  nullability: NULLABILITY_NULLABLE
+                              - decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                              - decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                              - decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                              - decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                              - fixedChar:
+                                  length: 1
+                                  nullability: NULLABILITY_NULLABLE
+                              - fixedChar:
+                                  length: 1
+                                  nullability: NULLABILITY_NULLABLE
+                              - date:
+                                  nullability: NULLABILITY_NULLABLE
+                              - date:
+                                  nullability: NULLABILITY_NULLABLE
+                              - date:
+                                  nullability: NULLABILITY_NULLABLE
+                              - fixedChar:
+                                  length: 25
+                                  nullability: NULLABILITY_NULLABLE
+                              - fixedChar:
+                                  length: 10
+                                  nullability: NULLABILITY_NULLABLE
+                              - varchar:
+                                  length: 44
+                                  nullability: NULLABILITY_NULLABLE
+                          common:
+                            direct: {}
+                          namedTable:
+                            names:
+                            - LINEITEM
+              measures:
+              - measure:
+                  args:
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 2
+                      rootReference: {}
+                  functionReference: 6
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+                  phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+              - measure:
+                  args:
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 3
+                      rootReference: {}
+                  functionReference: 6
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+                  phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+              - measure:
+                  args:
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 4
+                      rootReference: {}
+                  functionReference: 6
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+                  phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+              - measure:
+                  args:
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 5
+                      rootReference: {}
+                  functionReference: 6
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+                  phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+              - measure:
+                  args:
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 2
+                      rootReference: {}
+                  functionReference: 7
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+                  phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+              - measure:
+                  args:
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 3
+                      rootReference: {}
+                  functionReference: 7
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+                  phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+              - measure:
+                  args:
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 6
+                      rootReference: {}
+                  functionReference: 7
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+                  phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+              - measure:
+                  functionReference: 8
+                  outputType:
+                    i64:
+                      nullability: NULLABILITY_REQUIRED
+                  phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+          sorts:
+          - direction: SORT_DIRECTION_ASC_NULLS_LAST
+            expr:
+              selection:
+                directReference:
+                  structField: {}
+                rootReference: {}
+          - direction: SORT_DIRECTION_ASC_NULLS_LAST
+            expr:
+              selection:
+                directReference:
+                  structField:
+                    field: 1
+                rootReference: {}
+      names:
+      - L_RETURNFLAG
+      - L_LINESTATUS
+      - SUM_QTY
+      - SUM_BASE_PRICE
+      - SUM_DISC_PRICE
+      - SUM_CHARGE
+      - AVG_QTY
+      - AVG_PRICE
+      - AVG_DISC
+      - COUNT_ORDER

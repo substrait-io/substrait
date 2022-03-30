@@ -1,10 +1,10 @@
 name: meta-test
 plan:
-  "@test":
+  __test:
   - level: wi
   extensionUris:
   - extensionUriAnchor: 1
-    uri@yaml:
+    uri__yaml:
       types:
         - name: point
           structure:

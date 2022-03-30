@@ -90,11 +90,11 @@ def compile_test(fname, data, proto_parse, proto_desc):
                 allowed_levels = insn_type.pop('level', None)
                 if allowed_levels is not None:
                     if not isinstance(allowed_levels, (list, str)):
-                        raise Exception('@test.level must be a list or str')
+                        raise Exception('__test.level must be a list or string')
                     allowed_levels = list(allowed_levels)
                     for level in allowed_levels:
                         if level not in ('i', 'w', 'e'):
-                            raise Exception('@test.level[] must be either "i", "w", or "e"')
+                            raise Exception('__test.level[] must be either "i", "w", or "e"')
                     instructions.append(dict(Level=dict(path=path, allowed_levels=allowed_levels)))
 
                 # Handle diag instructions.
@@ -102,30 +102,30 @@ def compile_test(fname, data, proto_parse, proto_desc):
                 if diag_data is not None:
                     rust_diag_data = {}
                     if not isinstance(diag_data, dict):
-                        raise Exception('@test.diag must be a dict')
+                        raise Exception('__test.diag must be a dict')
 
                     code = diag_data.pop('code', None)
                     if code is not None:
                         if not isinstance(code, int):
-                            raise Exception('@test.diag.code must be an int')
+                            raise Exception('__test.diag.code must be an int')
                         rust_diag_data['code'] = code
 
                     level = diag_data.pop('level', None)
                     if level is not None:
                         if level not in ('i', 'w', 'e'):
-                            raise Exception('@test.diag.level must be either "i", "w", or "e"')
+                            raise Exception('__test.diag.level must be either "i", "w", or "e"')
                         rust_diag_data['level'] = level
 
                     level = diag_data.pop('original_level', None)
                     if level is not None:
                         if level not in ('i', 'w', 'e'):
-                            raise Exception('@test.diag.original_level must be either "i", "w", or "e"')
+                            raise Exception('__test.diag.original_level must be either "i", "w", or "e"')
                         rust_diag_data['original_level'] = level
 
                     msg_pattern = diag_data.pop('msg', None)
                     if msg_pattern is not None:
                         if not isinstance(msg_pattern, str):
-                            raise Exception('@test.diag.msg must be a string')
+                            raise Exception('__test.diag.msg must be a string')
                         # Convert to full glob pattern... We don't use the full
                         # pattern syntax in the description because escape
                         # sequences are needed for some rather common characters
@@ -147,21 +147,28 @@ def compile_test(fname, data, proto_parse, proto_desc):
                     element = diag_data.pop('before', None)
                     if element is not None:
                         if not isinstance(element, str):
-                            raise Exception('@test.diag.before must be a path element string')
+                            raise Exception('__test.diag.before must be a path element string')
                         rust_diag_data['before'] = parse_path_element(element)
 
                     element = diag_data.pop('after', None)
                     if element is not None:
                         if not isinstance(element, str):
-                            raise Exception('@test.diag.after must be a path element string')
+                            raise Exception('__test.diag.after must be a path element string')
                         rust_diag_data['after'] = parse_path_element(element)
 
                     if diag_data:
-                        raise Exception('Found unknown @test.diag key(s): {}'.format(', '.join(diag_data.keys())))
+                        raise Exception('Found unknown __test.diag key(s): {}'.format(', '.join(diag_data.keys())))
                     instructions.append(dict(Diag=dict(path=path, **rust_diag_data)))
 
+                # Handle type instructions.
+                type_str = insn_type.pop('type', None)
+                if type_str is not None:
+                    if not isinstance(type_str, str):
+                        raise Exception('__test.type must be a string')
+                    instructions.append(dict(DataType=dict(path=path, data_type=type_str)))
+
                 if insn_type:
-                    raise Exception('Found unknown @test key(s): {}'.format(', '.join(insn_type.keys())))
+                    raise Exception('Found unknown __test key(s): {}'.format(', '.join(insn_type.keys())))
 
         if insn == 'yaml':
             with open(f'{fname}.{loc}.yaml', 'w') as f:
@@ -236,11 +243,11 @@ def strip_test_tags(data, path=(), yaml_counter=None):
     """
     Modifies data recursively, yielding a flattened set of instruction triple:
 
-     - Pops all "[sub_path]@test" keys from the given data. For each popped
+     - Pops all "[sub_path]__test" keys from the given data. For each popped
        value, yields a ('test', path + sub_path, test_data) triple. sub_path
        may be left blank, or may be a .-separated list of key names and list
        indices.
-     - Replaces all "<name>@yaml" keys with "<name>", replacing their value
+     - Replaces all "<name>__yaml" keys with "<name>", replacing their value
        with "test:<index>.yaml", where index is a unique integer index within
        the plan. For each replaced value, the original yaml data is recursively
        stripped using 'data' for the path element (this is how it will appear
@@ -250,28 +257,28 @@ def strip_test_tags(data, path=(), yaml_counter=None):
     if yaml_counter is None:
         yaml_counter = [0]
     if isinstance(data, dict):
-        # Handle @test keys.
+        # Handle __test keys.
         keys = []
         for key in data.keys():
-            if key.endswith('@test'):
+            if key.endswith('__test'):
                 keys.append(key)
         for key in keys:
             test_data = data.pop(key)
-            sub_path = tuple(map(convert_if_int, key.rsplit('@')[0].split('.')))
+            sub_path = tuple(map(convert_if_int, key.rsplit('__')[0].split('.')))
             if sub_path == ('',):
                 sub_path = ()
             yield ('test', path + sub_path, test_data)
 
-        # Handle @yaml keys.
+        # Handle __yaml keys.
         keys = []
         for key in data.keys():
-            if key.endswith('@yaml'):
+            if key.endswith('__yaml'):
                 keys.append(key)
         for key in keys:
             index = yaml_counter[0]
             yaml_counter[0] += 1
             yaml_data = data.pop(key)
-            new_key = key.rsplit('@')[0]
+            new_key = key.rsplit('__')[0]
             data[new_key] = f'test:{index}.yaml'
             for x in strip_test_tags(yaml_data, path + (new_key, 'data'), yaml_counter):
                 yield x

@@ -1,0 +1,954 @@
+# select
+#   sum(l.l_extendedprice* (1 - l.l_discount)) as revenue
+# from
+#   "lineitem" l,
+#   "part" p
+# where
+#   (
+#     p.p_partkey = l.l_partkey
+#     and p.p_brand = 'Brand#41'
+#     and p.p_container in ('SM CASE', 'SM BOX', 'SM PACK', 'SM PKG')
+#     and l.l_quantity >= 2 and l.l_quantity <= 2 + 10
+#     and p.p_size between 1 and 5
+#     and l.l_shipmode in ('AIR', 'AIR REG')
+#     and l.l_shipinstruct = 'DELIVER IN PERSON'
+#   )
+#   or
+#   (
+#     p.p_partkey = l.l_partkey
+#     and p.p_brand = 'Brand#13'
+#     and p.p_container in ('MED BAG', 'MED BOX', 'MED PKG', 'MED PACK')
+#     and l.l_quantity >= 14 and l.l_quantity <= 14 + 10
+#     and p.p_size between 1 and 10
+#     and l.l_shipmode in ('AIR', 'AIR REG')
+#     and l.l_shipinstruct = 'DELIVER IN PERSON'
+#   )
+#   or
+#   (
+#     p.p_partkey = l.l_partkey
+#     and p.p_brand = 'Brand#55'
+#     and p.p_container in ('LG CASE', 'LG BOX', 'LG PACK', 'LG PKG')
+#     and l.l_quantity >= 23 and l.l_quantity <= 23 + 10
+#     and p.p_size between 1 and 15
+#     and l.l_shipmode in ('AIR', 'AIR REG')
+#     and l.l_shipinstruct = 'DELIVER IN PERSON'
+#   )
+
+name: TPC-H19
+diags:
+- { code: 0001, max: i } # Suppress "not yet implemented" warnings
+- { code: 3002, max: i } # Suppress function name resolution errors (function parsing isn't implemented yet)
+- { code: 6003, max: i } # Suppress function definition check warnings (function parsing isn't implemented yet)
+plan:
+  __test:
+  - level: i
+  extensionUris:
+  - extensionUriAnchor: 3
+    uri: /functions_arithmetic.yaml
+  - extensionUriAnchor: 1
+    uri: /functions_boolean.yaml
+  - extensionUriAnchor: 4
+    uri: /functions_arithmetic_decimal.yaml
+  - extensionUriAnchor: 2
+    uri: /functions_comparison.yaml
+  extensions:
+  - extensionFunction:
+      extensionUriReference: 1
+      functionAnchor: 1
+      name: or:bool
+  - extensionFunction:
+      extensionUriReference: 1
+      functionAnchor: 2
+      name: and:bool
+  - extensionFunction:
+      extensionUriReference: 2
+      functionAnchor: 3
+      name: equal:any1_any1
+  - extensionFunction:
+      extensionUriReference: 2
+      functionAnchor: 4
+      name: gte:any1_any1
+  - extensionFunction:
+      extensionUriReference: 2
+      functionAnchor: 5
+      name: lte:any1_any1
+  - extensionFunction:
+      extensionUriReference: 3
+      functionAnchor: 6
+      name: add:opt_i32_i32
+  - extensionFunction:
+      extensionUriReference: 4
+      functionAnchor: 7
+      name: multiply:opt_decimal_decimal
+  - extensionFunction:
+      extensionUriReference: 4
+      functionAnchor: 8
+      name: subtract:opt_decimal_decimal
+  - extensionFunction:
+      extensionUriReference: 4
+      functionAnchor: 9
+      name: sum:opt_decimal
+  relations:
+  - root:
+      __test:
+      - type: "NSTRUCT<REVENUE: DECIMAL?<19, 0>>"
+      input:
+        aggregate:
+          common:
+            emit:
+              outputMapping:
+              - 0
+          input:
+            project:
+              common:
+                emit:
+                  outputMapping:
+                  - 25
+              expressions:
+              - scalarFunction:
+                  args:
+                  - selection:
+                      directReference:
+                        structField:
+                          field: 5
+                      rootReference: {}
+                  - scalarFunction:
+                      args:
+                      - cast:
+                          input:
+                            literal:
+                              i32: 1
+                          type:
+                            decimal:
+                              nullability: NULLABILITY_NULLABLE
+                              precision: 19
+                      - selection:
+                          directReference:
+                            structField:
+                              field: 6
+                          rootReference: {}
+                      functionReference: 8
+                      outputType:
+                        decimal:
+                          nullability: NULLABILITY_NULLABLE
+                          precision: 19
+                  functionReference: 7
+                  outputType:
+                    decimal:
+                      nullability: NULLABILITY_NULLABLE
+                      precision: 19
+              input:
+                filter:
+                  common:
+                    direct: {}
+                  condition:
+                    scalarFunction:
+                      args:
+                      - scalarFunction:
+                          args:
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 16
+                                  rootReference: {}
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 1
+                                  rootReference: {}
+                              functionReference: 3
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_REQUIRED
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 19
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    literal:
+                                      fixedChar: Brand#41
+                                  type:
+                                    fixedChar:
+                                      length: 10
+                                      nullability: NULLABILITY_REQUIRED
+                              functionReference: 3
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: SM CASE
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: SM BOX
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: SM PACK
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: SM PKG
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              functionReference: 1
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 4
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    literal:
+                                      i32: 2
+                                  type:
+                                    decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                              functionReference: 4
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 4
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    scalarFunction:
+                                      args:
+                                      - literal:
+                                          i32: 2
+                                      - literal:
+                                          i32: 10
+                                      functionReference: 6
+                                      outputType:
+                                        i32:
+                                          nullability: NULLABILITY_REQUIRED
+                                  type:
+                                    decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                              functionReference: 5
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 21
+                                  rootReference: {}
+                              - literal:
+                                  i32: 1
+                              functionReference: 4
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 21
+                                  rootReference: {}
+                              - literal:
+                                  i32: 5
+                              functionReference: 5
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 14
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: AIR
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 14
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: AIR REG
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              functionReference: 1
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 13
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    literal:
+                                      fixedChar: DELIVER IN PERSON
+                                  type:
+                                    fixedChar:
+                                      length: 25
+                                      nullability: NULLABILITY_REQUIRED
+                              functionReference: 3
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          functionReference: 2
+                          outputType:
+                            bool:
+                              nullability: NULLABILITY_NULLABLE
+                      - scalarFunction:
+                          args:
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 16
+                                  rootReference: {}
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 1
+                                  rootReference: {}
+                              functionReference: 3
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_REQUIRED
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 19
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    literal:
+                                      fixedChar: Brand#13
+                                  type:
+                                    fixedChar:
+                                      length: 10
+                                      nullability: NULLABILITY_REQUIRED
+                              functionReference: 3
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: MED BAG
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: MED BOX
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: MED PKG
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: MED PACK
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              functionReference: 1
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 4
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    literal:
+                                      i32: 14
+                                  type:
+                                    decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                              functionReference: 4
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 4
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    scalarFunction:
+                                      args:
+                                      - literal:
+                                          i32: 14
+                                      - literal:
+                                          i32: 10
+                                      functionReference: 6
+                                      outputType:
+                                        i32:
+                                          nullability: NULLABILITY_REQUIRED
+                                  type:
+                                    decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                              functionReference: 5
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 21
+                                  rootReference: {}
+                              - literal:
+                                  i32: 1
+                              functionReference: 4
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 21
+                                  rootReference: {}
+                              - literal:
+                                  i32: 10
+                              functionReference: 5
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 14
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: AIR
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 14
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: AIR REG
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              functionReference: 1
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 13
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    literal:
+                                      fixedChar: DELIVER IN PERSON
+                                  type:
+                                    fixedChar:
+                                      length: 25
+                                      nullability: NULLABILITY_REQUIRED
+                              functionReference: 3
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          functionReference: 2
+                          outputType:
+                            bool:
+                              nullability: NULLABILITY_NULLABLE
+                      - scalarFunction:
+                          args:
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 16
+                                  rootReference: {}
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 1
+                                  rootReference: {}
+                              functionReference: 3
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_REQUIRED
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 19
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    literal:
+                                      fixedChar: Brand#55
+                                  type:
+                                    fixedChar:
+                                      length: 10
+                                      nullability: NULLABILITY_REQUIRED
+                              functionReference: 3
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: LG CASE
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: LG BOX
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: LG PACK
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 22
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: LG PKG
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              functionReference: 1
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 4
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    literal:
+                                      i32: 23
+                                  type:
+                                    decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                              functionReference: 4
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 4
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    scalarFunction:
+                                      args:
+                                      - literal:
+                                          i32: 23
+                                      - literal:
+                                          i32: 10
+                                      functionReference: 6
+                                      outputType:
+                                        i32:
+                                          nullability: NULLABILITY_REQUIRED
+                                  type:
+                                    decimal:
+                                      nullability: NULLABILITY_NULLABLE
+                                      precision: 19
+                              functionReference: 5
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 21
+                                  rootReference: {}
+                              - literal:
+                                  i32: 1
+                              functionReference: 4
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 21
+                                  rootReference: {}
+                              - literal:
+                                  i32: 15
+                              functionReference: 5
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 14
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: AIR
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              - scalarFunction:
+                                  args:
+                                  - selection:
+                                      directReference:
+                                        structField:
+                                          field: 14
+                                      rootReference: {}
+                                  - literal:
+                                      fixedChar: AIR REG
+                                  functionReference: 3
+                                  outputType:
+                                    bool:
+                                      nullability: NULLABILITY_NULLABLE
+                              functionReference: 1
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          - scalarFunction:
+                              args:
+                              - selection:
+                                  directReference:
+                                    structField:
+                                      field: 13
+                                  rootReference: {}
+                              - cast:
+                                  input:
+                                    literal:
+                                      fixedChar: DELIVER IN PERSON
+                                  type:
+                                    fixedChar:
+                                      length: 25
+                                      nullability: NULLABILITY_REQUIRED
+                              functionReference: 3
+                              outputType:
+                                bool:
+                                  nullability: NULLABILITY_NULLABLE
+                          functionReference: 2
+                          outputType:
+                            bool:
+                              nullability: NULLABILITY_NULLABLE
+                      functionReference: 1
+                      outputType:
+                        bool:
+                          nullability: NULLABILITY_NULLABLE
+                  input:
+                    join:
+                      common:
+                        direct: {}
+                      expression:
+                        literal:
+                          boolean: true
+                      left:
+                        read:
+                          baseSchema:
+                            names:
+                            - L_ORDERKEY
+                            - L_PARTKEY
+                            - L_SUPPKEY
+                            - L_LINENUMBER
+                            - L_QUANTITY
+                            - L_EXTENDEDPRICE
+                            - L_DISCOUNT
+                            - L_TAX
+                            - L_RETURNFLAG
+                            - L_LINESTATUS
+                            - L_SHIPDATE
+                            - L_COMMITDATE
+                            - L_RECEIPTDATE
+                            - L_SHIPINSTRUCT
+                            - L_SHIPMODE
+                            - L_COMMENT
+                            struct:
+                              nullability: NULLABILITY_REQUIRED
+                              types:
+                              - i64:
+                                  nullability: NULLABILITY_REQUIRED
+                              - i64:
+                                  nullability: NULLABILITY_REQUIRED
+                              - i64:
+                                  nullability: NULLABILITY_REQUIRED
+                              - i32:
+                                  nullability: NULLABILITY_NULLABLE
+                              - decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                              - decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                              - decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                              - decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                              - fixedChar:
+                                  length: 1
+                                  nullability: NULLABILITY_NULLABLE
+                              - fixedChar:
+                                  length: 1
+                                  nullability: NULLABILITY_NULLABLE
+                              - date:
+                                  nullability: NULLABILITY_NULLABLE
+                              - date:
+                                  nullability: NULLABILITY_NULLABLE
+                              - date:
+                                  nullability: NULLABILITY_NULLABLE
+                              - fixedChar:
+                                  length: 25
+                                  nullability: NULLABILITY_NULLABLE
+                              - fixedChar:
+                                  length: 10
+                                  nullability: NULLABILITY_NULLABLE
+                              - varchar:
+                                  length: 44
+                                  nullability: NULLABILITY_NULLABLE
+                          common:
+                            direct: {}
+                          namedTable:
+                            names:
+                            - LINEITEM
+                      right:
+                        read:
+                          baseSchema:
+                            names:
+                            - P_PARTKEY
+                            - P_NAME
+                            - P_MFGR
+                            - P_BRAND
+                            - P_TYPE
+                            - P_SIZE
+                            - P_CONTAINER
+                            - P_RETAILPRICE
+                            - P_COMMENT
+                            struct:
+                              nullability: NULLABILITY_REQUIRED
+                              types:
+                              - i64:
+                                  nullability: NULLABILITY_REQUIRED
+                              - varchar:
+                                  length: 55
+                                  nullability: NULLABILITY_NULLABLE
+                              - fixedChar:
+                                  length: 25
+                                  nullability: NULLABILITY_NULLABLE
+                              - fixedChar:
+                                  length: 10
+                                  nullability: NULLABILITY_NULLABLE
+                              - varchar:
+                                  length: 25
+                                  nullability: NULLABILITY_NULLABLE
+                              - i32:
+                                  nullability: NULLABILITY_NULLABLE
+                              - fixedChar:
+                                  length: 10
+                                  nullability: NULLABILITY_NULLABLE
+                              - decimal:
+                                  nullability: NULLABILITY_NULLABLE
+                                  precision: 19
+                              - varchar:
+                                  length: 23
+                                  nullability: NULLABILITY_NULLABLE
+                          common:
+                            direct: {}
+                          namedTable:
+                            names:
+                            - PART
+                      type: JOIN_TYPE_INNER
+          measures:
+          - measure:
+              args:
+              - selection:
+                  directReference:
+                    structField: {}
+                  rootReference: {}
+              functionReference: 9
+              outputType:
+                decimal:
+                  nullability: NULLABILITY_NULLABLE
+                  precision: 19
+              phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+      names:
+      - REVENUE

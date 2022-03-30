@@ -72,6 +72,12 @@ struct DiagnosticTest {
     pub after: Option<PathElement>,
 }
 
+#[derive(serde::Deserialize, Debug)]
+struct DataTypeTest {
+    pub path: Vec<PathElement>,
+    pub data_type: String,
+}
+
 impl DiagnosticTest {
     pub fn matches(&self, diag: &sv::Diagnostic) -> bool {
         // Check code.
@@ -114,6 +120,7 @@ impl DiagnosticTest {
 enum Instruction {
     Level(LevelTest),
     Diag(DiagnosticTest),
+    DataType(DataTypeTest),
 }
 
 /// A diagnostic level override command.
@@ -188,6 +195,8 @@ impl TestCase {
                 yaml_path.push(name);
                 let yaml_path = std::path::PathBuf::from(yaml_path);
                 std::fs::read(yaml_path)
+            } else if let Some(uri) = uri.strip_prefix('/') {
+                std::fs::read(std::path::PathBuf::from("../../extensions").join(uri))
             } else {
                 Err(std::io::Error::new(
                     std::io::ErrorKind::Other,
@@ -306,6 +315,19 @@ impl TestCase {
                         node.data.remove(diag_index);
 
                         Ok(())
+                    })
+                    .map_err(|e| format!("check failed at {path}: {e}"))?
+                }
+                Instruction::DataType(data_type) => {
+                    let path = convert_path(&data_type.path);
+                    println!("Checking data type at {path}...");
+                    traverse(&mut root, path.elements.iter(), |node| {
+                        let actual = format!("{:#}", node.data_type());
+                        if actual != data_type.data_type {
+                            Err(format!("data type mismatch; found {actual}"))
+                        } else {
+                            Ok(())
+                        }
                     })
                     .map_err(|e| format!("check failed at {path}: {e}"))?
                 }

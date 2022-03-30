@@ -75,11 +75,11 @@ additional keys may be added to objects to give instructions to the test
 runner, and YAML extensions can be embedded into the plans.
 
 The checks that the runner must perform are embedded in the plan structure
-using `"[sub-path]@test"` keys. Usually, `[sub-path]` is left blank, which
+using `"[sub-path]__test"` keys. Usually, `[sub-path]` is left blank, which
 means that the embedded checks relate to the dictionary that key is a part
 of, but it may also be set to a period-separated list of subkeys and/or
-list indices, to allow @test data to be attached to non-dict values. The
-data associated with @test keys must be a list of dictionaries with the
+list indices, to allow `__test` data to be attached to non-dict values. The
+data associated with `__test` keys must be a list of dictionaries with the
 following format:
 
     {
@@ -91,7 +91,8 @@ following format:
             "msg"?: <expected-message-pattern>,
             "before"?: <path-element>,
             "after"?: <path-element>
-        }
+        },
+        "type"?: "expected-type"
     }
 
 Exactly one key must be specified for the outermost dictionary:
@@ -122,11 +123,13 @@ Exactly one key must be specified for the outermost dictionary:
    that the serialization format you're writing may want non-identifier things
    to be quoted, too. For example, in YAML, a field with named `!` would be
    written as `'"!"'`, the single quotes delimiting the YAML string.
+ - `"type"` matches the (final) data type attached to the node with the given
+   string. There's no intelligence here; the string must match exactly.
 
 Evaluation order is depth-first, so diagnostics attached to child nodes are
 removed before the level of their parent node is checked.
 
-`<key>@yaml` keys may be used in place of URI keys to embed extension YAML
+`<key>__yaml` keys may be used in place of URI keys to embed extension YAML
 files. The key will be replaced with `"<key>"`, set to the string
 `"test:<index>.yaml"`. The corresponding YAML file is written to
 `"<test.fmt>.<index>.yaml"`. The test runner installs a custom URI handler
@@ -134,6 +137,6 @@ with the validator to ensure that the extension file will be linked up
 appropriately.
 
 Just like the protobuf message structure, the embedded YAML data may have
-`@test` tags associated with it, so check instructions can also be attached
+`__test` tags associated with it, so check instructions can also be attached
 to the extension
 files.
