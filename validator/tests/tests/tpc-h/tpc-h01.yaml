@@ -71,7 +71,19 @@ plan:
   relations:
   - root:
       __test:
-      - type: "NSTRUCT<L_RETURNFLAG: FIXEDCHAR?<1>, L_LINESTATUS: FIXEDCHAR?<1>, SUM_QTY: DECIMAL?<19, 0>, SUM_BASE_PRICE: DECIMAL?<19, 0>, SUM_DISC_PRICE: DECIMAL?<19, 0>, SUM_CHARGE: DECIMAL?<19, 0>, AVG_QTY: DECIMAL?<19, 0>, AVG_PRICE: DECIMAL?<19, 0>, AVG_DISC: DECIMAL?<19, 0>, COUNT_ORDER: i64>"
+      - type: "\
+        NSTRUCT<\
+          L_RETURNFLAG: FIXEDCHAR?<1>, \
+          L_LINESTATUS: FIXEDCHAR?<1>, \
+          SUM_QTY: DECIMAL?<19, 0>, \
+          SUM_BASE_PRICE: DECIMAL?<19, 0>, \
+          SUM_DISC_PRICE: DECIMAL?<19, 0>, \
+          SUM_CHARGE: DECIMAL?<19, 0>, \
+          AVG_QTY: DECIMAL?<19, 0>, \
+          AVG_PRICE: DECIMAL?<19, 0>, \
+          AVG_DISC: DECIMAL?<19, 0>, \
+          COUNT_ORDER: i64\
+        >"
       input:
         sort:
           common:

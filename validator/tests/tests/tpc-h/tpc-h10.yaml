@@ -84,7 +84,17 @@ plan:
   relations:
   - root:
       __test:
-      - type: "NSTRUCT<C_CUSTKEY: i32, C_NAME: i64, REVENUE: VARCHAR?<25>, C_ACCTBAL: DECIMAL?<19, 0>, N_NAME: DECIMAL?<19, 0>, C_ADDRESS: FIXEDCHAR?<25>, C_PHONE: VARCHAR?<40>, C_COMMENT: FIXEDCHAR?<15>>"
+      - type: "\
+        NSTRUCT<\
+          C_CUSTKEY: i32, \
+          C_NAME: i64, \
+          REVENUE: VARCHAR?<25>, \
+          C_ACCTBAL: DECIMAL?<19, 0>, \
+          N_NAME: DECIMAL?<19, 0>, \
+          C_ADDRESS: FIXEDCHAR?<25>, \
+          C_PHONE: VARCHAR?<40>, \
+          C_COMMENT: FIXEDCHAR?<15>\
+        >"
       input:
         fetch:
           common:
