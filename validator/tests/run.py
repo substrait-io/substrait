@@ -142,6 +142,7 @@ def compile_test(fname, data, proto_parse, proto_desc):
                                 glob_pattern += f'[{c}]'
                             else:
                                 glob_pattern += c
+                            i += 1
                         rust_diag_data['msg'] = glob_pattern
 
                     element = diag_data.pop('before', None)
@@ -260,6 +261,8 @@ def strip_test_tags(data, path=(), yaml_counter=None):
         # Handle __test keys.
         keys = []
         for key in data.keys():
+            if not isinstance(key, str):
+                raise Exception('found non-string key at {}'.format('.'.join(map(str, path))))
             if key.endswith('__test'):
                 keys.append(key)
         for key in keys:

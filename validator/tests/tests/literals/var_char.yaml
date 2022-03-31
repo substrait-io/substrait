@@ -1,0 +1,76 @@
+name: varchar
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - varchar: { length: 3, nullability: NULLABILITY_REQUIRED }
+            - varchar: { length: 6, nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - var_char:
+                value: "foo"
+                length: 3
+              nullable: false
+            - var_char:
+                value: "hello"
+                length: 6
+              nullable: true
+          - fields:
+            - var_char:
+                value: ""
+                length: 3
+              nullable: false
+            - var_char:
+                value: "world!"
+                length: 6
+              nullable: true
+          - fields:
+            - var_char:
+                value: "too long"
+                value__test: [ diag: { level: e, code: 6002, msg: "*longer than specified length*" } ]
+                length: 3
+              nullable: false
+            - var_char:
+                value: "!@#$%^"
+                length: 6
+              nullable: true
+          - fields:
+            - "null":
+                varchar: { length: 3, nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                varchar: { length: 6, nullability: NULLABILITY_NULLABLE }
+          - fields:
+            - "null":
+                varchar:
+                  length: -2147483648 # i32 minimum
+                  length__test: [ diag: { level: e, code: 2, msg: "*parameters cannot be negative*" } ]
+                  nullability: NULLABILITY_NULLABLE
+            - "null":
+                varchar:
+                  length: 0 # size 0 not allowed
+                  nullability: NULLABILITY_NULLABLE
+                  __test: [ diag: { level: e, code: 4002, msg: "*out of range*" } ]
+          - fields:
+            - "null":
+                varchar:
+                  length: 1 # minimum size
+                  nullability: NULLABILITY_NULLABLE
+            - "null":
+                varchar:
+                  length: 2147483647 # maximum size
+                  nullability: NULLABILITY_NULLABLE
+            __test:
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+        __test: [ type: "NSTRUCT<x: VARCHAR<3>, y: VARCHAR?<6>>" ]

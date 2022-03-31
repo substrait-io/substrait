@@ -1,0 +1,30 @@
+name: boolean
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - bool: { nullability: NULLABILITY_REQUIRED }
+            - bool: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - { boolean: false, nullable: false }
+            - { boolean: false, nullable: true }
+          - fields:
+            - { boolean: true, nullable: false }
+            - { boolean: true, nullable: true }
+          - fields:
+            - "null":
+                bool: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                bool: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: boolean, y: boolean?>" ]

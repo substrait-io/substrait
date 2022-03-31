@@ -1,0 +1,41 @@
+name: i8
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - i8: { nullability: NULLABILITY_REQUIRED }
+            - i8: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - i8: 0
+              nullable: false
+            - i8: 0
+              nullable: true
+          - fields:
+            - i8: -128
+              nullable: false
+            - i8: -129
+              i8__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - i8: 128
+              i8__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - i8: 127
+              nullable: true
+          - fields:
+            - "null":
+                i8: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                i8: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: i8, y: i8?>" ]

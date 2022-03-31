@@ -1,0 +1,71 @@
+name: fixed_binary
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - fixed_binary: { length: 3, nullability: NULLABILITY_REQUIRED }
+            - fixed_binary: { length: 5, nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - fixed_binary: Zm9v # base64("foo")
+              nullable: false
+            - fixed_binary: aGVsbG8= # base64("hello")
+              nullable: true
+          - fields:
+            - fixed_binary: YmFy # base64("bar")
+              nullable: false
+            - fixed_binary: d29ybGQ= # base64("world")
+              nullable: true
+          - fields:
+            - fixed_binary: d3JvbmcgbGVuZ3Ro # base64("wrong length")
+              nullable: false
+            - fixed_binary: AAECAwQ= # base64(00 01 02 03 04)
+              nullable: true
+            __test: [ diag: { level: e, code: 4005, msg: "*12 vs. 3*"} ]
+          - fields:
+            - "null":
+                fixed_binary: { length: 3, nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                fixed_binary: { length: 5, nullability: NULLABILITY_NULLABLE }
+          - fields:
+            - "null":
+                fixed_binary:
+                  length: -2147483648 # i32 minimum
+                  length__test: [ diag: { level: e, code: 2, msg: "*parameters cannot be negative*" } ]
+                  nullability: NULLABILITY_NULLABLE
+            - "null":
+                fixed_binary:
+                  length: 0 # size 0 not allowed
+                  nullability: NULLABILITY_NULLABLE
+                  __test: [ diag: { level: e, code: 4002, msg: "*out of range*" } ]
+          - fields:
+            - "null":
+                fixed_binary:
+                  length: 1 # minimum size
+                  nullability: NULLABILITY_NULLABLE
+            - "null":
+                fixed_binary:
+                  length: 2147483647 # maximum size
+                  nullability: NULLABILITY_NULLABLE
+            __test:
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+          - fields:
+            - fixed_binary: ""
+              fixed_binary__test: [ diag: { level: e, code: 4002, msg: "*out of range*" } ]
+              nullable: false
+            - fixed_binary: AA== # base64(00)
+              nullable: true
+            __test: [ diag: { level: e, code: 4005 } ]
+        __test: [ type: "NSTRUCT<x: FIXEDBINARY<3>, y: FIXEDBINARY?<5>>" ]

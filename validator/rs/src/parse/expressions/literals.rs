@@ -63,10 +63,20 @@ pub struct Literal {
 }
 
 /// Converts a value in microseconds since the epoch to a chrono::NaiveDateTime.
-fn to_date_time(micros: i64) -> chrono::NaiveDateTime {
-    let secs = micros / 1_000_000;
-    let nsecs = ((micros % 1_000_000) * 1000) as u32;
-    chrono::NaiveDateTime::from_timestamp(secs, nsecs)
+fn to_date_time(micros: i64) -> diagnostic::Result<chrono::NaiveDateTime> {
+    let secs = micros.div_euclid(1_000_000);
+    let nsecs = ((micros.rem_euclid(1_000_000)) * 1000) as u32;
+    chrono::NaiveDateTime::from_timestamp_opt(secs, nsecs).ok_or(ecause!(
+        ExpressionIllegalLiteralValue,
+        "timestamp out of range"
+    ))
+}
+
+/// Converts a value in microseconds since the epoch to a string.
+fn to_date_time_str(micros: i64, fmt: &str) -> String {
+    to_date_time(micros)
+        .map(|x| x.format(fmt).to_string())
+        .unwrap_or_else(|_| String::from("?"))
 }
 
 impl Literal {
@@ -144,28 +154,27 @@ impl Describe for Literal {
                 data_type::Class::Simple(data_type::Simple::I32) => write!(f, "{i}i32"),
                 data_type::Class::Simple(data_type::Simple::I64) => write!(f, "{i}i64"),
                 data_type::Class::Simple(data_type::Simple::Timestamp) => {
-                    write!(f, "{}", to_date_time(*i).format("%Y-%m-%d %H:%M:%S"))
+                    write!(f, "{}", to_date_time_str(*i, "%Y-%m-%d %H:%M:%S%.6f"))
                 }
                 data_type::Class::Simple(data_type::Simple::TimestampTz) => {
-                    write!(f, "{} UTC", to_date_time(*i).format("%Y-%m-%d %H:%M:%S"))
+                    write!(f, "{} UTC", to_date_time_str(*i, "%Y-%m-%d %H:%M:%S%.6f"))
                 }
                 data_type::Class::Simple(data_type::Simple::Date) => {
                     write!(
                         f,
                         "{}",
-                        to_date_time(*i * 24 * 60 * 60 * 1_000_000).format("%Y-%m-%d")
+                        to_date_time_str(i.saturating_mul(24 * 60 * 60 * 1_000_000), "%Y-%m-%d")
                     )
                 }
                 data_type::Class::Simple(data_type::Simple::Time) => {
-                    write!(f, "{}", to_date_time(*i).format("%H:%M:%S"))
+                    write!(f, "{}", to_date_time_str(*i, "%H:%M:%S%.6f"))
                 }
                 _ => write!(f, "{i}"),
             },
-            LiteralValue::Float(v) => match self.data_type.class() {
-                data_type::Class::Simple(data_type::Simple::Fp32) => write!(f, "{v}f32"),
-                data_type::Class::Simple(data_type::Simple::Fp64) => write!(f, "{v}f64"),
-                _ => write!(f, "{v}"),
-            },
+            LiteralValue::Float(v) => {
+                let max = std::cmp::min(std::cmp::max(3, limit.chars()), 10);
+                write!(f, "{:3.1$}", float_pretty_print::PrettyPrintFloat(*v), max)
+            }
             LiteralValue::Data16(d) => match self.data_type.class() {
                 data_type::Class::Compound(data_type::Compound::Decimal) => {
                     if let Some(scale) = self.data_type.int_parameter(1) {
@@ -174,7 +183,19 @@ impl Describe for Literal {
                         }
                         let d = d.abs() as u128;
                         let s = 10u128.pow(scale as u32);
-                        write!(f, "{0}.{1:02$}", d / s, d % s, scale as usize)
+                        if self
+                            .data_type
+                            .int_parameter(0)
+                            .map(|precision| scale < precision)
+                            .unwrap_or(true)
+                        {
+                            write!(f, "{0}", d.div_euclid(s))?;
+                        }
+                        write!(f, ".")?;
+                        if scale > 0 {
+                            write!(f, "{0:01$}", d.rem_euclid(s), scale as usize)?;
+                        }
+                        Ok(())
                     } else {
                         string_util::describe_binary(f, &d.to_le_bytes(), limit)
                     }
@@ -376,7 +397,7 @@ fn parse_timestamp(
     y: &mut context::Context,
     nullable: bool,
 ) -> diagnostic::Result<Literal> {
-    let dt = to_date_time(*x);
+    let dt = to_date_time(*x)?;
     if dt < chrono::NaiveDate::from_ymd(1000, 1, 1).and_hms(0, 0, 0)
         || dt >= chrono::NaiveDate::from_ymd(10000, 1, 1).and_hms(0, 0, 0)
     {
@@ -400,7 +421,7 @@ fn parse_timestamp_tz(
     y: &mut context::Context,
     nullable: bool,
 ) -> diagnostic::Result<Literal> {
-    let dt = to_date_time(*x);
+    let dt = to_date_time(*x)?;
     if dt < chrono::NaiveDate::from_ymd(1000, 1, 1).and_hms(0, 0, 0)
         || dt >= chrono::NaiveDate::from_ymd(10000, 1, 1).and_hms(0, 0, 0)
     {
@@ -420,7 +441,7 @@ fn parse_timestamp_tz(
 
 /// Parses a date literal.
 fn parse_date(x: &i32, y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
-    let dt = to_date_time((*x as i64) * 24 * 60 * 60 * 1_000_000);
+    let dt = to_date_time((*x as i64).saturating_mul(24 * 60 * 60 * 1_000_000))?;
     if dt < chrono::NaiveDate::from_ymd(1000, 1, 1).and_hms(0, 0, 0)
         || dt >= chrono::NaiveDate::from_ymd(10000, 1, 1).and_hms(0, 0, 0)
     {
@@ -478,7 +499,7 @@ fn parse_interval_year_to_month(
             Ok(())
         }
     });
-    let months = x.months + 12 * x.years;
+    let months = x.months.saturating_add(x.years.saturating_mul(12));
     if months < -120000 || months > 120000 {
         diagnostic!(
             y,
@@ -526,16 +547,19 @@ fn parse_interval_day_to_second(
 
 /// Parses a UUID literal.
 fn parse_uuid(x: &[u8], _y: &mut context::Context, nullable: bool) -> diagnostic::Result<Literal> {
-    let uuid = if let Ok(x) = x.try_into() {
-        i128::from_ne_bytes(x)
+    if let Ok(x) = x.try_into() {
+        Literal::new_simple(
+            LiteralValue::Data16(i128::from_ne_bytes(x)),
+            data_type::Simple::Uuid,
+            nullable,
+        )
     } else {
-        0
-    };
-    Literal::new_simple(
-        LiteralValue::Data16(uuid),
-        data_type::Simple::Uuid,
-        nullable,
-    )
+        Err(cause!(
+            ExpressionIllegalLiteralValue,
+            "uuid literals must be 16 bytes in length, got {}",
+            x.len()
+        ))
+    }
 }
 
 /// Parses a fixed-length string literal.
@@ -609,33 +633,43 @@ fn parse_decimal(
         }
     });
     proto_primitive_field!(x, y, scale);
-    proto_primitive_field!(x, y, value, |x, _| {
-        if x.len() != 16 {
+    let val = proto_primitive_field!(x, y, value, |x, _| {
+        if let Ok(x) = (&x[..]).try_into() {
+            Ok(i128::from_le_bytes(x))
+        } else {
             Err(cause!(
                 ExpressionIllegalLiteralValue,
-                "decimal literal value must be 16 bytes in length"
+                "decimal literals must be 16 bytes in length, got {}",
+                x.len()
             ))
-        } else {
-            Ok(())
         }
-    });
-    let mut val = 0i128;
-    for byte in x.value.iter() {
-        val <<= 8;
-        val |= *byte as i128;
-    }
+    })
+    .1;
     let precision = u64::try_from(x.precision).unwrap_or_default();
     let scale = u64::try_from(x.scale).unwrap_or_default();
-    Literal::new_compound(
-        LiteralValue::Data16(val),
-        data_type::Compound::Decimal,
-        nullable,
-        vec![precision, scale],
-    )
+
+    if let Some(val) = val {
+        let range = 10i128.saturating_pow(precision.try_into().unwrap_or_default());
+        if val >= range || val <= -range {
+            Err(cause!(
+                ExpressionIllegalLiteralValue,
+                "decimal value is out of range for specificied precision and scale"
+            ))
+        } else {
+            Literal::new_compound(
+                LiteralValue::Data16(val),
+                data_type::Compound::Decimal,
+                nullable,
+                vec![precision, scale],
+            )
+        }
+    } else {
+        Ok(Literal::default())
+    }
 }
 
 /// Parses a struct literal.
-pub fn parse_struct(
+fn parse_struct_int(
     x: &substrait::expression::literal::Struct,
     y: &mut context::Context,
     nullable: bool,
@@ -655,6 +689,17 @@ pub fn parse_struct(
         nullable,
         types,
     )
+}
+
+/// Parses a struct literal.
+pub fn parse_struct(
+    x: &substrait::expression::literal::Struct,
+    y: &mut context::Context,
+    nullable: bool,
+) -> diagnostic::Result<Literal> {
+    let literal = parse_struct_int(x, y, nullable)?;
+    y.set_data_type(literal.data_type().clone());
+    Ok(literal)
 }
 
 /// Parses a list literal.
@@ -779,10 +824,18 @@ fn parse_null(
 ) -> diagnostic::Result<Literal> {
     // FIXME: same note as for EmptyList.
     types::parse_type(x, y)?;
-    Ok(Literal {
-        value: LiteralValue::Null,
-        data_type: y.data_type(),
-    })
+    let data_type = y.data_type();
+    if !data_type.nullable() && !data_type.is_unresolved() {
+        Err(cause!(
+            TypeMismatch,
+            "type of null literal must be nullable"
+        ))
+    } else {
+        Ok(Literal {
+            value: LiteralValue::Null,
+            data_type: y.data_type(),
+        })
+    }
 }
 
 /// Parse a literal value. Returns the parsed literal.
@@ -813,7 +866,7 @@ fn parse_literal_type(
         LiteralType::VarChar(x) => parse_var_char(x, y, nullable),
         LiteralType::FixedBinary(x) => parse_fixed_binary(x, y, nullable),
         LiteralType::Decimal(x) => parse_decimal(x, y, nullable),
-        LiteralType::Struct(x) => parse_struct(x, y, nullable),
+        LiteralType::Struct(x) => parse_struct_int(x, y, nullable),
         LiteralType::List(x) => parse_list(x, y, nullable),
         LiteralType::Map(x) => parse_map(x, y, nullable),
         LiteralType::EmptyList(x) => parse_empty_list(x, y, nullable),

@@ -382,7 +382,7 @@ pub fn parse_list(x: &substrait::r#type::List, y: &mut context::Context) -> diag
     // Convert to internal type object.
     let data_type = if let (Some(nullable), Some(variation)) = (nullable, variation) {
         data_type::DataType::new(
-            data_type::Class::Compound(data_type::Compound::Struct),
+            data_type::Class::Compound(data_type::Compound::List),
             nullable,
             variation,
             vec![element_type.into()],
@@ -431,7 +431,7 @@ pub fn parse_map(x: &substrait::r#type::Map, y: &mut context::Context) -> diagno
     // Convert to internal type object.
     let data_type = if let (Some(nullable), Some(variation)) = (nullable, variation) {
         data_type::DataType::new(
-            data_type::Class::Compound(data_type::Compound::Struct),
+            data_type::Class::Compound(data_type::Compound::Map),
             nullable,
             variation,
             vec![key_type.into(), value_type.into()],
@@ -1095,7 +1095,7 @@ fn assert_equal_internal(
                             ),
                         )
                     }
-                    (base, other) => {
+                    (other, base) => {
                         if other != base {
                             diagnostic!(
                                 context,

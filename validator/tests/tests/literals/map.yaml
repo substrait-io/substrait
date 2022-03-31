@@ -1,0 +1,77 @@
+name: map
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - map:
+                nullability: NULLABILITY_REQUIRED
+                key: { string: { nullability: NULLABILITY_NULLABLE } }
+                value: { bool: { nullability: NULLABILITY_REQUIRED } }
+            - map:
+                nullability: NULLABILITY_NULLABLE
+                key: { bool: { nullability: NULLABILITY_REQUIRED } }
+                value: { string: { nullability: NULLABILITY_NULLABLE } }
+        virtualTable:
+          values:
+          - fields:
+            - map:
+                key_values:
+                - key:
+                    string: hello
+                    nullable: true
+                  value:
+                    boolean: false
+                    nullable: false
+                - key:
+                    string: world
+                    nullable: true
+                  value:
+                    boolean: true
+                    nullable: false
+              nullable: false
+            - map:
+                key_values:
+                - key:
+                    boolean: false
+                    nullable: false
+                  value:
+                    string: hello
+                    nullable: true
+                - key:
+                    boolean: true
+                    nullable: false
+                  value:
+                    string: world
+                    nullable: true
+              nullable: true
+          - fields:
+            - map:
+                key_values: []
+                __test: [ diag: { level: e, code: 1002, msg: "*missing required protobuf field: key_values*" } ]
+              nullable: false
+            - empty_map:
+                nullability: NULLABILITY_NULLABLE
+                key: { bool: { nullability: NULLABILITY_REQUIRED } }
+                value: { string: { nullability: NULLABILITY_NULLABLE } }
+              nullable: true
+          - fields:
+            - "null":
+                map:
+                  nullability: NULLABILITY_REQUIRED
+                  key: { string: { nullability: NULLABILITY_NULLABLE } }
+                  value: { bool: { nullability: NULLABILITY_REQUIRED } }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                map:
+                  nullability: NULLABILITY_NULLABLE
+                  key: { bool: { nullability: NULLABILITY_REQUIRED } }
+                  value: { string: { nullability: NULLABILITY_NULLABLE } }
+        __test: [ type: "NSTRUCT<x: MAP<string?, boolean>, y: MAP?<boolean, string?>>" ]

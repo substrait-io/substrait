@@ -1,0 +1,73 @@
+name: interval_day
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - interval_day: { nullability: NULLABILITY_REQUIRED }
+            - interval_day: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - interval_day_to_second:
+                days: 0
+                seconds: 0
+              nullable: false
+            - interval_day_to_second:
+                days: 123
+                seconds: 456
+              nullable: true
+          - fields:
+            - interval_day_to_second:
+                days: 3650000
+                seconds: 0
+              nullable: false
+            - interval_day_to_second:
+                days: 3650001
+                days__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+                seconds: 0
+              nullable: true
+          - fields:
+            - interval_day_to_second:
+                days: -3650000
+                seconds: 0
+              nullable: false
+            - interval_day_to_second:
+                days: -3650001
+                days__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+                seconds: 0
+              nullable: true
+          - fields:
+            - interval_day_to_second:
+                days: -2147483648
+                days__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+                seconds: 0
+              nullable: false
+            - interval_day_to_second:
+                days: 2147483647
+                days__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+                seconds: 0
+              nullable: true
+          - fields:
+            - interval_day_to_second:
+                days: 0
+                seconds: -2147483648
+              nullable: false
+            - interval_day_to_second:
+                days: 0
+                seconds: 2147483647
+              nullable: true
+          - fields:
+            - "null":
+                interval_day: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                interval_day: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: interval_day, y: interval_day?>" ]

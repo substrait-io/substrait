@@ -70,6 +70,9 @@ curl = { version = "0.4", optional = true }
 # in plans.
 chrono = "0.4"
 
+# Used for pretty-printing floating point literal values.
+float-pretty-print = "0.1"
+
 # Used by the HTML exporter.
 base64 = "0.13"
 percent-encoding = "2.1"

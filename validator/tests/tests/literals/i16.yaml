@@ -1,0 +1,41 @@
+name: i16
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - i16: { nullability: NULLABILITY_REQUIRED }
+            - i16: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - i16: 0
+              nullable: false
+            - i16: 0
+              nullable: true
+          - fields:
+            - i16: -32768
+              nullable: false
+            - i16: -32769
+              i16__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - i16: 32768
+              i16__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - i16: 32767
+              nullable: true
+          - fields:
+            - "null":
+                i16: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                i16: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: i16, y: i16?>" ]

@@ -49,7 +49,7 @@ impl Describe for DataType {
         }
         write!(f, "{}", name)?;
         let (_, limit) = limit.split(name.len());
-        if !self.parameters.is_empty() {
+        if self.class.has_parameters() {
             write!(f, "<")?;
             string_util::describe_sequence(
                 f,
@@ -459,6 +459,12 @@ pub trait ParameterInfo {
 
     /// Returns the logical name of the given parameter.
     fn parameter_name(&self, index: usize) -> Option<String>;
+
+    /// Whether this type supports parameters. This is used to determine
+    /// whether to print <> when the parameter list is empty. This is used to
+    /// distinguish a concrete empty struct from a struct with unspecified
+    /// fields.
+    fn has_parameters(&self) -> bool;
 }
 
 /// Type class.
@@ -521,6 +527,14 @@ impl ParameterInfo for Class {
             compound.parameter_name(index)
         } else {
             None
+        }
+    }
+
+    fn has_parameters(&self) -> bool {
+        if let Class::Compound(compound) = self {
+            compound.has_parameters()
+        } else {
+            false
         }
     }
 }
@@ -590,10 +604,10 @@ impl ParameterInfo for Compound {
                     // the limit.
                     const MIN_LENGTH: u64 = 1;
                     const MAX_LENGTH: u64 = 2147483647;
-                    if length < MIN_LENGTH && length > MAX_LENGTH {
+                    if !(MIN_LENGTH..=MAX_LENGTH).contains(&length) {
                         return Err(cause!(
                             TypeMismatchedParameters,
-                            "{self} length {length} is out of range 1..{MAX_LENGTH}"
+                            "{self} length {length} is out of range {MIN_LENGTH}..{MAX_LENGTH}"
                         ));
                     }
                 } else {
@@ -611,11 +625,12 @@ impl ParameterInfo for Compound {
                     ));
                 }
                 if let Parameter::Unsigned(precision) = params[0] {
+                    const MIN_PRECISION: u64 = 1;
                     const MAX_PRECISION: u64 = 38;
-                    if precision > MAX_PRECISION {
+                    if !(MIN_PRECISION..=MAX_PRECISION).contains(&precision) {
                         return Err(cause!(
                             TypeMismatchedParameters,
-                            "{self} precision {precision} is out of range 0..{MAX_PRECISION}"
+                            "{self} precision {precision} is out of range {MIN_PRECISION}..{MAX_PRECISION}"
                         ));
                     }
                     if let Parameter::Unsigned(scale) = params[1] {
@@ -718,6 +733,10 @@ impl ParameterInfo for Compound {
             (Compound::Map, 1) => Some(String::from("value")),
             (_, _) => None,
         }
+    }
+
+    fn has_parameters(&self) -> bool {
+        true
     }
 }
 

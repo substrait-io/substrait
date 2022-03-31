@@ -1,0 +1,156 @@
+name: decimal
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - decimal: { scale: 2, precision: 10, nullability: NULLABILITY_REQUIRED }
+            - decimal: { scale: 5, precision: 5, nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - decimal:
+                value: OTAAAAAAAAAAAAAAAAAAAA== # 123.45
+                scale: 2
+                precision: 10
+              nullable: false
+            - decimal:
+                value: OTAAAAAAAAAAAAAAAAAAAA== # .12345
+                scale: 5
+                precision: 5
+              nullable: true
+          - fields:
+            - decimal:
+                value: /+MLVAIAAAAAAAAAAAAAAA== # 99999999.99
+                scale: 2
+                precision: 10
+              nullable: false
+            - decimal:
+                value: n4YBAAAAAAAAAAAAAAAAAA== # .99999
+                scale: 5
+                precision: 5
+              nullable: true
+          - fields:
+            - decimal:
+                value: AOQLVAIAAAAAAAAAAAAAAA== # 100000000.00
+                scale: 2
+                precision: 10
+                __test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - decimal:
+                value: oIYBAAAAAAAAAAAAAAAAAA== # 1.00000
+                scale: 5
+                precision: 5
+                __test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - decimal:
+                value: ARz0q/3//////////////w== # -99999999.99
+                scale: 2
+                precision: 10
+              nullable: false
+            - decimal:
+                value: YXn+/////////////////w== # -.99999
+                scale: 5
+                precision: 5
+              nullable: true
+          - fields:
+            - decimal:
+                value: ABz0q/3//////////////w== # -100000000.00
+                scale: 2
+                precision: 10
+                __test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - decimal:
+                value: YHn+/////////////////w== # -1.00000
+                scale: 5
+                precision: 5
+                __test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - decimal:
+                value: /////z8iigl6xIZaqEw7Sw== # 99999999999999999999999999999999999999 (max)
+                scale: 0
+                precision: 38
+              nullable: false
+            - decimal:
+                value: AQAAAMDddfaFO3mlV7PEtA== # -99999999999999999999999999999999999999 (min)
+                scale: 0
+                precision: 38
+              nullable: true
+            __test:
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+          - fields:
+            - decimal:
+                value: AAAAAAAAAAAAAAAAAAAA # 15 bytes
+                value__test: [ diag: { level: e, code: 6002, msg: "*16 bytes*15*" } ]
+                scale: 2
+                precision: 10
+              nullable: false
+            - decimal:
+                value: AAAAAAAAAAAAAAAAAAAAAAA= # 17 bytes
+                value__test: [ diag: { level: e, code: 6002, msg: "*16 bytes*17*" } ]
+                scale: 5
+                precision: 5
+              nullable: true
+          - fields:
+            - "null":
+                decimal: { scale: 2, precision: 10, nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                decimal: { scale: 5, precision: 5, nullability: NULLABILITY_NULLABLE }
+          - fields:
+            - "null":
+                decimal:
+                  scale: -2147483648 # i32 minimum
+                  scale__test: [ diag: { level: e, code: 2, msg: "*parameters cannot be negative*" } ]
+                  precision: -2147483648 # i32 minimum
+                  precision__test: [ diag: { level: e, code: 2, msg: "*parameters cannot be negative*" } ]
+                  nullability: NULLABILITY_NULLABLE
+            - "null":
+                decimal:
+                  scale: 0
+                  precision: 0 # 0 digits doesn't make sense
+                  nullability: NULLABILITY_NULLABLE
+                  __test: [ diag: { level: e, code: 4002, msg: "*out of range*" } ]
+          - fields:
+            - "null":
+                decimal:
+                  scale: 0
+                  precision: 1 # minimum precision
+                  nullability: NULLABILITY_NULLABLE
+            - "null":
+                decimal:
+                  scale: 0
+                  precision: 38 # maximum precision
+                  nullability: NULLABILITY_NULLABLE
+            __test:
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+          - fields:
+            - "null":
+                decimal:
+                  scale: 0
+                  precision: 39 # beyond maximum precision
+                  nullability: NULLABILITY_NULLABLE
+                  __test: [ diag: { level: e, code: 4002, msg: "*out of range*" } ]
+            - "null":
+                decimal:
+                  scale: 6 # scale is not allowed to be greater than precision
+                  precision: 5
+                  nullability: NULLABILITY_NULLABLE
+                  __test: [ diag: { level: e, code: 4002, msg: "*out of range 0..5*" } ]
+        __test: [ type: "NSTRUCT<x: DECIMAL<10, 2>, y: DECIMAL?<5, 5>>" ]

@@ -1,0 +1,34 @@
+name: string
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - string: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - string: "foo"
+              nullable: false
+            - string: "bar"
+              nullable: true
+          - fields:
+            - string: ""
+              nullable: false
+            - string: "!@#$%^&*()_+<>"
+              nullable: true
+          - fields:
+            - "null":
+                string: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                string: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: string, y: string?>" ]

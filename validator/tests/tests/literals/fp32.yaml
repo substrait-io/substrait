@@ -1,0 +1,34 @@
+name: fp32
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - fp32: { nullability: NULLABILITY_REQUIRED }
+            - fp32: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - fp32: 0.0
+              nullable: false
+            - fp32: 3.1415926535897932384626433832795028841971
+              nullable: true
+          - fields:
+            - fp32: -100000000000000000000000.0
+              nullable: false
+            - fp32: 100000000000000000000000.0
+              nullable: true
+          - fields:
+            - "null":
+                fp32: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                fp32: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: fp32, y: fp32?>" ]

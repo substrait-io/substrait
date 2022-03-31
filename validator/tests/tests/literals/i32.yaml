@@ -1,0 +1,34 @@
+name: i32
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - i32: { nullability: NULLABILITY_REQUIRED }
+            - i32: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - i32: 0
+              nullable: false
+            - i32: 0
+              nullable: true
+          - fields:
+            - i32: -2147483648
+              nullable: false
+            - i32: 2147483647
+              nullable: true
+          - fields:
+            - "null":
+                i32: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                i32: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: i32, y: i32?>" ]

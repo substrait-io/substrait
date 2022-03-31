@@ -1,0 +1,48 @@
+name: timestamp
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - timestamp: { nullability: NULLABILITY_REQUIRED }
+            - timestamp: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - timestamp: 0 # 1970 epoch
+              nullable: false
+            - timestamp: 1575158400000000 # 2019-12-00 00:00:00.000000
+              nullable: true
+          - fields:
+            - timestamp: -30610224000000000 # 1000-01-01 00:00:00.000000
+              nullable: false
+            - timestamp: -30610224000000001 # 999-12-31 23:59:59.999999
+              timestamp__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - timestamp: 253402300800000000 # 10000-01-01 00:00:00.000000
+              timestamp__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - timestamp: 253402300799999999 # 9999-12-31 23:59:59.999999
+              nullable: true
+          - fields:
+            - timestamp: -9223372036854775808 # i64 min (not representable with chrono::NaiveDate; don't panic!)
+              timestamp__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - timestamp: 9223372036854775807 # i64 max (not representable with chrono::NaiveDate; don't panic!)
+              timestamp__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - "null":
+                timestamp: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                timestamp: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: timestamp, y: timestamp?>" ]

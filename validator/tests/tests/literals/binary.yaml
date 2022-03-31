@@ -1,0 +1,34 @@
+name: binary
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - binary: { nullability: NULLABILITY_REQUIRED }
+            - binary: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - binary: Zm9v # base64(foo)
+              nullable: false
+            - binary: YmFy # base64(bar)
+              nullable: true
+          - fields:
+            - binary: ""
+              nullable: false
+            - binary: BAgVFiNC # base64(04 08 15 16 23 42)
+              nullable: true
+          - fields:
+            - "null":
+                binary: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                binary: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: binary, y: binary?>" ]

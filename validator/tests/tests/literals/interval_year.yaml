@@ -1,0 +1,101 @@
+name: interval_year
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - interval_year: { nullability: NULLABILITY_REQUIRED }
+            - interval_year: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - interval_year_to_month:
+                years: 0
+                months: 0
+              nullable: false
+            - interval_year_to_month:
+                years: 123
+                months: 456
+              nullable: true
+          - fields:
+            - interval_year_to_month:
+                years: 10000
+                months: -120000
+              nullable: false
+            - interval_year_to_month:
+                years: 10001
+                years__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+                months: -120001
+                months__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - interval_year_to_month:
+                years: -10000
+                months: 120000
+              nullable: false
+            - interval_year_to_month:
+                years: -10001
+                years__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+                months: 120001
+                months__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - interval_year_to_month:
+                years: 5000
+                months: 60000
+              nullable: false
+            - interval_year_to_month:
+                years: 5000
+                months: 60001
+                __test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - interval_year_to_month:
+                years: -5000
+                months: -60000
+              nullable: false
+            - interval_year_to_month:
+                years: -5001
+                months: -60000
+                __test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - interval_year_to_month:
+                years: -2147483648
+                years__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+                months: 0
+                __test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - interval_year_to_month:
+                years: 2147483647
+                years__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+                months: 0
+                __test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - interval_year_to_month:
+                years: 0
+                months: -2147483648
+                months__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+                __test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - interval_year_to_month:
+                years: 0
+                months: 2147483647
+                months__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+                __test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - "null":
+                interval_year: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                interval_year: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: interval_year, y: interval_year?>" ]

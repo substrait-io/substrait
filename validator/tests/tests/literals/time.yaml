@@ -1,0 +1,48 @@
+name: time
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - time: { nullability: NULLABILITY_REQUIRED }
+            - time: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - time: 61200000000 # 17:00:00.000000
+              nullable: false
+            - time: 45296789876 # 12:34:56.789876
+              nullable: true
+          - fields:
+            - time: 0 # 00:00:00.000000 (lowest value)
+              nullable: false
+            - time: -1 # before start of day
+              time__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - time: 86400000000 # after end of day (leap seconds not supported)
+              time__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - time: 86399999999 # 23:59:59.999999 (highest value)
+              nullable: true
+          - fields:
+            - time: -9223372036854775808 # i64 min
+              time__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - time: 9223372036854775807 # i64 max
+              time__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - "null":
+                time: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                time: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: time, y: time?>" ]

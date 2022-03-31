@@ -1,0 +1,36 @@
+name: uuid
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - uuid: { nullability: NULLABILITY_REQUIRED }
+            - uuid: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - uuid: K2lgaYZgQDqtouub8GqT+g== # base64(2b696069-8660-403a-ada2-eb9bf06a93fa)
+              nullable: false
+            - uuid: AAAAAAAAAAAAAAAAAAAAAA== # base64(00000000-0000-0000-0000-000000000000)
+              nullable: true
+          - fields:
+            - uuid: AAAAAAAAAAAAAAAAAAAA # 15 bytes
+              uuid__test: [ diag: { level: e, code: 6002, msg: "*16 bytes*15*" } ]
+              nullable: false
+            - uuid: AAAAAAAAAAAAAAAAAAAAAAA= # 17 bytes
+              uuid__test: [ diag: { level: e, code: 6002, msg: "*16 bytes*17*" } ]
+              nullable: true
+          - fields:
+            - "null":
+                uuid: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                uuid: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: uuid, y: uuid?>" ]

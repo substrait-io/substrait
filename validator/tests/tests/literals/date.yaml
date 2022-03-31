@@ -1,0 +1,48 @@
+name: date
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - date: { nullability: NULLABILITY_REQUIRED }
+            - date: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - date: 0 # 1970 epoch
+              nullable: false
+            - date: 18231 # 2019-12-00 00:00:00.000000
+              nullable: true
+          - fields:
+            - date: -354285 # 1000-01-01
+              nullable: false
+            - date: -354286 # 999-12-31
+              date__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - date: 2932897 # 10000-01-01
+              date__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - date: 2932896 # 9999-12-31
+              nullable: true
+          - fields:
+            - date: -2147483648 # i32 min (not representable with chrono::NaiveDate; don't panic!)
+              date__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: false
+            - date: 2147483647 # i32 max (not representable with chrono::NaiveDate; don't panic!)
+              date__test: [ diag: { level: e, code: 6002, msg: "*out of range*" } ]
+              nullable: true
+          - fields:
+            - "null":
+                date: { nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                date: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: date, y: date?>" ]

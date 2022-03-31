@@ -1,0 +1,71 @@
+name: fixed_char
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - fixed_char: { length: 3, nullability: NULLABILITY_REQUIRED }
+            - fixed_char: { length: 5, nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - fixed_char: "foo"
+              nullable: false
+            - fixed_char: "hello"
+              nullable: true
+          - fields:
+            - fixed_char: "bar"
+              nullable: false
+            - fixed_char: "world"
+              nullable: true
+          - fields:
+            - fixed_char: "wrong length"
+              nullable: false
+            - fixed_char: "!@#$%"
+              nullable: true
+            __test: [ diag: { level: e, code: 4005, msg: "*12 vs. 3*"} ]
+          - fields:
+            - "null":
+                fixed_char: { length: 3, nullability: NULLABILITY_REQUIRED }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                fixed_char: { length: 5, nullability: NULLABILITY_NULLABLE }
+          - fields:
+            - "null":
+                fixed_char:
+                  length: -2147483648 # i32 minimum
+                  length__test: [ diag: { level: e, code: 2, msg: "*parameters cannot be negative*" } ]
+                  nullability: NULLABILITY_NULLABLE
+            - "null":
+                fixed_char:
+                  length: 0 # size 0 not allowed
+                  nullability: NULLABILITY_NULLABLE
+                  __test: [ diag: { level: e, code: 4002, msg: "*out of range*" } ]
+          - fields:
+            - "null":
+                fixed_char:
+                  length: 1 # minimum size
+                  nullability: NULLABILITY_NULLABLE
+            - "null":
+                fixed_char:
+                  length: 2147483647 # maximum size
+                  nullability: NULLABILITY_NULLABLE
+            __test:
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4005 }
+          - fields:
+            - fixed_char: ""
+              fixed_char__test: [ diag: { level: e, code: 4002, msg: "*out of range*" } ]
+              nullable: false
+            - fixed_char: " "
+              nullable: true
+            __test: [ diag: { level: e, code: 4005 } ]
+        __test: [ type: "NSTRUCT<x: FIXEDCHAR<3>, y: FIXEDCHAR?<5>>" ]

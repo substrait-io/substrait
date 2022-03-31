@@ -1,0 +1,40 @@
+name: struct
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          direct: {}
+        baseSchema:
+          names: [x, a, b, y]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - bool: { nullability: NULLABILITY_REQUIRED }
+                - bool: { nullability: NULLABILITY_NULLABLE }
+            - struct: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - struct:
+                fields:
+                - { boolean: false, nullable: false }
+                - { boolean: false, nullable: true }
+              nullable: false
+            - struct: {}
+              nullable: true
+          - fields:
+            - "null":
+                struct:
+                  nullability: NULLABILITY_REQUIRED
+                  types:
+                  - bool: { nullability: NULLABILITY_REQUIRED }
+                  - bool: { nullability: NULLABILITY_NULLABLE }
+                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+            - "null":
+                struct: { nullability: NULLABILITY_NULLABLE }
+        __test: [ type: "NSTRUCT<x: NSTRUCT<a: boolean, b: boolean?>, y: NSTRUCT?<>>" ]
