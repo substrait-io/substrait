@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
 
-set -euxo pipefail
+set -euo pipefail
 
 curdir="$PWD"
 worktree="$(mktemp -d)"
@@ -20,7 +20,9 @@ trap cleanup EXIT ERR
 
 cd "$worktree" || exit 1
 
-CI=false npx --yes \
+unset CI
+
+npx --yes \
   -p semantic-release \
   -p "@semantic-release/commit-analyzer" \
   -p "@semantic-release/release-notes-generator" \
