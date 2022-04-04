@@ -1,5 +1,5 @@
 version: v1
-name: buf.build/substrait-io/substrait
+name: buf.build/substrait/substrait
 lint:
   use:
     - DEFAULT
