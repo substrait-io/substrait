@@ -18,4 +18,5 @@ npx --yes \
   --generate-notes "@semantic-release/release-notes-generator" \
   --verify-conditions "@semantic-release/changelog,@semantic-release/exec,@semantic-release/git" \
   --prepare "@semantic-release/changelog,@semantic-release/exec" \
+  --branches "$GITHUB_REF" \
   --repository-url "file://$PWD"
