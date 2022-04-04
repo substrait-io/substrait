@@ -67,3 +67,13 @@ jobs:
             ajv validate -s ../text/simple_extensions_schema.yaml --strict=true --spec=draft2020 -d "$i"
           done
         working-directory: ./extensions
+  dry_run_release:
+    name: Dry-run release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: bufbuild/buf-setup-action@v0.7.0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: ./ci/release/dry_run.sh

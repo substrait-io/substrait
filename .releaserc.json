@@ -1,0 +1,35 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogTitle": "Release Notes\n---",
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "verifyConditionsCmd": "ci/release/verify.sh",
+        "prepareCmd": "ci/release/prepare.sh ${nextRelease.version}",
+        "publishCmd": "ci/release/publish.sh"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": ["dist/*.whl"]
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["CHANGELOG.md"],
+        "message": "chore(release): ${nextRelease.version}"
+      }
+    ]
+  ]
+}
