@@ -5,3 +5,4 @@ set -euo pipefail
 
 # build artifacts
 buf build
+buf generate
