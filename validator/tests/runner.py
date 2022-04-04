@@ -6,6 +6,7 @@ import pathlib
 import subprocess
 import shutil
 import sys
+import click
 import yaml
 import json
 import re
@@ -341,13 +342,28 @@ def mtime(path) -> float:
     return 0.0
 
 
-if __name__ == '__main__':
-    def fprint(*args, **kwargs):
-        print(*args, **kwargs)
-        sys.stdout.flush()
+@click.group()
+def cli():
+    pass
+
+
+@cli.command(short_help='Runs the test suite',
+             help=('Runs the test suite, or only run tests matching the '
+                   'given glob-capable filter (matching test case names).'))
+@click.argument('filter', required=False, default='*')
+@click.option('--release/--no-release',
+              default=False,
+              help=('Build Rust application in --release mode. Recompilation '
+                    'will take longer, but rerunning the tests will be much '
+                    'faster.'))
+@click.option('--html/--no-html',
+              default=True,
+              help=('Enables or disables exporting HTML for the plans under '
+                    'test. Enabled by default.'))
+def run(filter, release, html):
 
     # Build and run with optimizations if --release is passed.
-    if '--release' in sys.argv:
+    if release:
         release = ['--release']
     else:
         release = []
@@ -358,7 +374,7 @@ if __name__ == '__main__':
         sys.exit(code)
 
     # Find all proto files and check if they've changed since the last run.
-    fprint(f'Scanning for proto files...')
+    click.echo(f'Scanning for proto files...')
     script_path = os.path.dirname(os.path.realpath(__file__))
     repo_path = os.path.realpath(os.path.join(script_path, '..', '..'))
     proto_path = os.path.join(repo_path, 'proto')
@@ -368,16 +384,16 @@ if __name__ == '__main__':
     stamp_path = os.path.join(output_path, '__init__.py')
     stamp_mtime = mtime(stamp_path)
     if proto_mtime < stamp_mtime:
-        fprint(f'Protobuf bindings are up-to-date')
+        click.echo(f'Protobuf bindings are up-to-date')
     else:
 
         # Find the path to a protoc executable. We rely on prost for this, which is
         # capable of shipping it for most operating systems.
-        fprint(f'Finding protoc location...')
+        click.echo(f'Finding protoc location...')
         protoc = subprocess.run(['cargo', 'run'] + release + ['-q', '--bin', 'find_protoc'], capture_output=True).stdout.strip()
 
         # (Re)generate and import protobuf files and import them.
-        fprint(f'Generating protobuf bindings...')
+        click.echo(f'Generating protobuf bindings...')
         if os.path.isdir(output_path):
             shutil.rmtree(output_path)
         subprocess.check_call([protoc, '-I', proto_path, '--python_out', script_path, *proto_paths])
@@ -400,7 +416,7 @@ if __name__ == '__main__':
     errors = {}
 
     # Deserialize test input files (multiple input formats can be added here).
-    fprint(f'Scanning for test description files...')
+    click.echo(f'Scanning for test description files...')
     suite_path = os.path.join(script_path, 'tests')
     test_inputs = {}
     for fname in pathlib.Path(suite_path).rglob('*.yaml'):
@@ -416,9 +432,9 @@ if __name__ == '__main__':
 
     # Compile the contents of the test input files.
     if not test_inputs:
-        fprint(f'Test descriptions are up-to-date')
+        click.echo(f'Test descriptions are up-to-date')
     else:
-        fprint(f'Parsing {len(test_inputs)} test description(s)...')
+        click.echo(f'Parsing {len(test_inputs)} test description(s)...')
         for fname, (test_input, output_fname) in test_inputs.items():
             try:
                 compile_test(output_fname, test_input, proto_parse, proto_desc)
@@ -431,9 +447,28 @@ if __name__ == '__main__':
     if errors:
         for fname, (action, error) in errors.items():
             rel_path = os.path.relpath(fname, suite_path)
-            fprint(f'{type(error).__name__} while {action} {rel_path}: {error}')
+            click.echo(f'{type(error).__name__} while {action} {rel_path}: {error}')
         sys.exit(1)
 
     # Now run the test suite.
-    enable_html = '--no-html' not in sys.argv
-    sys.exit(subprocess.run(['cargo', 'run'] + release + ['-q', suite_path, str(int(enable_html))]).returncode)
+    sys.exit(subprocess.run(['cargo', 'run'] + release + ['-q', suite_path, str(int(html)), filter]).returncode)
+
+
+@cli.command(short_help='Removes all generated files',
+             help='Removes all generated files.')
+def clean():
+    script_path = os.path.dirname(os.path.realpath(__file__))
+
+    # Remove generated protobuf files.
+    proto_output_path = os.path.join(script_path, 'substrait')
+    if os.path.isdir(proto_output_path):
+        shutil.rmtree(proto_output_path)
+
+    # Remove compiled test files and test results.
+    suite_path = os.path.join(script_path, 'tests')
+    for fname in pathlib.Path(suite_path).rglob('*.test*'):
+        os.remove(fname)
+
+
+if __name__ == '__main__':
+    cli()

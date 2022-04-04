@@ -42,7 +42,7 @@ jobs:
         # runners are the fastest of the bunch.
         if: ${{ matrix.os == 'ubuntu-latest' }}
         working-directory: validator/tests
-        run: python3 run.py --no-html
+        run: python3 runner.py run --no-html
 
   style:
     runs-on: ubuntu-latest

@@ -344,7 +344,7 @@ fn print_usage_and_fail() -> ! {
     let me = std::env::args()
         .next()
         .unwrap_or_else(|| String::from("test_runner"));
-    println!("Usage: {me} <test-directory> <enable-html>");
+    println!("Usage: {me} <test-directory> <enable-html> <name-pattern>");
     println!("Runs all *.test files in the test directory.");
     std::process::exit(2);
 }
@@ -352,9 +352,11 @@ fn print_usage_and_fail() -> ! {
 pub fn main() {
     // "Parse" command line arguments.
     let args: Vec<_> = std::env::args().collect();
-    if args.len() != 3 {
+    if args.len() != 4 {
         print_usage_and_fail();
     }
+    let has_filter = args[3] != "*";
+    let filter = glob::Pattern::new(&args[3]).expect("invalid filter pattern");
 
     // Determine whether we should be emitting HTML files (disabling this makes
     // the runner a lot faster).
@@ -377,24 +379,32 @@ pub fn main() {
         })
         .map(|e| e.into_path())
     {
-        println!();
         let fname_str = fname.display().to_string();
-        n_cases += 1;
         match std::fs::read_to_string(&fname) {
-            Err(e) => println!("Failed to read test file {fname_str}): {e}"),
+            Err(e) => {
+                n_cases += 1;
+                println!();
+                println!("Failed to read test file {fname_str}): {e}");
+            }
             Ok(d) => match serde_json::from_str::<TestCase>(&d) {
                 Err(e) => {
+                    n_cases += 1;
+                    println!();
                     println!("Failed to parse test file {fname_str}): {e}");
                     failures.push(fname_str);
                 }
                 Ok(tc) => {
                     let name = &tc.name;
-                    println!("Running test {name} ({fname_str})...");
-                    if let Err(s) = tc.run(&fname, enable_html) {
-                        println!("Test {name} ({fname_str}) failed: {s}");
-                        failures.push(name.clone());
-                    } else {
-                        println!("Test {name} ({fname_str}) passed");
+                    if filter.matches(name) {
+                        n_cases += 1;
+                        println!();
+                        println!("Running test {name} ({fname_str})...");
+                        if let Err(s) = tc.run(&fname, enable_html) {
+                            println!("Test {name} ({fname_str}) failed: {s}");
+                            failures.push(name.clone());
+                        } else {
+                            println!("Test {name} ({fname_str}) passed");
+                        }
                     }
                 }
             },
@@ -408,11 +418,19 @@ pub fn main() {
     // Print summary.
     println!();
     if failures.is_empty() {
-        println!("All {n_cases} test case(s) passed!");
+        if has_filter {
+            println!("All {n_cases} matching test case(s) passed!");
+        } else {
+            println!("All {n_cases} test case(s) passed!");
+        }
         std::process::exit(0);
     } else {
         let n_failures = failures.len();
-        println!("{n_failures} out of {n_cases} test case(s) failed:");
+        if has_filter {
+            println!("{n_failures} out of {n_cases} matching test case(s) failed:");
+        } else {
+            println!("{n_failures} out of {n_cases} test case(s) failed:");
+        }
         for failure in failures {
             println!(" - {failure}");
         }
