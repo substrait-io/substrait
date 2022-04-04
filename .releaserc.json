@@ -18,7 +18,12 @@
         "publishCmd": "ci/release/publish.sh"
       }
     ],
-    "@semantic-release/github",
+    [
+      "@semantic-release/github",
+      {
+        "assets": ["gen"]
+      }
+    ],
     [
       "@semantic-release/git",
       {
