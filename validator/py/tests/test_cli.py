@@ -2,7 +2,7 @@
 
 from click.testing import CliRunner
 from substrait_validator import cli
-from data import BASIC_PLAN
+from data import BASIC_PLAN, COMPLEX_PLAN
 import tempfile
 import json
 import pprint
@@ -51,6 +51,32 @@ def test_mconvert_manual():
     with tempfile.TemporaryDirectory() as tmp:
         with open(pjoin(tmp, 'data'), 'w') as f:
             f.write(BASIC_PLAN)
+
+        def convert(in_type, out_type):
+            assert run(pjoin(tmp, 'data'), '-O', pjoin(tmp, 'data'), '-mconvert',
+                       '--in-type', in_type, '--out-type', out_type).exit_code == 0
+
+        convert('json', 'proto')
+
+        with open(pjoin(tmp, 'data'), 'rb') as f:
+            a = f.read()
+
+        convert('proto', 'yaml')
+        convert('yaml', 'jsom')
+        convert('jsom', 'json')
+        convert('json', 'proto')
+
+        with open(pjoin(tmp, 'data'), 'rb') as f:
+            b = f.read()
+
+        assert a == b
+
+
+def test_mconvert_complex():
+    """Test -mconvert with a complex plan."""
+    with tempfile.TemporaryDirectory() as tmp:
+        with open(pjoin(tmp, 'data'), 'w') as f:
+            f.write(COMPLEX_PLAN)
 
         def convert(in_type, out_type):
             assert run(pjoin(tmp, 'data'), '-O', pjoin(tmp, 'data'), '-mconvert',
