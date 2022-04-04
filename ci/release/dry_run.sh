@@ -20,8 +20,6 @@ trap cleanup EXIT ERR
 
 cd "$worktree" || exit 1
 
-unset CI
-
 npx --yes \
   -p semantic-release \
   -p "@semantic-release/commit-analyzer" \

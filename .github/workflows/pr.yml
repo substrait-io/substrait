@@ -90,3 +90,5 @@ jobs:
         with:
           node-version: "16"
       - run: ./ci/release/dry_run.sh
+        env:
+          CI: "false"
