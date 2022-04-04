@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0
 syntax = "proto3";
+
 package substrait;
 
 import "substrait/type.proto";
 
+option csharp_namespace = "Substrait.Protobuf";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
-option csharp_namespace = "Substrait.Protobuf";
 
 message DerivationExpression {
-
   oneof kind {
     Type.Boolean bool = 1;
     Type.I8 i8 = 2;
@@ -115,7 +115,6 @@ message DerivationExpression {
   }
 
   message BinaryOp {
-
     BinaryOpType op_type = 1;
     DerivationExpression arg1 = 2;
     DerivationExpression arg2 = 3;
