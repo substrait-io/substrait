@@ -36,8 +36,8 @@ def test_mconvert_auto():
             a = f.read()
 
         convert('plan.proto', 'plan.yaml')
-        #convert('plan.yaml', 'plan.jsom')
-        convert('plan.yaml', 'plan.json') # FIXME: JSOM decoder isn't round-tripping again
+        convert('plan.yaml', 'plan.jsom')
+        convert('plan.jsom', 'plan.json')
         convert('plan.json', 'plan.bin')
 
         with open(pjoin(tmp, 'plan.bin'), 'rb') as f:
@@ -62,8 +62,8 @@ def test_mconvert_manual():
             a = f.read()
 
         convert('proto', 'yaml')
-        #convert('yaml', 'jsom')
-        convert('yaml', 'json') # FIXME: JSOM decoder isn't round-tripping again
+        convert('yaml', 'jsom')
+        convert('jsom', 'json')
         convert('json', 'proto')
 
         with open(pjoin(tmp, 'data'), 'rb') as f:

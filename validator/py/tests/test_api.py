@@ -37,9 +37,8 @@ def test_proto_roundtrip():
     # Round-trip via JSOM.
     data = sv.plan_to_jsom(original_plan)
     assert type(data) is str
-    # TODO: disabled due to bugs in JSOM
-    #round_tripped_plan = sv.load_plan_from_jsom(data)
-    #assert round_tripped_plan == original_plan
+    round_tripped_plan = sv.load_plan_from_jsom(data)
+    assert round_tripped_plan == original_plan
 
     # Check identity.
     round_tripped_plan = sv.load_plan(original_plan)
