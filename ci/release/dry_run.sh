@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
 
-set -euo pipefail
+set -euxo pipefail
 
 npx --yes \
   -p semantic-release \
