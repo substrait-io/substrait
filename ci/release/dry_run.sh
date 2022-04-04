@@ -28,7 +28,7 @@ npx --yes \
   -p "@semantic-release/exec" \
   -p "@semantic-release/git" \
   semantic-release \
-  --ci \
+  --ci false \
   --dry-run \
   --plugins \
   --analyze-commits "@semantic-release/commit-analyzer" \
