@@ -20,7 +20,7 @@ trap cleanup EXIT ERR
 
 cd "$worktree" || exit 1
 
-npx --yes \
+CI=false npx --yes \
   -p semantic-release \
   -p "@semantic-release/commit-analyzer" \
   -p "@semantic-release/release-notes-generator" \
