@@ -331,6 +331,16 @@ def resolve_path(path, msg_desc):
             msg_desc = field_desc.message_type
 
 
+def mtime(path) -> float:
+    """Yields the mtime of the given path, or 0 if it doesn't exist."""
+    try:
+        if os.path.isfile(path):
+            return os.path.getmtime(path)
+    except OSError:
+        pass
+    return 0.0
+
+
 if __name__ == '__main__':
     def fprint(*args, **kwargs):
         print(*args, **kwargs)
@@ -347,25 +357,36 @@ if __name__ == '__main__':
     if code:
         sys.exit(code)
 
-    # Find the path to a protoc executable. We rely on prost for this, which is
-    # capable of shipping it for most operating systems.
-    fprint(f'Finding protoc location...')
-    protoc = subprocess.run(['cargo', 'run'] + release + ['-q', '--bin', 'find_protoc'], capture_output=True).stdout.strip()
-
-    # (Re)generate and import protobuf files and import them.
-    fprint(f'Generating protobuf bindings...')
+    # Find all proto files and check if they've changed since the last run.
+    fprint(f'Scanning for proto files...')
     script_path = os.path.dirname(os.path.realpath(__file__))
     repo_path = os.path.realpath(os.path.join(script_path, '..', '..'))
     proto_path = os.path.join(repo_path, 'proto')
-    proto_files = list(pathlib.Path(os.path.join(proto_path, 'substrait')).rglob('*.proto'))
+    proto_paths = list(pathlib.Path(os.path.join(proto_path, 'substrait')).rglob('*.proto'))
+    proto_mtime = max(map(mtime, proto_paths))
     output_path = os.path.join(script_path, 'substrait')
-    if os.path.isdir(output_path):
-        shutil.rmtree(output_path)
-    subprocess.check_call([protoc, '-I', proto_path, '--python_out', script_path, *proto_files])
-    for subdir in ('.', 'extensions', 'validator'):
-        fname = os.path.join(output_path, subdir, '__init__.py')
-        with open(fname, 'w') as f:
-            f.write('\n')
+    stamp_path = os.path.join(output_path, '__init__.py')
+    stamp_mtime = mtime(stamp_path)
+    if proto_mtime < stamp_mtime:
+        fprint(f'Protobuf bindings are up-to-date')
+    else:
+
+        # Find the path to a protoc executable. We rely on prost for this, which is
+        # capable of shipping it for most operating systems.
+        fprint(f'Finding protoc location...')
+        protoc = subprocess.run(['cargo', 'run'] + release + ['-q', '--bin', 'find_protoc'], capture_output=True).stdout.strip()
+
+        # (Re)generate and import protobuf files and import them.
+        fprint(f'Generating protobuf bindings...')
+        if os.path.isdir(output_path):
+            shutil.rmtree(output_path)
+        subprocess.check_call([protoc, '-I', proto_path, '--python_out', script_path, *proto_paths])
+        for subdir in ('.', 'extensions', 'validator'):
+            fname = os.path.join(output_path, subdir, '__init__.py')
+            with open(fname, 'w') as f:
+                f.write('\n')
+
+    # Import the generated protobuf bindings.
     from substrait import plan_pb2
     assert os.path.samefile(plan_pb2.__file__, os.path.join(output_path, 'plan_pb2.py'))
     from google.protobuf.json_format import ParseDict
@@ -379,28 +400,32 @@ if __name__ == '__main__':
     errors = {}
 
     # Deserialize test input files (multiple input formats can be added here).
-    fprint(f'Looking for test description files...')
+    fprint(f'Scanning for test description files...')
     suite_path = os.path.join(script_path, 'tests')
     test_inputs = {}
     for fname in pathlib.Path(suite_path).rglob('*.yaml'):
         if '.test.' in fname.name:
             continue
         try:
-            with open(fname, 'r') as f:
-                test_inputs[fname] = yaml.safe_load(f.read())
+            output_fname = str(fname) + '.test'
+            if mtime(fname) >= mtime(output_fname):
+                with open(fname, 'r') as f:
+                    test_inputs[fname] = (yaml.safe_load(f.read()), output_fname)
         except Exception as e:
             errors[fname] = ('reading', e)
 
     # Compile the contents of the test input files.
-    fprint(f'Parsing {len(test_inputs)} test description(s)...')
-    for fname, test_input in test_inputs.items():
-        output_fname = str(fname) + '.test'
-        try:
-            compile_test(output_fname, test_input, proto_parse, proto_desc)
-        except Exception as e:
-            if os.path.isfile(output_fname):
-                os.remove(output_fname)
-            errors[fname] = ('compiling', e)
+    if not test_inputs:
+        fprint(f'Test descriptions are up-to-date')
+    else:
+        fprint(f'Parsing {len(test_inputs)} test description(s)...')
+        for fname, (test_input, output_fname) in test_inputs.items():
+            try:
+                compile_test(output_fname, test_input, proto_parse, proto_desc)
+            except Exception as e:
+                if os.path.isfile(output_fname):
+                    os.remove(output_fname)
+                errors[fname] = ('compiling', e)
 
     # Fail if there were any errors.
     if errors:
