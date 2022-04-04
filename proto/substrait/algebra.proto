@@ -255,10 +255,14 @@ message ExchangeRel {
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-  message ScatterFields { repeated Expression.FieldReference fields = 1; }
+  message ScatterFields {
+    repeated Expression.FieldReference fields = 1;
+  }
 
   // Returns a single bucket number per record.
-  message SingleBucketExpression { Expression expression = 1; }
+  message SingleBucketExpression {
+    Expression expression = 1;
+  }
 
   // Returns zero or more bucket numbers per record
   message MultiBucketExpression {
