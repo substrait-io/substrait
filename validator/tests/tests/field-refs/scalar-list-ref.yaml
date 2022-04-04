@@ -1,0 +1,96 @@
+name: scalar-list-ref
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            common:
+              direct: {}
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - list:
+                    nullability: NULLABILITY_REQUIRED
+                    type:
+                      list:
+                        nullability: NULLABILITY_NULLABLE
+                        type:
+                          bool:
+                            nullability: NULLABILITY_REQUIRED
+                - list:
+                    nullability: NULLABILITY_REQUIRED
+                    type:
+                      bool:
+                        nullability: NULLABILITY_REQUIRED
+            namedTable:
+              names:
+              - test
+        expressions:
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 0
+          __test: [ type: "LIST<LIST?<boolean>>" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 0
+                child:
+                  listElement:
+                    offset: 0
+          __test: [ type: "LIST?<boolean>" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 0
+                child:
+                  listElement:
+                    offset: -1
+          __test: [ type: "LIST?<boolean>" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 0
+                child:
+                  listElement:
+                    offset: 0
+                    child:
+                      listElement:
+                        offset: 0
+          __test: [ type: "boolean?" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 1
+                child:
+                  listElement:
+                    offset: 0
+          # FIXME: should this yield nullable or not? That is, is out-of-range
+          # a runtime error or does it yield null? Or does that depend on the
+          # nullability of the field type?
+          __test: [ type: "boolean" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 0
+                child:
+                  listElement:
+                    offset: 0
+                    child:
+                      listElement:
+                        offset: 0
+                        child:
+                          listElement:
+                            offset: 0
+                            __test: [ diag: { level: e, code: 4005, msg: "*requires a list type*boolean*" } ]
+          __test: [ type: "!?" ]

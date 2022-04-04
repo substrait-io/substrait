@@ -1,0 +1,96 @@
+name: scalar-map-ref
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            common:
+              direct: {}
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - map:
+                    nullability: NULLABILITY_REQUIRED
+                    key: { i8: { nullability: NULLABILITY_REQUIRED } }
+                    value:
+                      map:
+                        nullability: NULLABILITY_NULLABLE
+                        key: { string: { nullability: NULLABILITY_REQUIRED } }
+                        value: { bool: { nullability: NULLABILITY_REQUIRED } }
+                - map:
+                    nullability: NULLABILITY_REQUIRED
+                    key: { i32: { nullability: NULLABILITY_REQUIRED } }
+                    value: { bool: { nullability: NULLABILITY_REQUIRED } }
+            namedTable:
+              names:
+              - test
+        expressions:
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 0
+          __test: [ type: "MAP<i8, MAP?<string, boolean>>" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 0
+                child:
+                  mapKey:
+                    mapKey: { i8: 0, nullable: false }
+          __test: [ type: "MAP?<string, boolean>" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 0
+                child:
+                  mapKey:
+                    mapKey: { i16: 0, nullable: false }
+                    __test: [ diag: { level: e, code: 4005, msg: "*map key type mismatch*" } ]
+          __test: [ type: "MAP?<string, boolean>" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 0
+                child:
+                  mapKey:
+                    mapKey: { i8: 0, nullable: false }
+                    child:
+                      mapKey:
+                        mapKey: { string: hello, nullable: false }
+          __test: [ type: "boolean?" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 1
+                child:
+                  mapKey:
+                    mapKey: { i32: 0, nullable: false }
+          # FIXME: should this yield nullable or not? That is, are missing keys
+          # a runtime error or does it yield null? Or does that depend on the
+          # nullability of the value type?
+          __test: [ type: "boolean" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 0
+                child:
+                  mapKey:
+                    mapKey: { i8: 0, nullable: false }
+                    child:
+                      mapKey:
+                        mapKey: { string: hello, nullable: false }
+                        child:
+                          mapKey:
+                            mapKey: { string: hello, nullable: false }
+                            __test: [ diag: { level: e, code: 4005, msg: "*requires a map type*boolean*" } ]
+          __test: [ type: "!?" ]

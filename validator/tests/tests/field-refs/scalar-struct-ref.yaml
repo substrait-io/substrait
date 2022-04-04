@@ -1,0 +1,110 @@
+name: scalar-struct-ref
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            common:
+              direct: {}
+            baseSchema:
+              names: [a, b, c, d, x, y]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - bool: { nullability: NULLABILITY_NULLABLE }
+                - i8: { nullability: NULLABILITY_REQUIRED }
+                - i16: { nullability: NULLABILITY_REQUIRED }
+                - struct:
+                    nullability: NULLABILITY_NULLABLE
+                    types:
+                    - i32: { nullability: NULLABILITY_REQUIRED }
+                    - i64: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        expressions:
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 4
+                field__test: [ diag: { level: e, code: 2, msg: "*out of range*" } ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: -1
+                field__test: [ diag: { level: e, code: 2, msg: "*cannot be less than zero*" } ]
+        - selection:
+            rootReference: {}
+            directReference: { structField: { field: 0 }}
+          __test: [ type: "boolean?" ]
+        - selection:
+            rootReference: {}
+            directReference: { structField: { field: 1 }}
+          __test: [ type: "i8" ]
+        - selection:
+            rootReference: {}
+            directReference: { structField: { field: 2 }}
+          __test: [ type: "i16" ]
+        - selection:
+            rootReference: {}
+            directReference: { structField: { field: 3 }}
+          __test: [ type: "NSTRUCT?<x: i32, y: i64>" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 3
+                child:
+                  structField:
+                    field: 0
+          __test: [ type: "i32?" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 3
+                child:
+                  structField:
+                    field: 1
+          __test: [ type: "i64?" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 3
+                child:
+                  structField:
+                    field: 2
+                    field__test: [ diag: { level: e, code: 2, msg: "*out of range*" } ]
+          __test: [ type: "!?" ]
+        - selection:
+            rootReference: {}
+            directReference:
+              structField:
+                field: 2
+                child:
+                  structField:
+                    field: 0
+                    __test: [ diag: { level: e, code: 4005, msg: "*requires a struct type*i16*" } ]
+          __test: [ type: "!" ]
+        - selection:
+            expression:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 3 }}
+            directReference: { structField: { field: 0 }}
+          __test: [ type: "i32?" ]
+        - selection:
+            expression:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 }}
+            directReference:
+              structField:
+                field: 0
+                __test: [ diag: { level: e, code: 4005, msg: "*requires a struct type*i16*" } ]
+          __test: [ type: "!" ]

@@ -8,6 +8,7 @@ use crate::output::diagnostic;
 use crate::parse::context;
 use crate::parse::expressions::literals;
 use crate::parse::expressions::references;
+use crate::parse::types;
 use crate::string_util;
 use std::sync::Arc;
 
@@ -29,13 +30,20 @@ fn parse_struct_field(
         );
     }
 
-    // Handle the struct index field.
+    // Create description.
+    let description = format!(".{}", x.field);
+
+    // Determine result data type.
     let data_type = proto_primitive_field!(x, y, field, super::parse_struct_field_index, root)
         .1
         .unwrap_or_default();
 
-    // Create description.
-    let description = format!(".{}", x.field);
+    // If the struct is nullable, the field must also be nullable.
+    let data_type = if root.nullable() {
+        data_type.make_nullable()
+    } else {
+        data_type
+    };
 
     // Set resulting data type.
     y.set_data_type(data_type.clone());
@@ -93,8 +101,21 @@ fn parse_list_element(
     // Create description.
     let description = format!(".[{}]", x.offset);
 
-    // Set resulting data type.
+    // Determine result data type.
     let data_type = root.unwrap_list().unwrap_or_default();
+
+    // If the list is nullable, the selection must also be nullable.
+    let data_type = if root.nullable() {
+        data_type.make_nullable()
+    } else {
+        data_type
+    };
+
+    // FIXME: what is the runtime behavior for index out of range, throw or
+    // yield null? In the latter case, the return type would always need to
+    // be nullable.
+
+    // Set resulting data type.
     y.set_data_type(data_type.clone());
 
     // Handle child selection, if any, to recursively select elements from
@@ -141,11 +162,32 @@ fn parse_map_key(
         .1
         .unwrap_or_default();
 
+    // Check the key type.
+    types::assert_equal(
+        y,
+        key.data_type(),
+        &root.unwrap_map_key().unwrap_or_default(),
+        "map key type mismatch",
+    );
+
     // Create description.
     let description = format!(".[{}]", key);
 
-    // Set resulting data type.
+    // Determine result data type.
     let data_type = root.unwrap_map().unwrap_or_default();
+
+    // If the map is nullable, the selection must also be nullable.
+    let data_type = if root.nullable() {
+        data_type.make_nullable()
+    } else {
+        data_type
+    };
+
+    // FIXME: what is the runtime behavior for index out of range, throw or
+    // yield null? In the latter case, the return type would always need to
+    // be nullable.
+
+    // Set resulting data type.
     y.set_data_type(data_type.clone());
 
     // Handle child selection, if any, to recursively select elements from

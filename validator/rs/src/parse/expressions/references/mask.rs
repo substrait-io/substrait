@@ -232,7 +232,8 @@ fn parse_map_select_expression(
     _key_type: &Arc<data_type::DataType>,
 ) -> diagnostic::Result<()> {
     // FIXME: in Rust vernacular, need an Fn(K) -> Option<K> here. I suppose
-    // there is no structure for that yet?
+    // there is no structure for that yet? Or are these the regex-type things
+    // that are not yet specified?
     diagnostic!(
         y,
         Error,
@@ -435,7 +436,13 @@ pub fn parse_mask_expression(
 
     // Determine if the data type is a singular struct (i.e. a struct with only
     // one item) and its element type if so.
-    let singular_type = data_type.unwrap_singular_struct();
+    let singular_type = data_type.unwrap_singular_struct().map(|data_type| {
+        if root.nullable() {
+            data_type.make_nullable()
+        } else {
+            data_type
+        }
+    });
 
     // Handle the maintain_singular_struct field.
     let unwrap = proto_primitive_field!(
