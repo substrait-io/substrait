@@ -310,6 +310,12 @@ pub enum Classification {
     RedundantField = 7007,
 }
 
+impl Default for Classification {
+    fn default() -> Self {
+        Classification::Unclassified
+    }
+}
+
 impl Classification {
     /// Returns the complete code for this classification.
     pub fn code(&self) -> u32 {

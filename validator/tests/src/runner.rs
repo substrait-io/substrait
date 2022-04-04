@@ -2,6 +2,7 @@
 
 //! Test runner for the [substrait_validator] crate.
 
+use rayon::prelude::*;
 use std::collections::HashSet;
 use substrait_validator as sv;
 
@@ -133,7 +134,7 @@ struct DiagOverride {
 
 /// Test case description structure.
 #[derive(serde::Deserialize, Debug)]
-struct TestCase {
+struct TestDescription {
     /// Test case name.
     pub name: String,
 
@@ -147,48 +148,238 @@ struct TestCase {
     pub instructions: Vec<Instruction>,
 }
 
-/// Traverse the given path within the given node tree, and then apply f on the
-/// selected node.
-fn traverse<'a, I, F>(node: &mut sv::output::tree::Node, mut path: I, f: F) -> Result<(), String>
-where
-    I: Iterator<Item = &'a sv::output::path::PathElement>,
-    F: FnOnce(&mut sv::output::tree::Node) -> Result<(), String>,
-{
-    match path.next() {
-        Some(path_element) => {
-            for data in node.data.iter_mut() {
-                if let sv::output::tree::NodeData::Child(c) = data {
-                    if &c.path_element == path_element {
-                        let mut node = c.node.as_ref().clone();
-                        let result = traverse(&mut node, path, f);
-                        c.node = std::sync::Arc::new(node);
-                        return result;
-                    }
-                }
+/// The result of a test case including messages.
+#[derive(Default)]
+struct TestResult {
+    /// Log messages generated while running the test.
+    pub messages: Vec<String>,
+
+    /// Whether there were failures in this test case.
+    pub failed: bool,
+
+    /// Whether the test case was skipped.
+    pub skipped: bool,
+}
+
+impl TestResult {
+    pub fn log<S: std::fmt::Display>(&mut self, msg: S) {
+        self.messages.push(msg.to_string());
+    }
+
+    pub fn error<S: std::fmt::Display>(&mut self, msg: S) {
+        self.failed = true;
+        self.log(format!("Error: {msg}"));
+    }
+
+    pub fn handle_result<T, E, F, S>(&mut self, e: Result<T, E>, msg: F) -> Option<T>
+    where
+        F: FnOnce() -> S,
+        S: std::fmt::Display,
+        E: std::error::Error,
+    {
+        match e {
+            Ok(x) => Some(x),
+            Err(e) => {
+                let msg = msg();
+                self.error(format!("{msg}: {e}"));
+                None
             }
-            Err(format!("missing child node {path_element}"))
         }
-        None => f(node),
+    }
+
+    pub fn handle_option<T, S, F>(&mut self, option: Option<T>, msg: F) -> Option<T>
+    where
+        F: FnOnce() -> S,
+        S: std::fmt::Display,
+    {
+        if option.is_none() {
+            let msg = msg();
+            self.error(format!("{msg}"));
+        }
+        option
     }
 }
 
+/// Configuration structure for the test runner.
+struct Configuration {
+    /// Skip test cases for which the name does not match this pattern.
+    pub filter: glob::Pattern,
+
+    /// Whether HTML output files should be written.
+    pub enable_html: bool,
+}
+
+/// All information related to a test case, including its result.
+struct TestCase {
+    /// Path to the test case input file.
+    pub path: std::path::PathBuf,
+
+    /// The test description file, if parsing succeeded.
+    pub description: Option<TestDescription>,
+
+    /// The result of the test.
+    pub result: TestResult,
+}
+
 impl TestCase {
-    /// Runs this test case. path must be set to the test filename in order to
-    /// resolve test-local YAML files properly and in order to write the HTML
-    /// representation of the output for debugging.
-    pub fn run(&self, path: &std::path::Path, enable_html: bool) -> Result<(), String> {
+    /// Traverse the given path within the given node tree, and then apply f on the
+    /// selected node.
+    fn traverse<'a, I, F>(
+        result: &mut TestResult,
+        node: &mut sv::output::tree::Node,
+        mut path: I,
+        f: F,
+    ) where
+        I: Iterator<Item = &'a sv::output::path::PathElement>,
+        F: FnOnce(&mut TestResult, &mut sv::output::tree::Node),
+    {
+        match path.next() {
+            Some(path_element) => {
+                for data in node.data.iter_mut() {
+                    if let sv::output::tree::NodeData::Child(c) = data {
+                        if &c.path_element == path_element {
+                            let mut node = c.node.as_ref().clone();
+                            Self::traverse(result, &mut node, path, f);
+                            c.node = std::sync::Arc::new(node);
+                            return;
+                        }
+                    }
+                }
+                result.error(format!("missing child node {path_element}"));
+            }
+            None => f(result, node),
+        }
+    }
+
+    /// Searches for the child node of node at the given path element and
+    /// returns its index. If the child does not exist, None is returned, and
+    /// an error is pushed.
+    fn find_child_index(
+        result: &mut TestResult,
+        node: &mut sv::output::tree::Node,
+        desc: &PathElement,
+    ) -> Option<usize> {
+        let path_element = sv::output::path::PathElement::from(desc.clone());
+        result.handle_option(
+            node.data.iter().enumerate().find_map(|(index, data)| {
+                if let sv::output::tree::NodeData::Child(c) = data {
+                    if c.path_element == path_element {
+                        return Some(index);
+                    }
+                }
+                None
+            }),
+            || format!("child {path_element} does not exist"),
+        )
+    }
+
+    /// Runs the given level test instruction.
+    fn run_level_test(
+        result: &mut TestResult,
+        root: &mut sv::output::tree::Node,
+        desc: &LevelTest,
+    ) {
+        let path = convert_path(&desc.path);
+        result.log(format!("Checking level at {path}..."));
+        Self::traverse(result, root, path.elements.iter(), |result, node| {
+            let actual_level = node
+                .get_diagnostic()
+                .map(|d| d.adjusted_level)
+                .unwrap_or(sv::Level::Info);
+            if !desc
+                .allowed_levels
+                .iter()
+                .any(|l| sv::Level::from(*l) == actual_level)
+            {
+                result.error(format!("unexpected error level {actual_level:?}"));
+            }
+        });
+    }
+
+    /// Runs the given diagnostic test instruction.
+    fn run_diag_test(
+        result: &mut TestResult,
+        root: &mut sv::output::tree::Node,
+        desc: &DiagnosticTest,
+    ) {
+        let path = convert_path(&desc.path);
+        result.log(format!("Checking diagnostic at {path}..."));
+        Self::traverse(result, root, path.elements.iter(), |result, node| {
+            // Find node data start index based on after (if specified).
+            let start_index = desc
+                .after
+                .as_ref()
+                .and_then(|path_element| Self::find_child_index(result, node, path_element))
+                .unwrap_or(0);
+
+            // Find node data end index based on before (if specified).
+            let end_index = desc
+                .before
+                .as_ref()
+                .and_then(|path_element| Self::find_child_index(result, node, path_element))
+                .unwrap_or(node.data.len());
+
+            // Look for diagnostics within that range.
+            let diag_index = result.handle_option(
+                node.data[start_index..end_index]
+                    .iter()
+                    .enumerate()
+                    .find_map(|(index, data)| {
+                        if let sv::output::tree::NodeData::Diagnostic(diag) = data {
+                            if desc.matches(diag) {
+                                return Some(index);
+                            }
+                        }
+                        None
+                    }),
+                || "no diagnostic found that matches expectations",
+            );
+
+            // Remove the diagnostic we found from the tree.
+            if let Some(diag_index) = diag_index {
+                node.data.remove(diag_index);
+            }
+        });
+    }
+
+    /// Runs the given data type test instruction.
+    fn run_data_type_test(
+        result: &mut TestResult,
+        root: &mut sv::output::tree::Node,
+        desc: &DataTypeTest,
+    ) {
+        let path = convert_path(&desc.path);
+        result.log(format!("Checking data type at {path}..."));
+        Self::traverse(result, root, path.elements.iter(), |result, node| {
+            let actual = format!("{:#}", node.data_type());
+            if actual != desc.data_type {
+                result.error(format!("data type mismatch; found {actual}"));
+            }
+        })
+    }
+
+    /// Runs the given test case, updating result.
+    fn run(
+        result: &mut TestResult,
+        path: &std::path::Path,
+        desc: &TestDescription,
+        cfg: &Configuration,
+    ) {
         // Create validator configuration.
-        let mut cfg = sv::Config::new();
-        for diag_override in self.diag_overrides.iter() {
-            cfg.override_diagnostic_level(
-                sv::Classification::from_code(diag_override.code)
-                    .ok_or_else(|| format!("invalid error code {}", diag_override.code))?,
+        let mut validator_config = sv::Config::new();
+        for diag_override in desc.diag_overrides.iter() {
+            validator_config.override_diagnostic_level(
+                result
+                    .handle_option(sv::Classification::from_code(diag_override.code), || {
+                        format!("invalid error code {}", diag_override.code)
+                    })
+                    .unwrap_or_default(),
                 diag_override.min.into(),
                 diag_override.max.into(),
             );
         }
         let path_os_str = path.as_os_str().to_owned();
-        cfg.add_uri_resolver(move |uri| {
+        validator_config.add_uri_resolver(move |uri| {
             if let Some(name) = uri.strip_prefix("test:") {
                 let mut yaml_path = path_os_str.clone();
                 yaml_path.push(".");
@@ -206,137 +397,87 @@ impl TestCase {
         });
 
         // Parse the plan.
-        let result = sv::parse(&self.plan[..], &cfg);
+        let parse_result = sv::parse(&desc.plan[..], &validator_config);
 
         // Export result to HTML for debugging.
-        if enable_html {
+        if cfg.enable_html {
             let mut html_path = path.as_os_str().to_owned();
             html_path.push(".html");
-            if let Err(e) = std::fs::File::create(html_path)
-                .and_then(|mut f| result.export(&mut f, sv::export::Format::Html))
-            {
-                println!("Error while attempting to write HTML output: {e}");
-            };
+            result.handle_result(
+                std::fs::File::create(html_path)
+                    .and_then(|mut f| parse_result.export(&mut f, sv::export::Format::Html)),
+                || "Error while attempting to write HTML output",
+            );
         }
 
         // Execute test instructions.
-        let mut root = result.root;
-        for insn in self.instructions.iter() {
+        let mut root = parse_result.root;
+        for insn in desc.instructions.iter() {
             match insn {
-                Instruction::Level(level_test) => {
-                    let path = convert_path(&level_test.path);
-                    println!("Checking level at {path}...");
-                    traverse(&mut root, path.elements.iter(), |node| {
-                        let actual_level = node
-                            .get_diagnostic()
-                            .map(|d| d.adjusted_level)
-                            .unwrap_or(sv::Level::Info);
-                        if level_test
-                            .allowed_levels
-                            .iter()
-                            .any(|l| sv::Level::from(*l) == actual_level)
-                        {
-                            Ok(())
-                        } else {
-                            Err(format!("unexpected error level {actual_level:?}"))
-                        }
-                    })
-                    .map_err(|e| format!("check failed at {path}: {e}"))?
-                }
-                Instruction::Diag(diag_test) => {
-                    let path = convert_path(&diag_test.path);
-                    println!("Checking diagnostic at {path}...");
-                    traverse(&mut root, path.elements.iter(), |node| {
-                        // Find node data start index based on after (if specified).
-                        let start_index = diag_test
-                            .after
-                            .as_ref()
-                            .map(|path_element| {
-                                let path_element =
-                                    sv::output::path::PathElement::from(path_element.clone());
-                                node.data
-                                    .iter()
-                                    .enumerate()
-                                    .find_map(|(index, data)| {
-                                        if let sv::output::tree::NodeData::Child(c) = data {
-                                            if c.path_element == path_element {
-                                                return Some(index + 1);
-                                            }
-                                        }
-                                        None
-                                    })
-                                    .ok_or_else(|| {
-                                        format!("child {path_element} does not exist (after)")
-                                    })
-                            })
-                            .transpose()?
-                            .unwrap_or(0);
-
-                        // Find node data end index based on before (if specified).
-                        let end_index = diag_test
-                            .before
-                            .as_ref()
-                            .map(|path_element| {
-                                let path_element =
-                                    sv::output::path::PathElement::from(path_element.clone());
-                                node.data
-                                    .iter()
-                                    .enumerate()
-                                    .find_map(|(index, data)| {
-                                        if let sv::output::tree::NodeData::Child(c) = data {
-                                            if c.path_element == path_element {
-                                                return Some(index);
-                                            }
-                                        }
-                                        None
-                                    })
-                                    .ok_or_else(|| {
-                                        format!("child {path_element} does not exist (before)")
-                                    })
-                            })
-                            .transpose()?
-                            .unwrap_or(node.data.len());
-
-                        // Look for diagnostics within that range.
-                        let diag_index = node.data[start_index..end_index]
-                            .iter()
-                            .enumerate()
-                            .find_map(|(index, data)| {
-                                if let sv::output::tree::NodeData::Diagnostic(diag) = data {
-                                    if diag_test.matches(diag) {
-                                        return Some(index);
-                                    }
-                                }
-                                None
-                            })
-                            .ok_or_else(|| {
-                                String::from("no diagnostic found that matches expectations")
-                            })?;
-
-                        // Remove the diagnostic we found from the tree.
-                        node.data.remove(diag_index);
-
-                        Ok(())
-                    })
-                    .map_err(|e| format!("check failed at {path}: {e}"))?
-                }
+                Instruction::Level(level) => Self::run_level_test(result, &mut root, level),
+                Instruction::Diag(diag) => Self::run_diag_test(result, &mut root, diag),
                 Instruction::DataType(data_type) => {
-                    let path = convert_path(&data_type.path);
-                    println!("Checking data type at {path}...");
-                    traverse(&mut root, path.elements.iter(), |node| {
-                        let actual = format!("{:#}", node.data_type());
-                        if actual != data_type.data_type {
-                            Err(format!("data type mismatch; found {actual}"))
-                        } else {
-                            Ok(())
-                        }
-                    })
-                    .map_err(|e| format!("check failed at {path}: {e}"))?
+                    Self::run_data_type_test(result, &mut root, data_type)
                 }
             }
         }
+    }
 
-        Ok(())
+    /// Loads a plan from the given file and runs it, returning the result.
+    pub fn load_and_run<P: Into<std::path::PathBuf>>(
+        path: P,
+        cfg: &Configuration,
+    ) -> Box<TestCase> {
+        // Construct the path.
+        let path = path.into();
+
+        // Construct the result object.
+        let mut result = TestResult::default();
+
+        // Read input file.
+        let input = result.handle_result(std::fs::read_to_string(&path), || {
+            "failed to read test file"
+        });
+
+        // Parse input file.
+        let description = input.and_then(|input| {
+            result.handle_result(serde_json::from_str::<TestDescription>(&input), || {
+                "failed to parse test file"
+            })
+        });
+
+        // Match test case filter.
+        let skip = description
+            .as_ref()
+            .map(|d| !cfg.filter.matches(&d.name))
+            .unwrap_or_default();
+
+        // Run the test case.
+        if skip {
+            result.skipped = true;
+        } else if let Some(desc) = &description {
+            Self::run(&mut result, &path, desc, cfg);
+        }
+
+        // Log the result.
+        result.log(format!(
+            "Test case {} ({}): {}",
+            description.as_ref().map(|d| &d.name[..]).unwrap_or("?"),
+            path.display(),
+            if result.skipped {
+                "skipped"
+            } else if result.failed {
+                "FAILED"
+            } else {
+                "passed"
+            }
+        ));
+
+        Box::new(TestCase {
+            path,
+            description,
+            result,
+        })
     }
 }
 
@@ -345,7 +486,8 @@ fn print_usage_and_fail() -> ! {
         .next()
         .unwrap_or_else(|| String::from("test_runner"));
     println!("Usage: {me} <test-directory> <enable-html> <name-pattern>");
-    println!("Runs all *.test files in the test directory.");
+    println!("Runs all *.test files in the test directory for which the name matches the pattern.");
+    println!("NOTE: you should be running this with runner.py.");
     std::process::exit(2);
 }
 
@@ -355,22 +497,18 @@ pub fn main() {
     if args.len() != 4 {
         print_usage_and_fail();
     }
-    let has_filter = args[3] != "*";
-    let filter = glob::Pattern::new(&args[3]).expect("invalid filter pattern");
-
-    // Determine whether we should be emitting HTML files (disabling this makes
-    // the runner a lot faster).
-    let enable_html = match &args[2][..] {
-        "1" => true,
-        "0" => false,
-        _ => print_usage_and_fail(),
+    let cfg = Configuration {
+        filter: glob::Pattern::new(&args[3]).expect("invalid filter pattern"),
+        enable_html: match &args[2][..] {
+            "1" => true,
+            "0" => false,
+            _ => print_usage_and_fail(),
+        },
     };
 
     // Find all test cases and run them.
     println!("Running test suite...");
-    let mut n_cases = 0usize;
-    let mut failures = vec![];
-    for fname in walkdir::WalkDir::new(&args[1])
+    let paths = walkdir::WalkDir::new(&args[1])
         .into_iter()
         .filter_map(|e| e.ok())
         .filter(|e| {
@@ -378,61 +516,48 @@ pub fn main() {
                 && e.metadata().unwrap().is_file()
         })
         .map(|e| e.into_path())
-    {
-        let fname_str = fname.display().to_string();
-        match std::fs::read_to_string(&fname) {
-            Err(e) => {
-                n_cases += 1;
-                println!();
-                println!("Failed to read test file {fname_str}): {e}");
-            }
-            Ok(d) => match serde_json::from_str::<TestCase>(&d) {
-                Err(e) => {
-                    n_cases += 1;
-                    println!();
-                    println!("Failed to parse test file {fname_str}): {e}");
-                    failures.push(fname_str);
-                }
-                Ok(tc) => {
-                    let name = &tc.name;
-                    if filter.matches(name) {
-                        n_cases += 1;
-                        println!();
-                        println!("Running test {name} ({fname_str})...");
-                        if let Err(s) = tc.run(&fname, enable_html) {
-                            println!("Test {name} ({fname_str}) failed: {s}");
-                            failures.push(name.clone());
-                        } else {
-                            println!("Test {name} ({fname_str}) passed");
-                        }
-                    }
-                }
-            },
+        .collect::<Vec<_>>();
+    let test_cases = paths
+        .par_iter()
+        .map(|p| TestCase::load_and_run(p, &cfg))
+        .collect::<Vec<_>>();
+
+    // Print logs for failing tests.
+    for test_case in test_cases.iter().filter(|x| x.result.failed) {
+        println!();
+        if let Some(desc) = &test_case.description {
+            println!("Test {} ({}) FAILED:", desc.name, test_case.path.display());
+        } else {
+            println!("Test {} FAILED:", test_case.path.display());
         }
-    }
-    if n_cases == 0 {
-        println!("No test cases were found! (did you run compile.py?)");
-        std::process::exit(1);
+        for msg in test_case.result.messages.iter() {
+            println!("  {msg}");
+        }
     }
 
     // Print summary.
-    println!();
-    if failures.is_empty() {
-        if has_filter {
-            println!("All {n_cases} matching test case(s) passed!");
+    let n_total = test_cases.len();
+    let n_run = test_cases.iter().filter(|x| !x.result.skipped).count();
+    let n_failed = test_cases.iter().filter(|x| x.result.failed).count();
+    if n_total == 0 {
+        println!("FAIL: no test cases were found. Did you run me using runner.py?");
+        std::process::exit(1);
+    } else if n_run == 0 {
+        println!("FAIL: none of the {n_total} test case(s) matched the specified filter.");
+        std::process::exit(1);
+    } else if n_failed == 0 {
+        if n_run != n_total {
+            println!("PASS: all {n_run}/{n_total} matching test case(s) passed.");
         } else {
-            println!("All {n_cases} test case(s) passed!");
+            println!("PASS: all {n_run} test case(s) passed.");
         }
         std::process::exit(0);
     } else {
-        let n_failures = failures.len();
-        if has_filter {
-            println!("{n_failures} out of {n_cases} matching test case(s) failed:");
+        println!();
+        if n_run != n_total {
+            println!("FAIL: {n_failed} out of {n_run}/{n_total} matching test case(s) failed.");
         } else {
-            println!("{n_failures} out of {n_cases} test case(s) failed:");
-        }
-        for failure in failures {
-            println!(" - {failure}");
+            println!("FAIL: {n_failed} out of {n_run} test case(s) failed.");
         }
         std::process::exit(1);
     }

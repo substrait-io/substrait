@@ -384,7 +384,7 @@ def run(filter, release, html):
     stamp_path = os.path.join(output_path, '__init__.py')
     stamp_mtime = mtime(stamp_path)
     if proto_mtime < stamp_mtime:
-        click.echo(f'Protobuf bindings are up-to-date')
+        click.echo(f'Protobuf bindings are up-to-date.')
     else:
 
         # Find the path to a protoc executable. We rely on prost for this, which is
@@ -432,7 +432,7 @@ def run(filter, release, html):
 
     # Compile the contents of the test input files.
     if not test_inputs:
-        click.echo(f'Test descriptions are up-to-date')
+        click.echo(f'All test descriptions are up-to-date.')
     else:
         click.echo(f'Parsing {len(test_inputs)} test description(s)...')
         for fname, (test_input, output_fname) in test_inputs.items():
