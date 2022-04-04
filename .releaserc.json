@@ -18,12 +18,7 @@
         "publishCmd": "ci/release/publish.sh"
       }
     ],
-    [
-      "@semantic-release/github",
-      {
-        "assets": ["dist/*.whl"]
-      }
-    ],
+    "@semantic-release/github",
     [
       "@semantic-release/git",
       {
