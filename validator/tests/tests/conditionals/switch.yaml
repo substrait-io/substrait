@@ -1,0 +1,121 @@
+name: switch
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            baseSchema:
+              names: [a, b, c, d]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - i32: { nullability: NULLABILITY_REQUIRED }
+                - i8: { nullability: NULLABILITY_REQUIRED }
+                - i16: { nullability: NULLABILITY_REQUIRED }
+                - i16: { nullability: NULLABILITY_NULLABLE }
+            namedTable:
+              names:
+              - test
+        expressions:
+        - switchExpression:
+            match:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 0 } }
+            ifs:
+            - if: { i32: 0 }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 1 } }
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 1 } }
+          __test: [ type: "i8" ]
+        - switchExpression:
+            match:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 0 } }
+            ifs:
+            - if: { i32: 0 }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 1 } }
+          __test: [ type: "i8?" ]
+        - switchExpression:
+            match:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 0 } }
+            ifs:
+            - if: { i32: 0 }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 2 } }
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 3 } }
+          __test: [ type: "i16?" ]
+        - switchExpression:
+            match:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 0 } }
+            ifs:
+            - if: { i32: 0 }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 2 } }
+            - if: { i32: 1 }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 3 } }
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 } }
+          __test: [ type: "i16?" ]
+        - switchExpression:
+            match:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 0 } }
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 1 } }
+            __test: [ diag: { level: e, code: 1002, msg: "*missing required protobuf field: ifs*" } ]
+        - switchExpression:
+            match:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 0 } }
+            ifs:
+            - if: { i16: 0 }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 1 } }
+              __test:
+              - diag: { level: e, code: 4005, msg: "*literal type must match switch expression: i16 vs. i32*" }
+            - if: { i32: 1 }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 2 } }
+              __test: [ diag: { level: e, code: 4005, msg: "*branches must yield the same type: i16 vs. i8*" } ]
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 } }
+            __test: [ diag: { level: e, code: 4005, msg: "*branches must yield the same type: i16 vs. i8*" } ]
+          __test: [ type: "i8" ]

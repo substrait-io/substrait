@@ -1,0 +1,117 @@
+name: if-else
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            baseSchema:
+              names: [a, b, c, d]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - bool: { nullability: NULLABILITY_REQUIRED }
+                - i8: { nullability: NULLABILITY_REQUIRED }
+                - i16: { nullability: NULLABILITY_REQUIRED }
+                - i16: { nullability: NULLABILITY_NULLABLE }
+            namedTable:
+              names:
+              - test
+        expressions:
+        - ifThen:
+            ifs:
+            - if:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 0 } }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 1 } }
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 1 } }
+          __test: [ type: "i8" ]
+        - ifThen:
+            ifs:
+            - if:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 0 } }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 1 } }
+          __test: [ type: "i8?" ]
+        - ifThen:
+            ifs:
+            - if:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 0 } }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 2 } }
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 3 } }
+          __test: [ type: "i16?" ]
+        - ifThen:
+            ifs:
+            - if:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 0 } }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 2 } }
+            - if:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 0 } }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 3 } }
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 } }
+          __test: [ type: "i16?" ]
+        - ifThen:
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 1 } }
+            __test: [ diag: { level: e, code: 1002, msg: "*missing required protobuf field: ifs*" } ]
+        - ifThen:
+            ifs:
+            - if:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 1 } }
+                __test: [ diag: { level: e, code: 4005, msg: "*predicates must yield booleans, but found i8*" } ]
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 1 } }
+            - if:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 0 } }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 2 } }
+              __test: [ diag: { level: e, code: 4005, msg: "*branches must yield the same type: i16 vs. i8*" } ]
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 } }
+            __test: [ diag: { level: e, code: 4005, msg: "*branches must yield the same type: i16 vs. i8*" } ]
+          __test: [ type: "i8" ]

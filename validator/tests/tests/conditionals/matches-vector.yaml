@@ -1,0 +1,74 @@
+name: matches-vector
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            baseSchema:
+              names: [a, b, c, d]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - bool: { nullability: NULLABILITY_REQUIRED }
+                - i8: { nullability: NULLABILITY_REQUIRED }
+                - i16: { nullability: NULLABILITY_REQUIRED }
+                - i16: { nullability: NULLABILITY_NULLABLE }
+            namedTable:
+              names:
+              - test
+        expressions:
+        - multiOrList:
+            value:
+            - selection:
+                rootReference: {}
+                directReference: { structField: { field: 1 } }
+            - selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 } }
+            options:
+            - fields:
+              - literal: { i8: 1 }
+              - literal: { i16: 2 }
+            - fields:
+              - literal: { i8: 3 }
+              - literal: { i16: 4 }
+            - fields:
+              - literal: { i8: 5 }
+              - literal: { i16: 6 }
+          __test: [ type: "boolean" ]
+        - multiOrList:
+            value:
+            - selection:
+                rootReference: {}
+                directReference: { structField: { field: 1 } }
+            - selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 } }
+            options: []
+            __test: [ diag: { level: e, code: 1002, msg: "*missing required protobuf field: options*" } ]
+        - multiOrList:
+            value:
+            - selection:
+                rootReference: {}
+                directReference: { structField: { field: 1 } }
+            - selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 } }
+            options:
+            - fields:
+              - literal: { i8: 1 }
+              - literal: { i16: 2 }
+            - fields:
+              - literal: { i8: 3 }
+              - literal: { i16: 2, nullable: true }
+              __test: [ diag: { level: e, code: 4005, msg: "*nullable vs. required*" } ]
+            - fields:
+              - literal: { i8: 5 }
+              - literal: { i32: 3 }
+              __test: [ diag: { level: e, code: 4005, msg: "*i32 vs. i16*" } ]
+            - fields:
+              - literal: { i8: 5 }
+              __test: [ diag: { level: e, code: 4005, msg: "*numbers of fields differ*" } ]
+          __test: [ type: "boolean" ]

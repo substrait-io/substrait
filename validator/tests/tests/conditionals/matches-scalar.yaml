@@ -1,0 +1,50 @@
+name: matches-scalar
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            baseSchema:
+              names: [a, b, c, d]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - bool: { nullability: NULLABILITY_REQUIRED }
+                - i8: { nullability: NULLABILITY_REQUIRED }
+                - i16: { nullability: NULLABILITY_REQUIRED }
+                - i16: { nullability: NULLABILITY_NULLABLE }
+            namedTable:
+              names:
+              - test
+        expressions:
+        - singularOrList:
+            value:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 } }
+            options:
+            - literal: { i16: 1 }
+            - literal: { i16: 2 }
+            - literal: { i16: 3 }
+          __test: [ type: "boolean" ]
+        - singularOrList:
+            value:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 } }
+            options: []
+            __test: [ diag: { level: e, code: 1002, msg: "*missing required protobuf field: options*" } ]
+        - singularOrList:
+            value:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 2 } }
+            options:
+            - literal: { i16: 1 }
+            - literal: { i16: 2, nullable: true }
+              __test: [ diag: { level: e, code: 4005, msg: "*nullable vs. required*" } ]
+            - literal: { i32: 3 }
+              __test: [ diag: { level: e, code: 4005, msg: "*i32 vs. i16*" } ]
+          __test: [ type: "boolean" ]
