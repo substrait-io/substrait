@@ -1,0 +1,72 @@
+name: outer-ref
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            baseSchema:
+              names: [a, b, c]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - bool: { nullability: NULLABILITY_REQUIRED }
+                - i8: { nullability: NULLABILITY_REQUIRED }
+                - i16: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        expressions:
+        - subquery:
+            scalar:
+              input:
+                project:
+                  common: { emit: { outputMapping: [2] } }
+                  input:
+                    read:
+                      baseSchema:
+                        names: [x, y]
+                        struct:
+                          nullability: NULLABILITY_REQUIRED
+                          types:
+                          - string: { nullability: NULLABILITY_REQUIRED }
+                          - string: { nullability: NULLABILITY_REQUIRED }
+                      namedTable:
+                        names:
+                        - test2
+                  expressions:
+                  - ifThen:
+                      ifs:
+                      - if:
+                          selection:
+                            outerReference:
+                              stepsOut: 1
+                              __test: [ type: "NSTRUCT<a: boolean, b: i8, c: i16>" ]
+                            directReference: { structField: { field: 0 } }
+                        then:
+                          selection:
+                            rootReference: {}
+                            directReference: { structField: { field: 1 } }
+                      else:
+                        selection:
+                          rootReference: {}
+                          directReference: { structField: { field: 0 } }
+                  - selection:
+                      outerReference:
+                        stepsOut: 2
+                        __test:
+                        - diag: { level: e, code: 6001, msg: "*indexing query beyond current query depth (2)*" }
+                      directReference: { structField: { field: 0 } }
+        - selection:
+            outerReference:
+              stepsOut: 1
+              __test:
+              - diag: { level: e, code: 6001, msg: "*indexing query beyond current query depth (1)*" }
+            directReference: { structField: { field: 0 } }
+        - selection:
+            outerReference:
+              stepsOut: 0
+              stepsOut__test:
+              - diag: { level: e, code: 2, msg: "*must be at least 1 (use RootReference instead)*" }
+            directReference: { structField: { field: 0 } }

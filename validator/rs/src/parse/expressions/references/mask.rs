@@ -345,7 +345,10 @@ fn parse_select(
     y: &mut context::Context,
     root: &Arc<data_type::DataType>,
 ) -> diagnostic::Result<()> {
-    proto_required_field!(x, y, r#type, parse_select_type, root);
+    let data_type = proto_required_field!(x, y, r#type, parse_select_type, root)
+        .0
+        .data_type();
+    y.set_data_type(data_type);
     Ok(())
 }
 
