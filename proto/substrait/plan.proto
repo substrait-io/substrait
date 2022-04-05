@@ -6,9 +6,9 @@ package substrait;
 import "substrait/algebra.proto";
 import "substrait/extensions/extensions.proto";
 
+option csharp_namespace = "Substrait.Protobuf";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
-option csharp_namespace = "Substrait.Protobuf";
 
 // Either a relation or root relation
 message PlanRel {
@@ -23,7 +23,6 @@ message PlanRel {
 // Describe a set of operations to complete.
 // For compactness sake, identifiers are normalized at the plan level.
 message Plan {
-
   // a list of yaml specifications this plan may depend on
   repeated substrait.extensions.SimpleExtensionURI extension_uris = 1;
 

@@ -3,16 +3,15 @@ syntax = "proto3";
 
 package substrait;
 
-import "substrait/type.proto";
-import "substrait/extensions/extensions.proto";
 import "google/protobuf/any.proto";
+import "substrait/extensions/extensions.proto";
+import "substrait/type.proto";
 
+option csharp_namespace = "Substrait.Protobuf";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
-option csharp_namespace = "Substrait.Protobuf";
 
 message RelCommon {
-
   oneof emit_kind {
     Direct direct = 1;
     Emit emit = 2;
@@ -22,7 +21,9 @@ message RelCommon {
   substrait.extensions.AdvancedExtension advanced_extension = 4;
 
   message Direct {}
-  message Emit { repeated int32 output_mapping = 1; }
+  message Emit {
+    repeated int32 output_mapping = 1;
+  }
 
   // Changes to the operation that can influence efficiency/performance but
   // should not impact correctness.
@@ -65,14 +66,17 @@ message ReadRel {
   }
 
   // a table composed of literals.
-  message VirtualTable { repeated Expression.Literal.Struct values = 1; }
+  message VirtualTable {
+    repeated Expression.Literal.Struct values = 1;
+  }
 
   // a stub type that can be used to extend/introduce new table types outside
   // the specification.
-  message ExtensionTable { google.protobuf.Any detail = 1; }
+  message ExtensionTable {
+    google.protobuf.Any detail = 1;
+  }
 
   message LocalFiles {
-
     repeated FileOrFiles items = 1;
     substrait.extensions.AdvancedExtension advanced_extension = 10;
 
@@ -169,7 +173,9 @@ message AggregateRel {
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-  message Grouping { repeated Expression grouping_expressions = 1; }
+  message Grouping {
+    repeated Expression grouping_expressions = 1;
+  }
 
   message Measure {
     AggregateFunction measure = 1;
@@ -249,10 +255,14 @@ message ExchangeRel {
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-  message ScatterFields { repeated Expression.FieldReference fields = 1; }
+  message ScatterFields {
+    repeated Expression.FieldReference fields = 1;
+  }
 
   // Returns a single bucket number per record.
-  message SingleBucketExpression { Expression expression = 1; }
+  message SingleBucketExpression {
+    Expression expression = 1;
+  }
 
   // Returns zero or more bucket numbers per record
   message MultiBucketExpression {
@@ -437,10 +447,13 @@ message Expression {
     repeated Expression args = 8;
 
     message Bound {
+      message Preceding {
+        int64 offset = 1;
+      }
 
-      message Preceding { int64 offset = 1; }
-
-      message Following { int64 offset = 1; }
+      message Following {
+        int64 offset = 1;
+      }
 
       message CurrentRow {}
 
@@ -456,7 +469,6 @@ message Expression {
   }
 
   message IfThen {
-
     repeated IfClause ifs = 1;
     Expression else = 2;
 
@@ -490,7 +502,9 @@ message Expression {
     repeated Expression value = 1;
     repeated Record options = 2;
 
-    message Record { repeated Expression fields = 1; }
+    message Record {
+      repeated Expression fields = 1;
+    }
   }
 
   message EmbeddedFunction {
@@ -520,7 +534,6 @@ message Expression {
   // (ordinalized in the internal representation here), [2] is a list offset
   // and ['my_map_key'] is a reference into a map field.
   message ReferenceSegment {
-
     oneof reference_type {
       MapKey map_key = 1;
       StructField struct_field = 2;
@@ -562,7 +575,6 @@ message Expression {
   // Note that this does not fundamentally alter the structure of data beyond
   // the elimination of unecessary elements.
   message MaskExpression {
-
     StructSelect select = 1;
     bool maintain_singular_struct = 2;
 
@@ -574,7 +586,9 @@ message Expression {
       }
     }
 
-    message StructSelect { repeated StructItem struct_items = 1; }
+    message StructSelect {
+      repeated StructItem struct_items = 1;
+    }
 
     message StructItem {
       int32 field = 1;
@@ -582,7 +596,6 @@ message Expression {
     }
 
     message ListSelect {
-
       repeated ListSelectItem selection = 1;
       Select child = 2;
 
@@ -592,7 +605,9 @@ message Expression {
           ListSlice slice = 2;
         }
 
-        message ListElement { int32 field = 1; }
+        message ListElement {
+          int32 field = 1;
+        }
 
         message ListSlice {
           int32 start = 1;
@@ -609,16 +624,19 @@ message Expression {
 
       Select child = 3;
 
-      message MapKey { string map_key = 1; }
+      message MapKey {
+        string map_key = 1;
+      }
 
-      message MapKeyExpression { string map_key_expression = 1; }
+      message MapKeyExpression {
+        string map_key_expression = 1;
+      }
     }
   }
 
   // A reference to an inner part of a complex object. Can reference reference a
   // single element or a masked version of elements
   message FieldReference {
-
     // Whether this is composed of a single element reference or a masked
     // element subtree
     oneof reference_type {
@@ -663,7 +681,9 @@ message Expression {
 
     // A subquery with one row and one column. This is often an aggregate
     // though not required to be.
-    message Scalar { Rel input = 1; }
+    message Scalar {
+      Rel input = 1;
+    }
 
     // Predicate checking that the left expression is contained in the right
     // subquery
