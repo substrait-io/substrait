@@ -7,6 +7,8 @@ fix things that Isthmus wasn't doing right, being:
    considering.
  - Aggregations with only measures were being emitted by Isthmus as
    aggregations with empty grouping sets rather than no grouping sets.
+ - Isthmus was emitting duplicate grouping sets wherever there should only be
+   one grouping set.
  - Decimal literals had too many bytes attached to them.
 
 TODO: when function resolution is implemented in the validator, the diagnostic

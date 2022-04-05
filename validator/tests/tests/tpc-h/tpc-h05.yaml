@@ -95,12 +95,8 @@ plan:
               - groupingExpressions:
                 - selection:
                     directReference:
-                      structField: {}
-                    rootReference: {}
-              - groupingExpressions:
-                - selection:
-                    directReference:
-                      structField: {}
+                      structField:
+                        field: 0
                     rootReference: {}
               input:
                 project:

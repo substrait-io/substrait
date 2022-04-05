@@ -165,42 +165,8 @@ plan:
                       - groupingExpressions:
                         - selection:
                             directReference:
-                              structField: {}
-                            rootReference: {}
-                        - selection:
-                            directReference:
                               structField:
-                                field: 1
-                            rootReference: {}
-                        - selection:
-                            directReference:
-                              structField:
-                                field: 2
-                            rootReference: {}
-                        - selection:
-                            directReference:
-                              structField:
-                                field: 3
-                            rootReference: {}
-                        - selection:
-                            directReference:
-                              structField:
-                                field: 4
-                            rootReference: {}
-                        - selection:
-                            directReference:
-                              structField:
-                                field: 5
-                            rootReference: {}
-                        - selection:
-                            directReference:
-                              structField:
-                                field: 6
-                            rootReference: {}
-                      - groupingExpressions:
-                        - selection:
-                            directReference:
-                              structField: {}
+                                field: 0
                             rootReference: {}
                         - selection:
                             directReference:
