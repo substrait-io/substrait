@@ -39,7 +39,7 @@ plan:
   - extensionFunction:
       extensionUriReference: 2
       functionAnchor: 2
-      name: equal:any1_any1
+      name: equal:any_any
   - extensionFunction:
       extensionUriReference: 3
       functionAnchor: 3

@@ -63,15 +63,15 @@ plan:
   - extensionFunction:
       extensionUriReference: 2
       functionAnchor: 3
-      name: equal:any1_any1
+      name: equal:any_any
   - extensionFunction:
       extensionUriReference: 2
       functionAnchor: 4
-      name: gte:any1_any1
+      name: gte:any_any
   - extensionFunction:
       extensionUriReference: 2
       functionAnchor: 5
-      name: lte:any1_any1
+      name: lte:any_any
   - extensionFunction:
       extensionUriReference: 3
       functionAnchor: 6

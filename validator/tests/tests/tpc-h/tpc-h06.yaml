@@ -46,7 +46,7 @@ plan:
   - extensionFunction:
       extensionUriReference: 3
       functionAnchor: 5
-      name: gte:any1_any1
+      name: gte:any_any
   - extensionFunction:
       extensionUriReference: 4
       functionAnchor: 6
@@ -54,7 +54,7 @@ plan:
   - extensionFunction:
       extensionUriReference: 3
       functionAnchor: 7
-      name: lte:any1_any1
+      name: lte:any_any
   - extensionFunction:
       extensionUriReference: 4
       functionAnchor: 8
@@ -62,7 +62,7 @@ plan:
   - extensionFunction:
       extensionUriReference: 3
       functionAnchor: 9
-      name: lt:any1_any1
+      name: lt:any_any
   - extensionFunction:
       extensionUriReference: 4
       functionAnchor: 10
