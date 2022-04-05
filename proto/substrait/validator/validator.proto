@@ -5,9 +5,9 @@ package substrait.validator;
 
 import "google/protobuf/any.proto";
 
+option csharp_namespace = "Substrait.Validator.Protobuf";
 option java_multiple_files = true;
 option java_package = "io.substrait.validator.proto";
-option csharp_namespace = "Substrait.Validator.Protobuf";
 
 // One of the functions of the validator is to convert Substrait plans to a
 // format that is more easy to consume for software geared toward making
@@ -15,7 +15,6 @@ option csharp_namespace = "Substrait.Validator.Protobuf";
 // builtin text-based exporters, but it can also emit the complete parse
 // result via the binary serialization of this message type.
 message ParseResult {
-
   // Root node of the parse result tree.
   Node root = 1;
 }
@@ -40,10 +39,8 @@ message ParseResult {
 // substrait.Plan, every node can be related back to its corresponding message
 // via the path information associated with the nodes.
 message Node {
-
   // The type of node.
   oneof node_type {
-
     // This node represents a protobuf message. The fields are described using
     // Field, RepeatedField, and OneOfField messages in data.
     ProtoMessage proto_message = 1;
@@ -120,9 +117,7 @@ message Node {
   // on the node type (for example, a primitive does not have fields, so it
   // makes no sense for Field data to appear).
   message Data {
-
     oneof kind {
-
       // Represents a child node in the tree.
       Child child = 1;
 
@@ -139,7 +134,6 @@ message Node {
 
   // Representation of a child node in the tree.
   message Child {
-
     // Path element identifying the relation of this child node to its
     // parent.
     Path.Element path = 1;
@@ -157,14 +151,12 @@ message Node {
 
   // Information about a protobuf message.
   message ProtoMessage {
-
     // The full protobuf path for the type, for example "substrait.Plan".
     string path = 1;
   }
 
   // Information about a protobuf primitive.
   message ProtoPrimitive {
-
     // Logically compatible protobuf name of the primitive type, for example
     // uint32 for any 32-bit unsigned data storage type.
     string path = 1;
@@ -175,7 +167,6 @@ message Node {
 
   // Information about the reference part of a reference/anchor pair.
   message NodeReference {
-
     // Integer value of the reference and anchor.
     uint64 value = 1;
 
@@ -186,14 +177,12 @@ message Node {
 
   // Information about a reference to a YAML file.
   message YamlReference {
-
     // URI to the YAML file.
     string uri = 1;
   }
 
   // Value for a primitive data element.
   message PrimitiveData {
-
     // Note: to represent a YAML null, this field is simply not populated.
     oneof data {
       bool boolean = 1;
@@ -210,7 +199,6 @@ message Node {
 
 // An absolute path to a node in the tree.
 message Path {
-
   // Name of the root node. Currently always set to `plan`.
   string root = 1;
 
@@ -232,7 +220,9 @@ message Path {
   // Canonically represented as `.<field>` if field matches
   // [a-zA-Z_][a-zA-Z0-9_]*, or as `."<field>"` using \\ and \" escape
   // sequences if not (note that this can only happen for YAML map keys).
-  message Field { string field = 1; }
+  message Field {
+    string field = 1;
+  }
 
   // Path element used for protobuf repeated field elements.
   // Canonically represented as `.<field>[<index>]`.
@@ -250,12 +240,13 @@ message Path {
 
   // Path element used for YAML arrays.
   // Canonically represented as `[<index>]`.
-  message ArrayElement { uint64 index = 2; }
+  message ArrayElement {
+    uint64 index = 2;
+  }
 }
 
 // Representation of a diagnostic message.
 message Diagnostic {
-
   // The original error level/severity for this diagnostic.
   Level original_level = 1;
 
@@ -297,7 +288,6 @@ message Diagnostic {
 // Representation of a comment made by the validator that is only intended
 // to be interpreted by people.
 message Comment {
-
   // Comments consist of one or more "elements," defining formatting
   // information.
   repeated Element elements = 1;
@@ -328,13 +318,11 @@ message Comment {
 
   // A span of text.
   message Span {
-
     // Text for this span. Should not include newlines.
     string text = 1;
 
     // Specified if this span of text should link to something.
     oneof link {
-
       // Link to a path in the tree.
       Path path = 2;
 
@@ -346,7 +334,6 @@ message Comment {
 
 // Representation of a resolved data type.
 message DataType {
-
   // Type class.
   Class class = 1;
 
@@ -412,7 +399,6 @@ message DataType {
 
   // Information about a user-defined type.
   message UserDefinedType {
-
     // URI of the YAML file that the type is (supposed to be) defined in, if
     // known.
     string uri = 1;
@@ -426,14 +412,12 @@ message DataType {
 
     // Type definition information from a YAML file for a user-defined type.
     message Definition {
-
       // The primitive structure of the type.
       repeated Element structure = 1;
     }
 
     // Primitive structure element for a user-defined type.
     message Element {
-
       // Name of the element.
       string name = 1;
 
@@ -444,7 +428,6 @@ message DataType {
 
   // Information about a type variation.
   message UserDefinedVariation {
-
     // URI of the YAML file that the type variation is (supposed to be) defined
     // in, if known.
     string uri = 1;
@@ -458,7 +441,6 @@ message DataType {
 
     // Type definition information from a YAML file for a user-defined type.
     message Definition {
-
       // Base type.
       oneof base_type {
         Class physical = 1;
@@ -480,10 +462,8 @@ message DataType {
 
   // Type parameter.
   message Parameter {
-
     // Type of parameter.
     oneof kind {
-
       // Anonymous data type parameter, for example the T in LIST<T>.
       DataType data_type = 1;
 
@@ -497,7 +477,6 @@ message DataType {
 
   // A named type, used for NSTRUCT (meta)types.
   message Named {
-
     // Name of the struct element.
     string name = 1;
 

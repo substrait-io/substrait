@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 syntax = "proto3";
+
 package substrait;
 
+option csharp_namespace = "Substrait.Protobuf";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
-option csharp_namespace = "Substrait.Protobuf";
 
 message Type {
-
   oneof kind {
     Boolean bool = 1;
     I8 i8 = 2;

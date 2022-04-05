@@ -3,17 +3,16 @@ syntax = "proto3";
 
 package substrait;
 
-import "substrait/type.proto";
 import "substrait/parameterized_types.proto";
+import "substrait/type.proto";
 import "substrait/type_expressions.proto";
 
+option csharp_namespace = "Substrait.Protobuf";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
-option csharp_namespace = "Substrait.Protobuf";
 
 // List of function signatures available.
 message FunctionSignature {
-
   message FinalArgVariadic {
     // the minimum number of arguments allowed for the list of final arguments
     // (inclusive).
@@ -112,7 +111,6 @@ message FunctionSignature {
   }
 
   message Implementation {
-
     Type type = 1;
     string uri = 2;
 
@@ -137,7 +135,9 @@ message FunctionSignature {
       bool constant = 2;
     }
 
-    message TypeArgument { ParameterizedType type = 1; }
+    message TypeArgument {
+      ParameterizedType type = 1;
+    }
 
     message EnumArgument {
       repeated string options = 1;
