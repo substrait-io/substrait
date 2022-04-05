@@ -1,0 +1,72 @@
+name: comparison-subquery
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            baseSchema:
+              names: [x]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - bool: { nullability: NULLABILITY_REQUIRED }
+            namedTable: { names: [ test ] }
+        expressions:
+        - subquery:
+            setComparison:
+              right:
+                read:
+                  baseSchema:
+                    names: [x]
+                    struct:
+                      nullability: NULLABILITY_REQUIRED
+                      types:
+                      - string: { nullability: NULLABILITY_REQUIRED }
+                  namedTable:
+                    names:
+                    - test2
+              left: { literal: { string: test } }
+              comparisonOp: COMPARISON_OP_EQ
+              reductionOp: REDUCTION_OP_ALL
+          __test: [ type: boolean ]
+        - subquery:
+            setComparison:
+              right:
+                read:
+                  baseSchema:
+                    names: [x, y]
+                    struct:
+                      nullability: NULLABILITY_REQUIRED
+                      types:
+                      - string: { nullability: NULLABILITY_REQUIRED }
+                      - i32: { nullability: NULLABILITY_REQUIRED }
+                  namedTable:
+                    names:
+                    - test3
+              __test: [ diag: { level: e, code: 6004, msg: "*subquery must return a single column*" } ]
+              left: { literal: { string: test } }
+              comparisonOp: COMPARISON_OP_UNSPECIFIED
+              comparisonOp__test: [ diag: { level: e, code: 2, msg: "*this enum may not be left unspecified*" } ]
+              reductionOp: REDUCTION_OP_UNSPECIFIED
+              reductionOp__test: [ diag: { level: e, code: 2, msg: "*this enum may not be left unspecified*" } ]
+          __test: [ type: boolean ]
+        - subquery:
+            setComparison:
+              right:
+                read:
+                  baseSchema:
+                    names: [x]
+                    struct:
+                      nullability: NULLABILITY_REQUIRED
+                      types:
+                      - string: { nullability: NULLABILITY_REQUIRED }
+                  namedTable:
+                    names:
+                    - test4
+              __test: [ diag: { level: e, code: 4005, msg: "*string vs. i32*" } ]
+              left: { literal: { i32: 0 } }
+              comparisonOp: COMPARISON_OP_GE
+              reductionOp: REDUCTION_OP_ANY
+          __test: [ type: boolean ]

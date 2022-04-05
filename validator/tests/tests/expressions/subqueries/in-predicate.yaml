@@ -1,0 +1,69 @@
+name: in-subquery
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            baseSchema:
+              names: [x]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - bool: { nullability: NULLABILITY_REQUIRED }
+            namedTable: { names: [ test ] }
+        expressions:
+        - subquery:
+            inPredicate:
+              haystack:
+                read:
+                  baseSchema:
+                    names: [x, y]
+                    struct:
+                      nullability: NULLABILITY_REQUIRED
+                      types:
+                      - string: { nullability: NULLABILITY_REQUIRED }
+                      - i32: { nullability: NULLABILITY_REQUIRED }
+                  namedTable:
+                    names:
+                    - test2
+              needles:
+              - literal: { string: test }
+              - literal: { i32: 0 }
+          __test: [ type: boolean ]
+        - subquery:
+            inPredicate:
+              haystack:
+                read:
+                  baseSchema:
+                    names: [x]
+                    struct:
+                      nullability: NULLABILITY_REQUIRED
+                      types:
+                      - i32: { nullability: NULLABILITY_REQUIRED }
+                  namedTable:
+                    names:
+                    - test3
+              needles:
+              - literal: { i16: 0 }
+              __test: [ diag: { level: e, code: 4005, msg: "*column 1*i32 vs. i16*" } ]
+          __test: [ type: boolean ]
+        - subquery:
+            inPredicate:
+              haystack:
+                read:
+                  baseSchema:
+                    names: [x]
+                    struct:
+                      nullability: NULLABILITY_REQUIRED
+                      types:
+                      - i32: { nullability: NULLABILITY_REQUIRED }
+                  namedTable:
+                    names:
+                    - test3
+              needles:
+              - literal: { i32: 0 }
+              - literal: { i16: 0 }
+              __test: [ diag: { level: e, code: 4005, msg: "*column count mismatch*" } ]
+          __test: [ type: boolean ]

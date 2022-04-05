@@ -39,6 +39,9 @@ fn parse_scalar(
         Arc::default()
     };
 
+    // FIXME: what is the behavior when the query doesn't yield one row? Should
+    // the returned data type be made nullable?
+
     // Describe node.
     y.set_data_type(return_type);
     summary!(
@@ -123,7 +126,7 @@ fn parse_set_predicate(
     y.enter_relation_root(|y| proto_boxed_required_field!(x, y, tuples, relations::parse_rel));
 
     // Parse the operation type.
-    let operation = proto_enum_field!(x, y, predicate_op, PredicateOp)
+    let operation = proto_required_enum_field!(x, y, predicate_op, PredicateOp)
         .1
         .unwrap_or_default();
 
@@ -168,10 +171,10 @@ fn parse_set_comparison(
     let left_expression = e.unwrap_or_default();
 
     // Parse the operation type.
-    let comparison_op = proto_enum_field!(x, y, comparison_op, ComparisonOp)
+    let comparison_op = proto_required_enum_field!(x, y, comparison_op, ComparisonOp)
         .1
         .unwrap_or_default();
-    let reduction_op = proto_enum_field!(x, y, reduction_op, ReductionOp)
+    let reduction_op = proto_required_enum_field!(x, y, reduction_op, ReductionOp)
         .1
         .unwrap_or_default();
 

@@ -1,0 +1,65 @@
+name: set-subquery
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            baseSchema:
+              names: [x]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - bool: { nullability: NULLABILITY_REQUIRED }
+            namedTable: { names: [ test ] }
+        expressions:
+        - subquery:
+            setPredicate:
+              tuples:
+                read:
+                  baseSchema:
+                    names: [x, y]
+                    struct:
+                      nullability: NULLABILITY_REQUIRED
+                      types:
+                      - string: { nullability: NULLABILITY_REQUIRED }
+                      - i32: { nullability: NULLABILITY_REQUIRED }
+                  namedTable:
+                    names:
+                    - test2
+              predicateOp: PREDICATE_OP_EXISTS
+          __test: [ type: boolean ]
+        - subquery:
+            setPredicate:
+              tuples:
+                read:
+                  baseSchema:
+                    names: [x, y]
+                    struct:
+                      nullability: NULLABILITY_REQUIRED
+                      types:
+                      - string: { nullability: NULLABILITY_REQUIRED }
+                      - i32: { nullability: NULLABILITY_REQUIRED }
+                  namedTable:
+                    names:
+                    - test2
+              predicateOp: PREDICATE_OP_UNIQUE
+          __test: [ type: boolean ]
+        - subquery:
+            setPredicate:
+              tuples:
+                read:
+                  baseSchema:
+                    names: [x, y]
+                    struct:
+                      nullability: NULLABILITY_REQUIRED
+                      types:
+                      - string: { nullability: NULLABILITY_REQUIRED }
+                      - i32: { nullability: NULLABILITY_REQUIRED }
+                  namedTable:
+                    names:
+                    - test2
+              predicateOp: PREDICATE_OP_UNSPECIFIED
+              predicateOp__test: [ diag: { level: e, code: 2, msg: "*this enum may not be left unspecified*" } ]
+          __test: [ type: boolean ]
