@@ -57,10 +57,10 @@ plan:
   extensionUris:
   - extensionUriAnchor: 1
     uri: /functions_boolean.yaml
-  - extensionUriAnchor: 3
-    uri: /functions_string.yaml
   - extensionUriAnchor: 2
     uri: /functions_comparison.yaml
+  - extensionUriAnchor: 3
+    uri: /functions_string.yaml
   - extensionUriAnchor: 4
     uri: /functions_aggregate_generic.yaml
   extensions:

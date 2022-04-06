@@ -29,12 +29,12 @@ plan:
   __test:
   - level: i
   extensionUris:
-  - extensionUriAnchor: 3
-    uri: /functions_aggregate_generic.yaml
-  - extensionUriAnchor: 2
-    uri: /functions_arithmetic_decimal.yaml
   - extensionUriAnchor: 1
     uri: /functions_datetime.yaml
+  - extensionUriAnchor: 2
+    uri: /functions_arithmetic_decimal.yaml
+  - extensionUriAnchor: 3
+    uri: /functions_aggregate_generic.yaml
   extensions:
   - extensionFunction:
       extensionUriReference: 1

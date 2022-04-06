@@ -49,12 +49,12 @@ plan:
   extensionUris:
   - extensionUriAnchor: 1
     uri: /functions_boolean.yaml
-  - extensionUriAnchor: 4
-    uri: /functions_arithmetic_decimal.yaml
-  - extensionUriAnchor: 3
-    uri: /functions_datetime.yaml
   - extensionUriAnchor: 2
     uri: /functions_comparison.yaml
+  - extensionUriAnchor: 3
+    uri: /functions_datetime.yaml
+  - extensionUriAnchor: 4
+    uri: /functions_arithmetic_decimal.yaml
   extensions:
   - extensionFunction:
       extensionUriReference: 1
