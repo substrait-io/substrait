@@ -50,7 +50,7 @@ plan:
   - extensionFunction:
       extensionUriReference: 4
       functionAnchor: 6
-      name: subtract:opt_decimal_decimal
+      name: subtract:opt_dec_dec
   - extensionFunction:
       extensionUriReference: 3
       functionAnchor: 7
@@ -58,7 +58,7 @@ plan:
   - extensionFunction:
       extensionUriReference: 4
       functionAnchor: 8
-      name: add:opt_decimal_decimal
+      name: add:opt_dec_dec
   - extensionFunction:
       extensionUriReference: 3
       functionAnchor: 9
@@ -66,11 +66,11 @@ plan:
   - extensionFunction:
       extensionUriReference: 4
       functionAnchor: 10
-      name: multiply:opt_decimal_decimal
+      name: multiply:opt_dec_dec
   - extensionFunction:
       extensionUriReference: 4
       functionAnchor: 11
-      name: sum:opt_decimal
+      name: sum:opt_dec
   relations:
   - root:
       __test:

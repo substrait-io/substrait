@@ -67,15 +67,15 @@ plan:
   - extensionFunction:
       extensionUriReference: 4
       functionAnchor: 6
-      name: multiply:opt_decimal_decimal
+      name: multiply:opt_dec_dec
   - extensionFunction:
       extensionUriReference: 4
       functionAnchor: 7
-      name: subtract:opt_decimal_decimal
+      name: subtract:opt_dec_dec
   - extensionFunction:
       extensionUriReference: 4
       functionAnchor: 8
-      name: sum:opt_decimal
+      name: sum:opt_dec
   relations:
   - root:
       __test:

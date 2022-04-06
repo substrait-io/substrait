@@ -47,23 +47,23 @@ plan:
   - extensionFunction:
       extensionUriReference: 2
       functionAnchor: 3
-      name: multiply:opt_decimal_decimal
+      name: multiply:opt_dec_dec
   - extensionFunction:
       extensionUriReference: 2
       functionAnchor: 4
-      name: subtract:opt_decimal_decimal
+      name: subtract:opt_dec_dec
   - extensionFunction:
       extensionUriReference: 2
       functionAnchor: 5
-      name: add:opt_decimal_decimal
+      name: add:opt_dec_dec
   - extensionFunction:
       extensionUriReference: 2
       functionAnchor: 6
-      name: sum:opt_decimal
+      name: sum:opt_dec
   - extensionFunction:
       extensionUriReference: 2
       functionAnchor: 7
-      name: avg:opt_decimal
+      name: avg:opt_dec
   - extensionFunction:
       extensionUriReference: 3
       functionAnchor: 8

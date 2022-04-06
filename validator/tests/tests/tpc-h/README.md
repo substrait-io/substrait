@@ -11,7 +11,7 @@ however:
    one grouping set.
  - Decimal literals had too many bytes attached to them.
  - Emitted function signatures use `any1` etc. where according to the spec a
-   plain `any` should be used.
+   plain `any` should be used. Same for `decimal` vs `dec`.
  - Subqueries are not presently supported by Isthmus, so queries with
    subqueries were merged manually.
 

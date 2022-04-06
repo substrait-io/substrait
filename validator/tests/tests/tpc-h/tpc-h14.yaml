@@ -59,19 +59,19 @@ plan:
   - extensionFunction:
       extensionUriReference: 5
       functionAnchor: 7
-      name: multiply:opt_decimal_decimal
+      name: multiply:opt_dec_dec
   - extensionFunction:
       extensionUriReference: 5
       functionAnchor: 8
-      name: subtract:opt_decimal_decimal
+      name: subtract:opt_dec_dec
   - extensionFunction:
       extensionUriReference: 5
       functionAnchor: 9
-      name: sum:opt_decimal
+      name: sum:opt_dec
   - extensionFunction:
       extensionUriReference: 5
       functionAnchor: 10
-      name: divide:opt_decimal_decimal
+      name: divide:opt_dec_dec
   relations:
   - root:
       __test:
