@@ -19,5 +19,10 @@ NOTE: these queries have not undergone *functional* testing, and have been
 manually modified. Therefore, it is quite likely for there to be slight
 functional differences between the SQL queries and the plans due to bugs.
 
+NOTE: the plans are also not optimized; they typically start by forming the
+cross product of all input tables and then applying a filter to the result.
+Without predicate pushdown they are unlikely to run for any reasonable table
+sizes.
+
 TODO: when function resolution is implemented in the validator, the diagnostic
 overrides relating to those not currently working should be removed.
