@@ -7,7 +7,7 @@ plan:
         input:
           read:
             baseSchema:
-              names: [a, b, c, d]
+              names: [a, b, c, d, e]
               struct:
                 nullability: NULLABILITY_REQUIRED
                 types:
@@ -15,6 +15,7 @@ plan:
                 - i8: { nullability: NULLABILITY_REQUIRED }
                 - i16: { nullability: NULLABILITY_REQUIRED }
                 - i16: { nullability: NULLABILITY_NULLABLE }
+                - bool: { nullability: NULLABILITY_NULLABLE }
             namedTable:
               names:
               - test
@@ -44,6 +45,21 @@ plan:
                 selection:
                   rootReference: {}
                   directReference: { structField: { field: 1 } }
+          __test: [ type: "i8?" ]
+        - ifThen:
+            ifs:
+            - if:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 4 } }
+              then:
+                selection:
+                  rootReference: {}
+                  directReference: { structField: { field: 1 } }
+            else:
+              selection:
+                rootReference: {}
+                directReference: { structField: { field: 1 } }
           __test: [ type: "i8?" ]
         - ifThen:
             ifs:

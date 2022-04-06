@@ -28,19 +28,26 @@ pub fn parse_if_then(
     // Handle branches.
     proto_required_repeated_field!(x, y, ifs, |x, y| {
         // Parse fields.
-        let condition = proto_required_field!(x, y, r#if, expressions::parse_predicate)
-            .1
-            .unwrap_or_default();
+        let (n, e) = proto_required_field!(x, y, r#if, expressions::parse_predicate);
+        let condition = e.unwrap_or_default();
+        let condition_type = n.data_type();
         let (n, e) = proto_required_field!(x, y, then, expressions::parse_expression);
         let value = e.unwrap_or_default();
+        let value_type = n.data_type();
 
         // Check that the type is the same for each branch.
         return_type = types::promote_and_assert_equal(
             y,
-            &n.data_type(),
+            &value_type,
             &return_type,
             "branches must yield the same type",
         );
+
+        // Nulls in the condition are propagated to the output.
+        // FIXME: I guess?
+        if !condition_type.is_unresolved() && condition_type.nullable() {
+            return_type = return_type.make_nullable();
+        }
 
         // Describe this branch.
         describe!(y, Misc, "If {} yield {}", &condition, &value);
