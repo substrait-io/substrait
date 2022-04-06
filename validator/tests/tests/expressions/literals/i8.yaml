@@ -35,7 +35,7 @@ plan:
           - fields:
             - "null":
                 i8: { nullability: NULLABILITY_REQUIRED }
-                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+                __test: [ diag: { level: e, code: 4008, msg: "*type of null literal must be nullable*" } ]
             - "null":
                 i8: { nullability: NULLABILITY_NULLABLE }
         __test: [ type: "NSTRUCT<x: i8, y: i8?>" ]

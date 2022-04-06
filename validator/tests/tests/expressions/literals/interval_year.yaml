@@ -95,7 +95,7 @@ plan:
           - fields:
             - "null":
                 interval_year: { nullability: NULLABILITY_REQUIRED }
-                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+                __test: [ diag: { level: e, code: 4008, msg: "*type of null literal must be nullable*" } ]
             - "null":
                 interval_year: { nullability: NULLABILITY_NULLABLE }
         __test: [ type: "NSTRUCT<x: interval_year, y: interval_year?>" ]

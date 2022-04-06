@@ -944,7 +944,7 @@ fn assert_equal_internal(
                     diagnostic!(
                         context,
                         Error,
-                        TypeMismatch,
+                        TypeMismatchedNullability,
                         "{message}: nullable vs. required{path}"
                     );
                     false
@@ -955,7 +955,7 @@ fn assert_equal_internal(
                     diagnostic!(
                         context,
                         Error,
-                        TypeMismatch,
+                        TypeMismatchedNullability,
                         "{message}: required vs. nullable{path}"
                     );
                 }
@@ -971,7 +971,7 @@ fn assert_equal_internal(
                     diagnostic!(
                         context,
                         Error,
-                        TypeMismatch,
+                        TypeMismatchedVariation,
                         "{message}: variation {other} vs. {base}{path}"
                     );
                 }
@@ -979,13 +979,13 @@ fn assert_equal_internal(
             (Some(other), None) => diagnostic!(
                 context,
                 Error,
-                TypeMismatch,
+                TypeMismatchedVariation,
                 "{message}: variation {other} vs. no variation{path}"
             ),
             (None, Some(base)) => diagnostic!(
                 context,
                 Error,
-                TypeMismatch,
+                TypeMismatchedVariation,
                 "{message}: no variation vs. variation {base}{path}"
             ),
             (None, None) => {}
@@ -999,7 +999,7 @@ fn assert_equal_internal(
                 context,
                 Error,
                 TypeMismatch,
-                "{message}: {other_len} parameters vs. {base_len} parameters{path}"
+                "{message}: {other_len} parameter(s) vs. {base_len} parameter(s){path}"
             );
             return base.clone();
         }

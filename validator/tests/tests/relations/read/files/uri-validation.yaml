@@ -1,0 +1,50 @@
+name: read-files-uri-validation
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+        localFiles:
+          items:
+          - uriPath: "not a valid URI"
+            uriPath__test: [ diag: { level: e, code: 4, msg: "*invalid path character*" } ]
+            format: FILE_FORMAT_PARQUET
+          - uriPath: "a%20valid%20relative%20URI"
+            format: FILE_FORMAT_PARQUET
+          - uriPath: "/path/to/local/file"
+            format: FILE_FORMAT_PARQUET
+          - uriPath: "file:///path/to/local/file"
+            format: FILE_FORMAT_PARQUET
+          - uriPath: "protocol://with.an.authority/path/goes/here"
+            format: FILE_FORMAT_PARQUET
+          - uriPath: "protocol:urn"
+            format: FILE_FORMAT_PARQUET
+          - uriPath: 'C:\windows\paths\are\not\uris'
+            uriPath__test: [ diag: { level: e, code: 4, msg: "*invalid path character*" } ]
+            format: FILE_FORMAT_PARQUET
+          - uriPath: 'file://C:/write/them/like/this'
+            format: FILE_FORMAT_PARQUET
+          - uriPath: 'C:/or/like/this'
+            format: FILE_FORMAT_PARQUET
+          - uriPathGlob: '/can/have/*/and/?/in/path/globs'
+            format: FILE_FORMAT_PARQUET
+          - uriPathGlob: 'file:///can/have/*/and/?/in/path/globs'
+            format: FILE_FORMAT_PARQUET
+          - uriPathGlob: '/character/classes/must/be/escaped/[cls]'
+            uriPathGlob__test: [ diag: { level: e, code: 4, msg: "*invalid path character*" } ]
+            format: FILE_FORMAT_PARQUET
+          - uriPathGlob: '/character/classes/must/be/escaped/%5Bcls%5D'
+            format: FILE_FORMAT_PARQUET
+          - uriPathGlob: '/invalid/glob/syntax/%5Dcls%5B'
+            uriPathGlob__test: [ diag: { level: e, code: 5, msg: "*invalid range pattern*" } ]
+            format: FILE_FORMAT_PARQUET
+          - uriFile: "/path/to/local/file"
+            format: FILE_FORMAT_PARQUET
+          - uriFolder: "/path/to/local/folder"
+            format: FILE_FORMAT_PARQUET

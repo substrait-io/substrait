@@ -1,0 +1,16 @@
+name: read-virtual-empty
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [word, value]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - i32: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values: []
+        __test: [ type: "NSTRUCT<word: string, value: i32?>" ]

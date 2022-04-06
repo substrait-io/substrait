@@ -1,0 +1,30 @@
+name: read-partial-files
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+        localFiles:
+          items:
+          - uriFile: "a/b/c"
+            format: FILE_FORMAT_PARQUET
+            partitionIndex: 3
+          - uriFolder: "a/b/c"
+            format: FILE_FORMAT_PARQUET
+            partitionIndex: 3
+          - uriFile: "a/b/c"
+            format: FILE_FORMAT_PARQUET
+            start: 10
+            length: 20
+          - uriFolder: "a/b/c"
+            format: FILE_FORMAT_PARQUET
+            start: 10
+            length: 20
+            __test:
+            - diag: { level: e, code: 2, msg: "*file offsets are not allowed in conjunction with multiple files*" }

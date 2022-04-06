@@ -82,9 +82,7 @@ fn parse_path_type(
         }
         PathType::UriPathGlob(x) => {
             if let Err(e) = string_util::check_uri_glob(x) {
-                // May yield false negatives due to the weird combination of
-                // glob and URI syntax. See associated FIXME in string_util.
-                diagnostic!(y, Warning, e);
+                diagnostic!(y, Error, e);
             }
             Ok(true)
         }
@@ -336,6 +334,16 @@ pub fn parse_read_rel(x: &substrait::ReadRel, y: &mut context::Context) -> diagn
         (None, Some(schema)) => schema,
         (None, None) => Arc::default(),
     };
+
+    // The outer struct of a schema should not be nullable.
+    if !schema.is_unresolved() && schema.nullable() {
+        diagnostic!(
+            y,
+            Error,
+            TypeMismatchedNullability,
+            "the outer struct representing a schema must not be nullable"
+        );
+    }
 
     // Set the schema to the merged data type.
     y.set_schema(schema.clone());

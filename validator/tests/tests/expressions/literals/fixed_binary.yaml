@@ -34,7 +34,7 @@ plan:
           - fields:
             - "null":
                 fixed_binary: { length: 3, nullability: NULLABILITY_REQUIRED }
-                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+                __test: [ diag: { level: e, code: 4008, msg: "*type of null literal must be nullable*" } ]
             - "null":
                 fixed_binary: { length: 5, nullability: NULLABILITY_NULLABLE }
           - fields:
@@ -58,7 +58,7 @@ plan:
                   length: 2147483647 # maximum size
                   nullability: NULLABILITY_NULLABLE
             __test:
-            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4008 }
             - diag: { level: e, code: 4005 }
             - diag: { level: e, code: 4005 }
           - fields:

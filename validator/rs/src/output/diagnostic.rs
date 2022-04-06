@@ -253,6 +253,9 @@ pub enum Classification {
     #[strum(props(Description = "mismatched type variation"))]
     TypeMismatchedVariation = 4007,
 
+    #[strum(props(Description = "mismatched nullability"))]
+    TypeMismatchedNullability = 4008,
+
     // Relation-related diagnostics (group 5).
     #[strum(props(HiddenDescription = "relation-related diagnostics"))]
     Relation = 5000,

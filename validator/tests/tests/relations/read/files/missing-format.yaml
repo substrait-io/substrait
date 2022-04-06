@@ -1,0 +1,16 @@
+name: read-files-missing-format
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+        localFiles:
+          items:
+          - uriPath: "1/2/3"
+            format__test: [ diag: { level: e, code: 2, msg: "*file format must be specified*" } ]

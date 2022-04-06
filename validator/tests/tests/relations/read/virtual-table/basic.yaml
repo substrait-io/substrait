@@ -1,0 +1,35 @@
+name: read-virtual-basic
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [word, value]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - i32: { nullability: NULLABILITY_NULLABLE }
+        virtualTable:
+          values:
+          - fields:
+            - string: one
+              nullable: false
+            - i32: 1
+              nullable: true
+          - fields:
+            - string: two
+              nullable: false
+            - i32: 2
+              nullable: true
+          - fields:
+            - string: three
+              nullable: false
+            - i32: 3
+              nullable: true
+          - fields:
+            - string: banana
+              nullable: false
+            - "null": { i32: { nullability: NULLABILITY_NULLABLE } }
+        __test: [ type: "NSTRUCT<word: string, value: i32?>" ]

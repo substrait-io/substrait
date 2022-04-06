@@ -1,0 +1,16 @@
+name: read-schema-wrong-name-count
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a, b]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+          __test: [ diag: { level: e, code: 4003, msg: "*1 too many*" } ]
+        namedTable:
+          names:
+          - test

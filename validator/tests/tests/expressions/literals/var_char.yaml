@@ -46,7 +46,7 @@ plan:
           - fields:
             - "null":
                 varchar: { length: 3, nullability: NULLABILITY_REQUIRED }
-                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+                __test: [ diag: { level: e, code: 4008, msg: "*type of null literal must be nullable*" } ]
             - "null":
                 varchar: { length: 6, nullability: NULLABILITY_NULLABLE }
           - fields:
@@ -70,7 +70,7 @@ plan:
                   length: 2147483647 # maximum size
                   nullability: NULLABILITY_NULLABLE
             __test:
-            - diag: { level: e, code: 4005 }
+            - diag: { level: e, code: 4008 }
             - diag: { level: e, code: 4005 }
             - diag: { level: e, code: 4005 }
         __test: [ type: "NSTRUCT<x: VARCHAR<3>, y: VARCHAR?<6>>" ]

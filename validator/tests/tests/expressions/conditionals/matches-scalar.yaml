@@ -44,7 +44,7 @@ plan:
             options:
             - literal: { i16: 1 }
             - literal: { i16: 2, nullable: true }
-              __test: [ diag: { level: e, code: 4005, msg: "*nullable vs. required*" } ]
+              __test: [ diag: { level: e, code: 4008, msg: "*nullable vs. required*" } ]
             - literal: { i32: 3 }
               __test: [ diag: { level: e, code: 4005, msg: "*i32 vs. i16*" } ]
           __test: [ type: "boolean" ]

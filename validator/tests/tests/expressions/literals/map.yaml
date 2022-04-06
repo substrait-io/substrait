@@ -68,7 +68,7 @@ plan:
                   nullability: NULLABILITY_REQUIRED
                   key: { string: { nullability: NULLABILITY_NULLABLE } }
                   value: { bool: { nullability: NULLABILITY_REQUIRED } }
-                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+                __test: [ diag: { level: e, code: 4008, msg: "*type of null literal must be nullable*" } ]
             - "null":
                 map:
                   nullability: NULLABILITY_NULLABLE

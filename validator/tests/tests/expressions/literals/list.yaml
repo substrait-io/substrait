@@ -52,7 +52,7 @@ plan:
                   nullability: NULLABILITY_REQUIRED
                   type:
                     bool: { nullability: NULLABILITY_NULLABLE }
-                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+                __test: [ diag: { level: e, code: 4008, msg: "*type of null literal must be nullable*" } ]
             - "null":
                 list:
                   nullability: NULLABILITY_NULLABLE

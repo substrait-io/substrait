@@ -827,7 +827,7 @@ fn parse_null(
     let data_type = y.data_type();
     if !data_type.nullable() && !data_type.is_unresolved() {
         Err(cause!(
-            TypeMismatch,
+            TypeMismatchedNullability,
             "type of null literal must be nullable"
         ))
     } else {

@@ -1,0 +1,16 @@
+name: read-schema-nullable
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a]
+          struct:
+            nullability: NULLABILITY_NULLABLE
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+        namedTable:
+          names:
+          - test
+        __test: [ diag: { level: e, code: 4008, msg: "*the outer struct representing a schema must not be nullable*" } ]

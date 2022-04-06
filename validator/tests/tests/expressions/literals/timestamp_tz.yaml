@@ -42,7 +42,7 @@ plan:
           - fields:
             - "null":
                 timestamp_tz: { nullability: NULLABILITY_REQUIRED }
-                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+                __test: [ diag: { level: e, code: 4008, msg: "*type of null literal must be nullable*" } ]
             - "null":
                 timestamp_tz: { nullability: NULLABILITY_NULLABLE }
         __test: [ type: "NSTRUCT<x: timestamp_tz, y: timestamp_tz?>" ]

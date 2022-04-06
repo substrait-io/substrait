@@ -30,7 +30,7 @@ plan:
           - fields:
             - "null":
                 uuid: { nullability: NULLABILITY_REQUIRED }
-                __test: [ diag: { level: e, code: 4005, msg: "*type of null literal must be nullable*" } ]
+                __test: [ diag: { level: e, code: 4008, msg: "*type of null literal must be nullable*" } ]
             - "null":
                 uuid: { nullability: NULLABILITY_NULLABLE }
         __test: [ type: "NSTRUCT<x: uuid, y: uuid?>" ]

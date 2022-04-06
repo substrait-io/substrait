@@ -1,0 +1,17 @@
+name: read-named-multiple
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+        namedTable:
+          names:
+          - a
+          - b
+          __test: [ diag: { level: w, msg: "*named tables with multiple names*" } ]
