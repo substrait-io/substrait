@@ -96,3 +96,15 @@ jobs:
         with:
           command: upload
           args: --skip-existing *
+
+  fmt-lint:
+    name: Format & lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: python3 -m pip install --upgrade pip black==22.3.0 flake8==4.0.1
+    - name: Black
+      run: python3 -m black --diff --check .
+    - name: Flake8
+      run: python3 -m flake8 .

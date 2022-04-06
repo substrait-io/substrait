@@ -5,8 +5,12 @@ import shutil
 import os
 
 
-_LOCALIZED_PATHS = ('proto', 'text', 'LICENSE')
-_ADDITIONAL_PATHS_TO_CLEAN = ('protoc_out', 'substrait_validator/substrait', 'substrait_validator/__pycache__')
+_LOCALIZED_PATHS = ("proto", "text", "LICENSE")
+_ADDITIONAL_PATHS_TO_CLEAN = (
+    "protoc_out",
+    "substrait_validator/substrait",
+    "substrait_validator/__pycache__",
+)
 
 
 def clean():
@@ -20,7 +24,7 @@ def clean():
 def populate():
     clean()
     for path in _LOCALIZED_PATHS:
-        source = os.path.join('..', '..', path)
+        source = os.path.join("..", "..", path)
         if os.path.isdir(source):
             shutil.copytree(source, path)
         else:
@@ -31,24 +35,31 @@ def _prepare():
     # If the local_dependencies directory exists, pip is building the package
     # from a source distribution. In that case, the build environment is
     # already as it should be.
-    if not os.path.isdir('local_dependencies'):
+    if not os.path.isdir("local_dependencies"):
         populate()
 
 
-_maturin_prepare_metadata_for_build_wheel = prepare_metadata_for_build_wheel
+_maturin_prepare_metadata_for_build_wheel = (
+    prepare_metadata_for_build_wheel  # noqa: F405
+)
+
+
 def prepare_metadata_for_build_wheel(*args, **kwargs):
     _prepare()
     return _maturin_prepare_metadata_for_build_wheel(*args, **kwargs)
 
 
-_maturin_build_wheel = build_wheel
+_maturin_build_wheel = build_wheel  # noqa: F405
+
+
 def build_wheel(*args, **kwargs):
     _prepare()
     return _maturin_build_wheel(*args, **kwargs)
 
 
-_maturin_build_sdist = build_sdist
+_maturin_build_sdist = build_sdist  # noqa: F405
+
+
 def build_sdist(*args, **kwargs):
     _prepare()
     return _maturin_build_sdist(*args, **kwargs)
-

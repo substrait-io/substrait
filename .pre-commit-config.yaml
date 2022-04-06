@@ -4,7 +4,6 @@ repos:
   hooks:
   - id: fmt
   - id: clippy
-  - id: cargo-check
 - repo: https://github.com/nametake/pre-commit-buf
   rev: v2.0.0
   hooks:
@@ -14,3 +13,11 @@ repos:
   hooks:
     - id: yamllint
       args: [-c=.yamllint.yaml]
+- repo: https://github.com/psf/black
+  rev: 22.3.0
+  hooks:
+  - id: black
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 4.0.1
+  hooks:
+  - id: flake8
