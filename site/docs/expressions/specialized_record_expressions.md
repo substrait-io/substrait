@@ -1,7 +1,7 @@
 # Specialized Record Expressions
-While most all types of operations could be reduced to functions, in some cases this would be overly simplistic. Instead, it is helpful to construct some other expression constructs. 
+While all types of operations could be reduced to functions, in some cases this would be overly simplistic. Instead, it is helpful to construct some other expression constructs.
 
-These constructs should be focused on different expression types as opposed to something that directly related to syntactic sugar. For example, CAST and EXTRACT or SQL operations that are presented using specialized syntax. However, they can easily modeled using a function paradigm with minimal complexity.
+These constructs should be focused on different expression types as opposed to something that directly related to syntactic sugar. For example, CAST and EXTRACT or SQL operations that are presented using specialized syntax. However, they can easily be modeled using a function paradigm with minimal complexity.
 
 
 
@@ -16,7 +16,7 @@ To convert a value from one type to another, Substrait defines a cast expression
 
 
 ## If Expression
-An if value expression is an expression composed of one if clause, zero or more else if clauses and an else clause. In pseudo code, they are envisioned as:
+An if value expression is an expression composed of one if clause, zero or more else if clauses and an else clause. In pseudocode, they are envisioned as:
 
 ```
 if <boolean expression> then <result expression 1>
@@ -37,7 +37,7 @@ else cast('hello' as integer)
 
 
 ## Switch Expression
-Switch expression allow a selection of alternate branches based on the value of a given expression. They are an optimized form of a generic if expression where all conditions are equality to the same value. In pseudo-code:
+Switch expression allow a selection of alternate branches based on the value of a given expression. They are an optimized form of a generic if expression where all conditions are equality to the same value. In pseudocode:
 
 ```
 switch(value)
@@ -55,7 +55,7 @@ As in if expressions, switch expression evaluation should not be interrupted by 
 
 ## Or List Equality Expression
 
-A specialized structure that is often used is a large list of possible values. In SQL, these are typically large IN lists. They can composed of one or more fields. There are two common patterns, single value and multi value. In pseudo code they are represented as:
+A specialized structure that is often used is a large list of possible values. In SQL, these are typically large IN lists. They can be composed from one or more fields. There are two common patterns, single value and multi value. In pseudocode they are represented as:
 
 ```
 Single Value:
@@ -65,7 +65,7 @@ Multi Value:
 [expressionA, expressionB], [[value1a, value1b], [value2a, value2b].. [valueNa, valueNb]]
 ```
 
-For single value expressions, these are a compact equivalent of `expression = value1 OR expression = value2 OR .. OR expression = valueN`. When using an expression of this type, two things are required. The types of the test expression and all value expressions that are related must be of the same type. Additionally, a function signature for equality must be available for the expression type used.
+For single value expressions, these are a compact equivalent of `expression = value1 OR expression = value2 OR .. OR expression = valueN`. When using an expression of this type, two things are required; the types of the test expression and all value expressions that are related must be of the same type. Additionally, a function signature for equality must be available for the expression type used.
 
 
 

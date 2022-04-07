@@ -63,5 +63,5 @@ WHERE x < ANY(SELECT y from t2)
 | --------------------- | ---------------------------------------------- | -------- |
 | Reduction operation   | The kind of reduction to use over the subquery | Yes      |
 | Comparison operation  | The kind of comparison operation to use        | Yes      |
-| Expression            | Left hand side expression to check             | Yes      |
+| Expression            | Left-hand side expression to check             | Yes      |
 | Subquery              | Subquery to check                              | Yes      |

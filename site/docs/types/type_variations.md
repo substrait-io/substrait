@@ -4,8 +4,7 @@ Since Substrait is designed to work in both logical and physical contexts, there
 
 | Property          | Description                                                  |
 | ----------------- | ------------------------------------------------------------ |
-| Base Type       | The base type this variation belongs to. Variations can only be expressed for simple types and wild-carded compound types (e.g. i8 or varchar(*)). |
+| Base Type       | The base type this variation belongs to. Variations can only be expressed for simple types and wild-carded compound types (e.g. `i8` or `VARCHAR<*>`). |
 | Name              | The name used to reference this type. Should be unique within type variations for this parent type within a simple extension. |
-| Description       | A human description of the purpose of this type variation    |
-| Function Behavior | **INHERITS** or **SEPARATE**: Whether this variation supports functions using the canonical variation or whether functions should be resolved independently. For example if one has the function `add(i8,i8)` defined and then defines an i8 variation, can the i8 variation field be bound to the base `add` operation (inherits) or does a specialized version of `add` need to be defined specifically for this type variation (separate). Defaults to inherits. |
-
+| Description       | A human description of the purpose of this type variation.    |
+| Function Behavior | **INHERITS** or **SEPARATE**: Whether this variation supports functions using the canonical variation or whether functions should be resolved independently. For example if one has the function `add(i8,i8)` defined and then defines an `i8` variation, can the `i8` variation field be bound to the base `add` operation (inherits) or does a specialized version of `add` need to be defined specifically for this type variation (separate). Defaults to inherits. |

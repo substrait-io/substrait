@@ -6,7 +6,7 @@ license. Development is done in the open leveraging GitHub issues and PRs.
 ## Get In Touch
 
 [Slack Channel]({{versions.slackinvitelink}})
-: The developers on Substrait frequent the Slack. You can get an
+: The developers of Substrait frequent the Slack channel. You can get an
   invite to the channel by following [this link]({{versions.slackinvitelink}}).
 
 [GitHub Issues](https://github.com/substrait-io/substrait/issues)
