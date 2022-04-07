@@ -484,6 +484,7 @@ message Expression {
   }
 
   message SwitchExpression {
+    Expression match = 3;
     repeated IfValue ifs = 1;
     Expression else = 2;
 
