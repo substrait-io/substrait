@@ -1,0 +1,36 @@
+name: join-outer
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      join:
+        left:
+          read:
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        right:
+          read:
+            baseSchema:
+              names: [x, y]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - fp32: { nullability: NULLABILITY_REQUIRED }
+                - bool: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test2
+        expression:
+          selection:
+            rootReference: {}
+            directReference: { structField: { field: 3 } }
+        type: JOIN_TYPE_OUTER
+        __test: [ type: "STRUCT<string?, i32?, fp32?, boolean?>" ]

@@ -48,7 +48,7 @@ State of test suite coverage
     - [x] Sort
     - [x] Project
     - [x] Cross
-    - [ ] Join
+    - [x] Join
     - [ ] Set
     - [ ] Fetch
     - [ ] Aggregate
