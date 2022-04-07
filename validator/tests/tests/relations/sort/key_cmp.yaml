@@ -1,0 +1,42 @@
+name: rel-sort-key-cmp
+plan:
+  __test: [ level: iw ]
+  extensionUris:
+  - extensionUriAnchor: 1
+    uri__yaml:
+      scalar_functions:
+        - name: "cmp"
+          impls:
+            - args:
+                - value: i32
+                - value: i32
+              return: i32
+  extensions:
+  - extensionFunction:
+      extensionUriReference: 1
+      functionAnchor: 1
+      name: cmp:i32_i32
+  relations:
+  - rel:
+      sort:
+        input:
+          read:
+            common:
+              direct: {}
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        sorts:
+        - expr:
+            selection:
+              rootReference: {}
+              directReference: { structField: { field: 0 } }
+          comparisonFunctionReference: 1
+        __test: [ type: "NSTRUCT<a: string, b: i32>" ]

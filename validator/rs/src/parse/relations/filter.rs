@@ -24,9 +24,9 @@ pub fn parse_filter_rel(
     y.set_schema(in_type);
 
     // Check the filter predicate.
-    let predicate = proto_boxed_required_field!(x, y, condition, expressions::parse_predicate)
-        .1
-        .unwrap_or_default();
+    let (n, e) = proto_boxed_required_field!(x, y, condition, expressions::parse_predicate);
+    let predicate = e.unwrap_or_default();
+    let nullable = n.data_type().nullable();
 
     // Describe the relation.
     describe!(y, Relation, "Filter by {}", &predicate);
@@ -35,6 +35,11 @@ pub fn parse_filter_rel(
         "This relation discards all rows for which {} yields false.",
         &predicate
     );
+    if nullable {
+        // FIXME: what's the behavior when a filter condition is nullable and
+        // yields null? Same applies for all other usages of parse_predicate().
+        summary!(y, "Behavior for a null condition is unspecified.");
+    }
 
     // Handle the common field.
     handle_rel_common!(x, y);

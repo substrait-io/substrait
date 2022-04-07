@@ -168,7 +168,8 @@ fn parse_extension_mapping_data(
                     name.as_ref().and_then(|name| {
                         let data_type = data.types.get(name).cloned();
                         if data_type.is_none() {
-                            diagnostic!(y, Error, LinkMissingTypeName, "failed to resolve data type {name:?} in {yaml_info}");
+                            // TODO: Error, LinkMissingTypeName
+                            diagnostic!(y, Warning, NotYetImplemented, "failed to resolve data type {name:?} in {yaml_info}");
                         }
                         data_type
                     })
@@ -211,7 +212,8 @@ fn parse_extension_mapping_data(
                     name.as_ref().and_then(|name| {
                         let type_variation = data.type_variations.get(name).cloned();
                         if type_variation.is_none() {
-                            diagnostic!(y, Error, LinkMissingTypeVariationName, "failed to resolve type variation {name:?} in {yaml_info}");
+                            // TODO: Error, LinkMissingTypeVariationName
+                            diagnostic!(y, Warning, NotYetImplemented, "failed to resolve type variation {name:?} in {yaml_info}");
                         }
                         type_variation
                     })
@@ -254,7 +256,8 @@ fn parse_extension_mapping_data(
                     name.as_ref().and_then(|name| {
                         let function = data.functions.get(name).cloned();
                         if function.is_none() {
-                            diagnostic!(y, Error, LinkMissingFunctionName, "failed to resolve function {name:?} in {yaml_info}");
+                            // TODO: Error, LinkMissingFunctionName
+                            diagnostic!(y, Warning, NotYetImplemented, "failed to resolve function {name:?} in {yaml_info}");
                         }
                         function
                     })

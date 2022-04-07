@@ -1,0 +1,24 @@
+name: filter-not-bool
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      filter:
+        input:
+          read:
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - bool: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        condition:
+          selection:
+            rootReference: {}
+            directReference: { structField: { field: 0 } }
+          __test: [ diag: { level: e, code: 4005, msg: "*must yield booleans*string*" } ]
+        __test: [ type: "NSTRUCT<a: string, b: boolean>" ]

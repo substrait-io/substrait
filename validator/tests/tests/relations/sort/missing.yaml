@@ -1,0 +1,21 @@
+name: rel-sort-no-op
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      sort:
+        input:
+          read:
+            common:
+              direct: {}
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        __test: [ diag: { level: e, code: 1002, msg: "*missing required protobuf field: sorts*" } ]

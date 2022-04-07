@@ -1,0 +1,32 @@
+name: rel-sort-multiple
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      sort:
+        input:
+          read:
+            common:
+              direct: {}
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        sorts:
+        - expr:
+            selection:
+              rootReference: {}
+              directReference: { structField: { field: 1 } }
+          direction: SORT_DIRECTION_ASC_NULLS_LAST
+        - expr:
+            selection:
+              rootReference: {}
+              directReference: { structField: { field: 0 } }
+          direction: SORT_DIRECTION_DESC_NULLS_FIRST
+        __test: [ type: "NSTRUCT<a: string, b: i32>" ]

@@ -44,8 +44,8 @@ State of test suite coverage
        - [x] Base schema
        - [x] Filter
        - [x] Projection
-    - [ ] Filter
-    - [ ] Sort
+    - [x] Filter
+    - [x] Sort
     - [ ] Project
     - [ ] Cross
     - [ ] Join

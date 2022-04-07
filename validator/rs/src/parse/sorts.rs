@@ -52,7 +52,7 @@ fn parse_sort_direction(x: &i32, y: &mut context::Context) -> diagnostic::Result
             describe!(y, Misc, "Coalesce equal values");
             summary!(
                 y,
-                "Equal values are grouped together, but no ordering is defined between groups."
+                "Equal values are grouped together, but no ordering is defined between clusters."
             );
             Ok("Coalesce")
         }
