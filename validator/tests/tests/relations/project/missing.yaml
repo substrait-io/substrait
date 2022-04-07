@@ -1,0 +1,18 @@
+name: project-missing
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            baseSchema:
+              names: [a]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        __test: [ diag: { level: e, code: 1002, msg: "*missing required protobuf field: expressions*" } ]

@@ -1,0 +1,23 @@
+name: project-single
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      project:
+        input:
+          read:
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - bool: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        expressions:
+        - selection:
+            rootReference: {}
+            directReference: { structField: { field: 1 } }
+        __test: [ type: "STRUCT<string, boolean, boolean>" ]

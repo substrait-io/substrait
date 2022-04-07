@@ -46,8 +46,8 @@ State of test suite coverage
        - [x] Projection
     - [x] Filter
     - [x] Sort
-    - [ ] Project
-    - [ ] Cross
+    - [x] Project
+    - [x] Cross
     - [ ] Join
     - [ ] Set
     - [ ] Fetch

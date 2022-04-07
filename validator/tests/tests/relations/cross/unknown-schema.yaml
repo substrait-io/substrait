@@ -1,0 +1,25 @@
+name: cross-unknown-schema
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      cross:
+        left:
+          read:
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        right:
+          read:
+            namedTable:
+              names:
+              - test2
+            __test: [ diag: { level: e, code: 1002, msg: "*missing required protobuf field: base_schema*" } ]
+        __test: [ type: "!" ]
