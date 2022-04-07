@@ -1,0 +1,21 @@
+name: rel-root-with-names
+plan:
+  __test: [ level: i ]
+  relations:
+  - root:
+      names:
+      - a
+      - b
+      input:
+        read:
+          baseSchema:
+            names: [x, y]
+            struct:
+              nullability: NULLABILITY_REQUIRED
+              types:
+              - string: { nullability: NULLABILITY_REQUIRED }
+              - i32: { nullability: NULLABILITY_NULLABLE }
+          namedTable:
+            names:
+            - test
+    __test: [ type: "NSTRUCT<a: string, b: i32?>" ]

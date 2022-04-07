@@ -1,0 +1,21 @@
+name: rel-common-emit-out-of-range
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          emit:
+            outputMapping:
+            - 2
+            outputMapping.0__test: [ diag: { level: e, code: 4004, msg: "*index out of range*" } ]
+        baseSchema:
+          names: [a, b]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - i32: { nullability: NULLABILITY_REQUIRED }
+        namedTable:
+          names:
+          - test

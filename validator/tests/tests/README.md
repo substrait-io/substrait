@@ -34,16 +34,16 @@ State of test suite coverage
     - [x] Conditionals
     - [x] Subqueries
  - [ ] Relations
-    - [ ] Relation root
-    - [ ] Common logic
-    - [ ] Read
+    - [x] Relation root
+    - [x] Common logic
+    - [x] Read
        - [x] Virtual data source
        - [x] Named data source
        - [x] File data source
-       - [ ] Extension data source
+       - [x] Extension data source
        - [x] Base schema
-       - [ ] Filter
-       - [ ] Projection
+       - [x] Filter
+       - [x] Projection
     - [ ] Filter
     - [ ] Sort
     - [ ] Project

@@ -138,9 +138,9 @@ pub fn parse_rel_common(
     };
 
     // Parse emit kind.
-    let data_type = proto_field!(x, y, emit_kind, parse_emit_kind, data_type)
+    let data_type = proto_field!(x, y, emit_kind, parse_emit_kind, data_type.clone())
         .1
-        .unwrap_or_default();
+        .unwrap_or(data_type);
 
     Ok(data_type)
 }

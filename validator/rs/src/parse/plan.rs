@@ -3,10 +3,12 @@
 //! Module providing toplevel parse/validation functions for plans.
 
 use crate::input::proto::substrait;
+use crate::output::data_type;
 use crate::output::diagnostic;
 use crate::parse::context;
 use crate::parse::extensions;
 use crate::parse::relations;
+use std::sync::Arc;
 
 // Parse a relation root, i.e. a toplevel relation that includes field name
 // information.
@@ -25,7 +27,7 @@ fn parse_rel_root(x: &substrait::RelRoot, y: &mut context::Context) -> diagnosti
     y.set_schema(schema);
 
     // Describe the node.
-    describe!(y, Misc, "Relation root");
+    describe!(y, Misc, "Named relation root");
     summary!(y, "Attaches names to result schema");
     Ok(())
 }
@@ -34,18 +36,30 @@ fn parse_rel_root(x: &substrait::RelRoot, y: &mut context::Context) -> diagnosti
 fn parse_rel_type(
     x: &substrait::plan_rel::RelType,
     y: &mut context::Context,
-) -> diagnostic::Result<()> {
+) -> diagnostic::Result<Arc<data_type::DataType>> {
     match x {
-        substrait::plan_rel::RelType::Rel(x) => relations::parse_rel(x, y),
-        substrait::plan_rel::RelType::Root(x) => parse_rel_root(x, y),
+        substrait::plan_rel::RelType::Rel(x) => {
+            relations::parse_rel(x, y)?;
+            Ok(y.data_type().strip_field_names())
+        }
+        substrait::plan_rel::RelType::Root(x) => {
+            parse_rel_root(x, y)?;
+            Ok(y.data_type())
+        }
     }
 }
 
 /// Parse a PlanRel node.
 fn parse_plan_rel(x: &substrait::PlanRel, y: &mut context::Context) -> diagnostic::Result<()> {
-    y.enter_relation_root(|y| {
-        proto_required_field!(x, y, rel_type, parse_rel_type);
+    let data_type = y.enter_relation_root(|y| {
+        proto_required_field!(x, y, rel_type, parse_rel_type)
+            .1
+            .unwrap_or_default()
     });
+
+    // Describe the node.
+    y.set_data_type(data_type);
+    describe!(y, Misc, "Relation root");
     Ok(())
 }
 

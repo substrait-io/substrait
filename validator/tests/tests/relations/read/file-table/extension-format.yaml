@@ -1,0 +1,20 @@
+name: read-files-extension-format
+plan:
+  __test: [ level: w ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+        localFiles:
+          items:
+          - uriPath: "1/2/3"
+          advancedExtension:
+            enhancement:
+              "@type": substrait.Plan
+  expectedTypeUrls:
+  - substrait.Plan

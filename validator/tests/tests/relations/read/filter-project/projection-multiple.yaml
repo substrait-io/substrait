@@ -1,0 +1,22 @@
+name: read-projection-multiple
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a, b]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - bool: { nullability: NULLABILITY_REQUIRED }
+        namedTable:
+          names:
+          - test
+        projection:
+          select:
+            structItems:
+            - field: 1
+            - field: 0
+        __test: [ type: "STRUCT<boolean, string>" ]

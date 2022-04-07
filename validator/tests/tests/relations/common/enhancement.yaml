@@ -1,0 +1,23 @@
+name: rel-common-optimization
+plan:
+  __test: [ level: w ]
+  relations:
+  - rel:
+      read:
+        common:
+          advancedExtension:
+            enhancement:
+              '@type': substrait.Plan
+        baseSchema:
+          names: [a]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+        namedTable:
+          names:
+          - test
+        # enhancements may affect schema, so validator does not know type
+        __test: [ type: "!" ]
+  expectedTypeUrls:
+  - substrait.Plan

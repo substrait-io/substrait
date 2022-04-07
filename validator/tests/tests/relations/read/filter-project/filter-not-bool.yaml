@@ -1,0 +1,21 @@
+name: read-filter-not-bool
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a, b]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - bool: { nullability: NULLABILITY_REQUIRED }
+        namedTable:
+          names:
+          - test
+        filter:
+          selection:
+            rootReference: {}
+            directReference: { structField: { field: 0 } }
+          __test: [ diag: { level: e, code: 4005, msg: "*predicates must yield booleans*string*" } ]

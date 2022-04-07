@@ -343,8 +343,13 @@ impl DataType {
                 p.map_type(|t| t.split_field_names_internal(namer))
             })
             .collect();
+        let class = if self.class == Class::Compound(Compound::NamedStruct) {
+            Class::Compound(Compound::Struct)
+        } else {
+            self.class.clone()
+        };
         Arc::new(DataType {
-            class: self.class.clone(),
+            class,
             nullable: self.nullable,
             variation: self.variation.clone(),
             parameters,

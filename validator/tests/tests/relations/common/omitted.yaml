@@ -1,0 +1,16 @@
+name: rel-common-omitted
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+        namedTable:
+          names:
+          - test
+        __test: [ type: "NSTRUCT<a: string>" ]

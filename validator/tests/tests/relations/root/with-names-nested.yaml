@@ -1,0 +1,30 @@
+name: rel-root-with-names-nested
+plan:
+  __test: [ level: i ]
+  relations:
+  - root:
+      names: [x, y, a, b, z]
+      input:
+        read:
+          baseSchema:
+            names: [a, b, c, d, e]
+            struct:
+              nullability: NULLABILITY_REQUIRED
+              types:
+              - string: { nullability: NULLABILITY_NULLABLE }
+              - list:
+                  nullability: NULLABILITY_REQUIRED
+                  type:
+                    struct:
+                      nullability: NULLABILITY_REQUIRED
+                      types:
+                      - map:
+                          nullability: NULLABILITY_REQUIRED
+                          key: { string: { nullability: NULLABILITY_NULLABLE } }
+                          value: { string: { nullability: NULLABILITY_NULLABLE } }
+                      - bool: { nullability: NULLABILITY_NULLABLE }
+              - i32: { nullability: NULLABILITY_NULLABLE }
+          namedTable:
+            names:
+            - test
+    __test: [ type: "NSTRUCT<x: string?, y: LIST<NSTRUCT<a: MAP<string?, string?>, b: boolean?>>, z: i32?>" ]

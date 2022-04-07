@@ -1,0 +1,26 @@
+name: read-filter-project
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [a, b]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - bool: { nullability: NULLABILITY_REQUIRED }
+        namedTable:
+          names:
+          - test
+        filter:
+          selection:
+            rootReference: {}
+            directReference: { structField: { field: 1 } }
+        projection:
+          maintain_singular_struct: true
+          select:
+            structItems:
+            - field: 0
+        __test: [ type: "STRUCT<string>" ]

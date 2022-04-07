@@ -1,0 +1,19 @@
+name: read-extension-basic
+plan:
+  __test: [ level: w ]
+  relations:
+  - rel:
+      read:
+        baseSchema:
+          names: [word, value]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - i32: { nullability: NULLABILITY_NULLABLE }
+        extensionTable:
+          detail:
+            '@type': substrait.Plan
+        __test: [ type: "NSTRUCT<word: string, value: i32?>" ]
+  expectedTypeUrls:
+  - substrait.Plan
