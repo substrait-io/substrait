@@ -1,0 +1,21 @@
+name: adv-ext-enhancement-not-declared
+plan:
+  __test: [ level: w ]
+  relations:
+  - rel:
+      read:
+        common:
+          advancedExtension:
+            enhancement:
+              "@type": substrait.Plan
+              __test: [ diag: { level: e, code: 1006, msg: '*missing protobuf "any" declaration*' } ]
+        baseSchema:
+          names: [word, value]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - i32: { nullability: NULLABILITY_NULLABLE }
+        namedTable:
+          names:
+            - test

@@ -1,0 +1,40 @@
+name: aggregate-measure
+plan:
+  __test: [ level: iw ]
+  extensionUris:
+  - extensionUriAnchor: 1
+    uri__yaml:
+      aggregate_functions:
+        - name: "count"
+          description: Count number of rows
+          impls:
+          - args: []
+            nullability: DECLARED_OUTPUT
+            decomposable: MANY
+            intermediate: i64
+            return: i64
+  extensions:
+  - extensionFunction:
+      extensionUriReference: 1
+      functionAnchor: 1
+      name: "count:"
+  relations:
+  - rel:
+      aggregate:
+        input:
+          read:
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - fp32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        measures:
+        - measure:
+            functionReference: 1
+            output_type: { i64: { nullability: NULLABILITY_REQUIRED } }
+        __test: [ type: "STRUCT<i64, i32>" ]

@@ -1,0 +1,12 @@
+name: rel-extension-multi-without-inputs
+plan:
+  __test: [ level: w ]
+  relations:
+  - rel:
+      extensionMulti:
+        inputs: []
+        detail:
+          '@type': substrait.Plan
+        __test: [ type: "!" ]
+  expectedTypeUrls:
+  - substrait.Plan

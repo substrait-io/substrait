@@ -1,0 +1,21 @@
+name: adv-ext-missing-declaration
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      read:
+        common:
+          advancedExtension:
+            optimization:
+              "@type": substrait.Plan
+              __test: [ diag: { level: e, code: 1006, msg: '*missing protobuf "any" declaration: substrait.Plan*' } ]
+        baseSchema:
+          names: [word, value]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - i32: { nullability: NULLABILITY_NULLABLE }
+        namedTable:
+          names:
+            - test

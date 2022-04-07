@@ -1,0 +1,22 @@
+name: rel-extension-single
+plan:
+  __test: [ level: w ]
+  relations:
+  - rel:
+      extensionSingle:
+        input:
+          read:
+            baseSchema:
+              names: [a]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        detail:
+          '@type': substrait.Plan
+        __test: [ type: "!" ]
+  expectedTypeUrls:
+  - substrait.Plan

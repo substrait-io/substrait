@@ -146,7 +146,7 @@ pub fn parse_aggregate_rel(
     }
 
     // Parse measures.
-    proto_required_repeated_field!(x, y, measures, |x, y| {
+    proto_repeated_field!(x, y, measures, |x, y| {
         let result = parse_measure(x, y);
         fields.push(Field {
             expression: result.as_ref().cloned().unwrap_or_default(),
@@ -156,7 +156,17 @@ pub fn parse_aggregate_rel(
         result
     });
 
-    // Add the column for the grouping set index if any grouping set is defined.
+    // The relation is invalid if no fields result from it.
+    if fields.is_empty() {
+        diagnostic!(
+            y,
+            Error,
+            RelationInvalid,
+            "aggregate relations must have at least one grouping expression or measure"
+        );
+    }
+
+    // Add the column for the grouping set index.
     // FIXME: this field makes no sense for aggregate relations that only have
     // measures. It's also disputable whether it should exist when there is
     // only one grouping set.
@@ -167,19 +177,15 @@ pub fn parse_aggregate_rel(
     });
     let fields = fields;
 
-    // The relation is invalid if no fields result from it.
-    if fields.is_empty() {
-        diagnostic!(
-            y,
-            Error,
-            RelationInvalid,
-            "aggregate relations must have at least one grouping set or measure"
-        );
-    }
-
     // Derive schema.
     y.set_schema(data_type::DataType::new_struct(
-        fields.iter().map(|x| x.data_type.clone()),
+        fields.iter().map(|x| {
+            if matches!(x.field_type, FieldType::NullableGroupedField) {
+                x.data_type.make_nullable()
+            } else {
+                x.data_type.clone()
+            }
+        }),
         false,
     ));
 
@@ -227,13 +233,13 @@ pub fn parse_aggregate_rel(
                 if x.groupings.is_empty() {
                     format!(
                         "Field {index}: result of aggregate function {:#} \
-                    applied to all input rows.",
+                        applied to all input rows.",
                         field.expression
                     )
                 } else {
                     format!(
                         "Field {index}: result of aggregate function {:#} \
-                    applied to the rows from the current group.",
+                        applied to the rows from the current group.",
                         field.expression
                     )
                 }
@@ -242,17 +248,17 @@ pub fn parse_aggregate_rel(
                 if x.groupings.is_empty() {
                     format!(
                         "Field {index}: undefined value, reserved for grouping \
-                    set index."
+                        set index."
                     )
                 } else if x.groupings.len() == 1 {
                     format!(
                         "Field {index}: always zero, representing the index of the \
-                    matched grouping set (of which there is only one here)."
+                        matched grouping set (of which there is only one here)."
                     )
                 } else {
                     format!(
                         "Field {index}: integer between 0 and {} inclusive, \
-                    representing the index of the matched grouping set.",
+                        representing the index of the matched grouping set.",
                         x.groupings.len() - 1
                     )
                 }

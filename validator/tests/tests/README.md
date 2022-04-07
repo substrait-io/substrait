@@ -33,7 +33,7 @@ State of test suite coverage
     - [x] References
     - [x] Conditionals
     - [x] Subqueries
- - [ ] Relations
+ - [x] Relations
     - [x] Relation root
     - [x] Common logic
     - [x] Read
@@ -51,10 +51,10 @@ State of test suite coverage
     - [x] Join
     - [x] Set
     - [x] Fetch
-    - [ ] Aggregate
-    - [ ] Extensions
+    - [x] Aggregate
+    - [x] Extensions
  - [ ] Extensions
     - [ ] Types
     - [ ] Type variations
     - [ ] Functions
-    - [ ] Advanced extensions
+    - [x] Advanced extensions

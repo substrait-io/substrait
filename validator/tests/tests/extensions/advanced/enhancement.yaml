@@ -1,0 +1,22 @@
+name: adv-ext-enhancement
+plan:
+  __test: [ level: w ]
+  relations:
+  - rel:
+      read:
+        common:
+          advancedExtension:
+            enhancement:
+              "@type": substrait.Plan
+        baseSchema:
+          names: [word, value]
+          struct:
+            nullability: NULLABILITY_REQUIRED
+            types:
+            - string: { nullability: NULLABILITY_REQUIRED }
+            - i32: { nullability: NULLABILITY_NULLABLE }
+        namedTable:
+          names:
+            - test
+  expectedTypeUrls:
+  - substrait.Plan

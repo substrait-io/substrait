@@ -1,0 +1,5 @@
+name: rel-root-missing
+plan:
+  __test: [ level: i ]
+  relations: []
+  __test: [ diag: { level: e, code: 5001, msg: "*must have at least one relation*" } ]

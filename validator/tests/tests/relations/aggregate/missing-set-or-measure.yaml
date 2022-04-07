@@ -1,0 +1,19 @@
+name: aggregate-missing-set-or-measure
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      aggregate:
+        input:
+          read:
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - fp32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        __test: [ diag: { level: e, code: 5003, msg: "*must have at least one grouping expression or measure*" } ]

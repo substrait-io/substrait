@@ -1,0 +1,28 @@
+name: aggregate-multi-set
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      aggregate:
+        input:
+          read:
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - fp32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        groupings:
+        - groupingExpressions:
+          - selection:
+              rootReference: {}
+              directReference: { structField: { field: 1 } }
+        - groupingExpressions:
+          - selection:
+              rootReference: {}
+              directReference: { structField: { field: 0 } }
+        __test: [ type: "STRUCT<fp32?, string?, i32>" ]
