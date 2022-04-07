@@ -1,4 +1,4 @@
-name: join-left
+name: join-right
 plan:
   __test: [ level: i ]
   relations:

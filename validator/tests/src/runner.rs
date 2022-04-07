@@ -3,6 +3,7 @@
 //! Test runner for the [substrait_validator] crate.
 
 use rayon::prelude::*;
+use std::collections::HashMap;
 use std::collections::HashSet;
 use substrait_validator as sv;
 
@@ -521,6 +522,21 @@ pub fn main() {
         .par_iter()
         .map(|p| TestCase::load_and_run(p, &cfg))
         .collect::<Vec<_>>();
+
+    // Print test name collisions.
+    let mut names = HashMap::new();
+    for test_case in test_cases.iter() {
+        if let Some(desc) = &test_case.description {
+            if let Some(previous) = names.insert(&desc.name, &test_case.path) {
+                println!(
+                    "Warning: duplicate test name {}: {} and {}",
+                    &desc.name,
+                    test_case.path.display(),
+                    previous.display()
+                );
+            }
+        }
+    }
 
     // Print logs for failing tests.
     for test_case in test_cases.iter().filter(|x| x.result.failed) {

@@ -1,4 +1,4 @@
-name: rel-common-optimization
+name: rel-common-enhancement
 plan:
   __test: [ level: w ]
   relations:

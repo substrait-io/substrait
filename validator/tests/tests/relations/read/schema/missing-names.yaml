@@ -1,4 +1,4 @@
-name: read-schema-wrong-name-count
+name: read-schema-missing-names
 plan:
   __test: [ level: i ]
   relations:
