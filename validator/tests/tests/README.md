@@ -49,8 +49,8 @@ State of test suite coverage
     - [x] Project
     - [x] Cross
     - [x] Join
-    - [ ] Set
-    - [ ] Fetch
+    - [x] Set
+    - [x] Fetch
     - [ ] Aggregate
     - [ ] Extensions
  - [ ] Extensions

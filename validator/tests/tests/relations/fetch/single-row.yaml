@@ -1,0 +1,20 @@
+name: fetch-single-row
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      fetch:
+        input:
+          read:
+            baseSchema:
+              names: [a]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        offset: 100
+        count: 1
+        __test: [ type: "NSTRUCT<a: string>" ]

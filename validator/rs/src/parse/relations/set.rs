@@ -46,7 +46,7 @@ pub fn parse_set_rel(x: &substrait::SetRel, y: &mut context::Context) -> diagnos
     for in_type in in_types.iter() {
         schema = types::assert_equal(
             y,
-            in_type,
+            &in_type.strip_field_names(),
             &schema,
             "all set inputs must have matching schemas",
         );

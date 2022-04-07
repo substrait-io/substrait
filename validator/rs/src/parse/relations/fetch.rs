@@ -63,6 +63,8 @@ pub fn parse_fetch_rel(
         } else {
             describe!(y, Relation, "Propagate only the first {} rows", x.count);
         }
+    } else if x.offset == 0 {
+        describe!(y, Relation, "Fetch all rows");
     } else if x.offset == 1 {
         describe!(y, Relation, "Discard the first row");
     } else if x.offset > 1 {

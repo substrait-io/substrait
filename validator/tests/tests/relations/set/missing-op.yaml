@@ -1,0 +1,30 @@
+name: set-missing-op
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      set:
+        inputs:
+        - read:
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        - read:
+            baseSchema:
+              names: [x, y]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test2
+        op__test: [ diag: { level: e, code: 2, msg: "*this enum may not be left unspecified*" } ]

@@ -1,0 +1,42 @@
+name: set-three-inputs
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      set:
+        inputs:
+        - read:
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        - read:
+            baseSchema:
+              names: [x, y]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test2
+        - read:
+            baseSchema:
+              names: [u, v]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test3
+        op: SET_OP_UNION_ALL
+        __test: [ type: "STRUCT<string, i32>" ]

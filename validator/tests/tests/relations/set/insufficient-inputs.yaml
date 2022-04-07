@@ -1,0 +1,20 @@
+name: set-insufficient-inputs
+plan:
+  __test: [ level: i ]
+  relations:
+  - rel:
+      set:
+        inputs:
+        - read:
+            baseSchema:
+              names: [a, b]
+              struct:
+                nullability: NULLABILITY_REQUIRED
+                types:
+                - string: { nullability: NULLABILITY_REQUIRED }
+                - i32: { nullability: NULLABILITY_REQUIRED }
+            namedTable:
+              names:
+              - test
+        op: SET_OP_UNION_ALL
+        __test: [ diag: { level: e, code: 5002, msg: "*set operations require at least two input relations*" } ]
