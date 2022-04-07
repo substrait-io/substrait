@@ -129,7 +129,6 @@ For reference, here are are some common output type derivations and how they can
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Add item to list                                             | `add(<List<T>, T>) => List<T>`                               |
 | Decimal Division                                             | `divide(Decimal(P1,S1), Decimal(P2,S2)) => Decimal(P1 -S1 + S2 + MAX(6, S1 + P2 + 1), MAX(6, S1 + P2 + 1))` |
-| Select a subset of map keys based on a regular expression (requires stringlike keys) | `extract_values(regex:string, map:Map<K,V>) => List<V> WHERE K IN [STRING, VARCHAR(N), FIXEDCHAR(N)]` |
 | Concatenate two fixed sized character strings                | `concat(FIXEDCHAR(A), FIXEDCHAR(B)) => FIXEDCHAR(A+B)`       |
 | Make a struct of a set of fields and a struct definition.    | `make_struct(<type> T, K...) => T`                           |
 
