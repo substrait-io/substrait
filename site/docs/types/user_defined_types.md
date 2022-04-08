@@ -1,6 +1,6 @@
 # User Defined Types
 
-User Defined Types can be created using a combination of pre-defined simple and compound types. User defined types are defined as a YAML extension. An extension can declare an arbitrary number of user defined extension types. Initially, user defined types must be simple types (although they can be constructed of a number of inner compound and simple types).
+User Defined Types can be created using a combination of pre-defined simple and compound types. User defined types are defined as part of [simple extensions](../extensions/index.md#simple-extensions). An extension can declare an arbitrary number of user defined extension types. Initially, user defined types must be simple types (although they can be constructed of a number of inner compound and simple types).
 
 A yaml example of an extension type is below:
 
