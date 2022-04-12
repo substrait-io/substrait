@@ -35,7 +35,7 @@ scalar_functions:
         return: BOOLEAN
   -
     name: "gt"
-    description: Less than
+    description: Greater than
     impls:
       - args:
           - value: any1
@@ -51,7 +51,7 @@ scalar_functions:
         return: BOOLEAN
   -
     name: "gte"
-    description: Less than or equal to
+    description: Greater than or equal to
     impls:
       - args:
           - value: any1
