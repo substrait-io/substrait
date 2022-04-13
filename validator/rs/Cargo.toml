@@ -34,7 +34,7 @@ yaml-rust = "0.4"
 # schema validation with this format this uses serde_json types as input for
 # both the schema and the input, so we need to depend on that as well, even
 # though we don't actually do any JSON serialization and deserialization.
-jsonschema = { version = "0.15", default-features = false }
+jsonschema = { version = "=0.15.0", default-features = false }
 serde_json = "1"
 
 # Used for checking identifier syntax (could be removed if regexes don't end up
