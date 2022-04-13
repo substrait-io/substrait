@@ -72,14 +72,6 @@ Types are parameterized by two types of values: by inner types (e.g. `List<K>`) 
 
 When the same parameter name is used multiple times in a function definition, the function can only bind if the exact same value is used for all parameters of that name. For example, if one had a function with a signature of `fn(VARCHAR(N), VARCHAR(N)), the function would be only be usable if both VARCHAR types had the same length value N. This necessitates that all instances of the same parameter name must be of the same parameter type (all instances are a type parameter or all instances are an integer parameter).
 
-#### Integer Parameter Bounds
-
-A type which declares one or more integer parameters can also declare a range of legal values for a function. For example, one could declare a function `fn(VARCHAR(N)) where N IN [0..20]` to describe a function which only takes in varchar types that are less than or equal to 20 characters in length.
-
-#### Type Parameter Bounds
-
-A parameterized type can either be unbounded (any type is allowed) or be bounded. When bounded, the function can only be bound to arguments of the types bound to. For example, one could declare a function `fn(Map<K,V> map) where K IN [STRING, VARCHAR(N), FIXEDCHAR(N)]` which would allow the function to accept a map argument as long as the key type is one of STRING, VARCHAR or FIXEDCHAR. Note, when duplicate parameter names are used in disjunct bounds options, the names will use the same bounds. For example, in the above map function, if one were to declare a bound such as `where N IN [0..20]`, this limit would apply to either N parameter.
-
 #### Type Parameter Resolution in variadic functions
 
 When the last argument of a function is variadic and declares a type parameter e.g. `fn(A, B, C...)`, the C parameter can be marked as either consistent or inconsistent. If marked as consistent, the function can only be bound to arguments where all of the C types are the same concrete type. If marked as inconsistent, each unique C can be bound to a different type within the constraints of what T allows.
@@ -137,7 +129,6 @@ For reference, here are are some common output type derivations and how they can
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Add item to list                                             | `add(<List<T>, T>) => List<T>`                               |
 | Decimal Division                                             | `divide(Decimal(P1,S1), Decimal(P2,S2)) => Decimal(P1 -S1 + S2 + MAX(6, S1 + P2 + 1), MAX(6, S1 + P2 + 1))` |
-| Select a subset of map keys based on a regular expression (requires stringlike keys) | `extract_values(regex:string, map:Map<K,V>) => List<V> WHERE K IN [STRING, VARCHAR(N), FIXEDCHAR(N)]` |
 | Concatenate two fixed sized character strings                | `concat(FIXEDCHAR(A), FIXEDCHAR(B)) => FIXEDCHAR(A+B)`       |
 | Make a struct of a set of fields and a struct definition.    | `make_struct(<type> T, K...) => T`                           |
 
