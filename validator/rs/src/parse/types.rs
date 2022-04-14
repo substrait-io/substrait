@@ -55,7 +55,7 @@ fn parse_integral_type_parameter(
 macro_rules! parse_simple_type {
     ($input:expr, $context:expr, $typ:ident) => {{
         // Parse fields.
-        let nullable = proto_required_enum_field!(
+        let nullable = proto_enum_field!(
             $input,
             $context,
             nullability,
@@ -199,7 +199,7 @@ macro_rules! parse_compound_type_with_length {
         // Parse fields.
         let length =
             proto_primitive_field!($input, $context, length, parse_integral_type_parameter).1;
-        let nullable = proto_required_enum_field!(
+        let nullable = proto_enum_field!(
             $input,
             $context,
             nullability,
@@ -270,7 +270,7 @@ pub fn parse_decimal(
     // Parse fields.
     let precision = proto_primitive_field!(x, y, precision, parse_integral_type_parameter).1;
     let scale = proto_primitive_field!(x, y, scale, parse_integral_type_parameter).1;
-    let nullable = proto_required_enum_field!(
+    let nullable = proto_enum_field!(
         x,
         y,
         nullability,
@@ -319,7 +319,7 @@ pub fn parse_struct(
         .iter()
         .map(|n| n.data_type.clone().unwrap_or_default().into())
         .collect();
-    let nullable = proto_required_enum_field!(
+    let nullable = proto_enum_field!(
         x,
         y,
         nullability,
@@ -363,7 +363,7 @@ pub fn parse_list(x: &substrait::r#type::List, y: &mut context::Context) -> diag
         .data_type
         .clone()
         .unwrap_or_default();
-    let nullable = proto_required_enum_field!(
+    let nullable = proto_enum_field!(
         x,
         y,
         nullability,
@@ -412,7 +412,7 @@ pub fn parse_map(x: &substrait::r#type::Map, y: &mut context::Context) -> diagno
         .data_type
         .clone()
         .unwrap_or_default();
-    let nullable = proto_required_enum_field!(
+    let nullable = proto_enum_field!(
         x,
         y,
         nullability,
