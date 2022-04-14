@@ -33,11 +33,11 @@ pub fn parse_sort_rel(x: &substrait::SortRel, y: &mut context::Context) -> diagn
     if x.sorts.len() > 1 {
         summary!(
             y,
-            "This relation reorders or coalesces a dataset based on {} keys.",
+            "This relation reorders or coalesces a dataset based on {} keys. \
+            For sorts, the first key has greatest priority; only if the first \
+            key is equivalent for two rows will the next key be checked.",
             x.sorts.len()
         );
-        summary!(y, "The first key has greatest priority; only if finds");
-        summary!(y, "two keys equivalent will the next key be checked.");
     } else {
         summary!(
             y,
