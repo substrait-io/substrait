@@ -26,6 +26,11 @@ license. Development is done in the open leveraging GitHub issues and PRs.
 : We use Reviewable (in addition to GitHub reviews) to collaborate on code and docs. They are
   a great service and support OSS projects.
 
+## Talks
+Want to learn more about Substrait? Try the following presentations and slide decks.
+
+* Substrait: A Common Representation for Data Compute Plans (Jacques Nadeau, April 2022) [[slides](https://docs.google.com/presentation/d/1H89iwnnmHZ2oMgGpFon9Rv_fJ60RWE0c9drHCZAL8Bw)]
+
 ## Contribution
 
 All contributors are welcome to Substrait.
