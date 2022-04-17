@@ -110,11 +110,37 @@ message ReadRel {
 
       // the length in byte to read from this item
       uint64 length = 8;
+      
+      message CSVReadOptions{
+        int32 skip_rows = 1;
+        int32 skip_rows_after_names = 2;
+        repeated string column_names = 3;
+        bool autogenerate_column_names = 4;
+        
+      }
+
+      message CSVParseOptions{
+        string delimiter = 1;
+        bool quoting = 2;
+        string quote_char = 3; 
+        bool double_quote = 4;
+        bool escaping = 5;
+        string escape_char = 6;
+        bool newlines_in_values = 7;
+        bool ignore_empty_lines = 8;
+      }
+
+      message CSVOptions{
+        CSVReadOptions read_options = 1;
+        CSVParseOptions parse_options = 2;
+      }
 
       enum FileFormat {
         FILE_FORMAT_UNSPECIFIED = 0;
         FILE_FORMAT_PARQUET = 1;
       }
+
+      CSVOptions csv_options = 9;
     }
   }
 }
