@@ -99,17 +99,20 @@ message ReadRel {
         // A URI that refers to a single folder
         string uri_folder = 4;
       }
-
-      FileFormat format = 5;
+      
+      oneof file_type{
+        FileFormat format = 5;
+        CSVOptions csv_options = 6;
+      }
 
       // the index of the partition this item belongs to
-      uint64 partition_index = 6;
+      uint64 partition_index = 7;
 
       // the start position in byte to read from this item
-      uint64 start = 7;
+      uint64 start = 8;
 
       // the length in byte to read from this item
-      uint64 length = 8;
+      uint64 length = 9;
       
       message CSVReadOptions{
         int32 skip_rows = 1;
@@ -140,7 +143,6 @@ message ReadRel {
         FILE_FORMAT_PARQUET = 1;
       }
 
-      CSVOptions csv_options = 9;
     }
   }
 }
