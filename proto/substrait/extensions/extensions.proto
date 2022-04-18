@@ -8,6 +8,7 @@ import "google/protobuf/any.proto";
 option csharp_namespace = "Substrait.Protobuf";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
+option go_package = "github.com/substrait-io/substrait/go/substrait/extensions";
 
 message SimpleExtensionURI {
   // A surrogate key used in the context of a single plan used to reference the
