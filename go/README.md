@@ -5,7 +5,7 @@ Experimental Go bindings for [substrait](https://substrait.io).
 ## Generate from proto files
 
 ```bash
-go generate ./substrait
+buf generate
 ```
 
 ## Importing and Testing

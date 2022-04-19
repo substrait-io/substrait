@@ -8,3 +8,8 @@ plugins:
     out: gen/proto/java
   - name: python
     out: gen/proto/python
+  - name: go
+    out: go
+    opt:
+      - paths=source_relative
+      
