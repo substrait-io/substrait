@@ -9,7 +9,7 @@ plugins:
   - name: python
     out: gen/proto/python
   - name: go
-    out: go
+    out: gen/proto/go
     opt:
       - paths=source_relative
       
