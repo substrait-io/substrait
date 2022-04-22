@@ -114,12 +114,28 @@ message ReadRel {
       // the length in byte to read from this item
       uint64 length = 9;
       
+      message CSVConvertOptions{
+        bool ignore_check_utf8 = 1;
+        repeated string null_values = 2;
+        repeated string true_values = 3;
+        repeated string false_values = 4;
+        bool strings_can_be_null = 5;
+        bool quoted_strings_cannot_be_null = 6;
+        bool auto_dict_encode = 7;
+        int32 auto_dict_max_cardinality = 8;
+        string decimal_point = 9;
+        repeated string include_columns = 10;
+        bool include_missing_columns = 11;
+      }
+
+
       message CSVReadOptions{
-        int32 skip_rows = 1;
-        int32 skip_rows_after_names = 2;
-        repeated string column_names = 3;
-        bool autogenerate_column_names = 4;
-        
+        bool no_use_threads = 1;
+        int32 block_size = 2;
+        int32 skip_rows = 3;
+        int32 skip_rows_after_names = 4;
+        repeated string column_names = 5;
+        bool autogenerate_column_names = 6;
       }
 
       message CSVParseOptions{
@@ -134,8 +150,10 @@ message ReadRel {
       }
 
       message CSVOptions{
-        CSVReadOptions read_options = 1;
-        CSVParseOptions parse_options = 2;
+        CSVParseOptions parse_options = 1;
+        CSVParseOptions convert_options = 1;
+        CSVReadOptions read_options = 3;
+
       }
 
       enum FileFormat {
