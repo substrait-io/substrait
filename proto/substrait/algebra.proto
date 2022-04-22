@@ -128,7 +128,6 @@ message ReadRel {
         bool include_missing_columns = 11;
       }
 
-
       message CSVReadOptions{
         bool no_use_threads = 1;
         int32 block_size = 2;
@@ -151,7 +150,7 @@ message ReadRel {
 
       message CSVOptions{
         CSVParseOptions parse_options = 1;
-        CSVParseOptions convert_options = 1;
+        CSVConvertOptions convert_options = 2;
         CSVReadOptions read_options = 3;
 
       }
