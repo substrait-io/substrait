@@ -51,7 +51,7 @@ jobs:
         run: |
           set -euo pipefail
           # check commits for a BREAKING CHANGE section if any breaking changes occurred
-          gh api '${{ github.event.pull_request.commits.href }}' --paginate --jq '.[].message' | \
+          gh api '${{ github.event.pull_request.commits.href }}' --paginate --jq '.[].commit.message' | \
             jq -rcM | \
             grep "BREAKING CHANGE: "
       - name: Compile protobuf
