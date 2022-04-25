@@ -44,7 +44,6 @@ jobs:
       - uses: bufbuild/buf-breaking-action@v1
         # allowed to pass if breaking changes are detected, requires the next
         # step to pass if breaking changes are detected
-        continue-on-error: true
         with:
           against: "https://github.com/substrait-io/substrait.git#branch=main,ref=HEAD~1"
       - name: check whether the commit message includes a breaking change footer
