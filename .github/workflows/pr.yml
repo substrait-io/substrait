@@ -41,6 +41,19 @@ jobs:
           go-version: '^1.16'
       - name: install protoc-gen-go
         run: go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+      - uses: bufbuild/buf-breaking-action@v1
+        # allowed to pass if breaking changes are detected, requires the next
+        # step to pass if breaking changes are detected
+        continue-on-error: true
+        with:
+          against: "https://github.com/substrait-io/substrait.git#branch=main,ref=HEAD~1"
+      - name: check whether the commit message includes a breaking change footer
+        if: failure()
+        run: |
+          set -euo pipefail
+
+          # check commits for a BREAKING CHANGE section if any breaking changes occurred
+          ${{ toJSON(github.event.commits) }} | jq -rcM '[].message' | grep "BREAKING CHANGE: "
       - name: Compile protobuf
         run: buf generate
   yamllint:
