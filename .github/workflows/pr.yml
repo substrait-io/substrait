@@ -50,10 +50,10 @@ jobs:
         if: failure()
         run: |
           set -euo pipefail
-
           # check commits for a BREAKING CHANGE section if any breaking changes occurred
-          echo '${{ toJSON(github.event) }}'
-          jq -rcM '.commits[].message' <<< '${{ toJSON(github.event) }}' | grep "BREAKING CHANGE: "
+          gh api '${{ github.event.pull_request.commits.href }}' --paginate --jq '.[].message' | \
+            jq -rcM | \
+            grep "BREAKING CHANGE: "
       - name: Compile protobuf
         run: buf generate
   yamllint:
