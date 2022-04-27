@@ -6,6 +6,7 @@ package substrait.extensions;
 import "google/protobuf/any.proto";
 
 option csharp_namespace = "Substrait.Protobuf";
+option go_package = "github.com/substrait-io/substrait-go/proto/extensions";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
 
