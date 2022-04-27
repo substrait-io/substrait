@@ -11,5 +11,4 @@ plugins:
   - name: go
     out: gen/proto/go
     opt:
-      - paths=source_relative
-      
+      - paths=source_relative      
