@@ -46,8 +46,7 @@ jobs:
         run: |
           set -euo pipefail
           # check commits for a BREAKING CHANGE section if any breaking changes occurred
-          gh api '${{ github.event.pull_request.commits_url }}' --paginate --jq '.[].commit.message' | \
-            grep "BREAKING CHANGE: "
+          ./ci/commit_messages.sh '${{ github.event.pull_request.commits_url }}'
       - name: Compile protobuf
         run: buf generate
   yamllint:
