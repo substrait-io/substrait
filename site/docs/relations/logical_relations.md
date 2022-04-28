@@ -4,7 +4,7 @@
 
 ## Read Operator
 
-The read operator is an operator that produces one output. A simple example would be the reading of a Parquet file. It is expected that many types of reads will be added over time
+The read operator is an operator that produces one output. A simple example would be the reading of a Parquet file. It is expected that many types of reads will be added over time.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -19,10 +19,10 @@ The read operator is an operator that produces one output. A simple example woul
 | ----------------- | ------------------------------------------------------------ | ------------------------------------ |
 | Definition        | The contents of the read property definition.                | Required                             |
 | Direct Schema     | Defines the schema of the output of the read (before any projection or emit remapping/hiding). | Required                             |
-| Filter            | A boolean Substrait expression that describes the filter of a iceberg dataset. TBD: define how field referencing works. | Optional, defaults to none.          |
+| Filter            | A boolean Substrait expression that describes the filter of an iceberg dataset. TBD: define how field referencing works. | Optional, defaults to none.          |
 | Projection        | A masked complex expression describing the portions of the content that should be read | Optional, defaults to all of schema  |
-| Output properties | Declaration of orderedness and/or distribution properties this read produces | Optional, defaults to no properties. |
-| Properties        | A list of name/value pairs associated with the read          | Optional, defaults to empty          |
+| Output properties | Declaration of orderedness and/or distribution properties this read produces. | Optional, defaults to no properties. |
+| Properties        | A list of name/value pairs associated with the read.         | Optional, defaults to empty          |
 
 ### Read Definition Types
 
@@ -40,18 +40,18 @@ Read definition types are built by the community and added to the specification.
 
 | Property                    | Description                                                       | Required |
 | --------------------------- | ----------------------------------------------------------------- | -------- |
-| Items                       | An array of Items (path or path glob) associated with the read    | Required |
+| Items                       | An array of Items (path or path glob) associated with the read.   | Required |
 | Format per item             | Enumeration of available formats. Only current option is PARQUET. | Required |
 | Slicing parameters per item | Information to use when reading a slice of a file.                | Optional |
 
 ##### Slicing Files
 
-A read operation may only read part of a file.  This is convenient, for example, when distributing
-a read operation across several nodes.  The slicing parameters are specified as byte offsets
+A read operation is allowed to only read part of a file. This is convenient, for example, when distributing
+a read operation across several nodes. The slicing parameters are specified as byte offsets
 into the file.
 
-Many file formats consist of indivisible "chunks" of data (e.g. parquet row groups).  If this
-happens the consumer can determine which slice a particular chunk belongs to.  For example, one
+Many file formats consist of indivisible "chunks" of data (e.g. Parquet row groups). If this
+happens the consumer can determine which slice a particular chunk belongs to. For example, one
 possible approach is that a chunk should only be read if the midpoint of the chunk (dividing by
 2 and rounding down) is contained within the asked-for byte range.
 
@@ -73,13 +73,13 @@ The filter operator eliminates one or more records from the input data based on 
 
 | Property   | Description                                                  | Required |
 | ---------- | ------------------------------------------------------------ | -------- |
-| Input      | The relational input                                         | Required |
+| Input      | The relational input.                                        | Required |
 | Expression | A boolean expression which describes which records are included/excluded. | Required |
 
 
 ## Sort Operation
 
-The sort operator reorders a dataset based on one or more identified sort fields as well as a sorting function. 
+The sort operator reorders a dataset based on one or more identified sort fields and a sorting function for each.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -94,7 +94,7 @@ The sort operator reorders a dataset based on one or more identified sort fields
 
 | Property    | Description                                                  | Required                |
 | ----------- | ------------------------------------------------------------ | ----------------------- |
-| Input       | The relational input                                         | Required                |
+| Input       | The relational input.                                        | Required                |
 | Sort Fields | List of one or more fields to sort by. Uses the same properties as the [orderedness](basics.md#orderedness) property. | One sort field required |
 
 
@@ -114,7 +114,7 @@ The project operation will produce one or more additional expressions based on t
 
 | Property    | Description                                          | Required                         |
 | ----------- | ---------------------------------------------------- | -------------------------------- |
-| Input       | The relational input                                 | Required                         |
+| Input       | The relational input.                                | Required                         |
 | Expressions | List of one or more expressions to add to the input. | At least one expression required |
 
 
@@ -139,7 +139,7 @@ The cross product operation will combine two separate inputs into a single outpu
 
 ## Join Operation
 
-The join operation will combine two separate inputs into a single output, based on a join expression. A common subtype of joins is a equality join where the join expression is constrained to a list of equality (or equality + null equality) conditions between the two inputs of the join.
+The join operation will combine two separate inputs into a single output, based on a join expression. A common subtype of joins is an equality join where the join expression is constrained to a list of equality (or equality + null equality) conditions between the two inputs of the join.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -171,22 +171,22 @@ The join operation will combine two separate inputs into a single output, based 
 
 ## Set Operation
 
-The set operation ecompasses several set level operations that support combining datasets based, possibly excluding records based on various types of record level matching.
+The set operation encompasses several set-level operations that support combining datasets based, possibly excluding records based on various types of record level matching.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
 | Inputs               | 2 or more                                                    |
 | Outputs              | 1                                                            |
-| Property Maintenance | Maintains distribution if all inputs have the same ordinal distribution. Orderness is not maintained. |
+| Property Maintenance | Maintains distribution if all inputs have the same ordinal distribution. Orderedness is not maintained. |
 | Direct Output Order  | All inputs are ordinally matched and returned together. All inputs must have matching record types. |
 
 ### Set Properties
 
-| Property           | Description                      | Required              |
-| ------------------ | -------------------------------- | --------------------- |
-| Primary Input      | The primary input of the dataset | Required              |
-| Secondary Inputs   | One or more relational inputs    | At least one required |
-| Set Operation Type | From list below.                 | Required              |
+| Property           | Description                       | Required              |
+| ------------------ | --------------------------------- | --------------------- |
+| Primary Input      | The primary input of the dataset. | Required              |
+| Secondary Inputs   | One or more relational inputs.    | At least one required |
+| Set Operation Type | From list below.                  | Required              |
 
 ### Set Operation Types
 
@@ -229,22 +229,22 @@ The aggregate operation groups input data on one or more sets of grouping keys, 
 | -------------------- | ------------------------------------------------------------ |
 | Inputs               | 1                                                            |
 | Outputs              | 1                                                            |
-| Property Maintenance | Maintains distribution if all distribution fields are contained in every grouping set. No orderness guaranteed. |
-| Direct Output Order  | The list of distinct columns from each grouping set (ordered by their first appearance) followed by the list of measures in declaration order, followed by a integer describing the associated particular grouping set the value is derived from. |
+| Property Maintenance | Maintains distribution if all distribution fields are contained in every grouping set. No orderedness guaranteed. |
+| Direct Output Order  | The list of distinct columns from each grouping set (ordered by their first appearance) followed by the list of measures in declaration order, followed by an integer describing the associated particular grouping set the value is derived from. |
 
 ### Aggregate Properties
 
 | Property         | Description                                                  | Required                                |
 | ---------------- | ------------------------------------------------------------ | --------------------------------------- |
-| Input            | The relational input                                         | Required                                |
-| Grouping Sets    | One or more grouping sets                                    | Optional, required if no measures.      |
+| Input            | The relational input.                                        | Required                                |
+| Grouping Sets    | One or more grouping sets.                                   | Optional, required if no measures.      |
 | Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional, defaults to 0.                |
 | Measures         | A list of one or more aggregate expressions along with an optional filter. | Optional, required if no grouping sets. |
 
 
 ## Write Operator
 
-The write operator is an operator that consumes one output and writes it to storage. A simple example would be writing Parquet files. It is expected that many types of writes will be added over time
+The write operator is an operator that consumes one output and writes it to storage. A simple example would be writing Parquet files. It is expected that many types of writes will be added over time.
 
 | Signature            | Value           |
 | -------------------- | --------------- |
@@ -260,8 +260,8 @@ The write operator is an operator that consumes one output and writes it to stor
 | Definition                  | The contents of the write property definition.               | Required                    |
 | Field names                 | The names of all struct fields in breadth-first order.       | Required                    |
 | Masked Complex Expression   | The masking expression applied to the input record prior to write. | Optional, defaults to all   |
-| Rotation description fields | A list of fields that can be used for stream description whenever a stream is reset | Optional, defaults to none. |
-| Rotation indicator          | An input field id that describes when the current stream should be "rotated". Individual write definition types may support the ability to rotate the output into one or more streams. This could mean closing and opening a new file, finishing and restarting a TCP connection, etc. If a rotation indicator is available, it will be 0 except when a rotation should occur. Rotation indication are frequently defined by things like discrete partition values but could be done based on number of records or other arbitrary criteria. | Optional, defaults to none. |
+| Rotation description fields | A list of fields that can be used for stream description whenever a stream is reset. | Optional, defaults to none. |
+| Rotation indicator          | An input field ID that describes when the current stream should be "rotated". Individual write definition types may support the ability to rotate the output into one or more streams. This could mean closing and opening a new file, finishing and restarting a TCP connection, etc. If a rotation indicator is available, it will be 0 except when a rotation should occur. Rotation indication are frequently defined by things like discrete partition values but could be done based on number of records or other arbitrary criteria. | Optional, defaults to none. |
 
 ### Write Definition Types
 
@@ -280,7 +280,7 @@ Write definition types are built by the community and added to the specification
 
 | Property | Description                                                  | Required |
 | -------- | ------------------------------------------------------------ | -------- |
-| Path     | A uri to write the data to. Supports the inclusion of field references that are listed as available in properties as a "rotation description field". | Required |
+| Path     | A URI to write the data to. Supports the inclusion of field references that are listed as available in properties as a "rotation description field". | Required |
 | Format   | Enumeration of available formats. Only current option is PARQUET. | Required |
 
 

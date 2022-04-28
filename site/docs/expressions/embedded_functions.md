@@ -2,13 +2,13 @@
 
 Embedded functions are a special kind of function where the implementation is embedded within the actual plan. They are commonly used in tools where a user intersperses business logic within a data pipeline. This is more common in data science workflows than traditional SQL workflows.
 
-Embedded functions are not pre-registered. Embedded functions require that data be consumed and produced with a standard API, may require memory allocation and have determinate error reporting behavior. They may also have specific runtime dependencies. For example, a python pickle function may depend on pyarrow 5.0 and pynessie 1.0. 
+Embedded functions are not pre-registered. Embedded functions require that data be consumed and produced with a standard API, may require memory allocation and have determinate error reporting behavior. They may also have specific runtime dependencies. For example, a Python pickle function may depend on pyarrow 5.0 and pynessie 1.0.
 
 Properties for an embedded function include:
 
 | Property            | Description                                                | Required |
 | ------------------- | ---------------------------------------------------------- | -------- |
-| Function Type       | The type of embedded function presented                    | Required |
+| Function Type       | The type of embedded function presented.                   | Required |
 | Function Properties | Function properties, one of those items defined below.     | Required |
 | Output Type         | The fully resolved output type for this embedded function. | Required |
 
@@ -35,8 +35,8 @@ There are many types of possible stored functions. For each, Substrait works to 
 
 | Property    | Description                                                  | Required                   |
 | ----------- | ------------------------------------------------------------ | -------------------------- |
-| Pickle Body | binary pickle encoded function using [TBD] api representation to access arguments. | True                       |
-| Prereqs     | A list of specific python conda packages that are prerequisites for access (a structured version of a requirements.txt file) | Optional, defaults to none |
+| Pickle Body | binary pickle encoded function using [TBD] API representation to access arguments. | True                       |
+| Prereqs     | A list of specific Python conda packages that are prerequisites for access (a structured version of a requirements.txt file). | Optional, defaults to none |
 
 
 
@@ -45,7 +45,7 @@ There are many types of possible stored functions. For each, Substrait works to 
 | Property | Description                                                  | Required                   |
 | -------- | ------------------------------------------------------------ | -------------------------- |
 | Script   | WebAssembly function                                         | True                       |
-| Prereqs  | A list of AssemblyScript prerequisites required to compile the assemblyscript function using NPM coordinates | Optional, defaults to none |
+| Prereqs  | A list of AssemblyScript prerequisites required to compile the assemblyscript function using NPM coordinates. | Optional, defaults to none |
 
 
 

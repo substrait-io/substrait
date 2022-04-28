@@ -1,6 +1,6 @@
 # Physical Relations
 
-There is no true distinction between logical and physical operations in Substrait. By convention, certain operations are classified as physical but all operations can be potentially used in any kind of plan. A particular set of transformations or target operators may (by convention) be considered the "physical plan" but this is a characteristic of the system consuming substrait as opposed to a definition within Substrait.
+There is no true distinction between logical and physical operations in Substrait. By convention, certain operations are classified as physical, but all operations can be potentially used in any kind of plan. A particular set of transformations or target operators may (by convention) be considered the "physical plan" but this is a characteristic of the system consuming substrait as opposed to a definition within Substrait.
 
 
 
@@ -29,7 +29,7 @@ The hash equijoin join operator will build a hash table out of the right input b
 
 ## NLJ Operator
 
-The nested loop join operator does a join by holding the entire right input and then iterating over it using the left input, evaluating the join expression on the cartesian product of all rows, only outputting rows where the expression is true. Will also include non-matching rows in the OUTER, LEFT and RIGHT operations per the join type requirements.
+The nested loop join operator does a join by holding the entire right input and then iterating over it using the left input, evaluating the join expression on the Cartesian product of all rows, only outputting rows where the expression is true. Will also include non-matching rows in the OUTER, LEFT and RIGHT operations per the join type requirements.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -44,7 +44,7 @@ The nested loop join operator does a join by holding the entire right input and 
 | --------------- | ------------------------------------------------------------ | ---------------------------------------------- |
 | Left Input      | A relational input.                                          | Required                                       |
 | Right Input     | A relational input.                                          | Required                                       |
-| Join Expression | A boolean condition that describes whether each record from the left set "match" the record from the right set. | Optional. Defaults to true (a cartesian join). |
+| Join Expression | A boolean condition that describes whether each record from the left set "match" the record from the right set. | Optional. Defaults to true (a Cartesian join). |
 | Join Type       | One of the join types defined in the Join operator.          | Required                                       |
 
 
@@ -66,7 +66,7 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | ------------------- | ------------------------------------------------------------ | --------------------------------------------- |
 | Left Input          | A relational input.                                          | Required                                      |
 | Right Input         | A relational input.                                          | Required                                      |
-| Join Expression     | A boolean condition that describes whether each record from the left set "match" the record from the right set. The condition must only include the following operations: AND, ==, field references, is not distinct from. Field references correspond to the direct output order of the data. | Optional. Defaults to tue (a cartesian join). |
+| Join Expression     | A boolean condition that describes whether each record from the left set "match" the record from the right set. The condition must only include the following operations: AND, ==, field references, is not distinct from. Field references correspond to the direct output order of the data. | Optional. Defaults to true (a Cartesian join). |
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.                      |
 | Join Type           | One of the join types defined in the Join operator.          | Required                                      |
 
@@ -86,8 +86,8 @@ The exchange operator will redistribute data based on an exchange type definitio
 |Type|Description|
 |--|--|
 |Scatter|Distribute data using a system defined hashing function that considers one or more fields. For the same type of fields and same ordering of values, the same partition target should be identified for different ExchangeRels|
-|Single Bucket|Define an expression that provides a single `i32` bucket number. Optionally define whether the expression will only return values within the valid number of partition counts. If not, the system should modulo the return value to determine a target patition.|
-|Multi Bucket|Define an expression that provides an `List<i32>`a bucket number. Optionally define whether the expression will only return values within the valid number of partition counts. If not, the system should modulo the return value to determine a target patition. The records should be sent to all bucket numbers provided by the expression.|
+|Single Bucket|Define an expression that provides a single `i32` bucket number. Optionally define whether the expression will only return values within the valid number of partition counts. If not, the system should modulo the return value to determine a target partition.|
+|Multi Bucket|Define an expression that provides a `List<i32>` of bucket numbers. Optionally define whether the expression will only return values within the valid number of partition counts. If not, the system should modulo the return value to determine a target partition. The records should be sent to all bucket numbers provided by the expression.|
 |Broadcast|Send all records to all partitions.|
 |Round Robin|Send records to each target in sequence. Can follow either exact or approximate behavior. Approximate will attempt to balance the number of records sent to each destination but may not exactly distribute evenly and may send batches of records to each target before moving to the next.|
 
@@ -95,10 +95,10 @@ The exchange operator will redistribute data based on an exchange type definitio
 
 | Property           | Description                                                  | Required                                                     |
 | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Input              | The relational input                                         | Required.                                                    |
-| Distribution Type  | One of the distribution types defined above                  | Required.                                                    |
-| Partition Count    | The number of partitions targeted for output                 | Optional. If not defined, implementation system should decide the number of partitions. Note that when not defined, single or multi bucket expressions should not be constrained to count. |
-| Expression Mapping | Describes a relationship between each partition id and the destination that partition should be sent to. | Optional. A partition may be sent to 0..N locations. Value can either be a URI or arbitrary value. |
+| Input              | The relational input.                                        | Required.                                                    |
+| Distribution Type  | One of the distribution types defined above.                 | Required.                                                    |
+| Partition Count    | The number of partitions targeted for output.                | Optional. If not defined, implementation system should decide the number of partitions. Note that when not defined, single or multi bucket expressions should not be constrained to count. |
+| Expression Mapping | Describes a relationship between each partition ID and the destination that partition should be sent to. | Optional. A partition may be sent to 0..N locations. Value can either be a URI or arbitrary value. |
 
 
 
@@ -134,15 +134,15 @@ A receiving operation that will merge multiple streams in an arbitrary order.
 
 ### Naive Capture Properties
 
-| Property | Description          | Required |
-| -------- | -------------------- | -------- |
-| Input    | The relational input | Required |
+| Property | Description           | Required |
+| -------- | --------------------- | -------- |
+| Input    | The relational input. | Required |
 
 
 
-## TopN Operation
+## Top-N Operation
 
-The topn operator reorders a dataset based on one or more identified sort fields as well as a sorting function. Rather than sort the entire dataset, the top-n will only maintain the total number of records required to ensure a limited output. A top-n is a combination of a logical sort and logical fetch operations.
+The top-N operator reorders a dataset based on one or more identified sort fields as well as a sorting function. Rather than sort the entire dataset, the top-N will only maintain the total number of records required to ensure a limited output. A top-n is a combination of a logical sort and logical fetch operations.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -151,11 +151,11 @@ The topn operator reorders a dataset based on one or more identified sort fields
 | Property Maintenance | Will update orderedness property to the output of the sort operation. Distribution property only remapped based on emit. |
 | Direct Output Order  | The field order of the input.                                |
 
-### TopN Properties
+### Top-N Properties
 
 | Property    | Description                                                  | Required                 |
 | ----------- | ------------------------------------------------------------ | ------------------------ |
-| Input       | The relational input                                         | Required                 |
+| Input       | The relational input.                                        | Required                 |
 | Sort Fields | List of one or more fields to sort by. Uses the same properties as the [orderedness](basics.md#orderedness) property. | One sort field required  |
 | Offset      | A positive integer. Declares the offset for retrieval of records. | Optional, defaults to 0. |
 | Count       | A positive integer. Declares the number of records that should be returned. | Required                 |
@@ -177,8 +177,8 @@ The hash aggregate operation maintains a hash table for each grouping set to coa
 
 | Property         | Description                                                  | Required                                |
 | ---------------- | ------------------------------------------------------------ | --------------------------------------- |
-| Input            | The relational input                                         | Required                                |
-| Grouping Sets    | One or more grouping sets                                    | Optional, required if no measures.      |
+| Input            | The relational input.                                        | Required                                |
+| Grouping Sets    | One or more grouping sets.                                   | Optional, required if no measures.      |
 | Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional, defaults to 0.                |
 | Measures         | A list of one or more aggregate expressions. Implementations may or may not support aggregate ordering expressions. | Optional, required if no grouping sets. |
 
@@ -199,8 +199,8 @@ The streaming aggregate operation leverages data ordered by the grouping express
 
 | Property         | Description                                                  | Required                                |
 | ---------------- | ------------------------------------------------------------ | --------------------------------------- |
-| Input            | The relational input                                         | Required                                |
-| Grouping Sets    | One or more grouping sets. If multiple grouping sets are declared, sets must all be compatible with the the input sortedness. | Optional, required if no measures.      |
+| Input            | The relational input.                                        | Required                                |
+| Grouping Sets    | One or more grouping sets. If multiple grouping sets are declared, sets must all be compatible with the input sortedness. | Optional, required if no measures.      |
 | Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional, defaults to 0.                |
 | Measures         | A list of one or more aggregate expressions. Aggregate expressions ordering requirements must be compatible with expected ordering. | Optional, required if no grouping sets. |
 
@@ -219,10 +219,10 @@ A window aggregate operation that will build hash tables for each distinct parti
 
 ### Hashing Window Properties
 
-| Property           | Description                    | Required               |
-| ------------------ | ------------------------------ | ---------------------- |
-| Input              | The relational input           | Required               |
-| Window Expressions | One or more window expressions | At least one required. |
+| Property           | Description                     | Required               |
+| ------------------ | ------------------------------- | ---------------------- |
+| Input              | The relational input.           | Required               |
+| Window Expressions | One or more window expressions. | At least one required. |
 
 
 
@@ -241,6 +241,6 @@ A window aggregate operation that relies on a partition/ordering sorted input.
 
 | Property           | Description                                                  | Required               |
 | ------------------ | ------------------------------------------------------------ | ---------------------- |
-| Input              | The relational input                                         | Required               |
-| Window Expressions | One or more window expressions. Must be supported by the sorteness of the input. | At least one required. |
+| Input              | The relational input.                                        | Required               |
+| Window Expressions | One or more window expressions. Must be supported by the sortedness of the input. | At least one required. |
 
