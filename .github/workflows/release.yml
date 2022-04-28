@@ -28,11 +28,10 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
 
-      # install node
       - uses: actions/setup-node@v2
         with:
           node-version: "16"
-      # install buf
+
       - uses: bufbuild/buf-setup-action@v0.7.0
 
       - name: run semantic-release

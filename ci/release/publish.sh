@@ -3,8 +3,4 @@
 
 set -euo pipefail
 
-if [[ $GITHUB_REF == refs/tags/v* ]]; then
-  buf push --tag "${GITHUB_REF_NAME}"
-else
-  buf push
-fi
+buf push --tag "${1}"
