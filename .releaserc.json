@@ -21,7 +21,7 @@
     [
       "@semantic-release/github",
       {
-        "assets": ["gen"]
+        "assets": ["gen/proto/*"]
       }
     ],
     [
