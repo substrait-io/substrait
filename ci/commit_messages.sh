@@ -14,4 +14,4 @@ while true; do
   fi
   ((++page))
   jq -rcM '.[].commit.message' <<< "$json"
-done | grep "BREAKING CHANGE: "
+done

@@ -36,17 +36,24 @@ jobs:
       - uses: actions/checkout@v2
       - uses: bufbuild/buf-setup-action@v0.7.0
       - uses: bufbuild/buf-lint-action@v1
-      - uses: bufbuild/buf-breaking-action@v1
-        # allowed to pass if breaking changes are detected, requires the next
-        # step to pass if breaking changes are detected
-        with:
-          against: "https://github.com/substrait-io/substrait.git#branch=main,ref=HEAD~1"
+      - name: check for breaking changes
+        id: check_breaking
+        run: |
+          set -euo pipefail
+
+          if ! buf breaking --against '.git#branch=main,ref=HEAD~1'; then
+            breaking="true"
+          else
+            breaking="false"
+          fi
+
+          echo "::set-output name=breaking::${breaking}"
       - name: check whether the commit message includes a breaking change footer
-        if: failure()
+        if: ${{ fromJson(steps.check_breaking.outputs.breaking) }}
         run: |
           set -euo pipefail
           # check commits for a BREAKING CHANGE section if any breaking changes occurred
-          ./ci/commit_messages.sh '${{ github.event.pull_request.commits_url }}'
+          ./ci/commit_messages.sh '${{ github.event.pull_request.commits_url }}' | grep 'BREAKING CHANGE: '
       - name: Compile protobuf
         run: buf generate
   yamllint:
