@@ -41,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          if ! buf breaking --against 'https://github.com/substrait-io/substrait.git#branch=main,ref=HEAD~1'; then
+          if ! buf breaking --against 'https://github.com/substrait-io/substrait.git#branch=main'; then
             breaking="true"
           else
             breaking="false"
