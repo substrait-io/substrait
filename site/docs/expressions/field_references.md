@@ -47,13 +47,14 @@ Given this schema, you could declare a mask in pseudo-code such as:
 
 OR
 
-O:
+0:
   - 0
   - 1:
     ..5:
       -0
       -2
-1
+2
+3
 ```
 
 This mask states that we would like to include fields 0 2 and 3 at the top-level. Within field 0, we want to include subfields 0 and 1. For subfield 0.1, we want to include up to only the first 5 records in the array and only includes fields 0 and 2 within the struct within that array. The resulting schema would be:
@@ -67,6 +68,7 @@ struct:
         - i32
         - string
   - i32
+  - i64
 ```
 
 #### Unwrapping Behavior
