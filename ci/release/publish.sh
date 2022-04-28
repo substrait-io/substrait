@@ -3,4 +3,6 @@
 
 set -euo pipefail
 
-buf push --tag "${1}" --tag "$(git rev-parse HEAD)"
+cd "$(git rev-parse --show-toplevel)"/proto || exit 1
+
+buf push --tag "v${1}" --tag "$(git rev-parse HEAD)"
