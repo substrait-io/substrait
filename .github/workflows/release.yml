@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  schedule:
+    # 2 AM on Sunday
+    - "0 2 * * 0"
+  workflow_dispatch:
+
+# we do not want more than one release workflow executing at the same time, ever
+concurrency:
+  group: release
+  # cancelling in the middle of a release would create incomplete releases
+  # so cancel-in-progress is false
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: tibdex/github-app-token@v1
+        id: generate-token
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - uses: bufbuild/buf-setup-action@v0.7.0
+
+      - name: run semantic-release
+        run: ./ci/release/run.sh
+        env:
+          BUF_TOKEN: ${{ secrets.BUF_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
