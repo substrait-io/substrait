@@ -14,14 +14,14 @@ option java_package = "io.substrait.proto";
 
 message RelCommon {
   oneof emit_kind {
-    Directs direct = 1;
+    Direct direct = 1;
     Emit emit = 2;
   }
 
   Hint hint = 3;
   substrait.extensions.AdvancedExtension advanced_extension = 4;
 
-  message Directs {}
+  message Direct {}
   message Emit {
     repeated int32 output_mapping = 1;
   }
