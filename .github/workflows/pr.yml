@@ -37,7 +37,7 @@ jobs:
       - uses: bufbuild/buf-setup-action@v0.7.0
       - uses: bufbuild/buf-lint-action@v1
       - name: check for breaking changes
-        id: check_breaking
+        id: check-breaking
         run: |
           set -euo pipefail
 
@@ -49,7 +49,7 @@ jobs:
 
           echo "::set-output name=breaking::${breaking}"
       - name: check whether the commit message includes a breaking change footer
-        if: ${{ fromJson(steps.check_breaking.outputs.breaking) }}
+        if: ${{ fromJson(steps.check-breaking.outputs.breaking) }}
         run: |
           set -euo pipefail
           # check commits for a BREAKING CHANGE section if any breaking changes occurred
