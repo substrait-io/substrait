@@ -34,8 +34,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - uses: bufbuild/buf-setup-action@v0.7.0
       - uses: bufbuild/buf-lint-action@v1
       - name: check for breaking changes
@@ -43,8 +41,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          git fetch origin main
-          if ! buf breaking --against '.git#branch=main,ref=HEAD~1'; then
+          if ! buf breaking --against 'https://github.com/substrait-io/substrait.git#branch=main,ref=HEAD~1'; then
             breaking="true"
           else
             breaking="false"
