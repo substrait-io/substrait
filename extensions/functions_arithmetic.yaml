@@ -22,7 +22,7 @@ scalar_functions:
             required: false
           - value: i32
           - value: i32
-        return: i8
+        return: i32
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
@@ -62,7 +62,7 @@ scalar_functions:
             required: false
           - value: i32
           - value: i32
-        return: i8
+        return: i32
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
@@ -102,7 +102,7 @@ scalar_functions:
             required: false
           - value: i32
           - value: i32
-        return: i8
+        return: i32
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
@@ -136,7 +136,7 @@ scalar_functions:
       - args:
           - value: i32
           - value: i32
-        return: i8
+        return: i32
       - args:
           - value: i64
           - value: i64
@@ -168,7 +168,7 @@ scalar_functions:
       - args:
           - value: i32
           - value: i32
-        return: i8
+        return: i32
       - args:
           - value: i64
           - value: i64
