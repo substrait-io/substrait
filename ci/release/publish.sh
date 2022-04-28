@@ -3,4 +3,4 @@
 
 set -euo pipefail
 
-buf push --tag "${1}"
+buf push --tag "${1}" --tag "$(git rev-parse HEAD)"
