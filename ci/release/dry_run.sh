@@ -29,9 +29,11 @@ npx --yes \
   -p "@semantic-release/changelog" \
   -p "@semantic-release/exec" \
   -p "@semantic-release/git" \
+  -p "conventional-changelog-conventionalcommits" \
   semantic-release \
   --ci false \
   --dry-run \
+  --preset conventionalcommits \
   --plugins \
   --analyze-commits "@semantic-release/commit-analyzer" \
   --generate-notes "@semantic-release/release-notes-generator" \
