@@ -484,7 +484,7 @@ message Expression {
     Expression input = 2;
     ConditionFlag condition_flag = 3;
 
-    enum ConditionFlag{
+    enum ConditionFlag {
       CONDITION_FLAG_UNSPECIFIED = 0;
       CONDITION_FLAG_NULL_ON_FAILURE = 1;
       CONDITION_FLAG_THROW_ON_FAILURE = 2;
