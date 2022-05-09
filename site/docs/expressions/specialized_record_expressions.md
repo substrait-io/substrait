@@ -11,7 +11,7 @@ For each data type, it is possible to create a literal value for that data type.
 
 
 ## Cast Expression
-To convert a value from one type to another, Substrait defines a cast expression. Cast expression declare an expected type and an input argument.
+To convert a value from one type to another, Substrait defines a cast expression. Cast expression declare an expected type, an input argument and an enumeration flag that contains enhancement conditions, such as `CONDITION_FLAG_NULL_ON_FAILURE` which  prevents throws and instead returns null on cast failure.
 
 
 
