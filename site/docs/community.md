@@ -5,6 +5,9 @@ license. Development is done in the open leveraging GitHub issues and PRs.
 
 ## Get In Touch
 
+[Mailing List/Google Group](https://groups.google.com/g/substrait)
+: We use the mailing list to discuss questions, formulate plans and collaborate asynchronously.
+
 [Slack Channel]({{versions.slackinvitelink}})
 : The developers of Substrait frequent the Slack channel. You can get an
   invite to the channel by following [this link]({{versions.slackinvitelink}}).
@@ -22,9 +25,6 @@ license. Development is done in the open leveraging GitHub issues and PRs.
 : Our website is all maintained in our source repository. If there is something you think
   can be improved, feel free to fork our repository and post a pull request.
 
-[Reviewable](https://reviewable.io/)
-: We use Reviewable (in addition to GitHub reviews) to collaborate on code and docs. They are
-  a great service and support OSS projects.
 
 ## Talks
 Want to learn more about Substrait? Try the following presentations and slide decks.

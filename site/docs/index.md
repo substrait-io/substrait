@@ -27,7 +27,7 @@ In many ways, the goal of this project is similar to that of the Apache Arrow pr
 
 ## Community Principles
 
-* Be inclusive and open to all. If you want to join the project, open a PR or [issue](https://github.com/substrait-io/substrait/issues), start a [discussion](https://github.com/substrait-io/substrait/discussions) or [join the Slack Channel]({{versions.slackinvitelink}}).
+* Be inclusive and open to all. If you want to join the project, open a PR or [issue](https://github.com/substrait-io/substrait/issues), start a [discussion](https://groups.google.com/g/substrait) or [join the Slack Channel]({{versions.slackinvitelink}}).
 * Ensure a diverse set of contributors that come from multiple data backgrounds to maximize general utility.
 * Build a specification based on open consensus.
 * Avoid over-reliance/coupling to any single technology.
