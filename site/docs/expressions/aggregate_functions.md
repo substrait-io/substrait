@@ -11,6 +11,7 @@ Aggregate function signatures contain all the properties defined for [scalar fun
 | Maximum set size         | Maximum allowed set size as an unsigned integer.              | Optional, defaults to unlimited |
 | Decomposable             | Whether the function can be executed in one or more intermediate steps. Valid options are: `NONE`, `ONE`, `MANY`, describing how intermediate steps can be taken. | Optional, defaults to `NONE`     |
 | Intermediate Output Type | If the function is decomposable, represents the intermediate output type that is used, if the function is defined as either `ONE` or `MANY` decomposable. Will be a struct in many cases. | Required for `ONE` and `MANY`.      |
+| Invocation               | Whether the function uses all or only distinct values in the aggregation calculation. Valid options are: `ALL`, `DISTINCT`. | Optional, defaults to `ALL`     |
 
 
 
