@@ -11,9 +11,7 @@ For each data type, it is possible to create a literal value for that data type.
 
 
 ## Cast Expression
-To convert a value from one type to another, Substrait defines a cast expression. Cast expression declare an expected type and an input argument.
-
-
+To convert a value from one type to another, Substrait defines a cast expression. Cast expressions declare an expected type, an input argument and an enumeration specifying failure behavior, indicating whether cast should return null on failure or throw an exception.
 
 ## If Expression
 An if value expression is an expression composed of one if clause, zero or more else if clauses and an else clause. In pseudocode, they are envisioned as:

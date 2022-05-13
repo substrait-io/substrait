@@ -482,6 +482,13 @@ message Expression {
   message Cast {
     Type type = 1;
     Expression input = 2;
+    FailureBehavior failure_behavior = 3;
+
+    enum FailureBehavior {
+      FAILURE_BEHAVIOR_UNSPECIFIED = 0;
+      FAILURE_BEHAVIOR_RETURN_NULL = 1;
+      FAILURE_BEHAVIOR_THROW_EXCEPTION = 2;
+    }
   }
 
   message SwitchExpression {
