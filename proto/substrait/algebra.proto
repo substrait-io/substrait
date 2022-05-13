@@ -482,12 +482,12 @@ message Expression {
   message Cast {
     Type type = 1;
     Expression input = 2;
-    ConditionFlag condition_flag = 3;
+    FailureBehavior failure_behavior = 3;
 
-    enum ConditionFlag {
-      CONDITION_FLAG_UNSPECIFIED = 0;
-      CONDITION_FLAG_NULL_ON_FAILURE = 1;
-      CONDITION_FLAG_THROW_ON_FAILURE = 2;
+    enum FailureBehavior {
+      // throw an exception as default failure behavior
+      FAILURE_BEHAVIOR_UNSPECIFIED = 0;
+      FAILURE_BEHAVIOR_RETURN_NULL = 1;
     }
   }
 
