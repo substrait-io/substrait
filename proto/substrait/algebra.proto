@@ -416,6 +416,7 @@ message Expression {
     message IntervalDayToSecond {
       int32 days = 1;
       int32 seconds = 2;
+      int32 microseconds = 3;
     }
 
     message Struct {
