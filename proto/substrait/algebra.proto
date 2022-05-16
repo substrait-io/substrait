@@ -376,12 +376,18 @@ message Expression {
       List list = 30;
       Type.List empty_list = 31;
       Type.Map empty_map = 32;
+      UserDefined user_defined = 33;
     }
 
     // whether the literal type should be treated as a nullable type. Applies to
     // all members of union other than the Typed null (which should directly
     // declare nullability).
     bool nullable = 50;
+
+    // optionally points to a type_variation_anchor defined in this plan.
+    // Applies to all members of union other than the Typed null (which should
+    // directly declare the type variation).
+    uint32 type_variation_reference = 51;
 
     message VarChar {
       string value = 1;
@@ -427,6 +433,15 @@ message Expression {
     message List {
       // A homogeneously typed list of literals
       repeated Literal values = 1;
+    }
+
+    message UserDefined {
+      // points to a type_anchor defined in this plan
+      uint32 type_reference = 1;
+
+      // the value of the literal, serialized using some type-specific
+      // protobuf message
+      google.protobuf.Any value = 2;
     }
   }
 
