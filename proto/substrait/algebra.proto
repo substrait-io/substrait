@@ -456,11 +456,11 @@ message Expression {
   message ScalarFunction {
     // points to a function_anchor defined in this plan
     uint32 function_reference = 1;
-    repeated FunctionArgument args = 4;
+    repeated FunctionArgument arguments = 4;
     Type output_type = 3;
 
     // deprecated; use args instead
-    repeated Expression deprecated_args = 2 [deprecated = true];
+    repeated Expression args = 2 [deprecated = true];
   }
 
   message WindowFunction {
@@ -472,10 +472,10 @@ message Expression {
     Bound lower_bound = 5;
     AggregationPhase phase = 6;
     Type output_type = 7;
-    repeated FunctionArgument args = 9;
+    repeated FunctionArgument arguments = 9;
 
     // deprecated; use args instead
-    repeated Expression deprecated_args = 8 [deprecated = true];
+    repeated Expression args = 8 [deprecated = true];
 
     message Bound {
       message Preceding {
@@ -812,14 +812,14 @@ enum AggregationPhase {
 message AggregateFunction {
   // points to a function_anchor defined in this plan
   uint32 function_reference = 1;
-  repeated FunctionArgument args = 7;
+  repeated FunctionArgument arguments = 7;
   repeated SortField sorts = 3;
   AggregationPhase phase = 4;
   Type output_type = 5;
   AggregationInvocation invocation = 6;
 
   // deprecated; use args instead
-  repeated Expression deprecated_args = 2 [deprecated = true];
+  repeated Expression args = 2 [deprecated = true];
 
   enum AggregationInvocation {
     AGGREGATION_INVOCATION_UNSPECIFIED = 0;
