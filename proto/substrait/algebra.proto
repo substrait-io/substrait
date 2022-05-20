@@ -4,6 +4,7 @@ syntax = "proto3";
 package substrait;
 
 import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
 import "substrait/extensions/extensions.proto";
 import "substrait/type.proto";
 
@@ -320,6 +321,21 @@ message Rel {
   }
 }
 
+message FunctionArgument {
+  oneof arg_type {
+    Enum enum = 1;
+    Type type = 2;
+    Expression value = 3;
+  }
+
+  message Enum {
+    oneof enum_kind {
+      string specified = 1;
+      google.protobuf.Empty unspecified = 2;
+    }
+  }
+}
+
 message Expression {
   oneof rex_type {
     Literal literal = 1;
@@ -330,18 +346,26 @@ message Expression {
     SwitchExpression switch_expression = 7;
     SingularOrList singular_or_list = 8;
     MultiOrList multi_or_list = 9;
-    Enum enum = 10;
     Cast cast = 11;
     Subquery subquery = 12;
+
+    // deprecated: enum literals are only sensible in the context of
+    // function arguments, for which FunctionArgument should now be
+    // used
+    Enum enum = 10 [deprecated = true];
   }
 
   message Enum {
+    option deprecated = true;
+
     oneof enum_kind {
       string specified = 1;
       Empty unspecified = 2;
     }
 
-    message Empty {}
+    message Empty {
+      option deprecated = true;
+    }
   }
 
   message Literal {
@@ -448,8 +472,11 @@ message Expression {
   message ScalarFunction {
     // points to a function_anchor defined in this plan
     uint32 function_reference = 1;
-    repeated Expression args = 2;
+    repeated FunctionArgument arguments = 4;
     Type output_type = 3;
+
+    // deprecated; use args instead
+    repeated Expression args = 2 [deprecated = true];
   }
 
   message WindowFunction {
@@ -461,7 +488,10 @@ message Expression {
     Bound lower_bound = 5;
     AggregationPhase phase = 6;
     Type output_type = 7;
-    repeated Expression args = 8;
+    repeated FunctionArgument arguments = 9;
+
+    // deprecated; use args instead
+    repeated Expression args = 8 [deprecated = true];
 
     message Bound {
       message Preceding {
@@ -798,12 +828,14 @@ enum AggregationPhase {
 message AggregateFunction {
   // points to a function_anchor defined in this plan
   uint32 function_reference = 1;
-  repeated Expression args = 2;
+  repeated FunctionArgument arguments = 7;
   repeated SortField sorts = 3;
   AggregationPhase phase = 4;
   Type output_type = 5;
-
   AggregationInvocation invocation = 6;
+
+  // deprecated; use args instead
+  repeated Expression args = 2 [deprecated = true];
 
   enum AggregationInvocation {
     AGGREGATION_INVOCATION_UNSPECIFIED = 0;
