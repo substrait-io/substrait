@@ -13,3 +13,11 @@ repos:
   hooks:
   - id: commitlint
     stages: [commit-msg]
+- repo: https://github.com/psf/black
+  rev: 22.3.0
+  hooks:
+  - id: black
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 4.0.1
+  hooks:
+  - id: flake8
