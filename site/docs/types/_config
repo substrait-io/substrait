@@ -1,4 +1,5 @@
 arrange:
+  - type_system.md
   - type_classes.md
   - type_variations.md
   - type_parsing.md
