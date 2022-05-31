@@ -1,4 +1,6 @@
-# Simple Types
+# Type Classes
+
+## Simple Types
 
 Substrait tries to cover the most common types used in data manipulation. Simple types are those that don't support any form of configuration. For simplicity, any generic type that has only a small number of discrete implementations is declared directly, as opposed to via configuration.
 
@@ -22,3 +24,33 @@ To minimize type explosion, the project currently follows the guideline that a l
 | interval_year   | Interval year to month. Supports a range of any combination of years and months that total less than or equal to 10,000 years. Each component can be specified as positive or negative. Examples minimums/maximums include: [10000y, -120000m, 1y119988m, 1000y108000m, etc.] Note that each component can never independently specify more than 10,000 years, even if the components have opposite signs; e.g. -10000y200000m is **not** allowed.  | INTERVAL&lt;YEAR_MONTH&gt;     | -              | -             | Interval year to month      |
 | interval_day    | Interval day to second with microsecond precision. Supports a range of  [-3,650,000..3,650,000] days and [-9,223,372,036,854,775..9,223,372,036,854,775] microseconds in any combination.                                                                                                                                                                                                                                                           | INTERVAL&lt;MONTH_DAY_NANO&gt; | -              | -             | Interval day to second      |
 | uuid            | A universally-unique identifier composed of 128 bits. Typically presented to users in the following hexadecimal format: `c48ffa9e-64f4-44cb-ae47-152b4e60e77b`. Any 128-bit value is allowed, without specific adherence to RFC4122.                                                                                                                                                                                                                |                                | uuid           |               | UUID                        |
+
+## Compound Types
+
+Compound types include any type that is configurable including complex types as well as configurable scalar types.
+
+| Type Name                   | Description                                                  | Arrow Analog        | Iceberg Analog | Spark Analog   | Trino Analog                |
+| --------------------------- | ------------------------------------------------------------ | ------------------- | -------------- | -------------- | --------------------------- |
+| FIXEDCHAR&lt;L&gt;    | A fixed-length field of length L. L can be between [1..2,147,483,647]. Values shorter than the length of the field are padded with spaces. | -                   | -              | CharType(L)    | CHAR(L)                     |
+| VARCHAR&lt;L&gt;         | A field that can holds UTF-8-encoded strings between 0 and L in character length. The value of L can be between [1..2,147,483,647]. Values shorter than L are not padded. | -                   | -              | VarcharType(L) | VARCHAR(L)                  |
+| FIXEDBINARY&lt;L&gt;     | A binary field that is fixed in width to L bytes. Values that are shorter than L are 0-padded. | FixedSizeBinary&lt;L&gt;  | FIXED&lt;L&gt;       | -              | -                           |
+| DECIMAL&lt;P, S&gt;   | A fixed-precision decimal value having precision (P, number of digits) <= 38 and scale (S, number of fractional digits) 0 <= S <= P. | Decimal&lt;P, S, bitwidth=128&gt; | DECIMAL(P,S)   | DECIMAL(P,S)   | DECIMAL(P,S)                |
+| STRUCT&lt;T1,...,T2&gt; | A list of types in a defined order. | struct_&lt;*&gt;                  | struct&lt;*&gt; | struct&lt;*&gt; | row&lt;*&gt;   |
+| NSTRUCT&lt;N:T1,...,N:T2&gt; | **Pseudo-type**: A struct that maps unique names to value types. Each name is a UTF-8-encoded string. Each value can have a distinct type. Note that NSTRUCT is actually a pseudo-type. This is because Substrait's core type system is based entirely on ordinal positions, not named fields. Nonetheless, when working with systems outside Substrait, names are important. | struct_&lt;*&gt; | struct&lt;*&gt; | struct&lt;*&gt; | row&lt;*&gt; |
+| LIST&lt;T&gt;               | A list of values of type T. The list can be between [0..2,147,483,647] values in length. | list                | list           | list           | array                       |
+| MAP&lt;K, V&gt;                   | An unordered list of type K keys with type V values.         | map&lt;k,v&gt;            | map&lt;k,v&gt;       | -              | map&lt;k,v&gt;                    |
+
+## User-Defined Types
+
+User Defined Types can be created using a combination of pre-defined simple and compound types. User-defined types are defined as part of [simple extensions](../extensions/index.md#simple-extensions). An extension can declare an arbitrary number of user defined extension types. Initially, user defined types must be simple types (although they can be constructed of a number of inner compound and simple types).
+
+A YAML example of an extension type is below:
+
+```yaml
+  name: point
+  structure:
+    longitude: i32
+    latitude: i32
+```
+
+This declares a new type (namespaced to the associated YAML file) called "point". This type is composed of two `i32` values named longitude and latitude. Once a type has been declared, it can be used in function declarations.  [TBD: should field references be allowed to dereference the components of a user defined type?]
