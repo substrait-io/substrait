@@ -45,6 +45,11 @@ plugins:
   - mkdocs_protobuf:
       proto_dir: ../proto/substrait
       indent_depth: 4 # requied to make superfences happy
+  - redirects:
+      redirect_maps:
+        'types/simple_logical_types.md': 'types/type_classes.md'
+        'types/compound_logical_types.md': 'types/type_classes.md'
+        'types/user_defined_types.md': 'types/type_classes.md'
 markdown_extensions:
   - smarty
   - sane_lists
