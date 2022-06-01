@@ -12,6 +12,6 @@ There's no formal set of dependencies for Substrait, but here are some that are 
 
 ## Commit Conventions
 
-Substrait follows [conventional commits]https://www.conventionalcommits.org/en/v1.0.0/) for commit message structure.
+Substrait follows [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) for commit message structure.
 
 Examples of commit messages can be seen [here](https://www.conventionalcommits.org/en/v1.0.0/#examples).
