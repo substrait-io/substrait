@@ -1,0 +1,18 @@
+repos:
+- repo: https://github.com/nametake/pre-commit-buf
+  rev: v2.0.0
+  hooks:
+  - id: buf-lint
+- repo: https://github.com/adrienverge/yamllint.git
+  rev: v1.26.0
+  hooks:
+  - id: yamllint
+    args: [-c=.yamllint.yaml]
+- repo: https://github.com/psf/black
+  rev: 22.3.0
+  hooks:
+  - id: black
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 4.0.1
+  hooks:
+  - id: flake8
