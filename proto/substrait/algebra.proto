@@ -148,6 +148,9 @@ message JoinRel {
     JOIN_TYPE_SINGLE = 7;
   }
 
+  string left_suffix = 8;
+  string right_suffix = 9;  
+
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
