@@ -276,3 +276,81 @@ aggregate_functions:
         decomposable: MANY
         intermediate: "STRUCT<fp64,i64>"
         return: fp64?
+  - name: "min"
+    description: Min a set of values.
+    impls:
+      - args:
+          - value: i8
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i8?
+        return: i8?
+      - args:
+          - value: i16
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i16?
+        return: i16?
+      - args:
+          - value: i32
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i32?
+        return: i32?
+      - args:
+          - value: i64
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i64?
+        return: i64?
+      - args:
+          - value: fp32
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: fp32?
+        return: fp32?
+      - args:
+          - value: fp64
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: fp64?
+        return: fp64?
+  - name: "max"
+    description: Max a set of values.
+    impls:
+      - args:
+          - value: i8
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i8?
+        return: i8?
+      - args:
+          - value: i16
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i16?
+        return: i16?
+      - args:
+          - value: i32
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i32?
+        return: i32?
+      - args:
+          - value: i64
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i64?
+        return: i64?
+      - args:
+          - value: fp32
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: fp32?
+        return: fp32?
+      - args:
+          - value: fp64
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: fp64?
+        return: fp64?
