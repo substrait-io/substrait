@@ -1,10 +1,12 @@
 # Type Variations
 
-Since Substrait is designed to work in both logical and physical contexts, there is a need to support extended attributes in the physical context. Different consumers may have multiple ways to present the same logical type. For example, an engine might support dictionary encoding a string or using either a row-wise or columnar representation of a struct. As such, there is the facility for users to express additional type variations for each logical type. These variations are expected to have the same logical properties as the canonical variation. They are defined as part of [simple extensions](../extensions/index.md#simple-extensions). The key properties of these variations are:
+Type variations may be used to represent differences in representation between different consumers. For example, an engine might support dictionary encoding for a string, or could be using either a row-wise or columnar representation of a struct. All variations of a type are expected to have the same semantics when operated on by functions or other expressions.
+
+All variations except the "system-preferred" variation (a.k.a. `[0]`, see [Type Parsing](type_parsing.md)) must be defined using [simple extensions](../extensions/index.md#simple-extensions). The key properties of these variations are:
 
 | Property          | Description                                                  |
 | ----------------- | ------------------------------------------------------------ |
-| Base Type       | The base type this variation belongs to. Variations can only be expressed for simple types and wild-carded compound types (e.g. `i8` or `VARCHAR<*>`). |
+| Base Type Class   | The type class that this variation belongs to.               |
 | Name              | The name used to reference this type. Should be unique within type variations for this parent type within a simple extension. |
-| Description       | A human description of the purpose of this type variation.    |
-| Function Behavior | **INHERITS** or **SEPARATE**: Whether this variation supports functions using the canonical variation or whether functions should be resolved independently. For example if one has the function `add(i8,i8)` defined and then defines an `i8` variation, can the `i8` variation field be bound to the base `add` operation (inherits) or does a specialized version of `add` need to be defined specifically for this type variation (separate). Defaults to inherits. |
+| Description       | A human description of the purpose of this type variation.   |
+| Function Behavior | **INHERITS** or **SEPARATE**: whether functions that support the system-preferred variation implicitly also support this variation, or whether functions should be resolved independently. For example, if one has the function `add(i8,i8)` defined and then defines an `i8` variation, this determines whether the `i8` variation can be bound to the base `add` operation (inherits) or whether a specialized version of `add` needs to be defined specifically for this variation (separate). Defaults to inherits. |
