@@ -196,10 +196,10 @@ message AggregateRel {
   // Input of the aggregation
   Rel input = 2;
 
-  // The columns to group on
+  // A list of expression grouping that the aggregation measured should be calculated for.
   repeated Grouping groupings = 3;
 
-  // The aggregation to perform
+  // A list of one or more aggregate expressions along with an optional filter.
   repeated Measure measures = 4;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
