@@ -28,7 +28,7 @@ message RelCommon {
   //Direct indicates no-op on ordering or presence of fields in the output
   message Direct {}
 
-  // remap which fields are output and in which order
+  // Remap which fields are output and in which order
   message Emit {
     repeated int32 output_mapping = 1;
   }
@@ -63,7 +63,7 @@ message ReadRel {
   Expression.MaskExpression projection = 4;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-  // definition of which type of scan operation is to be performed
+  // Definition of which type of scan operation is to be performed
   oneof read_type {
     VirtualTable virtual_table = 5;
     LocalFiles local_files = 6;
@@ -114,18 +114,19 @@ message ReadRel {
         string uri_folder = 4;
       }
 
-      // specification of the file format
+      // Specification of the file format
       FileFormat format = 5;
 
-      // the index of the partition this item belongs to
+      // The index of the partition this item belongs to
       uint64 partition_index = 6;
 
-      // the start position in byte to read from this item
+      // The start position in byte to read from this item
       uint64 start = 7;
 
-      // the length in byte to read from this item
+      // The length in byte to read from this item
       uint64 length = 8;
 
+      // Available formats for files
       enum FileFormat {
         FILE_FORMAT_UNSPECIFIED = 0;
         FILE_FORMAT_PARQUET = 1;
@@ -168,7 +169,7 @@ message JoinRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
-//Cartesian product relational operator of two tables (left and right)
+// Cartesian product relational operator of two tables (left and right)
 message CrossRel {
   RelCommon common = 1;
   Rel left = 2;
@@ -192,11 +193,13 @@ message FetchRel {
 message AggregateRel {
   RelCommon common = 1;
 
-  // input of the aggregation
+  // Input of the aggregation
   Rel input = 2;
 
-  // the columns to group on
+  // The columns to group on
   repeated Grouping groupings = 3;
+
+  // The aggregation to perform
   repeated Measure measures = 4;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
