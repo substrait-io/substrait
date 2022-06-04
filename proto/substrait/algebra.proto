@@ -16,7 +16,7 @@ option java_package = "io.substrait.proto";
 // Common fields for all relational operators
 message RelCommon {
   oneof emit_kind {
-    //The underlying relation is output as is (no reordering or projection of columns)
+    // The underlying relation is output as is (no reordering or projection of columns)
     Direct direct = 1;
     // Allows to control for order and inclusion of fields
     Emit emit = 2;
@@ -40,7 +40,7 @@ message RelCommon {
     RuntimeConstraint constraint = 2;
     substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-    //The statistiscs related to a hint (physical properties of records)
+    // The statistiscs related to a hint (physical properties of records)
     message Stats {
       double row_count = 1;
       double record_size = 2;
@@ -55,7 +55,7 @@ message RelCommon {
   }
 }
 
-//The scan operator of base data (physical or virtual), including filtering and projection.
+// The scan operator of base data (physical or virtual), including filtering and projection.
 message ReadRel {
   RelCommon common = 1;
   NamedStruct base_schema = 2;
@@ -71,7 +71,7 @@ message ReadRel {
     ExtensionTable extension_table = 8;
   }
 
-  //A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
+  // A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
   // This assumes shared catalog between systems exchanging a message.
   message NamedTable {
     repeated string names = 1;
@@ -181,13 +181,12 @@ message CrossRel {
 message FetchRel {
   RelCommon common = 1;
   Rel input = 2;
-  //the offset expressed in number of records
+  // the offset expressed in number of records
   int64 offset = 3;
-  //the amount of records to return
+  // the amount of records to return
   int64 count = 4;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
-
 
 // The relational operator representing a GROUP BY Aggregate
 message AggregateRel {
