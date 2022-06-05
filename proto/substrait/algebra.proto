@@ -101,22 +101,67 @@ message ReadRel {
         // A URI that refers to a single folder
         string uri_folder = 4;
       }
-
-      FileFormat format = 5;
+      
+      oneof file_type{
+        FileFormat format = 5;
+        CSVOptions csv_options = 6;
+      }
 
       // the index of the partition this item belongs to
-      uint64 partition_index = 6;
+      uint64 partition_index = 7;
 
       // the start position in byte to read from this item
-      uint64 start = 7;
+      uint64 start = 8;
 
       // the length in byte to read from this item
-      uint64 length = 8;
+      uint64 length = 9;
+      
+      message CSVConvertOptions{
+        bool ignore_check_utf8 = 1;
+        repeated string null_values = 2;
+        repeated string true_values = 3;
+        repeated string false_values = 4;
+        bool strings_can_be_null = 5;
+        bool quoted_strings_cannot_be_null = 6;
+        bool auto_dict_encode = 7;
+        int32 auto_dict_max_cardinality = 8;
+        string decimal_point = 9;
+        repeated string include_columns = 10;
+        bool include_missing_columns = 11;
+      }
+
+      message CSVReadOptions{
+        bool no_use_threads = 1;
+        int32 block_size = 2;
+        int32 skip_rows = 3;
+        int32 skip_rows_after_names = 4;
+        repeated string column_names = 5;
+        bool autogenerate_column_names = 6;
+      }
+
+      message CSVParseOptions{
+        string delimiter = 1;
+        bool quoting = 2;
+        string quote_char = 3; 
+        bool double_quote = 4;
+        bool escaping = 5;
+        string escape_char = 6;
+        bool newlines_in_values = 7;
+        bool ignore_empty_lines = 8;
+      }
+
+      message CSVOptions{
+        CSVParseOptions parse_options = 1;
+        CSVConvertOptions convert_options = 2;
+        CSVReadOptions read_options = 3;
+
+      }
 
       enum FileFormat {
         FILE_FORMAT_UNSPECIFIED = 0;
         FILE_FORMAT_PARQUET = 1;
       }
+
     }
   }
 }
