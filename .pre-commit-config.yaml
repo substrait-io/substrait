@@ -1,0 +1,10 @@
+repos:
+- repo: https://github.com/nametake/pre-commit-buf
+  rev: v2.0.0
+  hooks:
+  - id: buf-lint
+- repo: https://github.com/adrienverge/yamllint.git
+  rev: v1.26.0
+  hooks:
+  - id: yamllint
+    args: [-c=.yamllint.yaml]
