@@ -177,7 +177,7 @@ message Type {
   }
 
   message UserDefined {
-    uint32 user_defined_type_reference = 1;
+    uint32 type_reference = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
   }
