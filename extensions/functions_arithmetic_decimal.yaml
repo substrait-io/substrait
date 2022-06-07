@@ -110,3 +110,21 @@ aggregate_functions:
         decomposable: MANY
         intermediate: "STRUCT<DECIMAL<38,S>,i64>"
         return: "DECIMAL<38,S>"
+  - name: "min"
+    description: Min a set of values.
+    impls:
+      - args:
+          - value: "DECIMAL<P, S>"
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: "DECIMAL<P, S>?"
+        return: "DECIMAL<P, S>?"
+  - name: "max"
+    description: Max a set of values.
+    impls:
+      - args:
+          - value: "DECIMAL<P,S>"
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: "DECIMAL<P, S>?"
+        return: "DECIMAL<P, S>?"
