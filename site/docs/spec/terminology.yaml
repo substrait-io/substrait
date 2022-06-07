@@ -1,0 +1,230 @@
+plan: >-
+  an execution plan for some query, yielding some {dataset} by means of a
+  {relation} graph.
+dataset: >-
+  a tabular data structure consisting of {datum}s, for which the data types of
+  each row match the {schema}.
+schema: >-
+  type information of a {dataset}. Usually represented using a struct, where
+  the fields map to the column {data type}s.
+relation: >-
+  an operator that converts zero or more input {dataset}s to a new {dataset}.
+
+static: >-
+  something that is defined before a {plan} is executed, and doesn't change
+  during its execution. Contrasts with {runtime}.
+runtime: >-
+  something that is computed while a {plan} is executed. Contrasts with {static}.
+
+predefined: >-
+  qualifier for something defined as part of this specification. Contrasts with
+  {user-defined}.
+user-defined: >-
+  qualifier for something defined within an {extension}. Contrasts with
+  {predefined}.
+
+extension: >-
+  something defined outside the context of this specification that may be used
+  in a plan by means of a URI-based link to a {simple extension} or a protobuf
+  `Any` message (a.k.a. {advanced extension}).
+simple extension: >-
+  an {extension} to Substrait, normally defined by means of a YAML file
+  compliant with the
+  [simple extension schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml),
+  referred to from a plan by means of an URI. Simple extensions can currently
+  define {function}s, {type class}es, and {type variation}s.
+advanced extension: >-
+  an {extension} to Substrait, used within a plan by populating one of the
+  various protobuf `Any` messages contained therein.
+
+anchor: >-
+  an integer in the protobuf serialization that can be referred to by
+  means of {reference}s elsewhere in a {plan}. Anchors are used for
+  {simple extension} URIs, {user-defined} {function}s, {user-defined}
+  {type class}es, and {user-defined} {type variation}s. Anchors are namespaced
+  by their type, but must otherwise be unique within the plan. Their value has
+  no significance other than to be a unique thing to refer to.
+reference: >-
+  an integer in the protobuf serialization that can be used to refer to
+  an {anchor}.
+
+function: >-
+  some {user-defined} operation on some information (usually specified by means
+  of {function argument}s) that yields a single {datum} for each invocation.
+  Functions are declared via {function declaration}s in {simple extension}s,
+  and referred to from within a plan via {function binding}s. They are
+  subdivided into {scalar function}s, {aggregate function}s, and
+  {window function}s.
+scalar function: >-
+  a {function} that computes a {datum} for each row of a {dataset} individually
+  within {expression} context, as defined
+  [here](../expressions/scalar_functions.md).
+aggregate function: >-
+  a {function} that computes a single {datum} for a complete {dataset}, as
+  defined [here](../expressions/aggregate_functions.md).
+window function: >-
+  a {function} that computes a {datum} for each row of a {dataset}, making use
+  of some window of surrounding rows in addition to the row it is computed for,
+  as defined [here](../expressions/window_functions.md).
+
+function declaration: >-
+  information about a {function}, defined in a {simple extension}.
+function parameter: >- # changed from "argument" and in some cases "variable"
+  a {static}, named slot which a {function argument} can be bound. Part of a
+  {function declaration}. Can be a {value function parameter},
+  {type function parameter}, or {enum function parameter}.
+value function parameter: >- # changed from "value argument"
+  a {function parameter} to which a {value function argument} can be bound.
+  The {data type} of the argument must match the {data type pattern} defined
+  along with the parameter.
+type function parameter: >- # changed from "type argument"
+  a {function parameter} to which a {type function argument} can be bound.
+  The {data type} passed to the argument must match the {data type pattern}
+  defined along with the parameter.
+enum function parameter: >- # changed from "enumeration"
+  a {function parameter} to which an {enum function argument} can be bound.
+  The allowed values are defined along with the parameter by means of a set
+  of string options and an optional default option.
+
+function binding: >- # didn't really exist
+  information about how a {function} is to be called, defined in the {plan}.
+  Includes at least a function {reference} and the {function argument}s bound
+  to the function.
+function argument: >- # didn't really exist
+  the information bound to a {function parameter} as part of a
+  {function binding}. Can be a {value function argument},
+  {type function argument}, or {enum function argument}.
+value function argument: >- # didn't really exist
+  a {function argument} consisting of a {static} {datum} or a {runtime}
+  {expression} (evaluated for each invocation of the function) passed to a
+  {value function parameter}.
+type function argument: >- # didn't really exist
+  a {static} {data type} passed to a {type function parameter}.
+enum function argument: >- # didn't really exist
+  a {static} {enum option} passed to an {enum function parameter}.
+
+enum option: >- # also just "enumeration", ambiguous with the parameter type
+  a special type of value for {function argument}s, used to pass {static}
+  configuration information to {function}s in a type-safe way.
+
+data type: >- # was just "type", using "data type" to distinguish from metatypes
+  a concrete type as defined [here](../types/type_system.md), consisting of
+  a {type class}, a {nullability flag}, a {type variation}, and zero or more
+  {type argument}s as defined by the {type class}.
+
+type class: >-
+  a non-concrete type as defined [here](../types/type_classes.md).
+  Subdivided into {simple type class}es, {compound type class}es, and
+  {user-defined} type classes.
+simple type class: >-
+  a {type class} defined with an empty {type parameter pack}.
+compound type class: >-
+  a {type class} defined with an non-empty {type parameter pack}.
+
+nullability flag: >-
+  specifies whether a {data type} includes the special {null} value. Either
+  {nullable} or {non-nullable}.
+nullable: >-
+  qualifier for a {data type} that signals that {datum}s of this type may be
+  {null}.
+non-nullable: >- # a.k.a. "required", but that confused me to no end initially
+  qualifier for a {data type} that signals that {datum}s of this type may
+  NOT be {null}.
+
+type variation: >-
+  a specific variation of a {type class}, allowing different variations of the
+  same {type class} to exist in a system at a time. Usually this is set to the
+  {system-preferred variation} for the {type class}.
+system-preferred variation: >-
+  a special {type variation} that is implicitly defined for each {type class},
+  serving as a default value for when {type variation}s are not in use.
+
+type parameter pack: >- # wasn't really used
+  a set of zero or more, possibly variadic, named {type parameter}s, defined as
+  part of a {type class}.
+
+type parameter: >- # was just "parameter"
+  a {static}, named slot which a {type argument} can be bound, defined along
+  with the {type class}. Can be a {nested type parameter} or an
+  {integer type parameter}.
+nested type parameter: >- # was "type parameter", I think
+  a {type parameter} to which a {nested type argument} can be bound.
+integer type parameter: >- # was "integer parameter" I guess?
+  a {type parameter} to which an {integer type argument} can be bound.
+
+type argument: >- # didn't really exist
+  the information bound to a {type parameter} as part of a concrete
+  {data type}. Can be a {nested type argument} or an {integer type argument}.
+nested type argument: >- # didn't really exist
+  a {type argument} consisting of a {static} {data type} passed to a
+  {nested type parameter}.
+integer type argument: >- # didn't really exist
+  a {type argument} consisting of a {static} integer passed to an
+  {integer type parameter}.
+
+datum: >- # a.k.a. "value", but "value" is pretty commonly used without implying this type of value specifically
+  an instance of a {data type}.
+"null": >-
+  a special {datum} that is generally used to imply "undefined". All
+  {nullable} {data type}s can assume this value.
+expression: >-
+  something that yields a single {datum} when evaluated. Expressions are
+  defined recursively by combining the results of zero or more child
+  expressions using some operation. Notable types of expressions are
+  {literal}s, {field reference}s, {function}s, {subqueries:subquery},
+  and {cast}s.
+literal: >-
+  an expression that yields a {static} {datum}. Defined
+  [here](../expressions/specialized_record_expressions.md#literal-expressions).
+field reference: >-
+  a reference to a value in the current {dataset} (row determined by context,
+  column determined by the reference) *or* a reference to a value within a
+  nested {data type}. Defined [here](../expressions/field_references.md).
+cast: >-
+  an expression that converts from one {data type} to another. Defined
+  [here](../expressions/specialized_record_expressions.md#cast-expression).
+subquery: >-
+  a {relation} embedded within an {expression} context, functionally evaluated
+  for each evaluation of the expression to yield a single value. Defined
+  [here](../expressions/subqueries.md).
+
+metatype: >- # no equivalent term
+  the type of a {metavalue}, currently either {data type} or integer.
+metavalue: >- # no equivalent term
+  an instance of a {metatype} within the context of function argument matching
+  (via {metapattern}s) and intermediate/return type {derivation program}s,
+  currently either a {data type} or an integer. Unlike {datum}s, {metavalue}s
+  are always {static}.
+metapattern: >- # no equivalent term
+  a pattern that matches one or more {metavalue}s, currently either a
+  {data type pattern} or an {integer pattern}.
+metavar: >- # was "named parameter", which confused me to no end; type parameters also have names
+  a named variable that can be bound to a {metavalue} within the context of
+  function argument matching (via {metapattern}s) or by means of an assignment
+  in an intermediate/return type {derivation program}. Once bound, the
+  {metavar} can be used in subsequent {derivation expression}s, or matched
+  exactly when used in a {metapattern}.
+
+data type pattern: >- # was "parameterized type", more or less
+  a {metapattern} matching one or more concrete {data type}s. Consists of a
+  set of quadruples consisting of a {type class}, a {nullability flag}, a
+  {type variation}, and a {type parameter pack pattern}, representing the set
+  of allowed {data type}s. Can also be assigned a {metavar} name, in order
+  to bind or match the {data type} as a whole.
+type parameter pack pattern: >-
+  a list of zero or more {metapattern}s, to be matched against the
+  {type parameter pack} of a candidate {data type}.
+integer pattern: >- # no equivalent term
+  a {metapattern} matching one or more integers. Specified using a consecutive
+  range. Can also be assigned a {metavar} name, in order to bind or match the
+  integer.
+
+derivation program: >-
+  A {static}ally-evaluated "program" used to determine the intermediate or
+  return type of a {function} based on its argument types. Consists of zero or
+  more assignments that bind the result of a {derivation expression} to a
+  {metavar}, followed by a final {derivation expression}, of which the result
+  is used as the type.
+derivation expression: >-
+  A {static}ally-evaluated meta-expression, used to derive a {metavalue} from
+  previously bound {metavar}s.

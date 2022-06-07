@@ -1,4 +1,5 @@
 arrange:
   - versioning.md
+  - terminology.md
   - specification.md
   - technology_principles.md
