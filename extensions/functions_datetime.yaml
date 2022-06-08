@@ -1,36 +1,52 @@
 %YAML 1.2
 ---
 scalar_functions:
-  -
-    name: extract
+  - name: extract
     description: Extract portion of a date/time value.
     impls:
       - args:
-          - options: [ YEAR, MONTH, DAY, SECOND ]
+          - options: [ YEAR, QUARTER, MONTH, DAY, DAY_OF_WEEK, DAY_OF_YEAR, ISO_WEEK, IS_LEAP_YEAR, HOUR, SECOND, SUBSECOND, MILLISECOND, MICROSECOND, NANOSECOND ]
             name: The part of the value to extract.
             required: true
           - value: timestamp
         return: i64
       - args:
-          - options: [ YEAR, MONTH, DAY, SECOND ]
+          - options: [ IS_LEAP_YEAR ]
+            name: The part of the value to extract.
+            required: true
+          - value: timestamp
+        return: boolean
+      - args:
+          - options: [ YEAR, QUARTER, MONTH, DAY, DAY_OF_WEEK, DAY_OF_YEAR, ISO_WEEK, IS_LEAP_YEAR, HOUR, SECOND, SUBSECOND, MILLISECOND, MICROSECOND, NANOSECOND, IS_DST ]
             name: The part of the value to extract.
             required: true
           - value: timestamp_tz
         return: i64
       - args:
-          - options: [ YEAR, MONTH, DAY ]
+          - options: [ IS_LEAP_YEAR, IS_DST ]
+            name: The part of the value to extract.
+            required: true
+          - value: timestamp_tz
+        return: boolean
+      - args:
+          - options: [ YEAR, QUARTER, MONTH, DAY, DAY_OF_WEEK, DAY_OF_YEAR, ISO_WEEK, IS_LEAP_YEAR ]
             name: The part of the value to extract.
             required: true
           - value: date
         return: i64
       - args:
-          - options: [ SECOND ]
+          - options: [ IS_LEAP_YEAR ]
+            name: The part of the value to extract.
+            required: true
+          - value: date
+        return: boolean
+      - args:
+          - options: [ HOUR, SECOND, SUBSECOND, MILLISECOND, MICROSECOND, NANOSECOND ]
             name: The part of the value to extract.
             required: true
           - value: time
         return: i64
-  -
-    name: "add"
+  - name: "add"
     description: Add an interval to a date/time type.
     impls:
       - args:
@@ -57,8 +73,7 @@ scalar_functions:
           - value: date
           - value: interval_day
         return: timestamp
-  -
-    name: "add_intervals"
+  - name: "add_intervals"
     description: Add two intervals together.
     impls:
       - args:
@@ -69,8 +84,7 @@ scalar_functions:
           - value: interval_year
           - value: interval_year
         return: interval_year
-  -
-    name: "subtract"
+  - name: "subtract"
     description: Subtract an interval from a date/time type.
     impls:
       - args:
@@ -97,8 +111,7 @@ scalar_functions:
           - value: date
           - value: interval_day
         return: date
-  -
-    name: "lte"
+  - name: "lte"
     description: less than or equal to
     impls:
       - args:
@@ -121,8 +134,7 @@ scalar_functions:
           - value: interval_year
           - value: interval_year
         return: boolean
-  -
-    name: "lt"
+  - name: "lt"
     description: less than
     impls:
       - args:
@@ -145,8 +157,7 @@ scalar_functions:
           - value: interval_year
           - value: interval_year
         return: boolean
-  -
-    name: "gte"
+  - name: "gte"
     description: less than or equal to
     impls:
       - args:
@@ -169,8 +180,7 @@ scalar_functions:
           - value: interval_year
           - value: interval_year
         return: boolean
-  -
-    name: "gt"
+  - name: "gt"
     description: less than
     impls:
       - args:
@@ -193,3 +203,66 @@ scalar_functions:
           - value: interval_year
           - value: interval_year
         return: boolean
+  - name: "assume_timezone"
+    description: Convert local time to UTC using given local time's timezone.
+    impls:
+      - args:
+          - options: [ TIMEZONE ]
+            name: Timezone of provided local time.
+            required: true
+          - value: timestamp
+        return: timestamp_tz
+  - name: "strptime"
+    description: Parse string into timestamp/date/time using provided format.
+    impls:
+      - args:
+          - options: [ FORMAT ]
+            name: Expected format of the input timestamp/date/time.
+            required: true
+          - value: string
+        return: timestamp
+      - args:
+          - options: [ FORMAT ]
+            name: Expected format of the input timestamp/date/time.
+            required: true
+          - value: string
+        return: timestamp_tz
+      - args:
+          - options: [ FORMAT ]
+            name: Expected format of the input timestamp/date/time.
+            required: true
+          - value: string
+        return: date
+      - args:
+          - options: [ FORMAT ]
+            name: Expected format of the input timestamp/date/time.
+            required: true
+          - value: string
+        return: time
+  - name: "strftime"
+    description: Convert timestamp/date/time to string using provided format
+    impls:
+      - args:
+          - options: [ FORMAT ]
+            name: Format of the output string.
+            required: true
+          - value: timestamp
+        return: string
+      - args:
+          - options: [ FORMAT ]
+            name: Format of the output string.
+            required: true
+          - value: timestamp_tz
+        return: string
+      - args:
+          - options: [ FORMAT ]
+            name: Format of the output string.
+            required: true
+          - value: date
+        return: string
+      - args:
+          - options: [ FORMAT ]
+            name: Format of the output string.
+            required: true
+          - value: time
+        return: string
