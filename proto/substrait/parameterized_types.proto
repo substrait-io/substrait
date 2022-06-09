@@ -38,7 +38,12 @@ message ParameterizedType {
     ParameterizedList list = 27;
     ParameterizedMap map = 28;
 
-    uint32 user_defined_pointer = 31;
+    ParameterizedUserDefined user_defined = 30;
+
+    // Deprecated in favor of user_defined, which allows nullability and
+    // variations to be specified. If user_defined_pointer is encountered,
+    // treat it as being non-nullable and having the default variation.
+    uint32 user_defined_pointer = 31 [deprecated = true];
 
     TypeParameter type_parameter = 33;
   }
@@ -106,6 +111,12 @@ message ParameterizedType {
     ParameterizedType value = 2;
     uint32 variation_pointer = 3;
     Type.Nullability nullability = 4;
+  }
+
+  message ParameterizedUserDefined {
+    uint32 type_pointer = 1;
+    uint32 variation_pointer = 2;
+    Type.Nullability nullability = 3;
   }
 
   message IntegerOption {
