@@ -73,4 +73,12 @@ scalar_functions:
           - value: any1
         return: BOOLEAN
         nullability: DECLARED_OUTPUT
+  -
+    name: "is_nan"
+    description: Whether a value is not a number.
+    impls:
+      - args:
+          - value: any1
+        return: BOOLEAN
+        nullability: DECLARED_OUTPUT
 
