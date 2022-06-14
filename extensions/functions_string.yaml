@@ -44,7 +44,8 @@ scalar_functions:
           - value: i32
           - value: i32
         return: "string"
-  - name: starts_with
+  - 
+    name: starts_with
     description: Whether this string starts with another string.
     impls:
       - args:
@@ -163,3 +164,29 @@ scalar_functions:
           - value: "fixedchar<L1>"
           - value: "varchar<L2>"
         return: "BOOLEAN"
+  -
+    name: lower
+    description: Transforms the string to lower case characters
+    impls:
+      - args:
+          - value: "varchar<L1>"
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+        return: "string"
+      - args:
+          - value: "fixedchar<L1>"
+        return: "fixedchar<L1>"
+  -
+    name: upper
+    description: Transforms the string to upper case characters
+    impls:
+      - args:
+          - value: "varchar<L1>"
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+        return: "string"
+      - args:
+          - value: "fixedchar<L1>"
+        return: "fixedchar<L1>"
