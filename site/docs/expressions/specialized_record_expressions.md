@@ -8,7 +8,8 @@ These constructs should be focused on different expression types as opposed to s
 ## Literal Expressions
 For each data type, it is possible to create a literal value for that data type. The representation depends on the serialization format. Literal expressions include both a type literal and a possibly null value.
 
-
+## Placeholder Expressions
+Placeholders allow plans to be parameterized akin to prepared statements in SQL. A placeholder expression behaves like a literal, but rather than encoding the value of the literal, it just encodes a reference to a plan parameter. The parameter in turn encodes type information and a reference to where the data should come from. The parameter may also be given a literal value, either to serve as a default value, or to make a parameterized plan executable without actually replacing the placeholders with literals.
 
 ## Cast Expression
 To convert a value from one type to another, Substrait defines a cast expression. Cast expressions declare an expected type, an input argument and an enumeration specifying failure behavior, indicating whether cast should return null on failure or throw an exception.

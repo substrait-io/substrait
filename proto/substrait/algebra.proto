@@ -357,6 +357,7 @@ message Expression {
     MultiOrList multi_or_list = 9;
     Cast cast = 11;
     Subquery subquery = 12;
+    Placeholder placeholder = 13;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -806,6 +807,13 @@ message Expression {
       // right side of the expression
       Rel right = 4;
     }
+  }
+
+  // A placeholder expression acts like a parameter passed to the plan, to
+  // support things like prepared statements in SQL.
+  message Placeholder {
+    // Points to a plan_parameter_anchor defined in this plan.
+    uint32 plan_parameter_reference = 1;
   }
 }
 
