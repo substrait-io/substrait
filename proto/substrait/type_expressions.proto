@@ -145,6 +145,7 @@ message DerivationExpression {
       BINARY_OP_TYPE_OR = 10;
       BINARY_OP_TYPE_EQUALS = 11;
       BINARY_OP_TYPE_COVERS = 12;
+      BINARY_OP_TYPE_MODULO = 13;
     }
   }
 

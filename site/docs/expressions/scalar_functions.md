@@ -95,7 +95,7 @@ Any function can declare a return type expression. A return type expression uses
 These types are evaluated using a small set of operations to support common scenarios. List of valid operations:
 
 ```
-Math: +, -, *, /, min, max
+Math: +, -, *, /, % (modulo), min, max
 Boolean: &&, ||, !, <, >, ==
 Parameters: type, integer
 Literals: type, integer
@@ -110,6 +110,7 @@ Fully defined with argument types:
 * `or(boolean a, boolean b) => boolean` 
 * `multiply(integer a, integer b) => integer`
 * `divide(integer a, integer b) => integer`
+* `modulo(integer a, integer b) => integer`
 * `add(integer a, integer b) => integer`
 * `subtract(integer a, integer b) => integer`
 * `min(integer a, integer b) => integer`
