@@ -44,3 +44,122 @@ scalar_functions:
           - value: i32
           - value: i32
         return: "string"
+  - name: starts_with
+    description: Whether this string starts with another string.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: "varchar<L2>"
+        return: "BOOLEAN"
+      - args:
+          - value: "varchar<L1>"
+          - value: "string"
+        return: "BOOLEAN"
+      - args:
+          - value: "varchar<L1>"
+          - value: "fixedchar<L2>"
+        return: "BOOLEAN"
+      - args:
+          - value: "string"
+          - value: "string"
+        return: "BOOLEAN"
+      - args:
+          - value: "string"
+          - value: "varchar<L1>"
+        return: "BOOLEAN"
+      - args:
+          - value: "string"
+          - value: "fixedchar<L1>"
+        return: "BOOLEAN"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "fixedchar<L2>"
+        return: "BOOLEAN"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "string"
+        return: "BOOLEAN"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "varchar<L2>"
+        return: "BOOLEAN"
+  -
+    name: ends_with
+    description: Whether this string ends with another string.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: "varchar<L2>"
+        return: "BOOLEAN"
+      - args:
+          - value: "varchar<L1>"
+          - value: "string"
+        return: "BOOLEAN"
+      - args:
+          - value: "varchar<L1>"
+          - value: "fixedchar<L2>"
+        return: "BOOLEAN"
+      - args:
+          - value: "string"
+          - value: "string"
+        return: "BOOLEAN"
+      - args:
+          - value: "string"
+          - value: "varchar<L1>"
+        return: "BOOLEAN"
+      - args:
+          - value: "string"
+          - value: "fixedchar<L1>"
+        return: "BOOLEAN"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "fixedchar<L2>"
+        return: "BOOLEAN"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "string"
+        return: "BOOLEAN"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "varchar<L2>"
+        return: "BOOLEAN"
+  -
+    name: contains
+    description: Whether this string contains another string.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: "varchar<L2>"
+        return: "BOOLEAN"
+      - args:
+          - value: "varchar<L1>"
+          - value: "string"
+        return: "BOOLEAN"
+      - args:
+          - value: "varchar<L1>"
+          - value: "fixedchar<L2>"
+        return: "BOOLEAN"
+      - args:
+          - value: "string"
+          - value: "string"
+        return: "BOOLEAN"
+      - args:
+          - value: "string"
+          - value: "varchar<L1>"
+        return: "BOOLEAN"
+      - args:
+          - value: "string"
+          - value: "fixedchar<L1>"
+        return: "BOOLEAN"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "fixedchar<L2>"
+        return: "BOOLEAN"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "string"
+        return: "BOOLEAN"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "varchar<L2>"
+        return: "BOOLEAN"
