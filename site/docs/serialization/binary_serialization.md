@@ -85,7 +85,7 @@ There are several binary IDLs that exist today. The key requirements for Substra
 
 The primary formats that exist that roughly qualify under these requirements include: Protobuf, Thrift, Flatbuf, Avro, Cap'N'Proto. Protobuf was chosen due to its clean typing system and large number of high quality language bindings. 
 
-The binary serialization IDLs can be found on [GitHub](https://github.com/substrait-io/substrait/tree/main/binary) and are sampled throughout the documentation.
+The binary serialization IDLs can be found on [GitHub](https://github.com/substrait-io/substrait/tree/main/proto/substrait) and are sampled throughout the documentation.
 
 
 
