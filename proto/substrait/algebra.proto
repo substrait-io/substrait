@@ -457,6 +457,10 @@ message Expression {
     // directly declare the type variation).
     uint32 type_variation_reference = 51;
 
+    // The parameters to be bound to the type variation, if a type variation is
+    // specified and it is defined to be parameterizable.
+    repeated Type.Parameter type_variation_parameters = 52;
+
     message VarChar {
       string value = 1;
       uint32 length = 2;
@@ -506,6 +510,10 @@ message Expression {
     message UserDefined {
       // points to a type_anchor defined in this plan
       uint32 type_reference = 1;
+
+      // The parameters to be bound to the type class, if the type class is
+      // parameterizable.
+      repeated Type.Parameter type_parameters = 3;
 
       // the value of the literal, serialized using some type-specific
       // protobuf message

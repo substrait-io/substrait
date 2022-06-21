@@ -3,6 +3,8 @@ syntax = "proto3";
 
 package substrait;
 
+import "google/protobuf/empty.proto";
+
 option csharp_namespace = "Substrait.Protobuf";
 option go_package = "github.com/substrait-io/substrait-go/proto";
 option java_multiple_files = true;
@@ -53,81 +55,97 @@ message Type {
 
   message Boolean {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message I8 {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message I16 {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message I32 {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message I64 {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message FP32 {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message FP64 {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message String {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message Binary {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message Timestamp {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message Date {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message Time {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message TimestampTZ {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message IntervalYear {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message IntervalDay {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
   message UUID {
     uint32 type_variation_reference = 1;
+    repeated Parameter type_variation_parameters = 3;
     Nullability nullability = 2;
   }
 
@@ -135,18 +153,21 @@ message Type {
   message FixedChar {
     int32 length = 1;
     uint32 type_variation_reference = 2;
+    repeated Parameter type_variation_parameters = 4;
     Nullability nullability = 3;
   }
 
   message VarChar {
     int32 length = 1;
     uint32 type_variation_reference = 2;
+    repeated Parameter type_variation_parameters = 4;
     Nullability nullability = 3;
   }
 
   message FixedBinary {
     int32 length = 1;
     uint32 type_variation_reference = 2;
+    repeated Parameter type_variation_parameters = 4;
     Nullability nullability = 3;
   }
 
@@ -154,18 +175,21 @@ message Type {
     int32 scale = 1;
     int32 precision = 2;
     uint32 type_variation_reference = 3;
+    repeated Parameter type_variation_parameters = 5;
     Nullability nullability = 4;
   }
 
   message Struct {
     repeated Type types = 1;
     uint32 type_variation_reference = 2;
+    repeated Parameter type_variation_parameters = 4;
     Nullability nullability = 3;
   }
 
   message List {
     Type type = 1;
     uint32 type_variation_reference = 2;
+    repeated Parameter type_variation_parameters = 4;
     Nullability nullability = 3;
   }
 
@@ -173,13 +197,33 @@ message Type {
     Type key = 1;
     Type value = 2;
     uint32 type_variation_reference = 3;
+    repeated Parameter type_variation_parameters = 5;
     Nullability nullability = 4;
   }
 
   message UserDefined {
     uint32 type_reference = 1;
     uint32 type_variation_reference = 2;
+    repeated Parameter type_variation_parameters = 4;
     Nullability nullability = 3;
+    repeated Parameter type_parameters = 5;
+  }
+
+  message Parameter {
+    oneof parameter {
+      // Explicitly null/unspecified parameter, to select the default value (if
+      // any).
+      google.protobuf.Empty null = 1;
+
+      // Data type parameters, like the i32 in LIST<i32>.
+      Type data_type = 2;
+
+      // Value parameters, like the 10 in VARCHAR<10>.
+      bool boolean = 3;
+      int64 integer = 4;
+      string enum = 5;
+      string string = 6;
+    }
   }
 }
 

@@ -16,6 +16,10 @@ properties:
           type: object
           additionalProperties:
             $ref: "#/$defs/type"
+        parameters:  # parameter list for compound types
+          $ref: "#/$defs/type_param_defs"
+        variadic:  # when set, last parameter may be specified one or more times
+          type: boolean
   type_variations:
     type: array
     minItems: 1
@@ -25,7 +29,7 @@ properties:
       required: [parent, name]
       properties:
         parent:
-          type: string
+          $ref: "#/$defs/type"
         name:
           type: string
         description:
@@ -33,6 +37,10 @@ properties:
         functions:
           type: string
           enum: [INHERITS, SEPARATE]
+        parameters:  # parameter list for compound type variations
+          $ref: "#/$defs/type_param_defs"
+        variadic:  # when set, last parameter may be specified one or more times
+          type: boolean
   scalar_functions:
     type: array
     items:
@@ -45,8 +53,69 @@ properties:
 $defs:
   type:
     oneOf:
-      - type: string
+      - type: string  # shorthand form for when only name is needed
       - type: object
+        properties:
+          name:  # name: a Substrait type name, or name of a type previously defined in this extension
+            type: string
+          nullable:  # set to true to make the type nullable
+            type: boolean
+          variation:  # type variation, if any
+            $ref: "#/$defs/variation"
+          parameters:  # parameters for compound types
+            $ref: "#/$defs/type_param_values"
+  variation:
+    oneOf:
+      - type: string  # shorthand form for when only name is needed
+      - type: object
+        properties:
+          name:  # name of a type variation previously defined in this extension
+            type: string
+          parameters:  # parameters for compound type variations
+            $ref: "#/$defs/type_param_values"
+  type_param_defs:  # an array of compound type (variation) parameter definitions
+    type: array
+    items:
+      type: object
+      required: [type]
+      properties:
+        name:  # name of the parameter (for documentation only)
+          type: string
+        description:  # description (for documentation only)
+          type: string
+        type:  # expected metatype for the parameter
+          type: string
+          enum:
+            - type
+            - boolean
+            - integer
+            - enumeration
+            - string
+        min:  # for integers, the minimum supported value (inclusive)
+          type: number
+        max:  # for integers, the maximum supported value (inclusive)
+          type: number
+        options:  # for enums, the list of supported values
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+        optional:  # when set to true, the parameter may be omitted at the end or skipped using null
+          type: boolean
+  type_param_values:  # an array of compound type (variation) parameter definitions
+    type: array
+    items:
+      oneOf:
+        - type: "null"  # use to skip optional parameters
+        - type: boolean  # for boolean parameters
+        - type: number  # for integer parameters
+        - type: string  # for string and enum parameters
+        - type: object  # for data type parameters
+          required: [ type ]
+          properties:
+            type:
+              $ref: "#/$defs/type"
   arguments:  # an array of arguments
     type: array
     items:

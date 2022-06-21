@@ -58,3 +58,80 @@ A YAML example of an extension type is below:
 This declares a new type (namespaced to the associated YAML file) called "point". This type is composed of two `i32` values named longitude and latitude. Once a type has been declared, it can be used in function declarations.  [TBD: should field references be allowed to dereference the components of a user defined type?]
 
 Literals for user-defined types are represented using protobuf [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) messages.
+
+### Parameterization
+
+User-defined types may be parameterized, in the same way in which the built-in compound types are parameterizable. The supported "meta-types" for parameters are data types, booleans, integers, enumerations, and strings. Using parameters, we could redefine "point" with different types of coordinates. For example:
+
+```yaml
+name: point
+parameters:
+  - name: T
+    description: |
+      The type used for the longitude and latitude
+      components of the point.
+    type: type
+```
+
+or:
+
+```yaml
+name: point
+parameters:
+  - name: coordinate_type
+    type: enum
+    options:
+      - integer
+      - double
+```
+
+or:
+
+```yaml
+name: point
+parameters:
+  - name: LONG
+    type: type
+  - name: LAT
+    type: type
+```
+
+We can't specify the internal structure in this case, because there is currently no support for derived types in the structure.
+
+The allowed range can be limited for integer parameters. For example:
+
+```yaml
+name: vector
+parameters:
+  - name: T
+    type: type
+  - name: dimensions
+    type: integer
+    min: 2
+    max: 3
+```
+
+This specifies a vector that can be either 2- or 3-dimensional.
+
+Similar to function arguments, the last parameter may be specified to be variadic, allowing it to be specified one or more times instead of only once. For example:
+
+```yaml
+name: union
+parameters:
+  - name: T
+    type: type
+variadic: true
+```
+
+This defines a type that can be parameterized with one or more other data types, for example `union<i32, i64>` but also `union<bool>`. Zero or more is also possible, by making the last argument optional:
+
+```yaml
+name: tuple
+parameters:
+  - name: T
+    type: type
+    optional: true
+variadic: true
+```
+
+This would also allow for `tuple<>`, to define a zero-tuple.
