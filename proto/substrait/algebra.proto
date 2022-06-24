@@ -40,7 +40,7 @@ message RelCommon {
     RuntimeConstraint constraint = 2;
     substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-    // The statistiscs related to a hint (physical properties of records)
+    // The statistics related to a hint (physical properties of records)
     message Stats {
       double row_count = 1;
       double record_size = 2;
