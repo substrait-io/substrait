@@ -55,6 +55,12 @@ happens the consumer can determine which slice a particular chunk belongs to. Fo
 possible approach is that a chunk should only be read if the midpoint of the chunk (dividing by
 2 and rounding down) is contained within the asked-for byte range.
 
+=== "ReadRel Message"
+
+    ```proto
+%%% proto.algebra.ReadRel %%%
+    ```
+
 
 ## Filter Operation
 
@@ -77,6 +83,13 @@ The filter operator eliminates one or more records from the input data based on 
 | Expression | A boolean expression which describes which records are included/excluded. | Required |
 
 
+=== "FilterRel Message"
+
+    ```proto
+%%% proto.algebra.FilterRel %%%
+    ```
+
+
 ## Sort Operation
 
 The sort operator reorders a dataset based on one or more identified sort fields and a sorting function for each.
@@ -97,6 +110,11 @@ The sort operator reorders a dataset based on one or more identified sort fields
 | Input       | The relational input.                                        | Required                |
 | Sort Fields | List of one or more fields to sort by. Uses the same properties as the [orderedness](basics.md#orderedness) property. | One sort field required |
 
+=== "SortRel Message"
+
+    ```proto
+%%% proto.algebra.SortRel %%%
+    ```
 
 
 ## Project Operation
@@ -117,6 +135,12 @@ The project operation will produce one or more additional expressions based on t
 | Input       | The relational input.                                | Required                         |
 | Expressions | List of one or more expressions to add to the input. | At least one expression required |
 
+=== "ProjectRel Message"
+
+    ```proto
+%%% proto.algebra.ProjectRel %%%
+    ```
+
 
 ## Cross Product Operation
 
@@ -135,6 +159,13 @@ The cross product operation will combine two separate inputs into a single outpu
 | --------------- | ------------------------------------------------------------ | ---------------------------------- |
 | Left Input      | A relational input.                                          | Required                           |
 | Right Input     | A relational input.                                          | Required                           |
+
+
+=== "CrossRel Message"
+
+    ```proto
+%%% proto.algebra.CrossRel %%%
+    ```
 
 
 ## Join Operation
@@ -169,6 +200,14 @@ The join operation will combine two separate inputs into a single output, based 
 | Anti  | Return records from the left input. These are returned only if the records do not have a join partner on the right side. |
 | Single | Returns one join partner per entry on the left input. If more than one join partner exists, there are two valid semantics. 1) Only the first match is returned. 2) The system throws an error. If there is no match between the left and right inputs, NULL is returned. |
 
+
+=== "JoinRel Message"
+
+    ```proto
+%%% proto.algebra.JoinRel %%%
+    ```
+
+
 ## Set Operation
 
 The set operation encompasses several set-level operations that support combining datasets based, possibly excluding records based on various types of record level matching.
@@ -199,6 +238,14 @@ The set operation encompasses several set-level operations that support combinin
 | Union Distinct          | Returns all the records from each set, removing any rows that are duplicated (within or across sets). |
 | Union All               | Returns all records from each set, allowing duplicates.      |
 
+
+=== "SetRel Message"
+
+    ```proto
+%%% proto.algebra.SetRel %%%
+    ```
+
+
 ## Fetch Operation
 
 The fetch operation eliminates records outside a desired window. Typically corresponds to a fetch/offset SQL clause. Will only returns records between the start offset and the end offset.
@@ -220,6 +267,11 @@ The fetch operation eliminates records outside a desired window. Typically corre
 | Offset   | A positive integer. Declares the offset for retrieval of records. | Optional, defaults to 0. |
 | Count    | A positive integer. Declares the number of records that should be returned. | Required                 |
 
+=== "FetchRel Message"
+
+    ```proto
+%%% proto.algebra.FetchRel %%%
+    ```
 
 ## Aggregate Operation
 
@@ -240,6 +292,13 @@ The aggregate operation groups input data on one or more sets of grouping keys, 
 | Grouping Sets    | One or more grouping sets.                                   | Optional, required if no measures.      |
 | Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional, defaults to 0.                |
 | Measures         | A list of one or more aggregate expressions along with an optional filter. | Optional, required if no grouping sets. |
+
+
+=== "AggregateRel Message"
+
+    ```proto
+%%% proto.algebra.AggregateRel %%%
+    ```
 
 
 ## Write Operator
