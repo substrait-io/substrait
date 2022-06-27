@@ -902,28 +902,34 @@ message AggregateFunction {
     AGGREGATION_INVOCATION_DISTINCT = 2;
   }
 
-  // A CREATE TABLE operation
+  // A CREATE TABLE [AS] operation
   message CreateTable {
     // the table to insert into
     NamedTable table = 1;
+    // the schema of the table (with types, nullability,
+    // defaults for each column)
     NamedStruct base_schema = 2;
-    // A query (for the CTAS semantics)
+    // An optional query (for the CTAS semantics)
     // with named fields matching all columns that
-    // do not have detaults in the table
+    // do not have defaults in the table
     optional RelRoot query = 3;
+
+    //TODO: add constraints
   }
 
   // A CREATE VIEW AS operation
   message CreateView {
     // the table to insert into
     NamedView table = 1;
-    NamedStruct base_schema = 2;
-    // The query defining the body of the view
-    // all fields types in the query must match the base_schema
+    // an optional schema (if different than the query output)
+    optional NamedStruct base_schema = 2;
+    // The query defining the body of the view all fields
+    // types in the query must match the base_schema if present
     RelRoot query = 3;
   }
 
-  // An Insert operation
+
+  // An INSERT [OR REPLACE] operation
   message Insert {
     // the table to insert into
     NamedTable table = 1;
@@ -935,7 +941,7 @@ message AggregateFunction {
     RelRoot query = 3;
   }
 
-  // An Delete operation
+  // An DELETE operation
   //NOTE: we are not supporting multi-table deletes (only available in MySQL)
   message Delete {
     // the table to insert into
@@ -944,7 +950,7 @@ message AggregateFunction {
     Rel tup_delete = 2;
   }
 
-  // An Update operation
+  // An UPDATE operation
   message Update {
     // the table to update
     NamedTable table = 1;
