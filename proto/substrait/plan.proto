@@ -18,6 +18,8 @@ message PlanRel {
     Rel rel = 1;
     // The root of a relation tree
     RelRoot root = 2;
+    // An update/insert/delet
+    ModOp mod_op = 3;
   }
 }
 
@@ -30,7 +32,8 @@ message Plan {
   // a list of extensions this plan may depend on
   repeated substrait.extensions.SimpleExtensionDeclaration extensions = 2;
 
-  // one or more relation trees that are associated with this plan.
+  // one or more relation trees that are associated with this plan,
+  // or db-modifying operations.
   repeated PlanRel relations = 3;
 
   // additional extensions associated with this plan.

@@ -55,6 +55,21 @@ message RelCommon {
   }
 }
 
+// A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
+// This assumes shared catalog between systems exchanging a message.
+message NamedTable {
+  repeated string names = 1;
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
+// A view (materialized or virtual). The list of string is used to represent namespacing (e.g., mydb.myview).
+// This assumes shared catalog between systems exchanging a message.
+message NamedView {
+  repeated string names = 1;
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
+
 // The scan operator of base data (physical or virtual), including filtering and projection.
 message ReadRel {
   RelCommon common = 1;
@@ -69,13 +84,6 @@ message ReadRel {
     LocalFiles local_files = 6;
     NamedTable named_table = 7;
     ExtensionTable extension_table = 8;
-  }
-
-  // A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
-  // This assumes shared catalog between systems exchanging a message.
-  message NamedTable {
-    repeated string names = 1;
-    substrait.extensions.AdvancedExtension advanced_extension = 10;
   }
 
   // A table composed of literals.
@@ -363,6 +371,8 @@ message Rel {
     CrossRel cross = 12;
   }
 }
+
+
 
 // The argument of a function
 message FunctionArgument {
@@ -890,5 +900,70 @@ message AggregateFunction {
 
     // Use only distinct values in aggregation calculation
     AGGREGATION_INVOCATION_DISTINCT = 2;
+  }
+
+  // A CREATE TABLE operation
+  message CreateTable {
+    // the table to insert into
+    NamedTable table = 1;
+    NamedStruct base_schema = 2;
+    // A query (for the CTAS semantics)
+    // with named fields matching all columns that
+    // do not have detaults in the table
+    optional RelRoot query = 3;
+  }
+
+  // A CREATE VIEW AS operation
+  message CreateView {
+    // the table to insert into
+    NamedView table = 1;
+    NamedStruct base_schema = 2;
+    // The query defining the body of the view
+    // all fields types in the query must match the base_schema
+    RelRoot query = 3;
+  }
+
+  // An Insert operation
+  message Insert {
+    // the table to insert into
+    NamedTable table = 1;
+    // replace semantics if tuple exists (default false)
+    bool replace = 2;
+    // A query (which can also be as set of values),
+    // with named fields matching all columns that
+    // do not have detaults in the table
+    RelRoot query = 3;
+  }
+
+  // An Delete operation
+  //NOTE: we are not supporting multi-table deletes (only available in MySQL)
+  message Delete {
+    // the table to insert into
+    NamedTable table = 1;
+    // query that returns the tuples to delete (that must be part of table)
+    Rel tup_delete = 2;
+  }
+
+  // An Update operation
+  message Update {
+    // the table to update
+    NamedTable table = 1;
+    // Expression to assign new value to one (or more) columns
+    repeated Assignment assignments = 1;
+    // query that returns the tuples to be modified (that must be part of table)
+    ReadRel tup_delete = 2;
+  }
+
+
+  // A modifying operation
+  message ModOp {
+    oneof operation {
+      CreateTable crtab = 1;
+      CreateView crview = 2;
+      Insert ins = 3;
+      Delete del = 4;
+      Update upd = 5;
+      // consider adding UPSERT semantics
+    }
   }
 }
