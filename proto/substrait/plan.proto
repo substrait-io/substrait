@@ -18,7 +18,7 @@ message PlanRel {
     Rel rel = 1;
     // The root of a relation tree
     RelRoot root = 2;
-    // An update/insert/delet
+    // An CREATE TABLE / CREATE VIEW / UPDATE / INSERT / DELETE 
     ModOp mod_op = 3;
   }
 }

@@ -914,7 +914,7 @@ message AggregateFunction {
     // do not have defaults in the table
     optional RelRoot query = 3;
 
-    //TODO: add constraints
+    //TODO: add constraints, indexes, etc.?
   }
 
   // A CREATE VIEW AS operation
@@ -926,8 +926,9 @@ message AggregateFunction {
     // The query defining the body of the view all fields
     // types in the query must match the base_schema if present
     RelRoot query = 3;
-  }
 
+    //TODO: add materialization and other options
+  }
 
   // An INSERT [OR REPLACE] operation
   message Insert {
@@ -948,6 +949,8 @@ message AggregateFunction {
     NamedTable table = 1;
     // query that returns the tuples to delete (that must be part of table)
     Rel tup_delete = 2;
+
+    //TODO: add cascading semantics
   }
 
   // An UPDATE operation
@@ -955,21 +958,20 @@ message AggregateFunction {
     // the table to update
     NamedTable table = 1;
     // Expression to assign new value to one (or more) columns
-    repeated Assignment assignments = 1;
+    repeated Assignment assignments = 2;
     // query that returns the tuples to be modified (that must be part of table)
-    ReadRel tup_delete = 2;
+    Rel tup_update = 3;
   }
-
 
   // A modifying operation
   message ModOp {
     oneof operation {
-      CreateTable crtab = 1;
-      CreateView crview = 2;
-      Insert ins = 3;
-      Delete del = 4;
-      Update upd = 5;
-      // consider adding UPSERT semantics
+      CreateTable create_table = 1;
+      CreateView create_view = 2;
+      Insert insert = 3;
+      Delete delete = 4;
+      Update update = 5;
+      //TODO: consider adding UPSERT/MERGE semantics
     }
   }
 }
