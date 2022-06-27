@@ -54,81 +54,97 @@ message Type {
   message Boolean {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.boolean default = 3;
   }
 
   message I8 {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.i8 default = 3;
   }
 
   message I16 {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.i16 default = 3;
   }
 
   message I32 {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.i32 default = 3;
   }
 
   message I64 {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.i64 default = 3;
   }
 
   message FP32 {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.fp32 default = 3;
   }
 
   message FP64 {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.fp64 default = 3;
   }
 
   message String {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.string default = 3;
   }
 
   message Binary {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.binary default = 3;
   }
 
   message Timestamp {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.timestamp default = 3;
   }
 
   message Date {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.date default = 3;
   }
 
   message Time {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.time default = 3;
   }
 
   message TimestampTZ {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.timestamp_tz default = 3;
   }
 
   message IntervalYear {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.interval_year_to_month default = 3;
   }
 
   message IntervalDay {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.interval_day_to_second default = 3;
   }
 
   message UUID {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+    Literal.uuid default = 3;
   }
 
   // Start compound types.
@@ -136,18 +152,21 @@ message Type {
     int32 length = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
+    Literal.fixed_char default = 4;
   }
 
   message VarChar {
     int32 length = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
+    Literal.var_char default = 4;
   }
 
   message FixedBinary {
     int32 length = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
+    Literal.fixed_binary default = 4;
   }
 
   message Decimal {
@@ -155,18 +174,21 @@ message Type {
     int32 precision = 2;
     uint32 type_variation_reference = 3;
     Nullability nullability = 4;
+    Literal.decimal default = 5;
   }
 
   message Struct {
     repeated Type types = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
+    Literal.Struct default = 4;
   }
 
   message List {
     Type type = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
+    Literal.List default = 4;
   }
 
   message Map {
@@ -174,12 +196,14 @@ message Type {
     Type value = 2;
     uint32 type_variation_reference = 3;
     Nullability nullability = 4;
+    Literal.Map default = 5;
   }
 
   message UserDefined {
     uint32 type_reference = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
+    Literal.UserDefined default = 4;
   }
 }
 
@@ -206,4 +230,5 @@ message NamedStruct {
   // list of names in dfs order
   repeated string names = 1;
   Type.Struct struct = 2;
+  Literal.Struct default = 3;
 }
