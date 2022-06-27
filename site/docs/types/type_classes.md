@@ -44,7 +44,7 @@ Compound type classes are type classes that need to be configured by means of a 
 
 ## User-Defined Types
 
-User-defined type classes can be created using a combination of pre-defined types. User-defined types are defined as part of [simple extensions](../extensions/index.md#simple-extensions). An extension can declare an arbitrary number of user defined extension types. Initially, user defined types must be simple types (although they can be constructed of a number of inner compound and simple types).
+User-defined type classes can be created using a combination of pre-defined types. User-defined types are defined as part of [simple extensions](../extensions/index.md#simple-extensions). An extension can declare an arbitrary number of user defined extension types.
 
 A YAML example of an extension type is below:
 
@@ -59,9 +59,9 @@ This declares a new type (namespaced to the associated YAML file) called "point"
 
 Literals for user-defined types are represented using protobuf [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) messages.
 
-### Parameterization
+### Compound User-Defined Types
 
-User-defined types may be parameterized, in the same way in which the built-in compound types are parameterizable. The supported "meta-types" for parameters are data types, booleans, integers, enumerations, and strings. Using parameters, we could redefine "point" with different types of coordinates. For example:
+User-defined types may be turned into compound types by requiring parameters to be passed to them. The supported "meta-types" for parameters are data types (like those used in `LIST`, `MAP`, and `STRUCT`), booleans, integers, enumerations, and strings. Using parameters, we could redefine "point" with different types of coordinates. For example:
 
 ```yaml
 name: point
@@ -70,7 +70,7 @@ parameters:
     description: |
       The type used for the longitude and latitude
       components of the point.
-    type: type
+    type: dataType
 ```
 
 or:
@@ -79,7 +79,7 @@ or:
 name: point
 parameters:
   - name: coordinate_type
-    type: enum
+    type: enumeration
     options:
       - integer
       - double
@@ -91,9 +91,9 @@ or:
 name: point
 parameters:
   - name: LONG
-    type: type
+    type: dataType
   - name: LAT
-    type: type
+    type: dataType
 ```
 
 We can't specify the internal structure in this case, because there is currently no support for derived types in the structure.
@@ -104,14 +104,14 @@ The allowed range can be limited for integer parameters. For example:
 name: vector
 parameters:
   - name: T
-    type: type
+    type: dataType
   - name: dimensions
     type: integer
     min: 2
     max: 3
 ```
 
-This specifies a vector that can be either 2- or 3-dimensional.
+This specifies a vector that can be either 2- or 3-dimensional. Note however that it's not currently possible to put constraints on data type, string, or (technically) boolean parameters.
 
 Similar to function arguments, the last parameter may be specified to be variadic, allowing it to be specified one or more times instead of only once. For example:
 
@@ -119,7 +119,7 @@ Similar to function arguments, the last parameter may be specified to be variadi
 name: union
 parameters:
   - name: T
-    type: type
+    type: dataType
 variadic: true
 ```
 
@@ -129,7 +129,7 @@ This defines a type that can be parameterized with one or more other data types,
 name: tuple
 parameters:
   - name: T
-    type: type
+    type: dataType
     optional: true
 variadic: true
 ```
