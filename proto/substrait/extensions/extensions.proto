@@ -64,8 +64,29 @@ message SimpleExtensionDeclaration {
 
     // A simple name if there is only one impl for the function within the YAML.
     // A compound name, referencing that includes type short names if there is
-    // more than one impl per name in the YAML.
+    // more than one impl per name in the YAML. A simple name not found in the
+    // YAML if "udf" is given.
     string name = 3;
+
+    UserDefinedFunction udf = 4;
+
+    message UserDefinedFunction {
+      // A serialization of the user-defined function's code. The default serialization
+      // format is using base64 of cloudpickle.dumps().
+      string code = 1;
+
+      // Summary of the user-defined function.
+      string summary = 2;
+
+      // Description of the user-defined function.
+      string description = 3;
+
+      // Input types of the user-defined function.
+      repeated Type input_types = 4;
+
+      // Output type of the user-defined function.
+      Type output_type = 5;
+    }
   }
 }
 
