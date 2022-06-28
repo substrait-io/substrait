@@ -305,12 +305,12 @@ The aggregate operation groups input data on one or more sets of grouping keys, 
 
 The write operator is an operator that consumes one output and writes it to storage. A simple example would be writing Parquet files. It is expected that many types of writes will be added over time.
 
-| Signature            | Value           |
-| -------------------- | --------------- |
-| Inputs               | 1               |
-| Outputs              | 0               |
-| Property Maintenance | N/A (no output) |
-| Direct Output Order  | N/A (no output) |
+| Signature            | Value                |
+| -------------------- |----------------------|
+| Inputs               | 1                    |
+| Outputs              | 1                    |
+| Property Maintenance | N/A (no output)      |
+| Direct Output Order  | Unchanged from input |
 
 ### Write Properties
 
@@ -325,6 +325,13 @@ The write operator is an operator that consumes one output and writes it to stor
 ### Write Definition Types
 
 Write definition types are built by the community and added to the specification. This is a portion of specification that is expected to grow rapidly.
+
+
+=== "WriteRel Message"
+
+    ```proto
+%%% proto.algebra.WriteRel %%%
+```
 
 #### Virtual Table
 
