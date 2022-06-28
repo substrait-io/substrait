@@ -377,9 +377,7 @@ message NamedTableWrite {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
-
 message DdlRel {
-
   // Definition of which type of scan operation is to be performed
   oneof write_type {
     NamedTableWrite named_table = 1;
@@ -406,10 +404,8 @@ message DdlRel {
   }
 }
 
-
 // The operator that modifies the schema/content of a database
 message WriteRel {
-
   // Definition of which type of write operation is to be performed
   oneof write_type {
     NamedTableWrite named_table = 1;
