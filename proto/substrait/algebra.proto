@@ -55,6 +55,13 @@ message RelCommon {
   }
 }
 
+// A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
+// This assumes shared catalog between systems exchanging a message.
+message NamedTable {
+  repeated string names = 1;
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
 // The scan operator of base data (physical or virtual), including filtering and projection.
 message ReadRel {
   RelCommon common = 1;
@@ -71,16 +78,9 @@ message ReadRel {
     ExtensionTable extension_table = 8;
   }
 
-  // A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
-  // This assumes shared catalog between systems exchanging a message.
-  message NamedTable {
-    repeated string names = 1;
-    substrait.extensions.AdvancedExtension advanced_extension = 10;
-  }
-
   // A table composed of literals.
   message VirtualTable {
-    repeated Expression.Literal.Struct values = 1;
+    repeated Literal.Struct values = 1;
   }
 
   // A stub type that can be used to extend/introduce new table types outside
@@ -370,7 +370,7 @@ message WriteRel {
   // The table to be modified
   NamedTable table = 1;
   // The columns that will be modified (representing after-image of a schema change)
-  NamedStruct base_schema  = 2;
+  NamedStruct base_schema = 2;
   // The default values for the columns (representing after-image of a schema change)
   repeated Literal defaults = 3;
 
@@ -553,7 +553,6 @@ message Expression {
       option deprecated = true;
     }
   }
-
 
   message ScalarFunction {
     // points to a function_anchor defined in this plan
