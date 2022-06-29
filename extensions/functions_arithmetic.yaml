@@ -253,13 +253,13 @@ scalar_functions:
     impls:
       - args:
           - value: i8
-        return: fp32
+        return: fp64
       - args:
           - value: i16
-        return: fp32
+        return: fp64
       - args:
           - value: i32
-        return: fp32
+        return: fp64
       - args:
           - value: i64
         return: fp64
