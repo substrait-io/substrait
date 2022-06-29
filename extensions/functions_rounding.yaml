@@ -20,12 +20,10 @@ scalar_functions:
     description: "Rounding to the floor of the value"
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: fp32
         return: i32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: fp64
         return: i64
