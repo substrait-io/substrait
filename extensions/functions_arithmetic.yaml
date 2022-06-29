@@ -178,13 +178,9 @@ scalar_functions:
           - value: i64
         return: i64
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - value: fp32
         return: fp32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - value: fp64
         return: fp64
   -
