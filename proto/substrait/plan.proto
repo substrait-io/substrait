@@ -42,4 +42,7 @@ message Plan {
   // unused. In many cases, a consumer may be able to work with a plan even if
   // one or more message types defined here are unknown.
   repeated string expected_type_urls = 5;
+
+  // Store the runtime configurations to pass to the execution engine
+  map<string, string> configurations= 6;
 }
