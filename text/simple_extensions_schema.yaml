@@ -16,6 +16,10 @@ properties:
           type: object
           additionalProperties:
             $ref: "#/$defs/type"
+        parameters:  # parameter list for compound types
+          $ref: "#/$defs/type_param_defs"
+        variadic:  # when set, last parameter may be specified one or more times
+          type: boolean
   type_variations:
     type: array
     minItems: 1
@@ -25,7 +29,7 @@ properties:
       required: [parent, name]
       properties:
         parent:
-          type: string
+          $ref: "#/$defs/type"
         name:
           type: string
         description:
@@ -47,6 +51,36 @@ $defs:
     oneOf:
       - type: string
       - type: object
+  type_param_defs:  # an array of compound type parameter definitions
+    type: array
+    items:
+      type: object
+      required: [type]
+      properties:
+        name:  # name of the parameter (for documentation only)
+          type: string
+        description:  # description (for documentation only)
+          type: string
+        type:  # expected metatype for the parameter
+          type: string
+          enum:
+            - dataType
+            - boolean
+            - integer
+            - enumeration
+            - string
+        min:  # for integers, the minimum supported value (inclusive)
+          type: number
+        max:  # for integers, the maximum supported value (inclusive)
+          type: number
+        options:  # for enums, the list of supported values
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            type: string
+        optional:  # when set to true, the parameter may be omitted at the end or skipped using null
+          type: boolean
   arguments:  # an array of arguments
     type: array
     items:
