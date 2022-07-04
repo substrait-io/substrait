@@ -3,6 +3,8 @@ syntax = "proto3";
 
 package substrait;
 
+import "google/protobuf/empty.proto";
+
 option csharp_namespace = "Substrait.Protobuf";
 option go_package = "github.com/substrait-io/substrait-go/proto";
 option java_multiple_files = true;
@@ -180,6 +182,24 @@ message Type {
     uint32 type_reference = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
+    repeated Parameter type_parameters = 4;
+  }
+
+  message Parameter {
+    oneof parameter {
+      // Explicitly null/unspecified parameter, to select the default value (if
+      // any).
+      google.protobuf.Empty null = 1;
+
+      // Data type parameters, like the i32 in LIST<i32>.
+      Type data_type = 2;
+
+      // Value parameters, like the 10 in VARCHAR<10>.
+      bool boolean = 3;
+      int64 integer = 4;
+      string enum = 5;
+      string string = 6;
+    }
   }
 }
 

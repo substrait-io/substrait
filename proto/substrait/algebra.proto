@@ -507,6 +507,10 @@ message Expression {
       // points to a type_anchor defined in this plan
       uint32 type_reference = 1;
 
+      // The parameters to be bound to the type class, if the type class is
+      // parameterizable.
+      repeated Type.Parameter type_parameters = 3;
+
       // the value of the literal, serialized using some type-specific
       // protobuf message
       google.protobuf.Any value = 2;
