@@ -213,26 +213,30 @@ scalar_functions:
         return: i64
   -
     name: "power"
-    description: "Take the power with the first value as the base and second as exponent"
+    description: >
+      Take the power with the first value as the base and second as exponent.
+
+      All integer arguments are promoted to int64.
+      All floating point arguments are promoted to float64.
     impls:
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i8
           - value: i8
-        return: i8
+        return: i64
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
           - value: i16
-        return: i16
+        return: i64
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
           - value: i32
-        return: i32
+        return: i64
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
@@ -244,7 +248,7 @@ scalar_functions:
             required: false
           - value: fp32
           - value: fp32
-        return: fp32
+        return: fp64
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
@@ -269,7 +273,7 @@ scalar_functions:
         return: fp64
       - args:
           - value: fp32
-        return: fp32
+        return: fp64
       - args:
           - value: fp64
         return: fp64
