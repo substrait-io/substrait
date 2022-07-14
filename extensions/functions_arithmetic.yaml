@@ -392,6 +392,70 @@ scalar_functions:
           - value: fp64
           - value: fp64
         return: fp64
+  - 
+    name: "abs"
+    description: >
+      Calculate the absolute value of the argument.
+
+      Integer values allow the specification of overflow behavior to handle the
+      unevenness of the twos complement, e.g. Int8 range [-128 : 127].
+    impls:
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i8
+        return: i8
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i16
+        return: i16
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i32
+        return: i32
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i64
+        return: i64
+      - args:
+          - value: fp32
+        return: fp32
+      - args:
+          - value: fp64
+        return: fp64
+  -
+    name: "sign"
+    description: >
+      Return the signedness of the argument.
+
+      Integer values return signedness with the same type as the input.
+      Possible return values are [-1, 0, 1]
+
+      Floating point values return signedness with the same type as the input.
+      Possible return values are [-1.0, -0.0, 0.0, 1.0, NaN]
+    impls:
+      - args:
+          - value: i8
+        return: i8
+      - args:
+          - value: i16
+        return: i16
+      - args:
+          - value: i32
+        return: i32
+      - args:
+          - value: i64
+        return: i64
+      - args:
+          - value: fp32
+        return: fp32
+      - args:
+          - value: fp64
+        return: fp64
+
 aggregate_functions:
   - name: "sum"
     description: Sum a set of values. The sum of zero elements yields null.
