@@ -73,4 +73,71 @@ scalar_functions:
           - value: any1
         return: BOOLEAN
         nullability: DECLARED_OUTPUT
-
+  -
+    name: "least"
+    description: Returns the smallest value from a list of arguments.
+    impls:
+      - args:
+          - value: i8
+        variadic:
+          min: 1
+        return: i8
+      - args:
+          - value: i16
+        variadic:
+          min: 1
+        return: i16
+      - args:
+          - value: i32
+        variadic:
+          min: 1
+        return: i32
+      - args:
+          - value: i64
+        variadic:
+          min: 1
+        return: i64
+      - args:
+          - value: fp32
+        variadic:
+          min: 1
+        return: fp32
+      - args:
+        - value: fp64
+        variadic:
+          min: 1
+        return: fp64
+  -
+    name: "greatest"
+    description: Returns the largest value from a list of arguments.
+    impls:
+      - args:
+          - value: i8
+        variadic:
+          min: 1
+        return: i8
+      - args:
+          - value: i16
+        variadic:
+          min: 1
+        return: i16
+      - args:
+          - value: i32
+        variadic:
+          min: 1
+        return: i32
+      - args:
+          - value: i64
+        variadic:
+          min: 1
+        return: i64
+      - args:
+          - value: fp32
+        variadic:
+          min: 1
+        return: fp32
+      - args:
+          - value: fp64
+        variadic:
+          min: 1
+        return: fp64
