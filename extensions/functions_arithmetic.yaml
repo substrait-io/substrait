@@ -238,20 +238,11 @@ scalar_functions:
     description: "Square root of the value"
     impls:
       - args:
-          - value: i8
-        return: fp64
-      - args:
-          - value: i16
-        return: fp64
-      - args:
-          - value: i32
-        return: fp64
-      - args:
           - value: i64
         return: fp64
       - args:
           - value: fp32
-        return: fp64
+        return: fp32
       - args:
           - value: fp64
         return: fp64
