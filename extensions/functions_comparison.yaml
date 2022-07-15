@@ -107,6 +107,11 @@ scalar_functions:
         variadic:
           min: 1
         return: fp64
+      - args:
+        - value: "string"
+        variadic:
+          min: 1
+        return: "string"
   -
     name: "greatest"
     description: Returns the largest value from a list of arguments.
@@ -141,3 +146,8 @@ scalar_functions:
         variadic:
           min: 1
         return: fp64
+      - args:
+        - value: "string"
+        variadic:
+          min: 1
+        return: "string"
