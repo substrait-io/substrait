@@ -27,7 +27,9 @@ scalar_functions:
         return: "BOOLEAN"
   -
     name: substring
-    description: Extract a portion of a string from another string.
+    description: >-
+      Extract a substring of a specified length starting from position start.
+      A start value of 1 refers to the first characters of the string.
     impls:
       - args:
           - value: "varchar<L1>"
@@ -163,3 +165,146 @@ scalar_functions:
           - value: "fixedchar<L1>"
           - value: "varchar<L2>"
         return: "BOOLEAN"
+  -
+    name: ltrim
+    description: >-
+      Remove any occurrence of the characters from the left side of the string.
+      If no characters are specified, spaces are removed.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: "varchar<L2>"
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+          - value: "string"
+        return: "string"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "fixedchar<L2>"
+        return: "string"
+  -
+    name: rtrim
+    description: >-
+      Remove any occurrence of the characters from the right side of the string.
+      If no characters are specified, spaces are removed.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: "varchar<L2>"
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+          - value: "string"
+        return: "string"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "fixedchar<L2>"
+        return: "string"
+  -
+    name: trim
+    description: >-
+      Remove any occurrence of the characters from the left and right sides of
+      the string. If no characters are specified, spaces are removed.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: "varchar<L2>"
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+          - value: "string"
+        return: "string"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: "fixedchar<L2>"
+        return: "string"
+  -
+    name: lpad
+    description: Left-pad the string with the characters until the specified length of the string has been reached.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: i32
+          - value: "varchar<L2>"
+        return: "string"
+      - args:
+          - value: "string"
+          - value: i32
+          - value: "string"
+        return: "string"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: i32
+          - value: "fixedchar<L2>"
+        return: "string"
+  -
+    name: rpad
+    description: Right-pad the string with the characters until the specified length of the string has been reached.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: i32
+          - value: "varchar<L2>"
+        return: "string"
+      - args:
+          - value: "string"
+          - value: i32
+          - value: "string"
+        return: "string"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: i32
+          - value: "fixedchar<L2>"
+        return: "string"
+  -
+    name: center
+    description: Pad the string with characters from each side until the specified length of the string has been reached.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: i32
+          - value: "varchar<L2>"
+        return: "string"
+      - args:
+          - value: "string"
+          - value: i32
+          - value: "string"
+        return: "string"
+      - args:
+          - value: "fixedchar<L1>"
+          - value: i32
+          - value: "fixedchar<L2>"
+        return: "string"
+  -
+    name: left
+    description: Extract count characters starting from the left of the string.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: i32
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+          - value: i32
+        return: "string"
+      - args:
+          - value: "fixedchar<l1>"
+          - value: i32
+        return: "string"
+  -
+    name: right
+    description: Extract count characters starting from the right of the string.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: i32
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+          - value: i32
+        return: "string"
+      - args:
+          - value: "fixedchar<l1>"
+          - value: i32
+        return: "string"
