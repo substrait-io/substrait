@@ -215,3 +215,30 @@ scalar_functions:
         variadic:
           min: 2
         return: any1
+  -
+    name: "least"
+    description: >-
+      Returns the smallest value. Only return null if 'all' arguments evaluate to null.
+
+      String comparison is done in lexicographical ordering, one character at a time, from left to right.
+      Uppercase letters are less than lowercase letters.
+    impls:
+      - args:
+          - value: T
+        variadic:
+          min: 2
+        return: T
+
+  -
+    name: "greatest"
+    description: >-
+      Returns the largest value. Only return null if 'all' arguments evaluate to null.
+
+      String comparison is done in lexicographical ordering, one character at a time, from left to right.
+      Uppercase letters are less than lowercase letters.
+    impls:
+      - args:
+          - value: T
+        variadic:
+          min: 2
+        return: T
