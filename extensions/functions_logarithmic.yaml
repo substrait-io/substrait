@@ -6,12 +6,14 @@ scalar_functions:
     description: "Natural logarithm of the value"
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp32
         return: fp32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp64
         return: fp64
@@ -20,12 +22,14 @@ scalar_functions:
     description: "Logarithm to base 10 of the value"
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp32
         return: fp32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp64
         return: fp64
@@ -34,12 +38,14 @@ scalar_functions:
     description: "Logarithm to base 2 of the value"
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp32
         return: fp32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp64
         return: fp64
@@ -48,13 +54,15 @@ scalar_functions:
     description: "Logarithm of the value with the given base"
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp32
           - value: fp32
         return: fp32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp64
           - value: fp64
