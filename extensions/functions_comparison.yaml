@@ -75,7 +75,11 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
   -
     name: "least"
-    description: Returns the smallest value from a list of arguments.
+    description: >-
+      Returns the smallest value from a list of arguments. Only return null if 'all' arguments evaluate to null.
+
+      String comparison is done in lexicographical ordering, one character at a time, from left to right.
+      Uppercase letters are less than lowercase letters.
     impls:
       - args:
           - value: i8
@@ -114,7 +118,11 @@ scalar_functions:
         return: "string"
   -
     name: "greatest"
-    description: Returns the largest value from a list of arguments.
+    description: >-
+      Returns the largest value from a list of arguments. Only return null if 'all' arguments evaluate to null.
+
+      String comparison is done in lexicographical ordering, one character at a time, from left to right.
+      Uppercase letters are less than lowercase letters.
     impls:
       - args:
           - value: i8
