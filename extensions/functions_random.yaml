@@ -1,0 +1,14 @@
+%YAML 1.2
+---
+scalar_functions:
+  -
+    name: random
+    description: "Return a value between 0 (inclusive) and 1 (exclusive)"
+    impls:
+      - args:
+          - value:
+              - name: Seed
+                type: any1
+                required: false
+        deterministic: false
+        return: fp64
