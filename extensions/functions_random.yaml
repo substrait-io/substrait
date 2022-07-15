@@ -13,7 +13,14 @@ scalar_functions:
       - args:
           - value:
               - name: Seed
-                type: any1
+                type: i64
+                constant: true
+        deterministic: false
+        return: fp64
+      - args:
+          - value:
+              - name: Seed
+                type: fp64
                 constant: true
         deterministic: false
         return: fp64
