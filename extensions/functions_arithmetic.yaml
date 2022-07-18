@@ -234,12 +234,30 @@ scalar_functions:
     description: "Square root of the value"
     impls:
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
           - value: i64
         return: fp64
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
           - value: fp32
         return: fp32
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
           - value: fp64
         return: fp64
 aggregate_functions:
