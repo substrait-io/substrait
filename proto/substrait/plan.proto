@@ -5,6 +5,7 @@ package substrait;
 
 import "substrait/algebra.proto";
 import "substrait/extensions/extensions.proto";
+import "substrait/type.proto";
 
 option csharp_namespace = "Substrait.Protobuf";
 option go_package = "github.com/substrait-io/substrait-go/proto";
@@ -18,6 +19,28 @@ message PlanRel {
     Rel rel = 1;
     // The root of a relation tree
     RelRoot root = 2;
+  }
+}
+
+// A parameter for a plan, to support things like prepared statements in SQL.
+message PlanParameter {
+  // An arbitrary integer used to refer to this parameter in the plan.
+  // Required.
+  uint32 plan_parameter_anchor = 1;
+
+  // The reference used to refer to this parameter outside of the plan.
+  // Required.
+  oneof reference {
+    string named = 2;
+    int32 indexed = 3;
+  }
+
+  // The data type or value of the parameter. Required. A value may be passed
+  // either to serve as a default or to make the plan executable without losing
+  // the distinction between parameter and literal.
+  oneof type_or_value {
+    Type type = 4;
+    Expression.Literal value = 5;
   }
 }
 
@@ -42,4 +65,11 @@ message Plan {
   // unused. In many cases, a consumer may be able to work with a plan even if
   // one or more message types defined here are unknown.
   repeated string expected_type_urls = 5;
+
+  // An optional list of parameters used in the plan, to support things like
+  // prepared statements in SQL. When nonempty, the plan can only be executed
+  // when all parameters have a value (either passed along with the parameter
+  // or via another channel), but it *can* be optimized or otherwise
+  // manipulated.
+  repeated PlanParameter parameters = 6;
 }
