@@ -69,7 +69,10 @@ scalar_functions:
         return: fp64
   -
     name: "logb"
-    description: "Logarithm of the value with the given base"
+    description: >
+      Logarithm of the value with the given base
+
+      logb(x, b) => log_{b} (x)
     impls:
       - args:
           - name: rounding
@@ -79,7 +82,11 @@ scalar_functions:
             options: [ NAN, ERROR ]
             required: false
           - value: fp32
+            name: "x"
+            description: "The number `x` to compute the logarithm of"
           - value: fp32
+            name: "base"
+            description: "The logarithm base `b` to use"
         return: fp32
       - args:
           - name: rounding
@@ -89,7 +96,11 @@ scalar_functions:
             options: [ NAN, ERROR ]
             required: false
           - value: fp64
+            name: "x"
+            description: "The number `x` to compute the logarithm of"
           - value: fp64
+            name: "base"
+            description: "The logarithm base `b` to use"
         return: fp64
 
 
