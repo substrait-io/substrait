@@ -173,15 +173,27 @@ scalar_functions:
     impls:
       - args:
           - value: "varchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
           - value: "varchar<L2>"
+            name: "characters"
+            description: "The set of characters to remove."
         return: "varchar<L1>"
       - args:
           - value: "string"
+            name: "input"
+            description: "The string to remove characters from."
           - value: "string"
+            name: "characters"
+            description: "The set of characters to remove."
         return: "string"
       - args:
           - value: "fixedchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
           - value: "fixedchar<L2>"
+            name: "characters"
+            description: "The set of characters to remove."
         return: "string"
   -
     name: rtrim
@@ -191,15 +203,27 @@ scalar_functions:
     impls:
       - args:
           - value: "varchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
           - value: "varchar<L2>"
+            name: "characters"
+            description: "The set of characters to remove."
         return: "varchar<L1>"
       - args:
           - value: "string"
+            name: "input"
+            description: "The string to remove characters from."
           - value: "string"
+            name: "characters"
+            description: "The set of characters to remove."
         return: "string"
       - args:
           - value: "fixedchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
           - value: "fixedchar<L2>"
+            name: "characters"
+            description: "The set of characters to remove."
         return: "string"
   -
     name: trim
@@ -209,15 +233,27 @@ scalar_functions:
     impls:
       - args:
           - value: "varchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
           - value: "varchar<L2>"
+            name: "characters"
+            description: "The set of characters to remove."
         return: "varchar<L1>"
       - args:
           - value: "string"
+            name: "input"
+            description: "The string to remove characters from."
           - value: "string"
+            name: "characters"
+            description: "The set of characters to remove."
         return: "string"
       - args:
           - value: "fixedchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
           - value: "fixedchar<L2>"
+            name: "characters"
+            description: "The set of characters to remove."
         return: "string"
   -
     name: lpad
@@ -225,18 +261,36 @@ scalar_functions:
     impls:
       - args:
           - value: "varchar<L1>"
+            name: "input"
+            description: "The string to pad."
           - value: i32
+            name: "length"
+            description: "The length of the output string."
           - value: "varchar<L2>"
+            name: "characters"
+            description: "The set of characters to use for padding."
         return: "string"
       - args:
           - value: "string"
+            name: "input"
+            description: "The string to pad."
           - value: i32
+            name: "length"
+            description: "The length of the output string."
           - value: "string"
+            name: "characters"
+            description: "The set of characters to use for padding."
         return: "string"
       - args:
           - value: "fixedchar<L1>"
+            name: "input"
+            description: "The string to pad."
           - value: i32
+            name: "length"
+            description: "The length of the output string."
           - value: "fixedchar<L2>"
+            name: "characters"
+            description: "The set of characters to use for padding."
         return: "string"
   -
     name: rpad
@@ -244,18 +298,36 @@ scalar_functions:
     impls:
       - args:
           - value: "varchar<L1>"
+            name: "input"
+            description: "The string to pad."
           - value: i32
+            name: "length"
+            description: "The length of the output string."
           - value: "varchar<L2>"
+            name: "characters"
+            description: "The set of characters to use for padding."
         return: "string"
       - args:
           - value: "string"
+            name: "input"
+            description: "The string to pad."
           - value: i32
+            name: "length"
+            description: "The length of the output string."
           - value: "string"
+            name: "characters"
+            description: "The set of characters to use for padding."
         return: "string"
       - args:
           - value: "fixedchar<L1>"
+            name: "input"
+            description: "The string to pad."
           - value: i32
+            name: "length"
+            description: "The length of the output string."
           - value: "fixedchar<L2>"
+            name: "characters"
+            description: "The set of characters to use for padding."
         return: "string"
   -
     name: center
@@ -263,18 +335,36 @@ scalar_functions:
     impls:
       - args:
           - value: "varchar<L1>"
+            name: "input"
+            description: "The string to pad."
           - value: i32
+            name: "length"
+            description: "The length of the output string."
           - value: "varchar<L2>"
+            name: "characters"
+            description: "The set of characters to use for padding."
         return: "string"
       - args:
           - value: "string"
+            name: "input"
+            description: "The string to pad."
           - value: i32
+            name: "length"
+            description: "The length of the output string."
           - value: "string"
+            name: "characters"
+            description: "The set of characters to use for padding."
         return: "string"
       - args:
           - value: "fixedchar<L1>"
+            name: "input"
+            description: "The string to pad."
           - value: i32
+            name: "length"
+            description: "The length of the output string."
           - value: "fixedchar<L2>"
+            name: "characters"
+            description: "The set of characters to use for padding."
         return: "string"
   -
     name: left
