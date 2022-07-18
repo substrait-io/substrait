@@ -6,13 +6,9 @@ scalar_functions:
     description: "Rounding to the ceiling of the value"
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - value: fp32
         return: fp32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - value: fp64
         return: fp64
   -
