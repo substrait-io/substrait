@@ -22,3 +22,25 @@ aggregate_functions:
         decomposable: MANY
         intermediate: i64
         return: i64
+  - name: "grouping"
+    description: >-
+      Indicates whether a specified column in a GROUP BY is aggregated or not,
+      returns 1 for aggregated or 0 for not aggregated in the result set
+    impls:
+      - args:
+          - options: [ SILENT, ERROR ]
+            required: false
+          - value: any
+        nullability: DECLARED_OUTPUT
+        return: boolean
+  - name: "grouping_id"
+    description: "Return the level of grouping for a set of columns"
+    impls:
+      - args:
+          - options: [ SILENT, ERROR ]
+            required: false
+          - value: any
+        variadic:
+          min: 0
+        nullability: DECLARED_OUTPUT
+        return: i64
