@@ -45,6 +45,10 @@ properties:
     type: array
     items:
       $ref: "#/$defs/aggregateFunction"
+  window_functions:
+    type: array
+    items:
+      $ref: "#/$defs/windowFunction"
 
 $defs:
   type:
@@ -220,6 +224,7 @@ $defs:
               $ref: "#/$defs/maxset"
             decomposable:
               $ref: "#/$defs/decomposable"
+
   windowFunction:
     type: object
     additionalProperties: false
@@ -235,7 +240,7 @@ $defs:
         items:
           type: object
           additionalProperties: false
-          required: [ intermediate, return ]
+          required: [ return ]
           properties:
             args:
               $ref: "#/$defs/arguments"
