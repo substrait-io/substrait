@@ -31,8 +31,10 @@ aggregate_functions:
           - options: [ SILENT, ERROR ]
             required: false
           - value: any
+        variadic:
+          min: 1
         nullability: DECLARED_OUTPUT
-        return: boolean
+        return: i64
   - name: "grouping_id"
     description: "Return the level of grouping for a set of columns"
     impls:
