@@ -22,3 +22,28 @@ aggregate_functions:
         decomposable: MANY
         intermediate: i64
         return: i64
+  - name: "grouping"
+    description: >-
+      Indicates whether the specified column(s) in a GROUP BY are aggregated or not.
+      The result is a bitmap which indicates whether an argument is aggregated or grouped.
+      If the N-th argument is aggregated then the N-th bit is set to 1.
+    impls:
+      - args:
+          - options: [ SILENT, ERROR ]
+            required: false
+          - value: any
+        variadic:
+          min: 1
+        nullability: DECLARED_OUTPUT
+        return: i64
+  - name: "grouping_id"
+    description: "Return the level of grouping for a set of columns"
+    impls:
+      - args:
+          - options: [ SILENT, ERROR ]
+            required: false
+          - value: any
+        variadic:
+          min: 0
+        nullability: DECLARED_OUTPUT
+        return: i64
