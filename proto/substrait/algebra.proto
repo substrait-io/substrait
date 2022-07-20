@@ -364,6 +364,76 @@ message Rel {
   }
 }
 
+// A base table for writing. The list of string is used to represent namespacing (e.g., mydb.mytable).
+// This assumes shared catalog between systems exchanging a message.
+// it also includes a base schema, and default values
+message NamedTableWrite {
+  repeated string names = 1;
+  // The columns that will be modified (representing after-image of a schema change)
+  NamedStruct base_schema = 2;
+  // The default values for the columns (representing after-image of a schema change)
+  repeated Expression.Literal defaults = 3;
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
+message DdlRel {
+  // Definition of which type of scan operation is to be performed
+  oneof write_type {
+    NamedTableWrite named_table = 1;
+    ReadRel.ExtensionTable extension_table = 2;
+  }
+
+  //TODO add constraints/indexes/etc..?
+
+  // The type of operation to perform
+  DdlOp op = 3;
+
+  // The body of the CREATE VIEW / CTAS
+  Rel input = 4;
+
+  enum DdlOp {
+    DDL_OP_UNSPECIFIED = 0;
+    DDL_OP_CREATE_TABLE = 1;
+    DDL_OP_DROP_TABLE = 2;
+    DDL_OP_ALTER_TABLE = 3;
+
+    DDL_OP_CREATE_VIEW = 4;
+    DDL_OP_CREATE_OR_REPLACE = 5;
+    DDL_OP_DROP_VIEW = 6;
+  }
+}
+
+// The operator that modifies the schema/content of a database
+message WriteRel {
+  // Definition of which type of write operation is to be performed
+  oneof write_type {
+    NamedTableWrite named_table = 1;
+    ReadRel.LocalFiles local_files = 2;
+    ReadRel.ExtensionTable extension_table = 3;
+  }
+
+  // The type of operation to perform
+  WriteOp op = 4;
+
+  // The relation that determines the tuples to add/remove/modify
+  // remaining columns are left as-is or to default (for INSERT).
+  Rel input = 5;
+
+  // The rel that specifies the output of the operator. It allows references
+  // to DELETED.<col_name> or INSERTED.<col_name>. It can also compute simply count of
+  // affected tuples (per common behavior of most RDBMS). Defaults to no output.
+  Rel output = 6;
+
+  enum WriteOp {
+    WRITE_OP_UNSPECIFIED = 0;
+    WRITE_OP_INSERT = 1;
+    WRITE_OP_INSERT_OR_REPLACE = 2;
+    WRITE_OP_DELETE = 3;
+    WRITE_OP_UPDATE = 4;
+  }
+}
+
 // The argument of a function
 message FunctionArgument {
   oneof arg_type {
