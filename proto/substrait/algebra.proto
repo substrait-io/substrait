@@ -364,49 +364,9 @@ message Rel {
   }
 }
 
-// The operator that modifies the schema/content of a database
-message WriteRel {
-  // The table to be modified
-  ReadRel.NamedTable table = 1;
-  // The columns that will be modified (representing after-image of a schema change)
-  NamedStruct base_schema = 2;
-  // The default values for the columns (representing after-image of a schema change)
-  repeated Expression.Literal defaults = 3;
-
-  //TODO add constraints/indexes/etc..?
-
-  // The type of operation to perform
-  WriteOp op = 4;
-
-  // The relation that determines the tuples to add/remove/modify
-  // remaining columns are left as-is or to default (for INSERT).
-  Rel query = 5;
-
-  // The rel that specifies the output of the operator. It allows references
-  // to DELETED.<col_name> or INSERTED.<col_name>. It can also compute simply count of
-  // affected tuples (per common behavior of most RDBMS). Defaults to no output.
-  Rel output = 6;
-
-  enum WriteOp {
-    CREATE_TABLE = 0;
-    DROP_TABLE = 1;
-    ALTER_TABLE = 2;
-    TRUNCATE_TABLE = 3;
-
-    CREATE_VIEW = 4;
-    CREATE_OR_REPLACE = 5;
-    DROP_VIEW = 6;
-
-    INSERT = 7;
-    INSERT_OR_REPLACE = 8;
-    DELETE = 9;
-    UPDATE = 10;
-  }
-}
-
 // A base table for writing. The list of string is used to represent namespacing (e.g., mydb.mytable).
 // This assumes shared catalog between systems exchanging a message.
-// it also includes a base schema, and default types
+// it also includes a base schema, and default values
 message NamedTableWrite {
   repeated string names = 1;
   // The columns that will be modified (representing after-image of a schema change)
@@ -430,7 +390,7 @@ message DdlRel {
   DdlOp op = 3;
 
   // The body of the CREATE VIEW / CTAS
-  Rel query = 4;
+  Rel input = 4;
 
   enum DdlOp {
     DDL_OP_UNSPECIFIED = 0;
@@ -458,7 +418,7 @@ message WriteRel {
 
   // The relation that determines the tuples to add/remove/modify
   // remaining columns are left as-is or to default (for INSERT).
-  Rel query = 5;
+  Rel input = 5;
 
   // The rel that specifies the output of the operator. It allows references
   // to DELETED.<col_name> or INSERTED.<col_name>. It can also compute simply count of
@@ -617,24 +577,16 @@ message Expression {
       // points to a type_anchor defined in this plan
       uint32 type_reference = 1;
 
-<<<<<<< HEAD
       // The parameters to be bound to the type class, if the type class is
       // parameterizable.
       repeated Type.Parameter type_parameters = 3;
 
-=======
->>>>>>> 4a624b5 (feat: moving Literal back to Expression (#128))
       // the value of the literal, serialized using some type-specific
       // protobuf message
       google.protobuf.Any value = 2;
     }
   }
 
-<<<<<<< HEAD
-=======
->>>>>>> e5c5c6c (feat: lint/style fixes (#128))
-=======
->>>>>>> 4a624b5 (feat: moving Literal back to Expression (#128))
   message ScalarFunction {
     // points to a function_anchor defined in this plan
     uint32 function_reference = 1;
