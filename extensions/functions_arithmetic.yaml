@@ -362,3 +362,54 @@ aggregate_functions:
         decomposable: MANY
         intermediate: fp64?
         return: fp64?
+  - name: "product"
+    description: Product of a set of values.
+    impls:
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i8
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i64?
+        return: i64?
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i16
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i64?
+        return: i64?
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i32
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i64?
+        return: i64?
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i64
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i64?
+        return: i64?
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: fp32
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: fp64?
+        return: fp64?
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: fp64
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: fp64?
+        return: fp64?

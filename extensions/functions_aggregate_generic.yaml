@@ -1,7 +1,8 @@
 %YAML 1.2
 ---
 aggregate_functions:
-  - name: "count"
+  - 
+    name: "count"
     description: Count a set of values
     impls:
       - args:
@@ -12,7 +13,8 @@ aggregate_functions:
         decomposable: MANY
         intermediate: i64
         return: i64
-  - name: "count"
+  - 
+    name: "count"
     description: "Count a set of records (not field referenced)"
     impls:
       - args:
