@@ -299,22 +299,6 @@ The aggregate operation groups input data on one or more sets of grouping keys, 
     ```proto
 %%% proto.algebra.AggregateRel %%%
     ```
-## DDL Operator
-
-The operator that defines modifications of a database schema (CREATE/DROP/ALTER for TABLE and VIEWS). 
-
-| Signature            | Value           |
-| -------------------- |-----------------|
-| Inputs               | 1               |
-| Outputs              | 0               |
-| Property Maintenance | N/A (no output) |
-| Direct Output Order  | N/A             |
-
-=== "DdlRel Message"
-
-    ```proto
-%%% proto.algebra.DdlRel %%%
-    ```
 
 ## Write Operator
 
@@ -365,7 +349,25 @@ Write definition types are built by the community and added to the specification
 | Format   | Enumeration of available formats. Only current option is PARQUET. | Required |
 
 
+## DDL Operator
+
+The operator that defines modifications of a database schema (CREATE/DROP/ALTER for TABLE and VIEWS).
+
+| Signature            | Value           |
+| -------------------- |-----------------|
+| Inputs               | 1               |
+| Outputs              | 0               |
+| Property Maintenance | N/A (no output) |
+| Direct Output Order  | N/A             |
+
+=== "DdlRel Message"
+
+    ```proto
+%%% proto.algebra.DdlRel %%%
+    ```
 
 ## Discussion Points
 
 * How to handle correlated operations?
+
+
