@@ -24,8 +24,9 @@ aggregate_functions:
         return: i64
   - name: "grouping"
     description: >-
-      Indicates whether a specified column in a GROUP BY is aggregated or not,
-      returns 1 for aggregated or 0 for not aggregated in the result set
+      Indicates whether the specified column(s) in a GROUP BY are aggregated or not.
+      The result is a bitmap which indicates whether an argument is aggregated or grouped.
+      If the N-th argument is aggregated then the N-th bit is set to 1.
     impls:
       - args:
           - options: [ SILENT, ERROR ]
