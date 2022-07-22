@@ -189,7 +189,7 @@ aggregate_functions:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i8
-        nullability: DECLARED_OUTPUT
+        nullability: MIRROR
         decomposable: MANY
         intermediate: i8?
         return: i8?
@@ -197,7 +197,7 @@ aggregate_functions:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
-        nullability: DECLARED_OUTPUT
+        nullability: MIRROR
         decomposable: MANY
         intermediate: i16?
         return: i16?
@@ -205,7 +205,7 @@ aggregate_functions:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
-        nullability: DECLARED_OUTPUT
+        nullability: MIRROR
         decomposable: MANY
         intermediate: i32?
         return: i32?
@@ -213,7 +213,7 @@ aggregate_functions:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i64
-        nullability: DECLARED_OUTPUT
+        nullability: MIRROR
         decomposable: MANY
         intermediate: i64?
         return: i64?
@@ -221,7 +221,7 @@ aggregate_functions:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: fp32
-        nullability: DECLARED_OUTPUT
+        nullability: MIRROR
         decomposable: MANY
         intermediate: fp32?
         return: fp32?
@@ -229,7 +229,7 @@ aggregate_functions:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: fp64
-        nullability: DECLARED_OUTPUT
+        nullability: MIRROR
         decomposable: MANY
         intermediate: fp64?
         return: fp64?
