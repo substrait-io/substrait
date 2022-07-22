@@ -191,24 +191,24 @@ aggregate_functions:
           - value: i8
         nullability: MIRROR
         decomposable: MANY
-        intermediate: i8?
-        return: i8?
+        intermediate: i64?
+        return: i64?
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
         nullability: MIRROR
         decomposable: MANY
-        intermediate: i16?
-        return: i16?
+        intermediate: i64?
+        return: i64?
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
         nullability: MIRROR
         decomposable: MANY
-        intermediate: i32?
-        return: i32?
+        intermediate: i64?
+        return: i64?
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
@@ -223,8 +223,8 @@ aggregate_functions:
           - value: fp32
         nullability: MIRROR
         decomposable: MANY
-        intermediate: fp32?
-        return: fp32?
+        intermediate: fp64?
+        return: fp64?
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
