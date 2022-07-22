@@ -191,24 +191,24 @@ aggregate_functions:
           - value: i8
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: i64?
-        return: i64?
+        intermediate: i8?
+        return: i8?
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: i64?
-        return: i64?
+        intermediate: i16?
+        return: i16?
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: i64?
-        return: i64?
+        intermediate: i32?
+        return: i32?
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
@@ -223,8 +223,8 @@ aggregate_functions:
           - value: fp32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: fp64?
-        return: fp64?
+        intermediate: fp32?
+        return: fp32?
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
             required: false
