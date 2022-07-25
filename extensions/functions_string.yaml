@@ -246,4 +246,4 @@ scalar_functions:
           - value: "varchar<L3>"
             name: "replacement"
             description: The replacement string.
-        return: "varchar<L1 - L2 + L3>"
+        return: "varchar<L1>"
