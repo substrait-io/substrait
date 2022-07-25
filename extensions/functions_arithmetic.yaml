@@ -183,7 +183,7 @@ scalar_functions:
         return: i64
 aggregate_functions:
   - name: "sum"
-    description: Sum a set of values.
+    description: Sum a set of values. The sum of zero elements yields null.
     impls:
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
