@@ -164,3 +164,87 @@ scalar_functions:
           - value: "fixedchar<L1>"
           - value: "varchar<L2>"
         return: "BOOLEAN"
+  -
+    name: strpos
+    description: >-
+      Return the position of the first occurrence of a string in another string. The first
+      character of the string is at position 1. If no occurrence is found, 0 is returned.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+            description: The input string.
+          - value: "string"
+            name: "substring"
+            description: The substring to search for.
+        return: i64
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
+          - value: "varchar<L1>"
+            name: "substring"
+            description: The substring to search for.
+        return: i64
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
+          - value: "fixedchar<L2>"
+            name: "substring"
+            description: The substring to search for.
+        return: i64
+  -
+    name: count_substring
+    description: Return the number of non-overlapping occurrences of a substring in an input string.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+            description: The input string.
+          - value: "string"
+            name: "substring"
+            description: The substring to count.
+        return: i64
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
+          - value: "varchar<L2>"
+            name: "substring"
+            description: The substring to count.
+        return: i64
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
+          - value: "fixedchar<L2>"
+            name: "substring"
+            description: The substring to count.
+        return: i64
+  - name: replace
+    description: >-
+      Replace all occurrences of the substring with the replacement string.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+            description: Input string.
+          - value: "string"
+            name: "substring"
+            description: The substring to replace.
+          - value: "string"
+            name: "replacement"
+            description: The replacement string.
+        return: "string"
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: Input string.
+          - value: "varchar<L2>"
+            name: "substring"
+            description: The substring to replace.
+          - value: "varchar<L3>"
+            name: "replacement"
+            description: The replacement string.
+        return: "varchar<L1>"
