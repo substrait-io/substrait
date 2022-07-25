@@ -282,7 +282,17 @@ The aggregate operation groups input data on one or more sets of grouping keys, 
 | Inputs               | 1                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Maintains distribution if all distribution fields are contained in every grouping set. No orderedness guaranteed. |
-| Direct Output Order  | The list of distinct columns from each grouping set (ordered by their first appearance) followed by the list of measures in declaration order, followed by an integer describing the associated particular grouping set the value is derived from. |
+| Direct Output Order  | The list of distinct columns from each grouping set (ordered by their first appearance) followed by the list of measures in declaration order, followed by an `i32` describing the associated particular grouping set the value is derived from (if applicable). |
+
+In its simplest form, an aggregation has only measures. In this case, all records are folded into one, and a column is returned for each aggregate expression in the measures list.
+
+Grouping sets can be used for finer-grained control over which records are folded. Within a grouping set, two records will be folded together if and only if each expressions in the grouping set yields the same value for each. The values returned by the grouping sets will be returned as columns to the left of the columns for the aggregate expressions. If a grouping set contains no grouping expressions, all rows will be folded for that grouping set.
+
+It's possible to specify multiple grouping sets in a single aggregate operation. The grouping sets behave more or less independently, with each returned record belonging to one of the grouping sets. The values for the grouping expression columns that are not part of the grouping set for a particular record will be set to null. Two grouping expressions will be returned using the same column if they represent the protobuf messages describing the expressions are equal. The columns for grouping expressions that do *not* appear in *all* grouping sets will be nullable (regardless of the nullability of the type returned by the grouping expression) to accomodate the null insertion.
+
+To further disambiguate which record belongs to which grouping set, an aggregate relation with more than one grouping set receives an extra `i32` column on the right-hand side. The value of this field will be the zero-based index of the grouping set that yielded the record.
+
+If at least one grouping expression is present, the aggregation is allowed to not have any aggregate expressions. An aggregate relation is invalid if it would yield zero columns.
 
 ### Aggregate Properties
 
@@ -290,7 +300,7 @@ The aggregate operation groups input data on one or more sets of grouping keys, 
 | ---------------- | ------------------------------------------------------------ | --------------------------------------- |
 | Input            | The relational input.                                        | Required                                |
 | Grouping Sets    | One or more grouping sets.                                   | Optional, required if no measures.      |
-| Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional, defaults to 0.                |
+| Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional.      |
 | Measures         | A list of one or more aggregate expressions along with an optional filter. | Optional, required if no grouping sets. |
 
 
