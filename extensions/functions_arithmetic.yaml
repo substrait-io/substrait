@@ -162,6 +162,36 @@ scalar_functions:
           - value: fp64
         return: fp64
   -
+    name: "negate"
+    description: "Negation of the value"
+    impls:
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i8
+        return: i8
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i16
+        return: i16
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i32
+        return: i32
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i64
+        return: i64
+      - args:
+          - value: fp32
+        return: fp32
+      - args:
+          - value: fp64
+        return: fp64
+  -
     name: "modulus"
     description: "Get the remainder when dividing one value by another."
     impls:
@@ -181,6 +211,55 @@ scalar_functions:
           - value: i64
           - value: i64
         return: i64
+  -
+    name: "power"
+    description: "Take the power with the first value as the base and second as exponent."
+    impls:
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i64
+          - value: i64
+        return: i64
+      - args:
+          - value: fp32
+          - value: fp32
+        return: fp32
+      - args:
+          - value: fp64
+          - value: fp64
+        return: fp64
+  -
+    name: "sqrt"
+    description: "Square root of the value"
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
+          - value: i64
+        return: fp64
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
+          - value: fp32
+        return: fp32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
+          - value: fp64
+        return: fp64
 aggregate_functions:
   - name: "sum"
     description: Sum a set of values. The sum of zero elements yields null.

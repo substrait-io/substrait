@@ -44,7 +44,8 @@ scalar_functions:
           - value: i32
           - value: i32
         return: "string"
-  - name: starts_with
+  - 
+    name: starts_with
     description: Whether this string starts with another string.
     impls:
       - args:
