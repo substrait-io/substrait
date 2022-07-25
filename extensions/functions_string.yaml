@@ -176,23 +176,7 @@ scalar_functions:
           - value: "string"
             name: "substring"
             description: The substring to search for.
-        return: i8
-      - args:
-          - value: "string"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
-            name: "substring"
-            description: The substring to search for.
-        return: i8
-      - args:
-          - value: "string"
-            name: "input"
-            description: The input string.
-          - value: "fixedchar<L1>"
-            name: "substring"
-            description: The substring to search for.
-        return: i8
+        return: i64
       - args:
           - value: "varchar<L1>"
             name: "input"
@@ -200,83 +184,15 @@ scalar_functions:
           - value: "varchar<L1>"
             name: "substring"
             description: The substring to search for.
-        return: i8
+        return: i64
       - args:
-          - value: "varchar<L1>"
+          - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
-          - value: "string"
+          - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to search for.
-        return: i8
-      - args:
-          - value: "varchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "fixedchar<L1>"
-            name: "substring"
-            description: The substring to search for.
-        return: i8
-      - args:
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "fixedchar<L1>"
-            name: "substring"
-            description: The substring to search for.
-        return: i8
-      - args:
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "string"
-            name: "substring"
-            description: The substring to search for.
-        return: i8
-      - args:
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
-            name: "substring"
-            description: The substring to search for.
-        return: i8
-  -
-    name: regexp_strpos
-    description: >-
-      Return the position of the first occurrence of a regular expression pattern in another
-      string. The first character of the string is at position 1. If no occurrence is found,
-      0 is returned.
-    impls:
-      - args:
-          - options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - value: "string"
-            name: "input"
-            description: The input string.
-          - value: "string"
-            name: "pattern"
-            description: The regular expression pattern.
-      - args:
-          - options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - value: "varchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
-            name: "pattern"
-            description: The regular expression pattern.
-        return: i8
-      - args:
-          - options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "fixedchar<L1>"
-            name: "pattern"
-            description: The regular expression pattern.
-        return: i8
+        return: i64
   -
     name: count_substring
     description: Returns the number of times a substring occurs in an input string.
@@ -288,23 +204,7 @@ scalar_functions:
           - value: "string"
             name: "substring"
             description: The substring to count.
-        return: i8
-      - args:
-          - value: "string"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
-            name: "substring"
-            description: The substring to count.
-        return: i8
-      - args:
-          - value: "string"
-            name: "input"
-            description: The input string.
-          - value: "fixedchar<L1>"
-            name: "substring"
-            description: The substring to count.
-        return: i8
+        return: i64
       - args:
           - value: "varchar<L1>"
             name: "input"
@@ -312,119 +212,18 @@ scalar_functions:
           - value: "varchar<L1>"
             name: "substring"
             description: The substring to count.
-        return: i8
-      - args:
-          - value: "varchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "string"
-            name: "substring"
-            description: The substring to count.
-        return: i8
-      - args:
-          - value: "varchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "fixedchar<L1>"
-            name: "substring"
-            description: The substring to count.
-        return: i8
+        return: i64
       - args:
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
-          - value: "fixedchar<L1>"
+          - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to count.
-        return: i8
-      - args:
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "string"
-            name: "substring"
-            description: The substring to count.
-        return: i8
-      - args:
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
-            name: "substring"
-            description: The substring to count.
-        return: i8
-  -
-    name: regexp_count_substring
-    description: Returns the number of times a regular expression pattern occurs in an input string.
-    impls:
-      - args:
-          - options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - value: "string"
-            name: "input"
-            description: Input string.
-          - value: "string"
-            name: "pattern"
-            description: The regular expression pattern.
-        return: i8
-      - args:
-          - options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - value: "varchar<L1>"
-            name: "input"
-            description: Input string.
-          - value: "varchar<L1>"
-            name: "pattern"
-            description: The regular expression pattern.
-        return: i8
-      - args:
-          - options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: Input string.
-          - value: "fixedchar<L1>"
-            name: "pattern"
-            description: The regular expression pattern.
-        return: i8
-  -
-    name: regexp_matches
-    description: >-
-      Returns true if part of the input string matches the regular expression pattern.
-    impls:
-      - args:
-          - options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - value: "string"
-            name: "input"
-            description: Input string.
-          - value: "string"
-            name: "pattern"
-            description: The regular expression pattern.
-        return: "BOOLEAN"
-      - args:
-          - options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - value: "varchar<L1>"
-            name: "input"
-            description: Input string.
-          - value: "varchar<L1>"
-            name: "pattern"
-            description: The regular expression pattern.
-        return: "BOOLEAN"
-      - args:
-          - options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: Input string.
-          - value: "fixedchar<L1>"
-            name: "pattern"
-            description: The regular expression pattern.
-        return: "BOOLEAN"
+        return: i64
   - name: replace
     description: >-
-      Replace any occurrence of the substring with the replacement string
+      Replace all occurrence of the substring with the replacement string.
     impls:
       - args:
           - value: "string"
@@ -448,70 +247,3 @@ scalar_functions:
             name: "replacement"
             description: The replacement string.
         return: "varchar<L1>"
-      - args:
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: Input string.
-          - value: "fixedchar<L1>"
-            name: "substring"
-            description: The substring to replace.
-          - value: "fixedchar<L1>"
-            name: "replacement"
-            description: The replacement string.
-        return: "fixedchar<L1>"
-  -
-    name: regexp_replace
-    description: >-
-      Replace the occurrence of the pattern with the replacement string.
-    impls:
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - name: pattern_matching
-            options: [ FIRST_OCCURRENCE, ALL_OCCURRENCES ]
-            required: false
-          - value: "string"
-            name: "input"
-            description: Input string.
-          - value: "string"
-            name: "pattern"
-            description:  The regular expression for matching.
-          - value: "string"
-            name: "replacement"
-            description: The string to replace the regular expression match with.
-        return: "string"
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - name: pattern_matching
-            options: [ FIRST_OCCURRENCE, ALL_OCCURRENCES ]
-            required: false
-          - value: "varchar<L1>"
-            name: "input"
-            description: Input string.
-          - value: "varchar<L1>"
-            name: "pattern"
-            description:  The regular expression for matching.
-          - value: "varchar<L1>"
-            name: "replacement"
-            description: The string to replace the regular expression match with.
-        return: "varchar<L1>"
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
-            required: false
-          - name: pattern_matching
-            options: [ FIRST_OCCURRENCE, ALL_OCCURRENCES ]
-            required: false
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: Input string.
-          - value: "fixedchar<L1>"
-            name: "pattern"
-            description:  The regular expression for matching.
-          - value: "fixedchar<L1>"
-            name: "replacement"
-            description: The string to replace the regular expression match with.
-        return: "fixedchar<L1>"
