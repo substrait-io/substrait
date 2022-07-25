@@ -126,18 +126,26 @@ scalar_functions:
     description: "Divide one value by another. Partial values are truncated."
     impls:
       - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
           - value: i8
           - value: i8
         return: i8
       - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
           - value: i16
           - value: i16
         return: i16
       - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
           - value: i32
           - value: i32
         return: i32
       - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
           - value: i64
           - value: i64
         return: i64
