@@ -362,3 +362,59 @@ aggregate_functions:
         decomposable: MANY
         intermediate: fp64?
         return: fp64?
+window_functions:
+  - name: "row_number"
+    description: "the number of the current row within its partition."
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: i64?
+        window_type: PARTITION
+  - name: "rank"
+    description: "the rank of the current row, with gaps."
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: i64?
+        window_type: PARTITION
+  - name: "dense_rank"
+    description: "the rank of the current row, without gaps."
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: i64?
+        window_type: PARTITION
+  - name: "percent_rank"
+    description: "the relative rank of the current row."
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: fp64?
+        window_type: PARTITION
+  - name: "cume_dist"
+    description: "the cumulative distribution."
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: fp64?
+        window_type: PARTITION
+  - name: "ntile"
+    description: "Return an integer ranging from 1 to the argument value,dividing the partition as equally as possible."
+    impls:
+      - args:
+          - value: i32
+        nullability: DECLARED_OUTPUT  
+        decomposable: NONE
+        return: i32?
+        window_type: PARTITION
+      - args:
+          - value: i64
+        nullability: DECLARED_OUTPUT  
+        decomposable: NONE
+        return: i64?
+        window_type: PARTITION
