@@ -3,15 +3,19 @@
 scalar_functions:
   -
     name: concat
-    description: Concatenate two strings
+    description: Concatenate strings.
     impls:
       - args:
           - value: "varchar<L1>"
-          - value: "varchar<L2>"
-        return: "varchar<L1 + L2>"
+            name: "input"
+        variadic:
+          min: 1
+        return: "varchar<L1>"
       - args:
           - value: "string"
-          - value: "string"
+            name: "input"
+        variadic:
+          min: 1
         return: "string"
   -
     name: like
@@ -45,23 +49,32 @@ scalar_functions:
   -
     name: substring
     description: >-
-      Extract a substring of a specified length starting from position start.
-      A start value of 1 refers to the first characters of the string.
+      Extract a substring of a specified `length` starting from position `start`.
+      A `start` value of 1 refers to the first characters of the string.
     impls:
       - args:
           - value: "varchar<L1>"
+            name: "input"
           - value: i32
+            name: "start"
           - value: i32
+            name: "length"
         return: "varchar<L1>"
       - args:
           - value: "string"
+            name: "input"
           - value: i32
+            name: "start"
           - value: i32
+            name: "length"
         return: "string"
       - args:
           - value: "fixedchar<l1>"
+            name: "input"
           - value: i32
+            name: "start"
           - value: i32
+            name: "length"
         return: "string"
   -
     name: starts_with
@@ -498,6 +511,290 @@ scalar_functions:
             description: The replacement string.
         return: "varchar<L1>"
   -
+    name: concat_ws
+    description: Concatenate strings together separated by a separator.
+    impls:
+      - args:
+          - value: "string"
+            name: "separator"
+            description: Character to separate strings by.
+          - value: "string"
+            name: "string_arguments"
+            description: Strings to be concatenated.
+        variadic:
+          min: 1
+        return: "string"
+      - args:
+          - value: "varchar<L2>"
+            name: "separator"
+            description: Character to separate strings by.
+          - value: "varchar<L1>"
+            name: "string_arguments"
+            description: Strings to be concatenated.
+        variadic:
+          min: 1
+        return: "varchar<L1>"
+  -
+    name: repeat
+    description: Repeat a string `count` number of times.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+          - value: i64
+            name: "count"
+        return: "string"
+      - args:
+          - value: "varchar<L1>"
+          - value: i64
+            name: "input"
+          - value: i64
+            name: "count"
+        return: "varchar<L1>"
+  -
+    name: reverse
+    description: Returns the string in reverse order.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+        return: "string"
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        return: "varchar<L1>"
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: "fixedchar<L1>"
+  -
+    name: replace_slice
+    description: >-
+      Replace a slice of the input string.  A specified 'length' of characters will be deleted from
+      the input string beginning at the 'start' position and will be replaced by a new string.  A
+      start value of 1 indicates the first character of the input string. If start is negative
+      or zero, or greater than the length of the input string, a null string is returned. If 'length'
+      is negative, a null string is returned.  If 'length' is zero, inserting of the new string
+      occurs at the specified 'start' position and no characters are deleted. If 'length' is
+      greater than the input string, deletion will occur up to the last character of the input string.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+            description: Input string.
+          - value: i64
+            name: "start"
+            description: The position in the string to start deleting/inserting characters.
+          - value: i64
+            name: "length"
+            description: The number of characters to delete from the input string.
+          - value: "string"
+            name: "replacement"
+            description: The new string to insert at the start position.
+        return: "string"
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: Input string.
+          - value: i64
+            name: "start"
+            description: The position in the string to start deleting/inserting characters.
+          - value: i64
+            name: "length"
+            description: The number of characters to delete from the input string.
+          - value: "varchar<L2>"
+            name: "replacement"
+            description: The new string to insert at the start position.
+        return: "varchar<L1>"
+  -
+    name: lower
+    description: >-
+      Transform the string to lower case characters. Implementation should follow the utf8_unicode_ci
+      collations according to the Unicode Collation Algorithm described at http://www.unicode.org/reports/tr10/.
+    impls:
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "string"
+            name: "input"
+        return: "string"
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+        return: "varchar<L1>"
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: "fixedchar<L1>"
+  -
+    name: upper
+    description: >-
+      Transform the string to upper case characters. Implementation should follow the utf8_unicode_ci
+      collations according to the Unicode Collation Algorithm described at http://www.unicode.org/reports/tr10/.
+    impls:
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "string"
+            name: "input"
+        return: "string"
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+        return: "varchar<L1>"
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: "fixedchar<L1>"
+  -
+    name: swapcase
+    description: >-
+      Transform the string's lowercase characters to uppercase and uppercase characters to
+      lowercase. Implementation should follow the utf8_unicode_ci collations according to the
+      Unicode Collation Algorithm described at http://www.unicode.org/reports/tr10/.
+    impls:
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "string"
+            name: "input"
+        return: "string"
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+        return: "varchar<L1>"
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: "fixedchar<L1>"
+  -
+    name: capitalize
+    description: >-
+      Capitalize the first character of the input string. Implementation should follow the
+      utf8_unicode_ci collations according to the Unicode Collation Algorithm described at
+      http://www.unicode.org/reports/tr10/.
+    impls:
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "string"
+            name: "input"
+        return: "string"
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+        return: "varchar<L1>"
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: "fixedchar<L1>"
+  -
+    name: title
+    description: >-
+      Converts the input string into titlecase. Capitalize the first character of each word in the
+      input string except for articles (a, an, the). Implementation should follow the
+      utf8_unicode_ci collations according to the Unicode Collation Algorithm described at
+      http://www.unicode.org/reports/tr10/.
+    impls:
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "string"
+            name: "input"
+        return: "string"
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+        return: "varchar<L1>"
+      - args:
+          - name: char_set
+            options: [ UTF8, ASCII_ONLY ]
+            required: false
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: "fixedchar<L1>"
+  -
+    name: char_length
+    description: >-
+      Return the number of characters in the input string.  The length includes trailing spaces.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+        return: i64
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        return: i64
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: i64
+  -
+    name: bit_length
+    description: Return the number of bits in the input string.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+        return: i64
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        return: i64
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: i64
+  -
+    name: octet_length
+    description: Return the number of bytes in the input string.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+        return: i64
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        return: i64
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: i64
+  -
     name: ltrim
     description: >-
       Remove any occurrence of the characters from the left side of the string.
@@ -627,25 +924,33 @@ scalar_functions:
         return: "string"
   -
     name: left
-    description: Extract count characters starting from the left of the string.
+    description: Extract `count` characters starting from the left of the string.
     impls:
       - args:
           - value: "varchar<L1>"
+            name: "input"
           - value: i32
+            name: "count"
         return: "varchar<L1>"
       - args:
           - value: "string"
+            name: "input"
           - value: i32
+            name: "count"
         return: "string"
   -
     name: right
-    description: Extract count characters starting from the right of the string.
+    description: Extract `count` characters starting from the right of the string.
     impls:
       - args:
           - value: "varchar<L1>"
+            name: "input"
           - value: i32
+            name: "count"
         return: "varchar<L1>"
       - args:
           - value: "string"
+            name: "input"
           - value: i32
+            name: "count"
         return: "string"
