@@ -1,6 +1,17 @@
 Release Notes
 ---
 
+## [0.8.0](https://github.com/substrait-io/substrait/compare/v0.7.0...v0.8.0) (2022-07-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* The signature of divide functions for multiple types now specify an enumeration prior to specifying operands.
+
+### Bug Fixes
+
+* add overflow behavior to integer division ([#223](https://github.com/substrait-io/substrait/issues/223)) ([cf552d7](https://github.com/substrait-io/substrait/commit/cf552d7c76da9a91bce992391356c6ffb5a969ac))
+
 ## [0.7.0](https://github.com/substrait-io/substrait/compare/v0.6.0...v0.7.0) (2022-07-11)
 
 

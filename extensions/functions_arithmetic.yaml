@@ -162,6 +162,36 @@ scalar_functions:
           - value: fp64
         return: fp64
   -
+    name: "negate"
+    description: "Negation of the value"
+    impls:
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i8
+        return: i8
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i16
+        return: i16
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i32
+        return: i32
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i64
+        return: i64
+      - args:
+          - value: fp32
+        return: fp32
+      - args:
+          - value: fp64
+        return: fp64
+  -
     name: "modulus"
     description: "Get the remainder when dividing one value by another."
     impls:
@@ -181,9 +211,58 @@ scalar_functions:
           - value: i64
           - value: i64
         return: i64
+  -
+    name: "power"
+    description: "Take the power with the first value as the base and second as exponent."
+    impls:
+      - args:
+          - options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i64
+          - value: i64
+        return: i64
+      - args:
+          - value: fp32
+          - value: fp32
+        return: fp32
+      - args:
+          - value: fp64
+          - value: fp64
+        return: fp64
+  -
+    name: "sqrt"
+    description: "Square root of the value"
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
+          - value: i64
+        return: fp64
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
+          - value: fp32
+        return: fp32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
+          - value: fp64
+        return: fp64
 aggregate_functions:
   - name: "sum"
-    description: Sum a set of values.
+    description: Sum a set of values. The sum of zero elements yields null.
     impls:
       - args:
           - options: [ SILENT, SATURATE, ERROR ]
@@ -362,3 +441,59 @@ aggregate_functions:
         decomposable: MANY
         intermediate: fp64?
         return: fp64?
+window_functions:
+  - name: "row_number"
+    description: "the number of the current row within its partition."
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: i64?
+        window_type: PARTITION
+  - name: "rank"
+    description: "the rank of the current row, with gaps."
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: i64?
+        window_type: PARTITION
+  - name: "dense_rank"
+    description: "the rank of the current row, without gaps."
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: i64?
+        window_type: PARTITION
+  - name: "percent_rank"
+    description: "the relative rank of the current row."
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: fp64?
+        window_type: PARTITION
+  - name: "cume_dist"
+    description: "the cumulative distribution."
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: fp64?
+        window_type: PARTITION
+  - name: "ntile"
+    description: "Return an integer ranging from 1 to the argument value,dividing the partition as equally as possible."
+    impls:
+      - args:
+          - value: i32
+        nullability: DECLARED_OUTPUT  
+        decomposable: NONE
+        return: i32?
+        window_type: PARTITION
+      - args:
+          - value: i64
+        nullability: DECLARED_OUTPUT  
+        decomposable: NONE
+        return: i64?
+        window_type: PARTITION
