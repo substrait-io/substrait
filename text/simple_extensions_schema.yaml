@@ -3,6 +3,16 @@ $schema: https://json-schema.org/draft/2020-12/schema
 additionalProperties: false
 type: object
 properties:
+  dependencies:
+    # For reusing type classes and type variations from other extension files.
+    # The keys are namespace identifiers that you can then use as dot-separated
+    # prefix for type class and type variation names in functions and the base
+    # type class for variations. The values must be extension URIs, following
+    # the same format and conventions as those used in the proto plans.
+    type: object
+    patternProperties:
+      "^[a-zA-Z_\\$][a-zA-Z0-9_\\$]*$":
+        type: string
   types:
     type: array
     minItems: 1
