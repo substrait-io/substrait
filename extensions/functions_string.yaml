@@ -319,7 +319,12 @@ scalar_functions:
         return: "string"
   -
     name: lpad
-    description: Left-pad the string with the characters until the specified length of the string has been reached.
+    description: >-
+      Left-pad the input string with the string of 'characters' until the specified length of the
+      string has been reached. If the input string is longer than 'length', remove characters from
+      the right-side to shorten it to 'length' characters. If the string of 'characters' is longer
+      than the remaining 'length' needed to be filled, only pad until 'length' has been reached.
+      If 'characters' is not specified, the default value is a single space.
     impls:
       - args:
           - value: "varchar<L1>"
@@ -330,7 +335,7 @@ scalar_functions:
             description: "The length of the output string."
           - value: "varchar<L2>"
             name: "characters"
-            description: "The set of characters to use for padding."
+            description: "The string of characters to use for padding."
         return: "varchar<L1>"
       - args:
           - value: "string"
@@ -341,11 +346,16 @@ scalar_functions:
             description: "The length of the output string."
           - value: "string"
             name: "characters"
-            description: "The set of characters to use for padding."
+            description: "The string of characters to use for padding."
         return: "string"
   -
     name: rpad
-    description: Right-pad the string with the characters until the specified length of the string has been reached.
+    description: >-
+      Right-pad the input string with the string of 'characters' until the specified length of the
+      string has been reached. If the input string is longer than 'length', remove characters from
+      the left-side to shorten it to 'length' characters. If the string of 'characters' is longer
+      than the remaining 'length' needed to be filled, only pad until 'length' has been reached.
+      If 'characters' is not specified, the default value is a single space.
     impls:
       - args:
           - value: "varchar<L1>"
@@ -356,7 +366,7 @@ scalar_functions:
             description: "The length of the output string."
           - value: "varchar<L2>"
             name: "characters"
-            description: "The set of characters to use for padding."
+            description: "The string of characters to use for padding."
         return: "varchar<L1>"
       - args:
           - value: "string"
@@ -367,7 +377,7 @@ scalar_functions:
             description: "The length of the output string."
           - value: "string"
             name: "characters"
-            description: "The set of characters to use for padding."
+            description: "The string of characters to use for padding."
         return: "string"
   -
     name: center
