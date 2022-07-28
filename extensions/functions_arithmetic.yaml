@@ -637,6 +637,63 @@ aggregate_functions:
         decomposable: MANY
         intermediate: fp64?
         return: fp64?
+  - name: "product"
+    description: Product of a set of values. Returns 1 for empty input.
+    impls:
+      - args:
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i8
+        nullability: MIRROR
+        decomposable: MANY
+        intermediate: i64
+        return: i8
+      - args:
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i16
+        nullability: MIRROR
+        decomposable: MANY
+        intermediate: i64
+        return: i16
+      - args:
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i32
+        nullability: MIRROR
+        decomposable: MANY
+        intermediate: i64
+        return: i32
+      - args:
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i64
+        nullability: MIRROR
+        decomposable: MANY
+        intermediate: i64
+        return: i64
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: fp32
+        nullability: MIRROR
+        decomposable: MANY
+        intermediate: fp64
+        return: fp32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: fp64
+        nullability: MIRROR
+        decomposable: MANY
+        intermediate: fp64
+        return: fp64
 window_functions:
   - name: "row_number"
     description: "the number of the current row within its partition."
