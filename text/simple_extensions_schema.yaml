@@ -200,7 +200,7 @@ $defs:
         items:
           type: object
           additionalProperties: false
-          required: [ intermediate, return ]
+          required: [ return ]
           properties:
             args:
               $ref: "#/$defs/arguments"

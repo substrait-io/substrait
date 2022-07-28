@@ -694,6 +694,23 @@ aggregate_functions:
         decomposable: MANY
         intermediate: fp64
         return: fp64
+  - name: "std_dev"
+    description: Calculates standard-deviation for a set of values.
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: fp32
+        nullability: DECLARED_OUTPUT
+        return: fp32?
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: fp64
+        nullability: DECLARED_OUTPUT
+        return: fp64?
 window_functions:
   - name: "row_number"
     description: "the number of the current row within its partition."
