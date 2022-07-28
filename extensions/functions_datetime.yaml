@@ -147,7 +147,7 @@ scalar_functions:
         return: boolean
   -
     name: "gte"
-    description: less than or equal to
+    description: greater than or equal to
     impls:
       - args:
           - value: timestamp
@@ -171,7 +171,7 @@ scalar_functions:
         return: boolean
   -
     name: "gt"
-    description: less than
+    description: greater than
     impls:
       - args:
           - value: timestamp
