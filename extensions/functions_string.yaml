@@ -27,7 +27,9 @@ scalar_functions:
         return: "BOOLEAN"
   -
     name: substring
-    description: Extract a portion of a string from another string.
+    description: >-
+      Extract a substring of a specified length starting from position start.
+      A start value of 1 refers to the first characters of the string.
     impls:
       - args:
           - value: "varchar<L1>"
@@ -44,7 +46,7 @@ scalar_functions:
           - value: i32
           - value: i32
         return: "string"
-  - 
+  -
     name: starts_with
     description: Whether this string starts with another string.
     impls:
@@ -222,7 +224,8 @@ scalar_functions:
             name: "substring"
             description: The substring to count.
         return: i64
-  - name: replace
+  -
+    name: replace
     description: >-
       Replace all occurrences of the substring with the replacement string.
     impls:
@@ -248,3 +251,155 @@ scalar_functions:
             name: "replacement"
             description: The replacement string.
         return: "varchar<L1>"
+  -
+    name: ltrim
+    description: >-
+      Remove any occurrence of the characters from the left side of the string.
+      If no characters are specified, spaces are removed.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
+          - value: "varchar<L2>"
+            name: "characters"
+            description: "The set of characters to remove."
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+            description: "The string to remove characters from."
+          - value: "string"
+            name: "characters"
+            description: "The set of characters to remove."
+        return: "string"
+  -
+    name: rtrim
+    description: >-
+      Remove any occurrence of the characters from the right side of the string.
+      If no characters are specified, spaces are removed.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
+          - value: "varchar<L2>"
+            name: "characters"
+            description: "The set of characters to remove."
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+            description: "The string to remove characters from."
+          - value: "string"
+            name: "characters"
+            description: "The set of characters to remove."
+        return: "string"
+  -
+    name: trim
+    description: >-
+      Remove any occurrence of the characters from the left and right sides of
+      the string. If no characters are specified, spaces are removed.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
+          - value: "varchar<L2>"
+            name: "characters"
+            description: "The set of characters to remove."
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+            description: "The string to remove characters from."
+          - value: "string"
+            name: "characters"
+            description: "The set of characters to remove."
+        return: "string"
+  -
+    name: lpad
+    description: >-
+      Left-pad the input string with the string of 'characters' until the specified length of the
+      string has been reached. If the input string is longer than 'length', remove characters from
+      the right-side to shorten it to 'length' characters. If the string of 'characters' is longer
+      than the remaining 'length' needed to be filled, only pad until 'length' has been reached.
+      If 'characters' is not specified, the default value is a single space.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: "The string to pad."
+          - value: i32
+            name: "length"
+            description: "The length of the output string."
+          - value: "varchar<L2>"
+            name: "characters"
+            description: "The string of characters to use for padding."
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+            description: "The string to pad."
+          - value: i32
+            name: "length"
+            description: "The length of the output string."
+          - value: "string"
+            name: "characters"
+            description: "The string of characters to use for padding."
+        return: "string"
+  -
+    name: rpad
+    description: >-
+      Right-pad the input string with the string of 'characters' until the specified length of the
+      string has been reached. If the input string is longer than 'length', remove characters from
+      the left-side to shorten it to 'length' characters. If the string of 'characters' is longer
+      than the remaining 'length' needed to be filled, only pad until 'length' has been reached.
+      If 'characters' is not specified, the default value is a single space.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: "The string to pad."
+          - value: i32
+            name: "length"
+            description: "The length of the output string."
+          - value: "varchar<L2>"
+            name: "characters"
+            description: "The string of characters to use for padding."
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+            description: "The string to pad."
+          - value: i32
+            name: "length"
+            description: "The length of the output string."
+          - value: "string"
+            name: "characters"
+            description: "The string of characters to use for padding."
+        return: "string"
+  -
+    name: left
+    description: Extract count characters starting from the left of the string.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: i32
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+          - value: i32
+        return: "string"
+  -
+    name: right
+    description: Extract count characters starting from the right of the string.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+          - value: i32
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+          - value: i32
+        return: "string"
