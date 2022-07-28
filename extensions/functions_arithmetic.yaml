@@ -30,13 +30,15 @@ scalar_functions:
           - value: i64
         return: i64
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp32
           - value: fp32
         return: fp32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp64
           - value: fp64
@@ -70,13 +72,15 @@ scalar_functions:
           - value: i64
         return: i64
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp32
           - value: fp32
         return: fp32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp64
           - value: fp64
@@ -110,13 +114,15 @@ scalar_functions:
           - value: i64
         return: i64
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp32
           - value: fp32
         return: fp32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp64
           - value: fp64
@@ -150,13 +156,21 @@ scalar_functions:
           - value: i64
         return: i64
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
             required: false
           - value: fp32
           - value: fp32
         return: fp32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
             required: false
           - value: fp64
           - value: fp64
