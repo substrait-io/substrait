@@ -1,6 +1,51 @@
 Release Notes
 ---
 
+## [0.9.0](https://github.com/substrait-io/substrait/compare/v0.8.0...v0.9.0) (2022-07-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* **arithmetic:** Options SILENT, SATURATE, ERROR are no longer valid for use with floating point
+arguments to add, subtract, multiply or divide
+* function argument bindings were open to interpretation
+before, and were often produced incorrectly; therefore, this change
+semantically shifts some responsibilities from the consumers to the
+producers.
+* the grouping set index column now only exists if there is more
+than one grouping set.
+* Existing plans that are modeling `cast` with the `cast`
+function (as opposed to the `cast` expression) will no longer be valid. All
+producers/consumers should use the `cast` expression type.
+
+### Features
+
+* add functions for arithmetic, rounding, logarithmic, and string transformations ([#245](https://github.com/substrait-io/substrait/issues/245)) ([f7c5da5](https://github.com/substrait-io/substrait/commit/f7c5da5625f50514ba70b9e8a32cb2e7085c24f1))
+* add standard deviation functions ([#257](https://github.com/substrait-io/substrait/issues/257)) ([1339534](https://github.com/substrait-io/substrait/commit/13395340f6971f705e43f304005ea540d04780ce))
+* add string containment functions ([#256](https://github.com/substrait-io/substrait/issues/256)) ([d6b9b34](https://github.com/substrait-io/substrait/commit/d6b9b344f0f0865573a79feb6ec818c146b47f62))
+* add string trimming and padding functions ([#248](https://github.com/substrait-io/substrait/issues/248)) ([8a8f65d](https://github.com/substrait-io/substrait/commit/8a8f65d3860ce8fc09424947b4fb45b8dd21cef0))
+* add trigonometry functions ([#241](https://github.com/substrait-io/substrait/issues/241)) ([d83d566](https://github.com/substrait-io/substrait/commit/d83d566851a0fb5d35c2b23ed8aa549b88d6a63b))
+* add variance function ([#263](https://github.com/substrait-io/substrait/issues/263)) ([b6c3772](https://github.com/substrait-io/substrait/commit/b6c377216687a6e253d4b7ec77b48a886cfb501a))
+* **arithmetic:** add abs and sign to scalar function extensions ([#244](https://github.com/substrait-io/substrait/issues/244)) ([1b9a45f](https://github.com/substrait-io/substrait/commit/1b9a45fd4f4ea9f9db3d3e7132c5db4d06c05e77))
+* support window functions ([#224](https://github.com/substrait-io/substrait/issues/224)) ([4b2072a](https://github.com/substrait-io/substrait/commit/4b2072a40447a4f1a3f6875fa0476cc57145ba30))
+
+
+### Bug Fixes
+
+* **message:** commit lint issue ([#250](https://github.com/substrait-io/substrait/issues/250)) ([34ec8f5](https://github.com/substrait-io/substrait/commit/34ec8f570b7782c1d26bc6d237d461f211dd8078))
+* removes cast function definition ([#253](https://github.com/substrait-io/substrait/issues/253)) ([66a3476](https://github.com/substrait-io/substrait/commit/66a347603bd0a2cba27d749864a9bdb1164eb1dd)), closes [#88](https://github.com/substrait-io/substrait/issues/88) [#152](https://github.com/substrait-io/substrait/issues/152)
+* specify how function arguments are to be bound ([#231](https://github.com/substrait-io/substrait/issues/231)) ([d4cfbe0](https://github.com/substrait-io/substrait/commit/d4cfbe014e9c126ac008094323a2baca9f47c42d))
+
+
+### Documentation
+
+* better explain aggregate relations ([#260](https://github.com/substrait-io/substrait/issues/260)) ([42d9ca3](https://github.com/substrait-io/substrait/commit/42d9ca31a032e1fac0248a998501241eaa27b56f))
+
+
+### Code Refactoring
+
+* **arithmetic:** specify FP overflow and domain options for remaining ops ([#269](https://github.com/substrait-io/substrait/issues/269)) ([de64a3c](https://github.com/substrait-io/substrait/commit/de64a3c8879c6e0219dd405ce18659219ead926a))
+
 ## [0.8.0](https://github.com/substrait-io/substrait/compare/v0.7.0...v0.8.0) (2022-07-17)
 
 
