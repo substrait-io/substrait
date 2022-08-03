@@ -1,7 +1,7 @@
 name: Update Function Docs
 on:
   push:
-    branches: [ yaml_to_docs ]
+    branches: [ main ]
     paths:
       - 'site/docs/functions/generate_function_docs.py'
       - 'extensions/**'
@@ -10,7 +10,7 @@ jobs:
   site:
     name: Generate Function Documentation
     runs-on: ubuntu-latest
-    if: ${{ github.repository == 'richtia/substrait' }}
+    if: ${{ github.repository == 'substrait-io/substrait' }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python
@@ -28,7 +28,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
-          git commit -m "update function docs" -a
+          git commit -m "docs: update function docs" -a
       - name: GitHub Push
         uses: ad-m/github-push-action@v0.6.0
         with:
