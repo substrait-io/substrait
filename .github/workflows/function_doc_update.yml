@@ -17,6 +17,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.8'
+      - name: Install dependencies
+        run: python3 -m pip install -r ./site/requirements.txt
       - name: Generate function docs
         run: |
           cd site/docs/functions
