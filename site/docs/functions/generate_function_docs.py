@@ -87,9 +87,12 @@ def write_markdown(file_obj: dict) -> None:
                 )
                 option_names_list = list(dict.fromkeys(option_names_list))
                 options_list = list(dict.fromkeys(options_list))
-                arg_values = [f"`{x}`" for x in arg_string + option_names_list]
+                arg_values = [
+                    f"{x.replace('<','&lt').replace('>','&gt')}"
+                    for x in arg_string + option_names_list
+                ]
                 arg_names_and_options = [
-                    f"`{x}`" for x in arg_names + option_names_list
+                    f"{x}" for x in arg_names + option_names_list
                 ]
                 # reset the options names list for the next function implementation.
                 option_names_list = []
@@ -100,10 +103,10 @@ def write_markdown(file_obj: dict) -> None:
                 # names are provided and an example implementation doesn't already exist.
                 if len(arg_names) > 0 and not EXAMPLE_IMPL:
                     mdFile.new_line(
-                        f"{function_name}({func_concat_arg_input_names}): -> `return_type`"
+                        f"{function_name}({func_concat_arg_input_names}): -> `return_type` "
                     )
                     for arg_name, arg_desc in zip(arg_names, arg_descriptions):
-                        mdFile.new_paragraph(f"- {arg_name}: {arg_desc}")
+                        mdFile.new_line(f"<li>{arg_name}: {arg_desc}</li>")
                     EXAMPLE_IMPL = True
 
                 # If the return value for the function implementation is multiple lines long,
@@ -120,8 +123,8 @@ def write_markdown(file_obj: dict) -> None:
                     mdFile.new_line("\t```")
                 else:
                     mdFile.new_line(
-                        f"{count}. {function_name}({func_concat_arg_input_values}): -> "
-                        f"`{impls['return']}`"
+                        f"<br> {count}. {function_name}({func_concat_arg_input_values}): -> "
+                        f"{impls['return'].replace('<','&lt').replace('>','&gt')} </br> "
                     )
             mdFile.new_paragraph("</details>")
             mdFile.write("\n")
@@ -137,12 +140,13 @@ def write_markdown(file_obj: dict) -> None:
                 for options_list, option_name in (
                     zip(A, cycle(B)) if len(A) > len(B) else zip(cycle(A), B)
                 ):
-                    mdFile.new_line(f"- `{option_name}` {options_list}")
+                    mdFile.new_line(f"<li>{option_name} {options_list} </li> ")
 
                 mdFile.new_paragraph("</details>")
                 mdFile.write("\n")
 
 
+current_file = Path(__file__).name
 cur_path = os.path.dirname(__file__)
 functions_folder = os.path.join(str(Path(cur_path).parents[2]), "extensions")
 
@@ -170,6 +174,15 @@ for function_file in function_files:
             link=f"https://github.com/substrait-io/substrait/tree/main/extensions/"
             f"{function_file_name}",
             text=f"{function_file_name}",
+        )
+    )
+
+    mdFile.new_paragraph(
+        "Updating this document with the latest yaml can be done by running: "
+        + mdFile.new_inline_link(
+            link=f"https://github.com/substrait-io/substrait/tree/main/site/docs/functions/"
+            f"{current_file}",
+            text="generate_function_docs.py",
         )
     )
 
