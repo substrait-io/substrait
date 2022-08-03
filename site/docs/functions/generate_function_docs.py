@@ -147,8 +147,8 @@ def write_markdown(file_obj: dict) -> None:
 
 
 current_file = Path(__file__).name
-cur_path = os.path.dirname(__file__)
-functions_folder = os.path.join(str(Path(cur_path).parents[2]), "extensions")
+cur_path = Path(__file__).resolve()
+functions_folder = os.path.join(str(Path(cur_path).parents[3]), "extensions")
 
 # Get a list of all the function yaml files
 function_files = []
