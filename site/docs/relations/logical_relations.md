@@ -312,14 +312,14 @@ If at least one grouping expression is present, the aggregation is allowed to no
 
 ## Write Operator
 
-The write operator is an operator that consumes one output and writes it to storage. A simple example would be writing Parquet files. It is expected that many types of writes will be added over time.
+The write operator is an operator that consumes one output and writes it to storage. This can range from writing to a Parquet file, to INSERT/DELETE/UPDATE in a database. 
 
-| Signature            | Value                |
-| -------------------- |----------------------|
-| Inputs               | 1                    |
-| Outputs              | 1                    |
-| Property Maintenance | N/A (no output)      |
-| Direct Output Order  | Unchanged from input |
+| Signature            | Value                                                   |
+| -------------------- |---------------------------------------------------------|
+| Inputs               | 1                                                       |
+| Outputs              | 1                                                       |
+| Property Maintenance | Output depends on OutputMode (none, or modified tuples) |
+| Direct Output Order  | Unchanged from input                                    |
 
 ### Write Properties
 

@@ -404,7 +404,7 @@ message DdlRel {
   }
 }
 
-// The operator that modifies the schema/content of a database
+// The operator that modifies the content of a database
 message WriteRel {
   // Definition of which type of write operation is to be performed
   oneof write_type {
@@ -420,10 +420,8 @@ message WriteRel {
   // remaining columns are left as-is or to default (for INSERT).
   Rel input = 5;
 
-  // The rel that specifies the output of the operator. It allows references
-  // to DELETED.<col_name> or INSERTED.<col_name>. It can also compute simply count of
-  // affected tuples (per common behavior of most RDBMS). Defaults to no output.
-  Rel output = 6;
+  // Output mode determines what is the output of executing this rel
+  OutputMode output = 6;
 
   enum WriteOp {
     WRITE_OP_UNSPECIFIED = 0;
@@ -431,6 +429,18 @@ message WriteRel {
     WRITE_OP_INSERT_OR_REPLACE = 2;
     WRITE_OP_DELETE = 3;
     WRITE_OP_UPDATE = 4;
+  }
+
+  enum OutputMode {
+    OUTPUT_MODE_UNSPECIFIED = 0;
+    // return no tuples at all
+    OUTPUT_MODE_NO_OUTPUT = 1;
+    // this mode makes the operator return all the tuple INSERTED/DELETED/UPDATED by the operator.
+    // The operator returns the AFTER-image of any change. This can be further manipulated by operators upstreams
+    // (e.g., retunring the typical "count of modified tuples").
+    // For scenarios in which the BEFORE image is required, the user must implement a spool (via references to
+    // subplans in the body of the Rel input) and return those with anounter PlanRel.relations.
+    OUTPUT_MODE_MODIFIED_TUPLES = 2;
   }
 }
 
