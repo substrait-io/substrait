@@ -1268,6 +1268,109 @@ aggregate_functions:
           - value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
+  - name: "quantile"
+    description: Calculates quantile for a set of values.
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: i8
+        nullability: DECLARED_OUTPUT
+        return: i8
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: i16
+        nullability: DECLARED_OUTPUT
+        return: i16
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: i32
+        nullability: DECLARED_OUTPUT
+        return: i32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: i64
+        nullability: DECLARED_OUTPUT
+        return: i64
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: f32
+        nullability: DECLARED_OUTPUT
+        return: f32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: f64
+        nullability: DECLARED_OUTPUT
+        return: f64
+  - name: "approx_quantile"
+    description: Calculates approximate quantile for a set of values.
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: i8
+        nullability: DECLARED_OUTPUT
+        return: i8
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: i16
+        nullability: DECLARED_OUTPUT
+        return: i16
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: i32
+        nullability: DECLARED_OUTPUT
+        return: i32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: i64
+        nullability: DECLARED_OUTPUT
+        return: i64
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: f32
+        nullability: DECLARED_OUTPUT
+        return: f32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+          - value: f64
+        nullability: DECLARED_OUTPUT
+        return: f64
+
 window_functions:
   - name: "row_number"
     description: "the number of the current row within its partition."
