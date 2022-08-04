@@ -1137,26 +1137,44 @@ aggregate_functions:
     description: Calculate the median for a set of values.
     impls:
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: i8
         nullability: DECLARED_OUTPUT
         return: i8?
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: i16
         nullability: DECLARED_OUTPUT
         return: i16?
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: i32
         nullability: DECLARED_OUTPUT
         return: i32?
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: i64
         nullability: DECLARED_OUTPUT
         return: i64?
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: fp32
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
@@ -1164,26 +1182,44 @@ aggregate_functions:
     description: Calculate the approximate median for a set of values.
     impls:
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: i8
         nullability: DECLARED_OUTPUT
         return: i8?
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: i16
         nullability: DECLARED_OUTPUT
         return: i16?
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: i32
         nullability: DECLARED_OUTPUT
         return: i32?
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: i64
         nullability: DECLARED_OUTPUT
         return: i64?
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: fp32
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
           - value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
