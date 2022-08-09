@@ -168,7 +168,7 @@ for function_file in function_files:
     function_file_no_extension = os.path.splitext(function_file_name)[0]
     function_category = function_file_no_extension.split("_")[-1]
     mdFile = MdUtils(
-        file_name=f"{function_file_no_extension}",
+        file_name=f"docs/functions/{function_file_no_extension}",
         title=f"{function_category} functions",
     )
     mdFile.new_paragraph(

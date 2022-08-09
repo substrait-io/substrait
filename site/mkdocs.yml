@@ -50,6 +50,9 @@ plugins:
         'types/simple_logical_types.md': 'types/type_classes.md'
         'types/compound_logical_types.md': 'types/type_classes.md'
         'types/user_defined_types.md': 'types/type_classes.md'
+  - gen-files:
+      scripts:
+        - docs/functions/generate_function_docs.py
 markdown_extensions:
   - smarty
   - sane_lists
