@@ -180,15 +180,6 @@ for function_file in function_files:
         )
     )
 
-    mdFile.new_paragraph(
-        "Updating this document with the latest yaml can be done by running: "
-        + mdFile.new_inline_link(
-            link=f"https://github.com/substrait-io/substrait/tree/main/site/docs/functions/"
-            f"{current_file}",
-            text="generate_function_docs.py",
-        )
-    )
-
     write_markdown(yaml_file_object)
 
     mdFile.new_table_of_contents(table_title="Table of Contents", depth=2)
