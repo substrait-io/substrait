@@ -321,19 +321,19 @@ We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the t
 One expressing `A JOIN B` (in position 0 in the plan), one using reference as follows: `ReferenceRel(0) JOIN C` and a third one
 doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B`.
 
-| Signature            | Value           |
-| -------------------- | --------------- |
-| Inputs               | 1               |
-| Outputs              | 0               |
-| Property Maintenance | N/A (no output) |
-| Direct Output Order  | N/A (no output) |
+| Signature            | Value                                 |
+| -------------------- |---------------------------------------|
+| Inputs               | 1                                     |
+| Outputs              | 1                                     |
+| Property Maintenance | Maintains all properties of the input |
+| Direct Output Order  | Maintains order                       |
 
 
 ### Reference Properties
 
-| Property                    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Required                    |
-|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| --------------------------- |
-| Referred Rel                | A positional reference to a `Rel` defined within the same `Plan`.  | Required                    |
+| Property                    | Description                                                                    | Required                    |
+|-----------------------------|--------------------------------------------------------------------------------| --------------------------- |
+| Referred Rel                | A zero-indexed positional reference to a `Rel` defined within the same `Plan`. | Required                    |
 
 === "ReferenceRel Message"
 
