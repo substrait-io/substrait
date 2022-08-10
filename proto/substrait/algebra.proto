@@ -368,7 +368,7 @@ message Rel {
 message NamedObjectWrite {
   // The list of string is used to represent namespacing (e.g., mydb.mytable).
   // This assumes shared catalog between systems exchanging a message.
-  // 
+  //
   repeated string names = 1;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
