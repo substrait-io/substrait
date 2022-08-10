@@ -420,8 +420,6 @@ The operator that defines modifications of a database schema (CREATE/DROP/ALTER 
     ```proto
 %%% proto.algebra.DdlRel %%%
     ```
-=======
->>>>>>> e041822 (feat: removing spurious change. (#283))
 
 ## Discussion Points
 
