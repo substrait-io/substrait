@@ -310,31 +310,39 @@ If at least one grouping expression is present, the aggregation is allowed to no
 %%% proto.algebra.AggregateRel %%%
     ```
 
-
 ## Write Operator
 
-The write operator is an operator that consumes one output and writes it to storage. A simple example would be writing Parquet files. It is expected that many types of writes will be added over time.
+The write operator is an operator that consumes one output and writes it to storage. This can range from writing to a Parquet file, to INSERT/DELETE/UPDATE in a database. 
 
-| Signature            | Value           |
-| -------------------- | --------------- |
-| Inputs               | 1               |
-| Outputs              | 0               |
-| Property Maintenance | N/A (no output) |
-| Direct Output Order  | N/A (no output) |
+| Signature            | Value                                                   |
+| -------------------- |---------------------------------------------------------|
+| Inputs               | 1                                                       |
+| Outputs              | 1                                                       |
+| Property Maintenance | Output depends on OutputMode (none, or modified tuples) |
+| Direct Output Order  | Unchanged from input                                    |
 
 ### Write Properties
 
-| Property                    | Description                                                  | Required                    |
-| --------------------------- | ------------------------------------------------------------ | --------------------------- |
-| Definition                  | The contents of the write property definition.               | Required                    |
-| Field names                 | The names of all struct fields in breadth-first order.       | Required                    |
-| Masked Complex Expression   | The masking expression applied to the input record prior to write. | Optional, defaults to all   |
-| Rotation description fields | A list of fields that can be used for stream description whenever a stream is reset. | Optional, defaults to none. |
-| Rotation indicator          | An input field ID that describes when the current stream should be "rotated". Individual write definition types may support the ability to rotate the output into one or more streams. This could mean closing and opening a new file, finishing and restarting a TCP connection, etc. If a rotation indicator is available, it will be 0 except when a rotation should occur. Rotation indication are frequently defined by things like discrete partition values but could be done based on number of records or other arbitrary criteria. | Optional, defaults to none. |
+
+| Property                   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Required                                            |
+|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| Write Type                 | Definition of which object we are operating on (e.g., a fully-qualified table name).                                                                                                                                                                                                                                                                                                                                                                                               | Required                                            |
+| CTAS Schema                | The names of all the columns and their type for a CREATE TABLE AS.                                                                                                                                                                                                                                                                                                                                                                                                                 | Required only for CTAS  |
+| Write Operator             | Which type of operation we are performing (INSERT/DELETE/UPDATE/CTAS).                                                                                                                                                                                                                                                                                                                                                                                                             | Required                                            |
+| Rel Input                  | The Rel representing which tuples we will be operating on (e.g., VALUES for an INSERT, or which tuples to DELETE, or tuples and after-image of their values for UPDATE).                                                                                                                                                                                                                                                                                                           | Required                                            |
+| Output Mode | For views that modify a DB it is important to control, which tuples to "return". Common default is NO_OUTPUT where we return nothing. Alternatively, we can return MODIFIED_TUPLES, that can be further manipulated by layering more rels ontop of this WriteRel (e.g., to "count how many tuples were updated"). This also allows to return the after-image of the change. To return before-image (or both) one can use the reference mechanisms and have multiple return values. | Required for VIEW CREATE/CREATE_OR_REPLACE/ALTER    |
+
 
 ### Write Definition Types
 
 Write definition types are built by the community and added to the specification. This is a portion of specification that is expected to grow rapidly.
+
+
+=== "WriteRel Message"
+
+    ```proto
+%%% proto.algebra.WriteRel %%%
+    ```
 
 #### Virtual Table
 
@@ -353,6 +361,34 @@ Write definition types are built by the community and added to the specification
 | Format   | Enumeration of available formats. Only current option is PARQUET. | Required |
 
 
+## DDL Operator
+
+The operator that defines modifications of a database schema (CREATE/DROP/ALTER for TABLE and VIEWS).
+
+| Signature            | Value           |
+| -------------------- |-----------------|
+| Inputs               | 1               |
+| Outputs              | 0               |
+| Property Maintenance | N/A (no output) |
+| Direct Output Order  | N/A             |
+
+
+### DDL Properties
+
+| Property        | Description                                                     | Required                                         |
+|-----------------|-----------------------------------------------------------------|--------------------------------------------------|
+| Write Type      | Definition of which type of object we are operating on.         | Required                                         |
+| Table Schema    | The names of all the columns and their type.                    | Required (except for DROP operations)            |
+| Table Defaults  | The set of default values for this table.                       | Required (except for DROP operations)            |
+| DDL Object      | Which type of object we are operating on (e.g., TABLE or VIEW). | Required                                         |
+| DDL Operator    | The operation to be performed (e.g., CREATE/ALTER/DROP).        | Required                                         |
+| View Definition | A Rel representing the "body" of a VIEW.                        | Required for VIEW CREATE/CREATE_OR_REPLACE/ALTER |
+
+=== "DdlRel Message"
+
+    ```proto
+%%% proto.algebra.DdlRel %%%
+    ```
 
 ## Discussion Points
 

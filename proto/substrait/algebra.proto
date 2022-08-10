@@ -364,6 +364,118 @@ message Rel {
   }
 }
 
+// A base object for writing (e.g., a table or a view).
+message NamedObjectWrite {
+  // The list of string is used to represent namespacing (e.g., mydb.mytable).
+  // This assumes shared catalog between systems exchanging a message.
+  // 
+  repeated string names = 1;
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
+// A stub type that can be used to extend/introduce new table types outside
+// the specification.
+message ExtensionObject {
+  google.protobuf.Any detail = 1;
+}
+
+message DdlRel {
+  // Definition of which type of object we are operating on
+  oneof write_type {
+    NamedObjectWrite named_object = 1;
+    ExtensionObject extension_object = 2;
+  }
+
+  // The columns that will be modified (representing after-image of a schema change)
+  NamedStruct table_schema = 3;
+  // The default values for the columns (representing after-image of a schema change)
+  // E.g., in case of an ALTER TABLE that changes some of the column default values, we expect
+  // the table_defaults Struct to report a full list of default values reflecting the result of applying
+  // the ALTER TABLE operator successfully
+  Expression.Literal.Struct table_defaults = 4;
+
+  // Which type of object we operate on
+  DdlObject object = 5;
+
+  // The type of operation to perform
+  DdlOp op = 6;
+
+  // The body of the CREATE VIEW
+  Rel view_definition = 7;
+
+  enum DdlObject {
+    DDL_OBJECT_UNSPECIFIED = 0;
+    // A Table object in the system
+    DDL_OBJECT_TABLE = 1;
+    // A View object in the system
+    DDL_OBJECT_VIEW = 2;
+  }
+
+  enum DdlOp {
+    DDL_OP_UNSPECIFIED = 0;
+    // A create operation (for any object)
+    DDL_OP_CREATE = 1;
+    // A create operation if the object does not exist, or replaces it (equivalent to a DROP + CREATE) if the object already exists
+    DDL_OP_CREATE_OR_REPLACE = 2;
+    // An operation that modifies the schema (e.g., column names, types, default values) for the target object
+    DDL_OP_ALTER = 3;
+    // An operation that removes an object from the system
+    DDL_OP_DROP = 4;
+    // An operation that removes an object from the system (without throwing an exception if the object did not exist)
+    DDL_OP_DROP_IF_EXIST = 5;
+  }
+  //TODO add PK/constraints/indexes/etc..?
+}
+
+// The operator that modifies the content of a database (operates on 1 table at a time, but tuple-selection/source can be
+// based on joining of multiple tables).
+message WriteRel {
+  // Definition of which TABLE we are operating on
+  oneof write_type {
+    NamedObjectWrite named_table = 1;
+    ExtensionObject extension_table = 2;
+  }
+
+  // The schema of the table (must align with Rel input (e.g., number of leaf fields must match))
+  NamedStruct table_schema = 3;
+
+  // The type of operation to perform
+  WriteOp op = 4;
+
+  // The relation that determines the tuples to add/remove/modify
+  // the schema must match with table_schema. Default values must be explicitly stated
+  // in a ProjectRel at the top of the input. The match must also
+  // occur in case of DELETE to ensure multi-engine plans are unequivocal.
+  Rel input = 5;
+
+  // Output mode determines what is the output of executing this rel
+  OutputMode output = 6;
+
+  enum WriteOp {
+    WRITE_OP_UNSPECIFIED = 0;
+    // The insert of new tuples in a table
+    WRITE_OP_INSERT = 1;
+    // The removal of tuples from a table
+    WRITE_OP_DELETE = 2;
+    // The modification of existing tuples within a table
+    WRITE_OP_UPDATE = 3;
+    // The Creation of a new table, and the insert of new tuples in the table
+    WRITE_OP_CTAS = 4;
+  }
+
+  enum OutputMode {
+    OUTPUT_MODE_UNSPECIFIED = 0;
+    // return no tuples at all
+    OUTPUT_MODE_NO_OUTPUT = 1;
+    // this mode makes the operator return all the tuple INSERTED/DELETED/UPDATED by the operator.
+    // The operator returns the AFTER-image of any change. This can be further manipulated by operators upstreams
+    // (e.g., retunring the typical "count of modified tuples").
+    // For scenarios in which the BEFORE image is required, the user must implement a spool (via references to
+    // subplans in the body of the Rel input) and return those with anounter PlanRel.relations.
+    OUTPUT_MODE_MODIFIED_TUPLES = 2;
+  }
+}
+
 // The argument of a function
 message FunctionArgument {
   oneof arg_type {
