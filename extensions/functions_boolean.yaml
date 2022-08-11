@@ -20,6 +20,15 @@ scalar_functions:
           min: 2
         return: boolean
   -
+    name: and_not
+    description: The boolean and of one value and the negation of the other using Kleene logic.
+    impls:
+      - args:
+          - value: boolean
+        variadic:
+          min: 2
+        return: boolean
+  -
     name: xor
     description: The boolean xor of two values using Kleene logic.
     impls:
