@@ -310,6 +310,37 @@ If at least one grouping expression is present, the aggregation is allowed to no
 %%% proto.algebra.AggregateRel %%%
     ```
 
+## Reference Operator
+
+The reference operator is used to construct DAGs of operations. In a `Plan` we can have multiple Rel representing various 
+computations with potentially multiple outputs. The `ReferenceRel` is used to express the fact that multiple `Rel` might be
+sharing subtrees of computation. This can be used to express arbitrary DAGs as well as represent multi-query optimizations.
+
+As a concrete example think about two queries `SELECT * FROM A JOIN B JOIN C` and `SELECT * FROM A JOIN B JOIN D`,
+We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the two queries, by creating a plan with 3 `Rel`. 
+One expressing `A JOIN B` (in position 0 in the plan), one using reference as follows: `ReferenceRel(0) JOIN C` and a third one
+doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B`.
+
+| Signature            | Value                                 |
+| -------------------- |---------------------------------------|
+| Inputs               | 1                                     |
+| Outputs              | 1                                     |
+| Property Maintenance | Maintains all properties of the input |
+| Direct Output Order  | Maintains order                       |
+
+
+### Reference Properties
+
+| Property                    | Description                                                                    | Required                    |
+|-----------------------------|--------------------------------------------------------------------------------| --------------------------- |
+| Referred Rel                | A zero-indexed positional reference to a `Rel` defined within the same `Plan`. | Required                    |
+
+=== "ReferenceRel Message"
+
+    ```proto
+%%% proto.algebra.ReferenceRel %%%
+    ```
+
 ## Write Operator
 
 The write operator is an operator that consumes one output and writes it to storage. This can range from writing to a Parquet file, to INSERT/DELETE/UPDATE in a database. 
