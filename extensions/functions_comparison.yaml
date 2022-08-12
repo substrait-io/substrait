@@ -83,4 +83,28 @@ scalar_functions:
       - args:
           - value: fp64
         return: BOOLEAN
+  -
+    name: "is_finite"
+    description: Whether a value is finite (neither infinite nor NaN).
+    impls:
+      - args:
+          - value: fp32
+        nullability: DECLARED_OUTPUT
+        return: BOOLEAN
+      - args:
+          - value: fp64
+        nullability: DECLARED_OUTPUT
+        return: BOOLEAN
+  -
+    name: "is_infinite"
+    description: Whether a value is infinite.
+    impls:
+      - args:
+          - value: fp32
+        nullability: DECLARED_OUTPUT
+        return: BOOLEAN
+      - args:
+          - value: fp64
+        nullability: DECLARED_OUTPUT
+        return: BOOLEAN
 
