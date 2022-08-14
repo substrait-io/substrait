@@ -1,6 +1,15 @@
 Release Notes
 ---
 
+## [0.10.0](https://github.com/substrait-io/substrait/compare/v0.9.0...v0.10.0) (2022-08-14)
+
+
+### Features
+
+* add and_not boolean function ([#276](https://github.com/substrait-io/substrait/issues/276)) ([8af3fe0](https://github.com/substrait-io/substrait/commit/8af3fe0e874d8006430699628adfc755d4a1a1b0))
+* add is_finite and is_infinite ([#286](https://github.com/substrait-io/substrait/issues/286)) ([01d5428](https://github.com/substrait-io/substrait/commit/01d54287f69635b463832c8b84a75a8fa90f9f3f))
+* add support for DDL and INSERT/DELETE/UPDATE operations ([#252](https://github.com/substrait-io/substrait/issues/252)) ([cbb6c26](https://github.com/substrait-io/substrait/commit/cbb6c26e16bced5187c779eaa7027c90461e3e2e))
+
 ## [0.9.0](https://github.com/substrait-io/substrait/compare/v0.8.0...v0.9.0) (2022-07-31)
 
 
