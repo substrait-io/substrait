@@ -1224,15 +1224,13 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "count_distinct"
-    description: Count of unique values in a set of values
+    description: Count of unique values in a set of values.
     impls:
       - args:
           - options: [SILENT, SATURATE, ERROR]
             required: false
           - value: any
         nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: i64
         return: i64
 window_functions:
   - name: "row_number"
