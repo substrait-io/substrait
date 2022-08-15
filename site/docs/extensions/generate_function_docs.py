@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import os
+import mkdocs_gen_files
 from itertools import cycle
 from pathlib import Path
 
@@ -11,16 +12,13 @@ from mdutils.mdutils import MdUtils
 
 def write_markdown(file_obj: dict) -> None:
     for function_classification, value in file_obj.items():
-        mdFile.new_header(level=1, title=f"{function_classification}")
+        function_classification_str = function_classification.replace("_", " ").title()
+        mdFile.new_header(level=2, title=f"{function_classification_str}")
         functions_list = yaml_file_object[function_classification]
 
         for function_spec in functions_list:
             function_name = function_spec["name"]
-            mdFile.new_header(level=2, title=f"{function_name}")
-            if "description" in function_spec:
-                description = function_spec["description"]
-                mdFile.new_paragraph("DESCRIPTION:")
-                mdFile.new_line(f"{description}")
+            mdFile.new_header(level=3, title=f"{function_name}")
 
             """
             Write markdown for implementations.
@@ -30,8 +28,7 @@ def write_markdown(file_obj: dict) -> None:
             """
 
             EXAMPLE_IMPL = False
-            mdFile.new_paragraph("<details><summary>IMPLEMENTATIONS:</summary>")
-            mdFile.write("\n")
+            mdFile.new_paragraph("Implementations:")
             implementations_list = function_spec["impls"]
             option_names_list = []
             document_option_names_list = []
@@ -40,7 +37,8 @@ def write_markdown(file_obj: dict) -> None:
             for count, impls in enumerate(implementations_list):
                 args_list = impls["args"]
                 arg_string = []
-                arg_names = []
+                only_arg_names = []
+                arg_with_option_names = []
                 arg_descriptions = []
 
                 # For each function implementation, collect details on the following:
@@ -53,18 +51,19 @@ def write_markdown(file_obj: dict) -> None:
                     if "value" in arg:
                         arg_string.append(arg["value"])
                         if "name" in arg:
-                            arg_names.append(arg["name"])
+                            only_arg_names.append(arg["name"])
+                            arg_with_option_names.append(arg["name"])
                         if "description" in arg:
                             arg_descriptions.append(arg["description"])
                     if "options" in arg:
                         options = str(arg["options"])
 
-                        # Options with no defined name, will be named as `name_placeholder`
+                        # Options with no defined name, will be named as the list of options
                         if "name" in arg:
                             option_name = str(arg["name"])
+                            document_option_names_list.append(option_name)
                         else:
-                            option_name = "name_placeholder"
-                        document_option_names_list.append(option_name)
+                            option_name = options
 
                         # Required options will be prepended with `req_enum` inside the function
                         # implementation. Optional options will be prepended with `opt_enum`
@@ -73,6 +72,8 @@ def write_markdown(file_obj: dict) -> None:
                             option_name = f"req_enum:{option_name}"
                         else:
                             option_name = f"opt_enum:{option_name}"
+                        arg_string.append(option_name)
+                        arg_with_option_names.append(option_name)
                         option_names_list.append(option_name)
                         options_list.append(options)
 
@@ -82,33 +83,29 @@ def write_markdown(file_obj: dict) -> None:
                     min_args = impls["variadic"]["min"]
                     for count in range(min_args - 1):
                         arg_string.append(arg_string[-1])
-                        if len(arg_names) > 0:
-                            arg_names.append(arg_names[-1])
+                        if len(only_arg_names) > 0:
+                            only_arg_names.append(only_arg_names[-1])
 
                 document_option_names_list = list(
                     dict.fromkeys(document_option_names_list)
                 )
-                option_names_list = list(dict.fromkeys(option_names_list))
                 options_list = list(dict.fromkeys(options_list))
-                arg_values = [
-                    f"{x.replace('<','&lt').replace('>','&gt')}"
-                    for x in arg_string + option_names_list
-                ]
-                arg_names_and_options = [
-                    f"{x}" for x in arg_names + option_names_list
-                ]
+                arg_values = [f"{x}" for x in arg_string]
+                options_and_arg_names = [f"{x}" for x in arg_with_option_names]
                 # reset the options names list for the next function implementation.
                 option_names_list = []
-                func_concat_arg_input_names = ", ".join(arg_names_and_options)
+                options_and_arg_names = [f"`{x}`" for x in options_and_arg_names]
+                func_concat_arg_input_names = ", ".join(options_and_arg_names)
+                arg_values = [f"`{x}`" for x in arg_values]
                 func_concat_arg_input_values = ", ".join(arg_values)
 
                 # Only provide an example implementation using the argument names if argument
                 # names are provided and an example implementation doesn't already exist.
-                if len(arg_names) > 0 and not EXAMPLE_IMPL:
+                if len(only_arg_names) > 0 and not EXAMPLE_IMPL:
                     mdFile.new_line(
                         f"{function_name}({func_concat_arg_input_names}): -> `return_type` "
                     )
-                    for arg_name, arg_desc in zip(arg_names, arg_descriptions):
+                    for arg_name, arg_desc in zip(only_arg_names, arg_descriptions):
                         mdFile.new_line(f"<li>{arg_name}: {arg_desc}</li>")
                     EXAMPLE_IMPL = True
 
@@ -126,17 +123,18 @@ def write_markdown(file_obj: dict) -> None:
                     mdFile.new_line("\t```")
                 else:
                     mdFile.new_line(
-                        f"<br> {count}. {function_name}({func_concat_arg_input_values}): -> "
-                        f"{impls['return'].replace('<','&lt').replace('>','&gt')} </br> "
+                        f"{count}. {function_name}({func_concat_arg_input_values}): -> "
+                        f"`{impls['return']}`"
                     )
-            mdFile.new_paragraph("</details>")
-            mdFile.write("\n")
 
+            if "description" in function_spec:
+                description = function_spec["description"]
+                mdFile.new_paragraph(text=f"{description}", bold_italics_code="i")
             """
             Write markdown for options.
             """
-            if len(options_list) > 0:
-                mdFile.new_paragraph("<details><summary>OPTIONS:</summary>")
+            if len(options_list) > 0 and len(document_option_names_list) > 0:
+                mdFile.new_paragraph("<details><summary>Options:</summary>")
                 mdFile.write("\n")
                 A = options_list
                 B = document_option_names_list
@@ -166,11 +164,10 @@ for function_file in function_files:
 
     function_file_name = os.path.basename(function_file)
     function_file_no_extension = os.path.splitext(function_file_name)[0]
-    function_category = function_file_no_extension.split("_")[-1]
-    mdFile = MdUtils(
-        file_name=f"docs/functions/{function_file_no_extension}",
-        title=f"{function_category} functions",
-    )
+    function_category = function_file_no_extension.replace("_", " ").capitalize()
+
+    mdFile = MdUtils(file_name=f"docs/extensions/{function_file_no_extension}")
+    mdFile.new_header(level=1, title=f"{function_file_name}")
     mdFile.new_paragraph(
         "This document file is generated for "
         + mdFile.new_inline_link(
@@ -181,6 +178,15 @@ for function_file in function_files:
     )
 
     write_markdown(yaml_file_object)
-
-    mdFile.new_table_of_contents(table_title="Table of Contents", depth=2)
     mdFile.create_md_file()
+
+    # In order to preview the file with `mkdocs serve` we need to copy the file into a tmp file
+    # that is generated by mkdocs_gen_files.open method.
+    current_directory = Path(__file__).resolve().parent
+    fpath = current_directory / f"{function_file_no_extension}.md"
+    with open(fpath, "r") as markdown_file:
+        with mkdocs_gen_files.open(
+            f"extensions/{function_file_no_extension}.md", "w"
+        ) as f:
+            for line in markdown_file:
+                f.write(line)
