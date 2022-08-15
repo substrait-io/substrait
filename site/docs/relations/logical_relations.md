@@ -323,7 +323,7 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 
 | Signature            | Value                                 |
 | -------------------- |---------------------------------------|
-| Inputs               | 1                                     |
+| Inputs               | 0                                     |
 | Outputs              | 1                                     |
 | Property Maintenance | Maintains all properties of the input |
 | Direct Output Order  | Maintains order                       |
@@ -333,7 +333,7 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 
 | Property                    | Description                                                                    | Required                    |
 |-----------------------------|--------------------------------------------------------------------------------| --------------------------- |
-| Referred Rel                | A zero-indexed positional reference to a `Rel` defined within the same `Plan`. | Required                    |
+| Referred Rel                | A zero-indexed positional reference to a `Rel` defined within the same `Plan`. The index must be less than the index of the relation tree that the reference appears in; put differently, you can only refer to trees that have already been declared. This avoids cyclic dependencies and forward references. | Required                    |
 
 === "ReferenceRel Message"
 
@@ -343,14 +343,14 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 
 ## Write Operator
 
-The write operator is an operator that consumes one output and writes it to storage. This can range from writing to a Parquet file, to INSERT/DELETE/UPDATE in a database. 
+The write operator is an operator that consumes one output and writes it to storage. Currently, only named tables and extensions are supported, but the intention is to also support writing files in the future.
 
-| Signature            | Value                                                   |
-| -------------------- |---------------------------------------------------------|
-| Inputs               | 1                                                       |
-| Outputs              | 1                                                       |
-| Property Maintenance | Output depends on OutputMode (none, or modified tuples) |
-| Direct Output Order  | Unchanged from input                                    |
+| Signature            | Value                                                    |
+| -------------------- |----------------------------------------------------------|
+| Inputs               | 1                                                        |
+| Outputs              | 1                                                        |
+| Property Maintenance | Output depends on OutputMode (none, or modified records) |
+| Direct Output Order  | Unchanged from input                                     |
 
 ### Write Properties
 
@@ -360,8 +360,8 @@ The write operator is an operator that consumes one output and writes it to stor
 | Write Type                 | Definition of which object we are operating on (e.g., a fully-qualified table name).                                                                                                                                                                                                                                                                                                                                                                                               | Required                                            |
 | CTAS Schema                | The names of all the columns and their type for a CREATE TABLE AS.                                                                                                                                                                                                                                                                                                                                                                                                                 | Required only for CTAS  |
 | Write Operator             | Which type of operation we are performing (INSERT/DELETE/UPDATE/CTAS).                                                                                                                                                                                                                                                                                                                                                                                                             | Required                                            |
-| Rel Input                  | The Rel representing which tuples we will be operating on (e.g., VALUES for an INSERT, or which tuples to DELETE, or tuples and after-image of their values for UPDATE).                                                                                                                                                                                                                                                                                                           | Required                                            |
-| Output Mode | For views that modify a DB it is important to control, which tuples to "return". Common default is NO_OUTPUT where we return nothing. Alternatively, we can return MODIFIED_TUPLES, that can be further manipulated by layering more rels ontop of this WriteRel (e.g., to "count how many tuples were updated"). This also allows to return the after-image of the change. To return before-image (or both) one can use the reference mechanisms and have multiple return values. | Required for VIEW CREATE/CREATE_OR_REPLACE/ALTER    |
+| Rel Input                  | The Rel representing which records we will be operating on (e.g., VALUES for an INSERT, or which records to DELETE, or records and after-image of their values for UPDATE).                                                                                                                                                                                                                                                                                                           | Required                                            |
+| Output Mode | For views that modify a DB it is important to control, which records to "return". Common default is NO_OUTPUT where we return nothing. Alternatively, we can return MODIFIED_RECORDS, that can be further manipulated by layering more rels ontop of this WriteRel (e.g., to "count how many records were updated"). This also allows to return the after-image of the change. To return before-image (or both) one can use the relation reference mechanisms to use the relation subtree passed to the write input more than once. | Required for VIEW CREATE/CREATE_OR_REPLACE/ALTER    |
 
 
 ### Write Definition Types

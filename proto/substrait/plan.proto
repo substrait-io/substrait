@@ -14,9 +14,13 @@ option java_package = "io.substrait.proto";
 // Either a relation or root relation
 message PlanRel {
   oneof rel_type {
-    // Any relation (used for references and CTEs)
+    // A relation with an output that should be referred to by one or more
+    // relation references in subsequent relation trees, but for which the
+    // result is not logically returned by the plan.
     Rel rel = 1;
-    // The root of a relation tree
+    // The root of a relation tree. The result is logically returned by the
+    // plan using the enclosed field names. The result may also be used by
+    // relation references in subsequent relation trees.
     RelRoot root = 2;
   }
 }
