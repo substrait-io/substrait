@@ -23,6 +23,27 @@ A Substrait plan can reference one or more YAML files via URI for extension. In 
 | Type Variation     | The name as defined on the type variation object.            |
 | Function Signature | In a specific YAML, if there is only one function implementation with a specific name, a extension type declaration can reference the function using either simple or compound references. Simple references are simply the name of the function (e.g. `add`). Compound references (e.g. `add:i8_i8`)are described below. |
 
+A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the YAML file it depends on using a key-value pair in the `dependencies` key, where the value is the URI to the YAML file, and the key is a valid identifier that can then be used as an identifier-safe alias for the URI. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected.
+
+For example, if the YAML file at `/extension_types.yaml` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
+
+```yaml
+dependencies:
+  ext: /extension_types.yaml
+scalar_functions:
+- name: distance
+  description: The distance between two points.
+  impls:
+  - args:
+    - name: a
+      value: ext.point
+    - name: b
+      value: ext.point
+    return: f64
+```
+
+Here, the choice for the name `ext` is arbitrary, as long as it does not conflict with anything else in the YAML file.
+
 ### Function Signature Compound Names
 
 A YAML file may contain one or more functions by the same name. When only a single function is declared within the file, it can be referenced using the name of that function or a compound name. When more than one function of the same name is declared within a YAML file, the key used in the function extension declaration is a combination of the name of the function along with a list of input argument types. The format is as follows:
