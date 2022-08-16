@@ -382,10 +382,12 @@ scalar_functions:
   -
     name: center
     description: >-
-      Center the input string by padding the sides with the given `character` until the specified
+      Center the input string by padding the sides with a single `character` until the specified
       `length` of the string has been reached. By default, if the `length` will be reached with
       an uneven number of padding, the extra padding will be applied to the right side.
       The side with extra padding can be controlled with the `padding` option.
+
+      Behavior is undefined if the number of characters passed to the `character` argument is not 1.
     impls:
       - args:
           - name: padding
@@ -397,7 +399,7 @@ scalar_functions:
           - value: i32
             name: "length"
             description: "The length of the output string."
-          - value: "varchar<L2>"
+          - value: "varchar<1>"
             name: "character"
             description: "The character to use for padding."
         return: "varchar<L1>"
