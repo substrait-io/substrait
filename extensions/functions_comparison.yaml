@@ -107,4 +107,12 @@ scalar_functions:
           - value: fp64
         nullability: DECLARED_OUTPUT
         return: BOOLEAN
+  -
+    name: "nullif"
+    description: If two values are equal, return null. Otherwise, return the first value.
+    impls:
+      - args:
+          - value: any1
+          - value: any1
+        return: any1
 
