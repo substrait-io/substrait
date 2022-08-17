@@ -22,7 +22,7 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
             required: false
           - value: "varchar<L1>"
             name: "input"
