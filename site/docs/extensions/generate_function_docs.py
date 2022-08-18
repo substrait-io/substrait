@@ -35,6 +35,7 @@ def write_markdown(file_obj: dict) -> None:
             options_list = []
 
             for count, impls in enumerate(implementations_list):
+                UNRECOGNIZED_ARGUMENT = False
                 args_list = impls["args"]
                 arg_string = []
                 only_arg_names = []
@@ -55,7 +56,7 @@ def write_markdown(file_obj: dict) -> None:
                             arg_with_option_names.append(arg["name"])
                         if "description" in arg:
                             arg_descriptions.append(arg["description"])
-                    if "options" in arg:
+                    elif "options" in arg:
                         options = str(arg["options"])
 
                         # Options with no defined name, will be named as the list of options
@@ -76,6 +77,9 @@ def write_markdown(file_obj: dict) -> None:
                         arg_with_option_names.append(option_name)
                         option_names_list.append(option_name)
                         options_list.append(options)
+                    else:
+                        UNRECOGNIZED_ARGUMENT = True
+
 
                 # If the implementation is variadic, the last argument will appear `min_args`,
                 # number of times in the implementation.
@@ -108,6 +112,14 @@ def write_markdown(file_obj: dict) -> None:
                     for arg_name, arg_desc in zip(only_arg_names, arg_descriptions):
                         mdFile.new_line(f"<li>{arg_name}: {arg_desc}</li>")
                     EXAMPLE_IMPL = True
+
+                # Display a message indicating the unrecognized argument in the docs.
+                if UNRECOGNIZED_ARGUMENT:
+                    mdFile.new_line(
+                        text=f"{count}. Unrecognized argument in implementation. Please examine "
+                             f"the yaml spec for more details.", color='red'
+                    )
+                    continue
 
                 # If the return value for the function implementation is multiple lines long,
                 # print each line separately. This is the case for some functions in
