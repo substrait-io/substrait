@@ -1,6 +1,14 @@
 Release Notes
 ---
 
+## [0.11.0](https://github.com/substrait-io/substrait/compare/v0.10.0...v0.11.0) (2022-08-21)
+
+
+### Features
+
+* add nullif function ([#291](https://github.com/substrait-io/substrait/issues/291)) ([dc677c2](https://github.com/substrait-io/substrait/commit/dc677c226623489786f0def03db2a8c1e0d0116f))
+* **set:** add basic set membership operations ([#280](https://github.com/substrait-io/substrait/issues/280)) ([1bd1bd1](https://github.com/substrait-io/substrait/commit/1bd1bd1aa01e11bf769bfc68fbccb81920a46677))
+
 ## [0.10.0](https://github.com/substrait-io/substrait/compare/v0.9.0...v0.10.0) (2022-08-14)
 
 
