@@ -6,25 +6,29 @@ scalar_functions:
     description: "Add two values."
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i8
           - value: i8
         return: i8
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
           - value: i16
         return: i16
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
           - value: i32
         return: i32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i64
           - value: i64
@@ -48,25 +52,29 @@ scalar_functions:
     description: "Subtract one value from another."
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i8
           - value: i8
         return: i8
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
           - value: i16
         return: i16
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
           - value: i32
         return: i32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i64
           - value: i64
@@ -90,25 +98,29 @@ scalar_functions:
     description: "Multiply two values."
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i8
           - value: i8
         return: i8
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
           - value: i16
         return: i16
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
           - value: i32
         return: i32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i64
           - value: i64
@@ -132,25 +144,29 @@ scalar_functions:
     description: "Divide one value by another. Partial values are truncated."
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i8
           - value: i8
         return: i8
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
           - value: i16
         return: i16
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
           - value: i32
         return: i32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i64
           - value: i64
@@ -180,22 +196,26 @@ scalar_functions:
     description: "Negation of the value"
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i8
         return: i8
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
         return: i16
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
         return: i32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i64
         return: i64
@@ -230,7 +250,8 @@ scalar_functions:
     description: "Take the power with the first value as the base and second as exponent."
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i64
           - value: i64
@@ -415,22 +436,26 @@ scalar_functions:
       unevenness of the twos complement, e.g. Int8 range [-128 : 127].
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i8
         return: i8
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
         return: i16
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
         return: i32
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i64
         return: i64
@@ -475,7 +500,8 @@ aggregate_functions:
     description: Sum a set of values. The sum of zero elements yields null.
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i8
         nullability: DECLARED_OUTPUT
@@ -483,7 +509,8 @@ aggregate_functions:
         intermediate: i64?
         return: i64?
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
         nullability: DECLARED_OUTPUT
@@ -491,7 +518,8 @@ aggregate_functions:
         intermediate: i64?
         return: i64?
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
         nullability: DECLARED_OUTPUT
@@ -499,7 +527,8 @@ aggregate_functions:
         intermediate: i64?
         return: i64?
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i64
         nullability: DECLARED_OUTPUT
@@ -507,7 +536,8 @@ aggregate_functions:
         intermediate: i64?
         return: i64?
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: fp32
         nullability: DECLARED_OUTPUT
@@ -515,7 +545,8 @@ aggregate_functions:
         intermediate: fp64?
         return: fp64?
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: fp64
         nullability: DECLARED_OUTPUT
@@ -526,7 +557,8 @@ aggregate_functions:
     description: Average a set of values. For integral types, this truncates partial values.
     impls:
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i8
         nullability: DECLARED_OUTPUT
@@ -534,7 +566,8 @@ aggregate_functions:
         intermediate: "STRUCT<i64,i64>"
         return: i8?
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i16
         nullability: DECLARED_OUTPUT
@@ -542,7 +575,8 @@ aggregate_functions:
         intermediate: "STRUCT<i64,i64>"
         return: i16?
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i32
         nullability: DECLARED_OUTPUT
@@ -550,7 +584,8 @@ aggregate_functions:
         intermediate: "STRUCT<i64,i64>"
         return: i32?
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: i64
         nullability: DECLARED_OUTPUT
@@ -558,7 +593,8 @@ aggregate_functions:
         intermediate: "STRUCT<i64,i64>"
         return: i64?
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: fp32
         nullability: DECLARED_OUTPUT
@@ -566,7 +602,8 @@ aggregate_functions:
         intermediate: "STRUCT<fp64,i64>"
         return: fp32?
       - args:
-          - options: [ SILENT, SATURATE, ERROR ]
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
             required: false
           - value: fp64
         nullability: DECLARED_OUTPUT
