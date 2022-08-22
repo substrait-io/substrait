@@ -1071,6 +1071,40 @@ aggregate_functions:
             value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
+  - name: "variance_pop"
+    description: Calculates population variance for a population data.
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: fp32
+        nullability: DECLARED_OUTPUT
+        return: fp32?
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: fp64
+        nullability: DECLARED_OUTPUT
+        return: fp64?
+  - name: "std_dev_pop"
+    description: Calculates population standard-deviation for a population data.
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: fp32
+        nullability: DECLARED_OUTPUT
+        return: fp32?
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: fp64
+        nullability: DECLARED_OUTPUT
+        return: fp64?
 window_functions:
   - name: "row_number"
     description: "the number of the current row within its partition."
