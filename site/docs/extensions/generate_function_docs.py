@@ -10,7 +10,7 @@ import oyaml as yaml
 from mdutils.mdutils import MdUtils
 
 
-def write_markdown(file_obj: dict) -> None:
+def write_markdown(file_obj: dict, file_name: str) -> None:
     for function_classification, value in file_obj.items():
         function_classification_str = function_classification.replace("_", " ").title()
         mdFile.new_header(level=2, title=f"{function_classification_str}")
@@ -35,7 +35,6 @@ def write_markdown(file_obj: dict) -> None:
             options_list = []
 
             for count, impls in enumerate(implementations_list):
-                UNRECOGNIZED_ARGUMENT = False
                 args_list = impls["args"]
                 arg_string = []
                 only_arg_names = []
@@ -78,7 +77,8 @@ def write_markdown(file_obj: dict) -> None:
                         option_names_list.append(option_name)
                         options_list.append(options)
                     else:
-                        UNRECOGNIZED_ARGUMENT = True
+                        raise Exception(f"Unrecognized argument found in "
+                                        f"{file_name}:{function_name}")
 
 
                 # If the implementation is variadic, the last argument will appear `min_args`,
@@ -112,14 +112,6 @@ def write_markdown(file_obj: dict) -> None:
                     for arg_name, arg_desc in zip(only_arg_names, arg_descriptions):
                         mdFile.new_line(f"<li>{arg_name}: {arg_desc}</li>")
                     EXAMPLE_IMPL = True
-
-                # Display a message indicating the unrecognized argument in the docs.
-                if UNRECOGNIZED_ARGUMENT:
-                    mdFile.new_line(
-                        text=f"{count}. Unrecognized argument in implementation. Please examine "
-                             f"the yaml spec for more details.", color='red'
-                    )
-                    continue
 
                 # If the return value for the function implementation is multiple lines long,
                 # print each line separately. This is the case for some functions in
@@ -189,7 +181,7 @@ for function_file in function_files:
         )
     )
 
-    write_markdown(yaml_file_object)
+    write_markdown(yaml_file_object, function_file_name)
     mdFile.create_md_file()
 
     # In order to preview the file with `mkdocs serve` we need to copy the file into a tmp file
