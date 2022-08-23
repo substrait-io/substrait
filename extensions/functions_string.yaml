@@ -1263,3 +1263,18 @@ scalar_functions:
           - value: i32
             name: "count"
         return: "string"
+
+aggregate_functions:
+
+  -
+    name: string_agg
+    description: Concatenates a column of string values with a separator.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: "Column of string values."
+          - value: "varchar<L2>"
+            name: "separator"
+            description: "Separator for concatenated strings"
+        return: "varchar<L1 + L2>"
