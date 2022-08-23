@@ -1275,101 +1275,98 @@ aggregate_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
+          - name: precision
+            description: "Precision of the output"
+            options: [ EXACT, APPROXIMATE ]
+            required: false
           - value: i64
+            name: "quantile_literal"
+            description: "A positive integer which defines the number of quantile partitions"
           - value: i8
+            name: "x"
+            description: "The set of values `x` to compute the quantile of"
         nullability: DECLARED_OUTPUT
         return: i8
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
+          - name: precision
+            description: "Precision of the output"
+            options: [ EXACT, APPROXIMATE ]
+            required: false
           - value: i64
+            name: "quantile_literal"
+            description: "A positive integer which defines the number of quantile partitions"
           - value: i16
+            name: "x"
+            description: "The set of values `x` to compute the quantile of"
         nullability: DECLARED_OUTPUT
         return: i16
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
+          - name: precision
+            description: "Precision of the output"
+            options: [ EXACT, APPROXIMATE ]
+            required: false
           - value: i64
+            name: "quantile_literal"
+            description: "A positive integer which defines the number of quantile partitions"
           - value: i32
+            name: "x"
+            description: "The set of values `x` to compute the quantile of"
         nullability: DECLARED_OUTPUT
         return: i32
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
+          - name: precision
+            description: "Precision of the output"
+            options: [ EXACT, APPROXIMATE ]
+            required: false
           - value: i64
+            name: "quantile_literal"
+            description: "A positive integer which defines the number of quantile partitions"
           - value: i64
+            name: "x"
+            description: "The set of values `x` to compute the quantile of"
         nullability: DECLARED_OUTPUT
         return: i64
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
+          - name: precision
+            description: "Precision of the output"
+            options: [ EXACT, APPROXIMATE ]
+            required: false
           - value: i64
-          - value: f32
+            name: "quantile_literal"
+            description: "A positive integer which defines the number of quantile partitions"
+          - value: fp32
+            name: "x"
+            description: "The set of values `x` to compute the quantile of"
         nullability: DECLARED_OUTPUT
-        return: f32
+        return: fp32
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: i64
-          - value: f64
-        nullability: DECLARED_OUTPUT
-        return: f64
-  - name: "approx_quantile"
-    description: Calculates approximate quantile for a set of values.
-    impls:
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          - name: precision
+            description: "Precision of the output"
+            options: [ EXACT, APPROXIMATE ]
             required: false
           - value: i64
-          - value: i8
+            name: "quantile_literal"
+            description: "A positive integer which defines the number of quantile partitions"
+          - value: fp64
+            name: "x"
+            description: "The set of values `x` to compute the quantile of"
         nullability: DECLARED_OUTPUT
-        return: i8
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: i64
-          - value: i16
-        nullability: DECLARED_OUTPUT
-        return: i16
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: i64
-          - value: i32
-        nullability: DECLARED_OUTPUT
-        return: i32
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: i64
-          - value: i64
-        nullability: DECLARED_OUTPUT
-        return: i64
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: i64
-          - value: f32
-        nullability: DECLARED_OUTPUT
-        return: f32
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: i64
-          - value: f64
-        nullability: DECLARED_OUTPUT
-        return: f64
+        return: fp64
 
 window_functions:
   - name: "row_number"
