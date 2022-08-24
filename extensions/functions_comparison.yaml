@@ -58,6 +58,24 @@ scalar_functions:
           - value: any1
         return: BOOLEAN
   -
+    name: "between"
+    description: >-
+      Whether the `expression` is greater than or equal to `low` and less than or equal to `high`.
+
+      `expression` BETWEEN `low` AND `high`
+    impls:
+      - args:
+          - value: any1
+            name: expression
+            description: The expression to test for in the range defined by `low` and `high`
+          - value: any1
+            name: low
+            description: The value to check if greater than or equal to.
+          - value: any1
+            name: high
+            description: The value to check if less than or equal to.
+        return: BOOLEAN
+  -
     name: "is_null"
     description: Whether a value is null.
     impls:
