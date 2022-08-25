@@ -15,15 +15,32 @@ scalar_functions:
         return: "string"
   -
     name: like
-    description: Are two strings like each other.
+    description: >-
+      Are two strings like each other.
+
+      The `case_sensitivity` option applies to the `match` argument.
     impls:
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "varchar<L2>"
+            name: "match"
+            description: The string to match against the input string.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
+            name: "input"
+            description: The input string.
           - value: "string"
+            name: "match"
+            description: The string to match against the input string.
         return: "BOOLEAN"
   -
     name: substring
@@ -48,131 +65,334 @@ scalar_functions:
         return: "string"
   -
     name: starts_with
-    description: Whether this string starts with another string.
+    description: >-
+      Whether the `input` string starts with the `substring`.
+
+      The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "varchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "string"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "fixedchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
+            name: "input"
+            description: The input string.
           - value: "string"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
+            name: "input"
+            description: The input string.
           - value: "varchar<L1>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
+            name: "input"
+            description: The input string.
           - value: "fixedchar<L1>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "fixedchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "string"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "varchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
   -
     name: ends_with
-    description: Whether this string ends with another string.
+    description: >-
+      Whether `input` string ends with the substring.
+
+      The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "varchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "string"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "fixedchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
+            name: "input"
+            description: The input string.
           - value: "string"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
+            name: "input"
+            description: The input string.
           - value: "varchar<L1>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
+            name: "input"
+            description: The input string.
           - value: "fixedchar<L1>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "fixedchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "string"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "varchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
   -
     name: contains
-    description: Whether this string contains another string.
+    description: >-
+      Whether the `input` string contains the `substring`.
+
+      The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "varchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "string"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "fixedchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
+            name: "input"
+            description: The input string.
           - value: "string"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
+            name: "input"
+            description: The input string.
           - value: "varchar<L1>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
+            name: "input"
+            description: The input string.
           - value: "fixedchar<L1>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "fixedchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "string"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
           - value: "varchar<L2>"
+            name: "substring"
+            description: The substring to search for.
         return: "BOOLEAN"
   -
     name: strpos
     description: >-
       Return the position of the first occurrence of a string in another string. The first
       character of the string is at position 1. If no occurrence is found, 0 is returned.
+
+      The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
             name: "input"
             description: The input string.
@@ -181,6 +401,9 @@ scalar_functions:
             description: The substring to search for.
         return: i64
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
@@ -189,6 +412,9 @@ scalar_functions:
             description: The substring to search for.
         return: i64
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
@@ -198,9 +424,15 @@ scalar_functions:
         return: i64
   -
     name: count_substring
-    description: Return the number of non-overlapping occurrences of a substring in an input string.
+    description: >-
+      Return the number of non-overlapping occurrences of a substring in an input string.
+
+      The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
             name: "input"
             description: The input string.
@@ -209,6 +441,9 @@ scalar_functions:
             description: The substring to count.
         return: i64
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
@@ -217,6 +452,9 @@ scalar_functions:
             description: The substring to count.
         return: i64
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
@@ -228,8 +466,13 @@ scalar_functions:
     name: replace
     description: >-
       Replace all occurrences of the substring with the replacement string.
+
+      The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "string"
             name: "input"
             description: Input string.
@@ -241,6 +484,9 @@ scalar_functions:
             description: The replacement string.
         return: "string"
       - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            required: false
           - value: "varchar<L1>"
             name: "input"
             description: Input string.
