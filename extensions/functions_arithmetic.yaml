@@ -160,7 +160,7 @@ scalar_functions:
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - name: on_domain_error
-            options: [ NAN, ERROR ]
+            options: [ NAN, ERROR, LIMIT_OR_NAN ]
             required: false
           - value: fp32
           - value: fp32
@@ -170,7 +170,7 @@ scalar_functions:
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - name: on_domain_error
-            options: [ NAN, ERROR ]
+            options: [ NAN, ERROR, LIMIT_OR_NAN ]
             required: false
           - value: fp64
           - value: fp64
