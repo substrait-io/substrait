@@ -1271,10 +1271,10 @@ aggregate_functions:
     description: Concatenates a column of string values with a separator.
     impls:
       - args:
-          - value: "varchar<L1>"
+          - value: "string"
             name: "input"
             description: "Column of string values."
-          - value: "varchar<L2>"
+          - value: "string"
             name: "separator"
             description: "Separator for concatenated strings"
-        return: "varchar<L1 + L2>"
+        return: "string"
