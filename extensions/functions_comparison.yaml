@@ -3,59 +3,110 @@
 scalar_functions:
   -
     name: "not_equal"
-    description: Whether two values are not_equal (nulls are considered not not-equal).
+    description: >
+      Whether two values are not_equal.
+
+      `not_equal(x, y) := (x != y)`
+
+      If either/both of `x` and `y` are `null`, `null` is returned.
     impls:
       - args:
           - value: any1
+            name: x
           - value: any1
+            name: y
         return: BOOLEAN
   -
     name: "equal"
-    description: Whether two values are equal (nulls are considered unequal).
+    description: >
+      Whether two values are equal.
+
+      `equal(x, y) := (x == y)`
+
+      If either/both of `x` and `y` are `null`, `null` is returned.
     impls:
       - args:
           - value: any1
+            name: x
           - value: any1
+            name: y
         return: BOOLEAN
   -
     name: "is_not_distinct_from"
-    description: Whether two values are equal (nulls are considered equal).
+    description: >
+      Whether two values are equal.
+
+      This function treats `null` values as comparable, so
+
+      `is_not_distinct_from(null, null) == True`
+
+      This is in contrast to `equal`, in which `null` values do not compare.
     impls:
       - args:
           - value: any1
+            name: x
           - value: any1
+            name: y
         return: BOOLEAN
   -
     name: "lt"
-    description: Less than
+    description: >
+      Less than.
+
+      lt(x, y) := (x < y)
+
+      If either/both of `x` and `y` are `null`, `null` is returned.
     impls:
       - args:
           - value: any1
+            name: x
           - value: any1
+            name: y
         return: BOOLEAN
   -
     name: "gt"
-    description: Greater than
+    description: >
+      Greater than.
+
+      gt(x, y) := (x > y)
+
+      If either/both of `x` and `y` are `null`, `null` is returned.
     impls:
       - args:
           - value: any1
+            name: x
           - value: any1
+            name: y
         return: BOOLEAN
   -
     name: "lte"
-    description: Less than or equal to
+    description: >
+      Less than or equal to.
+
+      lte(x, y) := (x <= y)
+
+      If either/both of `x` and `y` are `null`, `null` is returned.
     impls:
       - args:
           - value: any1
+            name: x
           - value: any1
+            name: y
         return: BOOLEAN
   -
     name: "gte"
-    description: Greater than or equal to
+    description: >
+      Greater than or equal to.
+
+      gte(x, y) := (x >= y)
+
+      If either/both of `x` and `y` are `null`, `null` is returned.
     impls:
       - args:
           - value: any1
+            name: x
           - value: any1
+            name: y
         return: BOOLEAN
   -
     name: "between"
@@ -63,11 +114,13 @@ scalar_functions:
       Whether the `expression` is greater than or equal to `low` and less than or equal to `high`.
 
       `expression` BETWEEN `low` AND `high`
+
+      If `low`, `high`, or `expression` are `null`, `null` is returned.
     impls:
       - args:
           - value: any1
             name: expression
-            description: The expression to test for in the range defined by `low` and `high`
+            description: The expression to test for in the range defined by `low` and `high`.
           - value: any1
             name: low
             description: The value to check if greater than or equal to.
@@ -81,6 +134,7 @@ scalar_functions:
     impls:
       - args:
           - value: any1
+            name: x
         return: BOOLEAN
         nullability: DECLARED_OUTPUT
   -
@@ -89,43 +143,53 @@ scalar_functions:
     impls:
       - args:
           - value: any1
+            name: x
         return: BOOLEAN
         nullability: DECLARED_OUTPUT
   -
     name: "is_nan"
-    description: Whether a value is not a number.  If input is null, output will be null.
+    description: >
+      Whether a value is not a number.
+
+      If `x` is `null`, `null` is returned.
     impls:
       - args:
           - value: fp32
-        nullability: MIRROR
+            name: x
         return: BOOLEAN
       - args:
           - value: fp64
-        nullability: MIRROR
+            name: x
         return: BOOLEAN
   -
     name: "is_finite"
-    description: Whether a value is finite (neither infinite nor NaN). If input is null, output will be null.
+    description: >
+      Whether a value is finite (neither infinite nor NaN).
+
+      If `x` is `null`, `null` is returned.
     impls:
       - args:
           - value: fp32
-        nullability: MIRROR
+            name: x
         return: BOOLEAN
       - args:
           - value: fp64
-        nullability: MIRROR
+            name: x
         return: BOOLEAN
   -
     name: "is_infinite"
-    description: Whether a value is infinite. If input is null, output will be null.
+    description: >
+      Whether a value is infinite.
+
+      If `x` is `null`, `null` is returned.
     impls:
       - args:
           - value: fp32
-        nullability: MIRROR
+            name: x
         return: BOOLEAN
       - args:
           - value: fp64
-        nullability: MIRROR
+            name: x
         return: BOOLEAN
   -
     name: "nullif"
@@ -133,7 +197,9 @@ scalar_functions:
     impls:
       - args:
           - value: any1
+            name: x
           - value: any1
+            name: y
         return: any1
   -
     name: "coalesce"

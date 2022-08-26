@@ -3,21 +3,27 @@
 scalar_functions:
   -
     name: "ceil"
-    description: "Rounding to the ceiling of the value"
+    description: >
+      Rounding to the ceiling of the value `x`.
     impls:
       - args:
           - value: fp32
+            name: "x"
         return: fp32
       - args:
           - value: fp64
+            name: "x"
         return: fp64
   -
     name: "floor"
-    description: "Rounding to the floor of the value"
+    description: >
+      Rounding to the floor of the value `x`.
     impls:
       - args:
           - value: fp32
+            name: "x"
         return: fp32
       - args:
           - value: fp64
+            name: "x"
         return: fp64
