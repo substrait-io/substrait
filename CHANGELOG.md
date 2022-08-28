@@ -1,6 +1,14 @@
 Release Notes
 ---
 
+## [0.12.0](https://github.com/substrait-io/substrait/compare/v0.11.0...v0.12.0) (2022-08-28)
+
+
+### Features
+
+* add between function ([#287](https://github.com/substrait-io/substrait/issues/287)) ([aad6f63](https://github.com/substrait-io/substrait/commit/aad6f637a19c96f02effc7bd5068f4c2d11525c4))
+* add case_sensitivity option to string functions ([#289](https://github.com/substrait-io/substrait/issues/289)) ([4c354de](https://github.com/substrait-io/substrait/commit/4c354de568ac5448053b1b11a6373fe0b7e7a229))
+
 ## [0.11.0](https://github.com/substrait-io/substrait/compare/v0.10.0...v0.11.0) (2022-08-21)
 
 
