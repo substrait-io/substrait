@@ -130,6 +130,7 @@ message ReadRel {
       message ParquetReadOptions {}
       message ArrowReadOptions {}
       message OrcReadOptions {}
+      message DwrfReadOptions {}
 
       // The format of the files.
       oneof file_format {
@@ -137,6 +138,7 @@ message ReadRel {
         ArrowReadOptions arrow = 10;
         OrcReadOptions orc = 11;
         google.protobuf.Any extension = 12;
+        DwrfReadOptions dwrf = 13;
       }
     }
   }
