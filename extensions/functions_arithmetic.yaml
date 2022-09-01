@@ -9,22 +9,28 @@ scalar_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i8
-          - value: i8
+          - name: x
+            value: i8
+          - name: y
+            value: i8
         return: i8
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i16
-          - value: i16
+          - name: x
+            value: i16
+          - name: y
+            value: i16
         return: i16
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i32
-          - value: i32
+          - name: x
+            value: i32
+          - name: y
+            value: i32
         return: i32
       - args:
           - name: overflow
@@ -37,15 +43,19 @@ scalar_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp32
-          - value: fp32
+          - name: x
+            value: fp32
+          - name: y
+            value: fp32
         return: fp32
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp64
-          - value: fp64
+          - name: x
+            value: fp64
+          - name: y
+            value: fp64
         return: fp64
   -
     name: "subtract"
@@ -55,43 +65,55 @@ scalar_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i8
-          - value: i8
+          - name: x
+            value: i8
+          - name: y
+            value: i8
         return: i8
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i16
-          - value: i16
+          - name: x
+            value: i16
+          - name: y
+            value: i16
         return: i16
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i32
-          - value: i32
+          - name: x
+            value: i32
+          - name: y
+            value: i32
         return: i32
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i64
-          - value: i64
+          - name: x
+            value: i64
+          - name: y
+            value: i64
         return: i64
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp32
-          - value: fp32
+          - name: x
+            value: fp32
+          - name: y
+            value: fp32
         return: fp32
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp64
-          - value: fp64
+          - name: x
+            value: fp64
+          - name: y
+            value: fp64
         return: fp64
   -
     name: "multiply"
@@ -101,43 +123,55 @@ scalar_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i8
-          - value: i8
+          - name: x
+            value: i8
+          - name: y
+            value: i8
         return: i8
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i16
-          - value: i16
+          - name: x
+            value: i16
+          - name: y
+            value: i16
         return: i16
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i32
-          - value: i32
+          - name: x
+            value: i32
+          - name: y
+            value: i32
         return: i32
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i64
-          - value: i64
+          - name: x
+            value: i64
+          - name: y
+            value: i64
         return: i64
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp32
-          - value: fp32
+          - name: x
+            value: fp32
+          - name: y
+            value: fp32
         return: fp32
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp64
-          - value: fp64
+          - name: x
+            value: fp64
+          - name: y
+            value: fp64
         return: fp64
   -
     name: "divide"
@@ -147,29 +181,37 @@ scalar_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i8
-          - value: i8
+          - name: x
+            value: i8
+          - name: y
+            value: i8
         return: i8
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i16
-          - value: i16
+          - name: x
+            value: i16
+          - name: y
+            value: i16
         return: i16
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i32
-          - value: i32
+          - name: x
+            value: i32
+          - name: y
+            value: i32
         return: i32
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i64
-          - value: i64
+          - name: x
+            value: i64
+          - name: y
+            value: i64
         return: i64
       - args:
           - name: rounding
@@ -178,8 +220,10 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp32
-          - value: fp32
+          - name: x
+            value: fp32
+          - name: y
+            value: fp32
         return: fp32
       - args:
           - name: rounding
@@ -188,8 +232,10 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp64
-          - value: fp64
+          - name: x
+            value: fp64
+          - name: y
+            value: fp64
         return: fp64
   -
     name: "negate"
@@ -199,70 +245,90 @@ scalar_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i8
+          - name: x
+            value: i8
         return: i8
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i16
+          - name: x
+            value: i16
         return: i16
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i32
+          - name: x
+            value: i32
         return: i32
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i64
+          - name: x
+            value: i64
         return: i64
       - args:
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp32
       - args:
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "modulus"
     description: "Get the remainder when dividing one value by another."
     impls:
       - args:
-          - value: i8
-          - value: i8
+          - name: x
+            value: i8
+          - name: y
+            value: i8
         return: i8
       - args:
-          - value: i16
-          - value: i16
+          - name: x
+            value: i16
+          - name: y
+            value: i16
         return: i16
       - args:
-          - value: i32
-          - value: i32
+          - name: x
+            value: i32
+          - name: y
+            value: i32
         return: i32
       - args:
-          - value: i64
-          - value: i64
+          - name: x
+            value: i64
+          - name: y
+            value: i64
         return: i64
   -
     name: "power"
-    description: "Take the power with the first value as the base and second as exponent."
+    description: "Take the power with x as the base and y as exponent."
     impls:
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i64
-          - value: i64
+          - name: x
+            value: i64
+          - name: y
+            value: i64
         return: i64
       - args:
-          - value: fp32
-          - value: fp32
+          - name: x
+            value: fp32
+          - name: y
+            value: fp32
         return: fp32
       - args:
-          - value: fp64
-          - value: fp64
+          - name: x
+            value: fp64
+          - name: y
+            value: fp64
         return: fp64
   -
     name: "sqrt"
@@ -275,7 +341,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: i64
+          - name: x
+            value: i64
         return: fp64
       - args:
           - name: rounding
@@ -284,7 +351,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp32
       - args:
           - name: rounding
@@ -293,7 +361,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "cos"
@@ -303,13 +372,15 @@ scalar_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp64
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "sin"
@@ -319,13 +390,15 @@ scalar_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp64
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "tan"
@@ -335,13 +408,15 @@ scalar_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp64
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "acos"
@@ -354,7 +429,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp64
       - args:
           - name: rounding
@@ -363,7 +439,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "asin"
@@ -376,7 +453,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp64
       - args:
           - name: rounding
@@ -385,7 +463,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "atan"
@@ -395,13 +474,15 @@ scalar_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp64
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "atan2"
@@ -414,8 +495,10 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp32
-          - value: fp32
+          - name: x
+            value: fp32
+          - name: y
+            value: fp32
         return: fp64
       - args:
           - name: rounding
@@ -424,8 +507,10 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp64
-          - value: fp64
+          - name: x
+            value: fp64
+          - name: y
+            value: fp64
         return: fp64
   - 
     name: "abs"
@@ -439,31 +524,37 @@ scalar_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i8
+          - name: x
+            value: i8
         return: i8
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i16
+          - name: x
+            value: i16
         return: i16
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i32
+          - name: x
+            value: i32
         return: i32
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i64
+          - name: x
+            value: i64
         return: i64
       - args:
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp32
       - args:
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "sign"
@@ -477,22 +568,28 @@ scalar_functions:
       Possible return values are [-1.0, -0.0, 0.0, 1.0, NaN]
     impls:
       - args:
-          - value: i8
+          - name: x
+            value: i8
         return: i8
       - args:
-          - value: i16
+          - name: x
+            value: i16
         return: i16
       - args:
-          - value: i32
+          - name: x
+            value: i32
         return: i32
       - args:
-          - value: i64
+          - name: x
+            value: i64
         return: i64
       - args:
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp32
       - args:
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
 
 aggregate_functions:
@@ -503,7 +600,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i8
+          - name: x
+            value: i8
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
@@ -512,7 +610,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i16
+          - name: x
+            value: i16
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
@@ -521,7 +620,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i32
+          - name: x
+            value: i32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
@@ -530,7 +630,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i64
+          - name: x
+            value: i64
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
@@ -539,7 +640,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp64?
@@ -548,7 +650,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp64?
@@ -560,7 +663,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i8
+          - name: x
+            value: i8
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
@@ -569,7 +673,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i16
+          - name: x
+            value: i16
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
@@ -578,7 +683,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i32
+          - name: x
+            value: i32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
@@ -587,7 +693,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i64
+          - name: x
+            value: i64
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
@@ -596,7 +703,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<fp64,i64>"
@@ -605,7 +713,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<fp64,i64>"
@@ -614,37 +723,43 @@ aggregate_functions:
     description: Min a set of values.
     impls:
       - args:
-          - value: i8
+          - name: x
+            value: i8
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i8?
         return: i8?
       - args:
-          - value: i16
+          - name: x
+            value: i16
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i16?
         return: i16?
       - args:
-          - value: i32
+          - name: x
+            value: i32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i32?
         return: i32?
       - args:
-          - value: i64
+          - name: x
+            value: i64
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
         return: i64?
       - args:
-          - value: fp32
+          - name: x
+            value: fp32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp32?
         return: fp32?
       - args:
-          - value: fp64
+          - name: x
+            value: fp64
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp64?
@@ -653,37 +768,43 @@ aggregate_functions:
     description: Max a set of values.
     impls:
       - args:
-          - value: i8
+          - name: x
+            value: i8
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i8?
         return: i8?
       - args:
-          - value: i16
+          - name: x
+            value: i16
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i16?
         return: i16?
       - args:
-          - value: i32
+          - name: x
+            value: i32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i32?
         return: i32?
       - args:
-          - value: i64
+          - name: x
+            value: i64
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
         return: i64?
       - args:
-          - value: fp32
+          - name: x
+            value: fp32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp32?
         return: fp32?
       - args:
-          - value: fp64
+          - name: x
+            value: fp64
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp64?
@@ -695,7 +816,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i8
+          - name: x
+            value: i8
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
@@ -704,7 +826,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i16
+          - name: x
+            value: i16
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
@@ -713,7 +836,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i32
+          - name: x
+            value: i32
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
@@ -722,7 +846,8 @@ aggregate_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - value: i64
+          - name: x
+            value: i64
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
@@ -731,7 +856,8 @@ aggregate_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         nullability: MIRROR
         decomposable: MANY
         intermediate: fp64
@@ -740,7 +866,8 @@ aggregate_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         nullability: MIRROR
         decomposable: MANY
         intermediate: fp64
@@ -752,14 +879,16 @@ aggregate_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "variance"
@@ -769,14 +898,16 @@ aggregate_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
 window_functions:
@@ -824,13 +955,15 @@ window_functions:
     description: "Return an integer ranging from 1 to the argument value,dividing the partition as equally as possible."
     impls:
       - args:
-          - value: i32
+          - name: x
+            value: i32
         nullability: DECLARED_OUTPUT  
         decomposable: NONE
         return: i32?
         window_type: PARTITION
       - args:
-          - value: i64
+          - name: x
+            value: i64
         nullability: DECLARED_OUTPUT  
         decomposable: NONE
         return: i64?
