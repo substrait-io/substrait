@@ -821,7 +821,7 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
             required: false
           - name: multiline
             options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
@@ -847,7 +847,7 @@ scalar_functions:
         return: "string"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
             required: false
           - name: multiline
             options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
