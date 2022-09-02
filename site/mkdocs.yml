@@ -44,12 +44,15 @@ plugins:
       minify_html: true
   - mkdocs_protobuf:
       proto_dir: ../proto/substrait
-      indent_depth: 4 # requied to make superfences happy
+      indent_depth: 4 # required to make superfences happy
   - redirects:
       redirect_maps:
         'types/simple_logical_types.md': 'types/type_classes.md'
         'types/compound_logical_types.md': 'types/type_classes.md'
         'types/user_defined_types.md': 'types/type_classes.md'
+  - gen-files:
+      scripts:
+        - docs/extensions/generate_function_docs.py
 markdown_extensions:
   - smarty
   - sane_lists
