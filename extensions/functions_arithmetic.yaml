@@ -323,6 +323,60 @@ scalar_functions:
           - value: fp64
         return: fp64
   -
+    name: "cosh"
+    description: "Get the hyperbolic cosine of a value in radians."
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: x
+            value: fp32
+        return: fp32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: x
+            value: fp64
+        return: fp64
+  -
+    name: "sinh"
+    description: "Get the hyperbolic sine of a value in radians."
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: x
+            value: fp32
+        return: fp32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: x
+            value: fp64
+        return: fp64
+  -
+    name: "tanh"
+    description: "Get the hyperbolic tangent of a value in radians."
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: x
+            value: fp32
+        return: fp32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: x
+            value: fp64
+        return: fp64
+  -
     name: "acos"
     description: "Get the arccosine of a value in radians."
     impls:
@@ -381,6 +435,72 @@ scalar_functions:
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: fp64
+        return: fp64
+  -
+    name: "acosh"
+    description: "Get the hyperbolic arccosine of a value in radians."
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
+          - name: x
+            value: fp32
+        return: fp32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
+          - name: x
+            value: fp64
+        return: fp64
+  -
+    name: "asinh"
+    description: "Get the hyperbolic arcsine of a value in radians."
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: x
+            value: fp32
+        return: fp32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: x
+            value: fp64
+        return: fp64
+  -
+    name: "atanh"
+    description: "Get the hyperbolic arctangent of a value in radians."
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
+          - name: x
+            value: fp32
+        return: fp32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: on_domain_error
+            options: [ NAN, ERROR ]
+            required: false
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "atan2"
