@@ -77,7 +77,7 @@ scalar_functions:
         return: BOOLEAN
   -
     name: "is_null"
-    description: Whether a value is null.
+    description: Whether a value is null. NaN is not null.
     impls:
       - args:
           - value: any1
@@ -85,7 +85,7 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
   -
     name: "is_not_null"
-    description: Whether a value is not null.
+    description: Whether a value is not null. NaN is not null.
     impls:
       - args:
           - value: any1
@@ -93,37 +93,39 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
   -
     name: "is_nan"
-    description: Whether a value is not a number.
+    description: Whether a value is not a number.  If input is null, output will be null.
     impls:
       - args:
           - value: fp32
+        nullability: MIRROR
         return: BOOLEAN
       - args:
           - value: fp64
+        nullability: MIRROR
         return: BOOLEAN
   -
     name: "is_finite"
-    description: Whether a value is finite (neither infinite nor NaN).
+    description: Whether a value is finite (neither infinite nor NaN). If input is null, output will be null.
     impls:
       - args:
           - value: fp32
-        nullability: DECLARED_OUTPUT
+        nullability: MIRROR
         return: BOOLEAN
       - args:
           - value: fp64
-        nullability: DECLARED_OUTPUT
+        nullability: MIRROR
         return: BOOLEAN
   -
     name: "is_infinite"
-    description: Whether a value is infinite.
+    description: Whether a value is infinite. If input is null, output will be null.
     impls:
       - args:
           - value: fp32
-        nullability: DECLARED_OUTPUT
+        nullability: MIRROR
         return: BOOLEAN
       - args:
           - value: fp64
-        nullability: DECLARED_OUTPUT
+        nullability: MIRROR
         return: BOOLEAN
   -
     name: "nullif"
