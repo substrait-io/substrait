@@ -729,6 +729,29 @@ scalar_functions:
           - name: x
             value: fp64
         return: fp64
+  -
+    name: "factorial"
+    description: >
+      Return the factorial of a given integer input.
+
+      The factorial of 0! is 1 by convention.
+
+      Negative inputs will raise an error.
+    impls:
+      - args:
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i32
+            name: "n"
+        return: i32
+      - args:
+          - name: overflow
+            options: [ SILENT, SATURATE, ERROR ]
+            required: false
+          - value: i64
+            name: "n"
+        return: i64
 
 aggregate_functions:
   - name: "sum"
