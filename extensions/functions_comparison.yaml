@@ -135,4 +135,16 @@ scalar_functions:
           - value: any1
           - value: any1
         return: any1
+  -
+    name: "coalesce"
+    description: >-
+      Evaluate arguments from left to right and return the first argument that is not null. Once
+      a non-null argument is found, the remaining arguments are not evaluated.
 
+      If all arguments are null, return null.
+    impls:
+      - args:
+          - value: any1
+        variadic:
+          min: 2
+        return: any1
