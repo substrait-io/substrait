@@ -795,6 +795,83 @@ scalar_functions:
             name: "input"
         return: i64
   -
+    name: regexp_replace
+    description: >-
+      Search a string for a substring that matches a given regular expression pattern and replace
+      it with a replacement string. The regular expression pattern should follow the
+      International Components for Unicode implementation (https://unicode-org.github
+      .io/icu/userguide/strings/regexp.html). The occurrence of the pattern to be replaced is
+      specified using the `occurrence` argument. Specifying `1` means only the first occurrence
+      will be replaced, `2` means the second occurrence, and so on. Specifying `0` means all
+      occurrences will be replaced. The number of characters from the beginning of the string to
+      begin starting to search for pattern matches can be specified using the `position` argument.
+      Specifying `1` means to search for matches starting at the first character of the input
+      string, `2` means the second character, and so on. The `position` argument should be a
+      positive non-zero integer. The replacement string can capture groups using numbered
+      backreferences.
+
+      The `case_sensitivity` option specifies case-sensitive or case-insensitive matching.
+      Enabling the `multiline` option will treat the input string as multiple lines.  This makes
+      the `^` and `$` characters match at the beginning and end of any line, instead of just the
+      beginning and end of the input string. Enabling the `dotall` option makes the `.` character
+      match line terminator characters in a string.
+
+      Behavior is undefined if the regex fails to compile, the replacement contains an illegal
+      back-reference, the occurrence value is out of range, or the position value is out of range.
+    impls:
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            required: false
+          - value: "string"
+            name: "input"
+            description: The input string.
+          - value: "string"
+            name: "pattern"
+            description: The regular expression to search for within the input string.
+          - value: "string"
+            name: "replacement"
+            description: The replacement string.
+          - value: i64
+            name: "position"
+            description: The position to start the search.
+          - value: i64
+            name: "occurrence"
+            description: Which occurrence of the match to replace.
+        return: "string"
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
+          - value: "varchar<L2>"
+            name: "pattern"
+            description: The regular expression to search for within the input string.
+          - value: "varchar<L3>"
+            name: "replacement"
+            description: The replacement string.
+          - value: i64
+            name: "position"
+            description: The position to start the search.
+          - value: i64
+            name: "occurrence"
+            description: Which occurrence of the match to replace.
+        return: "varchar<L1>"
+  -
     name: ltrim
     description: >-
       Remove any occurrence of the characters from the left side of the string.
