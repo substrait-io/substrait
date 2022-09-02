@@ -365,6 +365,24 @@ scalar_functions:
             value: fp64
         return: fp64
   -
+    name: "exp"
+    description: "The mathematical constant e, raised to the power of the value."
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: x
+            value: fp32
+        return: fp32
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: x
+            value: fp64
+        return: fp64
+  -
     name: "cos"
     description: "Get the cosine of a value in radians."
     impls:
