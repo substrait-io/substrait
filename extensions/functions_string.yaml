@@ -923,6 +923,44 @@ scalar_functions:
             description: "The string of characters to use for padding."
         return: "string"
   -
+    name: center
+    description: >-
+      Center the input string by padding the sides with a single `character` until the specified
+      `length` of the string has been reached. By default, if the `length` will be reached with
+      an uneven number of padding, the extra padding will be applied to the right side.
+      The side with extra padding can be controlled with the `padding` option.
+
+      Behavior is undefined if the number of characters passed to the `character` argument is not 1.
+    impls:
+      - args:
+          - name: padding
+            options: [ RIGHT, LEFT ]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+            description: "The string to pad."
+          - value: i32
+            name: "length"
+            description: "The length of the output string."
+          - value: "varchar<1>"
+            name: "character"
+            description: "The character to use for padding."
+        return: "varchar<L1>"
+      - args:
+          - name: padding
+            options: [ RIGHT, LEFT ]
+            required: false
+          - value: "string"
+            name: "input"
+            description: "The string to pad."
+          - value: i32
+            name: "length"
+            description: "The length of the output string."
+          - value: "string"
+            name: "character"
+            description: "The character to use for padding."
+        return: "string"
+  -
     name: left
     description: Extract `count` characters starting from the left of the string.
     impls:
