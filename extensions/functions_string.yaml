@@ -26,7 +26,7 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -37,7 +37,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -77,6 +77,67 @@ scalar_functions:
             name: "length"
         return: "string"
   -
+    name: regexp_match_substring
+    description: >-
+      Extract a substring that matches the given regular expression pattern. The regular expression
+      pattern should follow the International Components for Unicode implementation
+      (https://unicode-org.github.io/icu/userguide/strings/regexp.html). The occurrence of the
+      pattern to be extracted is specified using the `occurrence` argument. Specifying `1` means
+      the first occurrence will be extracted, `2` means the second occurrence, and so on.
+      The `occurrence` argument should be a positive non-zero integer. The number of characters
+      from the beginning of the string to begin starting to search for pattern matches can be
+      specified using the `position` argument. Specifying `1` means to search for matches
+      starting at the first character of the input string, `2` means the second character, and so
+      on. The `position` argument should be a positive non-zero integer.
+
+      The `case_sensitivity` option specifies case-sensitive or case-insensitive matching.
+      Enabling the `multiline` option will treat the input string as multiple lines. This makes
+      the `^` and `$` characters match at the beginning and end of any line, instead of just the
+      beginning and end of the input string. Enabling the `dotall` option makes the `.` character
+      match line terminator characters in a string.
+
+      Behavior is undefined if the regex fails to compile, the occurrence value is out of range, or
+      the position value is out of range.
+    impls:
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+          - value: "varchar<L2>"
+            name: "pattern"
+          - value: i64
+            name: "position"
+          - value: i64
+            name: "occurrence"
+        return: "varchar<L1>"
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            required: false
+          - value: "string"
+            name: "input"
+          - value: "string"
+            name: "pattern"
+          - value: i64
+            name: "position"
+          - value: i64
+            name: "occurrence"
+        return: "string"
+  -
     name: starts_with
     description: >-
       Whether the `input` string starts with the `substring`.
@@ -85,7 +146,7 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -96,7 +157,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -107,7 +168,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -118,7 +179,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -129,7 +190,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -140,7 +201,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -151,7 +212,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -162,7 +223,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -173,7 +234,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -191,7 +252,7 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -202,7 +263,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -213,7 +274,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -224,7 +285,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -235,7 +296,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -246,7 +307,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -257,7 +318,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -268,7 +329,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -279,7 +340,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -297,7 +358,7 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -308,7 +369,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -319,7 +380,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -330,7 +391,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -341,7 +402,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -352,7 +413,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -363,7 +424,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -374,7 +435,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -385,7 +446,7 @@ scalar_functions:
         return: "BOOLEAN"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -404,7 +465,7 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -415,7 +476,7 @@ scalar_functions:
         return: i64
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -426,7 +487,7 @@ scalar_functions:
         return: i64
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -434,6 +495,69 @@ scalar_functions:
           - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to search for.
+        return: i64
+  -
+    name: regexp_strpos
+    description: >-
+      Return the position of an occurrence of the given regular expression pattern in a
+      string. The first character of the string is at position 1. The regular expression pattern
+      should follow the International Components for Unicode implementation
+      (https://unicode-org.github.io/icu/userguide/strings/regexp.html). The number of characters
+      from the beginning of the string to begin starting to search for pattern matches can be
+      specified using the `position` argument. Specifying `1` means to search for matches
+      starting at the first character of the input string, `2` means the second character, and so
+      on. The `position` argument should be a positive non-zero integer. Which occurrence to
+      return the position of is specified using the `occurrence` argument. Specifying `1` means
+      the position first occurrence will be returned, `2` means the position of the second
+      occurrence, and so on. The `occurrence` argument should be a positive non-zero integer. If
+      no occurrence is found, 0 is returned.
+
+      The `case_sensitivity` option specifies case-sensitive or case-insensitive matching.
+      Enabling the `multiline` option will treat the input string as multiple lines. This makes
+      the `^` and `$` characters match at the beginning and end of any line, instead of just the
+      beginning and end of the input string. Enabling the `dotall` option makes the `.` character
+      match line terminator characters in a string.
+
+      Behavior is undefined if the regex fails to compile, the occurrence value is out of range, or
+      the position value is out of range.
+    impls:
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+          - value: "varchar<L2>"
+            name: "pattern"
+          - value: i64
+            name: "position"
+          - value: i64
+            name: "occurrence"
+        return: i64
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            required: false
+          - value: "string"
+            name: "input"
+          - value: "string"
+            name: "pattern"
+          - value: i64
+            name: "position"
+          - value: i64
+            name: "occurrence"
         return: i64
   -
     name: count_substring
@@ -444,7 +568,7 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -455,7 +579,7 @@ scalar_functions:
         return: i64
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -466,7 +590,7 @@ scalar_functions:
         return: i64
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -474,6 +598,76 @@ scalar_functions:
           - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to count.
+        return: i64
+  -
+    name: regexp_count_substring
+    description: >-
+      Return the number of non-overlapping occurrences of a regular expression pattern in an input
+      string. The regular expression pattern should follow the International Components for
+      Unicode implementation (https://unicode-org.github.io/icu/userguide/strings/regexp.html).
+      The number of characters from the beginning of the string to begin starting to search for
+      pattern matches can be specified using the `position` argument. Specifying `1` means to
+      search for matches starting at the first character of the input string, `2` means the
+      second character, and so on. The `position` argument should be a positive non-zero integer.
+
+      The `case_sensitivity` option specifies case-sensitive or case-insensitive matching.
+      Enabling the `multiline` option will treat the input string as multiple lines. This makes
+      the `^` and `$` characters match at the beginning and end of any line, instead of just the
+      beginning and end of the input string. Enabling the `dotall` option makes the `.` character
+      match line terminator characters in a string.
+
+      Behavior is undefined if the regex fails to compile or the position value is out of range.
+    impls:
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            required: false
+          - value: "string"
+            name: "input"
+          - value: "string"
+            name: "pattern"
+          - value: i64
+            name: "position"
+        return: i64
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+          - value: "varchar<L2>"
+            name: "pattern"
+          - value: i64
+            name: "position"
+        return: i64
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            required: false
+          - value: "fixedchar<L1>"
+            name: "input"
+          - value: "fixedchar<L2>"
+            name: "pattern"
+          - value: i64
+            name: "position"
         return: i64
   -
     name: replace
@@ -484,7 +678,7 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "string"
             name: "input"
@@ -498,7 +692,7 @@ scalar_functions:
         return: "string"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE ]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - value: "varchar<L1>"
             name: "input"
