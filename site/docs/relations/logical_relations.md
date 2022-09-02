@@ -30,11 +30,22 @@ Read definition types are built by the community and added to the specification.
 
 #### Virtual Table
 
+A virtual table is a table whose contents are embedded in the plan itself.  The table data
+is encoded as records consisting of literal values.
+
 | Property | Description | Required |
 | -------- | ----------- | -------- |
 | Data     | Required    | Required |
 
+#### Named Table
 
+A named table is a reference to data defined elsewhere.  For example, there may be a catalog
+of tables with unique names that both the producer and consumer agree on.  This catalog would
+provide the consumer with more information on how to retrieve the data.
+
+| Property | Description                                                      | Required                |
+| -------- | ---------------------------------------------------------------- | ----------------------- |
+| Names    | A list of namespaced strings that, together, form the table name | Required (at least one) |
 
 #### Files Type
 
