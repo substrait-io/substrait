@@ -1,6 +1,29 @@
 Release Notes
 ---
 
+## [0.13.0](https://github.com/substrait-io/substrait/compare/v0.12.0...v0.13.0) (2022-09-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* nullability behavior of is_nan, is_finite, and is_infinite has changed
+* compound name for concat has changed to concat:str and
+concat:vchar (one argument) to make it 1+ variadic
+
+### Features
+
+* add center function ([#282](https://github.com/substrait-io/substrait/issues/282)) ([7697d39](https://github.com/substrait-io/substrait/commit/7697d397aaf53999d6eca7799bb4535f30af4e45))
+* add coalesce function ([#301](https://github.com/substrait-io/substrait/issues/301)) ([63c5da0](https://github.com/substrait-io/substrait/commit/63c5da0173369ce3d7667da6a30c9581057fa890))
+* add dwrf file format ([#304](https://github.com/substrait-io/substrait/issues/304)) ([0f7c2ea](https://github.com/substrait-io/substrait/commit/0f7c2eae469f8bf92905230bbed0d6e88dff7f40))
+* add exp function ([#299](https://github.com/substrait-io/substrait/issues/299)) ([7ed31f6](https://github.com/substrait-io/substrait/commit/7ed31f60e58aeff0b5e17af1be3fa0fba24b7ae1))
+* add factorial scalar function ([#300](https://github.com/substrait-io/substrait/issues/300)) ([a4d6f35](https://github.com/substrait-io/substrait/commit/a4d6f35f3d12c50d45e15ac974f5cc366e4aa905))
+* add hyperbolic functions ([#290](https://github.com/substrait-io/substrait/issues/290)) ([4252824](https://github.com/substrait-io/substrait/commit/4252824264025f69352cf16cd6f886cd4b30df48))
+* add log1p function ([#273](https://github.com/substrait-io/substrait/issues/273)) ([55e8275](https://github.com/substrait-io/substrait/commit/55e827519d70b466e748e5c3fef3a568733a9076))
+* add regexp_match_substring, regexp_strpos, and regexp_count_substring ([#293](https://github.com/substrait-io/substrait/issues/293)) ([6b8191f](https://github.com/substrait-io/substrait/commit/6b8191f304d28171dfc8edb5a82c1e254284cd5b))
+* add regexp_replace function ([#281](https://github.com/substrait-io/substrait/issues/281)) ([433d049](https://github.com/substrait-io/substrait/commit/433d0493b66d67c048f5e41017c6fdcd521b92d9))
+* add string transform functions ([#267](https://github.com/substrait-io/substrait/issues/267)) ([ff2f7f1](https://github.com/substrait-io/substrait/commit/ff2f7f1da8ea38452a3760ccc8a232cd8f59cfee))
+* clarify behavior of is_null, is_not_null, is_nan, is_finite, and is_infinite for nulls ([#285](https://github.com/substrait-io/substrait/issues/285)) ([cb25124](https://github.com/substrait-io/substrait/commit/cb25124d2d12f629a2f6335bb4f2563c1745758f))
+
 ## [0.12.0](https://github.com/substrait-io/substrait/compare/v0.11.0...v0.12.0) (2022-08-28)
 
 
