@@ -1147,11 +1147,16 @@ aggregate_functions:
             description: >
               Based on required operator performance and configured optimizations
               on saving memory bandwidth, the precision of the end result can be
-              the highest possible accuracy of an approximation.
+              the highest possible accuracy or an approximation.
 
-                - EXACT: provides the highest accurate output
-                - APPROXIMATE: provides a sub-optimal output
+                - EXACT: provides the exact result, rounded if needed according
+                  to the rounding option.
+                - APPROXIMATE: provides only an estimate; the result must lie
+                  between the minimum and maximum values in the input
+                  (inclusive), but otherwise the accuracy is left up to the
+                  consumer.
             options: [ EXACT, APPROXIMATE ]
+            required: true
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
@@ -1163,10 +1168,14 @@ aggregate_functions:
             description: >
               Based on required operator performance and configured optimizations
               on saving memory bandwidth, the precision of the end result can be
-              the highest possible accuracy of an approximation.
+              the highest possible accuracy or an approximation.
 
-                - EXACT: provides the highest accurate output
-                - APPROXIMATE: provides a sub-optimal output
+                - EXACT: provides the exact result, rounded if needed according
+                  to the rounding option.
+                - APPROXIMATE: provides only an estimate; the result must lie
+                  between the minimum and maximum values in the input
+                  (inclusive), but otherwise the accuracy is left up to the
+                  consumer.
             options: [ EXACT, APPROXIMATE ]
             required: true
           - name: rounding
@@ -1180,10 +1189,14 @@ aggregate_functions:
             description: >
               Based on required operator performance and configured optimizations
               on saving memory bandwidth, the precision of the end result can be
-              the highest possible accuracy of an approximation.
+              the highest possible accuracy or an approximation.
 
-                - EXACT: provides the highest accurate output
-                - APPROXIMATE: provides a sub-optimal output
+                - EXACT: provides the exact result, rounded if needed according
+                  to the rounding option.
+                - APPROXIMATE: provides only an estimate; the result must lie
+                  between the minimum and maximum values in the input
+                  (inclusive), but otherwise the accuracy is left up to the
+                  consumer.
             options: [ EXACT, APPROXIMATE ]
             required: true
           - name: rounding
@@ -1197,10 +1210,14 @@ aggregate_functions:
             description: >
               Based on required operator performance and configured optimizations
               on saving memory bandwidth, the precision of the end result can be
-              the highest possible accuracy of an approximation.
+              the highest possible accuracy or an approximation.
 
-                - EXACT: provides the highest accurate output
-                - APPROXIMATE: provides a sub-optimal output
+                - EXACT: provides the exact result, rounded if needed according
+                  to the rounding option.
+                - APPROXIMATE: provides only an estimate; the result must lie
+                  between the minimum and maximum values in the input
+                  (inclusive), but otherwise the accuracy is left up to the
+                  consumer.
             options: [ EXACT, APPROXIMATE ]
             required: true
           - name: rounding
@@ -1214,10 +1231,14 @@ aggregate_functions:
             description: >
               Based on required operator performance and configured optimizations
               on saving memory bandwidth, the precision of the end result can be
-              the highest possible accuracy of an approximation.
+              the highest possible accuracy or an approximation.
 
-                - EXACT: provides the highest accurate output
-                - APPROXIMATE: provides a sub-optimal output
+                - EXACT: provides the exact result, rounded if needed according
+                  to the rounding option.
+                - APPROXIMATE: provides only an estimate; the result must lie
+                  between the minimum and maximum values in the input
+                  (inclusive), but otherwise the accuracy is left up to the
+                  consumer.
             options: [ EXACT, APPROXIMATE ]
             required: true
           - name: rounding
@@ -1231,10 +1252,14 @@ aggregate_functions:
             description: >
               Based on required operator performance and configured optimizations
               on saving memory bandwidth, the precision of the end result can be
-              the highest possible accuracy of an approximation.
+              the highest possible accuracy or an approximation.
 
-                - EXACT: provides the highest accurate output
-                - APPROXIMATE: provides a sub-optimal output
+                - EXACT: provides the exact result, rounded if needed according
+                  to the rounding option.
+                - APPROXIMATE: provides only an estimate; the result must lie
+                  between the minimum and maximum values in the input
+                  (inclusive), but otherwise the accuracy is left up to the
+                  consumer.
             options: [ EXACT, APPROXIMATE ]
             required: true
           - name: rounding
