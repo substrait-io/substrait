@@ -1,6 +1,6 @@
 # Type System
 
-Substrait tries to cover the most common types used in data manipulation. Types beyond this common core may be represented using [simple extensions](../extensions/index.md#simple-extensions).
+Substrait tries to cover the most common types used in data manipulation. Types beyond this common core may be represented using [simple extensions](../extensions/simple_extensions.md).
 
 Substrait types fundamentally consist of four components:
 

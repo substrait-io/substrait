@@ -44,7 +44,7 @@ Compound type classes are type classes that need to be configured by means of a 
 
 ## User-Defined Types
 
-User-defined type classes can be created using a combination of pre-defined types. User-defined types are defined as part of [simple extensions](../extensions/index.md#simple-extensions). An extension can declare an arbitrary number of user defined extension types. Once a type has been declared, it can be used in function declarations.
+User-defined types are defined as part of [simple extensions](../extensions/#simple-extensions). An extension can declare an arbitrary number of user defined extension types. Once a type has been declared, it can be used in function declarations.
 
 A YAML example of an extension type is below:
 
