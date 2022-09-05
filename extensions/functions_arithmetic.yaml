@@ -1105,7 +1105,9 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "mode"
-    description: Calculates mode for a set of values.
+    description: >
+      Calculates mode for a set of values.
+      If there is no input, null is returned.
     impls:
       - args:
           - value: i8
