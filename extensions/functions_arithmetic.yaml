@@ -1313,7 +1313,8 @@ aggregate_functions:
 
                 - EXACT: provides the highest accurate output
                 - APPROXIMATE: provides a sub-optimal output
-            options: [ EXACT, APPROXIMATE]
+            options: [ EXACT, APPROXIMATE ]
+            required: true
           - name: rounding
             description: >
               When a boundary is computed to lie somewhere between two values,
