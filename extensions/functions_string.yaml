@@ -1276,5 +1276,6 @@ aggregate_functions:
             description: "Column of string values."
           - value: "string"
             name: "separator"
+            constant: true
             description: "Separator for concatenated strings"
         return: "string"
