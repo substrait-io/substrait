@@ -1278,4 +1278,5 @@ aggregate_functions:
             name: "separator"
             constant: true
             description: "Separator for concatenated strings"
+        ordered: true
         return: "string"
