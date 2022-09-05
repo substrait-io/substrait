@@ -1134,9 +1134,24 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "median"
-    description: Calculate the median for a set of values.
+    description: > 
+      Calculate the median for a set of values.
+
+      Returns null if applied to zero records. For the integer implementations,
+      the rounding option determines how the median should be rounded if it ends
+      up midway between two values. For the floating point implementations,
+      they specify the usual floating point rounding mode.
     impls:
       - args:
+          - name: precision
+            description: >
+              Based on required operator performance and configured optimizations
+              on saving memory bandwidth, the precision of the end result can be
+              the highest possible accuracy of an approximation.
+
+                - EXACT: provides the highest accurate output
+                - APPROXIMATE: provides a sub-optimal output
+            options: [ EXACT, APPROXIMATE ]
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
@@ -1144,6 +1159,16 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: i8?
       - args:
+          - name: precision
+            description: >
+              Based on required operator performance and configured optimizations
+              on saving memory bandwidth, the precision of the end result can be
+              the highest possible accuracy of an approximation.
+
+                - EXACT: provides the highest accurate output
+                - APPROXIMATE: provides a sub-optimal output
+            options: [ EXACT, APPROXIMATE ]
+            required: true
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
@@ -1151,6 +1176,16 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: i16?
       - args:
+          - name: precision
+            description: >
+              Based on required operator performance and configured optimizations
+              on saving memory bandwidth, the precision of the end result can be
+              the highest possible accuracy of an approximation.
+
+                - EXACT: provides the highest accurate output
+                - APPROXIMATE: provides a sub-optimal output
+            options: [ EXACT, APPROXIMATE ]
+            required: true
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
@@ -1158,6 +1193,16 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: i32?
       - args:
+          - name: precision
+            description: >
+              Based on required operator performance and configured optimizations
+              on saving memory bandwidth, the precision of the end result can be
+              the highest possible accuracy of an approximation.
+
+                - EXACT: provides the highest accurate output
+                - APPROXIMATE: provides a sub-optimal output
+            options: [ EXACT, APPROXIMATE ]
+            required: true
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
@@ -1165,6 +1210,16 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: i64?
       - args:
+          - name: precision
+            description: >
+              Based on required operator performance and configured optimizations
+              on saving memory bandwidth, the precision of the end result can be
+              the highest possible accuracy of an approximation.
+
+                - EXACT: provides the highest accurate output
+                - APPROXIMATE: provides a sub-optimal output
+            options: [ EXACT, APPROXIMATE ]
+            required: true
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
@@ -1172,51 +1227,16 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: fp64
-        nullability: DECLARED_OUTPUT
-        return: fp64?
-  - name: "approx_median"
-    description: Calculate the approximate median for a set of values.
-    impls:
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: i8
-        nullability: DECLARED_OUTPUT
-        return: i8?
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: i16
-        nullability: DECLARED_OUTPUT
-        return: i16?
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: i32
-        nullability: DECLARED_OUTPUT
-        return: i32?
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: i64
-        nullability: DECLARED_OUTPUT
-        return: i64?
-      - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - value: fp32
-        nullability: DECLARED_OUTPUT
-        return: fp32?
-      - args:
+          - name: precision
+            description: >
+              Based on required operator performance and configured optimizations
+              on saving memory bandwidth, the precision of the end result can be
+              the highest possible accuracy of an approximation.
+
+                - EXACT: provides the highest accurate output
+                - APPROXIMATE: provides a sub-optimal output
+            options: [ EXACT, APPROXIMATE ]
+            required: true
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
