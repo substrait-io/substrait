@@ -1305,6 +1305,15 @@ aggregate_functions:
               and for BOTH it will have n+1 elements.
             options: [ NEITHER, MINIMUM, MAXIMUM, BOTH ]
             required: true
+          - name: precision
+            description: >
+              Based on required operator performance and configured optimizations
+              on saving memory bandwidth, the precision of the end result can be
+              the highest possible accuracy of an approximation. 
+
+                - EXACT: provides the highest accurate output
+                - APPROXIMATE: provides a sub-optimal output
+            options: [ EXACT, APPROXIMATE]
           - name: rounding
             description: >
               When a boundary is computed to lie somewhere between two values,
