@@ -1084,7 +1084,9 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "corr"
-    description: Calculates correlation of two set of values.
+    description: >
+      Calculates correlation of two set of values. 
+      If there is no input, null is returned.
     impls:
       - args:
           - name: rounding
