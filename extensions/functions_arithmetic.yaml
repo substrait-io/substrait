@@ -1043,7 +1043,8 @@ aggregate_functions:
           - name: distribution
             options: [ SAMPLE, POPULATION]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
@@ -1053,7 +1054,8 @@ aggregate_functions:
           - name: distribution
             options: [ SAMPLE, POPULATION]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "variance"
@@ -1066,7 +1068,8 @@ aggregate_functions:
           - name: distribution
             options: [ SAMPLE, POPULATION]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
@@ -1076,7 +1079,8 @@ aggregate_functions:
           - name: distribution
             options: [ SAMPLE, POPULATION]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
 window_functions:
