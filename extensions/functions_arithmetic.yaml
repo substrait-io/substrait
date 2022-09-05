@@ -650,7 +650,7 @@ scalar_functions:
           - name: y
             value: fp64
         return: fp64
-  - 
+  -
     name: "abs"
     description: >
       Calculate the absolute value of the argument.
@@ -1085,7 +1085,7 @@ aggregate_functions:
         return: fp64?
   - name: "corr"
     description: >
-      Calculates correlation of two set of values. 
+      Calculates correlation of two set of values.
       If there is no input, null is returned.
     impls:
       - args:
@@ -1134,7 +1134,7 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "median"
-    description: > 
+    description: >
       Calculate the median for a set of values.
 
       Returns null if applied to zero records. For the integer implementations,
@@ -1268,15 +1268,6 @@ aggregate_functions:
           - value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
-  - name: "count_distinct"
-    description: Count of unique values in a set of values.
-    impls:
-      - args:
-          - options: [SILENT, SATURATE, ERROR]
-            required: false
-          - value: any
-        nullability: DECLARED_OUTPUT
-        return: i64
 window_functions:
   - name: "row_number"
     description: "the number of the current row within its partition."
@@ -1324,14 +1315,14 @@ window_functions:
       - args:
           - name: x
             value: i32
-        nullability: DECLARED_OUTPUT  
+        nullability: DECLARED_OUTPUT
         decomposable: NONE
         return: i32?
         window_type: PARTITION
       - args:
           - name: x
             value: i64
-        nullability: DECLARED_OUTPUT  
+        nullability: DECLARED_OUTPUT
         decomposable: NONE
         return: i64?
         window_type: PARTITION
