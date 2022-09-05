@@ -1263,3 +1263,19 @@ scalar_functions:
           - value: i32
             name: "count"
         return: "string"
+
+aggregate_functions:
+
+  -
+    name: string_agg
+    description: Concatenates a column of string values with a separator.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+            description: "Column of string values."
+          - value: "string"
+            name: "separator"
+            constant: true
+            description: "Separator for concatenated strings"
+        return: "string"
