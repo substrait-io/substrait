@@ -1040,6 +1040,9 @@ aggregate_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
+            required: false
           - name: x
             value: fp32
         nullability: DECLARED_OUTPUT
@@ -1047,6 +1050,9 @@ aggregate_functions:
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
             required: false
           - name: x
             value: fp64
@@ -1059,6 +1065,9 @@ aggregate_functions:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
+            required: false
           - name: x
             value: fp32
         nullability: DECLARED_OUTPUT
@@ -1066,6 +1075,9 @@ aggregate_functions:
       - args:
           - name: rounding
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
             required: false
           - name: x
             value: fp64
