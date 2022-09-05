@@ -1083,6 +1083,56 @@ aggregate_functions:
             value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
+  - name: "corr"
+    description: >
+      Calculates correlation of two set of values. 
+      If there is no input, null is returned.
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: fp32
+          - value: fp32
+        nullability: DECLARED_OUTPUT
+        return: fp32?
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: fp64
+          - value: fp64
+        nullability: DECLARED_OUTPUT
+        return: fp64?
+  - name: "mode"
+    description: >
+      Calculates mode for a set of values.
+      If there is no input, null is returned.
+    impls:
+      - args:
+          - value: i8
+        nullability: DECLARED_OUTPUT
+        return: i8?
+      - args:
+          - value: i16
+        nullability: DECLARED_OUTPUT
+        return: i16?
+      - args:
+          - value: i32
+        nullability: DECLARED_OUTPUT
+        return: i32?
+      - args:
+          - value: i64
+        nullability: DECLARED_OUTPUT
+        return: i64?
+      - args:
+          - value: fp32
+        nullability: DECLARED_OUTPUT
+        return: fp32?
+      - args:
+          - value: fp64
+        nullability: DECLARED_OUTPUT
+        return: fp64?
 window_functions:
   - name: "row_number"
     description: "the number of the current row within its partition."
