@@ -1352,31 +1352,6 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         ordered: true
         return: LIST?<any>
-  - name: "bool_and"
-    description: >
-      Aggregate boolean values and returns a boolean value.
-      If all of the values in the aggregation are true, function returns TRUE,
-      else it returns FALSE if any of the returned values are false. NULL values
-      are ignored by this function.
-    impls:
-      - args:
-          - value: boolean
-            name: x
-        nullability: DECLARED_OUTPUT
-        return: boolean
-  - name: "bool_or"
-    description: >
-      Aggregate boolean values and returns a boolean value.
-      If any value in the aggregation is true, function returns TRUE,
-      else it returns FALSE if all of the returned values are false. NULL values
-      are ignored by this function.
-    impls:
-      - args:
-          - value: boolean
-            name: x
-        nullability: DECLARED_OUTPUT
-        return: boolean
-
 
 window_functions:
   - name: "row_number"
