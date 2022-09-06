@@ -1268,6 +1268,91 @@ aggregate_functions:
           - value: fp64
         nullability: DECLARED_OUTPUT
         return: fp64?
+  - name: "quantile"
+    description: >
+      Calculates quantiles for a set of values.
+      
+      This function will divide the aggregated values (passed via the
+      distribution argument) over N equally-sized bins, where N is passed
+      via a constant argument. It will then return the values at the
+      boundaries of these bins in list form. If the input is appropriately
+      sorted, this computes the quantiles of the distribution.
+      
+      The function can optionally return the first and/or last element of
+      the input, as specified by the `boundaries` argument. If the input is
+      appropriately sorted, this will thus be the minimum and/or maximum
+      values of the distribution.
+      
+      When the boundaries do not lie exactly on elements of the incoming
+      distribution, the function will interpolate between the two nearby
+      elements. If the interpolated value cannot be represented exactly,
+      the `rounding` option controls how the value should be selected or
+      computed.
+      
+      The function fails and returns null in the following cases:
+        - `n` is null or less than one;
+        - any value in `distribution` is null.
+      
+      The function returns an empty list if `n` equals 1 and `boundaries` is
+      set to `NEITHER`.
+    
+    impls:
+      - args:
+          - name: boundaries
+            description: >
+              Which boundaries to include. For NEITHER, the output will have
+              n-1 elements, for MINIMUM and MAXIMUM it will have n elements,
+              and for BOTH it will have n+1 elements.
+            options: [ NEITHER, MINIMUM, MAXIMUM, BOTH ]
+            required: true
+          - name: precision
+            description: >
+              Based on required operator performance and configured optimizations
+              on saving memory bandwidth, the precision of the end result can be
+              the highest possible accuracy or an approximation.
+
+                - EXACT: provides the exact result, rounded if needed according
+                  to the rounding option.
+                - APPROXIMATE: provides only an estimate; the result must lie
+                  between the minimum and maximum values in the input
+                  (inclusive), but otherwise the accuracy is left up to the
+                  consumer.
+            options: [ EXACT, APPROXIMATE ]
+            required: true
+          - name: rounding
+            description: >
+              When a boundary is computed to lie somewhere between two values,
+              and this value cannot be exactly represented, this specifies how
+              to round it. For floating point numbers, it specifies the IEEE
+              754 rounding mode (as it does for all other floating point
+              operations). For integer types:
+              
+                - TIE_TO_EVEN: round to nearest value; if exactly halfway, tie
+                  to the even option.
+                - TIE_AWAY_FROM_ZERO: round to nearest value; if exactly
+                  halfway, tie away from zero.
+                - TRUNCATE: always round toward zero.
+                - CEILING: always round toward positive infinity.
+                - FLOOR: always round toward negative infinity.
+              
+              For non-numeric types, the behavior is the same as for integer
+              types, but applied to the index of the value in distribution.
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+            required: false
+          - value: i64
+            constant: yes
+            name: n
+            description: >
+              A positive integer which defines the number of quantile
+              partitions.
+          - value: any
+            name: distribution
+            description: >
+              The data for which the quantiles should be computed.
+        nullability: DECLARED_OUTPUT
+        ordered: true
+        return: LIST?<any>
+
 window_functions:
   - name: "row_number"
     description: "the number of the current row within its partition."
