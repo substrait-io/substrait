@@ -1350,6 +1350,7 @@ aggregate_functions:
             description: >
               The data for which the quantiles should be computed.
         nullability: DECLARED_OUTPUT
+        ordered: true
         return: LIST?<any>
 
 window_functions:
