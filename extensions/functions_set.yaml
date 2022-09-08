@@ -18,7 +18,9 @@ scalar_functions:
       - args:
           - options: [ NAN_IS_NAN, NAN_IS_NOT_NAN ]
             required: false
-          - value: T
-          - value: List<T>
+          - name: x
+            value: T
+          - name: y
+            value: List<T>
         nullability: DECLARED_OUTPUT
         return: int64?
