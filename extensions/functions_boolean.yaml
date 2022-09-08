@@ -110,6 +110,8 @@ scalar_functions:
           - value: boolean?
             name: a
         return: boolean?
+
+aggregate_functions:
   - 
     name: "bool_and"
     description: >
