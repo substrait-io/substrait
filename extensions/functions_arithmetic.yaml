@@ -1383,15 +1383,7 @@ aggregate_functions:
     description: >
       Selects an arbitrary value from a group of values.
 
-      This function returns a single arbitrary value from an expression.
-      Main purpose of this function is to optimize a query containing a GROUP BY
-      caluse.
-
-      A comparison is not performed when this function is applied, hence it
-      is not necessary to be included in the GROUP BY clause.
-
-      This function returns NULL when expression produces NULL.
-      When the expression is NULL, it returns NULL for all values in the group.
+      If the input is empty, the function returns null.
     impls:
       - args:
           - name: x
