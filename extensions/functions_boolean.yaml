@@ -27,6 +27,7 @@ scalar_functions:
     impls:
       - args:
           - value: boolean?
+            name: a
         variadic:
           min: 0
         return: boolean?
@@ -56,6 +57,7 @@ scalar_functions:
     impls:
       - args:
           - value: boolean?
+            name: a
         variadic:
           min: 0
         return: boolean?
@@ -121,7 +123,7 @@ aggregate_functions:
     impls:
       - args:
           - value: boolean
-            name: x
+            name: a
         nullability: DECLARED_OUTPUT
         return: boolean?
   - 
@@ -133,6 +135,6 @@ aggregate_functions:
     impls:
       - args:
           - value: boolean
-            name: x
+            name: a
         nullability: DECLARED_OUTPUT
         return: boolean?
