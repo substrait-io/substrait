@@ -12,7 +12,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp32
       - args:
           - name: rounding
@@ -21,7 +22,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "log10"
@@ -34,7 +36,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp32
       - args:
           - name: rounding
@@ -43,7 +46,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "log2"
@@ -56,7 +60,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp32
+          - name: x
+            value: fp32
         return: fp32
       - args:
           - name: rounding
@@ -65,7 +70,8 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
-          - value: fp64
+          - name: x
+            value: fp64
         return: fp64
   -
     name: "logb"
