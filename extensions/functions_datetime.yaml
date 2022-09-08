@@ -9,187 +9,259 @@ scalar_functions:
           - options: [ YEAR, MONTH, DAY, SECOND ]
             name: The part of the value to extract.
             required: true
-          - value: timestamp
+          - name: x
+            value: timestamp
         return: i64
       - args:
           - options: [ YEAR, MONTH, DAY, SECOND ]
             name: The part of the value to extract.
             required: true
-          - value: timestamp_tz
+          - name: x
+            value: timestamp_tz
         return: i64
       - args:
           - options: [ YEAR, MONTH, DAY ]
             name: The part of the value to extract.
             required: true
-          - value: date
+          - name: x
+            value: date
         return: i64
       - args:
           - options: [ SECOND ]
             name: The part of the value to extract.
             required: true
-          - value: time
+          - name: x
+            value: time
         return: i64
   -
     name: "add"
     description: Add an interval to a date/time type.
     impls:
       - args:
-          - value: timestamp
-          - value: interval_year
+          - name: x
+            value: timestamp
+          - name: y
+            value: interval_year
         return: timestamp
       - args:
-          - value: timestamp_tz
-          - value: interval_year
+          - name: x
+            value: timestamp_tz
+          - name: y
+            value: interval_year
         return: timestamp
       - args:
-          - value: date
-          - value: interval_year
+          - name: x
+            value: date
+          - name: y
+            value: interval_year
         return: timestamp
       - args:
-          - value: timestamp
-          - value: interval_day
+          - name: x
+            value: timestamp
+          - name: y
+            value: interval_day
         return: timestamp
       - args:
-          - value: timestamp_tz
-          - value: interval_day
+          - name: x
+            value: timestamp_tz
+          - name: y
+            value: interval_day
         return: timestamp
       - args:
-          - value: date
-          - value: interval_day
+          - name: x
+            value: date
+          - name: y
+            value: interval_day
         return: timestamp
   -
     name: "add_intervals"
     description: Add two intervals together.
     impls:
       - args:
-          - value: interval_day
-          - value: interval_day
+          - name: x
+            value: interval_day
+          - name: y
+            value: interval_day
         return: interval_day
       - args:
-          - value: interval_year
-          - value: interval_year
+          - name: x
+            value: interval_year
+          - name: y
+            value: interval_year
         return: interval_year
   -
     name: "subtract"
     description: Subtract an interval from a date/time type.
     impls:
       - args:
-          - value: timestamp
-          - value: interval_year
+          - name: x
+            value: timestamp
+          - name: y
+            value: interval_year
         return: timestamp
       - args:
-          - value: timestamp_tz
-          - value: interval_year
+          - name: x
+            value: timestamp_tz
+          - name: y
+            value: interval_year
         return: timestamp_tz
       - args:
-          - value: date
-          - value: interval_year
+          - name: x
+            value: date
+          - name: y
+            value: interval_year
         return: date
       - args:
-          - value: timestamp
-          - value: interval_day
+          - name: x
+            value: timestamp
+          - name: y
+            value: interval_day
         return: timestamp
       - args:
-          - value: timestamp_tz
-          - value: interval_day
+          - name: x
+            value: timestamp_tz
+          - name: y
+            value: interval_day
         return: timestamp_tz
       - args:
-          - value: date
-          - value: interval_day
+          - name: x
+            value: date
+          - name: y
+            value: interval_day
         return: date
   -
     name: "lte"
     description: less than or equal to
     impls:
       - args:
-          - value: timestamp
-          - value: timestamp
+          - name: x
+            value: timestamp
+          - name: y
+            value: timestamp
         return: boolean
       - args:
-          - value: timestamp_tz
-          - value: timestamp_tz
+          - name: x
+            value: timestamp_tz
+          - name: y
+            value: timestamp_tz
         return: boolean
       - args:
-          - value: date
-          - value: date
+          - name: x
+            value: date
+          - name: y
+            value: date
         return: boolean
       - args:
-          - value: interval_day
-          - value: interval_day
+          - name: x
+            value: interval_day
+          - name: y
+            value: interval_day
         return: boolean
       - args:
-          - value: interval_year
-          - value: interval_year
+          - name: x
+            value: interval_year
+          - name: y
+            value: interval_year
         return: boolean
   -
     name: "lt"
     description: less than
     impls:
       - args:
-          - value: timestamp
-          - value: timestamp
+          - name: x
+            value: timestamp
+          - name: y
+            value: timestamp
         return: boolean
       - args:
-          - value: timestamp_tz
-          - value: timestamp_tz
+          - name: x
+            value: timestamp_tz
+          - name: y
+            value: timestamp_tz
         return: boolean
       - args:
-          - value: date
-          - value: date
+          - name: x
+            value: date
+          - name: y
+            value: date
         return: boolean
       - args:
-          - value: interval_day
-          - value: interval_day
+          - name: x
+            value: interval_day
+          - name: y
+            value: interval_day
         return: boolean
       - args:
-          - value: interval_year
-          - value: interval_year
+          - name: x
+            value: interval_year
+          - name: y
+            value: interval_year
         return: boolean
   -
     name: "gte"
     description: greater than or equal to
     impls:
       - args:
-          - value: timestamp
-          - value: timestamp
+          - name: x
+            value: timestamp
+          - name: y
+            value: timestamp
         return: boolean
       - args:
-          - value: timestamp_tz
-          - value: timestamp_tz
+          - name: x
+            value: timestamp_tz
+          - name: y
+            value: timestamp_tz
         return: boolean
       - args:
-          - value: date
-          - value: date
+          - name: x
+            value: date
+          - name: y
+            value: date
         return: boolean
       - args:
-          - value: interval_day
-          - value: interval_day
+          - name: x
+            value: interval_day
+          - name: y
+            value: interval_day
         return: boolean
       - args:
-          - value: interval_year
-          - value: interval_year
+          - name: x
+            value: interval_year
+          - name: y
+            value: interval_year
         return: boolean
   -
     name: "gt"
     description: greater than
     impls:
       - args:
-          - value: timestamp
-          - value: timestamp
+          - name: x
+            value: timestamp
+          - name: y
+            value: timestamp
         return: boolean
       - args:
-          - value: timestamp_tz
-          - value: timestamp_tz
+          - name: x
+            value: timestamp_tz
+          - name: y
+            value: timestamp_tz
         return: boolean
       - args:
-          - value: date
-          - value: date
+          - name: x
+            value: date
+          - name: y
+            value: date
         return: boolean
       - args:
-          - value: interval_day
-          - value: interval_day
+          - name: x
+            value: interval_day
+          - name: y
+            value: interval_day
         return: boolean
       - args:
-          - value: interval_year
-          - value: interval_year
+          - name: x
+            value: interval_year
+          - name: y
+            value: interval_year
         return: boolean
