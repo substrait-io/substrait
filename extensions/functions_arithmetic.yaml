@@ -1378,6 +1378,52 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         ordered: true
         return: LIST?<any>
+  
+  - name: "any_value"
+    description: >
+      Selects an arbitrary value from a group of values.
+
+      This function returns a single arbitrary value from an expression.
+      Main purpose of this function is to optimize a query containing a GROUP BY
+      caluse.
+
+      A comparison is not performed when this function is applied, hence it
+      is not necessary to be included in the GROUP BY clause.
+
+      This function returns NULL when expression produces NULL.
+      When the expression is NULL, it returns NULL for all values in the group.
+
+    impls:
+      - args:
+          - value: i8
+            name: x
+      nullability: DECLARED_OUTPUT
+      return: i8?
+      - args:
+          - value: i16
+            name: x
+      nullability: DECLARED_OUTPUT
+      return: i16?
+      - args:
+          - value: i32
+            name: x
+      nullability: DECLARED_OUTPUT
+      return: i32?
+      - args:
+          - value: i64
+            name: x
+      nullability: DECLARED_OUTPUT
+      return: i64?
+      - args:
+          - value: fp32
+            name: x
+      nullability: DECLARED_OUTPUT
+      return: fp32?
+      - args:
+          - value: fp64
+            name: x
+      nullability: DECLARED_OUTPUT
+      return: fp64?
 
 window_functions:
   - name: "row_number"
