@@ -17,7 +17,8 @@ aggregate_functions:
     description: "Count a set of records (not field referenced)"
     impls:
       - args:
-          - options: [SILENT, SATURATE, ERROR]
+          - name: x
+            options: [SILENT, SATURATE, ERROR]
             required: false
         nullability: DECLARED_OUTPUT
         decomposable: MANY
