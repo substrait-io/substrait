@@ -1368,6 +1368,38 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         ordered: true
         return: LIST?<any>
+  - name: "arg_min"
+    description: >
+      Finds the value `y` which minimizes the `x`.
+
+    impls:
+      - args:
+          - name: x
+            description: >
+              Expression to be minimized.
+            value: any
+          - name: y
+            description: >
+              Expression to be returned.
+            value: any
+        nullability: DECLARED_OUTPUT
+        return: any?
+  - name: "arg_max"
+    description: >
+      Finds the value `y` which maximizes the `x`.
+
+    impls:
+      - args:
+          - name: x
+            description: >
+              Expression to be maximized.
+            value: any
+          - name: y
+            description: >
+              Expression to be returned.
+            value: any
+        nullability: DECLARED_OUTPUT
+        return: any?
 
 window_functions:
   - name: "row_number"
