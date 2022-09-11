@@ -1,6 +1,32 @@
 Release Notes
 ---
 
+## [0.14.0](https://github.com/substrait-io/substrait/compare/v0.13.0...v0.14.0) (2022-09-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* option argument added to std_dev and variance aggregate functions
+
+### Features
+
+* add bool_and and bool_or aggregate functions ([#314](https://github.com/substrait-io/substrait/issues/314)) ([52fa523](https://github.com/substrait-io/substrait/commit/52fa5235c6bb2f43ccc2e25c6fe548a0f0215524))
+* add corr and mode aggregation functions ([#296](https://github.com/substrait-io/substrait/issues/296)) ([96b13d7](https://github.com/substrait-io/substrait/commit/96b13d7ea4e9dc95c051d02521812e6011c47e20))
+* add median and count_distinct aggregation functions ([#278](https://github.com/substrait-io/substrait/issues/278)) ([9be62e5](https://github.com/substrait-io/substrait/commit/9be62e5067c13858e8c545689891937c2dced4ee))
+* add population option to variance and standard deviation functions ([#295](https://github.com/substrait-io/substrait/issues/295)) ([c47fffa](https://github.com/substrait-io/substrait/commit/c47fffa83af26f7278a5d7f6501d9eadbd365d30))
+* add quantile aggregate function ([#279](https://github.com/substrait-io/substrait/issues/279)) ([de6bc9f](https://github.com/substrait-io/substrait/commit/de6bc9fad440880b6b5333cb0ee129d2c19e471c))
+* add string_agg aggregate function ([#297](https://github.com/substrait-io/substrait/issues/297)) ([fbe5e09](https://github.com/substrait-io/substrait/commit/fbe5e0949b863334d02b5ad9ecac55ec8fc4debb))
+
+
+### Bug Fixes
+
+* mark string_agg aggregate as being sensitive to input order ([#312](https://github.com/substrait-io/substrait/issues/312)) ([683faaa](https://github.com/substrait-io/substrait/commit/683faaa37ce8cad444a5fe703a7653dc04d02486))
+* **naming:** add missing arg names in functions_arithmetic.yaml ([#315](https://github.com/substrait-io/substrait/issues/315)) ([d433a06](https://github.com/substrait-io/substrait/commit/d433a06adc77d9d71db3a3b956d82b8318d220ed))
+* **naming:** add missing arg names in functions_datetime.yaml ([#318](https://github.com/substrait-io/substrait/issues/318)) ([b7347d1](https://github.com/substrait-io/substrait/commit/b7347d15c62e67fbca2cb810c008c32460263d7b))
+* **naming:** add missing arg names in functions_logarithmic.yaml and functions_set.yaml ([#319](https://github.com/substrait-io/substrait/issues/319)) ([1c14d27](https://github.com/substrait-io/substrait/commit/1c14d271557addb5980123778102f844359a749e))
+* **naming:** add/replace arg names in functions_boolean.yaml ([#317](https://github.com/substrait-io/substrait/issues/317)) ([809a2f4](https://github.com/substrait-io/substrait/commit/809a2f42c2f2795bc7efd64b7ff4cef3d9abc807))
+* revert addition of count_distinct aggregate function ([#311](https://github.com/substrait-io/substrait/issues/311)) ([90d7c0d](https://github.com/substrait-io/substrait/commit/90d7c0df9c729a3027988aeadfd74104f7385014))
+
 ## [0.13.0](https://github.com/substrait-io/substrait/compare/v0.12.0...v0.13.0) (2022-09-04)
 
 
