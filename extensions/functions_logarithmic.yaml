@@ -12,6 +12,9 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
+          - name: on_log_zero
+            options: [NAN, ERROR, MINUS_INFINITY]
+            required: false
           - name: x
             value: fp32
         return: fp32
@@ -21,6 +24,9 @@ scalar_functions:
             required: false
           - name: on_domain_error
             options: [ NAN, ERROR ]
+            required: false
+          - name: on_log_zero
+            options: [NAN, ERROR, MINUS_INFINITY]
             required: false
           - name: x
             value: fp64
@@ -36,6 +42,9 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
+          - name: on_log_zero
+            options: [NAN, ERROR, MINUS_INFINITY]
+            required: false
           - name: x
             value: fp32
         return: fp32
@@ -45,6 +54,9 @@ scalar_functions:
             required: false
           - name: on_domain_error
             options: [ NAN, ERROR ]
+            required: false
+          - name: on_log_zero
+            options: [NAN, ERROR, MINUS_INFINITY]
             required: false
           - name: x
             value: fp64
@@ -60,6 +72,9 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
+          - name: on_log_zero
+            options: [NAN, ERROR, MINUS_INFINITY]
+            required: false
           - name: x
             value: fp32
         return: fp32
@@ -69,6 +84,9 @@ scalar_functions:
             required: false
           - name: on_domain_error
             options: [ NAN, ERROR ]
+            required: false
+          - name: on_log_zero
+            options: [NAN, ERROR, MINUS_INFINITY]
             required: false
           - name: x
             value: fp64
@@ -87,6 +105,9 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
+          - name: on_log_zero
+            options: [NAN, ERROR, MINUS_INFINITY]
+            required: false
           - value: fp32
             name: "x"
             description: "The number `x` to compute the logarithm of"
@@ -100,6 +121,9 @@ scalar_functions:
             required: false
           - name: on_domain_error
             options: [ NAN, ERROR ]
+            required: false
+          - name: on_log_zero
+            options: [NAN, ERROR, MINUS_INFINITY]
             required: false
           - value: fp64
             name: "x"
@@ -122,6 +146,9 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
+          - name: on_log_zero
+            options: [NAN, ERROR, MINUS_INFINITY]
+            required: false
           - name: x
             value: fp32
         return: fp32
@@ -131,6 +158,9 @@ scalar_functions:
             required: false
           - name: on_domain_error
             options: [ NAN, ERROR ]
+            required: false
+          - name: on_log_zero
+            options: [NAN, ERROR, MINUS_INFINITY]
             required: false
           - name: x
             value: fp64
