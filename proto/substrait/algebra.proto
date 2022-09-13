@@ -178,6 +178,37 @@ message JoinRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
+// A time-series variant of the traditional JOIN relational operator
+// left-join-right(s), which joins on an ordered key using inexact matching
+message AsOfJoinRel {
+  RelCommon common = 1;
+  Rel left = 2;
+  Rel right = 3;
+  Expression expression = 4;
+  Expression post_join_filter = 5;
+
+  JoinType type = 6;
+
+  enum JoinType {
+    JOIN_TYPE_UNSPECIFIED = 0;
+    JOIN_TYPE_INNER = 1;
+    JOIN_TYPE_OUTER = 2;
+    JOIN_TYPE_LEFT = 3;
+    JOIN_TYPE_RIGHT = 4;
+  }
+
+  // Key column that must be present in both the left and right fields.
+  Expression on = 7;
+
+  // Maximum allowed difference between the left and right key columns
+  //
+  // If this field is not set, then the right-side `on` lookback extends to the
+  // first timestamp.
+  Expression tolerance = 8;
+
+  substrait.extensions.AdvancedExtension advanced_extension = 100;
+}
+
 // Cartesian product relational operator of two tables (left and right)
 message CrossRel {
   RelCommon common = 1;
@@ -369,6 +400,9 @@ message Rel {
     //Physical relations
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
+
+    // Logical relation
+    AsOfJoinRel asof_join = 15;
   }
 }
 
