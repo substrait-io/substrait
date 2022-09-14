@@ -10,7 +10,8 @@ aggregate_functions:
       result.
     impls:
       - args:
-          - value: any
+          - name: x
+            value: any
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: binary
