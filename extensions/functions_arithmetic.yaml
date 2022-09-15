@@ -175,7 +175,11 @@ scalar_functions:
         return: fp64
   -
     name: "divide"
-    description: "Divide one value by another. Partial values are truncated."
+    description: >
+      Divide x by y. In the case of integer division, partial values are truncated (i.e. rounded towards 0).
+      The `on_division_by_zero` option governs behavior in cases where y is 0 and x is not 0.
+      `LIMIT` means positive or negative infinity (depending on the sign of x and y).
+      If x and y are both 0 or both +/-infinity, behavior will be governed by `on_domain_error`.
     impls:
       - args:
           - name: overflow
@@ -220,6 +224,9 @@ scalar_functions:
           - name: on_domain_error
             options: [ NAN, ERROR ]
             required: false
+          - name: on_division_by_zero
+            options: [ LIMIT, NAN, ERROR ]
+            required: false
           - name: x
             value: fp32
           - name: y
@@ -231,6 +238,9 @@ scalar_functions:
             required: false
           - name: on_domain_error
             options: [ NAN, ERROR ]
+            required: false
+          - name: on_division_by_zero
+            options: [ LIMIT, NAN, ERROR ]
             required: false
           - name: x
             value: fp64
