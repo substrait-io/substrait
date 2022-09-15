@@ -176,19 +176,15 @@ scalar_functions:
   -
     name: "divide"
     description: >
-      Divide x by y. In the case of integer division, partial values are truncated.
-      The `on_division_by_zero` option governs behaviour in cases where y is 0 and x is not 0.
-      The `on_domain_error` option governs behaviour for 0/0 and Inf/Inf etc.
+      Divide x by y. In the case of integer division, partial values are truncated (i.e. rounded towards 0).
+      The `on_division_by_zero` option governs behavior in cases where y is 0 and x is not 0.
+      `LIMIT` means positive or negative infinity (depending on the sign of x and y).
+      If x and y are both 0 or both +/-infinity, behavior will be governed by `on_domain_error`.
     impls:
       - args:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - name: on_division_by_zero
-            options: [ NAN, ERROR, LIMIT ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
           - name: x
             value: i8
           - name: y
@@ -198,11 +194,6 @@ scalar_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - name: on_division_by_zero
-            options: [ NAN, ERROR, LIMIT ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
           - name: x
             value: i16
           - name: y
@@ -212,11 +203,6 @@ scalar_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - name: on_division_by_zero
-            options: [ NAN, ERROR, LIMIT ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
           - name: x
             value: i32
           - name: y
@@ -226,11 +212,6 @@ scalar_functions:
           - name: overflow
             options: [ SILENT, SATURATE, ERROR ]
             required: false
-          - name: on_division_by_zero
-            options: [ NAN, ERROR, LIMIT ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
           - name: x
             value: i64
           - name: y
@@ -244,7 +225,7 @@ scalar_functions:
             options: [ NAN, ERROR ]
             required: false
           - name: on_division_by_zero
-            options: [ NAN, ERROR, LIMIT ]
+            options: [ LIMIT, NAN, ERROR ]
             required: false
           - name: x
             value: fp32
@@ -259,7 +240,7 @@ scalar_functions:
             options: [ NAN, ERROR ]
             required: false
           - name: on_division_by_zero
-            options: [ NAN, ERROR, LIMIT ]
+            options: [ LIMIT, NAN, ERROR ]
             required: false
           - name: x
             value: fp64
