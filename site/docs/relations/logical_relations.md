@@ -137,14 +137,14 @@ The project operation will produce one or more additional expressions based on t
 | Inputs               | 1                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution maintained, mapped by emit. Orderedness: Maintained if no window operations. Extended to include projection fields if fields are direct references. If window operations are present, no orderedness is maintained. |
-| Direct Output Order  | The field order of the input + the list of new expressions in the order they are declared in the expressions list. |
+| Direct Output Order  | One field for each expression in the order they are declared in the expressions list. |
 
 ### Project Properties
 
 | Property    | Description                                          | Required                         |
 | ----------- | ---------------------------------------------------- | -------------------------------- |
 | Input       | The relational input.                                | Required                         |
-| Expressions | List of one or more expressions to add to the input. | At least one expression required |
+| Expressions | List of one or more expressions to output.           | At least one expression required |
 
 === "ProjectRel Message"
 
