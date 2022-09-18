@@ -1,6 +1,22 @@
 Release Notes
 ---
 
+## [0.15.0](https://github.com/substrait-io/substrait/compare/v0.14.0...v0.15.0) (2022-09-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* options were added to division and logarithmic functions.
+
+### Features
+
+* add options for behaviour when dividing by zero or calculating log zero ([#329](https://github.com/substrait-io/substrait/issues/329)) ([1c170c8](https://github.com/substrait-io/substrait/commit/1c170c8d984ffbee759f7d7371cbb93b1fd24db9))
+
+
+### Bug Fixes
+
+* **naming:** add missing arg names in functions_aggregate_*.yaml ([#316](https://github.com/substrait-io/substrait/issues/316)) ([fb92997](https://github.com/substrait-io/substrait/commit/fb9299735f4e67cffaa7b153f4dce885c9f7f93d))
+
 ## [0.14.0](https://github.com/substrait-io/substrait/compare/v0.13.0...v0.14.0) (2022-09-11)
 
 
