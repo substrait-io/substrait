@@ -17,14 +17,14 @@ The hash equijoin join operator will build a hash table out of the right input b
 
 ### Hash Equijoin Properties
 
-| Property            | Description                                                  | Required                 |
-| ------------------- | ------------------------------------------------------------ | ------------------------ |
-| Left Input          | A relational input.                                          | Required                 |
-| Right Input         | A relational input.                                          | Required                 |
-| Join Expression     | A boolean condition that describes whether each record from the left set "match" the record from the right set. The condition must only include the following operations: AND, ==, field references, is not distinct from. Field references correspond to the direct output order of the data. | Required.                |
+| Property            | Description                                                                                                                                                                                                            | Required                 |
+|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
+| Left Input          | A relational input.(Probe-side)                                                                                                                                                                                        | Required                 |
+| Right Input         | A relational input.(Build-side)                                                                                                                                                                                        | Required                 |
+| Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                 | Required                 |
+| Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                | Required                 |
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true. |
-| Join Type           | One of the join types defined in the Join operator.          | Required                 |
-
+| Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                    | Required                 |
 
 
 ## NLJ Operator
@@ -62,13 +62,14 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 
 ### Merge Join Properties
 
-| Property            | Description                                                  | Required                                      |
-| ------------------- | ------------------------------------------------------------ | --------------------------------------------- |
-| Left Input          | A relational input.                                          | Required                                      |
-| Right Input         | A relational input.                                          | Required                                      |
-| Join Expression     | A boolean condition that describes whether each record from the left set "match" the record from the right set. The condition must only include the following operations: AND, ==, field references, is not distinct from. Field references correspond to the direct output order of the data. | Optional. Defaults to true (a Cartesian join). |
-| Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.                      |
-| Join Type           | One of the join types defined in the Join operator.          | Required                                      |
+| Property            | Description                                                                                                                                                                                                             | Required                    |
+|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|
+| Left Input          | A relational input.                                                                                                                                                                                                     | Required                    |
+| Right Input         | A relational input.                                                                                                                                                                                                     | Required                    |
+| Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                  | Required                    |
+| Right Keys          | References to the fields to join on in the right input.                                                                                                                                                            | Reauired                    |    
+| Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.    |
+| Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                    |
 
 ## Exchange Operator
 
