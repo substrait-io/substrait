@@ -152,6 +152,19 @@ message ProjectRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
+enum JoinType {
+  JOIN_TYPE_UNSPECIFIED = 0;
+  JOIN_TYPE_INNER = 1;
+  JOIN_TYPE_OUTER = 2;
+  JOIN_TYPE_LEFT = 3;
+  JOIN_TYPE_RIGHT = 4;
+  JOIN_TYPE_SEMI = 5;
+  JOIN_TYPE_ANTI = 6;
+  // This join is useful for nested sub-queries where we need exactly one tuple in output (or throw exception)
+  // See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf
+  JOIN_TYPE_SINGLE = 7;
+}
+
 // The binary JOIN relational operator left-join-right, including various join types, a join condition and post_join_filter expression
 message JoinRel {
   RelCommon common = 1;
@@ -159,21 +172,7 @@ message JoinRel {
   Rel right = 3;
   Expression expression = 4;
   Expression post_join_filter = 5;
-
   JoinType type = 6;
-
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_SEMI = 5;
-    JOIN_TYPE_ANTI = 6;
-    // This join is useful for nested sub-queries where we need exactly one tuple in output (or throw exception)
-    // See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf
-    JOIN_TYPE_SINGLE = 7;
-  }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
@@ -365,8 +364,8 @@ message Rel {
     CrossRel cross = 12;
 
     //Physical relations
-    HashJoinRel hashJoin = 13;
-    MergeJoinRel mergeJoin = 14;
+    HashJoinRel hash_join = 13;
+    MergeJoinRel merge_join = 14;
   }
 }
 
@@ -489,21 +488,7 @@ message HashJoinRel {
   Rel right = 3;
   Expression expression = 4;
   Expression post_join_filter = 5;
-
   JoinType type = 6;
-
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_SEMI = 5;
-    JOIN_TYPE_ANTI = 6;
-    // This join is useful for nested sub-queries where we need exactly one tuple in output (or throw exception)
-    // See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf
-    JOIN_TYPE_SINGLE = 7;
-  }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
@@ -518,19 +503,6 @@ message MergeJoinRel {
   Expression post_join_filter = 5;
 
   JoinType type = 6;
-
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_SEMI = 5;
-    JOIN_TYPE_ANTI = 6;
-    // This join is useful for nested sub-queries where we need exactly one tuple in output (or throw exception)
-    // See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf
-    JOIN_TYPE_SINGLE = 7;
-  }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
