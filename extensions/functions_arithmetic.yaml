@@ -1095,7 +1095,7 @@ aggregate_functions:
         return: fp64?
   - name: "corr"
     description: >
-      Calculates correlation of two set of values.
+      Calculates Pearson's correlation between `x` and `y`.
       If there is no input, null is returned.
     impls:
       - args:
