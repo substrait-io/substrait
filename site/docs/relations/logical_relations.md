@@ -19,7 +19,7 @@ The read operator is an operator that produces one output. A simple example woul
 | ----------------- | ------------------------------------------------------------ | ------------------------------------ |
 | Definition        | The contents of the read property definition.                | Required                             |
 | Direct Schema     | Defines the schema of the output of the read (before any projection or emit remapping/hiding). | Required                             |
-| Filter            | A boolean Substrait expression that describes the filter of an iceberg dataset. TBD: define how field referencing works. | Optional, defaults to none.          |
+| Filter            | A boolean Substrait expression that describes the filter of a dataset. | Optional, defaults to none.          |
 | Projection        | A masked complex expression describing the portions of the content that should be read | Optional, defaults to all of schema  |
 | Output properties | Declaration of orderedness and/or distribution properties this read produces. | Optional, defaults to no properties. |
 | Properties        | A list of name/value pairs associated with the read.         | Optional, defaults to empty          |
