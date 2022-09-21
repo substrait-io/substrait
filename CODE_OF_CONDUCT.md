@@ -74,7 +74,7 @@ is getting out of control we can email the SMC at ???.
 
 ## Acknowledgements
 
-This statement draws on the following for content and inspriation:
+This statement draws on the following for content and inspiration:
 
  * [The Apache Software Foundation code of conduct](https://www.apache.org/foundation/policies/conduct.html)
  * [Wikimedia's Universal Code of Conduct](https://meta.wikimedia.org/wiki/Universal_Code_of_Conduct)
