@@ -1366,7 +1366,7 @@ aggregate_functions:
             options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
             required: false
           - value: i64
-            constant: yes
+            constant: true
             name: n
             description: >
               A positive integer which defines the number of quantile
