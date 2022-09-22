@@ -112,6 +112,8 @@ $defs:
               type: string
             value:
               $ref: "#/$defs/type"
+            constant:
+              type: boolean
         - type: object # type
           required: [ type ]
           properties:
