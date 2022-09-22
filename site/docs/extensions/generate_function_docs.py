@@ -36,8 +36,10 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
             document_option_names_list = []
             options_list = []
 
-            for count, impls in enumerate(implementations_list):
-                args_list = impls["args"]
+            for count, impl in enumerate(implementations_list):
+                if "args" not in impl:
+                    continue
+                args_list = impl["args"]
                 arg_string = []
                 only_arg_names = []
                 arg_with_option_names = []
@@ -47,8 +49,6 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                 #
                 # Argument values:
                 #   values, value names, description
-                # Options:
-                #   options, option names, required
                 for arg in args_list:
                     if "value" in arg:
                         arg_string.append(arg["value"])
@@ -58,35 +58,38 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                         if "description" in arg:
                             arg_descriptions.append(arg["description"])
                     elif "options" in arg:
-                        options = str(arg["options"])
+                        choices = str(arg["options"])
 
-                        # Options with no defined name, will be named as the list of options
+                        # enum with no defined name, will be named as the list of choices
                         if "name" in arg:
                             option_name = str(arg["name"])
                             document_option_names_list.append(option_name)
                         else:
-                            option_name = options
+                            option_name = choices
 
-                        # Required options will be prepended with `req_enum` inside the function
-                        # implementation. Optional options will be prepended with `opt_enum`
-                        # inside the function implementation.
-                        if "required" in arg and arg["required"]:
-                            option_name = f"req_enum:{option_name}"
-                        else:
-                            option_name = f"opt_enum:{option_name}"
+                        # Required enums will be prepended with `req_enum` inside the function
                         arg_string.append(option_name)
                         arg_with_option_names.append(option_name)
                         option_names_list.append(option_name)
-                        options_list.append(options)
+                        options_list.append(choices)
                     else:
                         raise Exception(f"Unrecognized argument found in "
                                         f"{file_name}:{function_name}")
 
+                opts = impl["options"] if "options" in impl else {}
+                for opt_name, opt in opts.items():
+                    choices = str(opt["values"])
+                    document_option_names_list.append(opt_name)
+                    option_name = f"option:{opt_name}"
+                    arg_string.append(option_name)
+                    arg_with_option_names.append(option_name)
+                    option_names_list.append(option_name)
+                    options_list.append(choices)
 
                 # If the implementation is variadic, the last argument will appear `min_args`,
                 # number of times in the implementation.
-                if "variadic" in impls:
-                    min_args = impls["variadic"]["min"]
+                if "variadic" in impl:
+                    min_args = impl["variadic"]["min"]
                     for count in range(min_args - 1):
                         arg_string.append(arg_string[-1])
                         if len(only_arg_names) > 0:
@@ -118,11 +121,11 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                 # If the return value for the function implementation is multiple lines long,
                 # print each line separately. This is the case for some functions in
                 # functions_arithmetic_decimal.yaml
-                if "\n" in impls["return"]:
+                if "\n" in impl["return"]:
                     mdFile.new_line(
                         f"{count}. {function_name}({func_concat_arg_input_values}): -> "
                     )
-                    multiline_return_str = "\t" + impls["return"]
+                    multiline_return_str = "\t" + impl["return"]
                     multiline_return_str = multiline_return_str.replace("\n", "\n\t")
                     mdFile.new_line("\t```")
                     mdFile.new_line(f"{multiline_return_str}")
@@ -130,7 +133,7 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                 else:
                     mdFile.new_line(
                         f"{count}. {function_name}({func_concat_arg_input_values}): -> "
-                        f"`{impls['return']}`"
+                        f"`{impl['return']}`"
                     )
 
             if "description" in function_spec:

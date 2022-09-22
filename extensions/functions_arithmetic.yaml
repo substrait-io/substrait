@@ -6,172 +6,172 @@ scalar_functions:
     description: "Add two values."
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i8
           - name: y
             value: i8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i8
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i16
           - name: y
             value: i16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i16
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i32
           - name: y
             value: i32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i32
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - value: i64
           - value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
           - name: y
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
           - name: y
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "subtract"
     description: "Subtract one value from another."
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i8
           - name: y
             value: i8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i8
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i16
           - name: y
             value: i16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i16
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i32
           - name: y
             value: i32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i32
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i64
           - name: y
             value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
           - name: y
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
           - name: y
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "multiply"
     description: "Multiply two values."
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i8
           - name: y
             value: i8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i8
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i16
           - name: y
             value: i16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i16
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i32
           - name: y
             value: i32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i32
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i64
           - name: y
             value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
           - name: y
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
           - name: y
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "divide"
@@ -182,102 +182,98 @@ scalar_functions:
       If x and y are both 0 or both +/-infinity, behavior will be governed by `on_domain_error`.
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i8
           - name: y
             value: i8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i8
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i16
           - name: y
             value: i16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i16
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i32
           - name: y
             value: i32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i32
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i64
           - name: y
             value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
-          - name: on_division_by_zero
-            options: [ LIMIT, NAN, ERROR ]
-            required: false
           - name: x
             value: fp32
           - name: y
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
+          on_division_by_zero:
+            values: [ LIMIT, NAN, ERROR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
-          - name: on_division_by_zero
-            options: [ LIMIT, NAN, ERROR ]
-            required: false
           - name: x
             value: fp64
           - name: y
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
+          on_division_by_zero:
+            values: [ LIMIT, NAN, ERROR ]
         return: fp64
   -
     name: "negate"
     description: "Negation of the value"
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i8
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i16
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i32
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i64
       - args:
           - name: x
@@ -320,13 +316,13 @@ scalar_functions:
     description: "Take the power with x as the base and y as exponent."
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i64
           - name: y
             value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i64
       - args:
           - name: x
@@ -345,320 +341,307 @@ scalar_functions:
     description: "Square root of the value"
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: i64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp64
   -
     name: "exp"
     description: "The mathematical constant e, raised to the power of the value."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "cos"
     description: "Get the cosine of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "sin"
     description: "Get the sine of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "tan"
     description: "Get the tangent of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "cosh"
     description: "Get the hyperbolic cosine of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "sinh"
     description: "Get the hyperbolic sine of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "tanh"
     description: "Get the hyperbolic tangent of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "acos"
     description: "Get the arccosine of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp64
   -
     name: "asin"
     description: "Get the arcsine of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp64
   -
     name: "atan"
     description: "Get the arctangent of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "acosh"
     description: "Get the hyperbolic arccosine of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp64
   -
     name: "asinh"
     description: "Get the hyperbolic arcsine of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "atanh"
     description: "Get the hyperbolic arctangent of a value in radians."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp64
   -
     name: "atan2"
     description: "Get the arctangent of values given as x/y pairs."
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp32
           - name: y
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: on_domain_error
-            options: [ NAN, ERROR ]
-            required: false
           - name: x
             value: fp64
           - name: y
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: fp64
   -
     name: "abs"
@@ -669,32 +652,32 @@ scalar_functions:
       unevenness of the twos complement, e.g. Int8 range [-128 : 127].
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i8
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i16
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i32
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i64
       - args:
           - name: x
@@ -749,18 +732,18 @@ scalar_functions:
       Negative inputs will raise an error.
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - value: i32
             name: "n"
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i32
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - value: i64
             name: "n"
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: i64
 
 aggregate_functions:
@@ -768,61 +751,61 @@ aggregate_functions:
     description: Sum a set of values. The sum of zero elements yields null.
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
         return: i64?
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
         return: i64?
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
         return: i64?
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
         return: i64?
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp64?
         return: fp64?
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp64?
@@ -831,61 +814,61 @@ aggregate_functions:
     description: Average a set of values. For integral types, this truncates partial values.
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
         return: i8?
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
         return: i16?
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
         return: i32?
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
         return: i64?
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<fp64,i64>"
         return: fp32?
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<fp64,i64>"
@@ -984,61 +967,61 @@ aggregate_functions:
     description: Product of a set of values. Returns 1 for empty input.
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
         return: i8
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
         return: i16
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
         return: i32
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
         return: i64
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: fp64
         return: fp32
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: fp64
@@ -1047,50 +1030,46 @@ aggregate_functions:
     description: Calculates standard-deviation for a set of values.
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: distribution
-            options: [ SAMPLE, POPULATION]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          distribution:
+            values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: distribution
-            options: [ SAMPLE, POPULATION]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          distribution:
+            values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "variance"
     description: Calculates variance for a set of values.
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: distribution
-            options: [ SAMPLE, POPULATION]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          distribution:
+            values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
-          - name: distribution
-            options: [ SAMPLE, POPULATION]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          distribution:
+            values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "corr"
@@ -1099,23 +1078,23 @@ aggregate_functions:
       If there is no input, null is returned.
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
           - name: y
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
           - name: y
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "mode"
@@ -1176,12 +1155,11 @@ aggregate_functions:
                   (inclusive), but otherwise the accuracy is left up to the
                   consumer.
             options: [ EXACT, APPROXIMATE ]
-            required: true
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: i8
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: i8?
       - args:
@@ -1198,12 +1176,11 @@ aggregate_functions:
                   (inclusive), but otherwise the accuracy is left up to the
                   consumer.
             options: [ EXACT, APPROXIMATE ]
-            required: true
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: i16
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: i16?
       - args:
@@ -1220,12 +1197,11 @@ aggregate_functions:
                   (inclusive), but otherwise the accuracy is left up to the
                   consumer.
             options: [ EXACT, APPROXIMATE ]
-            required: true
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: i32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: i32?
       - args:
@@ -1242,12 +1218,11 @@ aggregate_functions:
                   (inclusive), but otherwise the accuracy is left up to the
                   consumer.
             options: [ EXACT, APPROXIMATE ]
-            required: true
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: i64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: i64?
       - args:
@@ -1264,12 +1239,11 @@ aggregate_functions:
                   (inclusive), but otherwise the accuracy is left up to the
                   consumer.
             options: [ EXACT, APPROXIMATE ]
-            required: true
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
@@ -1286,42 +1260,41 @@ aggregate_functions:
                   (inclusive), but otherwise the accuracy is left up to the
                   consumer.
             options: [ EXACT, APPROXIMATE ]
-            required: true
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "quantile"
     description: >
       Calculates quantiles for a set of values.
-      
+
       This function will divide the aggregated values (passed via the
       distribution argument) over N equally-sized bins, where N is passed
       via a constant argument. It will then return the values at the
       boundaries of these bins in list form. If the input is appropriately
       sorted, this computes the quantiles of the distribution.
-      
+
       The function can optionally return the first and/or last element of
       the input, as specified by the `boundaries` argument. If the input is
       appropriately sorted, this will thus be the minimum and/or maximum
       values of the distribution.
-      
+
       When the boundaries do not lie exactly on elements of the incoming
       distribution, the function will interpolate between the two nearby
       elements. If the interpolated value cannot be represented exactly,
       the `rounding` option controls how the value should be selected or
       computed.
-      
+
       The function fails and returns null in the following cases:
         - `n` is null or less than one;
         - any value in `distribution` is null.
-      
+
       The function returns an empty list if `n` equals 1 and `boundaries` is
       set to `NEITHER`.
-    
+
     impls:
       - args:
           - name: boundaries
@@ -1330,7 +1303,6 @@ aggregate_functions:
               n-1 elements, for MINIMUM and MAXIMUM it will have n elements,
               and for BOTH it will have n+1 elements.
             options: [ NEITHER, MINIMUM, MAXIMUM, BOTH ]
-            required: true
           - name: precision
             description: >
               Based on required operator performance and configured optimizations
@@ -1344,27 +1316,6 @@ aggregate_functions:
                   (inclusive), but otherwise the accuracy is left up to the
                   consumer.
             options: [ EXACT, APPROXIMATE ]
-            required: true
-          - name: rounding
-            description: >
-              When a boundary is computed to lie somewhere between two values,
-              and this value cannot be exactly represented, this specifies how
-              to round it. For floating point numbers, it specifies the IEEE
-              754 rounding mode (as it does for all other floating point
-              operations). For integer types:
-              
-                - TIE_TO_EVEN: round to nearest value; if exactly halfway, tie
-                  to the even option.
-                - TIE_AWAY_FROM_ZERO: round to nearest value; if exactly
-                  halfway, tie away from zero.
-                - TRUNCATE: always round toward zero.
-                - CEILING: always round toward positive infinity.
-                - FLOOR: always round toward negative infinity.
-              
-              For non-numeric types, the behavior is the same as for integer
-              types, but applied to the index of the value in distribution.
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-            required: false
           - value: i64
             constant: true
             name: n
@@ -1375,6 +1326,26 @@ aggregate_functions:
             name: distribution
             description: >
               The data for which the quantiles should be computed.
+        options:
+          rounding:
+            description: >
+              When a boundary is computed to lie somewhere between two values,
+              and this value cannot be exactly represented, this specifies how
+              to round it. For floating point numbers, it specifies the IEEE
+              754 rounding mode (as it does for all other floating point
+              operations). For integer types:
+
+                - TIE_TO_EVEN: round to nearest value; if exactly halfway, tie
+                  to the even option.
+                - TIE_AWAY_FROM_ZERO: round to nearest value; if exactly
+                  halfway, tie away from zero.
+                - TRUNCATE: always round toward zero.
+                - CEILING: always round toward positive infinity.
+                - FLOOR: always round toward negative infinity.
+
+              For non-numeric types, the behavior is the same as for integer
+              types, but applied to the index of the value in distribution.
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         ordered: true
         return: LIST?<any>

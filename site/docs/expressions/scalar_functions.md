@@ -18,12 +18,11 @@ A function is a scalar function if that function takes in values from a single r
 
 ## Argument Types
 
-There are four main types of arguments: value arguments, type arguments, required enumerations, and optional enumerations.
+There are three main types of arguments: value arguments, type arguments, and enumerations.  Every defined arguments must be specified in every invocation of the function.  When specified, the position of these arguments in the function invocation must match the position of the arguments as defined in the YAML function definition.
 
 * Value arguments: arguments that refer to a data value. These could be constants (literal expressions defined in the plan) or variables (a reference expression that references data being processed by the plan). This is the most common type of argument. The value of a value argument is not available in output derivation, but its type is. Value arguments can be declared in one of two ways: concrete or parameterized. Concrete types are either simple types or compound types with all parameters fully defined (without referencing any type arguments). Examples include `i32`, `fp32`, `VARCHAR<20>`, `List<fp32>`, etc. Parameterized types are discussed further below.
 * Type arguments: arguments that are used only to inform the evaluation and/or type derivation of the function. For example, you might have a function which is `truncate(<type> DECIMAL<P0,S0>, <value> DECIMAL<P1, S1>, <value> i32)`. This function declares two value arguments and a type argument. The difference between them is that the type argument has no value at runtime, while the value arguments do.
-* Required enumeration: arguments that support a fixed set of declared values as constant arguments. These arguments must be specified as part of an expression. While these could also have been implemented as constant string value arguments, they are formally included to improve validation/contextual help/etc. for frontend processors and IDEs. An example might use might be `extract([DAY|YEAR|MONTH], <date value>)`. In this example, a producer must specify a type of date part to extract. Note, the value of a required enumeration cannot be used in type derivation.
-* Optional enumeration: similar to required enumeration, but more focused on supporting alternative behaviors. An optional enumeration always includes an "unspecified" default option that can be bound based on the capabilities of the plan consumer. When a plan does not specify a behavior, the consumer is expected to resolve the option based on the first option the system can match. An example use case might be `OVERFLOW_BEHAVIOR:[OVERFLOW, SATURATE, ERROR]` If unspecified, an engine would use the first of these that it implements. If specified, the engine would be expected to behave as specified or fail. Note, the value of an optional enumeration cannot be used in type derivation.
+* Enumeration: arguments that support a fixed set of declared values as constant arguments. These arguments must be specified as part of an expression. While these could also have been implemented as constant string value arguments, they are formally included to improve validation/contextual help/etc. for frontend processors and IDEs. An example might use might be `extract([DAY|YEAR|MONTH], <date value>)`. In this example, a producer must specify a type of date part to extract. Note, the value of a required enumeration cannot be used in type derivation.
 
 #### Value Argument Properties
 
@@ -47,12 +46,20 @@ There are four main types of arguments: value arguments, type arguments, require
 | Options  | List of valid string options for this argument               | Required                                                     |
 | Name     | A human-readable name for this argument to help clarify use. | Optional, defaults to a name based on position (e.g. `arg0`) |
 
-#### Optional Enumeration Properties
+## Options
 
-| Property | Description                                                  | Required                                                     |
-| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Options  | Priority-ordered list of valid string options for this argument. The pseudo-option will be the default "value" for the enumeration unless a binding specifies a specific value. | Required                                                   |
-| Name     | A human-readable name for this argument to help clarify use. | Optional, defaults to a name based on position (e.g. `arg0`) |
+In addition to arguments each call may specify zero or more options.  These are similar to a required enumeration but more focused on supporting alternative behaviors. Options can be left unspecified and the consumer is free to choose which implementation to use. An example use case might be `OVERFLOW_BEHAVIOR:[OVERFLOW, SATURATE, ERROR]` If unspecified, an engine is free to use any of the three choices or even some alternative behavior (e.g. setting the value to null on overflow). If specified, the engine would be expected to behave as specified or fail. Note, the value of an optional enumeration cannot be used in type derivation.
+
+### Option Preference
+
+A producer may specify multiple vlaues for an option.  If the producer does so then the consumer must deliver the first behavior in the list of values that the consumer is capable of delivering.  For example, considering overflow as defined above, if a producer specified `[ERROR, SATURATE]` then the consumer must deliver `ERROR` if it is capable of doing so.  If it is not then it may deliver `SATURATE`.  If the consumer cannot deliver either behavior then it is an error and the consumer must reject the plan.
+
+#### Optional Properties
+
+| Property | Description                              | Required |
+| -------- | ---------------------------------------- | -------- |
+| Values   | A list of valid strings for this option. | Required |
+| Name     | A human-readable name for this option.   | Required |
 
 
 
