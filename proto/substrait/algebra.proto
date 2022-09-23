@@ -528,8 +528,8 @@ message Expression {
   message Literal {
     oneof literal_type {
       bool boolean = 1;
-      int32 i8 = 2;
-      int32 i16 = 3;
+      int8 i8 = 2;
+      int16 i16 = 3;
       int32 i32 = 5;
       int64 i64 = 7;
       float fp32 = 10;
