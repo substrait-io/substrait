@@ -1,6 +1,14 @@
 Release Notes
 ---
 
+## [0.16.0](https://github.com/substrait-io/substrait/compare/v0.15.0...v0.16.0) (2022-09-25)
+
+
+### Features
+
+* add any_value aggregate function ([#321](https://github.com/substrait-io/substrait/issues/321)) ([6f603d3](https://github.com/substrait-io/substrait/commit/6f603d3b61ad26a2f7da1bc74e2a60dd246def16))
+* support constant function arguments ([#305](https://github.com/substrait-io/substrait/issues/305)) ([6021030](https://github.com/substrait-io/substrait/commit/6021030a599134f959ebc0f36621b27127316356))
+
 ## [0.15.0](https://github.com/substrait-io/substrait/compare/v0.14.0...v0.15.0) (2022-09-18)
 
 
