@@ -21,7 +21,7 @@ A Substrait plan can reference one or more YAML files via URI for extension. In 
 | ------------------ | ------------------------------------------------------------ |
 | Type               | The name as defined on the type object.                      |
 | Type Variation     | The name as defined on the type variation object.            |
-| Function Signature | In a specific YAML, if there is only one function implementation with a specific name, a extension type declaration can reference the function using either simple or compound references. Simple references are simply the name of the function (e.g. `add`). Compound references (e.g. `add:i8_i8`)are described below. |
+| Function Signature | In a specific YAML, if there is only one function implementation with a specific name, a extension type declaration can reference the function using either simple or compound references. Simple references are simply the name of the function (e.g. `add`). Compound references (e.g. `add:i8_i8`) are described below. |
 
 ### Function Signature Compound Names
 
@@ -35,45 +35,52 @@ Rather than using a full data type representation, the input argument types (`sh
 
 !!! note
 
-It is required that two function implementation with the same simple name must resolve to different compound names using types. If two function implementations in a YAML file resolve to the same compound name, the YAML file is invalid and behavior is undefined.
+    It is required that two function implementation with the same simple name must resolve to different compound names using types. If two function implementations in a YAML file resolve to the same compound name, the YAML file is invalid and behavior is undefined.
 
-| Argument Type              | Signature Name |
-| -------------------------- | -------------- |
-| Optional Enumeration       | opt            |
-| Required Enumeration       | req            |
-| i8                         | i8             |
-| i16                        | i16            |
-| i32                        | i32            |
-| i64                        | i64            |
-| fp32                       | fp32           |
-| fp64                       | fp64           |
-| string                     | str            |
-| binary                     | vbin           |
-| timestamp                  | ts             |
-| timestamp_tz               | tstz           |
-| date                       | date           |
-| time                       | time           |
-| interval_year              | iyear          |
-| interval_day               | iday           |
-| uuid                       | uuid           |
-| fixedchar&lt;N&gt;         | fchar          |
-| varchar&lt;N&gt;           | vchar          |
-| fixedbinary&lt;N&gt;       | fbin           |
-| decimal&lt;P,S&gt;         | dec            |
-| struct&lt;T1,T2,...,TN&gt; | struct         |
-| list&lt;T&gt;              | list           |
-| map&lt;K,V&gt;             | map            |
-| any[\d]?                   | any            |
-| user defined type          | u!name         |
+| Argument type        | Signature name |
+|----------------------|----------------|
+| Optional enumeration | `opt`          |
+| Required enumeration | `req`          |
+| Value                | see below      |
+| Type                 | see below      |
+
+Value and type arguments receive names based on the type class they match.
+
+| Type class           | Signature name |
+|----------------------|----------------|
+| `i8`                 | `i8`           |
+| `i16`                | `i16`          |
+| `i32`                | `i32`          |
+| `i64`                | `i64`          |
+| `fp32`               | `fp32`         |
+| `fp64`               | `fp64`         |
+| `string`             | `str`          |
+| `binary`             | `vbin`         |
+| `timestamp`          | `ts`           |
+| `timestamp_tz`       | `tstz`         |
+| `date`               | `date`         |
+| `time`               | `time`         |
+| `interval_year`      | `iyear`        |
+| `interval_day`       | `iday`         |
+| `uuid`               | `uuid`         |
+| `fixedchar`          | `fchar`        |
+| `varchar`            | `vchar`        |
+| `fixedbinary`        | `fbin`         |
+| `decimal`            | `dec`          |
+| `struct`             | `struct`       |
+| `list`               | `list`         |
+| `map`                | `map`          |
+| user-defined         | `u!` followed by the name as referred to in the extension |
+| unspecified          | `any`          |
 
 #### Examples
 
-| Function Signature                                | Function Name    |
-| ------------------------------------------------- | ---------------- |
-| `add(optional enumeration, i8, i8) => i8`         | `add:opt_i8_i8`  |
-| `avg(fp32) => fp32`                               | `avg:fp32`       |
-| `extract(required enumeration, timestamp) => i64` | `extract:req_ts` |
-| `sum(any1) => any1`                               | `sum:any`        |
+| Function signature                                 | Compound name      |
+| ---------------------------------------------------|--------------------|
+| `add(opt {SILENT, SATURATE, ERROR}, i8, i8) => i8` | `add:opt_i8_i8`    |
+| `avg(fp32) => fp32`                                | `avg:fp32`         |
+| `extract({YEAR, MONTH, DAY}, timestamp) => i64`    | `extract:req_ts`   |
+| `coalesce(T, T) => T`                              | `coalesce:any_any` |
 
 
 

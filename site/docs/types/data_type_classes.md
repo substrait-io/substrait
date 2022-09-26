@@ -1,4 +1,4 @@
-# Type Classes
+# Data Type Classes
 
 In Substrait, the "class" of a type, not to be confused with the concept from object-oriented programming, defines the set of non-null values that instances of a type may assume.
 

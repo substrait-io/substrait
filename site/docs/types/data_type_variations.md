@@ -1,8 +1,8 @@
-# Type Variations
+# Data Type Variations
 
 Type variations may be used to represent differences in representation between different consumers. For example, an engine might support dictionary encoding for a string, or could be using either a row-wise or columnar representation of a struct. All variations of a type are expected to have the same semantics when operated on by functions or other expressions.
 
-All variations except the "system-preferred" variation (a.k.a. `[0]`, see [Type Parsing](type_parsing.md)) must be defined using [simple extensions](../extensions/index.md#simple-extensions). The key properties of these variations are:
+All variations except the "system-preferred" variation (a.k.a. `[0]`, see [Syntax Parsing](meta_type_system.md#syntax-parsing)) must be defined using [simple extensions](../extensions/index.md#simple-extensions). The key properties of these variations are:
 
 | Property          | Description                                                  |
 | ----------------- | ------------------------------------------------------------ |

@@ -1,0 +1,6 @@
+arrange:
+  - index.md
+  - scalar_functions.md
+  - aggregate_functions.md
+  - window_functions.md
+  - table_functions.md

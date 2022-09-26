@@ -47,9 +47,18 @@ plugins:
       indent_depth: 4 # required to make superfences happy
   - redirects:
       redirect_maps:
-        'types/simple_logical_types.md': 'types/type_classes.md'
-        'types/compound_logical_types.md': 'types/type_classes.md'
-        'types/user_defined_types.md': 'types/type_classes.md'
+        'types/simple_logical_types.md': 'types/data_type_classes.md'
+        'types/compound_logical_types.md': 'types/data_type_classes.md'
+        'types/user_defined_types.md': 'types/data_type_classes.md'
+        'types/type_system.md': 'types/data_type_system.md'
+        'types/type_classes.md': 'types/data_type_classes.md'
+        'types/type_variations.md': 'types/data_type_variations.md'
+        'types/type_parsing.md': 'types/meta_type_system.md'
+        'expressions/scalar_functions.md': 'expressions/Extension_Functions/scalar_functions.md'
+        'expressions/aggregate_functions.md': 'expressions/Extension_Functions/aggregate_functions.md'
+        'expressions/window_functions.md': 'expressions/Extension_Functions/window_functions.md'
+        'expressions/table_functions.md': 'expressions/Extension_Functions/table_functions.md'
+        'expressions/user_defined_functions.md': 'expressions/Extension_Functions/index.md'
   - gen-files:
       scripts:
         - docs/extensions/generate_function_docs.py

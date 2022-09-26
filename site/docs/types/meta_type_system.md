@@ -1,6 +1,10 @@
 # Meta Type System
 
-In addition to the "normal" type system, Substrait defines a second, much simpler type system that is internally used for type parameters, constraint patterns for function argument types, return type derivations, and similar constructs. In addition to basic scalar primitive types, data types (from the normal type system) are *themselves* values in this system, allowing them to be manipulated.
+In addition to the data type system, Substrait defines a second, much simpler type system that is internally used for type parameters, constraint patterns for function argument types, return type derivations, and similar static constructs. In addition to basic scalar primitive types, data types (from the normal type system) are *themselves* values in this system, allowing them to be manipulated.
+
+The meta type system also includes a syntax definition. Combined with the pattern matching and evaluation semantics, it effectively forms a tiny domain-specific language. The syntax for data types especially is also used throughout the documentation.
+
+The grammar for the language can be found in ANTLR form [here](https://github.com/substrait-io/substrait/blob/main/text/SubstraitType.g4). Note that this grammar includes extensive comments about how to interpret the various syntax rules. These comments are leading in case they conflict with the definitions on this page.
 
 ## Metatypes and Values
 
@@ -15,6 +19,35 @@ Unlike the data type system, the meta type system is dynamically typed. This mea
 | `typename` | Contains the set of all valid Substrait data type quadruplets (class, nullability, variation, and parameter pack). Parameters may include names in the binding for documentation purposes and/or to represent `NSTRUCT`. |
 
 Note that metatypes cannot be extended, only include scalar types, and don't include a `null` type or value.
+
+### Syntax Parsing
+
+While the syntax for representing concrete metavalues is fully covered by the pattern syntax defined below, let us first introduce it outside of pattern context to ease the learning curve.
+
+| Metatype     | Syntax for values |
+|--------------|-------------------|
+| Booleans     | `true` or `false`. Case insensitive, customarily written in lowercase. |
+| Integers     | Represented using the usual syntax for decimal integers. In regex form: `[+-](0|[1-9][0-9]*)`. Integers in other bases (hexadecimal, binary, or octal) are not supported. |
+| Enumerations | Represented using the enumeration variant identifier on its own. Case insensitive, customarily written in UPPERCASE. |
+| Strings      | Represented using double quotes (`"`) as delimiters. Escape sequences are not currently supported, so `"` itself cannot be represented. Support for this may be added later by using two successive double quotes (`""`) as the escape sequence for a single `"`. |
+| Data types   | See below. |
+
+Data types are a bit more complicated. The basic structure is:
+
+```
+name?[variation]<param0,...,paramN>
+```
+
+The components of this expression are:
+
+| Component             | Description | Required |
+|-----------------------|-------------|----------|
+| Name                  | Each type has a name, also referred to as the type class. The name is matched case-insensitively (e.g. `varchar` and `vArChAr` are equivalent), but is customarily written in lowercase for simple types and uppercase for compound types. | Yes |
+| Nullability indicator | A type is either non-nullable or nullable. To express nullable types, a type name is appended with a question mark. The lack of a question mark suffix or (in rare occasions) an exclamation mark suffix expresses non-nullable. To explicitly refer to a type with either nullability, one may append two question marks. | Optional, defaults to non-nullable |
+| Variation             | When expressing a type, a user can define the type based on a type variation. Some systems use type variations to describe different underlying representations of the same data type. Such custom variations are usually specified by their name between square brackets. Within the context of a plan, they may also be referred to by their anchor index. To refer to the implicit system-preferred variation, use `[0]` or leave the variation unspecified. | Optional, defaults to [0] |
+| Parameters            | Compound types may have one or more configurable properties, specified via parameters. The expected number of parameters and their types is defined along with the type class. User-defined compound types may mark parameter slots as optional, in which case the parameter slot may be skipped using the `null` keyword. Non-null parameters may be named using `name: value` or `"name": value` syntax, where the latter must be used if `name` does not match `[a-zA-Z_$][a-zA-Z0-9_$]*`. | Required for (concrete) compound types, illegal for simple types |
+
+Parameter names are currently only used for the `NSTRUCT` pseudotype. Here, each parameter corresponds with a field data type, and the parameter name is used to represent the field name. Note however that in core Substrait algebra fields are unnamed and references are always based on zero-index ordinal positions; the named structs are only intended to be used to annotate types used at the inputs and outputs of a plan to ease understanding for humans, and to support consumers and producers that rely on field names at the peripheries of the plan.
 
 ## Metapatterns
 

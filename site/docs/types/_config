@@ -1,6 +1,5 @@
 arrange:
-  - type_system.md
-  - type_classes.md
-  - type_variations.md
-  - type_parsing.md
+  - data_type_system.md
+  - data_type_classes.md
+  - data_type_variations.md
   - meta_type_system.md
