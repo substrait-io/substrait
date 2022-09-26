@@ -66,7 +66,7 @@ name: point
 structure: "NSTRUCT<longitude: i32, latitude: i32>"
 ```
 
-The structure field of a type is only intended to inform systems that don't have built-in support for the type how they can transfer the data type from one point to another without unnecessarily serialization/deserialization *and* without loss of type safety. Note that it is currently not possible to "unpack" a user-defined type class into its structure type or components thereof without also defining a function to do that packing/unpacking.
+The structure field of a type is only intended to inform systems that don't have built-in support for the type how they can transfer the data type from one point to another without unnecessary serialization/deserialization *and* without loss of type safety. Note that it is currently not possible to "unpack" a user-defined type class into its structure type or components thereof using `FieldReference`s or any other specialized record expression; if support for this is desired for a particular type, this can be accomplished with an extension function.
 
 The structure field is optional. If not specified, the type class is considered to be fully opaque. This implies that a systems without built-in support for the type cannot manipulate values in any way, including moving and cloning. This may be useful for exotic, context-sensitive types, such as raw pointers or identifiers that cannot be cloned.
 
