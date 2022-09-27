@@ -53,6 +53,8 @@ plugins:
   - gen-files:
       scripts:
         - docs/extensions/generate_function_docs.py
+watch:
+- ../extensions
 markdown_extensions:
   - smarty
   - sane_lists
