@@ -593,4 +593,4 @@ identifierPath : ( Identifier Period )* Identifier ;
 // The names of parameters (i.e. NSTRUCT field names) can be specified using
 // both identifiers and strings. The latter is idiomatic only when the field
 // name is not a valid Substrait identifier.
-identifierOrString : String #Str | Identifier #Ident;
+identifierOrString : String #Str | Identifier #Ident ;
