@@ -1,6 +1,6 @@
 # Meta Type System
 
-In addition to the data type system, Substrait defines a second, much simpler type system that is internally used for type parameters, constraint patterns for function argument types, return type derivations, and similar static constructs. In addition to basic scalar primitive types, data types (from the normal type system) are *themselves* values in this system, allowing them to be manipulated.
+In addition to the data type system, Substrait defines a second, much more restricted type system that is internally used for type parameters, constraint patterns for function argument types, return type derivations, and similar static constructs. In addition to basic scalar primitive types, data types (from the normal type system) are *themselves* values in this system, allowing them to be manipulated.
 
 The meta type system also includes a syntax definition. Combined with the pattern matching and evaluation semantics, it effectively forms a tiny domain-specific language. The syntax for data types especially is also used throughout the documentation.
 
@@ -47,7 +47,7 @@ The components of this expression are:
 | Variation             | When expressing a type, a user can define the type based on a type variation. Some systems use type variations to describe different underlying representations of the same data type. Such custom variations are usually specified by their name between square brackets. Within the context of a plan, they may also be referred to by their anchor index. To refer to the implicit system-preferred variation, use `[0]` or leave the variation unspecified. | Optional, defaults to [0] |
 | Parameters            | Compound types may have one or more configurable properties, specified via parameters. The expected number of parameters and their types is defined along with the type class. User-defined compound types may mark parameter slots as optional, in which case the parameter slot may be skipped using the `null` keyword. Non-null parameters may be named using `name: value` or `"name": value` syntax, where the latter must be used if `name` does not match `[a-zA-Z_$][a-zA-Z0-9_$]*`. | Required for (concrete) compound types, illegal for simple types |
 
-Parameter names are currently only used for the `NSTRUCT` pseudotype. Here, each parameter corresponds with a field data type, and the parameter name is used to represent the field name. Note however that in core Substrait algebra fields are unnamed and references are always based on zero-index ordinal positions; the named structs are only intended to be used to annotate types used at the inputs and outputs of a plan to ease understanding for humans, and to support consumers and producers that rely on field names at the peripheries of the plan.
+Parameter names are currently only used for the `NSTRUCT` pseudotype. Here, each parameter corresponds with a field data type, and the parameter name is used to represent the field name. Note however that in core Substrait algebra fields are unnamed and references are always based on zero-based ordinal positions; the named structs are only intended to be used to annotate types used at the inputs and outputs of a plan to ease understanding for humans, and to support consumers and producers that rely on field names at the peripheries of the plan.
 
 ## Metapatterns
 
