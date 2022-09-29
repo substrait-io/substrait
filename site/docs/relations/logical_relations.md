@@ -221,14 +221,14 @@ The join operation will combine two separate inputs into a single output, based 
 
 ## Set Operation
 
-The set operation encompasses several set-level operations that support combining datasets based, possibly excluding records based on various types of record level matching.
+The set operation encompasses several set-level operations that support combining datasets, possibly excluding records based on various types of record level matching.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
 | Inputs               | 2 or more                                                    |
 | Outputs              | 1                                                            |
 | Property Maintenance | Maintains distribution if all inputs have the same ordinal distribution. Orderedness is not maintained. |
-| Direct Output Order  | All inputs are ordinally matched and returned together. All inputs must have matching record types. |
+| Direct Output Order  | The field order of the inputs.  All inputs must have identical fields. |
 
 ### Set Properties
 

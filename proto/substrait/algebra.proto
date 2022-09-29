@@ -247,6 +247,8 @@ message FilterRel {
 // The relational set operators (intersection/union/etc..)
 message SetRel {
   RelCommon common = 1;
+  // The first input is the primary input, the remaining are secondary
+  // inputs.  There must be at least two inputs.
   repeated Rel inputs = 2;
   SetOp op = 3;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
