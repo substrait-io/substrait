@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.17.0](https://github.com/substrait-io/substrait/compare/v0.16.0...v0.17.0) (2022-10-02)
+
+
+### Features
+
+* support non-struct type class structure ([#328](https://github.com/substrait-io/substrait/issues/328)) ([dd7f9f0](https://github.com/substrait-io/substrait/commit/dd7f9f01bdf11f5ac9db7713c5ff3d2f82ff5a78))
+
 ## [0.16.0](https://github.com/substrait-io/substrait/compare/v0.15.0...v0.16.0) (2022-09-25)
 
 
