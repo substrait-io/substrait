@@ -12,7 +12,7 @@ The process for deciding whether something should or should not be a core extens
     - Example: [#289](https://github.com/substrait-io/substrait/issues/289)
     - Example: [#295](https://github.com/substrait-io/substrait/issues/295)
 
- - Aim for syntactic and semantic consistency with widely used SQL dialects, especially PostgreSQL.
+ - Aim for syntactic and semantic consistency with widely used SQL dialects.
     - Example: [#285 (comment)](https://github.com/substrait-io/substrait/pull/285#discussion_r944542030)
 
  - Generalize the function as much as possible, to reduce the odds that we'll need to update it later.
@@ -21,8 +21,6 @@ The process for deciding whether something should or should not be a core extens
  - Be consistent when it comes to argument types. It is preferable to define a function that accepts and returns one type class over a function that promotes from one type class or another or accepts a mixture of type classes. This aims to prevent an explosion of function implementations.
     - More information and examples: [#251](https://github.com/substrait-io/substrait/issues/251)
 
- - Be pedantic when describing functionality. The corner cases that rarely come up in practice are exactly the places where different implementations are likely to differ, so for a plan to be implementation-agnostic, these are exactly the things that need to be specified exhaustively. For especially pedantic things, an optional enumeration argument may be suitable; this allows a producer to explicitly indicate that the consumer can pick the behavior.
+ - Be precise when describing functionality. The corner cases that rarely come up in practice are exactly the places where different implementations are likely to differ, so for a plan to be implementation-agnostic, these are exactly the things that need to be specified exhaustively. For especially pedantic things, such as the behavior of a string function when given an illegal string index, an optional enumeration argument may be suitable; this allows a producer to explicitly indicate that the consumer can pick the behavior.
     - Example: the verbosity of the description of [regex_match_substring](https://github.com/substrait-io/substrait/blob/fbe5e0949b863334d02b5ad9ecac55ec8fc4debb/extensions/functions_string.yaml#L79-L139).
     - Example: the floating point rounding option defined [here](common_options.md).
-
- - The core extensions should generally not be defining type classes. If you believe a type class that isn't currently in the specification is important enough to include, it probably makes more sense to simply add it to the built-in types, or otherwise should be a third-party extension.
