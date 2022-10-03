@@ -20,7 +20,7 @@ scalar_functions:
           delta = init_prec - 38
           prec = min(init_prec, 38)
           scale_after_borrow = max(init_scale - delta, min_scale)
-          scale = init_prec > 38 ? scale_after_borrow : init_scale
+          scale = if init_prec > 38 then scale_after_borrow else init_scale
           DECIMAL<prec, scale>
   -
     name: "subtract"
@@ -40,7 +40,7 @@ scalar_functions:
           delta = init_prec - 38
           prec = min(init_prec, 38)
           scale_after_borrow = max(init_scale - delta, min_scale)
-          scale = init_prec > 38 ? scale_after_borrow : init_scale
+          scale = if init_prec > 38 then scale_after_borrow else init_scale
           DECIMAL<prec, scale>
   -
     name: "multiply"
@@ -60,7 +60,7 @@ scalar_functions:
           delta = init_prec - 38
           prec = min(init_prec, 38)
           scale_after_borrow = max(init_scale - delta, min_scale)
-          scale = init_prec > 38 ? scale_after_borrow : init_scale
+          scale = if init_prec > 38 then scale_after_borrow else init_scale
           DECIMAL<prec, scale>
   -
     name: "divide"
@@ -80,7 +80,7 @@ scalar_functions:
           delta = init_prec - 38
           prec = min(init_prec, 38)
           scale_after_borrow = max(init_scale - delta, min_scale)
-          scale = init_prec > 38 ? scale_after_borrow : init_scale
+          scale = if init_prec > 38 then scale_after_borrow else init_scale
           DECIMAL<prec, scale>
   -
     name: "modulus"
@@ -100,7 +100,7 @@ scalar_functions:
           delta = init_prec - 38
           prec = min(init_prec, 38)
           scale_after_borrow = max(init_scale - delta, min_scale)
-          scale = init_prec > 38 ? scale_after_borrow : init_scale
+          scale = if init_prec > 38 then scale_after_borrow else init_scale
           DECIMAL<prec, scale>
 aggregate_functions:
   - name: "sum"
@@ -114,8 +114,8 @@ aggregate_functions:
             value: "DECIMAL<P, S>"
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: "DECIMAL<38,S>?"
-        return: "DECIMAL<38,S>?"
+        intermediate: "DECIMAL?<38,S>"
+        return: "DECIMAL?<38,S>"
   - name: "avg"
     description: Average a set of values.
     impls:
@@ -137,8 +137,8 @@ aggregate_functions:
             value: "DECIMAL<P, S>"
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: "DECIMAL<P, S>?"
-        return: "DECIMAL<P, S>?"
+        intermediate: "DECIMAL?<P, S>"
+        return: "DECIMAL?<P, S>"
   - name: "max"
     description: Max a set of values.
     impls:
@@ -147,5 +147,5 @@ aggregate_functions:
             value: "DECIMAL<P,S>"
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: "DECIMAL<P, S>?"
-        return: "DECIMAL<P, S>?"
+        intermediate: "DECIMAL?<P, S>"
+        return: "DECIMAL?<P, S>"
