@@ -48,6 +48,15 @@ message Plan {
   repeated string expected_type_urls = 5;
 }
 
+// This message type can be used to deserialize only the version of a Substrait
+// Plan message. This prevents deserialization errors when there were breaking
+// changes between the Substrait version of the tool that produced the plan and
+// the Substrait version used to deserialize it, such that a consumer can emit
+// a more helpful error message in this case.
+message PlanVersion {
+  Version version = 6;
+}
+
 message Version {
   // Substrait version number.
   uint32 major = 1;
