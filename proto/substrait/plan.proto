@@ -72,4 +72,11 @@ message Version {
   // number above should be set to the most recent version tag in the history
   // of that commit.
   string git_hash = 4;
+
+  // Identifying information for the producer that created this plan. Under
+  // ideal circumstances, consumers should not need this information. However,
+  // it is foreseen that consumers may need to work around bugs in particular
+  // producers in practice, and therefore may need to know which producer
+  // created the plan.
+  string producer = 5;
 }
