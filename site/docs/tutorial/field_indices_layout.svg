@@ -1,0 +1,204 @@
+<svg version="1.1" width="800" height="820" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+    refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" />
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" fill="white" />
+
+  <text id="heading" y="40" x="20">Substrait uses field indices, not column names</text>
+
+  <g transform="translate(20, 70)">
+    <g transform="translate(0, 200)">
+      <rect width="150" height="130" x="0" y="0" class="node" fill="#eee" />
+      <rect width="150" height="30" x="0" y="0" class="node" fill="rebeccapurple" />
+      <text class="node light" x="75" y="20">Read (orders)</text>
+      <g transform="translate(10, 50)">
+        <text font-size="12">Field indices</text>
+        <text x="0" y="10" font-size="12" dy="0" class="code">
+          <tspan x="0" dy=".6em">0: product_id</tspan>
+          <tspan x="0" dy="1.2em">1: quantity</tspan>
+          <tspan x="0" dy="1.2em">2: order_date</tspan>
+          <tspan x="0" dy="1.2em">3: price</tspan>
+        </text>
+      </g>
+      <path d="M 150 75 c 0 0, 0 0, 60 0" class="edge" fill="transparent"/>
+    </g>
+
+    <g transform="translate(0, 30)">
+      <rect width="150" height="160" x="0" y="0" class="node" fill="#eee" />
+      <rect width="150" height="30" x="0" y="0" class="node" fill="rebeccapurple" />
+      <text class="node light" x="75" y="20">Read (products)</text>
+      <g transform="translate(10, 50)">
+        <text font-size="12">Field indices</text>
+        <text x="0" y="10" font-size="12" dy="0" class="code">
+          <tspan x="0" dy=".6em">0: product_id</tspan>
+        <tspan x="0" dy="1.2em">1: categories</tspan>
+        <tspan x="0" dy="1.2em">2: details</tspan>
+        <tspan x="0" dy="1.2em">3: product_name</tspan>
+        </text>
+      </g>
+      <path d="M 150 75 c 0 0, 0 0, 40 0" class="edge" fill="transparent"/>
+    </g>
+
+    <g transform="translate(200, 30)">
+      <rect width="150" height="160" x="0" y="0" class="node" fill="#eee" />
+      <rect width="350" height="160" x="150" y="0" class="node" fill="#eee" />
+      <rect width="500" height="30" x="0" y="0" class="node" fill="steelblue" />
+      <text class="node light" x="250" y="20">Filter</text>
+      <g transform="translate(10, 50)">
+        <text font-size="12">Field indices</text>
+        <text x="0" y="10" font-size="12" dy="0" class="code">
+          <tspan x="0" dy=".6em">0: product_id</tspan>
+        <tspan x="0" dy="1.2em" font-weight="bold">1: categories</tspan>
+        <tspan x="0" dy="1.2em">2: details</tspan>
+        <tspan x="0" dy="1.2em">3: product_name</tspan>
+        </text>
+      </g>
+      <g transform="translate(160, 50)">
+        <text font-size="12">Condition</text>
+        <text font-size="12" x="20" y="20">SQL fragment</text>
+        <text x="20" y="35" font-size="12" dy="0" class="code">
+          INDEX_IN("Computers", <tspan font-weight="bold">categories</tspan>) IS NULL
+        </text>
+
+        <text x="20" y="55" font-size="12">(Pseudo) Substrait</text>
+        <text x="20" y="70" font-size="12" dy="0" class="code">
+          is_null(index_in("Computers", <tspan font-weight="bold">field(1)</tspan>))
+        </text>
+      </g>
+      <path d="M 250 160 c 0 0, 0 0, 0 20" class="edge" fill="transparent"/>
+    </g>
+
+    <g transform="translate(220, 220)">
+      <rect width="150" height="210" x="0" y="0" class="node" fill="#eee" />
+      <rect width="350" height="210" x="150" y="0" class="node" fill="#eee" />
+      <rect width="500" height="30" x="0" y="0" class="node" fill="forestgreen" />
+      <text class="node light" x="250" y="20">Join</text>
+      <g transform="translate(10, 50)">
+        <text font-size="12">Field indices</text>
+        <text x="0" y="10" font-size="12" dy="0" class="code">
+          <tspan x="0" dy=".6em" font-weight="bold">0: product_id</tspan>
+          <tspan x="0" dy="1.2em">1: quantity</tspan>
+          <tspan x="0" dy="1.2em">2: order_date</tspan>
+          <tspan x="0" dy="1.2em">3: price</tspan>
+          <tspan x="0" dy="1.2em" font-weight="bold">4: product_id</tspan>
+          <tspan x="0" dy="1.2em">5: categories</tspan>
+          <tspan x="0" dy="1.2em">6: details</tspan>
+          <tspan x="0" dy="1.2em">7: product_name</tspan>
+        </text>
+      </g>
+      <g transform="translate(160, 50)">
+        <text font-size="12">Join expression</text>
+        <text font-size="12" x="20" y="20">SQL fragment</text>
+        <text x="20" y="35" font-size="12" dy="0" class="code">
+          <tspan font-weight="bold">orders.product_id</tspan> 
+          = <tspan font-weight="bold">products.product_id</tspan>
+        </text>
+
+        <text x="20" y="55" font-size="12">(Pseudo) Substrait</text>
+        <text x="20" y="70" font-size="12" dy="0" class="code">
+          equal(<tspan font-weight="bold">field(0)</tspan>,
+          <tspan font-weight="bold">field(4)</tspan>)
+        </text>
+      </g>
+      <path d="M 250 210 c 0 0, 0 0, 0 15" class="edge" fill="transparent"/>
+    </g>
+
+    <g transform="translate(240, 455)">
+      <rect width="150" height="270" x="0" y="0" class="node" fill="#eee" />
+      <rect width="350" height="270" x="150" y="0" class="node" fill="#eee" />
+      <rect width="500" height="30" x="0" y="0" class="node" fill="darkgoldenrod" />
+      <text class="node light" x="250" y="20">Aggregate</text>
+      <g transform="translate(10, 50)">
+        <text font-size="12">Field indices</text>
+        <text x="0" y="10" font-size="12" dy="0" class="code">
+          <tspan x="0" dy=".6em" font-weight="bold">0: product_id</tspan>
+          <tspan x="0" dy="1.2em" font-weight="bold">1: quantity</tspan>
+          <tspan x="0" dy="1.2em">2: order_date</tspan>
+          <tspan x="0" dy="1.2em" font-weight="bold">3: price</tspan>
+          <tspan x="0" dy="1.2em">4: product_id</tspan>
+          <tspan x="0" dy="1.2em">5: categories</tspan>
+          <tspan x="0" dy="1.2em">6: details</tspan>
+          <tspan x="0" dy="1.2em" font-weight="bold">7: product_name</tspan>
+        </text>
+      </g>
+      <g transform="translate(160, 50)">
+        <text font-size="12">Group By</text>
+        <text font-size="12" x="20" y="20">SQL fragment</text>
+        <text x="20" y="35" font-size="12" dy="0" class="code">
+          <tspan font-weight="bold">product_id</tspan>,
+          <tspan font-weight="bold">product_name</tspan>
+        </text>
+
+        <text x="20" y="55" font-size="12">(Pseudo) Substrait</text>
+        <text x="20" y="70" font-size="12" dy="0" class="code">
+          [<tspan font-weight="bold">field(0)</tspan>,
+           <tspan font-weight="bold">field(7)</tspan>]
+        </text>
+
+
+        <text font-size="12" y="90">Measures</text>
+        <text font-size="12" x="20" y="110">SQL</text>
+        <text x="20" y="125" font-size="12" dy="0" class="code">
+          SUM(<tspan font-weight="bold">quantity</tspan> * <tspan font-weight="bold">price</tspan>)
+        </text>
+
+        <text x="20" y="145" font-size="12">Substrait</text>
+        <text y="160" font-size="12" dy="0" class="code">
+          <tspan x="20" dy="0">sum(multiply(</tspan>
+          <tspan x="40" dy="1.2em">cast(decimal(10, 2), <tspan font-weight="bold">field(1)</tspan>),</tspan>
+          <tspan x="40" dy="1.2em" font-weight="bold">field(3)</tspan>
+          <tspan x="20" dy="1.2em">))</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+
+  <style>
+    text {
+      font-family: apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, Liberation Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    }
+
+    .code {
+      font-family: monospace;
+    }
+
+    path.edge {
+      stroke: black;
+      stroke-width: 1.4;
+      marker-end: url(#arrowhead);
+    }
+
+    rect.node {
+      /* fill: #eee; */
+      stroke: #333;
+    }
+
+    text.node {
+      fill: #333;
+      text-anchor: middle;
+      font-size: 14px;
+    }
+    
+    .node.light {
+      fill: #eee;
+    }
+
+    .label {
+      font-size: 14px;
+      font-weight: bold;
+      fill: #111;
+    }
+
+    .light {
+      fill: #eee;
+    }
+
+    #heading {
+      font-size: 24px;
+    }
+  </style>
+</svg>
