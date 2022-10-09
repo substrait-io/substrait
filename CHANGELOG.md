@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.18.0](https://github.com/substrait-io/substrait/compare/v0.17.0...v0.18.0) (2022-10-09)
+
+
+### Features
+
+* attach Substrait version number to plans ([#347](https://github.com/substrait-io/substrait/issues/347)) ([2d1bb9d](https://github.com/substrait-io/substrait/commit/2d1bb9d9472409715f1667dfeae241677c6c5ec2))
+
 ## [0.17.0](https://github.com/substrait-io/substrait/compare/v0.16.0...v0.17.0) (2022-10-02)
 
 
