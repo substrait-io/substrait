@@ -59,9 +59,9 @@ message PlanVersion {
 
 message Version {
   // Substrait version number.
-  uint32 major = 1;
-  uint32 minor = 2;
-  uint32 patch = 3;
+  uint32 major_number = 1;
+  uint32 minor_number = 2;
+  uint32 patch_number = 3;
 
   // If a particular version of Substrait is used that does not correspond to
   // a version number exactly (for example when using an unofficial fork or
