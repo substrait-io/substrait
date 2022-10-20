@@ -2,6 +2,31 @@
 ---
 scalar_functions:
   -
+    name: ascii
+    description: Returns the numeric value of the first character of `input`.
+      impls:
+        - args:
+            - name: char_set
+              options: [ UTF8, ASCII_ONLY ]
+              required: false
+            - value: "string"
+              name: "input"
+          return: i32
+        - args:
+            - name: char_set
+              options: [ UTF8, ASCII_ONLY ]
+              required: false
+            - value: "varchar<L1>"
+              name: "input"
+          return: i32
+        - args:
+            - name: char_set
+              options: [ UTF8, ASCII_ONLY ]
+              required: false
+            - value: "fixedchar<L1>"
+              name: "input"
+          return: i32
+  -
     name: concat
     description: Concatenate strings.
     impls:
@@ -17,6 +42,83 @@ scalar_functions:
         variadic:
           min: 1
         return: "string"
+  -
+    name: instr
+    description: >-
+      Returns the (1-based) index of the first occurrence of `substr` in `input`.".
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+          - value: "varchar<L1>"
+            name: "substr"
+        return: i32
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+          - value: "string"
+            name: "substr"
+        return: i32
+      - args:
+          - value: "varchar<l1>"
+            name: "input"
+          - value: "fixedchar<l1>"
+            name: "substr"
+        return: i32
+      - args:
+          - value: "string"
+            name: "input"
+          - value: "varchar<L1>"
+            name: "substr"
+        return: i32
+      - args:
+          - value: "string"
+            name: "input"
+          - value: "string"
+            name: "substr"
+        return: i32
+      - args:
+          - value: "string"
+            name: "input"
+          - value: "fixedchar<l1>"
+            name: "substr"
+        return: i32
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+          - value: "varchar<L1>"
+            name: "substr"
+        return: i32
+      - args:
+          - value: "fixedchar<l1>"
+            name: "input"
+          - value: "string"
+            name: "substr"
+        return: i32
+      - args:
+          - value: "fixedchar<l1>"
+            name: "input"
+          - value: "fixedchar<l1>"
+            name: "substr"
+        return: i32
+  - name: length
+    description: >-
+      Returns the character length of string data or number of bytes of binary data.
+      The length of string data includes the trailing spaces. T
+      he length of binary data includes binary zeros.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        return: i32
+      - args:
+          - value: "string"
+            name: "input"
+        return: i32
+      - args:
+          - value: "fixedchar<l1>"
+            name: "input"
+        return: i32
   -
     name: like
     description: >-
