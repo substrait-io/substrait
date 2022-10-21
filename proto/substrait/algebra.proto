@@ -178,6 +178,29 @@ message JoinRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
+// Represents APPLY relational operator, implemented as APPLY in SQL Server and LATERAL in Calcite. It resembles a
+// JOIN operator, but has different semantics. To use a JOIN, there must be no dependency between the two input
+// relations to be joined. Whereas APPLY depends on a correlation predicate, and to perform APPLY, the table
+// source on the right is evaluated against every row of the table source on the left, and not just once.
+// APPLY is frequently used when the expression on the right is a Table-Valued-Function.
+// See: https://www.mssqltips.com/sqlservertip/1958/sql-server-cross-apply-and-outer-apply/
+// e.g. select * from store_sales CROSS APPLY (select * from item where item.i_item_sk = store_sales.ss_item_sk);
+message ApplyRel {
+  RelCommon common = 1;
+  Rel left = 2;
+  Expression right = 3;
+
+  ApplyType type = 4;
+
+  enum ApplyType {
+    Apply_TYPE_UNSPECIFIED = 0;
+    APPLY_TYPE_CROSS = 1;
+    APPLY_TYPE_OUTER = 2;
+  }
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
 // Cartesian product relational operator of two tables (left and right)
 message CrossRel {
   RelCommon common = 1;
