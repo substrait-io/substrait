@@ -503,76 +503,10 @@ scalar_functions:
           - name: case_sensitivity
             options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
-          - value: "string"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
-            name: "substring"
-            description: The substring to search for.
-        return: i32
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - value: "string"
-            name: "input"
-            description: The input string.
-          - value: "fixedchar<L2>"
-            name: "substring"
-            description: The substring to search for.
-        return: i32
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
-          - value: "string"
-            name: "substring"
-            description: The substring to search for.
-        return: i32
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - value: "varchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
-            name: "substring"
-            description: The substring to search for.
-        return: i32
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - value: "varchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "fixedchar<L2>"
-            name: "substring"
-            description: The substring to search for.
-        return: i32
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "string"
-            name: "substring"
-            description: The substring to search for.
-        return: i32
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
+          - value: "varchar<L2>"
             name: "substring"
             description: The substring to search for.
         return: i32
@@ -602,76 +536,10 @@ scalar_functions:
           - name: case_sensitivity
             options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
-          - value: "string"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
-            name: "substring"
-            description: The substring to search for.
-        return: i64
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - value: "string"
-            name: "input"
-            description: The input string.
-          - value: "fixedchar<L2>"
-            name: "substring"
-            description: The substring to search for.
-        return: i64
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
-          - value: "string"
-            name: "substring"
-            description: The substring to search for.
-        return: i64
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - value: "varchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
-            name: "substring"
-            description: The substring to search for.
-        return: i64
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - value: "varchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "fixedchar<L2>"
-            name: "substring"
-            description: The substring to search for.
-        return: i64
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "string"
-            name: "substring"
-            description: The substring to search for.
-        return: i64
-      - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - value: "fixedchar<L1>"
-            name: "input"
-            description: The input string.
-          - value: "varchar<L1>"
+          - value: "varchar<L2>"
             name: "substring"
             description: The substring to search for.
         return: i64
