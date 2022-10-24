@@ -20,7 +20,8 @@ scalar_functions:
   - name: chr
     description: >-
     Returns the ASCII character having the binary equivalent to input.
-    If n is larger than 256 the result is equivalent to chr(n % 256)
+    If n is larger than 256 the result is equivalent to chr(n % 256).
+    If n is negative value, the result is null.
     impls:
     - args:
       - value: i8
