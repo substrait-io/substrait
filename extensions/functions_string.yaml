@@ -101,13 +101,13 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
             required: false
           - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -120,13 +120,13 @@ scalar_functions:
         return: "varchar<L1>"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
             required: false
           - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
             required: false
           - value: "string"
             name: "input"
@@ -523,13 +523,13 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
             required: false
           - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -542,13 +542,13 @@ scalar_functions:
         return: i64
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
             required: false
           - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
             required: false
           - value: "string"
             name: "input"
@@ -620,13 +620,13 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
             required: false
           - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
             required: false
           - value: "string"
             name: "input"
@@ -637,13 +637,13 @@ scalar_functions:
         return: i64
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
             required: false
           - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -654,13 +654,13 @@ scalar_functions:
         return: i64
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
             required: false
           - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
             required: false
           - value: "fixedchar<L1>"
             name: "input"
@@ -1015,13 +1015,13 @@ scalar_functions:
     impls:
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
             required: false
           - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
             required: false
           - value: "string"
             name: "input"
@@ -1041,13 +1041,13 @@ scalar_functions:
         return: "string"
       - args:
           - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII]
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
             required: false
           - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED]
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
             required: false
           - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED]
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
             required: false
           - value: "varchar<L1>"
             name: "input"
@@ -1263,6 +1263,76 @@ scalar_functions:
           - value: i32
             name: "count"
         return: "string"
+  -
+    name: string_split
+    description: >-
+      Split a string into a list of strings, based on a specified `separator` character.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
+          - value: "varchar<L2>"
+            name: "separator"
+            description: A character used for splitting the string.
+        return: "List<varchar<L1>>"
+      - args:
+          - value: "string"
+            name: "input"
+            description: The input string.
+          - value: "string"
+            name: "separator"
+            description: A character used for splitting the string.
+        return: "List<string>"
+  -
+    name: regex_string_split
+    description: >-
+      Split a string into a list of strings, based on a regular expression pattern.  The
+      substrings matched by the pattern will be used as the separators to split the input
+      string and will not be included in the resulting list. The regular expression
+      pattern should follow the International Components for Unicode implementation
+      (https://unicode-org.github.io/icu/userguide/strings/regexp.html).
+
+      The `case_sensitivity` option specifies case-sensitive or case-insensitive matching.
+      Enabling the `multiline` option will treat the input string as multiple lines. This makes
+      the `^` and `$` characters match at the beginning and end of any line, instead of just the
+      beginning and end of the input string. Enabling the `dotall` option makes the `.` character
+      match line terminator characters in a string.
+    impls:
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
+          - value: "varchar<L2>"
+            name: "pattern"
+            description: The regular expression to search for within the input string.
+        return: "List<varchar<L1>>"
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+            required: false
+          - name: multiline
+            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+            required: false
+          - name: dotall
+            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
+            required: false
+          - value: "string"
+            name: "input"
+            description: The input string.
+          - value: "string"
+            name: "pattern"
+            description: The regular expression to search for within the input string.
+        return: "List<string>"
 
 aggregate_functions:
 
