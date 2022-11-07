@@ -2,6 +2,31 @@
 ---
 scalar_functions:
   -
+    name: ascii
+    description: Returns the numeric value of the first character of `input`.
+      impls:
+        - args:
+            - name: char_set
+              options: [ UTF8, ASCII_ONLY ]
+              required: false
+            - value: "string"
+              name: "input"
+          return: i32
+        - args:
+            - name: char_set
+              options: [ UTF8, ASCII_ONLY ]
+              required: false
+            - value: "varchar<L1>"
+              name: "input"
+          return: i32
+        - args:
+            - name: char_set
+              options: [ UTF8, ASCII_ONLY ]
+              required: false
+            - value: "fixedchar<L1>"
+              name: "input"
+          return: i32
+  -
     name: concat
     description: Concatenate strings.
     impls:
@@ -473,6 +498,39 @@ scalar_functions:
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        return: i32
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+            required: false
+          - value: "varchar<L1>"
+            name: "input"
+            description: The input string.
+          - value: "varchar<L2>"
+            name: "substring"
+            description: The substring to search for.
+        return: i32
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+            required: false
+          - value: "fixedchar<L1>"
+            name: "input"
+            description: The input string.
+          - value: "fixedchar<L2>"
+            name: "substring"
+            description: The substring to search for.
+        return: i32
+      - args:
+          - name: case_sensitivity
+            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+            required: false
+          - value: "string"
+            name: "input"
+            description: The input string.
+          - value: "string"
+            name: "substring"
+            description: The substring to search for.
         return: i64
       - args:
           - name: case_sensitivity
@@ -481,7 +539,7 @@ scalar_functions:
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
-          - value: "varchar<L1>"
+          - value: "varchar<L2>"
             name: "substring"
             description: The substring to search for.
         return: i64
@@ -944,6 +1002,18 @@ scalar_functions:
     description: >-
       Return the number of characters in the input string.  The length includes trailing spaces.
     impls:
+      - args:
+          - value: "string"
+            name: "input"
+        return: i32
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        return: i32
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: i32
       - args:
           - value: "string"
             name: "input"
