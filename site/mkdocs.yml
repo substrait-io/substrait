@@ -50,9 +50,10 @@ plugins:
         'types/simple_logical_types.md': 'types/type_classes.md'
         'types/compound_logical_types.md': 'types/type_classes.md'
         'types/user_defined_types.md': 'types/type_classes.md'
+        'extensions/index.md': 'extensions/expressivity_vs_compatibility.md'
   - gen-files:
       scripts:
-        - docs/extensions/generate_function_docs.py
+        - docs/extensions/core_extensions/generate_function_docs.py
 watch:
 - ../extensions
 markdown_extensions:

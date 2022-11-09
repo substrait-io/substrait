@@ -155,7 +155,7 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
 
 current_file = Path(__file__).name
 cur_path = Path(__file__).resolve()
-functions_folder = os.path.join(str(Path(cur_path).parents[3]), "extensions")
+functions_folder = os.path.join(str(Path(cur_path).parents[4]), "extensions")
 
 # Get a list of all the function yaml files
 function_files = []
@@ -198,7 +198,7 @@ with tempfile.TemporaryDirectory() as temp_directory:
         if not out_path.exists() or not filecmp.cmp(in_path, out_path, shallow=False):
             with open(in_path, "r") as markdown_file:
                 with mkdocs_gen_files.open(
-                    f"extensions/{function_file_no_extension}.md", "w"
+                    f"extensions/core_extensions/{function_file_no_extension}.md", "w"
                 ) as f:
                     for line in markdown_file:
                         f.write(line)

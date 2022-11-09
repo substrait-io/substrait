@@ -1,0 +1,5 @@
+arrange:
+  - expressivity_vs_compatibility.md
+  - simple_extensions.md
+  - core_extensions
+  - advanced_extensions.md
