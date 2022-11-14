@@ -60,6 +60,7 @@ message ReadRel {
   RelCommon common = 1;
   NamedStruct base_schema = 2;
   Expression filter = 3;
+  Expression best_effort_filter = 11;
   Expression.MaskExpression projection = 4;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
