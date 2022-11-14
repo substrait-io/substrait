@@ -6,30 +6,30 @@ scalar_functions:
     description: Extract portion of a date/time value.
     impls:
       - args:
-          - options: [ YEAR, MONTH, DAY, SECOND ]
-            name: The part of the value to extract.
-            required: true
+          - name: component
+            options: [ YEAR, MONTH, DAY, SECOND ]
+            description: The part of the value to extract.
           - name: x
             value: timestamp
         return: i64
       - args:
-          - options: [ YEAR, MONTH, DAY, SECOND ]
-            name: The part of the value to extract.
-            required: true
+          - name: component
+            options: [ YEAR, MONTH, DAY, SECOND ]
+            description: The part of the value to extract.
           - name: x
             value: timestamp_tz
         return: i64
       - args:
-          - options: [ YEAR, MONTH, DAY ]
-            name: The part of the value to extract.
-            required: true
+          - name: component
+            options: [ YEAR, MONTH, DAY ]
+            description: The part of the value to extract.
           - name: x
             value: date
         return: i64
       - args:
-          - options: [ SECOND ]
-            name: The part of the value to extract.
-            required: true
+          - name: component
+            options: [ SECOND ]
+            description: The part of the value to extract.
           - name: x
             value: time
         return: i64

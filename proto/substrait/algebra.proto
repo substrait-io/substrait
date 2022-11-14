@@ -4,7 +4,6 @@ syntax = "proto3";
 package substrait;
 
 import "google/protobuf/any.proto";
-import "google/protobuf/empty.proto";
 import "substrait/extensions/extensions.proto";
 import "substrait/type.proto";
 
@@ -483,17 +482,27 @@ message WriteRel {
 // The argument of a function
 message FunctionArgument {
   oneof arg_type {
-    Enum enum = 1;
+    string enum = 1;
     Type type = 2;
     Expression value = 3;
   }
+}
 
-  message Enum {
-    oneof enum_kind {
-      string specified = 1;
-      google.protobuf.Empty unspecified = 2;
-    }
-  }
+// An optional function argument.  Typically used for specifying behavior in
+// invalid or corner cases.
+message FunctionOption {
+  // Name of the option to set. If the consumer does not recognize the
+  // option, it must reject the plan. The name is matched case-insensitively
+  // with option names defined for the function.
+  string name = 1;
+
+  // List of behavior options allowed by the producer. At least one must be
+  // specified; to leave an option unspecified, simply don't add an entry to
+  // `options`. The consumer must use the first option from the list that it
+  // supports. If the consumer supports none of the specified options, it
+  // must reject the plan. The name is matched case-insensitively and must
+  // match one of the option values defined for the option.
+  repeated string preference = 2;
 }
 
 message Expression {
@@ -648,13 +657,15 @@ message Expression {
     //    the expression in that must yield a value of a type that a function
     //    overload is defined for.
     //  - Type arguments must be bound using FunctionArgument.type.
-    //  - Required enum arguments must be bound using FunctionArgument.enum
+    //  - Enum arguments must be bound using FunctionArgument.enum
     //    followed by Enum.specified, with a string that case-insensitively
     //    matches one of the allowed options.
-    //  - Optional enum arguments must be bound using FunctionArgument.enum
-    //    followed by either Enum.specified or Enum.unspecified. If specified,
-    //    the string must case-insensitively match one of the allowed options.
     repeated FunctionArgument arguments = 4;
+
+    // Options to specify behavior for corner cases, or leave behavior
+    // unspecified if the consumer does not need specific behavior in these
+    // cases.
+    repeated FunctionOption options = 5;
 
     // Must be set to the return type of the function, exactly as derived
     // using the declaration in the extension.
@@ -680,13 +691,15 @@ message Expression {
     //    overload is defined for.
     //  - Type arguments must be bound using FunctionArgument.type, and a
     //    function overload must be defined for that type.
-    //  - Required enum arguments must be bound using FunctionArgument.enum
+    //  - Enum arguments must be bound using FunctionArgument.enum
     //    followed by Enum.specified, with a string that case-insensitively
     //    matches one of the allowed options.
-    //  - Optional enum arguments must be bound using FunctionArgument.enum
-    //    followed by either Enum.specified or Enum.unspecified. If specified,
-    //    the string must case-insensitively match one of the allowed options.
     repeated FunctionArgument arguments = 9;
+
+    // Options to specify behavior for corner cases, or leave behavior
+    // unspecified if the consumer does not need specific behavior in these
+    // cases.
+    repeated FunctionOption options = 11;
 
     // Must be set to the return type of the function, exactly as derived
     // using the declaration in the extension.
@@ -1127,13 +1140,18 @@ message AggregateFunction {
   //    overload is defined for.
   //  - Type arguments must be bound using FunctionArgument.type, and a
   //    function overload must be defined for that type.
-  //  - Required enum arguments must be bound using FunctionArgument.enum
+  //  - Enum arguments must be bound using FunctionArgument.enum
   //    followed by Enum.specified, with a string that case-insensitively
   //    matches one of the allowed options.
   //  - Optional enum arguments must be bound using FunctionArgument.enum
   //    followed by either Enum.specified or Enum.unspecified. If specified,
   //    the string must case-insensitively match one of the allowed options.
   repeated FunctionArgument arguments = 7;
+
+  // Options to specify behavior for corner cases, or leave behavior
+  // unspecified if the consumer does not need specific behavior in these
+  // cases.
+  repeated FunctionOption options = 8;
 
   // Must be set to the return type of the function, exactly as derived
   // using the declaration in the extension.

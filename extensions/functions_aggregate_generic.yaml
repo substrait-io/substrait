@@ -5,11 +5,11 @@ aggregate_functions:
     description: Count a set of values
     impls:
       - args:
-          - name: overflow
-            options: [SILENT, SATURATE, ERROR]
-            required: false
           - name: x
             value: any
+        options:
+          overflow:
+            values: [SILENT, SATURATE, ERROR]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64
@@ -17,10 +17,9 @@ aggregate_functions:
   - name: "count"
     description: "Count a set of records (not field referenced)"
     impls:
-      - args:
-          - name: overflow
-            options: [SILENT, SATURATE, ERROR]
-            required: false
+      - options:
+          overflow:
+            values: [SILENT, SATURATE, ERROR]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64

@@ -25,26 +25,26 @@ scalar_functions:
       The `case_sensitivity` option applies to the `match` argument.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "varchar<L2>"
             name: "match"
             description: The string to match against the input string.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "string"
             name: "match"
             description: The string to match against the input string.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
   -
     name: substring
@@ -100,15 +100,6 @@ scalar_functions:
       the position value is out of range.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
           - value: "varchar<L2>"
@@ -117,17 +108,15 @@ scalar_functions:
             name: "position"
           - value: i64
             name: "occurrence"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: "varchar<L1>"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "string"
             name: "input"
           - value: "string"
@@ -136,6 +125,13 @@ scalar_functions:
             name: "position"
           - value: i64
             name: "occurrence"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: "string"
   -
     name: starts_with
@@ -145,103 +141,103 @@ scalar_functions:
       The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "varchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "varchar<L1>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "fixedchar<L1>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "varchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
   -
     name: ends_with
@@ -251,103 +247,103 @@ scalar_functions:
       The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "varchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "varchar<L1>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "fixedchar<L1>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "varchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
   -
     name: contains
@@ -357,103 +353,103 @@ scalar_functions:
       The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "varchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "varchar<L1>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "fixedchar<L1>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "varchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "BOOLEAN"
   -
     name: strpos
@@ -464,37 +460,37 @@ scalar_functions:
       The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: i64
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "varchar<L1>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: i64
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to search for.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: i64
   -
     name: regexp_strpos
@@ -522,15 +518,6 @@ scalar_functions:
       the position value is out of range.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
           - value: "varchar<L2>"
@@ -539,17 +526,15 @@ scalar_functions:
             name: "position"
           - value: i64
             name: "occurrence"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: i64
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "string"
             name: "input"
           - value: "string"
@@ -558,6 +543,13 @@ scalar_functions:
             name: "position"
           - value: i64
             name: "occurrence"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: i64
   -
     name: count_substring
@@ -567,37 +559,37 @@ scalar_functions:
       The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "string"
             name: "substring"
             description: The substring to count.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: i64
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "varchar<L2>"
             name: "substring"
             description: The substring to count.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: i64
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
             description: The input string.
           - value: "fixedchar<L2>"
             name: "substring"
             description: The substring to count.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: i64
   -
     name: regexp_count_substring
@@ -619,55 +611,49 @@ scalar_functions:
       Behavior is undefined if the regex fails to compile or the position value is out of range.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "string"
             name: "input"
           - value: "string"
             name: "pattern"
           - value: i64
             name: "position"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: i64
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
           - value: "varchar<L2>"
             name: "pattern"
           - value: i64
             name: "position"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: i64
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
           - value: "fixedchar<L2>"
             name: "pattern"
           - value: i64
             name: "position"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: i64
   -
     name: replace
@@ -677,9 +663,6 @@ scalar_functions:
       The `case_sensitivity` option applies to the `substring` argument.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "string"
             name: "input"
             description: Input string.
@@ -689,11 +672,11 @@ scalar_functions:
           - value: "string"
             name: "replacement"
             description: The replacement string.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "string"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: Input string.
@@ -703,6 +686,9 @@ scalar_functions:
           - value: "varchar<L3>"
             name: "replacement"
             description: The replacement string.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
         return: "varchar<L1>"
   -
     name: concat_ws
@@ -807,25 +793,25 @@ scalar_functions:
       collations according to the Unicode Collation Algorithm described at http://www.unicode.org/reports/tr10/.
     impls:
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "string"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "string"
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "varchar<L1>"
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "fixedchar<L1>"
   -
     name: upper
@@ -834,25 +820,25 @@ scalar_functions:
       collations according to the Unicode Collation Algorithm described at http://www.unicode.org/reports/tr10/.
     impls:
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "string"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "string"
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "varchar<L1>"
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "fixedchar<L1>"
   -
     name: swapcase
@@ -862,25 +848,25 @@ scalar_functions:
       Unicode Collation Algorithm described at http://www.unicode.org/reports/tr10/.
     impls:
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "string"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "string"
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "varchar<L1>"
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "fixedchar<L1>"
   -
     name: capitalize
@@ -890,25 +876,25 @@ scalar_functions:
       http://www.unicode.org/reports/tr10/.
     impls:
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "string"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "string"
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "varchar<L1>"
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "fixedchar<L1>"
   -
     name: title
@@ -919,25 +905,25 @@ scalar_functions:
       http://www.unicode.org/reports/tr10/.
     impls:
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "string"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "string"
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "varchar<L1>"
       - args:
-          - name: char_set
-            options: [ UTF8, ASCII_ONLY ]
-            required: false
           - value: "fixedchar<L1>"
             name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
         return: "fixedchar<L1>"
   -
     name: char_length
@@ -1014,15 +1000,6 @@ scalar_functions:
       back-reference, the occurrence value is out of range, or the position value is out of range.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
@@ -1038,17 +1015,15 @@ scalar_functions:
           - value: i64
             name: "occurrence"
             description: Which occurrence of the match to replace.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: "string"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
@@ -1064,6 +1039,13 @@ scalar_functions:
           - value: i64
             name: "occurrence"
             description: Which occurrence of the match to replace.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: "varchar<L1>"
   -
     name: ltrim
@@ -1204,9 +1186,6 @@ scalar_functions:
       Behavior is undefined if the number of characters passed to the `character` argument is not 1.
     impls:
       - args:
-          - name: padding
-            options: [ RIGHT, LEFT ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: "The string to pad."
@@ -1216,11 +1195,11 @@ scalar_functions:
           - value: "varchar<1>"
             name: "character"
             description: "The character to use for padding."
+        options:
+          padding:
+            values: [ RIGHT, LEFT ]
         return: "varchar<L1>"
       - args:
-          - name: padding
-            options: [ RIGHT, LEFT ]
-            required: false
           - value: "string"
             name: "input"
             description: "The string to pad."
@@ -1230,6 +1209,9 @@ scalar_functions:
           - value: "string"
             name: "character"
             description: "The character to use for padding."
+        options:
+          padding:
+            values: [ RIGHT, LEFT ]
         return: "string"
   -
     name: left
@@ -1300,38 +1282,34 @@ scalar_functions:
       match line terminator characters in a string.
     impls:
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
           - value: "varchar<L2>"
             name: "pattern"
             description: The regular expression to search for within the input string.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: "List<varchar<L1>>"
       - args:
-          - name: case_sensitivity
-            options: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
-            required: false
-          - name: multiline
-            options: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
-            required: false
-          - name: dotall
-            options: [ DOTALL_DISABLED, DOTALL_ENABLED ]
-            required: false
           - value: "string"
             name: "input"
             description: The input string.
           - value: "string"
             name: "pattern"
             description: The regular expression to search for within the input string.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: "List<string>"
 
 aggregate_functions:

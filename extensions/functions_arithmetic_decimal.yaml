@@ -6,13 +6,13 @@ scalar_functions:
     description: "Add two decimal values."
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: decimal<P1,S1>
           - name: y
             value: decimal<P2,S2>
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: |-
           init_scale = max(S1,S2)
           init_prec = init_scale + max(P1 - S1, P2 - S2) + 1
@@ -26,13 +26,13 @@ scalar_functions:
     name: "subtract"
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: decimal<P1,S1>
           - name: y
             value: decimal<P2,S2>
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: |-
           init_scale = max(S1,S2)
           init_prec = init_scale + max(P1 - S1, P2 - S2) + 1
@@ -46,13 +46,13 @@ scalar_functions:
     name: "multiply"
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: decimal<P1,S1>
           - name: y
             value: decimal<P2,S2>
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: |-
           init_scale = S1 + S2
           init_prec = P1 + P2 + 1
@@ -66,13 +66,13 @@ scalar_functions:
     name: "divide"
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: decimal<P1,S1>
           - name: y
             value: decimal<P2,S2>
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: |-
           init_scale = max(6, S1 + P2 + 1)
           init_prec = P1 - S1 + P2 + init_scale
@@ -86,13 +86,13 @@ scalar_functions:
     name: "modulus"
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: decimal<P1,S1>
           - name: y
             value: decimal<P2,S2>
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         return: |-
           init_scale = max(S1,S2)
           init_prec = min(P1 - S1, P2 - S2) + init_scale
@@ -107,11 +107,11 @@ aggregate_functions:
     description: Sum a set of values.
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: "DECIMAL<P, S>"
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "DECIMAL<38,S>?"
@@ -120,11 +120,11 @@ aggregate_functions:
     description: Average a set of values.
     impls:
       - args:
-          - name: overflow
-            options: [ SILENT, SATURATE, ERROR ]
-            required: false
           - name: x
             value: "DECIMAL<P,S>"
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<DECIMAL<38,S>,i64>"
