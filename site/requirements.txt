@@ -7,6 +7,7 @@ mkdocs-awesome-pages-plugin==2.7.0
 mkdocs-gen-files==0.3.5
 mkdocs-markdownextradata-plugin==0.2.4
 mkdocs-protobuf==0.1.0
+mkdocs-table-reader-plugin==1.2
 pygments==2.11
 oyaml==1.0
 mdutils==1.4.0
