@@ -1404,7 +1404,7 @@ aggregate_functions:
 
       The function fails and returns null in the following cases:
         - `n` is null or less than one;
-        - any value in `distribution` is null.
+        - option `skip_nulls` is `FALSE` (the default) and any value in `distribution` is null.
 
       The function returns an empty list if `n` equals 1 and `boundaries` is
       set to `NEITHER`.
@@ -1460,6 +1460,8 @@ aggregate_functions:
               For non-numeric types, the behavior is the same as for integer
               types, but applied to the index of the value in distribution.
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ FALSE, TRUE ]
         nullability: DECLARED_OUTPUT
         ordered: true
         return: LIST?<any>
