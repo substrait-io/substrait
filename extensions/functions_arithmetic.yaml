@@ -756,6 +756,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
@@ -766,6 +768,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
@@ -776,6 +780,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
@@ -786,6 +792,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
@@ -796,6 +804,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp64?
@@ -806,6 +816,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp64?
@@ -819,6 +831,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
@@ -829,6 +843,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
@@ -839,6 +855,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
@@ -849,6 +867,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<i64,i64>"
@@ -859,6 +879,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<fp64,i64>"
@@ -869,6 +891,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<fp64,i64>"
@@ -879,6 +903,9 @@ aggregate_functions:
       - args:
           - name: x
             value: i8
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i8?
@@ -886,6 +913,9 @@ aggregate_functions:
       - args:
           - name: x
             value: i16
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i16?
@@ -893,6 +923,9 @@ aggregate_functions:
       - args:
           - name: x
             value: i32
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i32?
@@ -900,6 +933,9 @@ aggregate_functions:
       - args:
           - name: x
             value: i64
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
@@ -907,6 +943,9 @@ aggregate_functions:
       - args:
           - name: x
             value: fp32
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp32?
@@ -914,6 +953,9 @@ aggregate_functions:
       - args:
           - name: x
             value: fp64
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp64?
@@ -924,6 +966,9 @@ aggregate_functions:
       - args:
           - name: x
             value: i8
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i8?
@@ -931,6 +976,9 @@ aggregate_functions:
       - args:
           - name: x
             value: i16
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i16?
@@ -938,6 +986,9 @@ aggregate_functions:
       - args:
           - name: x
             value: i32
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i32?
@@ -945,6 +996,9 @@ aggregate_functions:
       - args:
           - name: x
             value: i64
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: i64?
@@ -952,6 +1006,9 @@ aggregate_functions:
       - args:
           - name: x
             value: fp32
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp32?
@@ -959,6 +1016,9 @@ aggregate_functions:
       - args:
           - name: x
             value: fp64
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: fp64?
@@ -972,6 +1032,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
@@ -982,6 +1044,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
@@ -992,6 +1056,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
@@ -1002,6 +1068,8 @@ aggregate_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: i64
@@ -1012,6 +1080,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: fp64
@@ -1022,6 +1092,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: MIRROR
         decomposable: MANY
         intermediate: fp64
@@ -1035,6 +1107,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
           distribution:
             values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
@@ -1045,6 +1119,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
           distribution:
             values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
@@ -1058,6 +1134,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
           distribution:
             values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
@@ -1068,6 +1146,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
           distribution:
             values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
@@ -1085,6 +1165,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
@@ -1095,6 +1177,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "mode"
@@ -1105,31 +1189,49 @@ aggregate_functions:
       - args:
           - name: x
             value: i8
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: i8?
       - args:
           - name: x
             value: i16
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: i16?
       - args:
           - name: x
             value: i32
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: i32?
       - args:
           - name: x
             value: i64
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: i64?
       - args:
           - name: x
             value: fp32
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
           - name: x
             value: fp64
+        options:
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "median"
@@ -1160,6 +1262,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: i8?
       - args:
@@ -1181,6 +1285,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: i16?
       - args:
@@ -1202,6 +1308,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: i32?
       - args:
@@ -1223,6 +1331,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: i64?
       - args:
@@ -1244,6 +1354,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
@@ -1265,6 +1377,8 @@ aggregate_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          skip_nulls:
+            values: [ TRUE, FALSE ]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "quantile"
