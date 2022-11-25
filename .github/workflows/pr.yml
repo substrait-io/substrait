@@ -7,7 +7,7 @@ jobs:
     name: Build Website
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Setup Python
         uses: ./.github/actions/dev-tool-python
         with:
@@ -26,15 +26,15 @@ jobs:
     name: Check Protobuf Style
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: bufbuild/buf-setup-action@v1.3.1
+      - uses: actions/checkout@v3
+      - uses: bufbuild/buf-setup-action@v1.9.0
       - run: buf format --diff --exit-code
   proto:
     name: Check Protobuf
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: bufbuild/buf-setup-action@v0.7.0
+      - uses: actions/checkout@v3
+      - uses: bufbuild/buf-setup-action@v1.9.0
       - uses: bufbuild/buf-lint-action@v1
       - name: check for breaking changes
         id: check-breaking
@@ -60,15 +60,15 @@ jobs:
     name: Lint YAML extensions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Run yamllint
         run: yamllint .
   yamlvalidate:
     name: Validate YAML extensions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: "14"
       - run: npm install -g ajv-cli
@@ -83,10 +83,10 @@ jobs:
     name: Lint commits for semantic-release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: "14"
       - run: npx commitlint --from=${{ github.event.pull_request.base.sha }} --to=${{ github.sha }} --verbose
@@ -94,11 +94,11 @@ jobs:
     name: Dry-run release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: bufbuild/buf-setup-action@v0.7.0
-      - uses: actions/setup-node@v2
+      - uses: bufbuild/buf-setup-action@v1.9.0
+      - uses: actions/setup-node@v3
         with:
           node-version: "16"
       - run: ./ci/release/dry_run.sh

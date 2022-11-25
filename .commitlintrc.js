@@ -1,4 +1,6 @@
-{
+module.exports = {
+  // Workaround for https://github.com/dependabot/dependabot-core/issues/5923
+  "ignores": [(message) => /^Bumps \[.+]\(.+\) from .+ to .+\.$/m.test(message)],
   "rules": {
     "body-leading-blank": [1, "always"],
     "body-max-line-length": [2, "always", 100],
