@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: "14"
       - run: npm install -g ajv-cli
@@ -86,7 +86,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: "14"
       - run: npx commitlint --from=${{ github.event.pull_request.base.sha }} --to=${{ github.sha }} --verbose
@@ -98,7 +98,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: bufbuild/buf-setup-action@v1.9.0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: "16"
       - run: ./ci/release/dry_run.sh
