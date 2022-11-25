@@ -5,7 +5,7 @@ mkdocs-redirects==1.0.3
 pymdown-extensions==8.2
 mkdocs-awesome-pages-plugin==2.7.0
 mkdocs-gen-files==0.4.0
-mkdocs-markdownextradata-plugin==0.2.4
+mkdocs-markdownextradata-plugin==0.2.5
 mkdocs-protobuf==0.1.0
 pygments==2.11
 oyaml==1.0
