@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: "16"
 
-      - uses: bufbuild/buf-setup-action@v0.7.0
+      - uses: bufbuild/buf-setup-action@v1.9.0
 
       - name: run semantic-release
         run: ./ci/release/run.sh
