@@ -27,14 +27,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: bufbuild/buf-setup-action@v1.3.1
+      - uses: bufbuild/buf-setup-action@v1.9.0
       - run: buf format --diff --exit-code
   proto:
     name: Check Protobuf
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: bufbuild/buf-setup-action@v0.7.0
+      - uses: bufbuild/buf-setup-action@v1.9.0
       - uses: bufbuild/buf-lint-action@v1
       - name: check for breaking changes
         id: check-breaking
@@ -97,7 +97,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: bufbuild/buf-setup-action@v0.7.0
+      - uses: bufbuild/buf-setup-action@v1.9.0
       - uses: actions/setup-node@v2
         with:
           node-version: "16"
