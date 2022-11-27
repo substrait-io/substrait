@@ -25,7 +25,7 @@ A Substrait plan can reference one or more YAML files via URI for extension. In 
 
 ### Function Signature Compound Names
 
-A YAML file may contain one or more functions by the same name. When only a single function is declared within the file, it can be referenced using the name of that function or a compound name. When more than one function of the same name is declared within a YAML file, the key used in the function extension declaration is a combination of the name of the function along with a list of input argument types. The format is as follows:
+A YAML file may contain one or more functions by the same name. When only a single function is declared within the file, it can be referenced using the name of that function or a compound name. When more than one function of the same name is declared within a YAML file, the key used in the function extension declaration is a combination of the name of the function along with a list of the required input argument types. Optional arguments are not included in the signature.  The format is as follows:
 
 ```
 <function name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>
@@ -35,11 +35,10 @@ Rather than using a full data type representation, the input argument types (`sh
 
 !!! note
 
-It is required that two function implementation with the same simple name must resolve to different compound names using types. If two function implementations in a YAML file resolve to the same compound name, the YAML file is invalid and behavior is undefined.
+It is required that two function implementations with the same simple name must resolve to different compound names using types. If two function implementations in a YAML file resolve to the same compound name, the YAML file is invalid and behavior is undefined.
 
 | Argument Type              | Signature Name |
 | -------------------------- | -------------- |
-| Optional Enumeration       | opt            |
 | Required Enumeration       | req            |
 | i8                         | i8             |
 | i16                        | i16            |
@@ -70,7 +69,7 @@ It is required that two function implementation with the same simple name must r
 
 | Function Signature                                | Function Name    |
 | ------------------------------------------------- | ---------------- |
-| `add(optional enumeration, i8, i8) => i8`         | `add:opt_i8_i8`  |
+| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`  |
 | `avg(fp32) => fp32`                               | `avg:fp32`       |
 | `extract(required enumeration, timestamp) => i64` | `extract:req_ts` |
 | `sum(any1) => any1`                               | `sum:any`        |

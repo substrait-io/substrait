@@ -15,14 +15,30 @@ The read operator is an operator that produces one output. A simple example woul
 
 ### Read Properties
 
-| Property          | Description                                                  | Required                             |
-| ----------------- | ------------------------------------------------------------ | ------------------------------------ |
-| Definition        | The contents of the read property definition.                | Required                             |
-| Direct Schema     | Defines the schema of the output of the read (before any projection or emit remapping/hiding). | Required                             |
-| Filter            | A boolean Substrait expression that describes the filter of a dataset. | Optional, defaults to none.          |
-| Projection        | A masked complex expression describing the portions of the content that should be read | Optional, defaults to all of schema  |
-| Output properties | Declaration of orderedness and/or distribution properties this read produces. | Optional, defaults to no properties. |
-| Properties        | A list of name/value pairs associated with the read.         | Optional, defaults to empty          |
+| Property           | Description                                                  | Required                             |
+| ------------------ | ------------------------------------------------------------ | ------------------------------------ |
+| Definition         | The contents of the read property definition.                | Required                             |
+| Direct Schema      | Defines the schema of the output of the read (before any projection or emit remapping/hiding). | Required                             |
+| Filter             | A boolean Substrait expression that describes a filter that must be applied to the data. The filter should be interpreted against the direct schema. | Optional, defaults to none. |
+| Best Effort Filter | A boolean Substrait expression that describes a filter that may be applied to the data.  The filter should be interpreted against the direct schema. | Optional, defaults to none. |
+| Projection         | A masked complex expression describing the portions of the content that should be read | Optional, defaults to all of schema  |
+| Output Properties  | Declaration of orderedness and/or distribution properties this read produces. | Optional, defaults to no properties. |
+| Properties         | A list of name/value pairs associated with the read.         | Optional, defaults to empty          |
+
+### Read Filtering
+
+The read relation has two different filter properties.  A filter, which must be satisfied by the operator and a best effort
+filter, which does not have to be satisfied.  This reflects the way that consumers are often implemented.  A consumer is
+often only able to fully apply a limited set of operations in the scan.  There can then be an extended set of operations which
+a consumer can apply in a best effort fashion.  A producer, when setting these two fields, should take care to only use
+expressions that the consumer is capable of handling.
+
+As an example, a consumer may only be able to fully apply (in the read relation) <, =, and > on integral types.  The consumer
+may be able to apply <, =, and > in a best effort fashion on decimal and string types.  Consider the filter expression
+`my_int < 10 && my_string < "x" && upper(my_string) > "B"`.  In this case the `filter` should be set to
+`my_int < 10` and the `best_effort_filter` should be set to `my_string < "x"` and the remaining portion (`upper(my_string) > "B"`) should be put into a filter relation.
+
+A filter expression must be interpreted against against the direct schema before the projection expression has been applied.  As a result, fields may be referenced by the filter expression which are not included in the relation's output.
 
 ### Read Definition Types
 

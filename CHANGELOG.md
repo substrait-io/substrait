@@ -1,6 +1,38 @@
 Release Notes
 ---
 
+## [0.20.0](https://github.com/substrait-io/substrait/compare/v0.19.0...v0.20.0) (2022-11-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* optional arguments are no longer allowed to be specified
+as a part of FunctionArgument messages.  Instead they are now specified
+separately as part of the function invocation.
+* optional arguments are now specified separately from
+required arguments in the YAML specification.
+
+Co-authored-by: Benjamin Kietzman <bengilgit@gmail.com>
+
+Co-authored-by: Benjamin Kietzman <bengilgit@gmail.com>
+
+### Features
+
+* add best effort filter to read rel and clarify that the pre-masked schema should be used ([#271](https://github.com/substrait-io/substrait/issues/271)) ([4beff87](https://github.com/substrait-io/substrait/commit/4beff877550ac4ac10199748acbba391aca172f6))
+* optional args are now specified separately from required args ([#342](https://github.com/substrait-io/substrait/issues/342)) ([bd29ea3](https://github.com/substrait-io/substrait/commit/bd29ea3b06391ae9018de851055db11075fd0758))
+
+## [0.19.0](https://github.com/substrait-io/substrait/compare/v0.18.0...v0.19.0) (2022-11-06)
+
+
+### Features
+
+* add functions for splitting strings ([#346](https://github.com/substrait-io/substrait/issues/346)) ([20a2f14](https://github.com/substrait-io/substrait/commit/20a2f14ee0f2c3186318543d7ff264c91f714967))
+
+
+### Bug Fixes
+
+* rename version fields which conflict with sysmacros ([#362](https://github.com/substrait-io/substrait/issues/362)) ([4170bf1](https://github.com/substrait-io/substrait/commit/4170bf12c0f86032d8649a0880c684c37a5065f7))
+
 ## [0.18.0](https://github.com/substrait-io/substrait/compare/v0.17.0...v0.18.0) (2022-10-09)
 
 

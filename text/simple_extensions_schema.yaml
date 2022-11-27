@@ -1,5 +1,6 @@
 $id: http://substrait.io/schemas/simple_extensions
 $schema: https://json-schema.org/draft/2020-12/schema
+title: Simple Extensions
 additionalProperties: false
 type: object
 properties:
@@ -103,8 +104,6 @@ $defs:
               type: array
               items:
                 type: string
-            required:
-              type: boolean
         - type: object # value
           required: [ value ]
           properties:
@@ -125,6 +124,19 @@ $defs:
               type: string
             type:
               type: string
+  options:  # a map of options
+    type: object
+    additionalProperties:
+      type: object # option
+      additionalProperties: false
+      required: [ values ]
+      properties:
+        description:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
   variadicBehavior:
     type: object
     additionalProperties: false
@@ -177,6 +189,8 @@ $defs:
           properties:
             args:
               $ref: "#/$defs/arguments"
+            options:
+              $ref: "#/$defs/options"
             variadic:
               $ref: "#/$defs/variadicBehavior"
             sessionDependent:
@@ -208,6 +222,8 @@ $defs:
           properties:
             args:
               $ref: "#/$defs/arguments"
+            options:
+              $ref: "#/$defs/options"
             variadic:
               $ref: "#/$defs/variadicBehavior"
             sessionDependent:
@@ -248,6 +264,8 @@ $defs:
           properties:
             args:
               $ref: "#/$defs/arguments"
+            options:
+              $ref: "#/$defs/options"
             variadic:
               $ref: "#/$defs/variadicBehavior"
             sessionDependent:
