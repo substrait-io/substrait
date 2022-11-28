@@ -1,6 +1,14 @@
 Release Notes
 ---
 
+## [0.21.0](https://github.com/substrait-io/substrait/compare/v0.20.0...v0.21.0) (2022-11-27)
+
+
+### Features
+
+* add nested type constructor expressions ([#351](https://github.com/substrait-io/substrait/issues/351)) ([b64d30b](https://github.com/substrait-io/substrait/commit/b64d30b28077973dd94f1f49e5016662a35bcf56))
+* add title to simple extensions schema ([#387](https://github.com/substrait-io/substrait/issues/387)) ([2819ecc](https://github.com/substrait-io/substrait/commit/2819ecc69175b96eefb8a73fb4b533431890f3da))
+
 ## [0.20.0](https://github.com/substrait-io/substrait/compare/v0.19.0...v0.20.0) (2022-11-20)
 
 
