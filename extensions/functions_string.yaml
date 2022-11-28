@@ -1267,7 +1267,7 @@ scalar_functions:
             description: A character used for splitting the string.
         return: "List<string>"
   -
-    name: regex_string_split
+    name: regexp_string_split
     description: >-
       Split a string into a list of strings, based on a regular expression pattern.  The
       substrings matched by the pattern will be used as the separators to split the input
