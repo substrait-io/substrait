@@ -244,18 +244,6 @@ message SortRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
-// The Top-N relational operator.
-message TopNRel {
-  RelCommon common = 1;
-  Rel input = 2;
-  repeated SortField sorts = 3;
-  // The amount of records to return.
-  int64 count = 4;
-  bool is_partial = 5;
-
-  substrait.extensions.AdvancedExtension advanced_extension = 10;
-}
-
 // The relational operator capturing simple FILTERs (as in the WHERE clause of SQL)
 message FilterRel {
   RelCommon common = 1;
