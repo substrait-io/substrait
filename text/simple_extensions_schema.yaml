@@ -1,5 +1,6 @@
 $id: http://substrait.io/schemas/simple_extensions
 $schema: https://json-schema.org/draft/2020-12/schema
+title: Simple Extensions
 additionalProperties: false
 type: object
 properties:

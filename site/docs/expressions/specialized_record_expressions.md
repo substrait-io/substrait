@@ -8,7 +8,8 @@ These constructs should be focused on different expression types as opposed to s
 ## Literal Expressions
 For each data type, it is possible to create a literal value for that data type. The representation depends on the serialization format. Literal expressions include both a type literal and a possibly null value.
 
-
+## Nested Type Constructor Expressions
+These expressions allow structs, lists, and maps to be constructed from a set of expressions. For example, they allow a struct expression like `(field 0 - field 1, field 0 + field 1)` to be represented.
 
 ## Cast Expression
 To convert a value from one type to another, Substrait defines a cast expression. Cast expressions declare an expected type, an input argument and an enumeration specifying failure behavior, indicating whether cast should return null on failure or throw an exception.

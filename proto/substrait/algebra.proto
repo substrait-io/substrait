@@ -517,6 +517,7 @@ message Expression {
     MultiOrList multi_or_list = 9;
     Cast cast = 11;
     Subquery subquery = 12;
+    Nested nested = 13;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -639,6 +640,47 @@ message Expression {
       // the value of the literal, serialized using some type-specific
       // protobuf message
       google.protobuf.Any value = 2;
+    }
+  }
+
+  // Expression to dynamically construct nested types.
+  message Nested {
+    // Whether the returned nested type is nullable.
+    bool nullable = 1;
+
+    // Optionally points to a type_variation_anchor defined in this plan for
+    // the returned nested type.
+    uint32 type_variation_reference = 2;
+
+    oneof nested_type {
+      Struct struct = 3;
+      List list = 4;
+      Map map = 5;
+    }
+
+    message Map {
+      message KeyValue {
+        // Mandatory key/value expressions.
+        Expression key = 1;
+        Expression value = 2;
+      }
+
+      // One or more key-value pairs. To specify an empty map, use
+      // Literal.empty_map (otherwise type information would be missing).
+      repeated KeyValue key_values = 1;
+    }
+
+    message Struct {
+      // Zero or more possibly heterogeneously-typed list of expressions that
+      // form the struct fields.
+      repeated Expression fields = 1;
+    }
+
+    message List {
+      // A homogeneously-typed list of one or more expressions that form the
+      // list entries. To specify an empty list, use Literal.empty_list
+      // (otherwise type information would be missing).
+      repeated Expression values = 1;
     }
   }
 
