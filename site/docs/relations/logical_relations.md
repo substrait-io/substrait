@@ -38,7 +38,7 @@ may be able to apply <, =, and > in a best effort fashion on decimal and string 
 `my_int < 10 && my_string < "x" && upper(my_string) > "B"`.  In this case the `filter` should be set to
 `my_int < 10` and the `best_effort_filter` should be set to `my_string < "x"` and the remaining portion (`upper(my_string) > "B"`) should be put into a filter relation.
 
-A filter expression must be interpreted against against the direct schema before the projection expression has been applied.  As a result, fields may be referenced by the filter expression which are not included in the relation's output.
+A filter expression must be interpreted against the direct schema before the projection expression has been applied. As a result, fields may be referenced by the filter expression which are not included in the relation's output.
 
 ### Read Definition Types
 
