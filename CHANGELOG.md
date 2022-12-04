@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.21.1](https://github.com/substrait-io/substrait/compare/v0.21.0...v0.21.1) (2022-12-04)
+
+
+### Bug Fixes
+
+* rename regex_string_split to regexp_string_split ([#393](https://github.com/substrait-io/substrait/issues/393)) ([f9f4967](https://github.com/substrait-io/substrait/commit/f9f4967e6785b49eccb64a42497b5b4aaffa63ff))
+
 ## [0.21.0](https://github.com/substrait-io/substrait/compare/v0.20.0...v0.21.0) (2022-11-27)
 
 
