@@ -34,6 +34,9 @@ jobs:
             ${{ runner.os }}-pip-
       - name: Install dependencies
         run: python3 -m pip install -r ./site/requirements.txt
+      - name: Generate Collaborators
+        run: curl $(gh api -H "Accept: application/vnd.github+json" /repos/curino/substrait/collaborators --jq ".[].url") --silent | jq -r '"- Name: \(.name)\n  Association: \(.company)"' > ./site/data/collaborators2.yaml
+        working-directory: ./site
       - name: Generate Static Site
         run: mkdocs build
         working-directory: ./site
