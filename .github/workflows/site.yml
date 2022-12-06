@@ -1,13 +1,15 @@
 name: Site
 
 on:
+  schedule:
+    - cron: "0 0 * * 0"
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'site/**'
-      - 'extensions/**'
-jobs:
+      - "site/**"
+      - "extensions/**"
 
+jobs:
   site:
     name: Build & Deploy Website
     runs-on: ubuntu-latest
@@ -17,7 +19,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: "3.8"
       - name: Upgrade pip
         run: |
           # install pip=>20.1 to use "pip cache dir"
@@ -34,6 +36,53 @@ jobs:
             ${{ runner.os }}-pip-
       - name: Install dependencies
         run: python3 -m pip install -r ./site/requirements.txt
+      - name: Get collaborators
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api graphql -f query='{
+            repository(owner: "substrait-io", name: "substrait") {
+              collaborators {
+                edges {
+                  permission
+                }
+                nodes {
+                  name
+                  company
+                }
+              }
+            }
+          }' | jq '[
+            [
+              [.data.repository.collaborators.edges[] | .permission],
+              [.data.repository.collaborators.nodes[] | .name],
+              [.data.repository.collaborators.nodes[] | .company]
+            ]
+            | transpose[]
+            | {
+              permission: .[0],
+              name: .[1],
+              company: .[2]
+            }
+          ]' > collaborators.json
+      - name: smc.yaml
+        run: |
+          jq 'map(select(.permission == "ADMIN")) \
+            | map({ \
+                "Name":.name, \
+                "Company":.company \
+              })' \
+            collaborators.json 
+          | yq -P > site/data/smc.yaml
+      - name: committers.yaml
+        run: |
+          jq 'map(select(.permission != "ADMIN")) \
+            | map({ \
+                "Name":.name, \
+                "Company":.company \
+              })' \
+            collaborators.json 
+          | yq -P > site/data/committers.yaml
       - name: Generate Static Site
         run: mkdocs build
         working-directory: ./site
