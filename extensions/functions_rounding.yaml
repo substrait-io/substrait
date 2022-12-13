@@ -27,3 +27,66 @@ scalar_functions:
           - value: fp64
             name: "x"
         return: fp64
+  -
+    name: "round"
+    description: >
+      Rounding the value `x` to s decimal places.
+    impls:
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR, 
+              AWAY_FROM_ZERO, TIE_DOWN, TIE_UP, TIE_TOWARDS_ZERO, TIE_TO_ODD ]
+          - value: fp32
+            name: "x"
+            description: >
+              Numerical expression to be rounded.
+          - value: i32
+            name: "s"
+            description: >
+              Number of decimal places to be rounded to.
+
+              When `s` is a positive number, the rounding
+              is performed to a `s` number of decimal places.
+
+              When `s` is a negative number, the rounding is
+              performed to the left side of the decimal point
+              as specified by `s`.
+          - value: i32
+            name: "function"
+            description: >
+              This is an optional argument `function`, a numeric
+              value determines whether to perform round or truncate.
+              When the `function` value is set to 0, the function
+              performs rounding to `s` decimal places, otherwise it
+              performs truncate. The default value is 0.
+        nullability: DECLARED_OUTPUT
+        return: fp32?
+      - args:
+          - name: rounding
+            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR, 
+              AWAY_FROM_ZERO, TIE_DOWN, TIE_UP, TIE_TOWARDS_ZERO, TIE_TO_ODD ]
+          - value: fp64
+            name: "x"
+            description: >
+              Numerical expression to be rounded.
+          - value: i32
+            name: "s"
+            description: >
+              Number of decimal places to be rounded to.
+
+              When `s` is a positive number, the rounding
+              is performed to a `s` number of decimal places.
+
+              When `s` is a negative number, the rounding is
+              performed to the left side of the decimal point
+              as specified by `s`.
+          - value: i32
+            name: "function"
+            description: >
+              This is an optional argument `function`, a numeric
+              value determines whether to perform round or truncate.
+              When the `function` value is set to 0, the function
+              performs rounding to `s` decimal places, otherwise it
+              performs truncate. The default value is 0.
+        nullability: DECLARED_OUTPUT
+        return: fp64?
