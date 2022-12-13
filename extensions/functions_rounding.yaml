@@ -33,8 +33,9 @@ scalar_functions:
       Rounding the value `x` to s decimal places.
     impls:
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR, 
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR,
               AWAY_FROM_ZERO, TIE_DOWN, TIE_UP, TIE_TOWARDS_ZERO, TIE_TO_ODD ]
           - value: fp32
             name: "x"
@@ -62,8 +63,9 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
-          - name: rounding
-            options: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR, 
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR,
               AWAY_FROM_ZERO, TIE_DOWN, TIE_UP, TIE_TOWARDS_ZERO, TIE_TO_ODD ]
           - value: fp64
             name: "x"
