@@ -76,7 +76,7 @@ jobs:
           | yq -P > site/data/smc.yaml
       - name: committers.yaml
         run: |
-          jq 'map(select(.permission != "ADMIN")) \
+          jq 'map(select(.permission == "WRITE")) \
             | map({ \
                 "Name":.name, \
                 "Company":.company \
