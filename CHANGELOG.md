@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.22.0](https://github.com/substrait-io/substrait/compare/v0.21.1...v0.22.0) (2022-12-18)
+
+
+### Features
+
+* add bitwise NOT, AND, OR & XOR functions ([#370](https://github.com/substrait-io/substrait/issues/370)) ([81e34d4](https://github.com/substrait-io/substrait/commit/81e34d4054ff0dbde23ac749fbb8fcc232989c5d))
+
 ## [0.21.1](https://github.com/substrait-io/substrait/compare/v0.21.0...v0.21.1) (2022-12-04)
 
 
