@@ -48,14 +48,6 @@ scalar_functions:
               When `s` is a negative number, the rounding is
               performed to the left side of the decimal point
               as specified by `s`.
-          - value: i32
-            name: "function"
-            description: >
-              This is an optional argument `function`, a numeric
-              value determines whether to perform round or truncate.
-              When the `function` value is set to 0, the function
-              performs rounding to `s` decimal places, otherwise it
-              performs truncate. The default value is 0.
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR,
@@ -78,14 +70,6 @@ scalar_functions:
               When `s` is a negative number, the rounding is
               performed to the left side of the decimal point
               as specified by `s`.
-          - value: i32
-            name: "function"
-            description: >
-              This is an optional argument `function`, a numeric
-              value determines whether to perform round or truncate.
-              When the `function` value is set to 0, the function
-              performs rounding to `s` decimal places, otherwise it
-              performs truncate. The default value is 0.
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR,
