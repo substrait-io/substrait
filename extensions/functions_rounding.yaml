@@ -30,7 +30,7 @@ scalar_functions:
   -
     name: "round"
     description: >
-      Rounding the value `x` to s decimal places.
+      Rounding the value `x` to `s` decimal places.
     impls:
       - args:
           - value: fp32
@@ -50,6 +50,26 @@ scalar_functions:
               as specified by `s`.
         options:
           rounding:
+            description: >
+              When a boundary is computed to lie somewhere between two values,
+              and this value cannot be exactly represented, this specifies how
+              to round it. For floating point numbers, it specifies the IEEE
+              754 rounding mode (as it does for all other floating point
+              operations). For integer types:
+
+                - TIE_TO_EVEN: round to nearest value; if exactly halfway, tie
+                  to the even option.
+                - TIE_AWAY_FROM_ZERO: round to nearest value; if exactly
+                  halfway, tie away from zero.
+                - TRUNCATE: always round toward zero.
+                - CEILING: always round toward positive infinity.
+                - FLOOR: always round toward negative infinity.
+                - AWAY_FROM_ZERO: round negative values with FLOOR rule, round positive values with CEILING rule
+                - TIE_DOWN: round ties with FLOOR rule
+                - TIE_UP: round ties with CEILING rule
+                - TIE_TOWARDS_ZERO: round ties with TRUNCATE rule
+                - TIE_TO_ODD: round to nearest value; if exactly halfway, tie
+                  to the odd option.
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR,
               AWAY_FROM_ZERO, TIE_DOWN, TIE_UP, TIE_TOWARDS_ZERO, TIE_TO_ODD ]
         nullability: DECLARED_OUTPUT
@@ -72,6 +92,26 @@ scalar_functions:
               as specified by `s`.
         options:
           rounding:
+            description: >
+              When a boundary is computed to lie somewhere between two values,
+              and this value cannot be exactly represented, this specifies how
+              to round it. For floating point numbers, it specifies the IEEE
+              754 rounding mode (as it does for all other floating point
+              operations). For integer types:
+
+                - TIE_TO_EVEN: round to nearest value; if exactly halfway, tie
+                  to the even option.
+                - TIE_AWAY_FROM_ZERO: round to nearest value; if exactly
+                  halfway, tie away from zero.
+                - TRUNCATE: always round toward zero.
+                - CEILING: always round toward positive infinity.
+                - FLOOR: always round toward negative infinity.
+                - AWAY_FROM_ZERO: round negative values with FLOOR rule, round positive values with CEILING rule
+                - TIE_DOWN: round ties with FLOOR rule
+                - TIE_UP: round ties with CEILING rule
+                - TIE_TOWARDS_ZERO: round ties with TRUNCATE rule
+                - TIE_TO_ODD: round to nearest value; if exactly halfway, tie
+                  to the odd option.
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR,
               AWAY_FROM_ZERO, TIE_DOWN, TIE_UP, TIE_TOWARDS_ZERO, TIE_TO_ODD ]
         nullability: DECLARED_OUTPUT
