@@ -1,6 +1,8 @@
 # Powered by Substrait
 
-In addition to the work maintained in repositories within the [substrait-io GitHub organization](https://github.com/substrait-io), a growing list of other open source projects have adopted Substrait.
+In addition to the work maintained in repositories within the
+[substrait-io GitHub organization](https://github.com/substrait-io), a growing
+list of other open source projects have adopted Substrait.
 
 
 [//]: # (Maintain this list in alphabetical order)
@@ -59,4 +61,5 @@ In addition to the work maintained in repositories within the [substrait-io GitH
   Acero and DuckDB.
 
 
-To add your project to this list, please open a [pull request](https://github.com/substrait-io/substrait/edit/main/site/docs/community/powered_by.md) 
+To add your project to this list, please open a
+[pull request](https://github.com/substrait-io/substrait/edit/main/site/docs/community/powered_by.md) 
