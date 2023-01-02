@@ -41,7 +41,7 @@ list of other open source projects have adopted Substrait.
   to engines that have better performance or efficiency than Spark's built-in
   JVM-based engine. Gluten converts Spark physical plans to Substrait plans.
 
-[Ibis](https://ibis-project.org/, 
+[Ibis](https://ibis-project.org/)
 : Ibis is a Python library that provides a lightweight, universal interface 
   for data wrangling. It includes a dataframe API for Python with support for
   more than 10 query execution engines, plus a 
