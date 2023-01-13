@@ -12,6 +12,6 @@ Some examples of proper commit message headers and PR titles:
 
 Note the case and grammar conventions.
 
-Furthermore, the description of any PR that inclues a breaking change should end in a paragraph that starts with `BREAKING CHANGE: ...`, where `...` explains what changed. The automated release process uses this to determine how it should bump the version number. Anything that changes the behavior of a plan that was previously legal is considered a breaking change; note that this includes behavior specifications that only exist in Substrait in the form of behavior descriptions on the website or in comments.
+Furthermore, the description of any PR that includes a breaking change should contain a paragraph that starts with `BREAKING CHANGE: ...`, where `...` explains what changed. The automated release process uses this to determine how it should bump the version number. Anything that changes the behavior of a plan that was previously legal is considered a breaking change; note that this includes behavior specifications that only exist in Substrait in the form of behavior descriptions on the website or in comments.
 
 [1]: https://www.conventionalcommits.org/en/v1.0.0/

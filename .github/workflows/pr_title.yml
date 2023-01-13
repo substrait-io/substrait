@@ -1,20 +1,23 @@
 name: PR Title Check
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, edited, synchronize, reopened]
 jobs:
   commitlint:
     name: PR title / description conforms to semantic-release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: "18"
-      - run: npx commitlint --verbose <<< $COMMIT_MSG
+      - run: npm install @commitlint/config-conventional
+      - run: >
+          echo 'module.exports = {
+            // Workaround for https://github.com/dependabot/dependabot-core/issues/5923
+            "ignores": [(message) => /^Bumps \[.+]\(.+\) from .+ to .+\.$/m.test(message)]
+          }' > .commitlintrc.js
+      - run: npx commitlint --extends @commitlint/config-conventional --verbose <<< $COMMIT_MSG
         env:
           COMMIT_MSG: >
             ${{ github.event.pull_request.title }}
@@ -24,18 +27,20 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const message = `Substrait follows the [Conventional Commits specification]\
-              (https://www.conventionalcommits.org/en/v1.0.0/) for release automation.
-              The PR title and description are used as the merge commit message.
+            const message = `**ACTION NEEDED**
               
-              Please update your PR title and description to match the specification.`
+              Substrait follows the [Conventional Commits specification](1) for release automation.
+
+              The PR title and description are used as the merge commit message.\
+              Please update your PR title and description to match the specification.
+              
+              [1]: https://www.conventionalcommits.org/en/v1.0.0/`
             // Get list of current comments
-            const list_comments = github.rest.issues.listComments({
+            const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number
-            })
-            const comments = await github.paginate(list_comments)
+            });
             // Check if this job already commented
             for (const comment of comments) {
               if (comment.body === message) {
@@ -49,61 +54,4 @@ jobs:
               issue_number: context.issue.number,
               body: message
             })
-            core.setFailed('Invalid PR title')
-  breaking:
-    name: Ensure breaking changes are labeled in description
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: bufbuild/buf-setup-action@v1.9.0
-      - name: check for breaking changes
-        id: check-breaking
-        run: |
-          set -euo pipefail
-
-          if ! buf breaking --against 'https://github.com/substrait-io/substrait.git#branch=main'; then
-            breaking="true"
-          else
-            breaking="false"
-          fi
-
-          echo "::set-output name=breaking::${breaking}"
-      - name: check whether the PR description includes a breaking change footer
-        if: ${{ fromJson(steps.check-breaking.outputs.breaking) }}
-        run: |
-          set -euo pipefail
-          # check PR description for a BREAKING CHANGE section if any breaking changes occurred
-          grep 'BREAKING CHANGE: ' <<< $COMMIT_DESC
-        env:
-          COMMIT_DESC: ${{ github.event.pull_request.body }}
-      - if: failure()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const message = `Substrait follows the [Conventional Commits specification]\
-            (https://www.conventionalcommits.org/en/v1.0.0/) for release automation.
-              The PR title and description are used as the merge commit message.
-              
-              Your PR appears to contain a breaking change to the specification.
-              This means your PR description must contain a \`BREAKING CHANGE: \` footer.`
-            // Get list of current comments
-            const list_comments = github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number
-            })
-            const comments = await github.paginate(list_comments)
-            // Check if this job already commented
-            for (const comment of comments) {
-              if (comment.body === message) {
-                return // Already commented
-              }
-            }
-            // Post the comment about Conventional Commits
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: message
-            })
-            core.setFailed('No breaking change footer')
+            core.setFailed(message)
