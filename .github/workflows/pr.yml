@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: "14"
+          node-version: "18"
       - run: npm install -g ajv-cli
       - run: |
           set -euo pipefail
@@ -88,7 +88,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
-          node-version: "14"
+          node-version: "18"
       - run: npx commitlint --from=${{ github.event.pull_request.base.sha }} --to=${{ github.sha }} --verbose
   dry_run_release:
     name: Dry-run release
@@ -100,5 +100,5 @@ jobs:
       - uses: bufbuild/buf-setup-action@v1.9.0
       - uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "18"
       - run: ./ci/release/dry_run.sh
