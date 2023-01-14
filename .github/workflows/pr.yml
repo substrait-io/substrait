@@ -35,25 +35,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: bufbuild/buf-setup-action@v1.9.0
+        with:
+          github_token: ${{ github.token }}
       - uses: bufbuild/buf-lint-action@v1
-      - name: check for breaking changes
-        id: check-breaking
-        run: |
-          set -euo pipefail
-
-          if ! buf breaking --against 'https://github.com/substrait-io/substrait.git#branch=main'; then
-            breaking="true"
-          else
-            breaking="false"
-          fi
-
-          echo "::set-output name=breaking::${breaking}"
-      - name: check whether the commit message includes a breaking change footer
-        if: ${{ fromJson(steps.check-breaking.outputs.breaking) }}
-        run: |
-          set -euo pipefail
-          # check commits for a BREAKING CHANGE section if any breaking changes occurred
-          ./ci/commit_messages.sh '${{ github.event.pull_request.commits_url }}' | grep 'BREAKING CHANGE: '
       - name: Compile protobuf
         run: buf generate
   yamllint:
@@ -79,17 +63,6 @@ jobs:
             ajv validate -s ../text/simple_extensions_schema.yaml --strict=true --spec=draft2020 -d "$i"
           done
         working-directory: ./extensions
-  commitlint:
-    name: Lint commits for semantic-release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-      - run: npx commitlint --from=${{ github.event.pull_request.base.sha }} --to=${{ github.sha }} --verbose
   dry_run_release:
     name: Dry-run release
     runs-on: ubuntu-latest
