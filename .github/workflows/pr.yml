@@ -35,6 +35,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: bufbuild/buf-setup-action@v1.9.0
+        with:
+          github_token: ${{ github.token }}
       - uses: bufbuild/buf-lint-action@v1
       - name: Compile protobuf
         run: buf generate
