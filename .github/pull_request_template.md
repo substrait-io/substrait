@@ -1,6 +1,6 @@
 Thank you for submitting a PR!
 
-Before you continue, please ensure that your PR title and description (this message!) follow [conventional commit syntax](1).  Substrait uses an automated release process that, among other things, uses PR titles & descriptions to build a changelog, so the syntax and format matter!
+Before you continue, please ensure that your PR title and description (this message!) follow [conventional commit syntax](1). Substrait uses an automated release process that, among other things, uses PR titles & descriptions to build a changelog, so the syntax and format matter!
 
 The title of the PR should be a valid commit header.
 
