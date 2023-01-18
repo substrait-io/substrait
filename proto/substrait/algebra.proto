@@ -180,6 +180,40 @@ message JoinRel {
 
 // A time-series variant of the traditional JOIN relational operator
 // left-join-right(s), which joins on an ordered key using inexact matching
+//
+// Pseudo (ish) code, inspired by https://code.kx.com/q/ref/aj/:
+//
+// Left and right are assumed to be ordered by left and right `on` keys in this example
+//
+// n = len(left)
+// m = len(right)
+//
+// left_idx = 0
+// right_idx = 0
+//
+// while left_idx < n:
+//     left_row = left[left_idx]
+//     right_row = right[right_idx]
+//
+//     # track possible matches so we know what to emit
+//     possible_match_count = 0
+//
+//     # typically on is `left_key <= right_key`
+//     # typically tolerance is `right_key - left_key < CONSTANT`
+//     #
+//     # keep scanning the right relation until there are no more matches
+//     while on(left_row.key, right_row.key):
+//         possible_match_count += 1
+//         right_idx += 1
+//         right_row = right[right_idx]
+//
+//     # check that the join key (expression) matches and the tolerance is satisfied
+//     if possible_match_count and expression(left_row, right_right) and tolerance(left_row.key, right_row.key):
+//         yield left_row + right fields where match
+//     else:
+//         yield left_row + null in fields from the right where no matches exist
+//
+//     left_idx += 1
 message AsOfJoinRel {
   RelCommon common = 1;
   Rel left = 2;
@@ -198,12 +232,23 @@ message AsOfJoinRel {
   }
 
   // Key column that must be present in both the left and right fields.
+  // An inequality indicating what to compare
+  //
+  // eg: x <= y
   Expression on = 7;
 
   // Maximum allowed difference between the left and right key columns
   //
   // If this field is not set, then the right-side `on` lookback extends to the
   // first timestamp.
+  //
+  // eg: right.x - left.x <= tolerance
+  //
+  // In Acero's execution engine, there's an implicit assumption that
+  // the left_on and right_on keys have a well-defined subtract operator
+  //
+  // The substrait message defined here is designed to be flexible enough to represent
+  // the general case
   Expression tolerance = 8;
 
   substrait.extensions.AdvancedExtension advanced_extension = 100;
