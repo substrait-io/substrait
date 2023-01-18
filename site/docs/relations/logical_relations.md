@@ -237,31 +237,30 @@ The join operation will combine two separate inputs into a single output, based 
 
 ## AsOfJoin Operation
 
-The as-of-join operation is a time-series operation that will combine a left input and multiple right inputs into a single output, based on a join expression, an on-field and a tolerance value. All inputs must have the on-field in ascending-order. The operation is similar to a join-operation where the join expression is used for exact matching whereas the on-field is used for inexact matching up to the tolerance value.
+The as-of join operation is a time series operation that will combine a left input and a right input into a single output, based on a join expression, an `on` field and a tolerance value. All inputs must have the on-field in ascending-order. The operation is similar to a join operation where the join expression is used for exact matching whereas the `on` field is used for inexact matching up to the tolerance value.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
-| Inputs               | 2 or more                                                    |
+| Inputs               | 1                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is by the on-field only post operation. Physical relations may provide better property maintenance. |
-| Direct Output Order  | The emit order of the left input followed by the emit order of each right input. |
+| Direct Output Order  | The emit order of the left input followed by the emit order of the right input. |
 
 ### Join Properties
 
 | Property        | Description                                                  | Required                           |
 | --------------- | ------------------------------------------------------------ | ---------------------------------- |
 | Left Input      | A relational input.                                          | Required                           |
-| Right Inputs    | Each a relational input.                                     | Required, at least one             |
-| Join Expression | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the direct output order of the data. | Required. Can be the literal True. |
-| Post Join Filter | A boolean condition that describes which join-rows appear in the output. | Optional, defaulting to True.      |
+| Right Input     | A relational input.                                          | Required                           |
+| Join Expression | A boolean condition that describes whether each record from the left set matches the record from the right set. Field references correspond to the direct output order of the data. | Required. Can be the literal True. |
+| Post Join Filter | A boolean condition that describes which join rows appear in the output. | Optional, defaulting to True.      |
 | Join Type       | Same as the [Join](logical_relations.md#join-operator) operator. | Required                           |
-| Tolerance       | The maximum on-field value difference in an inexact match.   | Required                           |
+| Tolerance       | The maximum on-field value difference in an inexact match.   | Optional                           |
 | On              | The on-field.                                                | Required                           |
 
 ### Join Types
 
-Same as in the join operation.
-
+Same as those in the join operation.
 
 === "AsOfJoinRel Message"
 
