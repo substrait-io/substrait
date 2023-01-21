@@ -114,8 +114,8 @@ aggregate_functions:
             values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: "DECIMAL<38,S>?"
-        return: "DECIMAL<38,S>?"
+        intermediate: "DECIMAL?<38,S>"
+        return: "DECIMAL?<38,S>"
   - name: "avg"
     description: Average a set of values.
     impls:
@@ -137,8 +137,8 @@ aggregate_functions:
             value: "DECIMAL<P, S>"
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: "DECIMAL<P, S>?"
-        return: "DECIMAL<P, S>?"
+        intermediate: "DECIMAL?<P, S>"
+        return: "DECIMAL?<P, S>"
   - name: "max"
     description: Max a set of values.
     impls:
@@ -147,5 +147,5 @@ aggregate_functions:
             value: "DECIMAL<P,S>"
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: "DECIMAL<P, S>?"
-        return: "DECIMAL<P, S>?"
+        intermediate: "DECIMAL?<P, S>"
+        return: "DECIMAL?<P, S>"
