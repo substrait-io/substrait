@@ -1,6 +1,19 @@
 Release Notes
 ---
 
+## [0.23.0](https://github.com/substrait-io/substrait/compare/v0.22.0...v0.23.0) (2023-01-22)
+
+
+### Features
+
+* add extended expression for expression only evaluation ([#405](https://github.com/substrait-io/substrait/issues/405)) ([d35f0ed](https://github.com/substrait-io/substrait/commit/d35f0ed98ccefe31a90d53ff887402636a74bbd1))
+* **spec:** add physical plans for hashJoin and mergeJoin ([#336](https://github.com/substrait-io/substrait/issues/336)) ([431651e](https://github.com/substrait-io/substrait/commit/431651efbd64958d2611b035ffdb25f589b28477))
+
+
+### Bug Fixes
+
+* update extension yaml files to match type-syntax spec ([#423](https://github.com/substrait-io/substrait/issues/423)) ([0608878](https://github.com/substrait-io/substrait/commit/0608878b25e7f9b4b3ffe33662eea9ef0f016548))
+
 ## [0.22.0](https://github.com/substrait-io/substrait/compare/v0.21.1...v0.22.0) (2022-12-18)
 
 
