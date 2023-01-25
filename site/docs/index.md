@@ -44,7 +44,7 @@ In many ways, the goal of this project is similar to that of the Apache Arrow pr
 
 ## Why not use SQL?
 
-POSIX SQL is a well known language for describing queries against relational data.  It is designed to be simple and allow reading
+SQL is a well known language for describing queries against relational data.  It is designed to be simple and allow reading
 and writing by humans.  Substrait is not intended as a replacement for SQL and works alongside SQL to provide capabilities that
 SQL lacks.  SQL is not a great fit for systems that actually satisfy the query because it does not provide sufficient detail and
 is not represented in a format that is easy for processing.  Because of this, most modern systems will first translate the SQL query
