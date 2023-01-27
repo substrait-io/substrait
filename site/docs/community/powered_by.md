@@ -26,9 +26,9 @@ list of other open source projects have adopted Substrait.
 [DataFusion](https://arrow.apache.org/datafusion/)
 : DataFusion is an extensible query planning, optimization, and execution
   framework, written in Rust, that uses Apache Arrow as its in-memory format.
-  DataFusion provides a
-  [Substrait producer and consumer](https://github.com/datafusion-contrib/datafusion-substrait)
-  that can convert DataFusion logical plans to and from Substrait plans.
+  DataFusion provides a Substrait producer and consumer that can convert
+  DataFusion logical plans to and from Substrait plans. It can be used through the
+  [DataFusion Python bindings](https://github.com/apache/arrow-datafusion-python#substrait-support).
 
 [DuckDB](https://duckdb.org)
 : DuckDB is an in-process SQL OLAP database management system. DuckDB provides
@@ -62,4 +62,4 @@ list of other open source projects have adopted Substrait.
 
 
 To add your project to this list, please open a
-[pull request](https://github.com/substrait-io/substrait/edit/main/site/docs/community/powered_by.md) 
+[pull request](https://github.com/substrait-io/substrait/edit/main/site/docs/community/powered_by.md).
