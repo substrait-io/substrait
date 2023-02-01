@@ -1,19 +1,25 @@
 # Extended expression
 
-Extended expression is provided for expression level protocol instead of plan rels. It mainly targets for expression only evaluation, such as those computed in Filter/Project/Aggregation rels. Different from original expression defined in substrait protocol, it requires more information to completely describe the computation context, including input data schema, referred function signatures and output schema. 
+Extended expression is a top-level message, like a plan, but for expressions. They can hold expressions to be used in filter, projection, and aggregation operations that aren't part of a full plan. Because they are a top-level message, they include more context than expressions that exist _within_ a plan. Some of this is additional computational context, such as the input data schema and the output schema. And some are message metadata, such as the Substrait version and the URIs of referenced extensions.
 
-Besides, as it will be used seperately with plan rel representation, it need include basic fields like Version.
-
-## Input and output data schema
-
-Similar as `base_schema` defined in [ReadRel](https://github.com/substrait-io/substrait/blob/7f272f13f22cd5f5842baea42bcf7961e6251881/proto/substrait/algebra.proto#L58), the input data schema tells name/type/nullibilty and layout info of input data for target expression evalutation. It also has a field `name` to define name of output data.
+For details, see the definition in [extended_expression.proto](https://github.com/substrait-io/substrait/blob/main/proto/substrait/extended_expression.proto).
 
 ## Referred expression
 
-It will has one or more referred expressions in this message and the referred expressions can be [Expression](https://github.com/substrait-io/substrait/blob/7f272f13f22cd5f5842baea42bcf7961e6251881/proto/substrait/algebra.proto) or [AggregateFunction](https://github.com/substrait-io/substrait/blob/7f272f13f22cd5f5842baea42bcf7961e6251881/proto/substrait/algebra.proto#L1170). More types of expression can be added for more scenarios.
+Extended expressions can contain one or multiple expressions. A single expression is used for filters, while multiple expressions are used for projections and aggregations. Each of these expressions is represented by an `ExpressionReference` message, which can either contain an [Expression](https://github.com/substrait-io/substrait/blob/7f272f13f22cd5f5842baea42bcf7961e6251881/proto/substrait/algebra.proto) or [AggregateFunction](https://github.com/substrait-io/substrait/blob/7f272f13f22cd5f5842baea42bcf7961e6251881/proto/substrait/algebra.proto#L1170) message. In the future, other types might be allowed to handle different use cases.
 
-For multi expressions, user can translate them following same order as it occurs in original plan rel. But it does NOT require the consume side to handle it strictly in previous order. Only need to make sure columns in final output are organized in same order as defined in extended expression message.
+## Input and output data schema
+
+The schema of the input data is specified by the `base_schema` field.
+
+The schema of the output data is determined by each of the `ExpressionReference` messages in the `referred_expr` field. The output type for the expression is determined by the expression or measure. The field name is determined by `output_names`. For primitive types `output_names` is just one string, but if the output type is a struct it will contain a name for each field, in depth-first order.
+
+## Order
+
+If there are multiple expressions, the order of the inputs and outputs matter. Input data will match the schema order
+in `base_schema` and output data must match the order of the `ExpressionReference` messages. However, there is no requirement that the expressions are executed in any particular order.
 
 ## Function extensions
 
-As in the expression message, functions are used by referring function anchor so the related extensions are needed to determine detailed function signature.
+Just like expressions in plans, functions are referred to with a function anchor. So similar to plans, the function declarations must be included in `extensions` and the URIs of the extension YAML files in `extension_uris`.
+

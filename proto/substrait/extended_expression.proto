@@ -19,33 +19,40 @@ message ExpressionReference {
     AggregateFunction measure = 2;
   }
   // Field names in depth-first order
+  //
+  // For primitive types, this will just be a single name. Nested types may
+  // have multiple names.
   repeated string output_names = 3;
 }
 
-// Describe a set of operations to complete.
-// For compactness sake, identifiers are normalized at the plan level.
+// Describe a list of expressions to evaluate.
+// This is a top-level expression, like a Plan.
 message ExtendedExpression {
   // Substrait version of the expression. Optional up to 0.17.0, required for later
   // versions.
   Version version = 7;
 
-  // a list of yaml specifications this expression may depend on
+  // A list of yaml specifications this expression may depend on.
   repeated substrait.extensions.SimpleExtensionURI extension_uris = 1;
 
-  // a list of extensions this expression may depend on
+  // A list of extensions this expression may depend on.
   repeated substrait.extensions.SimpleExtensionDeclaration extensions = 2;
 
-  // one or more expression trees with same order in plan rel
+  // One or more expression trees with same order in plan rel.
+  //
+  // The output schema is determined by these expression trees.
   repeated ExpressionReference referred_expr = 3;
 
+  // The schema of the input data.
   NamedStruct base_schema = 4;
-  // additional extensions associated with this expression.
+
+  // Additional extensions associated with this expression.
   substrait.extensions.AdvancedExtension advanced_extensions = 5;
 
-  // A list of com.google.Any entities that this plan may use. Can be used to
+  // A list of com.google.Any entities that this expression may use. Can be used to
   // warn if some embedded message types are unknown. Note that this list may
   // include message types that are ignorable (optimizations) or that are
-  // unused. In many cases, a consumer may be able to work with a plan even if
+  // unused. In many cases, a consumer may be able to work with a expression even if
   // one or more message types defined here are unknown.
   repeated string expected_type_urls = 6;
 }
