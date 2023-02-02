@@ -355,10 +355,9 @@ definitions that we will create later.
 `i64` type since that is what the function definition declares in the YAML file.
 
 `arguments` defines the arguments being passed into the function, which are all
-done positionally based on the function definition in the YAML file. The first 
-argument is an option that defines how `NaN` equality is handled, and since
-that's not relevant here we just pass `"NAN_IS_NOT_NAN"`. The next two options
-will be familiar as the literal and the field reference we constructed earlier.
+done positionally based on the function definition in the YAML file. The two 
+arguments will be familiar as the literal and the field reference we
+constructed earlier.
 
 To create the final expression, we just need to wrap this in another scalar
 function expression for `IS NULL`.
