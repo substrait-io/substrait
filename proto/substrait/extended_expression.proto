@@ -25,8 +25,8 @@ message ExpressionReference {
   repeated string output_names = 3;
 }
 
-// Describe a list of expressions to evaluate.
-// This is a top-level expression, like a Plan.
+// A list of expressions to evaluate.
+// This is a top-level message, like a Plan.
 message ExtendedExpression {
   // Substrait version of the expression. Optional up to 0.17.0, required for later
   // versions.
@@ -38,9 +38,11 @@ message ExtendedExpression {
   // A list of extensions this expression may depend on.
   repeated substrait.extensions.SimpleExtensionDeclaration extensions = 2;
 
-  // One or more expression trees with same order in plan rel.
+  // One or more expression trees.
   //
-  // The output schema is determined by these expression trees.
+  // The output schema is determined by these expression trees. Each expression
+  // tree becomes a field in the output schema. The order of the trees determines
+  // the order of the output fields.
   repeated ExpressionReference referred_expr = 3;
 
   // The schema of the input data.
