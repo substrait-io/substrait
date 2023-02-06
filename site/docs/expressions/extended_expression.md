@@ -6,7 +6,9 @@ For details, see the definition in [extended_expression.proto](https://github.co
 
 ## Referred expression
 
-Extended expressions can contain one or multiple expressions. A single expression is used for filters, while multiple expressions are used for projections and aggregations. Each of these expressions is represented by an `ExpressionReference` message, which can either contain an [Expression](https://github.com/substrait-io/substrait/blob/7f272f13f22cd5f5842baea42bcf7961e6251881/proto/substrait/algebra.proto) or [AggregateFunction](https://github.com/substrait-io/substrait/blob/7f272f13f22cd5f5842baea42bcf7961e6251881/proto/substrait/algebra.proto#L1170) message. In the future, other types might be allowed to handle different use cases.
+Extended expressions can contain one or multiple expressions. For example, a single expression could be used for filter operations, while multiple expressions could be used used for projections and aggregations. Each of these expressions is represented by an `ExpressionReference` message, which can either contain an [Expression](https://github.com/substrait-io/substrait/blob/7f272f13f22cd5f5842baea42bcf7961e6251881/proto/substrait/algebra.proto) or [AggregateFunction](https://github.com/substrait-io/substrait/blob/7f272f13f22cd5f5842baea42bcf7961e6251881/proto/substrait/algebra.proto#L1170) message. In the future, other types might be allowed to handle different use cases.
+
+If multiple expressions are specified then there is no implicit relationship between the different top-level expressions. Each expression should be considered independent and operates on the same top-level schema. This means that the expressions cannot build upon one another. For example,  the expressions `x + 1 as y` and `y - 2` cannot be represented in the same message, since the second expression refers to the first (assuming the field `y` was not in the input schema).
 
 ## Input and output data schema
 
@@ -16,7 +18,7 @@ The schema of the output data is determined by each of the `ExpressionReference`
 
 ## Order
 
-If there are multiple expressions, the order of the inputs and outputs matter. Input data will match the schema order
+If there are multiple expressions, the field order of the input and output data matters. Input data will match the schema order
 in `base_schema` and output data must match the order of the `ExpressionReference` messages. However, there is no requirement that the expressions are executed in any particular order.
 
 ## Function extensions
