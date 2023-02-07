@@ -95,9 +95,7 @@ scalar_functions:
             description: >
               When a boundary is computed to lie somewhere between two values,
               and this value cannot be exactly represented, this specifies how
-              to round it. For floating point numbers, it specifies the IEEE
-              754 rounding mode (as it does for all other floating point
-              operations). For integer types:
+              to round it.
 
                 - TIE_TO_EVEN: round to nearest value; if exactly halfway, tie
                   to the even option.
