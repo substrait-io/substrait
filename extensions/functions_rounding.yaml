@@ -42,12 +42,11 @@ scalar_functions:
             description: >
               Number of decimal places to be rounded to.
 
-              When `s` is a positive number, the rounding
-              is performed to a `s` number of decimal places.
+              When `s` is a positive number, nothing will happen
+              since `x` is an integer value.
 
               When `s` is a negative number, the rounding is
-              performed to the left side of the decimal point
-              as specified by `s`.
+              performed to the nearest multiple of `10^(-s)`.
         options:
           rounding:
             description: >
@@ -82,12 +81,11 @@ scalar_functions:
             description: >
               Number of decimal places to be rounded to.
 
-              When `s` is a positive number, the rounding
-              is performed to a `s` number of decimal places.
+              When `s` is a positive number, nothing will happen
+              since `x` is an integer value.
 
               When `s` is a negative number, the rounding is
-              performed to the left side of the decimal point
-              as specified by `s`.
+              performed to the nearest multiple of `10^(-s)`.
         options:
           rounding:
             description: >
@@ -122,12 +120,11 @@ scalar_functions:
             description: >
               Number of decimal places to be rounded to.
 
-              When `s` is a positive number, the rounding
-              is performed to a `s` number of decimal places.
+              When `s` is a positive number, nothing will happen
+              since `x` is an integer value.
 
               When `s` is a negative number, the rounding is
-              performed to the left side of the decimal point
-              as specified by `s`.
+              performed to the nearest multiple of `10^(-s)`.
         options:
           rounding:
             description: >
@@ -162,12 +159,11 @@ scalar_functions:
             description: >
               Number of decimal places to be rounded to.
 
-              When `s` is a positive number, the rounding
-              is performed to a `s` number of decimal places.
+              When `s` is a positive number, nothing will happen
+              since `x` is an integer value.
 
               When `s` is a negative number, the rounding is
-              performed to the left side of the decimal point
-              as specified by `s`.
+              performed to the nearest multiple of `10^(-s)`.
         options:
           rounding:
             description: >
