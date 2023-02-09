@@ -33,6 +33,8 @@ jobs:
           node-version: "18"
 
       - uses: bufbuild/buf-setup-action@v1.9.0
+        with:
+          github_token: ${{ github.token }}
 
       - name: run semantic-release
         run: ./ci/release/run.sh

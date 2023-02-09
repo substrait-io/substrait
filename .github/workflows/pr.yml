@@ -28,6 +28,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: bufbuild/buf-setup-action@v1.9.0
+        with:
+          github_token: ${{ github.token }}
       - run: buf format --diff --exit-code
   proto:
     name: Check Protobuf
