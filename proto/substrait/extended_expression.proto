@@ -20,7 +20,7 @@ message ExpressionReference {
   }
   // Field names in depth-first order
   //
-  // For primitive types, this will just be a single name. Nested types may
+  // For primitive types, this will just be a single name. Nested types will
   // have multiple names.
   repeated string output_names = 3;
 }

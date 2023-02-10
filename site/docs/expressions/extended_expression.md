@@ -1,6 +1,6 @@
 # Extended expression
 
-Extended expression is a top-level message, like a plan, but for expressions. They can hold expressions to be used in filter, projection, and aggregation operations that aren't part of a full plan. Because it is a top-level message, it includes more context than expressions that exist _within_ a plan. Some of this is additional computational context, such as the input data schema and the output schema.  In addition there is message metadata, such as the Substrait version and the URIs of referenced extensions.
+Extended expression is a top-level message, like a plan, but for expressions. It can hold expressions to be used in filter, projection, and aggregation operations that aren't part of a full plan. Because it is a top-level message, it includes more context than expressions that exist _within_ a plan. Some of this is additional computational context, such as the input data schema and the output schema.  In addition there is message metadata, such as the Substrait version and the URIs of referenced extensions.
 
 For details, see the definition in [extended_expression.proto](https://github.com/substrait-io/substrait/blob/main/proto/substrait/extended_expression.proto).
 
