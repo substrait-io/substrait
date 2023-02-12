@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.24.0](https://github.com/substrait-io/substrait/compare/v0.23.0...v0.24.0) (2023-02-12)
+
+
+### Features
+
+* add round function ([#322](https://github.com/substrait-io/substrait/issues/322)) ([57121c8](https://github.com/substrait-io/substrait/commit/57121c8ca6f1fe815e98eda8962f8f84736c58e2))
+
 ## [0.23.0](https://github.com/substrait-io/substrait/compare/v0.22.0...v0.23.0) (2023-01-22)
 
 
