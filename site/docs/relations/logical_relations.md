@@ -224,7 +224,8 @@ The join operation will combine two separate inputs into a single output, based 
 | Left  | Return all records from the left input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the left input, return the left record along with nulls for the right input. |
 | Right | Return all records from the right input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the right input, return the left record along with nulls for the right input. |
 | Semi | Returns records from the left input. These are returned only if the records have a join partner on the right side. |
-| Anti  | Return records from the left input. These are returned only if the records do not have a join partner on the right side. |
+| Anti  | Return records from the left input. These are returned only if the join expression evaluates to one of false or null for all records in the right input. |
+| NullAwareAnti | Return records from the left input.  These are returned only if the join expression evaluates to false for all records in the right input. |
 | Single | Returns one join partner per entry on the left input. If more than one join partner exists, there are two valid semantics. 1) Only the first match is returned. 2) The system throws an error. If there is no match between the left and right inputs, NULL is returned. |
 
 
