@@ -1192,7 +1192,7 @@ scalar_functions:
           - value: i32
             name: "length"
             description: "The length of the output string."
-          - value: "varchar<1>"
+          - value: "varchar<L1>"
             name: "character"
             description: "The character to use for padding."
         options:
