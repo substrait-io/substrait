@@ -3,4 +3,4 @@
 ## Substrait-tools
 The [substrait-tools](https://pypi.org/project/substrait-tools/) python package provides 
 a command line interface for producing/consuming substrait plans by leveraging the APIs
-from different producers and consumers. Source code can be found [here](https://github.com/richtia/substrait-tools).
+from different producers and consumers.
