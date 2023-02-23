@@ -35,7 +35,12 @@ scalar_functions:
         return: i64
   -
     name: "add"
-    description: Add an interval to a date/time type.
+    description: >-
+      Add an interval to a date/time type.
+
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Examples: "Pacific/Marquesas", "Etc/GMT+1".
+      If timezone is invalid an error is thrown.
     impls:
       - args:
           - name: x
@@ -48,7 +53,10 @@ scalar_functions:
             value: timestamp_tz
           - name: y
             value: interval_year
-        return: timestamp
+          - name: timezone
+            description: Timezone string from IANA tzdb.
+            value: string
+        return: timestamp_tz
       - args:
           - name: x
             value: date
@@ -66,7 +74,7 @@ scalar_functions:
             value: timestamp_tz
           - name: y
             value: interval_day
-        return: timestamp
+        return: timestamp_tz
       - args:
           - name: x
             value: date
@@ -91,7 +99,12 @@ scalar_functions:
         return: interval_year
   -
     name: "subtract"
-    description: Subtract an interval from a date/time type.
+    description: >-
+      Subtract an interval from a date/time type.
+
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Examples: "Pacific/Marquesas", "Etc/GMT+1".
+      If timezone is invalid an error is thrown.
     impls:
       - args:
           - name: x
@@ -104,6 +117,15 @@ scalar_functions:
             value: timestamp_tz
           - name: y
             value: interval_year
+        return: timestamp_tz
+      - args:
+          - name: x
+            value: timestamp_tz
+          - name: y
+            value: interval_year
+          - name: timezone
+            description: Timezone string from IANA tzdb.
+            value: string
         return: timestamp_tz
       - args:
           - name: x
