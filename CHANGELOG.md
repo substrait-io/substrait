@@ -1,6 +1,19 @@
 Release Notes
 ---
 
+## [0.25.0](https://github.com/substrait-io/substrait/compare/v0.24.0...v0.25.0) (2023-02-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* (add/subtract)ing an interval to a timestamp_tz
+now requires a time zone and returns a timestamp_tz
+
+### Bug Fixes
+
+* correct return of temporal add and subtract and add timezone parameter ([#337](https://github.com/substrait-io/substrait/issues/337)) ([1b184cc](https://github.com/substrait-io/substrait/commit/1b184cc79197c20f510aa74e633658f5ce249e47))
+* **extension:** fix typo in scalar function argument type ([#445](https://github.com/substrait-io/substrait/issues/445)) ([7d7ddf1](https://github.com/substrait-io/substrait/commit/7d7ddf11f3ce0b5f69a9d32ef10a699888f18a61))
+
 ## [0.24.0](https://github.com/substrait-io/substrait/compare/v0.23.0...v0.24.0) (2023-02-12)
 
 
