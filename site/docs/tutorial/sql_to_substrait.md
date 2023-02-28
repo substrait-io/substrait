@@ -586,7 +586,7 @@ relation for `orders` and in the `right` field will be the filter relation
 (from `products`). The `type` field is an enum that allows us to specify
 we want an inner join. Finally, the `expression` field contains the expression
 to use in the join. Since we haven't used the `equals()` function yet, we use
-the reference number 2 here. (Again, we'll see at the end with [plans](#plans)
+the reference number 3 here. (Again, we'll see at the end with [plans](#plans)
 how these functions are resolved.) The arguments refer to fields 0 and 4, which
 are indices into the combined schema formed from the left and right inputs.
 We'll discuss later in [Field Indices](#field-indices) where these come from.
