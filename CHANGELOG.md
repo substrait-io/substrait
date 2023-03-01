@@ -1,6 +1,46 @@
 Release Notes
 ---
 
+## [0.25.0](https://github.com/substrait-io/substrait/compare/v0.24.0...v0.25.0) (2023-02-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* (add/subtract)ing an interval to a timestamp_tz
+now requires a time zone and returns a timestamp_tz
+
+### Bug Fixes
+
+* correct return of temporal add and subtract and add timezone parameter ([#337](https://github.com/substrait-io/substrait/issues/337)) ([1b184cc](https://github.com/substrait-io/substrait/commit/1b184cc79197c20f510aa74e633658f5ce249e47))
+* **extension:** fix typo in scalar function argument type ([#445](https://github.com/substrait-io/substrait/issues/445)) ([7d7ddf1](https://github.com/substrait-io/substrait/commit/7d7ddf11f3ce0b5f69a9d32ef10a699888f18a61))
+
+## [0.24.0](https://github.com/substrait-io/substrait/compare/v0.23.0...v0.24.0) (2023-02-12)
+
+
+### Features
+
+* add round function ([#322](https://github.com/substrait-io/substrait/issues/322)) ([57121c8](https://github.com/substrait-io/substrait/commit/57121c8ca6f1fe815e98eda8962f8f84736c58e2))
+
+## [0.23.0](https://github.com/substrait-io/substrait/compare/v0.22.0...v0.23.0) (2023-01-22)
+
+
+### Features
+
+* add extended expression for expression only evaluation ([#405](https://github.com/substrait-io/substrait/issues/405)) ([d35f0ed](https://github.com/substrait-io/substrait/commit/d35f0ed98ccefe31a90d53ff887402636a74bbd1))
+* **spec:** add physical plans for hashJoin and mergeJoin ([#336](https://github.com/substrait-io/substrait/issues/336)) ([431651e](https://github.com/substrait-io/substrait/commit/431651efbd64958d2611b035ffdb25f589b28477))
+
+
+### Bug Fixes
+
+* update extension yaml files to match type-syntax spec ([#423](https://github.com/substrait-io/substrait/issues/423)) ([0608878](https://github.com/substrait-io/substrait/commit/0608878b25e7f9b4b3ffe33662eea9ef0f016548))
+
+## [0.22.0](https://github.com/substrait-io/substrait/compare/v0.21.1...v0.22.0) (2022-12-18)
+
+
+### Features
+
+* add bitwise NOT, AND, OR & XOR functions ([#370](https://github.com/substrait-io/substrait/issues/370)) ([81e34d4](https://github.com/substrait-io/substrait/commit/81e34d4054ff0dbde23ac749fbb8fcc232989c5d))
+
 ## [0.21.1](https://github.com/substrait-io/substrait/compare/v0.21.0...v0.21.1) (2022-12-04)
 
 

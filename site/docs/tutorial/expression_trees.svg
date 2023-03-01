@@ -1,0 +1,92 @@
+<svg version="1.1" width="675" height="275" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+    refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" />
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" fill="white" />
+
+  <g transform="translate(20, 20)">
+    <text x="305" y="15" font-size="20" text-anchor="middle" font-weight="bold">
+      <tspan fill="rebeccapurple">INDEX_IN(</tspan>
+      <tspan fill="steelblue">categories</tspan>,
+      <tspan fill="forestgreen">"Computers"</tspan>
+      <tspan fill="rebeccapurple">)</tspan>
+      <tspan fill="rebeccapurple">IS NULL</tspan>
+    </text>
+
+    <g transform="translate(225, 40)">
+      <rect width="160" height="30" x="0" y="0" class="node" fill="#eee" />
+      <rect width="80" height="30" x="0" y="0" class="node" fill="rebeccapurple" />
+      <text class="node light" x="40" y="20">Function</text>
+      <text class="node" x="120" y="20">is_null</text>
+      <path d="M 80 30 c 0 30, 0 20, 0 40" class="edge" fill="transparent"/>
+    </g>
+
+    <g transform="translate(225, 120)">
+      <rect width="160" height="30" x="0" y="0" class="node" fill="#eee" />
+      <rect width="80" height="30" x="0" y="0" class="node" fill="rebeccapurple" />
+      <text class="node light" x="40" y="20">Function</text>
+      <text class="node" x="120" y="20">index_in</text>
+      <path d="M 80 30 c 0 30, -100 20, -100 40" class="edge" fill="transparent"/>
+      <path d="M 80 30 c 0 30, 100 20, 100 40" class="edge" fill="transparent"/>
+    </g>
+
+    <g transform="translate(125, 200)">
+      <rect width="160" height="30" x="0" y="0" class="node" fill="#eee" />
+      <rect width="80" height="30" x="0" y="0" class="node" fill="steelblue" />
+      <text class="node light" x="40" y="20">Field Ref</text>
+      <text class="node" x="120" y="20">categories</text>
+    </g>
+
+    <g transform="translate(325, 200)">
+      <rect width="180" height="30" x="0" y="0" class="node" fill="#eee" />
+      <rect width="80" height="30" x="0" y="0" class="node" fill="forestgreen" />
+      <text class="node light" x="40" y="20">Literal</text>
+      <text class="node" x="130" y="20">"Computers"</text>
+    </g>
+
+  </g>
+
+  <style>
+    text {
+      font-family: apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, Liberation Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    }
+
+    path.edge {
+      stroke: black;
+      marker-end: url(#arrowhead);
+    }
+
+    rect.node {
+      /* fill: #eee; */
+      stroke: #333;
+    }
+
+    text.node {
+      fill: #333;
+      text-anchor: middle;
+      font-size: 14px;
+    }
+    
+    .node.light {
+      fill: #eee;
+    }
+
+    .label {
+      font-size: 14px;
+      font-weight: bold;
+      fill: #111;
+    }
+
+    .light {
+      fill: #eee;
+    }
+
+    #heading {
+      font-size: 24px;
+    }
+  </style>
+</svg>

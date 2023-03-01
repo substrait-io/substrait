@@ -745,6 +745,118 @@ scalar_functions:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
         return: i64
+  -
+    name: "bitwise_not"
+    description: >
+      Return the bitwise NOT result for one integer input.
+
+    impls:
+      - args:
+          - name: x
+            value: i8
+        return: i8
+      - args:
+          - name: x
+            value: i16
+        return: i16
+      - args:
+          - name: x
+            value: i32
+        return: i32
+      - args:
+          - name: x
+            value: i64
+        return: i64
+  -
+    name: "bitwise_and"
+    description: >
+      Return the bitwise AND result for two integer inputs.
+
+    impls:
+      - args:
+          - name: x
+            value: i8
+          - name: y
+            value: i8
+        return: i8
+      - args:
+          - name: x
+            value: i16
+          - name: y
+            value: i16
+        return: i16
+      - args:
+          - name: x
+            value: i32
+          - name: y
+            value: i32
+        return: i32
+      - args:
+          - name: x
+            value: i64
+          - name: y
+            value: i64
+        return: i64
+  -
+    name: "bitwise_or"
+    description: >
+      Return the bitwise OR result for two given integer inputs.
+
+    impls:
+      - args:
+          - name: x
+            value: i8
+          - name: y
+            value: i8
+        return: i8
+      - args:
+          - name: x
+            value: i16
+          - name: y
+            value: i16
+        return: i16
+      - args:
+          - name: x
+            value: i32
+          - name: y
+            value: i32
+        return: i32
+      - args:
+          - name: x
+            value: i64
+          - name: y
+            value: i64
+        return: i64
+  -
+    name: "bitwise_xor"
+    description: >
+      Return the bitwise XOR result for two integer inputs.
+
+    impls:
+      - args:
+          - name: x
+            value: i8
+          - name: y
+            value: i8
+        return: i8
+      - args:
+          - name: x
+            value: i16
+          - name: y
+            value: i16
+        return: i16
+      - args:
+          - name: x
+            value: i32
+          - name: y
+            value: i32
+        return: i32
+      - args:
+          - name: x
+            value: i64
+          - name: y
+            value: i64
+        return: i64
 
 aggregate_functions:
   - name: "sum"
