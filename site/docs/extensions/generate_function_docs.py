@@ -73,8 +73,10 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                         option_names_list.append(option_name)
                         options_list.append(choices)
                     else:
-                        raise Exception(f"Unrecognized argument found in "
-                                        f"{file_name}:{function_name}")
+                        raise Exception(
+                            f"Unrecognized argument found in "
+                            f"{file_name}:{function_name}"
+                        )
 
                 opts = impl["options"] if "options" in impl else {}
                 for opt_name, opt in opts.items():
