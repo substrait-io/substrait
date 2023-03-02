@@ -81,7 +81,7 @@ jobs:
     name: Style-check and lint Python files
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install dependencies
       run: python3 -m pip install --upgrade pip black==22.3.0 flake8==4.0.1
     - name: Black
@@ -92,7 +92,7 @@ jobs:
     name: Check proto-prefix.py
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: bufbuild/buf-setup-action@v0.7.0
       - name: Run proto-prefix.py
         run: tools/proto_prefix.py output test proto go_package=github.com/test/proto
