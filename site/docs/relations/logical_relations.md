@@ -279,7 +279,7 @@ The fetch operation eliminates records outside a desired window. Typically corre
 
 | Signature            | Value                                   |
 | -------------------- | --------------------------------------- |
-| Inputs               | 2 or more                               |
+| Inputs               | 1                                       |
 | Outputs              | 1                                       |
 | Property Maintenance | Maintains distribution and orderedness. |
 | Direct Output Order  | Unchanged from input.                   |
@@ -339,12 +339,12 @@ If at least one grouping expression is present, the aggregation is allowed to no
 
 ## Reference Operator
 
-The reference operator is used to construct DAGs of operations. In a `Plan` we can have multiple Rel representing various 
+The reference operator is used to construct DAGs of operations. In a `Plan` we can have multiple Rel representing various
 computations with potentially multiple outputs. The `ReferenceRel` is used to express the fact that multiple `Rel` might be
 sharing subtrees of computation. This can be used to express arbitrary DAGs as well as represent multi-query optimizations.
 
 As a concrete example think about two queries `SELECT * FROM A JOIN B JOIN C` and `SELECT * FROM A JOIN B JOIN D`,
-We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the two queries, by creating a plan with 3 `Rel`. 
+We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the two queries, by creating a plan with 3 `Rel`.
 One expressing `A JOIN B` (in position 0 in the plan), one using reference as follows: `ReferenceRel(0) JOIN C` and a third one
 doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B`.
 
@@ -370,7 +370,7 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 
 ## Write Operator
 
-The write operator is an operator that consumes one output and writes it to storage. This can range from writing to a Parquet file, to INSERT/DELETE/UPDATE in a database. 
+The write operator is an operator that consumes one output and writes it to storage. This can range from writing to a Parquet file, to INSERT/DELETE/UPDATE in a database.
 
 | Signature            | Value                                                   |
 | -------------------- |---------------------------------------------------------|
