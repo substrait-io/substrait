@@ -1,6 +1,14 @@
 Release Notes
 ---
 
+## [0.26.0](https://github.com/substrait-io/substrait/compare/v0.25.0...v0.26.0) (2023-03-05)
+
+
+### Features
+
+* add script to re-namespace .proto files for internal use in public libraries ([#207](https://github.com/substrait-io/substrait/issues/207)) ([a6f24db](https://github.com/substrait-io/substrait/commit/a6f24dbdc592baf4d0d775ee2d3b296eb747e86a))
+* add temporal functions ([#272](https://github.com/substrait-io/substrait/issues/272)) ([beb104b](https://github.com/substrait-io/substrait/commit/beb104b31aebe584f859f6ce27e3e3a62bc70132)), closes [#222](https://github.com/substrait-io/substrait/issues/222)
+
 ## [0.25.0](https://github.com/substrait-io/substrait/compare/v0.24.0...v0.25.0) (2023-02-26)
 
 
