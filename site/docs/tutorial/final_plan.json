@@ -285,7 +285,7 @@
             "measures": [
               {
                 "measure": {
-                    "functionReference": 3,
+                    "functionReference": 4,
                     "outputType": {
                       "decimal": {
                         "scale": 2,
@@ -297,7 +297,7 @@
                       {
                         "value": {
                           "scalarFunction": {
-                            "functionReference": 4,
+                            "functionReference": 5,
                             "outputType": {
                               "decimal": {
                                 "scale": 2,

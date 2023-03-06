@@ -693,7 +693,7 @@ names.
     "measures": [
       {
         "measure": {
-          "functionReference": 3,
+          "functionReference": 4,
           "outputType": {
             "decimal": {
               "precision": 38,
@@ -705,7 +705,7 @@ names.
             {
               "value": {
                 "scalarFunction": {
-                  "functionReference": 4,
+                  "functionReference": 5,
                   "outputType": {
                     "decimal": {
                       "precision": 38,
