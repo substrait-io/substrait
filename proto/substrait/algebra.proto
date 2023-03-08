@@ -163,13 +163,13 @@ message JoinRel {
   JoinType type = 6;
 
   enum JoinType {
+    reserved 5, 6;
+    reserved "JOIN_TYPE_SEMI", "JOIN_TYPE_ANTI";
     JOIN_TYPE_UNSPECIFIED = 0;
     JOIN_TYPE_INNER = 1;
     JOIN_TYPE_OUTER = 2;
     JOIN_TYPE_LEFT = 3;
     JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_SEMI = 5;
-    JOIN_TYPE_ANTI = 6;
     // This join is useful for nested sub-queries where we need exactly one tuple in output (or throw exception)
     // See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf
     JOIN_TYPE_SINGLE = 7;
@@ -492,8 +492,8 @@ message HashJoinRel {
   repeated Expression.FieldReference left_keys = 4;
   repeated Expression.FieldReference right_keys = 5;
   Expression post_join_filter = 6;
-
   JoinType type = 7;
+  bool null_is_match = 8;
 
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;

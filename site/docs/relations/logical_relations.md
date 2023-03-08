@@ -212,7 +212,8 @@ The join operation will combine two separate inputs into a single output, based 
 | --------------- | ------------------------------------------------------------ | ---------------------------------- |
 | Left Input      | A relational input.                                          | Required                           |
 | Right Input     | A relational input.                                          | Required                           |
-| Join Expression | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the direct output order of the data. | Required. Can be the literal True. |
+| Join Expression | A boolean condition that describes whether each record from the left set "match" the record from the right set.  Only the value
+true counts as a match (null does not match). Field references correspond to the direct output order of the data. | Required. Can be the literal True. |
 | Join Type       | One of the join types defined below.                         | Required                           |
 
 ### Join Types
@@ -223,8 +224,6 @@ The join operation will combine two separate inputs into a single output, based 
 | Outer | Return all records from both the left and right inputs. For each cross input match, return a record including the data from both sides. For any remaining non-match records, return the record from the corresponding input along with nulls for the opposite input. |
 | Left  | Return all records from the left input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the left input, return the left record along with nulls for the right input. |
 | Right | Return all records from the right input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the right input, return the left record along with nulls for the right input. |
-| Semi | Returns records from the left input. These are returned only if the records have a join partner on the right side. |
-| Anti  | Return records from the left input. These are returned only if the records do not have a join partner on the right side. |
 | Single | Returns one join partner per entry on the left input. If more than one join partner exists, there are two valid semantics. 1) Only the first match is returned. 2) The system throws an error. If there is no match between the left and right inputs, NULL is returned. |
 
 

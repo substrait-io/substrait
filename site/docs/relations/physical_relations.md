@@ -17,15 +17,31 @@ The hash equijoin join operator will build a hash table out of the right input b
 
 ### Hash Equijoin Properties
 
-| Property            | Description                                                                                                                                                                                                            | Required                 |
-|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
+| Property            | Description                                   | Required                 |
+|---------------------|-----------------------------------------------|--------------------------|
 | Left Input          | A relational input.(Probe-side)                                                                                                                                                                                        | Required                 |
 | Right Input         | A relational input.(Build-side)                                                                                                                                                                                        | Required                 |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                 | Required                 |
 | Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                | Required                 |
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true. |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                    | Required                 |
+| Null Is Match       | If true then a row is considered a "match" if one or both of the keys are null.  See the Additional Join Types section below for more details. | Optional, defaults false |
 
+### Additional Join Types
+
+The logical join operation describes a number of join types.  All of those are also available to the hash equijoin operator.  However, there are also additional join types which do not make sense in the logical context.
+
+| Type       | Description                                                  |
+| ---------- | ------------------------------------------------------------ |
+| Left Semi  | Return records from the left input if there is at least one record in the right input where the join expression matches. |
+| Right Semi | Return records from the right input if there is at least one record in the left input where the join expression matches. |
+| Left Anti  | Return records from the left input if the join expression does not match any record in the right input. |
+| Right Anti | Return records from the right input if the join expression does not match any record in the left input. |
+
+The semi join is often used as a more efficient method of evaluating subqueries of the form "SELECT * FROM left WHERE EXISTS (SELECT * FROM right WHERE left.id = right.id)" or "SELECT * FROM left WHERE left.id IN (SELECT id FROM right)".
+
+The anti join is often used as a more efficient method for evaluating subqueries of the form "SELECT * FROM left WHERE NOT EXISTS (SELECT * FROM right WHERE left.id = right.id)" or "SELECT * FROM left WHERE left.id NOT IN (SELECT id FROM right)".  Note that these two queries subtly differ in their handling of null keys.  For example, if there is a row in the right input where the keys are null then the "WHERE ... NOT IN (...)" version
+will never return anything (because any query of the form "WHERE x NOT IN (NULL)" will never return anything).  The Null Is Match property can be used to distinguish between these two behaviors.
 
 ## NLJ Operator
 
