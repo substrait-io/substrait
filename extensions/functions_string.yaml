@@ -88,7 +88,11 @@ scalar_functions:
       from the beginning of the string to begin starting to search for pattern matches can be
       specified using the `position` argument. Specifying `1` means to search for matches
       starting at the first character of the input string, `2` means the second character, and so
-      on. The `position` argument should be a positive non-zero integer.
+      on. The `position` argument should be a positive non-zero integer. The regular
+      expression capture group can be specified using the `group` argument. Specifying `0`
+      will return the substring matching the full regular expression. Specifying `1` will
+      return the substring matching only the first capture group, and so on. The `group`
+      argument should be a non-negative integer.
 
       The `case_sensitivity` option specifies case-sensitive or case-insensitive matching.
       Enabling the `multiline` option will treat the input string as multiple lines. This makes
@@ -96,8 +100,8 @@ scalar_functions:
       beginning and end of the input string. Enabling the `dotall` option makes the `.` character
       match line terminator characters in a string.
 
-      Behavior is undefined if the regex fails to compile, the occurrence value is out of range, or
-      the position value is out of range.
+      Behavior is undefined if the regex fails to compile, the occurrence value is out of range,
+      the position value is out of range, or the group value is out of range.
     impls:
       - args:
           - value: "varchar<L1>"
@@ -108,6 +112,8 @@ scalar_functions:
             name: "position"
           - value: i64
             name: "occurrence"
+          - value: i64
+            name: "group"
         options:
           case_sensitivity:
             values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
@@ -125,6 +131,8 @@ scalar_functions:
             name: "position"
           - value: i64
             name: "occurrence"
+          - value: i64
+            name: "group"
         options:
           case_sensitivity:
             values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
@@ -133,6 +141,65 @@ scalar_functions:
           dotall:
             values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: "string"
+  -
+    name: regexp_match_substring_all
+    description: >-
+      Extract all substrings that match the given regular expression pattern. This will return a
+      list of extracted strings with one value for each occurrence of a match. The regular expression
+      pattern should follow the International Components for Unicode implementation
+      (https://unicode-org.github.io/icu/userguide/strings/regexp.html). The number of characters
+      from the beginning of the string to begin starting to search for pattern matches can be
+      specified using the `position` argument. Specifying `1` means to search for matches
+      starting at the first character of the input string, `2` means the second character, and so
+      on. The `position` argument should be a positive non-zero integer. The regular
+      expression capture group can be specified using the `group` argument. Specifying `0`
+      will return substrings matching the full regular expression. Specifying `1` will return
+      substrings matching only the first capture group, and so on. The `group` argument should
+      be a non-negative integer.
+
+      The `case_sensitivity` option specifies case-sensitive or case-insensitive matching.
+      Enabling the `multiline` option will treat the input string as multiple lines. This makes
+      the `^` and `$` characters match at the beginning and end of any line, instead of just the
+      beginning and end of the input string. Enabling the `dotall` option makes the `.` character
+      match line terminator characters in a string.
+
+      Behavior is undefined if the regex fails to compile, the occurrence value is out of range,
+      the position value is out of range, or the group value is out of range.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+          - value: "varchar<L2>"
+            name: "pattern"
+          - value: i64
+            name: "position"
+          - value: i64
+            name: "group"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
+        return: "List<varchar<L1>>"
+      - args:
+          - value: "string"
+            name: "input"
+          - value: "string"
+            name: "pattern"
+          - value: i64
+            name: "position"
+          - value: i64
+            name: "group"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
+        return: "List<string>"
   -
     name: starts_with
     description: >-
