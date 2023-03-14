@@ -67,22 +67,18 @@ jobs:
           ]' > collaborators.json
       - name: smc.yaml
         run: |
-          jq 'map(select(.permission == "ADMIN")) \
-            | map({ \
-                "Name":.name, \
-                "Company":.company \
-              })' \
-            collaborators.json 
-          | yq -P > site/data/smc.yaml
+          jq 'map(select(.permission == "ADMIN"))
+            | map({
+                "Name":.name,
+                "Company":.company
+              })' collaborators.json | yq -P > site/data/smc.yaml
       - name: committers.yaml
         run: |
-          jq 'map(select(.permission == "WRITE")) \
-            | map({ \
-                "Name":.name, \
-                "Company":.company \
-              })' \
-            collaborators.json 
-          | yq -P > site/data/committers.yaml
+          jq 'map(select(.permission == "WRITE"))
+            | map({
+                "Name":.name,
+                "Company":.company
+              })' collaborators.json | yq -P > site/data/committers.yaml
       - name: Generate Static Site
         run: mkdocs build
         working-directory: ./site
