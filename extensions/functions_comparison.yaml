@@ -208,9 +208,15 @@ scalar_functions:
       a non-null argument is found, the remaining arguments are not evaluated.
 
       If all arguments are null, return null.
+
+      The arguments may be any combination of nullable and non-nullable, but must otherwise be of
+      the same type. If any argument is non-nullable, the return type is non-nullable. If all the
+      arguments are nullable, the return type is nullable. Nullability aside, the return type
+      matches the type of the arguments. At least one argument is required, in order for the return
+      type to be defined.
     impls:
       - args:
           - value: any1
         variadic:
           min: 2
-        return: any1
+        return: any1&? # Return type is nullable if all variadic inputs are nullable
