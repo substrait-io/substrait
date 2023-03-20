@@ -16,6 +16,7 @@ concurrency:
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: github.repository == 'substrait-io/substrait'
     steps:
       - uses: tibdex/github-app-token@v1
         id: generate-token
