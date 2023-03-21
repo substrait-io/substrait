@@ -163,8 +163,8 @@ scalar_functions:
       beginning and end of the input string. Enabling the `dotall` option makes the `.` character
       match line terminator characters in a string.
 
-      Behavior is undefined if the regex fails to compile, the occurrence value is out of range,
-      the position value is out of range, or the group value is out of range.
+      Behavior is undefined if the regex fails to compile, the position value is out of range,
+      or the group value is out of range.
     impls:
       - args:
           - value: "varchar<L1>"
