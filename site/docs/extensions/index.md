@@ -65,16 +65,36 @@ It is required that two function implementations with the same simple name must 
 | any[\d]?                   | any            |
 | user defined type          | u!name         |
 
+#### Special Cases for Nullability
+
+In some functions the nullability of the return value depends on the nullability of all the input
+arguments.  In these cases there is a special syntax to express this:
+
+| Return Value      | Meaning                                                           |
+| ----------------- | ----------------------------------------------------------------- |
+| &lt;type&gt;&?    | The return type is only nullable if all the inputs are nullable   |
+| &lt;type&gt;|?    | The return type is nullable if any of the inputs is nullable      |
+
+In addition, if the input type is `any?` and the return type is `any?` it is not clear if the return
+type is always nullable or only nullable if the input type is nullable.
+
+| Return Value | Meaning                                                             |
+| ------------ | ------------------------------------------------------------------- |
+| any!         | The return type is non-nullable, even if the input type is nullable |
+| any          | The return type is nullable only if the input type is nullable      |
+| any?         | The return type is nullable even if the input type is non-nullable  |
+
 #### Examples
 
 | Function Signature                                | Function Name    |
 | ------------------------------------------------- | ---------------- |
-| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`  |
+| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`      |
 | `avg(fp32) => fp32`                               | `avg:fp32`       |
 | `extract(required enumeration, timestamp) => i64` | `extract:req_ts` |
 | `sum(any1) => any1`                               | `sum:any`        |
-
-
+| `coalesce(any) => any&?`                          | `coalesce:any`   |
+| `least(any, any) => any|?`                        | `least:any`      |
+| `nullif(any) => any!`                             | `nullif:any`     |
 
 ## Advanced Extensions
 
