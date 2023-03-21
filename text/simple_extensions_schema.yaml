@@ -14,11 +14,7 @@ properties:
         name:
           type: string
         structure:
-          oneOf:
-            - type: string  # any data type
-            - type: object  # syntactic sugar for a non-nullable named struct
-              additionalProperties:
-                $ref: "#/$defs/type"
+          $ref: "#/$defs/type"
         parameters:  # parameter list for compound types
           $ref: "#/$defs/type_param_defs"
         variadic:  # when set, last parameter may be specified one or more times
@@ -56,8 +52,8 @@ properties:
 $defs:
   type:
     oneOf:
-      - type: string
-      - type: object
+      - type: string  # any data type
+      - type: object  # syntactic sugar for a non-nullable named struct
   type_param_defs:  # an array of compound type parameter definitions
     type: array
     items:
