@@ -63,6 +63,22 @@ message ReadRel {
   Expression.MaskExpression projection = 4;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
+  message PartitionColumns {
+    message RegularColumn {}
+    message PartitionColumn {
+      Expression.Literal value = 1;
+    }
+    message ColumnType {
+      oneof column_type {
+        RegularColumn regular = 1;
+        PartitionColumn partition = 2;
+      }
+    }
+    repeated ColumnType partition_columns = 1;
+  }
+
+  PartitionColumns partition_columns = 12;
+
   // Definition of which type of scan operation is to be performed
   oneof read_type {
     VirtualTable virtual_table = 5;
