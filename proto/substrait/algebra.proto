@@ -343,8 +343,7 @@ message ExchangeRel {
 }
 
 // The expand relation generates multiple rows per input row (denoted by
-// aggregate_expressions) which are then aggregated by groupings. No
-// ordering is applied to the aggregated results.
+// groupings). No ordering is applied to the results.
 message ExpandRel {
   RelCommon common = 1;
   Rel input = 2;

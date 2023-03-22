@@ -206,6 +206,28 @@ The streaming aggregate operation leverages data ordered by the grouping express
 | Measures         | A list of one or more aggregate expressions. Aggregate expressions ordering requirements must be compatible with expected ordering. | Optional, required if no grouping sets. |
 
 
+## Expand Operation
+
+The expand operation creates duplicates of input records based on groupings.  For each grouping the
+expressions specific to that grouping are evaluated and the result is added to the input record in a manner
+similar to a project operation.  The expand operation can be used to calculate aggregate grouping sets.
+
+| Signature            | Value                                                                               |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| Inputs               | 1                                                                                   |
+| Outputs              | 1                                                                                   |
+| Property Maintenance | Distribution and ordering are not maintained.                                       |
+| Direct Output Order  | Same as defined by the [Project](logical_relations.md#project-operation) operation. |
+
+### Expand Properties
+
+| Property  | Description                                                                             | Required |
+| --------- | --------------------------------------------------------------------------------------- | -------- |
+| Input     | The relational input.                                                                   | Required |
+| Groupings | Sets of expressions.  There will be one output row for each input row for each grouping | Required |
+
+Note: Each grouping must have the same number of expressions and the return types for each new output column must
+be consistent across all groupings.
 
 ## Hashing Window Operation
 
