@@ -31,16 +31,24 @@ FROM t1
 WHERE (x, y) IN (SELECT a, b FROM t2)
 ```
 
-| Property | Description                               | Required |
-| -------- | ----------------------------------------- | -------- |
-| Needles  | Expressions who existence will be checked | Yes      |
-| Haystack | Subquery to check                         | Yes      |
+| Property | Description                                 | Required |
+| -------- | ------------------------------------------- | -------- |
+| Needles  | Expressions whose existence will be checked | Yes      |
+| Haystack | Subquery to check                           | Yes      |
 
 ### Set predicates
 
 A set predicate is a predicate over a set of rows in the form of a subquery.
 
 `EXISTS` and `UNIQUE` are common SQL spellings of these kinds of predicates.
+
+#### Examples
+
+```sql
+SELECT *
+FROM t1
+WHERE EXISTS (SELECT 1 FROM t2 WHERE t2.x = t1.x)
+```
 
 | Property  | Description                                | Required |
 | --------- | ------------------------------------------ | -------- |
