@@ -19,7 +19,7 @@ In functions, function signatures are declared externally to the use of those si
 Each relational operation must declare the following:
 
 * Transformation logic around properties of the data. For example, does a relational operation maintain sortedness of a field? Does an operation change the distribution of data? 
-* How many input sets does an operation require?
+* How many input relations does an operation require?
 * Does the operator produce an output (by specification, we limit relational operations to a single output at this time)
 * What is the schema and field ordering of an output (see emit below)?
 

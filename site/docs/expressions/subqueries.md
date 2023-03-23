@@ -42,14 +42,6 @@ A set predicate is a predicate over a set of rows in the form of a subquery.
 
 `EXISTS` and `UNIQUE` are common SQL spellings of these kinds of predicates.
 
-#### Examples
-
-```sql
-SELECT *
-FROM t1
-WHERE EXISTS (SELECT 1 FROM t2 WHERE t2.x = t1.x)
-```
-
 | Property  | Description                                | Required |
 | --------- | ------------------------------------------ | -------- |
 | Operation | The operation to perform over the set      | Yes      |
