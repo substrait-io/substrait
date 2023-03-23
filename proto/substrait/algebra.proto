@@ -232,13 +232,64 @@ message AggregateRel {
 message WindowRel {
   RelCommon common = 1;
   Rel input = 2;
-  repeated Measure measures = 3;
+  repeated WindowRelFunction window_functions = 3;
   repeated Expression partition_expressions = 4;
   repeated SortField sorts = 5;
+
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-  message Measure {
-    Expression.WindowScalarFunction measure = 1;
+  // A window rel function call.
+  message WindowRelFunction {
+    // Points to a function_anchor defined in this plan, which must refer
+    // to a window function in the associated YAML file. Required; 0 is
+    // considered to be a valid anchor/reference.
+    uint32 function_reference = 1;
+
+    // The arguments to be bound to the function. This must have exactly the
+    // number of arguments specified in the function definition, and the
+    // argument types must also match exactly:
+    //
+    //  - Value arguments must be bound using FunctionArgument.value, and
+    //    the expression in that must yield a value of a type that a function
+    //    overload is defined for.
+    //  - Type arguments must be bound using FunctionArgument.type, and a
+    //    function overload must be defined for that type.
+    //  - Enum arguments must be bound using FunctionArgument.enum
+    //    followed by Enum.specified, with a string that case-insensitively
+    //    matches one of the allowed options.
+    repeated FunctionArgument arguments = 9;
+
+    // Options to specify behavior for corner cases, or leave behavior
+    // unspecified if the consumer does not need specific behavior in these
+    // cases.
+    repeated FunctionOption options = 11;
+
+    // Must be set to the return type of the function, exactly as derived
+    // using the declaration in the extension.
+    Type output_type = 7;
+
+    // Defines the record relative to the current record from which the window
+    // extends. The bound is inclusive. If the lower bound indexes a record
+    // greater than the upper bound, TODO (null range/no records passed?
+    // wrapping around as if lower/upper were swapped? error? null?).
+    // Optional; defaults to the start of the partition.
+    Expression.WindowFunction.Bound lower_bound = 5;
+
+    // Defines the record relative to the current record up to which the window
+    // extends. The bound is inclusive. If the upper bound indexes a record
+    // less than the lower bound, TODO (null range/no records passed?
+    // wrapping around as if lower/upper were swapped? error? null?).
+    // Optional; defaults to the end of the partition.
+    Expression.WindowFunction.Bound upper_bound = 4;
+
+    // Defines the window frame: ROWS, RANGE
+    WindowFrame window_frame = 12;
+  }
+
+  enum WindowFrame {
+    WINDOW_FRAME_UNSPECIFIED = 0;
+    WINDOW_FRAME_ROWS = 1;
+    WINDOW_FRAME_RANGE = 2;
   }
 }
 
@@ -904,113 +955,6 @@ message Expression {
         Unbounded unbounded = 4;
       }
     }
-  }
-
-  // A window scalar function call.
-  message WindowScalarFunction {
-    // Points to a function_anchor defined in this plan, which must refer
-    // to a window function in the associated YAML file. Required; 0 is
-    // considered to be a valid anchor/reference.
-    uint32 function_reference = 1;
-
-    // The arguments to be bound to the function. This must have exactly the
-    // number of arguments specified in the function definition, and the
-    // argument types must also match exactly:
-    //
-    //  - Value arguments must be bound using FunctionArgument.value, and
-    //    the expression in that must yield a value of a type that a function
-    //    overload is defined for.
-    //  - Type arguments must be bound using FunctionArgument.type, and a
-    //    function overload must be defined for that type.
-    //  - Enum arguments must be bound using FunctionArgument.enum
-    //    followed by Enum.specified, with a string that case-insensitively
-    //    matches one of the allowed options.
-    repeated FunctionArgument arguments = 9;
-
-    // Options to specify behavior for corner cases, or leave behavior
-    // unspecified if the consumer does not need specific behavior in these
-    // cases.
-    repeated FunctionOption options = 11;
-
-    // Must be set to the return type of the function, exactly as derived
-    // using the declaration in the extension.
-    Type output_type = 7;
-
-    // Describes which part of the window function to perform within the
-    // context of distributed algorithms. Required. Must be set to
-    // INITIAL_TO_RESULT for window functions that are not decomposable.
-    AggregationPhase phase = 6;
-
-    // Specifies whether equivalent records are merged before being aggregated.
-    // Optional, defaults to AGGREGATION_INVOCATION_ALL.
-    AggregateFunction.AggregationInvocation invocation = 10;
-
-    // Defines the record relative to the current record from which the window
-    // extends. The bound is inclusive. If the lower bound indexes a record
-    // greater than the upper bound, TODO (null range/no records passed?
-    // wrapping around as if lower/upper were swapped? error? null?).
-    // Optional; defaults to the start of the partition.
-    Bound lower_bound = 5;
-
-    // Defines the record relative to the current record up to which the window
-    // extends. The bound is inclusive. If the upper bound indexes a record
-    // less than the lower bound, TODO (null range/no records passed?
-    // wrapping around as if lower/upper were swapped? error? null?).
-    // Optional; defaults to the end of the partition.
-    Bound upper_bound = 4;
-
-    // Defines the window frame: ROWS, RANGE
-    WindowFrame window_frame = 12;
-
-    // Defines one of the two boundaries for the window of a window function.
-    message Bound {
-      // Defines that the bound extends this far back from the current record.
-      message Preceding {
-        // A strictly positive integer specifying the number of records that
-        // the window extends back from the current record. Required. Use
-        // CurrentRow for offset zero and Following for negative offsets.
-        int64 offset = 1;
-      }
-
-      // Defines that the bound extends this far ahead of the current record.
-      message Following {
-        // A strictly positive integer specifying the number of records that
-        // the window extends ahead of the current record. Required. Use
-        // CurrentRow for offset zero and Preceding for negative offsets.
-        int64 offset = 1;
-      }
-
-      // Defines that the bound extends to or from the current record.
-      message CurrentRow {}
-
-      // Defines an "unbounded bound": for lower bounds this means the start
-      // of the partition, and for upper bounds this means the end of the
-      // partition.
-      message Unbounded {}
-
-      oneof kind {
-        // The bound extends some number of records behind the current record.
-        Preceding preceding = 1;
-
-        // The bound extends some number of records ahead of the current
-        // record.
-        Following following = 2;
-
-        // The bound extends to the current record.
-        CurrentRow current_row = 3;
-
-        // The bound extends to the start of the partition or the end of the
-        // partition, depending on whether this represents the upper or lower
-        // bound.
-        Unbounded unbounded = 4;
-      }
-    }
-  }
-
-  enum WindowFrame {
-    WINDOW_FRAME_UNSPECIFIED = 0;
-    WINDOW_FRAME_ROWS = 1;
-    WINDOW_FRAME_RANGE = 2;
   }
 
   message IfThen {
