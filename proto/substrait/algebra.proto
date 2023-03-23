@@ -945,13 +945,6 @@ message Expression {
     // Optional, defaults to AGGREGATION_INVOCATION_ALL.
     AggregateFunction.AggregationInvocation invocation = 10;
 
-    // When one or more partition expressions are specified, two records are
-    // considered to be in the same partition if and only if these expressions
-    // yield an equal tuple of values for both. When computing the window
-    // function, only the subset of records within the bounds that are also in
-    // the same partition as the current record are aggregated.
-    repeated Expression partitions = 2;
-
     // Defines the record relative to the current record from which the window
     // extends. The bound is inclusive. If the lower bound indexes a record
     // greater than the upper bound, TODO (null range/no records passed?
