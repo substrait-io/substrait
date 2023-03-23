@@ -32,6 +32,8 @@ scalar_functions:
       * UNIX_TIME Return number of seconds that have elapsed since 1970-01-01 00:00:00 UTC, ignoring leap seconds.
       * TIMEZONE_OFFSET Return number of seconds of timezone offset to UTC.
 
+      For MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK, SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK
+      index can start from 0 or 1.
       Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
@@ -42,6 +44,9 @@ scalar_functions:
                        SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK, HOUR, MINUTE, SECOND,
                        MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
             description: The part of the value to extract.
+          - name: indexing
+            options: [ ZERO, ONE ]
+            description: Start counting from 0 or 1.
           - name: x
             value: timestamp_tz
           - name: timezone
@@ -54,6 +59,9 @@ scalar_functions:
                        SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK, HOUR, MINUTE, SECOND,
                        MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME ]
             description: The part of the value to extract.
+          - name: indexing
+            options: [ ZERO, ONE ]
+            description: Start counting from 0 or 1.
           - name: x
             value: timestamp
         return: i64
@@ -62,6 +70,9 @@ scalar_functions:
             options: [ YEAR, ISO_YEAR, US_YEAR, QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
                        SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK, UNIX_TIME ]
             description: The part of the value to extract.
+          - name: indexing
+            options: [ ZERO, ONE ]
+            description: Start counting from 0 or 1.
           - name: x
             value: date
         return: i64
