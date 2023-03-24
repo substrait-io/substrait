@@ -5,24 +5,28 @@ scalar_functions:
     name: extract
     description:  >-
       Extract portion of a date/time value.
-      * YEAR Return the year of the value.
-      * ISO_YEAR Return the ISO 8601 week-numbering year. First week of an ISO year has the majority (4 or more) of its
-        days in January.
-      * US_YEAR Return US epidemiological year. First week of US epidemiological year has the majority (4 or more) of
-        its days in January. Last week of US epidemiological year has the year's last Wednesday in it.
-        US epidemiological week starts on Sunday.
-      * QUARTER Return the quarter from the value (1-4).
-      * MONTH Return the month from value (1-12).
-      * DAY Return the day of the month (1-31).
-      * DAY_OF_YEAR Return the day of year (1 to 366). January 1st maps to day number 1, February 1st to 32, etc.
-      * MONDAY_DAY_OF_WEEK Return the day of week from Monday (1) to Sunday (7).
-      * SUNDAY_DAY_OF_WEEK Return the day of week from Sunday (1) to Saturday (7).
-      * MONDAY_WEEK Return week of year number (1-53). First week starts on first Monday of January.
-      * SUNDAY_WEEK Return week of year number (1-53). First week starts on first Sunday of January.
-      * ISO_WEEK Return ISO week of year number (1-53). First ISO calendar week has the majority (4 or more) of its
-        days in January. ISO week starts on Monday.
-      * US_WEEK Return ISO-like week of year number (1-53). First US calendar week has the majority (4 or more) of its
-        days in January. US week starts on Sunday.
+      * YEAR Return the year.
+      * ISO_YEAR Return the ISO 8601 week-numbering year. First week of an ISO year has the majority (4 or more) of
+        its days in January.
+      * US_YEAR Return the US epidemiological year. First week of US epidemiological year has the majority (4 or more)
+        of its days in January. Last week of US epidemiological year has the year's last Wednesday in it. US 
+        epidemiological week starts on Sunday.
+      * QUARTER Return the number of the quarter within the year. January 1 through March 31 map to the first quarter,
+        April 1 through June 30 map to the second quarter, etc.
+      * MONTH Return the number of the month within the year.
+      * DAY Return the number of the day within the month.
+      * DAY_OF_YEAR Return the number of the day within the year. January 1 maps to the first day, February 1 maps to
+        the thirty-second day, etc.
+      * MONDAY_DAY_OF_WEEK Return the number of the day within the week, from Monday (first day) to Sunday (seventh
+        day).
+      * SUNDAY_DAY_OF_WEEK Return the number of the day within the week, from Sunday (first day) to Saturday (seventh
+        day).
+      * MONDAY_WEEK Return the number of the week within the year. First week starts on first Monday of January.
+      * SUNDAY_WEEK Return the number of the week within the year. First week starts on first Sunday of January.
+      * ISO_WEEK Return the number of the ISO week within the ISO year. First ISO week has the majority (4 or more)
+        of its days in January. ISO week starts on Monday.
+      * US_WEEK Return the number of the US week within the US year. First US week has the majority (4 or more) of
+        its days in January. US week starts on Sunday.
       * HOUR Return the hour (0-23).
       * MINUTE Return the minute (0-59).
       * SECOND Return the second (0-59).
@@ -32,17 +36,29 @@ scalar_functions:
       * UNIX_TIME Return number of seconds that have elapsed since 1970-01-01 00:00:00 UTC, ignoring leap seconds.
       * TIMEZONE_OFFSET Return number of seconds of timezone offset to UTC.
 
-      For QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK, SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK,
-      ISO_WEEK, US_WEEK indexing can start from 0 or 1. When indexing from 1 QUARTER will return values in
-      range 1-4, MONTH in range 1-12, DAY in range 1-31, DAY_OF_YEAR in range 1-366, MONDAY_DAY_OF_WEEK in range 1-7,
-      SUNDAY_DAY_OF_WEEK in range 1-7, MONDAY_WEEK in range 1-53, SUNDAY_WEEK in range 1-53, ISO_WEEK in range 1-53,
-      US_WEEK in range 1-53. When indexing from 0 QUARTER will return values in range 0-3, MONTH in range 0-11,
-      DAY in range 0-30, DAY_OF_YEAR in range 0-365, MONDAY_DAY_OF_WEEK in range 0-6, SUNDAY_DAY_OF_WEEK in range 0-6,
-      MONDAY_WEEK in range 0-52, SUNDAY_WEEK in range 0-52, ISO_WEEK in range 0-52, US_WEEK in range 0-52.
+      The range of values returned for QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK, SUNDAY_DAY_OF_WEEK,
+      MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, and US_WEEK depends on whether counting starts at 1 or 0. This is governed
+      by the indexing option.
 
-      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
-      Examples: "Pacific/Marquesas", "Etc/GMT+1".
-      If timezone is invalid an error is thrown.
+      When indexing is ONE:
+       * QUARTER returns values in range 1-4
+       * MONTH returns values in range 1-12
+       * DAY returns values in range 1-31
+       * DAY_OF_YEAR returns values in range 1-366
+       * MONDAY_DAY_OF_WEEK and SUNDAY_DAY_OF_WEEK return values in range 1-7
+       * MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, and US_WEEK return values in range 1-53
+
+      When indexing is ZERO:
+       * QUARTER returns values in range 0-3
+       * MONTH returns values in range 0-11
+       * DAY returns values in range 0-30
+       * DAY_OF_YEAR returns values in range 0-365
+       * MONDAY_DAY_OF_WEEK and SUNDAY_DAY_OF_WEEK return values in range 0-6
+       * MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, and US_WEEK return values in range 0-52
+
+       Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
+       Examples: "Pacific/Marquesas", "Etc/GMT+1".
+       If timezone is invalid an error is thrown.
     impls:
       - args:
           - name: component
