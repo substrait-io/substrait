@@ -923,7 +923,10 @@ aggregate_functions:
         intermediate: fp64?
         return: fp64?
   - name: "sum0"
-    description: Sum a set of values. The sum of zero elements yields zero.
+    description: >
+      Sum a set of values. The sum of zero elements yields zero.
+
+      Null values are ignored.
     impls:
       - args:
           - name: x
