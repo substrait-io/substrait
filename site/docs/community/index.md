@@ -39,10 +39,12 @@ If you use Substrait in your research, please cite it using the following BibTeX
 @misc{substrait,
   author = {substrait-io},
   title = {Substrait: Cross-Language Serialization for Relational Algebra},
-  year = {2021-September-01},
+  year = {2021},
+  month = {8},
+  day = {31},
   publisher = {GitHub},
   journal = {GitHub repository},
-  howpublished = {\url{https://github.com/substrait-io/substrait}},
+  howpublished = {\url{https://github.com/substrait-io/substrait}}
 }
 ```
 
