@@ -1,6 +1,28 @@
 Release Notes
 ---
 
+## [0.27.0](https://github.com/substrait-io/substrait/compare/v0.26.0...v0.27.0) (2023-03-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* `group` argument added to `regexp_match_substring`
+function
+
+Add regexp_match_substring_all function
+
+Resolves https://github.com/substrait-io/substrait/issues/466
+
+### Features
+
+* add regexp_match_substring_all function to yaml ([#469](https://github.com/substrait-io/substrait/issues/469)) ([b4d81fb](https://github.com/substrait-io/substrait/commit/b4d81fba48990523012c7b2c6cc71d2c01650e59))
+
+
+### Bug Fixes
+
+* **ci:** fix link to conventional commits spec ([#482](https://github.com/substrait-io/substrait/issues/482)) ([45b4e48](https://github.com/substrait-io/substrait/commit/45b4e483ff1fca3c3e4d0f71e6e55436c6d7638a))
+* remove duplication in simple extensions schema ([#404](https://github.com/substrait-io/substrait/issues/404)) ([b7df38d](https://github.com/substrait-io/substrait/commit/b7df38d2099cd970d1ed1783d441d828ce84253d))
+
 ## [0.26.0](https://github.com/substrait-io/substrait/compare/v0.25.0...v0.26.0) (2023-03-05)
 
 
