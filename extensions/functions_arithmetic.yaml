@@ -936,7 +936,7 @@ aggregate_functions:
             values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: i64?
+        intermediate: i64
         return: i64
       - args:
           - name: x
@@ -946,7 +946,7 @@ aggregate_functions:
             values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: i64?
+        intermediate: i64
         return: i64
       - args:
           - name: x
@@ -956,7 +956,7 @@ aggregate_functions:
             values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: i64?
+        intermediate: i64
         return: i64
       - args:
           - name: x
@@ -966,7 +966,7 @@ aggregate_functions:
             values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: i64?
+        intermediate: i64
         return: i64
       - args:
           - name: x
@@ -976,7 +976,7 @@ aggregate_functions:
             values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: fp64?
+        intermediate: fp64
         return: fp64
       - args:
           - name: x
@@ -986,7 +986,7 @@ aggregate_functions:
             values: [ SILENT, SATURATE, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: fp64?
+        intermediate: fp64
         return: fp64
   - name: "avg"
     description: Average a set of values. For integral types, this truncates partial values.
