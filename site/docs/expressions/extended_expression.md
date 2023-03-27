@@ -1,6 +1,6 @@
 # Extended Expression
 
-Extended Expression messages are provided for expression-level protocols as an alternative to using a Plan. They mainly target expression-only evaluations, such as those computed in Filter/Project/Aggregation rels. Different from the original Expression defined in the substrait protocol, Extended Expression messages require more information to completely describe the computation context including: input data schema, referred function signatures, and output schema. 
+Extended Expression messages are provided for expression-level protocols as an alternative to using a Plan. They mainly target expression-only evaluations, such as those computed in Filter/Project/Aggregation rels. Unlike the original Expression defined in the substrait protocol, Extended Expression messages require more information to completely describe the computation context including: input data schema, referred function signatures, and output schema. 
 
 Since Extended Expression will be used seperately from the Plan rel representation, it will need to include basic fields like Version.
 
