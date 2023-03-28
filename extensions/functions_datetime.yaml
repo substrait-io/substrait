@@ -62,9 +62,41 @@ scalar_functions:
     impls:
       - args:
           - name: component
-            options: [ YEAR, ISO_YEAR, US_YEAR, QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
-                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK, HOUR, MINUTE, SECOND,
+            options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
                        MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
+            description: The part of the value to extract.
+          - name: x
+            value: timestamp_tz
+          - name: timezone
+            description: Timezone string from IANA tzdb.
+            value: string
+        return: i64
+      - args:
+          - name: component
+            options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
+                       MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME ]
+            description: The part of the value to extract.
+          - name: x
+            value: timestamp
+        return: i64
+      - args:
+          - name: component
+            options: [ YEAR, ISO_YEAR, US_YEAR, UNIX_TIME ]
+            description: The part of the value to extract.
+          - name: x
+            value: date
+        return: i64
+      - args:
+          - name: component
+            options: [ HOUR, MINUTE, SECOND, MILLISECOND, MICROSECOND, SUBSECOND ]
+            description: The part of the value to extract.
+          - name: x
+            value: time
+        return: i64
+      - args:
+          - name: component
+            options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
+                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
             description: The part of the value to extract.
           - name: indexing
             options: [ ONE, ZERO ]
@@ -77,9 +109,8 @@ scalar_functions:
         return: i64
       - args:
           - name: component
-            options: [ YEAR, ISO_YEAR, US_YEAR, QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
-                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK, HOUR, MINUTE, SECOND,
-                       MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME ]
+            options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
+                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
             description: The part of the value to extract.
           - name: indexing
             options: [ ONE, ZERO ]
@@ -89,21 +120,14 @@ scalar_functions:
         return: i64
       - args:
           - name: component
-            options: [ YEAR, ISO_YEAR, US_YEAR, QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
-                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK, UNIX_TIME ]
+            options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
+                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
             description: The part of the value to extract.
           - name: indexing
             options: [ ONE, ZERO ]
             description: Start counting from 1 or 0.
           - name: x
             value: date
-        return: i64
-      - args:
-          - name: component
-            options: [ HOUR, MINUTE, SECOND, MILLISECOND, MICROSECOND, SUBSECOND ]
-            description: The part of the value to extract.
-          - name: x
-            value: time
         return: i64
   -
     name: "extract_boolean"
