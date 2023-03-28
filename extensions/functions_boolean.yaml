@@ -138,3 +138,42 @@ aggregate_functions:
             name: a
         nullability: DECLARED_OUTPUT
         return: boolean?
+
+  -
+    name: "bit_or"
+    description: >
+      Calculates the bitwise OR of a set of values.
+      Null values are ignored.
+      If there is no input, null is returned.
+    impls:
+      - args:
+          - name: x
+            value: boolean
+        nullability: DECLARED_OUTPUT
+        return: boolean?
+
+  -
+    name: "bit_and"
+    description: >
+      Calculates the bitwise AND of a set of values.
+      Null values are ignored.
+      If there is no input, null is returned.
+    impls:
+      - args:
+          - name: x
+            value: boolean
+        nullability: DECLARED_OUTPUT
+        return: boolean?
+
+  -
+    name: "bit_xor"
+    description: >
+      Calculates the bitwise XOR of a set of values.
+      Null values are ignored.
+      If there is no input, null is returned.
+    impls:
+      - args:
+          - name: x
+            value: boolean
+        nullability: DECLARED_OUTPUT
+        return: boolean?

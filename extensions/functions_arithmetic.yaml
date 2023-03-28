@@ -1527,6 +1527,84 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         ordered: true
         return: LIST?<any>
+  - name: "bit_or"
+    description: >
+      Calculates the bitwise OR of a set of values.
+      Null values are ignored.
+      If there is no input, null is returned.
+    impls:
+      - args:
+          - name: x
+            value: i8
+        nullability: DECLARED_OUTPUT
+        return: i8?
+      - args:
+          - name: x
+            value: i16
+        nullability: DECLARED_OUTPUT
+        return: i16?
+      - args:
+          - name: x
+            value: i32
+        nullability: DECLARED_OUTPUT
+        return: i32?
+      - args:
+          - name: x
+            value: i64
+        nullability: DECLARED_OUTPUT
+        return: i64?
+  - name: "bit_and"
+    description: >
+      Calculates the bitwise AND of a set of values.
+      Null values are ignored.
+      If there is no input, null is returned.
+    impls:
+      - args:
+          - name: x
+            value: i8
+        nullability: DECLARED_OUTPUT
+        return: i8?
+      - args:
+          - name: x
+            value: i16
+        nullability: DECLARED_OUTPUT
+        return: i16?
+      - args:
+          - name: x
+            value: i32
+        nullability: DECLARED_OUTPUT
+        return: i32?
+      - args:
+          - name: x
+            value: i64
+        nullability: DECLARED_OUTPUT
+        return: i64?
+  - name: "bit_xor"
+    description: >
+      Calculates the bitwise XOR of a set of values.
+      Null values are ignored.
+      If there is no input, null is returned.
+    impls:
+      - args:
+          - name: x
+            value: i8
+        nullability: DECLARED_OUTPUT
+        return: i8?
+      - args:
+          - name: x
+            value: i16
+        nullability: DECLARED_OUTPUT
+        return: i16?
+      - args:
+          - name: x
+            value: i32
+        nullability: DECLARED_OUTPUT
+        return: i32?
+      - args:
+          - name: x
+            value: i64
+        nullability: DECLARED_OUTPUT
+        return: i64?
 
 window_functions:
   - name: "row_number"
