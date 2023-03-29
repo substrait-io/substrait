@@ -347,11 +347,9 @@ message ExchangeRel {
 message ExpandRel {
   RelCommon common = 1;
   Rel input = 2;
-  // The output of ExpandRel.
-  NamedStruct output = 3;
 
   // A list of expression grouping that the aggregation measured should be calculated for.
-  repeated Grouping groupings = 4;
+  repeated Grouping groupings = 3;
 
   message Grouping {
     repeated Expression projection_expression = 1;
