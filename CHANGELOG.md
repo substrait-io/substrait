@@ -1,6 +1,14 @@
 Release Notes
 ---
 
+## [0.28.0](https://github.com/substrait-io/substrait/compare/v0.27.0...v0.28.0) (2023-04-02)
+
+
+### Features
+
+* adding BibTex entry to cite Substrait ([#481](https://github.com/substrait-io/substrait/issues/481)) ([425e7f8](https://github.com/substrait-io/substrait/commit/425e7f868e0f89115bc125e8dab2c04b8144ff82)), closes [#480](https://github.com/substrait-io/substrait/issues/480)
+* adding SUM0 definition for aggregate functions ([#465](https://github.com/substrait-io/substrait/issues/465)) ([73228b4](https://github.com/substrait-io/substrait/commit/73228b4112d79eb1011af0ebb41753ce23ca180c)), closes [#259](https://github.com/substrait-io/substrait/issues/259)
+
 ## [0.27.0](https://github.com/substrait-io/substrait/compare/v0.26.0...v0.27.0) (2023-03-26)
 
 
