@@ -31,6 +31,23 @@ Want to learn more about Substrait? Try the following presentations and slide de
 
 * Substrait: A Common Representation for Data Compute Plans (Jacques Nadeau, April 2022) [[slides](https://docs.google.com/presentation/d/1H89iwnnmHZ2oMgGpFon9Rv_fJ60RWE0c9drHCZAL8Bw)]
 
+## Citation
+
+If you use Substrait in your research, please cite it using the following BibTeX entry:
+
+```bibtex
+@misc{substrait,
+  author = {substrait-io},
+  title = {Substrait: Cross-Language Serialization for Relational Algebra},
+  year = {2021},
+  month = {8},
+  day = {31},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/substrait-io/substrait}}
+}
+```
+
 ## Contribution
 
 All contributors are welcome to Substrait.
