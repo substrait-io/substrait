@@ -342,20 +342,31 @@ message ExchangeRel {
   }
 }
 
-// The expand relation generates multiple rows per input row (denoted by
-// groupings). No ordering is applied to the results.
+// Duplicates records, possibly switching output expressions between each duplicate.
+// Default output is all of the fields declared + one field that int64 type that returns the
+// duplicate_id which is a zero-index ordinal of which duplicate of the original record this
+// corresponds to.
 message ExpandRel {
   RelCommon common = 1;
   Rel input = 2;
+  repeated ExpandField fields = 4;
 
-  // A list of expression grouping that the aggregation measured should be calculated for.
-  repeated Grouping groupings = 3;
+  message ExpandField {
+    oneof field_type {
+      // Field that switches output based on which duplicate_id we're outputting
+      SwitchingField switching_field = 2;
 
-  message Grouping {
-    repeated Expression projection_expression = 1;
+      // Field that outputs the same value no matter which duplicate_id we're on.
+      Expression consistent_field = 3;
+    }
   }
 
-  substrait.extensions.AdvancedExtension advanced_extension = 10;
+  message SwitchingField {
+    // Array that contains the expression to output per duplicate_id
+    // must have the same number of expressions as each input record
+    // all expressions must be of the same type a
+    repeated Expression duplicates = 1;
+  }
 }
 
 // A relation with output field names.
