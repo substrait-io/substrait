@@ -10,4 +10,4 @@ mkdocs-protobuf==0.1.0
 mkdocs-table-reader-plugin==1.2
 pygments==2.11
 oyaml==1.0
-mdutils==1.4.0
+mdutils==1.5.1
