@@ -364,7 +364,8 @@ message ExpandRel {
   message SwitchingField {
     // Array that contains an expression to output per duplicate_id
     // each `switching_field` must have the same number of expressions
-    // all expressions must be of the same type a
+    // all expressions within a switching field be the same type class but can differ in nullability.
+    // this column will be nullable if any of the expressions are nullable.
     repeated Expression duplicates = 1;
   }
 }
