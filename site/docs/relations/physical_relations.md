@@ -208,9 +208,9 @@ The streaming aggregate operation leverages data ordered by the grouping express
 
 ## Expand Operation
 
-The expand operation creates duplicates of input records based on groupings.  For each grouping the
+The expand operation creates duplicates of input records based on ExpandFields. For each ExpandField the
 expressions specific to that grouping are evaluated and the result is added to the input record in a manner
-similar to a project operation.  The expand operation can be used to calculate aggregate grouping sets.
+similar to a project operation. 
 
 | Signature            | Value                                                                               |
 | -------------------- | ----------------------------------------------------------------------------------- |
@@ -221,13 +221,10 @@ similar to a project operation.  The expand operation can be used to calculate a
 
 ### Expand Properties
 
-| Property  | Description                                                                             | Required |
-| --------- | --------------------------------------------------------------------------------------- | -------- |
-| Input     | The relational input.                                                                   | Required |
-| Groupings | Sets of expressions.  There will be one output row for each input row for each grouping | Required |
-
-Note: Each grouping must have the same number of expressions and the return types for each new output column must
-be consistent across all groupings.
+| Property  | Description                          | Required |
+| --------- |--------------------------------------| -------- |
+| Input     | The relational input.                | Required |
+| ExpandField | One of SwitchingField of Expression. | Required |
 
 ## Hashing Window Operation
 
