@@ -343,7 +343,7 @@ message ExchangeRel {
 }
 
 // Duplicates records, possibly switching output expressions between each duplicate.
-// Default output is all of the fields declared + one field that int64 type that returns the
+// Default output is all of the fields declared followed by one int64 field that contains the
 // duplicate_id which is a zero-index ordinal of which duplicate of the original record this
 // corresponds to.
 message ExpandRel {
