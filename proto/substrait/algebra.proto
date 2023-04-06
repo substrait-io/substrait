@@ -362,7 +362,7 @@ message ExpandRel {
   }
 
   message SwitchingField {
-    // Array that contains the expression to output per duplicate_id
+    // Array that contains an expression to output per duplicate_id
     // must have the same number of expressions as each input record
     // all expressions must be of the same type a
     repeated Expression duplicates = 1;
