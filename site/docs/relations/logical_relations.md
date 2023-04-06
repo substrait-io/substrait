@@ -22,6 +22,7 @@ The read operator is an operator that produces one output. A simple example woul
 | Filter             | A boolean Substrait expression that describes a filter that must be applied to the data. The filter should be interpreted against the direct schema. | Optional, defaults to none. |
 | Best Effort Filter | A boolean Substrait expression that describes a filter that may be applied to the data.  The filter should be interpreted against the direct schema. | Optional, defaults to none. |
 | Projection         | A masked complex expression describing the portions of the content that should be read | Optional, defaults to all of schema  |
+| Partition Columns  | An optional column descriptor that specifies whether a column should be read from disk or whether its value is hard-coded in the plan itself. | Optional, defaults to empty |
 | Output Properties  | Declaration of orderedness and/or distribution properties this read produces. | Optional, defaults to no properties. |
 | Properties         | A list of name/value pairs associated with the read.         | Optional, defaults to empty          |
 
@@ -39,6 +40,13 @@ may be able to apply <, =, and > in a best effort fashion on decimal and string 
 `my_int < 10` and the `best_effort_filter` should be set to `my_string < "x"` and the remaining portion (`upper(my_string) > "B"`) should be put into a filter relation.
 
 A filter expression must be interpreted against the direct schema before the projection expression has been applied. As a result, fields may be referenced by the filter expression which are not included in the relation's output.
+
+### Partition Columns
+
+A read relation may specify partition columns.  If this property is specified then there should be one entry per column.  Each entry
+indicates whether the column's value should be read from disk or whether the column has a hard-coded value embedded in the plan itself.
+These hard-coded values are often populated from partitioning or similar table metadata.  If this property is empty then it is assumed
+that all columns will be read from disk.
 
 ### Read Definition Types
 
