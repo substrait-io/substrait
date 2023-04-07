@@ -224,7 +224,7 @@ similar to a project operation.
 | Property  | Description                          | Required |
 | --------- |--------------------------------------| -------- |
 | Input     | The relational input.                | Required |
-| ExpandField | One of SwitchingField of Expression. | Required |
+| Fields | Expressions describing the output fields.  These refer to the schema of the input.  A field can have a different expression for each duplicate.  | Required |
 
 ## Hashing Window Operation
 
