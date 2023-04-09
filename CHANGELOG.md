@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.28.1](https://github.com/substrait-io/substrait/compare/v0.28.0...v0.28.1) (2023-04-09)
+
+
+### Bug Fixes
+
+* typo in the comment/docstring ([#492](https://github.com/substrait-io/substrait/issues/492)) ([9046945](https://github.com/substrait-io/substrait/commit/90469453d111ba93983b00944dd79d0ddd8a3808))
+
 ## [0.28.0](https://github.com/substrait-io/substrait/compare/v0.27.0...v0.28.0) (2023-04-02)
 
 
