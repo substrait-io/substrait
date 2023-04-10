@@ -208,16 +208,14 @@ The streaming aggregate operation leverages data ordered by the grouping express
 
 ## Expand Operation
 
-The expand operation creates duplicates of input records based on ExpandFields. For each ExpandField the
-expressions specific to that grouping are evaluated and the result is added to the input record in a manner
-similar to a project operation. 
+The expand operation creates duplicates of input records based on ExpandFields. The ExpandField can be the SwitchingField or ConsistentField. The SwitchingField here means that switches output based on which duplicate_id we're outputting. And the ConsistentField means that outputs the same value no matter which duplicate_id we're on.
 
-| Signature            | Value                                                                               |
-| -------------------- | ----------------------------------------------------------------------------------- |
-| Inputs               | 1                                                                                   |
-| Outputs              | 1                                                                                   |
-| Property Maintenance | Distribution and ordering are not maintained.                                       |
-| Direct Output Order  | Same as defined by the [Project](logical_relations.md#project-operation) operation. |
+| Signature            | Value                                |
+| -------------------- |--------------------------------------|
+| Inputs               | 1                                    |
+| Outputs              | 1                                    |
+| Property Maintenance | Duplicated columns are maintained.   |
+| Direct Output Order  | The expand fields and duplicated id. |
 
 ### Expand Properties
 
