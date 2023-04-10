@@ -237,7 +237,7 @@ message ConsistentPartitionWindowRel {
   repeated SortField sorts = 5;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
-  
+
   // A WindowFunction can define itself WindowSpec(sorts columns and partitions keys)
   // But WindowRelFunction remove the WindowSpec property, because all the WindowRelFunctions
   // share the same WindowSpec() in WindowRel.
