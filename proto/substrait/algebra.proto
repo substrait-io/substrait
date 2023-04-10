@@ -229,7 +229,7 @@ message AggregateRel {
 }
 
 // The Window relational provide the ability to perform calculations across sets of rows that are related to the current query row.
-message WindowRel {
+message ConsistentPartitionWindowRel {
   RelCommon common = 1;
   Rel input = 2;
   repeated WindowRelFunction window_functions = 3;
@@ -237,8 +237,7 @@ message WindowRel {
   repeated SortField sorts = 5;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
-
-
+  
   // A WindowFunction can define itself WindowSpec(sorts columns and partitions keys)
   // But WindowRelFunction remove the WindowSpec property, because all the WindowRelFunctions
   // share the same WindowSpec() in WindowRel.
@@ -446,7 +445,7 @@ message Rel {
     //Physical relations
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
-    WindowRel window = 15;
+    ConsistentPartitionWindowRel window = 15;
   }
 }
 
