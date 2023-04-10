@@ -268,6 +268,15 @@ message WindowRel {
     // using the declaration in the extension.
     Type output_type = 7;
 
+    // Describes which part of the window function to perform within the
+    // context of distributed algorithms. Required. Must be set to
+    // INITIAL_TO_RESULT for window functions that are not decomposable.
+    AggregationPhase phase = 6;
+
+    // Specifies whether equivalent records are merged before being aggregated.
+    // Optional, defaults to AGGREGATION_INVOCATION_ALL.
+    AggregateFunction.AggregationInvocation invocation = 10;
+
     // Defines the record relative to the current record from which the window
     // extends. The bound is inclusive. If the lower bound indexes a record
     // greater than the upper bound, TODO (null range/no records passed?
