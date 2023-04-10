@@ -228,7 +228,7 @@ message AggregateRel {
   }
 }
 
-// The Window relational operate on a group of rows, referred to as a window, and calculate a return value for each row based on the group of rows.
+// The Window relational provide the ability to perform calculations across sets of rows that are related to the current query row.
 message WindowRel {
   RelCommon common = 1;
   Rel input = 2;
@@ -238,7 +238,10 @@ message WindowRel {
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-  // A window rel function call.
+
+  // A WindowFunction can define itself WindowSpec(sorts columns and partitions keys)
+  // But WindowRelFunction remove the WindowSpec property, because all the WindowRelFunctions
+  // share the same WindowSpec() in WindowRel.
   message WindowRelFunction {
     // Points to a function_anchor defined in this plan, which must refer
     // to a window function in the associated YAML file. Required; 0 is
