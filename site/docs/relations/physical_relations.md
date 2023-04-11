@@ -214,7 +214,7 @@ The expand operation creates duplicates of input records based on ExpandFields. 
 | -------------------- |--------------------------------------|
 | Inputs               | 1                                    |
 | Outputs              | 1                                    |
-| Property Maintenance | Duplicated columns are maintained.   |
+| Property Maintenance | Distribution is maintained for consistent fields with direct references.  Ordering is maintained if all ordering fields are consistent fields with direct references. |
 | Direct Output Order  | The expand fields and duplicated id. |
 
 ### Expand Properties
