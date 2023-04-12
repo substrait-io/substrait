@@ -293,20 +293,20 @@ message ConsistentPartitionWindowRel {
     // Optional; defaults to the end of the partition.
     Expression.WindowFunction.Bound upper_bound = 4;
 
-    // Defines the window frame: ROWS, RANGE
-    WindowFrame window_frame = 12;
+    // Defines the bounds type: ROWS, RANGE
+    BoundsType bounds_type = 12;
   }
 
-  enum WindowFrame {
-    WINDOW_FRAME_UNSPECIFIED = 0;
+  enum BoundsType {
+    BOUNDS_TYPE_UNSPECIFIED = 0;
     // The lower and upper bound specify how many rows before and after the current row
     // the window should extend.
-    WINDOW_FRAME_ROWS = 1;
+    BOUNDS_TYPE_ROWS = 1;
     // The lower and upper bound describe a range of values.  The window should include all rows
     // where the value of the ordering column is greater than or equal to (current_value - lower bound)
     // and less than or equal to (current_value + upper bound).  This bounds type is only valid if there
     // is a single ordering column.
-    WINDOW_FRAME_RANGE = 2;
+    BOUNDS_TYPE_RANGE = 2;
   }
 }
 
@@ -911,6 +911,8 @@ message Expression {
     // function, only the subset of records within the bounds that are also in
     // the same partition as the current record are aggregated.
     repeated Expression partitions = 2;
+
+    ConsistentPartitionWindowRel.BoundsType bounds_type = 12;
 
     // Defines the record relative to the current record from which the window
     // extends. The bound is inclusive. If the lower bound indexes a record
