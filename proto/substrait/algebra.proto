@@ -299,6 +299,8 @@ message ConsistentPartitionWindowRel {
 
   enum WindowFrame {
     WINDOW_FRAME_UNSPECIFIED = 0;
+    // The lower and upper bound specify how many rows before and after the current row
+    // the window should extend.
     WINDOW_FRAME_ROWS = 1;
     WINDOW_FRAME_RANGE = 2;
   }
