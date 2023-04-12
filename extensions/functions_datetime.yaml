@@ -402,9 +402,33 @@ scalar_functions:
             value: string
         return: timestamp
   -
-    name: "strptime"
+    name: "strptime_time"
     description: >-
-      Parse string into timestamp/date/time using provided format,
+      Parse string into time using provided format,
+      see https://man7.org/linux/man-pages/man3/strptime.3.html for reference.
+    impls:
+      - args:
+          - name: time_string
+            value: string
+          - name: format
+            value: string
+        return: time
+  -
+    name: "strptime_date"
+    description: >-
+      Parse string into date using provided format,
+      see https://man7.org/linux/man-pages/man3/strptime.3.html for reference.
+    impls:
+      - args:
+          - name: date_string
+            value: string
+          - name: format
+            value: string
+        return: date
+  -
+    name: "strptime_timestamp"
+    description: >-
+      Parse string into timestamp using provided format,
       see https://man7.org/linux/man-pages/man3/strptime.3.html for reference.
       If timezone is present in timestamp and provided as parameter an error is thrown.
 
@@ -428,18 +452,6 @@ scalar_functions:
           - name: format
             value: string
         return: timestamp_tz
-      - args:
-          - name: date_string
-            value: string
-          - name: format
-            value: string
-        return: date
-      - args:
-          - name: time_string
-            value: string
-          - name: format
-            value: string
-        return: time
   -
     name: "strftime"
     description: >-

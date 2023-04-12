@@ -1020,7 +1020,7 @@ message Expression {
   // pipeline.
   //
   // Note that this does not fundamentally alter the structure of data beyond
-  // the elimination of unecessary elements.
+  // the elimination of unnecessary elements.
   message MaskExpression {
     StructSelect select = 1;
     bool maintain_singular_struct = 2;
