@@ -3,7 +3,7 @@
   "extensionUris": [
     {
       "extensionUriAnchor": 1,
-      "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_string.yaml"
+      "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_set.yaml"
     },
     {
       "extensionUriAnchor": 2,
