@@ -10,7 +10,7 @@ properties:
     items:
       type: object
       additionalProperties: false
-      required: [name, structure]
+      required: [name]
       properties:
         name:
           type: string
