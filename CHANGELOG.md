@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.28.2](https://github.com/substrait-io/substrait/compare/v0.28.1...v0.28.2) (2023-04-16)
+
+
+### Bug Fixes
+
+* separate strptime to fix spec violation ([#493](https://github.com/substrait-io/substrait/issues/493)) ([8c230af](https://github.com/substrait-io/substrait/commit/8c230af70bc98805d84d20c72f32d0ddb84f8644))
+
 ## [0.28.1](https://github.com/substrait-io/substrait/compare/v0.28.0...v0.28.1) (2023-04-09)
 
 
