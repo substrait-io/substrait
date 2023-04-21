@@ -220,7 +220,7 @@ A consistent partition window operation is a special type of project operation w
 | Property           | Description                     | Required               |
 | ------------------ | ------------------------------- | ---------------------- |
 | Input              | The relational input.           | Required               |
-| Window Expressions | One or more window expressions. | At least one required. |
+| Window Functions | One or more window functions. | At least one required. |
 
 
 
