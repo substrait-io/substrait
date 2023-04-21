@@ -210,12 +210,12 @@ The streaming aggregate operation leverages data ordered by the grouping express
 
 The expand operation creates duplicates of input records based on ExpandFields. The ExpandField can be the SwitchingField or ConsistentField. The SwitchingField here means that switches output based on which duplicate_id we're outputting. And the ConsistentField means that outputs the same value no matter which duplicate_id we're on.
 
-| Signature            | Value                                |
-| -------------------- |--------------------------------------|
-| Inputs               | 1                                    |
-| Outputs              | 1                                    |
-| Property Maintenance | Distribution is maintained for consistent fields with direct references.  Ordering is maintained if all ordering fields are consistent fields with direct references. |
-| Direct Output Order  | The expand fields and duplicated id. |
+| Signature            | Value                                                                                                                                                                          |
+| -------------------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Inputs               | 1                                                                                                                                                                              |
+| Outputs              | 1                                                                                                                                                                              |
+| Property Maintenance | Distribution is maintained if all the distribution fields are consistent fields with direct references. Ordering only matintaines the consistent fields not the switch fields. |
+| Direct Output Order  | The expand fields and duplicated id.                                                                                                                                           |
 
 ### Expand Properties
 
