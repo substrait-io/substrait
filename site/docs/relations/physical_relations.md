@@ -208,11 +208,11 @@ The streaming aggregate operation leverages data ordered by the grouping express
 ## Consistent Partition Window Operation
 A consistent partition window operation is a special type of project operation where every function is a window function and all of the window functions share the same sorting and partitioning. This allows for the sort and partition to be calculated once and shared between the various function evaluations. This operator doesn't need to build hash tables as Hashing Window and rely on the sorted input as Streaming Window.
 
-| Signature            | Value                                                        |
-| -------------------- | ------------------------------------------------------------ |
-| Inputs               | 1                                                            |
-| Outputs              | 1                                                            |
-| Property Maintenance | Maintains distribution. Eliminates ordering.                 |
+| Signature            | Value                                                                |
+| -------------------- |----------------------------------------------------------------------|
+| Inputs               | 1                                                                    |
+| Outputs              | 1                                                                    |
+| Property Maintenance | Maintains distribution and ordering.                                   |
 | Direct Output Order  | Same as Project operator (input followed by each window expression). |
 
 ### Window Properties
