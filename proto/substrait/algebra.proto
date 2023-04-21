@@ -228,7 +228,8 @@ message AggregateRel {
   }
 }
 
-// The Window relational provide the ability to perform calculations across sets of rows that are related to the current query row.
+// ConsistentPartitionWindowRel provides the ability to perform calculations across sets of rows that are related to the current query row.  It can be used to execute window functions where all the windows share the same partitioning
+and ordering.
 message ConsistentPartitionWindowRel {
   RelCommon common = 1;
   Rel input = 2;
