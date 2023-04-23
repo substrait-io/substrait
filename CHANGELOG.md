@@ -1,6 +1,18 @@
 Release Notes
 ---
 
+## [0.29.0](https://github.com/substrait-io/substrait/compare/v0.28.2...v0.29.0) (2023-04-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **text:** mark `name` and `structure` property of `type` extension item as required (#495)
+
+### Bug Fixes
+
+* referenced simple extension in tutorial (set instead of string) ([#494](https://github.com/substrait-io/substrait/issues/494)) ([b5d7ed2](https://github.com/substrait-io/substrait/commit/b5d7ed26a17c0a0bd6d0779d312942e5216ea9fa))
+* **text:** mark `name` and `structure` property of `type` extension item as required ([#495](https://github.com/substrait-io/substrait/issues/495)) ([7246102](https://github.com/substrait-io/substrait/commit/7246102f0e1f056a3b5a13eb96fec36ff28d27a5))
+
 ## [0.28.2](https://github.com/substrait-io/substrait/compare/v0.28.1...v0.28.2) (2023-04-16)
 
 
