@@ -41,29 +41,29 @@ scalar_functions:
       by the indexing option.
 
       When indexing is ONE:
-       * QUARTER returns values in range 1-4
-       * MONTH returns values in range 1-12
-       * DAY returns values in range 1-31
-       * DAY_OF_YEAR returns values in range 1-366
-       * MONDAY_DAY_OF_WEEK and SUNDAY_DAY_OF_WEEK return values in range 1-7
-       * MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, and US_WEEK return values in range 1-53
+      * QUARTER returns values in range 1-4
+      * MONTH returns values in range 1-12
+      * DAY returns values in range 1-31
+      * DAY_OF_YEAR returns values in range 1-366
+      * MONDAY_DAY_OF_WEEK and SUNDAY_DAY_OF_WEEK return values in range 1-7
+      * MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, and US_WEEK return values in range 1-53
 
       When indexing is ZERO:
-       * QUARTER returns values in range 0-3
-       * MONTH returns values in range 0-11
-       * DAY returns values in range 0-30
-       * DAY_OF_YEAR returns values in range 0-365
-       * MONDAY_DAY_OF_WEEK and SUNDAY_DAY_OF_WEEK return values in range 0-6
-       * MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, and US_WEEK return values in range 0-52
+      * QUARTER returns values in range 0-3
+      * MONTH returns values in range 0-11
+      * DAY returns values in range 0-30
+      * DAY_OF_YEAR returns values in range 0-365
+      * MONDAY_DAY_OF_WEEK and SUNDAY_DAY_OF_WEEK return values in range 0-6
+      * MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, and US_WEEK return values in range 0-52
 
       The indexing option must be specified when the component is QUARTER, MONTH, DAY, DAY_OF_YEAR,
       MONDAY_DAY_OF_WEEK, SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, or US_WEEK. The 
       indexing option cannot be specified when the component is YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
       MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME, or TIMEZONE_OFFSET.
 
-       Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
-       Examples: "Pacific/Marquesas", "Etc/GMT+1".
-       If timezone is invalid an error is thrown.
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Examples: "Pacific/Marquesas", "Etc/GMT+1".
+      If timezone is invalid an error is thrown.
     impls:
       - args:
           - name: component
