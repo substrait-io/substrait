@@ -212,7 +212,7 @@ A consistent partition window operation is a special type of project operation w
 | -------------------- |----------------------------------------------------------------------|
 | Inputs               | 1                                                                    |
 | Outputs              | 1                                                                    |
-| Property Maintenance | Maintains distribution and ordering.                                   |
+| Property Maintenance | Maintains distribution and ordering.                                 |
 | Direct Output Order  | Same as Project operator (input followed by each window expression). |
 
 ### Window Properties
