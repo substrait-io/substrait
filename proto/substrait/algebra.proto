@@ -208,7 +208,7 @@ message AggregateRel {
   // A list of expression grouping that the aggregation measured should be calculated for.
   repeated Grouping groupings = 3;
 
-  // A list of one or more aggregate expressions along with an optional filter.
+  // A list of one or more aggregate expressions along with an optional filter, and optional ordering.
   repeated Measure measures = 4;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -225,6 +225,9 @@ message AggregateRel {
     // within the measure.
     // Helps to support SUM(<c>) FILTER(WHERE...) syntax without masking opportunities for optimization
     Expression filter = 2;
+    // An optional sort expression that acts to define required ordering for the aggregator.
+    // Helps to support ARRAY_AGG(<c> ORDER BY <C2>) syntax without masking opportunities for optimization
+    Expression order_by = 3;
   }
 }
 
