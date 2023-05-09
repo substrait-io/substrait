@@ -227,7 +227,7 @@ message AggregateRel {
     Expression filter = 2;
     // An optional sort expression that acts to define required ordering for the aggregator.
     // Helps to support ARRAY_AGG(<c> ORDER BY <C2>) syntax without masking opportunities for optimization
-    Expression order_by = 3;
+    repeated SortField order_by = 3;
   }
 }
 
