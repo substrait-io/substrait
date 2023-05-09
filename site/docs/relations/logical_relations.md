@@ -323,12 +323,12 @@ If at least one grouping expression is present, the aggregation is allowed to no
 
 ### Aggregate Properties
 
-| Property         | Description                                                  | Required                                |
-| ---------------- | ------------------------------------------------------------ | --------------------------------------- |
-| Input            | The relational input.                                        | Required                                |
-| Grouping Sets    | One or more grouping sets.                                   | Optional, required if no measures.      |
-| Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional.      |
-| Measures         | A list of one or more aggregate expressions along with an optional filter. | Optional, required if no grouping sets. |
+| Property         | Description                                                                                                   | Required                                |
+| ---------------- |---------------------------------------------------------------------------------------------------------------| --------------------------------------- |
+| Input            | The relational input.                                                                                         | Required                                |
+| Grouping Sets    | One or more grouping sets.                                                                                    | Optional, required if no measures.      |
+| Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for.                         | Optional.      |
+| Measures         | A list of one or more aggregate expressions along with an optional filter, and optional ordering requirement. | Optional, required if no grouping sets. |
 
 
 === "AggregateRel Message"
