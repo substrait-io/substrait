@@ -225,7 +225,8 @@ message AggregateRel {
     // within the measure.
     // Helps to support SUM(<c>) FILTER(WHERE...) syntax without masking opportunities for optimization
     Expression filter = 2;
-    // An optional sort expression that acts to define required ordering for the aggregator.
+    // An optional sort expression that acts to define required ordering
+    // (e.g the order that the aggregator expects its input to have) for the aggregator.
     // Helps to support ARRAY_AGG(<c> ORDER BY <C2>) syntax without masking opportunities for optimization
     repeated SortField order_by = 3;
   }
