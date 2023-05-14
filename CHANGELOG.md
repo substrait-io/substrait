@@ -1,6 +1,17 @@
 Release Notes
 ---
 
+## [0.30.0](https://github.com/substrait-io/substrait/compare/v0.29.0...v0.30.0) (2023-05-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* This adds an option to control indexing of components
+
+### Features
+
+* control indexing in temporal extraction ([#479](https://github.com/substrait-io/substrait/issues/479)) ([aacd25c](https://github.com/substrait-io/substrait/commit/aacd25c8fa5eb680c3456d2e0298ca0807eb7b87)), closes [#477](https://github.com/substrait-io/substrait/issues/477)
+
 ## [0.29.0](https://github.com/substrait-io/substrait/compare/v0.28.2...v0.29.0) (2023-04-23)
 
 
