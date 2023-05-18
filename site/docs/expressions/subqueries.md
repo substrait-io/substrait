@@ -31,10 +31,10 @@ FROM t1
 WHERE (x, y) IN (SELECT a, b FROM t2)
 ```
 
-| Property | Description                               | Required |
-| -------- | ----------------------------------------- | -------- |
-| Needles  | Expressions who existence will be checked | Yes      |
-| Haystack | Subquery to check                         | Yes      |
+| Property | Description                                 | Required |
+| -------- | ------------------------------------------- | -------- |
+| Needles  | Expressions whose existence will be checked | Yes      |
+| Haystack | Subquery to check                           | Yes      |
 
 ### Set predicates
 

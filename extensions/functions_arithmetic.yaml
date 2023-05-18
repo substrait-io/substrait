@@ -922,6 +922,72 @@ aggregate_functions:
         decomposable: MANY
         intermediate: fp64?
         return: fp64?
+  - name: "sum0"
+    description: >
+      Sum a set of values. The sum of zero elements yields zero.
+
+      Null values are ignored.
+    impls:
+      - args:
+          - name: x
+            value: i8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i64
+        return: i64
+      - args:
+          - name: x
+            value: i16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i64
+        return: i64
+      - args:
+          - name: x
+            value: i32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i64
+        return: i64
+      - args:
+          - name: x
+            value: i64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: i64
+        return: i64
+      - args:
+          - name: x
+            value: fp32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: fp64
+        return: fp64
+      - args:
+          - name: x
+            value: fp64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: fp64
+        return: fp64
   - name: "avg"
     description: Average a set of values. For integral types, this truncates partial values.
     impls:
