@@ -369,6 +369,8 @@ message Rel {
     //Physical relations
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
+
+    DdlRel ddl = 15;
   }
 }
 
@@ -409,6 +411,13 @@ message DdlRel {
 
   // The body of the CREATE VIEW
   Rel view_definition = 7;
+
+  // Field that could be used to extend or introduce any target specific metadata about the table,
+  // like replication, partition, etc.
+  ExtensionObject table_metadata = 8;
+
+  // Indices of all primary keys in the table
+  repeated int32 primary_keys = 9;
 
   enum DdlObject {
     DDL_OBJECT_UNSPECIFIED = 0;
