@@ -1,6 +1,6 @@
 # Extensions
 
-In many cases, the existing objects in Substrait will be sufficient to accomplish a particular use case. However, it is sometimes helpful to create a new data type, scalar function signature or some other custom representation within a system. For that, Substrait provides a number of extension points. 
+In many cases, the existing objects in Substrait will be sufficient to accomplish a particular use case. However, it is sometimes helpful to create a new data type, scalar function signature or some other custom representation within a system. For that, Substrait provides a number of extension points.
 
 ## Simple Extensions
 
@@ -24,6 +24,7 @@ A Substrait plan can reference one or more YAML files via URI for extension. In 
 | Function Signature | In a specific YAML, if there is only one function implementation with a specific name, a extension type declaration can reference the function using either simple or compound references. Simple references are simply the name of the function (e.g. `add`). Compound references (e.g. `add:i8_i8`)are described below. |
 
 ### Name Uniqueness
+
 Names of types, type variations and functions should be compared in a case-insensitive manner. For example, the types `i8` and `I8` are the same type, and the functions `add` and `ADD` are the same function.
 
 ### Function Signature Compound Names
@@ -34,7 +35,7 @@ A YAML file may contain one or more functions by the same name. When only a sing
 <function name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>
 ```
 
-Rather than using a full data type representation, the input argument types (`short_arg_type`) are mapped to single-level short name. The mappings are listed in the table below. 
+Rather than using a full data type representation, the input argument types (`short_arg_type`) are mapped to single-level short name. The mappings are listed in the table below.
 
 !!! note
 
