@@ -370,7 +370,9 @@ message Rel {
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
 
+    //Write relations
     DdlRel ddl = 15;
+    WriteRel write = 16;
   }
 }
 
