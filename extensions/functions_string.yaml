@@ -55,7 +55,7 @@ scalar_functions:
       from position `start` and ending at the end of the string.
 
       The `negative_start` option applies to the `start` parameter. `WRAP_FROM_END` means
-      the returned substring will start from the end of the `input` and move backwards.
+      the index will start from the end of the `input` and move backwards.
       The last character has an index of -1, the second to last character has an index of -2,
       and so on. `LEFT_OF_BEGINNING` means the returned substring will start from
       the left of the first character.  A `start` of -1 will begin 2 characters left of the
