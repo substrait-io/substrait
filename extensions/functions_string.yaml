@@ -50,7 +50,9 @@ scalar_functions:
     name: substring
     description: >-
       Extract a substring of a specified `length` starting from position `start`.
-      A `start` value of 1 refers to the first characters of the string.
+      A `start` value of 1 refers to the first characters of the string.  When
+      `length` is not specified the function will extract a substrait starting
+      from position `start` and ending at the end of the string.
     impls:
       - args:
           - value: "varchar<L1>"
