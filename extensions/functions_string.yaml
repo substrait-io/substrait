@@ -51,7 +51,7 @@ scalar_functions:
     description: >-
       Extract a substring of a specified `length` starting from position `start`.
       A `start` value of 1 refers to the first characters of the string.  When
-      `length` is not specified the function will extract a substrait starting
+      `length` is not specified the function will extract a substring starting
       from position `start` and ending at the end of the string.
     impls:
       - args:
