@@ -76,6 +76,24 @@ scalar_functions:
           - value: i32
             name: "length"
         return: "string"
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+          - value: i32
+            name: "start"
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+          - value: i32
+            name: "start"
+        return: "string"
+      - args:
+          - value: "fixedchar<l1>"
+            name: "input"
+          - value: i32
+            name: "start"
+        return: "string"
   -
     name: regexp_match_substring
     description: >-
