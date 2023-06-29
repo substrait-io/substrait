@@ -50,7 +50,9 @@ scalar_functions:
     name: substring
     description: >-
       Extract a substring of a specified `length` starting from position `start`.
-      A `start` value of 1 refers to the first characters of the string.
+      A `start` value of 1 refers to the first characters of the string.  When
+      `length` is not specified the function will extract a substring starting
+      from position `start` and ending at the end of the string.
     impls:
       - args:
           - value: "varchar<L1>"
@@ -75,6 +77,24 @@ scalar_functions:
             name: "start"
           - value: i32
             name: "length"
+        return: "string"
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+          - value: i32
+            name: "start"
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+          - value: i32
+            name: "start"
+        return: "string"
+      - args:
+          - value: "fixedchar<l1>"
+            name: "input"
+          - value: i32
+            name: "start"
         return: "string"
   -
     name: regexp_match_substring
