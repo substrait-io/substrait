@@ -1,6 +1,14 @@
 Release Notes
 ---
 
+## [0.31.0](https://github.com/substrait-io/substrait/compare/v0.30.0...v0.31.0) (2023-07-02)
+
+
+### Features
+
+* add a two-arg variant of substring ([#513](https://github.com/substrait-io/substrait/issues/513)) ([a6ead70](https://github.com/substrait-io/substrait/commit/a6ead70b1d62b79fad7ba2f9fdaf76c5b6d7696b))
+* add timestamp types to max/min function ([#511](https://github.com/substrait-io/substrait/issues/511)) ([6943400](https://github.com/substrait-io/substrait/commit/694340013433b1c0408c2a1cd77b22dfb9b22ad0))
+
 ## [0.30.0](https://github.com/substrait-io/substrait/compare/v0.29.0...v0.30.0) (2023-05-14)
 
 
