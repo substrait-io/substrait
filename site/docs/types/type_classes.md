@@ -40,7 +40,7 @@ Compound type classes are type classes that need to be configured by means of a 
 | STRUCT&lt;T1,...,Tn&gt;      | A list of types in a defined order. | `repeated Literal`, types matching T1..Tn
 | NSTRUCT&lt;N:T1,...,N:Tn&gt; | **Pseudo-type**: A struct that maps unique names to value types. Each name is a UTF-8-encoded string. Each value can have a distinct type. Note that NSTRUCT is actually a pseudo-type, because Substrait's core type system is based entirely on ordinal positions, not named fields. Nonetheless, when working with systems outside Substrait, names are important. | n/a
 | LIST&lt;T&gt;                | A list of values of type T. The list can be between [0..2,147,483,647] values in length. | `repeated Literal`, all types matching T
-| MAP&lt;K, V&gt;              | An unordered list of type K keys with type V values. Keys may not be repeated. While the key type could be nullable, keys may not be null. | `repeated KeyValue` (in turn two `Literal`s), all key types matching K and all value types matching V
+| MAP&lt;K, V&gt;              | An unordered list of type K keys with type V values.         | `repeated KeyValue` (in turn two `Literal`s), all key types matching K and all value types matching V
 
 ## User-Defined Types
 
