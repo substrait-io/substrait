@@ -70,9 +70,9 @@ A guarantee that data output from this operation is provided with a sort order. 
 
 
 
-## Discussion Points
+???+ question "Discussion Points"
 
-* Do we try to make read definition types more extensible à la function signatures? Is that necessary if we have a custom relational operator?
-* How do we express decomposed types. For example, the Iceberg type above is for early logical planning. Once we do some operations, it may produce a list of Iceberg file reads. This is likely a secondary type of object.
-* We currently include a "generic properties" property on read type. Do we want this dumping ground?
+    * Should [read definition types](/relations/logical_relations/#read-definition-types) more extensible in the way that function signatures are? Are extensible read definition types necessary if we have custom relational operators?
+    * How are decomposed types expressed? For example, the Iceberg type above is for early logical planning. Once we do some operations, it may produce a list of Iceberg file reads. This is likely a secondary type of object.
+    * We currently include a "generic properties" property on read type. Do we want this dumping ground?
 

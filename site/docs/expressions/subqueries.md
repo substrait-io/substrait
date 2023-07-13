@@ -65,3 +65,11 @@ WHERE x < ANY(SELECT y from t2)
 | Comparison operation  | The kind of comparison operation to use        | Yes      |
 | Expression            | Left-hand side expression to check             | Yes      |
 | Subquery              | Subquery to check                              | Yes      |
+
+
+
+=== "Protobuf Representation"
+
+    ```proto
+%%% proto.message.Expression.Subquery %%%
+    ```

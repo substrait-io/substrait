@@ -40,7 +40,7 @@ struct:
   - i64
 ```
 
-Given this schema, you could declare a mask in pseudocode, such as:
+Given this schema, you could declare a mask of fields to include in pseudocode, such as:
 
 ```
 0:[0,1:[..5:[0,2]]],2,3
@@ -77,11 +77,7 @@ By default, when only a single field is selected from a struct, that struct is r
 
 
 
-## Discussion Points
+???+ question "Discussion Points"
 
-* Should we support column reordering/positioning using a masked complex expression? (Right now, you can only mask things out.)
-
-
-
-
+    * Should we support column reordering/positioning using a masked complex expression? (Right now, you can only mask things out.)
 
