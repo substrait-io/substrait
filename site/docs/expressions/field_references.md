@@ -11,6 +11,59 @@ In Substrait, all fields are dealt with on a positional basis. Field names are o
 | Map KeyExpression         | A wildcard string that is matched against a simplified form of regular expressions. Requires the key type of the map to be a character type. [Format detail needed, intention to include basic regex concepts such as greedy/non-greedy.] | map                | List of map value type     |
 | Masked Complex Expression | An expression that provides a mask over a schema declaring which portions of the schema should be presented. This allows a user to select a portion of a complex object but mask certain subsections of that same object. | any                | any                        |
 
+
+```
+Schema:
+a: struct
+  b: list
+    c: map string
+      x: i32
+
+SQL expression:
+a.b[2].c['my_map_key'].x
+```
+
+```
+Example Protobuf Text:
+
+selection {
+  direct_reference {
+    struct_field {
+      field: 0 # .x
+      child {
+        map_key {
+          map_key {
+            string: "my_map_key" # ['my_map_key']
+          }
+          child {
+            struct_field {
+              field: 0 # .c
+              child {
+                list_element {
+                  offset: 2 # [2]
+                  child {
+                    struct_field {
+                      field: 0 # .b
+                      child {
+                        struct_field {
+                          field: 0 # .a
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  root_reference {
+  }
+}
+```
+
 #### Compound References
 
 References are typically constructed as a sequence. For example: [struct position 0, struct position 1, array offset 2, array slice 1..3].
