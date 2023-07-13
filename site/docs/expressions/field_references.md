@@ -14,10 +14,13 @@ In Substrait, all fields are dealt with on a positional basis. Field names are o
 
 ```
 Schema:
-a: struct
-  b: list
-    c: map string
-      x: i32
+
+struct<
+  b: list<
+    struct<
+      c: map<string, 
+        struct<
+          x: i32>>>>>
 
 SQL expression:
 a.b[2].c['my_map_key'].x
@@ -29,24 +32,24 @@ Example Protobuf Text:
 selection {
   direct_reference {
     struct_field {
-      field: 0 # .x
+      field: 0 # .a
       child {
-        map_key {
-          map_key {
-            string: "my_map_key" # ['my_map_key']
-          }
+        struct_field {
+          field: 0 # .b
           child {
-            struct_field {
-              field: 0 # .c
+            list_element {
+              offset: 2
               child {
-                list_element {
-                  offset: 2 # [2]
+                struct_field {
+                  field: 0 # .c
                   child {
-                    struct_field {
-                      field: 0 # .b
+                    map_key {
+                      map_key {
+                        string: "my_map_key" # ['my_map_key']
+                      }
                       child {
                         struct_field {
-                          field: 0 # .a
+                          field: 0 # .x
                         }
                       }
                     }
@@ -59,8 +62,7 @@ selection {
       }
     }
   }
-  root_reference {
-  }
+  root_reference { }
 }
 ```
 
