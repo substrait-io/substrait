@@ -4,8 +4,8 @@ title: Home
 # Substrait: Cross-Language Serialization for Relational Algebra
 
 
-!!! jagged-box "Check out the Tutorial!"
-    Check out the Tutorial!
+!!! jagged-box "tutorial-calltoaction"
+    [Check out the Tutorial!](/tutorial/sql_to_substrait)
 
 
 ## Project Vision

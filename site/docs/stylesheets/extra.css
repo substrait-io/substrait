@@ -10,27 +10,38 @@ img.bordered {
 .md-typeset details.jagged-box {
   border-color: transparent;
   background-color: rgb(196, 229, 204);
+  display: none;  /* Start hidden. */
+  transition: 0.5s;
 }
 .md-typeset .jagged-box > .admonition-title,
 .md-typeset .jagged-box > summary {
   background-color: rgb(196, 229, 204);
 }
+/* Hide the admonition icon. */
 .md-typeset .jagged-box > .admonition-title::before,
 .md-typeset .jagged-box > summary::before {
   display: none;
 }
-.md-typeset .jagged-box > .admonition-title::after,
-.md-typeset .jagged-box > summary::after {
-  content: "\00d7";
+.md-typeset .jagged-box > p.admonition-calltoaction-close {
   color: black;
   display: inline-block;
   position: absolute;
-  left: 95%;
+  right: 0.5rem;
+  top: 0;
+  font-size: 250%;
+  margin-top: auto;
+  margin-bottom: auto;
+  cursor: pointer;
+  opacity: 0.6;
+}
+.md-typeset .jagged-box > p.admonition-calltoaction-close:hover {
+  transition-duration: 0.4s;
+  opacity: 1;
 }
 
 
 .jagged-box{
-    position:relative;
+    position: relative;
     color: #185178;
     background-color: #2b9b46;
     text-align:center;
@@ -53,7 +64,6 @@ img.bordered {
     left:0;
     right:0;
     height: 20px;
-    /* TODO Add browser prefixes */
     background:
       linear-gradient(
         50deg,
@@ -87,7 +97,6 @@ img.bordered {
     left:0;
     right:0;
     height: 40px;
-    /* TODO Add browser prefixes */
     background:
       linear-gradient(
         50deg,
