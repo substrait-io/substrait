@@ -11,24 +11,42 @@ In Substrait, all fields are dealt with on a positional basis. Field names are o
 | Map KeyExpression         | A wildcard string that is matched against a simplified form of regular expressions. Requires the key type of the map to be a character type. [Format detail needed, intention to include basic regex concepts such as greedy/non-greedy.] | map                | List of map value type     |
 | Masked Complex Expression | An expression that provides a mask over a schema declaring which portions of the schema should be presented. This allows a user to select a portion of a complex object but mask certain subsections of that same object. | any                | any                        |
 
+#### Compound References
+
+References are typically constructed as a sequence. For example: [struct position 0, struct position 1, array offset 2, array slice 1..3].
+
+Field references are in the same order they are defined in their schema. For example, let's consider the following schema:
 
 ```
-Schema:
+column a:
+  struct<
+    b: list<
+      struct<
+        c: map<string, 
+          struct<
+            x: i32>>>>>
+```
 
-struct<
-  b: list<
-    struct<
-      c: map<string, 
-        struct<
-          x: i32>>>>>
+If we want to represent the SQL expression:
 
-SQL expression:
+```
 a.b[2].c['my_map_key'].x
 ```
 
-```
-Example Protobuf Text:
+We will need to declare the nested field such that:
 
+``
+Struct field reference a
+Struct field b
+List offset 2
+Struct field c
+Map key my_map_key
+Struct field x
+```
+
+Or more formally in Protobuf Text, we get:
+
+```
 selection {
   direct_reference {
     struct_field {
@@ -66,15 +84,9 @@ selection {
 }
 ```
 
-#### Compound References
-
-References are typically constructed as a sequence. For example: [struct position 0, struct position 1, array offset 2, array slice 1..3].
-
 #### Validation
 
 References must validate against the schema of the record being referenced. If not, an error is expected.
-
-
 
 ### Masked Complex Expression 
 
