@@ -369,6 +369,7 @@ message Rel {
     //Physical relations
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
+    ExchangeRel exchange = 15;
   }
 }
 
