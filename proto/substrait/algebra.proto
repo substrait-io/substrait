@@ -893,7 +893,9 @@ message Expression {
   }
 
   message IfThen {
+    // A list of one or more IfClauses
     repeated IfClause ifs = 1;
+    // The returned Expression if no IfClauses are satisified
     Expression else = 2;
 
     message IfClause {
