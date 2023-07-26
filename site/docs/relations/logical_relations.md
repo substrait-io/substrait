@@ -85,7 +85,7 @@ The following options are specific to the parquet file format.
 
 | Property  | Description                                                                                        | Required |
 | --------- | -------------------------------------------------------------------------------------------------- | -------- |
-| Field Ids | The field ids, if specified, define an alterantive way to resolve columns in the file (see below). | Optional |
+| Field Ids | The field ids, if specified, define an alternative way to resolve columns in the file (see below). | Optional |
 
 Column Resolution:
 
