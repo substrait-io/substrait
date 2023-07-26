@@ -65,11 +65,35 @@ provide the consumer with more information on how to retrieve the data.
 
 #### Files Type
 
+A file read lists one or more files or directories that should be scanned.
+
 | Property                    | Description                                                       | Required |
 | --------------------------- | ----------------------------------------------------------------- | -------- |
 | Items                       | An array of Items (path or path glob) associated with the read.   | Required |
 | Format per item             | Enumeration of available formats. Only current option is PARQUET. | Required |
 | Slicing parameters per item | Information to use when reading a slice of a file.                | Optional |
+
+##### File Formats
+
+In a file read the file format must be specified.  There is also an extension point here for custom
+file formats.  When specifying a file format there may be format-specific options that should be specified
+as well.
+
+###### Parquet Format Options
+
+The following options are specific to the parquet file format.
+
+| Property  | Description                                                                                        | Required |
+| --------- | -------------------------------------------------------------------------------------------------- | -------- |
+| Field Ids | The field ids, if specified, define an alterantive way to resolve columns in the file (see below). | Optional |
+
+Column Resolution:
+
+In some cases producers do not know the schema for every file in advance and the Base Schema in the read relation may
+not perfectly match the file schema.  In these cases the consumer must match columns from the Substrait plan with columns
+in the file.  If the field ids property is not specified then the consumer should use the field names.  The consumer should
+select the first column in the file whose name matches exactly the name of the column in the base schema.  If the field
+ids property is specified then the consumer should instead use the parquet field id.
 
 ##### Slicing Files
 
