@@ -46,7 +46,7 @@ A filter expression must be interpreted against the direct schema before the pro
 
     If you have a read definition that's not covered here, see the [process for adding new read definition types](/governance/#substrait-voting-process).
 
-Read definition types are built by the community and added to the specification.
+Read definition types (like the rest of the features in Substrait) are built by the community and added to the specification.
 
 #### Virtual Table
 
@@ -399,7 +399,7 @@ The write operator is an operator that consumes one output and writes it to stor
 
 ???+ info inline end "Adding new Write Definition Types"
 
-    If you have a read definition that's not covered here, see the [process for adding new write definition types](/governance/#substrait-voting-process).
+    If you have a write definition that's not covered here, see the [process for adding new write definition types](/governance/#substrait-voting-process).
 
 Write definition types are built by the community and added to the specification.
 
@@ -456,6 +456,6 @@ The operator that defines modifications of a database schema (CREATE/DROP/ALTER 
 %%% proto.algebra.DdlRel %%%
     ```
 
-???+ "Discussion Points"
+???+ question "Discussion Points"
 
     * How should correlated operations be handled?

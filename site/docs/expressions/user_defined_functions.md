@@ -5,7 +5,7 @@ Substrait supports the creation of custom functions using [simple extensions](..
 Here's an example function that doubles its input:
 
 !!! info inline end "Implementation Note"
-    This implementation is only defined on 32-bit floats and integers but could be defined on all numbers (and even lists and strings).
+    This implementation is only defined on 32-bit floats and integers but could be defined on all numbers (and even lists and strings).  The user of the implementation can specify what happens when the resulting value falls outside of the valid range for a 32-bit float (either return NAN or raise an error).
 
 ``` yaml
 %YAML 1.2
