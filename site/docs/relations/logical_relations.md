@@ -44,7 +44,7 @@ A filter expression must be interpreted against the direct schema before the pro
 
 ???+ info inline end "Adding new Read Definition Types"
 
-    If you have a read definition that's not covered here, see the [process for adding new read definition types](/governance/#substrait-voting-process).
+    If you have a read definition that's not covered here, see the [process for adding new read definition types](/spec/extending).
 
 Read definition types (like the rest of the features in Substrait) are built by the community and added to the specification.
 
@@ -399,7 +399,7 @@ The write operator is an operator that consumes one output and writes it to stor
 
 ???+ info inline end "Adding new Write Definition Types"
 
-    If you have a write definition that's not covered here, see the [process for adding new write definition types](/governance/#substrait-voting-process).
+    If you have a write definition that's not covered here, see the [process for adding new write definition types](/spec/extending).
 
 Write definition types are built by the community and added to the specification.
 

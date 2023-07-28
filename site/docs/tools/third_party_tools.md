@@ -3,7 +3,7 @@
 ## Substrait-tools
 The [substrait-tools](https://pypi.org/project/substrait-tools/) python package provides 
 a command line interface for producing/consuming substrait plans by leveraging the APIs
-from different producers and consumers.# Substrait Fiddle
+from different producers and consumers.
 
 ## Substrait Fiddle
 [Substrait Fiddle](https://substrait-fiddle.com) is an online tool to share, debug, and prototype Substrait plans.

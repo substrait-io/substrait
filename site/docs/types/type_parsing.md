@@ -17,7 +17,7 @@ The components of this expression are:
 
 ### Grammars
 
-It is relatively easy in most languages to produce simple parser & emitters for the type syntax. To make that easier, Substrait also includes an [ANTLR grammar](https://github.com/substrait-io/substrait-cpp/blob/main/src/substrait/textplan/parser/grammar/SubstraitPlanParser.g4#L108) to ease consumption and production of types.
+It is relatively easy in most languages to produce simple parser & emitters for the type syntax. To make that easier, Substrait also includes an [ANTLR grammar](https://github.com/substrait-io/substrait-cpp/blob/main/src/substrait/textplan/parser/grammar/SubstraitPlanParser.g4#L108) to ease consumption and production of types.  (The grammar also supports an entire language for representing plans as text.)
 
 ### Structs & Named Structs
 
@@ -36,9 +36,10 @@ Structs are unique from other types because they have an arbitrary number of par
 === "Text Format Examples"
 
     ```
+    // Struct
     struct?<string, i8, i32?, timestamp_tz>
 
-    # named structs are not yet supported in the text format
+    // Named structs are not yet supported in the text format.
     ```
 
 In the normal (non-named) form, struct declares a set of types that are fields within that struct. In the named struct form, the parameters are formed by tuples of names + types, delineated by a colon. Names that are composed only of numbers and letters can be left unquoted. For other characters, names should be quoted with double quotes and use backslash for double-quote escaping.
