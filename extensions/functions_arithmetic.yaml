@@ -1615,7 +1615,9 @@ window_functions:
         return: i64?
         window_type: PARTITION
   - name: "first_value"
-    description: "Return a value from the first row in the partition."
+    description: >
+      The `expression` is evaluated against the first row.  The `expression` can be a
+      column, expression or subquery that evaluates to a single value.
     impls:
       - args:
           - value: any1
@@ -1625,7 +1627,9 @@ window_functions:
         return: any1?
         window_type: PARTITION
   - name: "last_value"
-    description: "Return a value from the last row in the partition."
+    description: >
+      The `expression` is evaluated against the last row.  The `expression` can be a
+      column, expression, or subquery that evaluates to a single value.
     impls:
       - args:
           - value: any1
@@ -1635,7 +1639,10 @@ window_functions:
         return: any1?
         window_type: PARTITION
   - name: "nth_value"
-    description: "Return a value from the nth row in the partition."
+    description: >
+      The `expression` is evaluated against a row that comes after the current row based
+      on the `offset`.  `offset` should be a positive integer.  The `expression` can be a
+      column, expression or subquery that evaluates to a single value.
     impls:
       - args:
           - value: any1
@@ -1658,10 +1665,14 @@ window_functions:
   - name: "lead"
     description: >
       Return a value from a following row based on a specified physical offset.
+      This allows you to compare a value in the current row against a following row.
 
-      The `offset` is 1 if not specified explicitly.  The function returns
-      the `default` input value if `offset` goes beyond the scope of the partition.
-      If a `default` value is not specified, it is set to `null`
+      The `expression` is evaluated against a row that comes after the current row based
+      on the `offset`.  The `expression` can be a column, expression or subquery that
+      evaluates to a single value. The `offset` should be a positive integer and is set to
+      1 if not specified explicitly. The function returns the `default` input value if
+      `offset` goes beyond the scope of the partition. If a `default` value is not
+      specified, it is set to `null`
     impls:
       - args:
           - value: any1
@@ -1687,11 +1698,15 @@ window_functions:
         window_type: PARTITION
   - name: "lag"
     description: >
-      Return a value from a previous row based on a specified physical offset.
+      Return a column value from a previous row based on a specified physical offset.
+      This allows you to compare a value in the current row against a previous row.
 
-      The `offset` is 1 if not specified explicitly.  The function returns
-      the `default` input value if `offset` goes beyond the scope of the partition.
-      If a `default` value is not specified, it is set to `null`
+      The `expression` is evaluated against a row that comes before the current row based
+      on the `offset`.  The `expression` can be a column, expression or subquery that
+      evaluates to a single value. The `offset` should be a positive integer and is set to
+      1 if not specified explicitly. The function returns the `default` input value if
+      `offset` goes beyond the scope of the partition. If a `default` value is not
+      specified, it is set to `null`
     impls:
       - args:
           - value: any1
