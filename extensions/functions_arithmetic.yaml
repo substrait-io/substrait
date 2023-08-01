@@ -1678,7 +1678,7 @@ window_functions:
       | year | sales  | next_year_sales |
       | 2019 | 20.50  | 30.00           |
       | 2020 | 30.00  | 45.99           |
-      | 2021 | 45.99  | 50.00           |
+      | 2021 | 45.99  | null            |
     impls:
       - args:
           - value: any1
@@ -1716,7 +1716,7 @@ window_functions:
 
       Example comparing the sales of the current year to the previous year.
       | year | sales  | previous_year_sales |
-      | 2019 | 20.50  | 10.00               |
+      | 2019 | 20.50  | null                |
       | 2020 | 30.00  | 20.50               |
       | 2021 | 45.99  | 30.00               |
     impls:
