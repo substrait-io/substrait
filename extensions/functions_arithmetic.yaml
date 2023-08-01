@@ -1673,6 +1673,12 @@ window_functions:
       1 if not specified explicitly. The function returns the `default` input value if
       `offset` goes beyond the scope of the partition. If a `default` value is not
       specified, it is set to `null`
+
+      Example comparing the sales of the current year to the following year.
+      | year | sales  | next_year_sales |
+      | 2019 | 20.50  | 30.00           |
+      | 2020 | 30.00  | 45.99           |
+      | 2021 | 45.99  | 50.00           |
     impls:
       - args:
           - value: any1
@@ -1707,6 +1713,12 @@ window_functions:
       1 if not specified explicitly. The function returns the `default` input value if
       `offset` goes beyond the scope of the partition. If a `default` value is not
       specified, it is set to `null`
+
+      Example comparing the sales of the current year to the previous year.
+      | year | sales  | previous_year_sales |
+      | 2019 | 20.50  | 10.00               |
+      | 2020 | 30.00  | 20.50               |
+      | 2021 | 45.99  | 30.00               |
     impls:
       - args:
           - value: any1
