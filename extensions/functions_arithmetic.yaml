@@ -1614,3 +1614,104 @@ window_functions:
         decomposable: NONE
         return: i64?
         window_type: PARTITION
+  - name: "first_value"
+    description: "Return a value from the first row in the partition."
+    impls:
+      - args:
+          - value: any1
+            name: expression
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+  - name: "last_value"
+    description: "Return a value from the last row in the partition."
+    impls:
+      - args:
+          - value: any1
+            name: expression
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+  - name: "nth_value"
+    description: "Return a value from the nth row in the partition."
+    impls:
+      - args:
+          - value: any1
+            name: expression
+          - value: i32
+            name: offset
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+      - args:
+          - value: any1
+            name: expression
+          - value: i64
+            name: offset
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+  - name: "lead"
+    description: >
+      Return a value from a following row based on a specified physical offset.
+
+      The `offset` is 1 if not specified explicitly.  The function returns
+      the `default` input value if `offset` goes beyond the scope of the partition.
+      If a `default` value is not specified, it is set to `null`
+    impls:
+      - args:
+          - value: any1
+            name: expression
+          - value: i32
+            name: offset
+          - value: any1
+            name: default
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: i32?
+        window_type: PARTITION
+      - args:
+          - value: any1
+            name: expression
+          - value: i64
+            name: offset
+          - value: any1
+            name: default
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: i64?
+        window_type: PARTITION
+  - name: "lag"
+    description: >
+      Return a value from a previous row based on a specified physical offset.
+
+      The `offset` is 1 if not specified explicitly.  The function returns
+      the `default` input value if `offset` goes beyond the scope of the partition.
+      If a `default` value is not specified, it is set to `null`
+    impls:
+      - args:
+          - value: any1
+            name: expression
+          - value: i32
+            name: offset
+          - value: any1
+            name: default
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+      - args:
+          - value: any1
+            name: expression
+          - value: i64
+            name: offset
+          - value: any1
+            name: default
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
