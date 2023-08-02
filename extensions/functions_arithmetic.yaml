@@ -1616,8 +1616,7 @@ window_functions:
         window_type: PARTITION
   - name: "first_value"
     description: >
-      The `expression` is evaluated against the first row.  The `expression` can be a
-      column, expression or subquery that evaluates to a single value.
+      Returns the first value in the window.
     impls:
       - args:
           - value: any1
@@ -1628,8 +1627,7 @@ window_functions:
         window_type: PARTITION
   - name: "last_value"
     description: >
-      The `expression` is evaluated against the last row.  The `expression` can be a
-      column, expression, or subquery that evaluates to a single value.
+      Returns the last value in the window.
     impls:
       - args:
           - value: any1
@@ -1640,24 +1638,15 @@ window_functions:
         window_type: PARTITION
   - name: "nth_value"
     description: >
-      The `expression` is evaluated against a row that comes after the current row based
-      on the `offset`.  `offset` should be a positive integer.  The `expression` can be a
-      column, expression or subquery that evaluates to a single value.
+      Returns a value from the nth row based on the `window_offset`. `window_offset` should
+      be a positive integer. If the value of the `window_offset` is outside the range
+      of the window, `null` is returned.
     impls:
       - args:
           - value: any1
             name: expression
           - value: i32
-            name: offset
-        nullability: DECLARED_OUTPUT
-        decomposable: NONE
-        return: any1?
-        window_type: PARTITION
-      - args:
-          - value: any1
-            name: expression
-          - value: i64
-            name: offset
+            name: window_offset
         nullability: DECLARED_OUTPUT
         decomposable: NONE
         return: any1?
@@ -1668,10 +1657,9 @@ window_functions:
       This allows you to compare a value in the current row against a following row.
 
       The `expression` is evaluated against a row that comes after the current row based
-      on the `offset`.  The `expression` can be a column, expression or subquery that
-      evaluates to a single value. The `offset` should be a positive integer and is set to
+      on the `window_offset`.  The `window_offset` should be a positive integer and is set to
       1 if not specified explicitly. The function returns the `default` input value if
-      `offset` goes beyond the scope of the partition. If a `default` value is not
+      `window_offset` goes beyond the scope of the partition. If a `default` value is not
       specified, it is set to `null`
 
       Example comparing the sales of the current year to the following year.
@@ -1683,10 +1671,6 @@ window_functions:
       - args:
           - value: any1
             name: expression
-          - value: i32
-            name: offset
-          - value: any1
-            name: default
         nullability: DECLARED_OUTPUT
         decomposable: NONE
         return: any1?
@@ -1694,8 +1678,17 @@ window_functions:
       - args:
           - value: any1
             name: expression
-          - value: i64
-            name: offset
+          - value: i32
+            name: window_offset
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+      - args:
+          - value: any1
+            name: expression
+          - value: i32
+            name: window_offset
           - value: any1
             name: default
         nullability: DECLARED_OUTPUT
@@ -1708,10 +1701,10 @@ window_functions:
       This allows you to compare a value in the current row against a previous row.
 
       The `expression` is evaluated against a row that comes before the current row based
-      on the `offset`.  The `expression` can be a column, expression or subquery that
-      evaluates to a single value. The `offset` should be a positive integer and is set to
+      on the `window_offset`.  The `expression` can be a column, expression or subquery that
+      evaluates to a single value. The `window_offset` should be a positive integer and is set to
       1 if not specified explicitly. The function returns the `default` input value if
-      `offset` goes beyond the scope of the partition. If a `default` value is not
+      `window_offset` goes beyond the scope of the partition. If a `default` value is not
       specified, it is set to `null`
 
       Example comparing the sales of the current year to the previous year.
@@ -1723,10 +1716,6 @@ window_functions:
       - args:
           - value: any1
             name: expression
-          - value: i32
-            name: offset
-          - value: any1
-            name: default
         nullability: DECLARED_OUTPUT
         decomposable: NONE
         return: any1?
@@ -1734,8 +1723,17 @@ window_functions:
       - args:
           - value: any1
             name: expression
-          - value: i64
-            name: offset
+          - value: i32
+            name: window_offset
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+      - args:
+          - value: any1
+            name: expression
+          - value: i32
+            name: window_offset
           - value: any1
             name: default
         nullability: DECLARED_OUTPUT
