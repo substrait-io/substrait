@@ -1689,7 +1689,7 @@ window_functions:
             name: default
         nullability: DECLARED_OUTPUT
         decomposable: NONE
-        return: i32?
+        return: any1?
         window_type: PARTITION
       - args:
           - value: any1
@@ -1700,7 +1700,7 @@ window_functions:
             name: default
         nullability: DECLARED_OUTPUT
         decomposable: NONE
-        return: i64?
+        return: any1?
         window_type: PARTITION
   - name: "lag"
     description: >
