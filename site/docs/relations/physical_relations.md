@@ -222,7 +222,15 @@ The expand operation creates duplicates of input records based on the Expand Fie
 | Property  | Description                          | Required |
 | --------- |--------------------------------------| -------- |
 | Input     | The relational input.                | Required |
-| Fields | Expressions describing the output fields.  These refer to the schema of the input.  A field can have a different expression for each duplicate.  | Required |
+| Direct Fields | Expressions describing the output fields.  These refer to the schema of the input.  Each Direct Field must be a Consistent Field or a Switching Field  | Required |
+
+### Switching Field Properties
+
+A switching field is a field whose value is different in each duplicated row.  All switching fields in an Expand Operation must have the same number of duplicates.
+
+| Property  | Description                          | Required |
+| --------- |--------------------------------------| -------- |
+| Duplicates | List of one or more expressions.  The output will contain a row for each expression. | Required |
 
 ## Hashing Window Operation
 
