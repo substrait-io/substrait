@@ -399,7 +399,7 @@ message Rel {
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
     ExchangeRel exchange = 15;
-    ExpandRel exchange = 16;
+    ExpandRel expand = 16;
   }
 }
 
