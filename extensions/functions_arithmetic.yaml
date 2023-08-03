@@ -1641,12 +1641,18 @@ window_functions:
       Returns a value from the nth row based on the `window_offset`. `window_offset` should
       be a positive integer. If the value of the `window_offset` is outside the range
       of the window, `null` is returned.
+
+      The `on_domain_error` option governs behavior in cases where `window_offset` is not
+      a positive integer or `null`.
     impls:
       - args:
           - value: any1
             name: expression
           - value: i32
             name: window_offset
+        options:
+          on_domain_error:
+            values: [ NULL, ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: NONE
         return: any1?
@@ -1658,11 +1664,14 @@ window_functions:
 
       The `expression` is evaluated against a row that comes after the current row based
       on the `window_offset`.  The `window_offset` should be a positive integer and is set to
-      1 if not specified explicitly. The function returns the `default` input value if
-      `window_offset` goes beyond the scope of the partition. If a `default` value is not
-      specified, it is set to `null`
+      1 if not specified explicitly. If the `window_offset` is negative, the expression
+      will be evaluated against a row coming before the current row, similar to the `lag`
+      function. A `window_offset` of `null` will return `nulls`. The function returns the
+      `default` input value if `window_offset` goes beyond the scope of the partition.
+      If a `default` value is not specified, it is set to `null`
 
       Example comparing the sales of the current year to the following year.
+      `window_offset` of 1.
       | year | sales  | next_year_sales |
       | 2019 | 20.50  | 30.00           |
       | 2020 | 30.00  | 45.99           |
@@ -1703,11 +1712,14 @@ window_functions:
       The `expression` is evaluated against a row that comes before the current row based
       on the `window_offset`.  The `expression` can be a column, expression or subquery that
       evaluates to a single value. The `window_offset` should be a positive integer and is set to
-      1 if not specified explicitly. The function returns the `default` input value if
-      `window_offset` goes beyond the scope of the partition. If a `default` value is not
-      specified, it is set to `null`
+      1 if not specified explicitly. If the `window_offset` is negative, the expression will
+      be evaluated against a row coming after the current row, similar to the `lead` function.
+      A `window_offset` of `null` will return `nulls`. The function returns the `default`
+      input value if `window_offset` goes beyond the scope of the partition. If a `default`
+      value is not specified, it is set to `null`
 
       Example comparing the sales of the current year to the previous year.
+      `window_offset` of 1.
       | year | sales  | previous_year_sales |
       | 2019 | 20.50  | null                |
       | 2020 | 30.00  | 20.50               |
