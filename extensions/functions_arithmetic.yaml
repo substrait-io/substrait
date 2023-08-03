@@ -1663,15 +1663,15 @@ window_functions:
       This allows you to compare a value in the current row against a following row.
 
       The `expression` is evaluated against a row that comes after the current row based
-      on the `window_offset`.  The `window_offset` should be a positive integer and is set to
-      1 if not specified explicitly. If the `window_offset` is negative, the expression
+      on the `row_offset`.  The `row_offset` should be a positive integer and is set to
+      1 if not specified explicitly. If the `row_offset` is negative, the expression
       will be evaluated against a row coming before the current row, similar to the `lag`
-      function. A `window_offset` of `null` will return `nulls`. The function returns the
-      `default` input value if `window_offset` goes beyond the scope of the partition.
-      If a `default` value is not specified, it is set to `null`
+      function. A `row_offset` of `null` will return `null`. The function returns the
+      `default` input value if `row_offset` goes beyond the scope of the window.
+      If a `default` value is not specified, it is set to `null`.
 
       Example comparing the sales of the current year to the following year.
-      `window_offset` of 1.
+      `row_offset` of 1.
       | year | sales  | next_year_sales |
       | 2019 | 20.50  | 30.00           |
       | 2020 | 30.00  | 45.99           |
@@ -1688,7 +1688,7 @@ window_functions:
           - value: any1
             name: expression
           - value: i32
-            name: window_offset
+            name: row_offset
         nullability: DECLARED_OUTPUT
         decomposable: NONE
         return: any1?
@@ -1697,7 +1697,7 @@ window_functions:
           - value: any1
             name: expression
           - value: i32
-            name: window_offset
+            name: row_offset
           - value: any1
             name: default
         nullability: DECLARED_OUTPUT
@@ -1710,16 +1710,16 @@ window_functions:
       This allows you to compare a value in the current row against a previous row.
 
       The `expression` is evaluated against a row that comes before the current row based
-      on the `window_offset`.  The `expression` can be a column, expression or subquery that
-      evaluates to a single value. The `window_offset` should be a positive integer and is set to
-      1 if not specified explicitly. If the `window_offset` is negative, the expression will
+      on the `row_offset`.  The `expression` can be a column, expression or subquery that
+      evaluates to a single value. The `row_offset` should be a positive integer and is set to
+      1 if not specified explicitly. If the `row_offset` is negative, the expression will
       be evaluated against a row coming after the current row, similar to the `lead` function.
-      A `window_offset` of `null` will return `nulls`. The function returns the `default`
-      input value if `window_offset` goes beyond the scope of the partition. If a `default`
-      value is not specified, it is set to `null`
+      A `row_offset` of `null` will return `null`. The function returns the `default`
+      input value if `row_offset` goes beyond the scope of the partition. If a `default`
+      value is not specified, it is set to `null`.
 
       Example comparing the sales of the current year to the previous year.
-      `window_offset` of 1.
+      `row_offset` of 1.
       | year | sales  | previous_year_sales |
       | 2019 | 20.50  | null                |
       | 2020 | 30.00  | 20.50               |
@@ -1736,7 +1736,7 @@ window_functions:
           - value: any1
             name: expression
           - value: i32
-            name: window_offset
+            name: row_offset
         nullability: DECLARED_OUTPUT
         decomposable: NONE
         return: any1?
@@ -1745,7 +1745,7 @@ window_functions:
           - value: any1
             name: expression
           - value: i32
-            name: window_offset
+            name: row_offset
           - value: any1
             name: default
         nullability: DECLARED_OUTPUT
