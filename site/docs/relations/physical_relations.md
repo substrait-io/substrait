@@ -215,7 +215,7 @@ The expand operation creates duplicates of input records based on the Expand Fie
 | Inputs               | 1                                                                                                                                                                              |
 | Outputs              | 1                                                                                                                                                                              |
 | Property Maintenance | Distribution is maintained if all the distribution fields are consistent fields with direct references. Ordering can only be maintained down to the level of consistent fields that are kept.|
-| Direct Output Order  | The expand fields and duplicated id.                                                                                                                                           |
+| Direct Output Order  | The expand fields followed by an i32 column describing the index of the duplicate that the row is derived from.                                                                                                                                           |
 
 ### Expand Properties
 
