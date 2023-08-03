@@ -208,7 +208,7 @@ The streaming aggregate operation leverages data ordered by the grouping express
 
 ## Expand Operation
 
-The expand operation creates duplicates of input records based on ExpandFields. The ExpandField can be the SwitchingField or ConsistentField. The SwitchingField here means that switches output based on which duplicate_id we're outputting. And the ConsistentField means that outputs the same value no matter which duplicate_id we're on.
+The expand operation creates duplicates of input records based on the Expand Fields. Each Expand Field can be a Switching Field or an expression. Switching Fields are described below.  If an Expand Field is an expression then its value is consistent across all duplicate rows.
 
 | Signature            | Value                                                                                                                                                                          |
 | -------------------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
