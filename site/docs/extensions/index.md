@@ -35,7 +35,7 @@ Rather than using a full data type representation, the input argument types (`sh
 
 !!! note
 
-It is required that two functions with the same name must resolve to different compound names using types. If two functions in a YAML file resolve to the same compound name, the YAML file is invalid and behavior is undefined.
+Every compound function signature must be unique.  If two function implementations in a YAML file would generate the same compound function signature, then the YAML file is invalid and behavior is undefined.
 
 | Argument Type              | Signature Name |
 | -------------------------- | -------------- |
