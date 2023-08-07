@@ -25,7 +25,7 @@ A Substrait plan can reference one or more YAML files via URI for extension. In 
 
 ### Function Signature Compound Names
 
-A YAML file may contain one or more functions by the same name. The key used in the function extension declaration to reference a function is a combination of the name of the function along with a list of the required input argument types. Optional arguments are not included in the signature. The format is as follows:
+A YAML file may contain one or more functions by the same name. The key used in the function extension declaration to reference a function is a combination of the name of the function along with a list of the required input argument types. The format is as follows:
 
 ```
 <function name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>
