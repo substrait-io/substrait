@@ -50,4 +50,13 @@ If you use Substrait in your research, please cite it using the following BibTeX
 
 ## Contribution
 
-All contributors are welcome to Substrait.
+All contributors are welcome to Substrait.   If you want to join the project, open a PR or get in touch with us as [above](#get-in-touch).
+
+
+## Principles
+
+* Be inclusive and open to all.
+* Ensure a diverse set of contributors that come from multiple data backgrounds to maximize general utility.
+* Build a specification based on open consensus.
+* Avoid over-reliance/coupling to any single technology.
+* Make the specification and all tools freely available on a permissive license (ApacheV2)

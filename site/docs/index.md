@@ -5,13 +5,25 @@ title: Home
 
 
 
+## What is Substrait?
+
+Substrait enables interoperability between different implementations of the data compute ecosystem.  This allows one to make the best solution for any problem by choosing the best components.  It doesn't matter if they use different languages or run on different operating systems -- they just work together.
 
 
-## Project Vision
 
-Create a well-defined, cross-language [specification](spec/specification) for data compute operations. This includes a declaration of common operations, custom operations and one or more serialized representations of this specification. The spec focuses on the semantics of each operation and a consistent way to describe.
+## How does it work?
 
-In many ways, the goal of this project is similar to that of the Apache Arrow project. Arrow is focused on a standardized memory representation of columnar data. Substrait is focused on what should be done to data.
+Substrait provides a well-defined, cross-language [specification](spec/specification) for data compute operations.  This includes a consistent declaration of common operations, custom operations and one or more serialized representations of this specification.  The spec focuses on the semantics of each operation.
+
+We highly recommend the [tutorial](/tutorial/sql_to_substrait/) to learn how a Substrait plan is constructed.
+
+
+
+## Benefits
+
+* Avoids every system needing to create a communication method between every other system -- each system merely supports ingesting and producing Substrait and it instantly becomes a part of the greater ecosystem.
+* Enables heterogeneous environments -- run on a cluster of an unknown set of execution engines!
+* The text version of the Substrait plan allows you to quickly see how a plan functions without needing a visualizer (although there are Substrait visualizers as well!).
 
 
 
@@ -23,44 +35,3 @@ In many ways, the goal of this project is similar to that of the Apache Arrow pr
 * Create an alternative plan generation implementation that can connect an existing end-user compute expression system to an existing end-user processing engine (e.g. Pandas operations executed inside SingleStore)
 * Build a pluggable plan visualization tool (e.g. D3 based plan visualizer)
 
-
-
-## Community Principles
-
-* Be inclusive and open to all. If you want to join the project, open a PR or [issue](https://github.com/substrait-io/substrait/issues), start a [discussion](https://groups.google.com/g/substrait) or [join the Slack Channel]({{versions.slackinvitelink}}).
-* Ensure a diverse set of contributors that come from multiple data backgrounds to maximize general utility.
-* Build a specification based on open consensus.
-* Avoid over-reliance/coupling to any single technology.
-* Make the specification and all tools freely available on a permissive license (ApacheV2)
-
-
-
-## Related Technologies
-
-* [Apache Calcite](https://calcite.apache.org/): Many ideas in Substrait are inspired by the Calcite project. Calcite is a great JVM-based SQL query parsing and optimization framework. A key goal of the Substrait project is to expose Calcite capabilities more easily to non-JVM technologies as well as expose query planning operations as microservices.
-* [Apache Arrow](https://arrow.apache.org/): The Arrow format for data is what the Substrait specification attempts to be for compute expressions. A key goal of Substrait is to enable Substrait producers to execute work within the Arrow Rust and C++ compute kernels.
-
-
-
-## Why not use SQL?
-
-SQL is a well known language for describing queries against relational data.  It is designed to be simple and allow reading
-and writing by humans.  Substrait is not intended as a replacement for SQL and works alongside SQL to provide capabilities that
-SQL lacks.  SQL is not a great fit for systems that actually satisfy the query because it does not provide sufficient detail and
-is not represented in a format that is easy for processing.  Because of this, most modern systems will first translate the SQL query
-into a query plan, sometimes called the execution plan.  There can be multiple levels of a query plan (e.g. physical and logical),
-a query plan may be split up and distributed across multiple systems, and a query plan often undergoes simplifying or optimizing
-transformations. The SQL standard does not define the format of the query or execution plan and there is no open format that is
-supported by a broad set of systems.  Substrait was created to provide a standard and open format for these query plans.
-
-
-
-## Why not just do this within an existing OSS project?
-
-A key goal of the Substrait project is to not be coupled to any single existing technology. Trying to get people involved in something can be difficult when it seems to be primarily driven by the opinions and habits of a single community. In many ways, this situation is similar to the early situation with Arrow. The precursor to Arrow was the Apache Drill ValueVectors concepts. As part of creating Arrow, [Wes](https://www.linkedin.com/in/wesmckinn/) and [Jacques](https://www.linkedin.com/in/jacquesnadeau/) recognized the need to create a new community to build a fresh consensus (beyond just what the Apache Drill community wanted). This separation and new independent community was a key ingredient to Arrow's current success. The needs here are much the same: many separate communities could benefit from Substrait, but each have their own pain points, type systems, development processes and timelines. To help resolve these tensions, one of the approaches proposed in Substrait is to set a bar that at least two of the top four OSS data technologies (Arrow, Spark, Iceberg, Trino) supports something before incorporating it directly into the Substrait specification. (Another goal is to support strong extension points at key locations to avoid this bar being a limiter to broad adoption.)
-
-
-
-## Why the name Substrait?
-
-A strait is a narrow connector of water between two other pieces of water. In analytics, data is often thought of as water. Substrait is focused on instructions related to the data. In other words, what defines or supports the movement of water between one or more larger systems. Thus, the underlayment for the strait connecting different pools of water => sub-strait.
