@@ -1652,8 +1652,8 @@ window_functions:
             name: window_offset
         options:
           on_domain_error:
-            values: [ NULL, ERROR ]
-        nullability: DECLARED_OUTPUT
+            values: [ NAN, ERROR ]
+        nullability: DECLARED_OUTPU
         decomposable: NONE
         return: any1?
         window_type: PARTITION
