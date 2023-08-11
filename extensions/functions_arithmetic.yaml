@@ -1653,7 +1653,7 @@ window_functions:
         options:
           on_domain_error:
             values: [ NAN, ERROR ]
-        nullability: DECLARED_OUTPU
+        nullability: DECLARED_OUTPUT
         decomposable: NONE
         return: any1?
         window_type: PARTITION
