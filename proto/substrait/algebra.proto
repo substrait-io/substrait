@@ -296,20 +296,10 @@ message ConsistentPartitionWindowRel {
     Expression.WindowFunction.Bound upper_bound = 4;
 
     // Defines the bounds type: ROWS, RANGE
-    BoundsType bounds_type = 12;
+    Expression.WindowFunction.BoundsType bounds_type = 12;
   }
 
-  enum BoundsType {
-    BOUNDS_TYPE_UNSPECIFIED = 0;
-    // The lower and upper bound specify how many rows before and after the current row
-    // the window should extend.
-    BOUNDS_TYPE_ROWS = 1;
-    // The lower and upper bound describe a range of values.  The window should include all rows
-    // where the value of the ordering column is greater than or equal to (current_value - lower bound)
-    // and less than or equal to (current_value + upper bound).  This bounds type is only valid if there
-    // is a single ordering column.
-    BOUNDS_TYPE_RANGE = 2;
-  }
+
 }
 
 // The ORDERY BY (or sorting) relational operator. Beside describing a base relation, it includes a list of fields to sort on
@@ -914,7 +904,7 @@ message Expression {
     // the same partition as the current record are aggregated.
     repeated Expression partitions = 2;
 
-    ConsistentPartitionWindowRel.BoundsType bounds_type = 12;
+    BoundsType bounds_type = 12;
 
     // Defines the record relative to the current record from which the window
     // extends. The bound is inclusive. If the lower bound indexes a record
@@ -932,6 +922,18 @@ message Expression {
 
     // Deprecated; use arguments instead.
     repeated Expression args = 8 [deprecated = true];
+
+    enum BoundsType {
+      BOUNDS_TYPE_UNSPECIFIED = 0;
+      // The lower and upper bound specify how many rows before and after the current row
+      // the window should extend.
+      BOUNDS_TYPE_ROWS = 1;
+      // The lower and upper bound describe a range of values.  The window should include all rows
+      // where the value of the ordering column is greater than or equal to (current_value - lower bound)
+      // and less than or equal to (current_value + upper bound).  This bounds type is only valid if there
+      // is a single ordering column.
+      BOUNDS_TYPE_RANGE = 2;
+    }
 
     // Defines one of the two boundaries for the window of a window function.
     message Bound {
