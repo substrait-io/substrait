@@ -300,8 +300,6 @@ message ConsistentPartitionWindowRel {
     // Defines the bounds type: ROWS, RANGE
     Expression.WindowFunction.BoundsType bounds_type = 12;
   }
-
-
 }
 
 // The ORDERY BY (or sorting) relational operator. Beside describing a base relation, it includes a list of fields to sort on
