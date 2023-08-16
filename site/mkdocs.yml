@@ -36,6 +36,7 @@ extra:
       link: https://twitter.com/substrait_io
 repo_url: https://github.com/substrait-io/substrait
 plugins:
+  - table-reader
   - markdownextradata
   - search
   - awesome-pages:
@@ -53,6 +54,8 @@ plugins:
   - gen-files:
       scripts:
         - docs/extensions/generate_function_docs.py
+watch:
+- ../extensions
 markdown_extensions:
   - smarty
   - sane_lists

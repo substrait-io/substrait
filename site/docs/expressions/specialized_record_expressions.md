@@ -8,12 +8,13 @@ These constructs should be focused on different expression types as opposed to s
 ## Literal Expressions
 For each data type, it is possible to create a literal value for that data type. The representation depends on the serialization format. Literal expressions include both a type literal and a possibly null value.
 
-
+## Nested Type Constructor Expressions
+These expressions allow structs, lists, and maps to be constructed from a set of expressions. For example, they allow a struct expression like `(field 0 - field 1, field 0 + field 1)` to be represented.
 
 ## Cast Expression
 To convert a value from one type to another, Substrait defines a cast expression. Cast expressions declare an expected type, an input argument and an enumeration specifying failure behavior, indicating whether cast should return null on failure or throw an exception.
 
-Note that Substrait always requires a cast expression whenever the current type is not exactly equal to (one of) the expected types. For example, it is illegal to directly pass a value of type `i8[0]` to a function that only supports an `i8?[0]` argument, some other variation of `i8`, or `i16[0]`.
+Note that Substrait always requires a cast expression whenever the current type is not exactly equal to (one of) the expected types. For example, it is illegal to directly pass a value of type `i8[0]` to a function that only supports an `i8?[0]` argument.
 
 ## If Expression
 An if value expression is an expression composed of one if clause, zero or more else if clauses and an else clause. In pseudocode, they are envisioned as:
@@ -42,7 +43,7 @@ Switch expression allow a selection of alternate branches based on the value of 
 ```
 switch(value)
 <value 1> => <return 1> (1 or more times)
-<else> => <return 3>
+<else> => <return default>
 ```
 
 Return values for a switch expression must all be of identical type.

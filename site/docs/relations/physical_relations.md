@@ -17,14 +17,14 @@ The hash equijoin join operator will build a hash table out of the right input b
 
 ### Hash Equijoin Properties
 
-| Property            | Description                                                  | Required                 |
-| ------------------- | ------------------------------------------------------------ | ------------------------ |
-| Left Input          | A relational input.                                          | Required                 |
-| Right Input         | A relational input.                                          | Required                 |
-| Join Expression     | A boolean condition that describes whether each record from the left set "match" the record from the right set. The condition must only include the following operations: AND, ==, field references, is not distinct from. Field references correspond to the direct output order of the data. | Required.                |
+| Property            | Description                                                                                                                                                                                                            | Required                 |
+|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
+| Left Input          | A relational input.(Probe-side)                                                                                                                                                                                        | Required                 |
+| Right Input         | A relational input.(Build-side)                                                                                                                                                                                        | Required                 |
+| Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                 | Required                 |
+| Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                | Required                 |
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true. |
-| Join Type           | One of the join types defined in the Join operator.          | Required                 |
-
+| Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                    | Required                 |
 
 
 ## NLJ Operator
@@ -62,13 +62,14 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 
 ### Merge Join Properties
 
-| Property            | Description                                                  | Required                                      |
-| ------------------- | ------------------------------------------------------------ | --------------------------------------------- |
-| Left Input          | A relational input.                                          | Required                                      |
-| Right Input         | A relational input.                                          | Required                                      |
-| Join Expression     | A boolean condition that describes whether each record from the left set "match" the record from the right set. The condition must only include the following operations: AND, ==, field references, is not distinct from. Field references correspond to the direct output order of the data. | Optional. Defaults to true (a Cartesian join). |
-| Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.                      |
-| Join Type           | One of the join types defined in the Join operator.          | Required                                      |
+| Property            | Description                                                                                                                                                                                                             | Required                    |
+|---------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|
+| Left Input          | A relational input.                                                                                                                                                                                                     | Required                    |
+| Right Input         | A relational input.                                                                                                                                                                                                     | Required                    |
+| Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                  | Required                    |
+| Right Keys          | References to the fields to join on in the right input.                                                                                                                                                            | Reauired                    |    
+| Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.    |
+| Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                    |
 
 ## Exchange Operator
 
@@ -205,6 +206,31 @@ The streaming aggregate operation leverages data ordered by the grouping express
 | Measures         | A list of one or more aggregate expressions. Aggregate expressions ordering requirements must be compatible with expected ordering. | Optional, required if no grouping sets. |
 
 
+## Expand Operation
+
+The expand operation creates duplicates of input records based on the Expand Fields. Each Expand Field can be a Switching Field or an expression. Switching Fields are described below.  If an Expand Field is an expression then its value is consistent across all duplicate rows.
+
+| Signature            | Value                                                                                                                                                                          |
+| -------------------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Inputs               | 1                                                                                                                                                                              |
+| Outputs              | 1                                                                                                                                                                              |
+| Property Maintenance | Distribution is maintained if all the distribution fields are consistent fields with direct references. Ordering can only be maintained down to the level of consistent fields that are kept.|
+| Direct Output Order  | The expand fields followed by an i32 column describing the index of the duplicate that the row is derived from.                                                                                                                                           |
+
+### Expand Properties
+
+| Property  | Description                          | Required |
+| --------- |--------------------------------------| -------- |
+| Input     | The relational input.                | Required |
+| Direct Fields | Expressions describing the output fields.  These refer to the schema of the input.  Each Direct Field must be an expression or a Switching Field  | Required |
+
+### Switching Field Properties
+
+A switching field is a field whose value is different in each duplicated row.  All switching fields in an Expand Operation must have the same number of duplicates.
+
+| Property  | Description                          | Required |
+| --------- |--------------------------------------| -------- |
+| Duplicates | List of one or more expressions.  The output will contain a row for each expression. | Required |
 
 ## Hashing Window Operation
 

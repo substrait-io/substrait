@@ -4,7 +4,6 @@ syntax = "proto3";
 package substrait;
 
 import "google/protobuf/any.proto";
-import "google/protobuf/empty.proto";
 import "substrait/extensions/extensions.proto";
 import "substrait/type.proto";
 
@@ -60,6 +59,7 @@ message ReadRel {
   RelCommon common = 1;
   NamedStruct base_schema = 2;
   Expression filter = 3;
+  Expression best_effort_filter = 11;
   Expression.MaskExpression projection = 4;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
@@ -205,10 +205,12 @@ message AggregateRel {
   // Input of the aggregation
   Rel input = 2;
 
-  // A list of expression grouping that the aggregation measured should be calculated for.
+  // A list of one or more grouping expression sets that the aggregation measures should be calculated for.
+  // Required if there are no measures.
   repeated Grouping groupings = 3;
 
   // A list of one or more aggregate expressions along with an optional filter.
+  // Required if there are no groupings.
   repeated Measure measures = 4;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -247,6 +249,8 @@ message FilterRel {
 // The relational set operators (intersection/union/etc..)
 message SetRel {
   RelCommon common = 1;
+  // The first input is the primary input, the remaining are secondary
+  // inputs.  There must be at least two inputs.
   repeated Rel inputs = 2;
   SetOp op = 3;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -338,6 +342,34 @@ message ExchangeRel {
   }
 }
 
+// Duplicates records, possibly switching output expressions between each duplicate.
+// Default output is all of the fields declared followed by one int64 field that contains the
+// duplicate_id which is a zero-index ordinal of which duplicate of the original record this
+// corresponds to.
+message ExpandRel {
+  RelCommon common = 1;
+  Rel input = 2;
+  repeated ExpandField fields = 4;
+
+  message ExpandField {
+    oneof field_type {
+      // Field that switches output based on which duplicate_id we're outputting
+      SwitchingField switching_field = 2;
+
+      // Field that outputs the same value no matter which duplicate_id we're on.
+      Expression consistent_field = 3;
+    }
+  }
+
+  message SwitchingField {
+    // Array that contains an expression to output per duplicate_id
+    // each `switching_field` must have the same number of expressions
+    // all expressions within a switching field must be the same type class but can differ in nullability.
+    // this column will be nullable if any of the expressions are nullable.
+    repeated Expression duplicates = 1;
+  }
+}
+
 // A relation with output field names.
 //
 // This is for use at the root of a `Rel` tree.
@@ -363,6 +395,11 @@ message Rel {
     ExtensionMultiRel extension_multi = 10;
     ExtensionLeafRel extension_leaf = 11;
     CrossRel cross = 12;
+    //Physical relations
+    HashJoinRel hash_join = 13;
+    MergeJoinRel merge_join = 14;
+    ExchangeRel exchange = 15;
+    ExpandRel expand = 16;
   }
 }
 
@@ -477,20 +514,84 @@ message WriteRel {
   }
 }
 
+// The hash equijoin join operator will build a hash table out of the right input based on a set of join keys.
+// It will then probe that hash table for incoming inputs, finding matches.
+message HashJoinRel {
+  RelCommon common = 1;
+  Rel left = 2;
+  Rel right = 3;
+  repeated Expression.FieldReference left_keys = 4;
+  repeated Expression.FieldReference right_keys = 5;
+  Expression post_join_filter = 6;
+
+  JoinType type = 7;
+
+  enum JoinType {
+    JOIN_TYPE_UNSPECIFIED = 0;
+    JOIN_TYPE_INNER = 1;
+    JOIN_TYPE_OUTER = 2;
+    JOIN_TYPE_LEFT = 3;
+    JOIN_TYPE_RIGHT = 4;
+    JOIN_TYPE_LEFT_SEMI = 5;
+    JOIN_TYPE_RIGHT_SEMI = 6;
+    JOIN_TYPE_LEFT_ANTI = 7;
+    JOIN_TYPE_RIGHT_ANTI = 8;
+  }
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
+// The merge equijoin does a join by taking advantage of two sets that are sorted on the join keys.
+// This allows the join operation to be done in a streaming fashion.
+message MergeJoinRel {
+  RelCommon common = 1;
+  Rel left = 2;
+  Rel right = 3;
+  repeated Expression.FieldReference left_keys = 4;
+  repeated Expression.FieldReference right_keys = 5;
+  Expression post_join_filter = 6;
+
+  JoinType type = 7;
+
+  enum JoinType {
+    JOIN_TYPE_UNSPECIFIED = 0;
+    JOIN_TYPE_INNER = 1;
+    JOIN_TYPE_OUTER = 2;
+    JOIN_TYPE_LEFT = 3;
+    JOIN_TYPE_RIGHT = 4;
+    JOIN_TYPE_LEFT_SEMI = 5;
+    JOIN_TYPE_RIGHT_SEMI = 6;
+    JOIN_TYPE_LEFT_ANTI = 7;
+    JOIN_TYPE_RIGHT_ANTI = 8;
+  }
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
 // The argument of a function
 message FunctionArgument {
   oneof arg_type {
-    Enum enum = 1;
+    string enum = 1;
     Type type = 2;
     Expression value = 3;
   }
+}
 
-  message Enum {
-    oneof enum_kind {
-      string specified = 1;
-      google.protobuf.Empty unspecified = 2;
-    }
-  }
+// An optional function argument.  Typically used for specifying behavior in
+// invalid or corner cases.
+message FunctionOption {
+  // Name of the option to set. If the consumer does not recognize the
+  // option, it must reject the plan. The name is matched case-insensitively
+  // with option names defined for the function.
+  string name = 1;
+
+  // List of behavior options allowed by the producer. At least one must be
+  // specified; to leave an option unspecified, simply don't add an entry to
+  // `options`. The consumer must use the first option from the list that it
+  // supports. If the consumer supports none of the specified options, it
+  // must reject the plan. The name is matched case-insensitively and must
+  // match one of the option values defined for the option.
+  repeated string preference = 2;
 }
 
 message Expression {
@@ -505,6 +606,7 @@ message Expression {
     MultiOrList multi_or_list = 9;
     Cast cast = 11;
     Subquery subquery = 12;
+    Nested nested = 13;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -630,6 +732,47 @@ message Expression {
     }
   }
 
+  // Expression to dynamically construct nested types.
+  message Nested {
+    // Whether the returned nested type is nullable.
+    bool nullable = 1;
+
+    // Optionally points to a type_variation_anchor defined in this plan for
+    // the returned nested type.
+    uint32 type_variation_reference = 2;
+
+    oneof nested_type {
+      Struct struct = 3;
+      List list = 4;
+      Map map = 5;
+    }
+
+    message Map {
+      message KeyValue {
+        // Mandatory key/value expressions.
+        Expression key = 1;
+        Expression value = 2;
+      }
+
+      // One or more key-value pairs. To specify an empty map, use
+      // Literal.empty_map (otherwise type information would be missing).
+      repeated KeyValue key_values = 1;
+    }
+
+    message Struct {
+      // Zero or more possibly heterogeneously-typed list of expressions that
+      // form the struct fields.
+      repeated Expression fields = 1;
+    }
+
+    message List {
+      // A homogeneously-typed list of one or more expressions that form the
+      // list entries. To specify an empty list, use Literal.empty_list
+      // (otherwise type information would be missing).
+      repeated Expression values = 1;
+    }
+  }
+
   // A scalar function call.
   message ScalarFunction {
     // Points to a function_anchor defined in this plan, which must refer
@@ -645,13 +788,15 @@ message Expression {
     //    the expression in that must yield a value of a type that a function
     //    overload is defined for.
     //  - Type arguments must be bound using FunctionArgument.type.
-    //  - Required enum arguments must be bound using FunctionArgument.enum
+    //  - Enum arguments must be bound using FunctionArgument.enum
     //    followed by Enum.specified, with a string that case-insensitively
     //    matches one of the allowed options.
-    //  - Optional enum arguments must be bound using FunctionArgument.enum
-    //    followed by either Enum.specified or Enum.unspecified. If specified,
-    //    the string must case-insensitively match one of the allowed options.
     repeated FunctionArgument arguments = 4;
+
+    // Options to specify behavior for corner cases, or leave behavior
+    // unspecified if the consumer does not need specific behavior in these
+    // cases.
+    repeated FunctionOption options = 5;
 
     // Must be set to the return type of the function, exactly as derived
     // using the declaration in the extension.
@@ -677,13 +822,15 @@ message Expression {
     //    overload is defined for.
     //  - Type arguments must be bound using FunctionArgument.type, and a
     //    function overload must be defined for that type.
-    //  - Required enum arguments must be bound using FunctionArgument.enum
+    //  - Enum arguments must be bound using FunctionArgument.enum
     //    followed by Enum.specified, with a string that case-insensitively
     //    matches one of the allowed options.
-    //  - Optional enum arguments must be bound using FunctionArgument.enum
-    //    followed by either Enum.specified or Enum.unspecified. If specified,
-    //    the string must case-insensitively match one of the allowed options.
     repeated FunctionArgument arguments = 9;
+
+    // Options to specify behavior for corner cases, or leave behavior
+    // unspecified if the consumer does not need specific behavior in these
+    // cases.
+    repeated FunctionOption options = 11;
 
     // Must be set to the return type of the function, exactly as derived
     // using the declaration in the extension.
@@ -776,7 +923,9 @@ message Expression {
   }
 
   message IfThen {
+    // A list of one or more IfClauses
     repeated IfClause ifs = 1;
+    // The returned Expression if no IfClauses are satisified
     Expression else = 2;
 
     message IfClause {
@@ -888,7 +1037,7 @@ message Expression {
   // pipeline.
   //
   // Note that this does not fundamentally alter the structure of data beyond
-  // the elimination of unecessary elements.
+  // the elimination of unnecessary elements.
   message MaskExpression {
     StructSelect select = 1;
     bool maintain_singular_struct = 2;
@@ -1124,13 +1273,18 @@ message AggregateFunction {
   //    overload is defined for.
   //  - Type arguments must be bound using FunctionArgument.type, and a
   //    function overload must be defined for that type.
-  //  - Required enum arguments must be bound using FunctionArgument.enum
+  //  - Enum arguments must be bound using FunctionArgument.enum
   //    followed by Enum.specified, with a string that case-insensitively
   //    matches one of the allowed options.
   //  - Optional enum arguments must be bound using FunctionArgument.enum
   //    followed by either Enum.specified or Enum.unspecified. If specified,
   //    the string must case-insensitively match one of the allowed options.
   repeated FunctionArgument arguments = 7;
+
+  // Options to specify behavior for corner cases, or leave behavior
+  // unspecified if the consumer does not need specific behavior in these
+  // cases.
+  repeated FunctionOption options = 8;
 
   // Must be set to the return type of the function, exactly as derived
   // using the declaration in the extension.

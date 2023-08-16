@@ -1,6 +1,198 @@
 Release Notes
 ---
 
+## [0.31.0](https://github.com/substrait-io/substrait/compare/v0.30.0...v0.31.0) (2023-07-02)
+
+
+### Features
+
+* add a two-arg variant of substring ([#513](https://github.com/substrait-io/substrait/issues/513)) ([a6ead70](https://github.com/substrait-io/substrait/commit/a6ead70b1d62b79fad7ba2f9fdaf76c5b6d7696b))
+* add timestamp types to max/min function ([#511](https://github.com/substrait-io/substrait/issues/511)) ([6943400](https://github.com/substrait-io/substrait/commit/694340013433b1c0408c2a1cd77b22dfb9b22ad0))
+
+## [0.30.0](https://github.com/substrait-io/substrait/compare/v0.29.0...v0.30.0) (2023-05-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* This adds an option to control indexing of components
+
+### Features
+
+* control indexing in temporal extraction ([#479](https://github.com/substrait-io/substrait/issues/479)) ([aacd25c](https://github.com/substrait-io/substrait/commit/aacd25c8fa5eb680c3456d2e0298ca0807eb7b87)), closes [#477](https://github.com/substrait-io/substrait/issues/477)
+
+## [0.29.0](https://github.com/substrait-io/substrait/compare/v0.28.2...v0.29.0) (2023-04-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **text:** mark `name` and `structure` property of `type` extension item as required (#495)
+
+### Bug Fixes
+
+* referenced simple extension in tutorial (set instead of string) ([#494](https://github.com/substrait-io/substrait/issues/494)) ([b5d7ed2](https://github.com/substrait-io/substrait/commit/b5d7ed26a17c0a0bd6d0779d312942e5216ea9fa))
+* **text:** mark `name` and `structure` property of `type` extension item as required ([#495](https://github.com/substrait-io/substrait/issues/495)) ([7246102](https://github.com/substrait-io/substrait/commit/7246102f0e1f056a3b5a13eb96fec36ff28d27a5))
+
+## [0.28.2](https://github.com/substrait-io/substrait/compare/v0.28.1...v0.28.2) (2023-04-16)
+
+
+### Bug Fixes
+
+* separate strptime to fix spec violation ([#493](https://github.com/substrait-io/substrait/issues/493)) ([8c230af](https://github.com/substrait-io/substrait/commit/8c230af70bc98805d84d20c72f32d0ddb84f8644))
+
+## [0.28.1](https://github.com/substrait-io/substrait/compare/v0.28.0...v0.28.1) (2023-04-09)
+
+
+### Bug Fixes
+
+* typo in the comment/docstring ([#492](https://github.com/substrait-io/substrait/issues/492)) ([9046945](https://github.com/substrait-io/substrait/commit/90469453d111ba93983b00944dd79d0ddd8a3808))
+
+## [0.28.0](https://github.com/substrait-io/substrait/compare/v0.27.0...v0.28.0) (2023-04-02)
+
+
+### Features
+
+* adding BibTex entry to cite Substrait ([#481](https://github.com/substrait-io/substrait/issues/481)) ([425e7f8](https://github.com/substrait-io/substrait/commit/425e7f868e0f89115bc125e8dab2c04b8144ff82)), closes [#480](https://github.com/substrait-io/substrait/issues/480)
+* adding SUM0 definition for aggregate functions ([#465](https://github.com/substrait-io/substrait/issues/465)) ([73228b4](https://github.com/substrait-io/substrait/commit/73228b4112d79eb1011af0ebb41753ce23ca180c)), closes [#259](https://github.com/substrait-io/substrait/issues/259)
+
+## [0.27.0](https://github.com/substrait-io/substrait/compare/v0.26.0...v0.27.0) (2023-03-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* `group` argument added to `regexp_match_substring`
+function
+
+Add regexp_match_substring_all function
+
+Resolves https://github.com/substrait-io/substrait/issues/466
+
+### Features
+
+* add regexp_match_substring_all function to yaml ([#469](https://github.com/substrait-io/substrait/issues/469)) ([b4d81fb](https://github.com/substrait-io/substrait/commit/b4d81fba48990523012c7b2c6cc71d2c01650e59))
+
+
+### Bug Fixes
+
+* **ci:** fix link to conventional commits spec ([#482](https://github.com/substrait-io/substrait/issues/482)) ([45b4e48](https://github.com/substrait-io/substrait/commit/45b4e483ff1fca3c3e4d0f71e6e55436c6d7638a))
+* remove duplication in simple extensions schema ([#404](https://github.com/substrait-io/substrait/issues/404)) ([b7df38d](https://github.com/substrait-io/substrait/commit/b7df38d2099cd970d1ed1783d441d828ce84253d))
+
+## [0.26.0](https://github.com/substrait-io/substrait/compare/v0.25.0...v0.26.0) (2023-03-05)
+
+
+### Features
+
+* add script to re-namespace .proto files for internal use in public libraries ([#207](https://github.com/substrait-io/substrait/issues/207)) ([a6f24db](https://github.com/substrait-io/substrait/commit/a6f24dbdc592baf4d0d775ee2d3b296eb747e86a))
+* add temporal functions ([#272](https://github.com/substrait-io/substrait/issues/272)) ([beb104b](https://github.com/substrait-io/substrait/commit/beb104b31aebe584f859f6ce27e3e3a62bc70132)), closes [#222](https://github.com/substrait-io/substrait/issues/222)
+
+## [0.25.0](https://github.com/substrait-io/substrait/compare/v0.24.0...v0.25.0) (2023-02-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* (add/subtract)ing an interval to a timestamp_tz
+now requires a time zone and returns a timestamp_tz
+
+### Bug Fixes
+
+* correct return of temporal add and subtract and add timezone parameter ([#337](https://github.com/substrait-io/substrait/issues/337)) ([1b184cc](https://github.com/substrait-io/substrait/commit/1b184cc79197c20f510aa74e633658f5ce249e47))
+* **extension:** fix typo in scalar function argument type ([#445](https://github.com/substrait-io/substrait/issues/445)) ([7d7ddf1](https://github.com/substrait-io/substrait/commit/7d7ddf11f3ce0b5f69a9d32ef10a699888f18a61))
+
+## [0.24.0](https://github.com/substrait-io/substrait/compare/v0.23.0...v0.24.0) (2023-02-12)
+
+
+### Features
+
+* add round function ([#322](https://github.com/substrait-io/substrait/issues/322)) ([57121c8](https://github.com/substrait-io/substrait/commit/57121c8ca6f1fe815e98eda8962f8f84736c58e2))
+
+## [0.23.0](https://github.com/substrait-io/substrait/compare/v0.22.0...v0.23.0) (2023-01-22)
+
+
+### Features
+
+* add extended expression for expression only evaluation ([#405](https://github.com/substrait-io/substrait/issues/405)) ([d35f0ed](https://github.com/substrait-io/substrait/commit/d35f0ed98ccefe31a90d53ff887402636a74bbd1))
+* **spec:** add physical plans for hashJoin and mergeJoin ([#336](https://github.com/substrait-io/substrait/issues/336)) ([431651e](https://github.com/substrait-io/substrait/commit/431651efbd64958d2611b035ffdb25f589b28477))
+
+
+### Bug Fixes
+
+* update extension yaml files to match type-syntax spec ([#423](https://github.com/substrait-io/substrait/issues/423)) ([0608878](https://github.com/substrait-io/substrait/commit/0608878b25e7f9b4b3ffe33662eea9ef0f016548))
+
+## [0.22.0](https://github.com/substrait-io/substrait/compare/v0.21.1...v0.22.0) (2022-12-18)
+
+
+### Features
+
+* add bitwise NOT, AND, OR & XOR functions ([#370](https://github.com/substrait-io/substrait/issues/370)) ([81e34d4](https://github.com/substrait-io/substrait/commit/81e34d4054ff0dbde23ac749fbb8fcc232989c5d))
+
+## [0.21.1](https://github.com/substrait-io/substrait/compare/v0.21.0...v0.21.1) (2022-12-04)
+
+
+### Bug Fixes
+
+* rename regex_string_split to regexp_string_split ([#393](https://github.com/substrait-io/substrait/issues/393)) ([f9f4967](https://github.com/substrait-io/substrait/commit/f9f4967e6785b49eccb64a42497b5b4aaffa63ff))
+
+## [0.21.0](https://github.com/substrait-io/substrait/compare/v0.20.0...v0.21.0) (2022-11-27)
+
+
+### Features
+
+* add nested type constructor expressions ([#351](https://github.com/substrait-io/substrait/issues/351)) ([b64d30b](https://github.com/substrait-io/substrait/commit/b64d30b28077973dd94f1f49e5016662a35bcf56))
+* add title to simple extensions schema ([#387](https://github.com/substrait-io/substrait/issues/387)) ([2819ecc](https://github.com/substrait-io/substrait/commit/2819ecc69175b96eefb8a73fb4b533431890f3da))
+
+## [0.20.0](https://github.com/substrait-io/substrait/compare/v0.19.0...v0.20.0) (2022-11-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* optional arguments are no longer allowed to be specified
+as a part of FunctionArgument messages.  Instead they are now specified
+separately as part of the function invocation.
+* optional arguments are now specified separately from
+required arguments in the YAML specification.
+
+Co-authored-by: Benjamin Kietzman <bengilgit@gmail.com>
+
+Co-authored-by: Benjamin Kietzman <bengilgit@gmail.com>
+
+### Features
+
+* add best effort filter to read rel and clarify that the pre-masked schema should be used ([#271](https://github.com/substrait-io/substrait/issues/271)) ([4beff87](https://github.com/substrait-io/substrait/commit/4beff877550ac4ac10199748acbba391aca172f6))
+* optional args are now specified separately from required args ([#342](https://github.com/substrait-io/substrait/issues/342)) ([bd29ea3](https://github.com/substrait-io/substrait/commit/bd29ea3b06391ae9018de851055db11075fd0758))
+
+## [0.19.0](https://github.com/substrait-io/substrait/compare/v0.18.0...v0.19.0) (2022-11-06)
+
+
+### Features
+
+* add functions for splitting strings ([#346](https://github.com/substrait-io/substrait/issues/346)) ([20a2f14](https://github.com/substrait-io/substrait/commit/20a2f14ee0f2c3186318543d7ff264c91f714967))
+
+
+### Bug Fixes
+
+* rename version fields which conflict with sysmacros ([#362](https://github.com/substrait-io/substrait/issues/362)) ([4170bf1](https://github.com/substrait-io/substrait/commit/4170bf12c0f86032d8649a0880c684c37a5065f7))
+
+## [0.18.0](https://github.com/substrait-io/substrait/compare/v0.17.0...v0.18.0) (2022-10-09)
+
+
+### Features
+
+* attach Substrait version number to plans ([#347](https://github.com/substrait-io/substrait/issues/347)) ([2d1bb9d](https://github.com/substrait-io/substrait/commit/2d1bb9d9472409715f1667dfeae241677c6c5ec2))
+
+## [0.17.0](https://github.com/substrait-io/substrait/compare/v0.16.0...v0.17.0) (2022-10-02)
+
+
+### Features
+
+* support non-struct type class structure ([#328](https://github.com/substrait-io/substrait/issues/328)) ([dd7f9f0](https://github.com/substrait-io/substrait/commit/dd7f9f01bdf11f5ac9db7713c5ff3d2f82ff5a78))
+
+## [0.16.0](https://github.com/substrait-io/substrait/compare/v0.15.0...v0.16.0) (2022-09-25)
+
+
+### Features
+
+* add any_value aggregate function ([#321](https://github.com/substrait-io/substrait/issues/321)) ([6f603d3](https://github.com/substrait-io/substrait/commit/6f603d3b61ad26a2f7da1bc74e2a60dd246def16))
+* support constant function arguments ([#305](https://github.com/substrait-io/substrait/issues/305)) ([6021030](https://github.com/substrait-io/substrait/commit/6021030a599134f959ebc0f36621b27127316356))
+
 ## [0.15.0](https://github.com/substrait-io/substrait/compare/v0.14.0...v0.15.0) (2022-09-18)
 
 

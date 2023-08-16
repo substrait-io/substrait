@@ -16,11 +16,12 @@ scalar_functions:
         - Returns `NULL` (if `NAN_IS_NOT_NAN` is specified)
     impls:
       - args:
-          - options: [ NAN_IS_NAN, NAN_IS_NOT_NAN ]
-            required: false
           - name: x
             value: T
           - name: y
             value: List<T>
+        options:
+          nan_equality:
+            values: [ NAN_IS_NAN, NAN_IS_NOT_NAN ]
         nullability: DECLARED_OUTPUT
         return: int64?

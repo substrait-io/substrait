@@ -1,0 +1,105 @@
+<svg version="1.1" width="675" height="275" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+    refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" />
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" fill="white" />
+
+  <text id="heading" y="40" x="20">Relations as trees vs serialized layout</text>
+
+  <g transform="translate(20, 70)">
+    <text class="label" x="0" y="0">Relation Tree</text>
+    <text class="caption" x="0" y="25">Executed left to right</text>
+
+    <g transform="translate(0, 40)">
+      <rect width="67.5" height="30" x="0" y="0" class="node" fill="rebeccapurple" />
+      <text class="node light" x="33.75" y="20">Read</text>
+      <path d="M 67.5 15 L 100 15" class="edge" fill="transparent"/>
+    </g>
+
+    <g transform="translate(0, 120)">
+      <rect width="67.5" height="30" x="0" y="0" class="node" fill="rebeccapurple"/>
+      <text class="node light" x="33.75" y="20">Read</text>
+      <path d="M 67.5 15 C 120 15, 130 -25, 200 -25" class="edge" fill="transparent"/>
+    </g>
+
+    <g transform="translate(110, 40)">
+      <rect width="67.5" height="30" x="0" y="0" class="node" fill="steelblue"/>
+      <text class="node light" x="33.75" y="20">Filter</text>
+      <path d="M 67.5 15 C 90 15, 70 55, 90 55" class="edge" fill="transparent"/>
+    </g>
+
+    <g transform="translate(210, 80)">
+      <rect width="67.5" height="30" x="0" y="0" class="node" fill="forestgreen"/>
+      <text class="node light" x="33.75" y="20">Join</text>
+      <path d="M 67.5 15 L 90 15" class="edge" fill="transparent"/>
+    </g>
+
+    <g transform="translate(310, 80)">
+      <rect width="80" height="30" x="0" y="0" class="node" fill="darkgoldenrod"/>
+      <text class="node light" x="40" y="20">Aggregate</text>
+    </g>
+  </g>
+
+  <g transform="translate(460, 70)">
+    <text class="label" x="0" y="0">Relation layout</text>
+    <text class="caption" x="0" y="25">Executed inside to outside</text>
+    <text x="0" y="40" font-size="15" dy="0">
+        <tspan x="0" dy=".6em" fill="darkgoldenrod">Aggregate(</tspan>
+        <tspan x="20" dy="1.2em" fill="forestgreen">Join(</tspan>
+        <tspan x="40" dy="1.2em" fill="steelblue">Filter(</tspan>
+        <tspan x="60" dy="1.2em" fill="rebeccapurple">Read(...)</tspan>
+        <tspan x="40" dy="1.2em" fill="steelblue">),</tspan>
+        <tspan x="40" dy="1.2em" fill="rebeccapurple">Read(...)</tspan>
+        <tspan x="20" dy="1.2em" fill="forestgreen">)</tspan>
+        <tspan x="0" dy="1.2em" fill="darkgoldenrod">)</tspan>
+    </text>
+  </g>
+
+  <style>
+    text {
+      font-family: apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, Liberation Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    }
+
+    path.edge {
+      stroke: black;
+      marker-end: url(#arrowhead);
+    }
+    
+    rect {
+      rx: 5;
+    }
+
+    rect.node {
+      /* fill: #eee; */
+      stroke: #333;
+    }
+
+    text.node {
+      fill: #333;
+      text-anchor: middle;
+      font-size: 14px;
+    }
+    
+    .node.light {
+      fill: #eee;
+    }
+
+    .label {
+      font-size: 14px;
+      font-weight: bold;
+      fill: #111;
+    }
+
+    .light {
+      fill: #eee;
+    }
+
+    #heading {
+      font-size: 24px;
+    }
+  </style>
+</svg>

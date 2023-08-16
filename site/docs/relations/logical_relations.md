@@ -15,14 +15,30 @@ The read operator is an operator that produces one output. A simple example woul
 
 ### Read Properties
 
-| Property          | Description                                                  | Required                             |
-| ----------------- | ------------------------------------------------------------ | ------------------------------------ |
-| Definition        | The contents of the read property definition.                | Required                             |
-| Direct Schema     | Defines the schema of the output of the read (before any projection or emit remapping/hiding). | Required                             |
-| Filter            | A boolean Substrait expression that describes the filter of an iceberg dataset. TBD: define how field referencing works. | Optional, defaults to none.          |
-| Projection        | A masked complex expression describing the portions of the content that should be read | Optional, defaults to all of schema  |
-| Output properties | Declaration of orderedness and/or distribution properties this read produces. | Optional, defaults to no properties. |
-| Properties        | A list of name/value pairs associated with the read.         | Optional, defaults to empty          |
+| Property           | Description                                                  | Required                             |
+| ------------------ | ------------------------------------------------------------ | ------------------------------------ |
+| Definition         | The contents of the read property definition.                | Required                             |
+| Direct Schema      | Defines the schema of the output of the read (before any projection or emit remapping/hiding). | Required                             |
+| Filter             | A boolean Substrait expression that describes a filter that must be applied to the data. The filter should be interpreted against the direct schema. | Optional, defaults to none. |
+| Best Effort Filter | A boolean Substrait expression that describes a filter that may be applied to the data.  The filter should be interpreted against the direct schema. | Optional, defaults to none. |
+| Projection         | A masked complex expression describing the portions of the content that should be read | Optional, defaults to all of schema  |
+| Output Properties  | Declaration of orderedness and/or distribution properties this read produces. | Optional, defaults to no properties. |
+| Properties         | A list of name/value pairs associated with the read.         | Optional, defaults to empty          |
+
+### Read Filtering
+
+The read relation has two different filter properties.  A filter, which must be satisfied by the operator and a best effort
+filter, which does not have to be satisfied.  This reflects the way that consumers are often implemented.  A consumer is
+often only able to fully apply a limited set of operations in the scan.  There can then be an extended set of operations which
+a consumer can apply in a best effort fashion.  A producer, when setting these two fields, should take care to only use
+expressions that the consumer is capable of handling.
+
+As an example, a consumer may only be able to fully apply (in the read relation) <, =, and > on integral types.  The consumer
+may be able to apply <, =, and > in a best effort fashion on decimal and string types.  Consider the filter expression
+`my_int < 10 && my_string < "x" && upper(my_string) > "B"`.  In this case the `filter` should be set to
+`my_int < 10` and the `best_effort_filter` should be set to `my_string < "x"` and the remaining portion (`upper(my_string) > "B"`) should be put into a filter relation.
+
+A filter expression must be interpreted against the direct schema before the projection expression has been applied. As a result, fields may be referenced by the filter expression which are not included in the relation's output.
 
 ### Read Definition Types
 
@@ -206,7 +222,7 @@ The join operation will combine two separate inputs into a single output, based 
 | Inner | Return records from the left side only if they match the right side. Return records from the right side only when they match the left side. For each cross input match, return a record including the data from both sides. Non-matching records are ignored. |
 | Outer | Return all records from both the left and right inputs. For each cross input match, return a record including the data from both sides. For any remaining non-match records, return the record from the corresponding input along with nulls for the opposite input. |
 | Left  | Return all records from the left input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the left input, return the left record along with nulls for the right input. |
-| Right | Return all records from the right input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the right input, return the left record along with nulls for the right input. |
+| Right | Return all records from the right input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the right input, return the right record along with nulls for the left input. |
 | Semi | Returns records from the left input. These are returned only if the records have a join partner on the right side. |
 | Anti  | Return records from the left input. These are returned only if the records do not have a join partner on the right side. |
 | Single | Returns one join partner per entry on the left input. If more than one join partner exists, there are two valid semantics. 1) Only the first match is returned. 2) The system throws an error. If there is no match between the left and right inputs, NULL is returned. |
@@ -221,14 +237,14 @@ The join operation will combine two separate inputs into a single output, based 
 
 ## Set Operation
 
-The set operation encompasses several set-level operations that support combining datasets based, possibly excluding records based on various types of record level matching.
+The set operation encompasses several set-level operations that support combining datasets, possibly excluding records based on various types of record level matching.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
 | Inputs               | 2 or more                                                    |
 | Outputs              | 1                                                            |
 | Property Maintenance | Maintains distribution if all inputs have the same ordinal distribution. Orderedness is not maintained. |
-| Direct Output Order  | All inputs are ordinally matched and returned together. All inputs must have matching record types. |
+| Direct Output Order  | The field order of the inputs.  All inputs must have identical fields. |
 
 ### Set Properties
 
@@ -263,7 +279,7 @@ The fetch operation eliminates records outside a desired window. Typically corre
 
 | Signature            | Value                                   |
 | -------------------- | --------------------------------------- |
-| Inputs               | 2 or more                               |
+| Inputs               | 1                                       |
 | Outputs              | 1                                       |
 | Property Maintenance | Maintains distribution and orderedness. |
 | Direct Output Order  | Unchanged from input.                   |
@@ -323,12 +339,12 @@ If at least one grouping expression is present, the aggregation is allowed to no
 
 ## Reference Operator
 
-The reference operator is used to construct DAGs of operations. In a `Plan` we can have multiple Rel representing various 
+The reference operator is used to construct DAGs of operations. In a `Plan` we can have multiple Rel representing various
 computations with potentially multiple outputs. The `ReferenceRel` is used to express the fact that multiple `Rel` might be
 sharing subtrees of computation. This can be used to express arbitrary DAGs as well as represent multi-query optimizations.
 
 As a concrete example think about two queries `SELECT * FROM A JOIN B JOIN C` and `SELECT * FROM A JOIN B JOIN D`,
-We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the two queries, by creating a plan with 3 `Rel`. 
+We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the two queries, by creating a plan with 3 `Rel`.
 One expressing `A JOIN B` (in position 0 in the plan), one using reference as follows: `ReferenceRel(0) JOIN C` and a third one
 doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B`.
 
@@ -354,7 +370,7 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 
 ## Write Operator
 
-The write operator is an operator that consumes one output and writes it to storage. This can range from writing to a Parquet file, to INSERT/DELETE/UPDATE in a database. 
+The write operator is an operator that consumes one output and writes it to storage. This can range from writing to a Parquet file, to INSERT/DELETE/UPDATE in a database.
 
 | Signature            | Value                                                   |
 | -------------------- |---------------------------------------------------------|

@@ -114,7 +114,7 @@ scalar_functions:
         return: boolean?
 
 aggregate_functions:
-  - 
+  -
     name: "bool_and"
     description: >
       If any value in the input is false, false is returned. If the input is
@@ -126,7 +126,7 @@ aggregate_functions:
             name: a
         nullability: DECLARED_OUTPUT
         return: boolean?
-  - 
+  -
     name: "bool_or"
     description: >
       If any value in the input is true, true is returned. If the input is

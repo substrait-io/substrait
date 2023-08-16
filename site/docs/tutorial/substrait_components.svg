@@ -1,0 +1,133 @@
+<svg version="1.1" width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+
+  <rect width="100%" height="100%" fill="white" />
+
+  <text id="heading" y="40" x="20">Substrait Primitives</text>
+
+  <g transform="translate(20, 60)">
+    <rect width="360" height="310" x="0" y="0" fill="#ddd" />
+    <text class="label" x="10" y="20">Plan</text>
+  
+    <!-- types -->
+    <g transform="translate(10, 40)">
+      <rect width="165" height="120" x="0" y="0" fill="darkgoldenrod" />
+      <text class="label light" x="10" y="20">Types</text>
+      <g transform="translate(10, 40)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">i8</text>
+      </g>
+      <g transform="translate(87.5, 40)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">i32</text>
+      </g>
+      <g transform="translate(10, 80)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">fp32</text>
+      </g>
+      <g transform="translate(87.5, 80)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">struct</text>
+      </g>
+    </g>
+
+    <!-- expressions -->
+    <g transform="translate(185, 40)">
+      <rect width="165" height="120" x="0" y="0" fill="rebeccapurple" />
+      <text class="label light" x="10" y="20">Expressions</text>
+      <g transform="translate(10, 40)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">case</text>
+      </g>
+      <g transform="translate(87.5, 40)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">field</text>
+      </g>
+      <g transform="translate(10, 80)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">literal</text>
+      </g>
+      <g transform="translate(87.5, 80)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">orlist</text>
+      </g>
+    </g>
+
+    <!-- Relations -->
+    <g transform="translate(10, 170)">
+      <rect width="165" height="120" x="0" y="0" fill="forestgreen" />
+      <text class="label light" x="10" y="20">Relations</text>
+      <g transform="translate(10, 40)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">join</text>
+      </g>
+      <g transform="translate(87.5, 40)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">agg</text>
+      </g>
+      <g transform="translate(10, 80)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">filter</text>
+      </g>
+      <g transform="translate(87.5, 80)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">read</text>
+      </g>
+    </g>
+
+    <!-- Functions -->
+    <g transform="translate(185, 170)">
+      <rect width="165" height="120" x="0" y="0" fill="steelblue" />
+      <text class="label light" x="10" y="20">Functions</text>
+      <g transform="translate(10, 40)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">add</text>
+      </g>
+      <g transform="translate(87.5, 40)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">avg</text>
+      </g>
+      <g transform="translate(10, 80)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">rank</text>
+      </g>
+      <g transform="translate(87.5, 80)">
+        <rect width="67.5" height="30" x="0" y="0" class="example" />
+        <text class="example" x="33.75" y="20">sum</text>
+      </g>
+    </g>
+  </g>
+  <style>
+    text {
+      font-family: apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, Liberation Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+    }
+    
+    rect {
+      rx: 5;
+    }
+
+    rect.example {
+      fill: #eee;
+      stroke: #333;
+    }
+
+    text.example {
+      fill: #333;
+      text-anchor: middle;
+      font-size: 14px;
+    }
+
+    .label {
+      font-size: 14px;
+      font-weight: bold;
+      fill: #111;
+    }
+
+    .light {
+      fill: #eee;
+    }
+
+    #heading {
+      font-size: 24px;
+    }
+  </style>
+</svg>

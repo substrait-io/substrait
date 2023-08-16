@@ -44,18 +44,42 @@ Compound type classes are type classes that need to be configured by means of a 
 
 ## User-Defined Types
 
-User-defined type classes can be created using a combination of pre-defined types. User-defined types are defined as part of [simple extensions](../extensions/index.md#simple-extensions). An extension can declare an arbitrary number of user defined extension types.
+User-defined type classes can be created using a combination of pre-defined types. User-defined types are defined as part of [simple extensions](../extensions/index.md#simple-extensions). An extension can declare an arbitrary number of user defined extension types. Once a type has been declared, it can be used in function declarations.
 
 A YAML example of an extension type is below:
 
 ```yaml
-  name: point
-  structure:
-    longitude: i32
-    latitude: i32
+name: point
+structure:
+  longitude: i32
+  latitude: i32
 ```
 
-This declares a new type (namespaced to the associated YAML file) called "point". This type is composed of two `i32` values named longitude and latitude. Once a type has been declared, it can be used in function declarations.  [TBD: should field references be allowed to dereference the components of a user defined type?]
+This declares a new type (namespaced to the associated YAML file) called "point". This type is composed of two `i32` values named longitude and latitude.
+
+### Structure and opaque types
+
+The name-type object notation used above is syntactic sugar for `NSTRUCT<longitude: i32, latitude: i32>`. The following means the same thing:
+
+```yaml
+name: point
+structure: "NSTRUCT<longitude: i32, latitude: i32>"
+```
+
+The structure field of a type is only intended to inform systems that don't have built-in support for the type how they can transfer the data type from one point to another without unnecessary serialization/deserialization *and* without loss of type safety. Note that it is currently not possible to "unpack" a user-defined type class into its structure type or components thereof using `FieldReference`s or any other specialized record expression; if support for this is desired for a particular type, this can be accomplished with an extension function.
+
+The structure field is optional. If not specified, the type class is considered to be fully opaque. This implies that a systems without built-in support for the type cannot manipulate values in any way, including moving and cloning. This may be useful for exotic, context-sensitive types, such as raw pointers or identifiers that cannot be cloned.
+
+Note however that the vast majority of types can be trivially moved and copied, even if they cannot be precisely represented using Substrait's built-in types. In this case, it is recommended to use `binary` or `FIXEDBINARY<n>` (where n is the size of the type) as the structure type. For example, an unsigned 32-bit integer type could be defined as follows:
+
+```yaml
+name: u32
+structure: "FIXEDBINARY<4>"
+```
+
+In this case, `i32` might also be used.
+
+### Literals
 
 Literals for user-defined types are represented using protobuf [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) messages.
 

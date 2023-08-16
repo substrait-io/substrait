@@ -6,4 +6,5 @@ arrange:
   - relations
   - serialization
   - extensions
-  - community.md
+  - community
+  - governance.md
