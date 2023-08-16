@@ -7,7 +7,7 @@ title: Home
 
 ## What is Substrait?
 
-Substrait enables interoperability between different implementations of the data compute ecosystem.  This allows one to make the best solution for any problem by choosing the best components.  It doesn't matter if they use different languages or run on different operating systems -- they just work together.
+Substrait is a format for describing compute operations on structured data. It is designed for interoperability across different languages and systems.
 
 
 
