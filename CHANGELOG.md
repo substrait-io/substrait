@@ -1,6 +1,81 @@
 Release Notes
 ---
 
+## [0.31.0](https://github.com/substrait-io/substrait/compare/v0.30.0...v0.31.0) (2023-07-02)
+
+
+### Features
+
+* add a two-arg variant of substring ([#513](https://github.com/substrait-io/substrait/issues/513)) ([a6ead70](https://github.com/substrait-io/substrait/commit/a6ead70b1d62b79fad7ba2f9fdaf76c5b6d7696b))
+* add timestamp types to max/min function ([#511](https://github.com/substrait-io/substrait/issues/511)) ([6943400](https://github.com/substrait-io/substrait/commit/694340013433b1c0408c2a1cd77b22dfb9b22ad0))
+
+## [0.30.0](https://github.com/substrait-io/substrait/compare/v0.29.0...v0.30.0) (2023-05-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* This adds an option to control indexing of components
+
+### Features
+
+* control indexing in temporal extraction ([#479](https://github.com/substrait-io/substrait/issues/479)) ([aacd25c](https://github.com/substrait-io/substrait/commit/aacd25c8fa5eb680c3456d2e0298ca0807eb7b87)), closes [#477](https://github.com/substrait-io/substrait/issues/477)
+
+## [0.29.0](https://github.com/substrait-io/substrait/compare/v0.28.2...v0.29.0) (2023-04-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **text:** mark `name` and `structure` property of `type` extension item as required (#495)
+
+### Bug Fixes
+
+* referenced simple extension in tutorial (set instead of string) ([#494](https://github.com/substrait-io/substrait/issues/494)) ([b5d7ed2](https://github.com/substrait-io/substrait/commit/b5d7ed26a17c0a0bd6d0779d312942e5216ea9fa))
+* **text:** mark `name` and `structure` property of `type` extension item as required ([#495](https://github.com/substrait-io/substrait/issues/495)) ([7246102](https://github.com/substrait-io/substrait/commit/7246102f0e1f056a3b5a13eb96fec36ff28d27a5))
+
+## [0.28.2](https://github.com/substrait-io/substrait/compare/v0.28.1...v0.28.2) (2023-04-16)
+
+
+### Bug Fixes
+
+* separate strptime to fix spec violation ([#493](https://github.com/substrait-io/substrait/issues/493)) ([8c230af](https://github.com/substrait-io/substrait/commit/8c230af70bc98805d84d20c72f32d0ddb84f8644))
+
+## [0.28.1](https://github.com/substrait-io/substrait/compare/v0.28.0...v0.28.1) (2023-04-09)
+
+
+### Bug Fixes
+
+* typo in the comment/docstring ([#492](https://github.com/substrait-io/substrait/issues/492)) ([9046945](https://github.com/substrait-io/substrait/commit/90469453d111ba93983b00944dd79d0ddd8a3808))
+
+## [0.28.0](https://github.com/substrait-io/substrait/compare/v0.27.0...v0.28.0) (2023-04-02)
+
+
+### Features
+
+* adding BibTex entry to cite Substrait ([#481](https://github.com/substrait-io/substrait/issues/481)) ([425e7f8](https://github.com/substrait-io/substrait/commit/425e7f868e0f89115bc125e8dab2c04b8144ff82)), closes [#480](https://github.com/substrait-io/substrait/issues/480)
+* adding SUM0 definition for aggregate functions ([#465](https://github.com/substrait-io/substrait/issues/465)) ([73228b4](https://github.com/substrait-io/substrait/commit/73228b4112d79eb1011af0ebb41753ce23ca180c)), closes [#259](https://github.com/substrait-io/substrait/issues/259)
+
+## [0.27.0](https://github.com/substrait-io/substrait/compare/v0.26.0...v0.27.0) (2023-03-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* `group` argument added to `regexp_match_substring`
+function
+
+Add regexp_match_substring_all function
+
+Resolves https://github.com/substrait-io/substrait/issues/466
+
+### Features
+
+* add regexp_match_substring_all function to yaml ([#469](https://github.com/substrait-io/substrait/issues/469)) ([b4d81fb](https://github.com/substrait-io/substrait/commit/b4d81fba48990523012c7b2c6cc71d2c01650e59))
+
+
+### Bug Fixes
+
+* **ci:** fix link to conventional commits spec ([#482](https://github.com/substrait-io/substrait/issues/482)) ([45b4e48](https://github.com/substrait-io/substrait/commit/45b4e483ff1fca3c3e4d0f71e6e55436c6d7638a))
+* remove duplication in simple extensions schema ([#404](https://github.com/substrait-io/substrait/issues/404)) ([b7df38d](https://github.com/substrait-io/substrait/commit/b7df38d2099cd970d1ed1783d441d828ce84253d))
+
 ## [0.26.0](https://github.com/substrait-io/substrait/compare/v0.25.0...v0.26.0) (2023-03-05)
 
 

@@ -22,7 +22,7 @@ There are three main types of arguments: value arguments, type arguments, and en
 
 * Value arguments: arguments that refer to a data value. These could be constants (literal expressions defined in the plan) or variables (a reference expression that references data being processed by the plan). This is the most common type of argument. The value of a value argument is not available in output derivation, but its type is. Value arguments can be declared in one of two ways: concrete or parameterized. Concrete types are either simple types or compound types with all parameters fully defined (without referencing any type arguments). Examples include `i32`, `fp32`, `VARCHAR<20>`, `List<fp32>`, etc. Parameterized types are discussed further below.
 * Type arguments: arguments that are used only to inform the evaluation and/or type derivation of the function. For example, you might have a function which is `truncate(<type> DECIMAL<P0,S0>, <value> DECIMAL<P1, S1>, <value> i32)`. This function declares two value arguments and a type argument. The difference between them is that the type argument has no value at runtime, while the value arguments do.
-* Enumeration: arguments that support a fixed set of declared values as constant arguments. These arguments must be specified as part of an expression. While these could also have been implemented as constant string value arguments, they are formally included to improve validation/contextual help/etc. for frontend processors and IDEs. An example might use might be `extract([DAY|YEAR|MONTH], <date value>)`. In this example, a producer must specify a type of date part to extract. Note, the value of a required enumeration cannot be used in type derivation.
+* Enumeration: arguments that support a fixed set of declared values as constant arguments. These arguments must be specified as part of an expression. While these could also have been implemented as constant string value arguments, they are formally included to improve validation/contextual help/etc. for frontend processors and IDEs. An example might be `extract([DAY|YEAR|MONTH], <date value>)`. In this example, a producer must specify a type of date part to extract. Note, the value of a required enumeration cannot be used in type derivation.
 
 #### Value Argument Properties
 
@@ -52,7 +52,7 @@ In addition to arguments each call may specify zero or more options.  These are 
 
 ### Option Preference
 
-A producer may specify multiple vlaues for an option.  If the producer does so then the consumer must deliver the first behavior in the list of values that the consumer is capable of delivering.  For example, considering overflow as defined above, if a producer specified `[ERROR, SATURATE]` then the consumer must deliver `ERROR` if it is capable of doing so.  If it is not then it may deliver `SATURATE`.  If the consumer cannot deliver either behavior then it is an error and the consumer must reject the plan.
+A producer may specify multiple values for an option.  If the producer does so then the consumer must deliver the first behavior in the list of values that the consumer is capable of delivering.  For example, considering overflow as defined above, if a producer specified `[ERROR, SATURATE]` then the consumer must deliver `ERROR` if it is capable of doing so.  If it is not then it may deliver `SATURATE`.  If the consumer cannot deliver either behavior then it is an error and the consumer must reject the plan.
 
 #### Optional Properties
 
@@ -89,7 +89,7 @@ When the last argument of a function is variadic and declares a type parameter e
 
 ### Concrete Return Types
 
-A concrete return type is one that is fully known at function definition time. Example simple concrete return types would be things such as `i32`, `fp32`. For compound types, a concrete return type must be fully declared. Example of fully defined compound types: `VARCHAR<20>`, `DECIMAL<25,5>`
+A concrete return type is one that is fully known at function definition time. Examples of simple concrete return types would be things such as `i32`, `fp32`. For compound types, a concrete return type must be fully declared. Example of fully defined compound types: `VARCHAR<20>`, `DECIMAL<25,5>`
 
 ### Return Type Expressions
 
@@ -134,7 +134,7 @@ For reference, here are are some common output type derivations and how they can
 
 | Operation                                                    | Definition                                                   |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Add item to list                                             | `add(<List<T>, T>) => List<T>`                               |
+| Add item to list                                             | `add(List<T>, T) => List<T>`                               |
 | Decimal Division                                             | `divide(Decimal<P1,S1>, Decimal<P2,S2>) => Decimal<P1 -S1 + S2 + MAX(6, S1 + P2 + 1), MAX(6, S1 + P2 + 1)>` |
 | Select a subset of map keys based on a regular expression (requires stringlike keys) | `extract_values(regex:string, map:Map<K,V>) => List<V> WHERE K IN [STRING, VARCHAR<N>, FIXEDCHAR<N>]` |
 | Concatenate two fixed sized character strings                | `concat(FIXEDCHAR<A>, FIXEDCHAR<B>) => FIXEDCHAR<A+B>`       |
