@@ -933,6 +933,7 @@ message Expression {
     // the same partition as the current record are aggregated.
     repeated Expression partitions = 2;
 
+    // Defines the bounds type: ROWS, RANGE
     BoundsType bounds_type = 12;
 
     // Defines the record relative to the current record from which the window
