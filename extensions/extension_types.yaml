@@ -8,3 +8,35 @@ types:
     structure:
       start: point
       end: point
+  - name: coordinate
+    structure:
+      x: fp64
+      y: fp64
+  - name: crs_point
+    structure:
+      x: fp64
+      y: fp64
+      crs: string
+  - name: linestring
+    structure:
+      T: List<coordinate>
+  - name: polygon
+    structure:
+      T: List<List<coordinate>>
+  - name: multipoint
+    structure:
+      T: List<coordinate>
+  - name: multilinestring
+    structure:
+      T: List<linestring>
+  - name: multipolygon
+    structure:
+      T: List<polygon>
+  - name: any_simple_geometry
+    parameters:
+      - name: T
+        type: union<crs_point, linestring, polygon, multipoint, multilinestring, multipolygon>
+  - name: geometry
+    parameters:
+      - name: T
+        type: List<any_simple_geometry>

@@ -1,0 +1,29 @@
+%YAML 1.2
+---
+scalar_functions:
+  -
+    name: "point"
+    description: >
+      Return a 2D point with the given `x` and `y` coordinate values.
+    impls:
+      - args:
+          - name: x
+            value: fp64
+          - name: y
+            value: fp64
+        return: geometry
+  -
+    name: "makeline"
+    description: >
+      Return a linestring containing the points of the two input geometries.
+      Repeated points at the beginning of input geometries are collapsed to a single point.
+
+      A linestring can be closed or simple.  A closed linestring starts and ends on the same
+      point. A simple linestring does not cross or touch itself.
+    impls:
+      - args:
+          - name: x
+            value: geometry
+          - name: y
+            value: geometry
+        return: geometry
