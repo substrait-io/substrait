@@ -104,7 +104,6 @@ def group_tokens(tokens):
     token_it = iter(tokens)
     group = Group()
     for cls, match in token_it:
-
         # Look for the first identifier.
         if cls != "ident":
             group.append(cls, match, False)
@@ -232,7 +231,6 @@ def make_group_converter(prefix_from, prefix_to, **options):
         inner_namespace = []
         seen_options = False
         for group in groups:
-
             # Update package statement.
             if group[0] == "package":
                 assert len(group) == 3
