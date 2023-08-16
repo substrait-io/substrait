@@ -206,6 +206,31 @@ The streaming aggregate operation leverages data ordered by the grouping express
 | Measures         | A list of one or more aggregate expressions. Aggregate expressions ordering requirements must be compatible with expected ordering. | Optional, required if no grouping sets. |
 
 
+## Expand Operation
+
+The expand operation creates duplicates of input records based on the Expand Fields. Each Expand Field can be a Switching Field or an expression. Switching Fields are described below.  If an Expand Field is an expression then its value is consistent across all duplicate rows.
+
+| Signature            | Value                                                                                                                                                                          |
+| -------------------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Inputs               | 1                                                                                                                                                                              |
+| Outputs              | 1                                                                                                                                                                              |
+| Property Maintenance | Distribution is maintained if all the distribution fields are consistent fields with direct references. Ordering can only be maintained down to the level of consistent fields that are kept.|
+| Direct Output Order  | The expand fields followed by an i32 column describing the index of the duplicate that the row is derived from.                                                                                                                                           |
+
+### Expand Properties
+
+| Property  | Description                          | Required |
+| --------- |--------------------------------------| -------- |
+| Input     | The relational input.                | Required |
+| Direct Fields | Expressions describing the output fields.  These refer to the schema of the input.  Each Direct Field must be an expression or a Switching Field  | Required |
+
+### Switching Field Properties
+
+A switching field is a field whose value is different in each duplicated row.  All switching fields in an Expand Operation must have the same number of duplicates.
+
+| Property  | Description                          | Required |
+| --------- |--------------------------------------| -------- |
+| Duplicates | List of one or more expressions.  The output will contain a row for each expression. | Required |
 
 ## Hashing Window Operation
 
