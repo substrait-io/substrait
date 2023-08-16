@@ -13,7 +13,7 @@ Substrait is a format for describing compute operations on structured data. It i
 
 ## How does it work?
 
-Substrait provides a well-defined, cross-language [specification](spec/specification) for data compute operations.  This includes a consistent declaration of common operations, custom operations and one or more serialized representations of this specification.  The spec focuses on the semantics of each operation.
+Substrait provides a well-defined, cross-language [specification](spec/specification) for data compute operations.  This includes a consistent declaration of common operations, custom operations and one or more serialized representations of this specification.  The spec focuses on the semantics of each operation.  In addition to the format and specification, the Substrait community also includes a number of libraries and other [useful tools to get started](/tools/producer_tools/).
 
 We highly recommend the [tutorial](/tutorial/sql_to_substrait/) to learn how a Substrait plan is constructed.
 
