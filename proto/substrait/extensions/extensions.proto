@@ -62,9 +62,7 @@ message SimpleExtensionDeclaration {
     // specific function
     uint32 function_anchor = 2;
 
-    // A simple name if there is only one impl for the function within the YAML.
-    // A compound name, referencing that includes type short names if there is
-    // more than one impl per name in the YAML.
+    // A function signature compound name
     string name = 3;
   }
 }
