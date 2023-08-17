@@ -644,6 +644,34 @@ scalar_functions:
             values: [ NAN, ERROR ]
         return: fp64
   -
+    name: "radians"
+    description: >
+      Converts angle `x` in degrees to radians.
+
+    impls:
+      - args:
+          - name: x
+            value: fp32
+        return: fp64
+      - args:
+          - name: x
+            value: fp64
+        return: fp64
+  -
+    name: "degrees"
+    description: >
+      Converts angle `x` in radians to degrees.
+
+    impls:
+      - args:
+          - name: x
+            value: fp32
+        return: fp64
+      - args:
+          - name: x
+            value: fp64
+        return: fp64
+  -
     name: "abs"
     description: >
       Calculate the absolute value of the argument.
