@@ -248,18 +248,6 @@ message ConsistentPartitionWindowRel {
   message WindowRelFunction {
     uint32 function_reference = 1;
 
-    // The arguments to be bound to the function. This must have exactly the
-    // number of arguments specified in the function definition, and the
-    // argument types must also match exactly:
-    //
-    //  - Value arguments must be bound using FunctionArgument.value, and
-    //    the expression in that must yield a value of a type that a function
-    //    overload is defined for.
-    //  - Type arguments must be bound using FunctionArgument.type, and a
-    //    function overload must be defined for that type.
-    //  - Enum arguments must be bound using FunctionArgument.enum
-    //    followed by Enum.specified, with a string that case-insensitively
-    //    matches one of the allowed options.
     repeated FunctionArgument arguments = 9;
 
     // Options to specify behavior for corner cases, or leave behavior
