@@ -242,9 +242,9 @@ message ConsistentPartitionWindowRel {
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-  // A WindowFunction can define itself WindowSpec(sorts columns and partitions keys)
-  // But WindowRelFunction remove the WindowSpec property, because all the WindowRelFunctions
-  // share the same WindowSpec() in WindowRel.
+  // This message mirrors the `WindowFunction` message but removes the fields defining the partition,
+  // sorts, and bounds, since those must be consistent across the various functions in this rel.  Refer
+  // to the `WindowFunction` message for a description of these fields.
   message WindowRelFunction {
     // Points to a function_anchor defined in this plan, which must refer
     // to a window function in the associated YAML file. Required; 0 is
