@@ -254,9 +254,6 @@ message ConsistentPartitionWindowRel {
 
     Type output_type = 7;
 
-    // Describes which part of the window function to perform within the
-    // context of distributed algorithms. Required. Must be set to
-    // INITIAL_TO_RESULT for window functions that are not decomposable.
     AggregationPhase phase = 6;
 
     // Specifies whether equivalent records are merged before being aggregated.
