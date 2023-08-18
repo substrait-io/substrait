@@ -262,7 +262,6 @@ message ConsistentPartitionWindowRel {
 
     Expression.WindowFunction.Bound upper_bound = 4;
 
-    // Defines the bounds type: ROWS, RANGE
     Expression.WindowFunction.BoundsType bounds_type = 12;
   }
 }
