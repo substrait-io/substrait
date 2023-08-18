@@ -252,8 +252,6 @@ message ConsistentPartitionWindowRel {
 
     repeated FunctionOption options = 11;
 
-    // Must be set to the return type of the function, exactly as derived
-    // using the declaration in the extension.
     Type output_type = 7;
 
     // Describes which part of the window function to perform within the
