@@ -256,8 +256,6 @@ message ConsistentPartitionWindowRel {
 
     AggregationPhase phase = 6;
 
-    // Specifies whether equivalent records are merged before being aggregated.
-    // Optional, defaults to AGGREGATION_INVOCATION_ALL.
     AggregateFunction.AggregationInvocation invocation = 10;
 
     // Defines the record relative to the current record from which the window
