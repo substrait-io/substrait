@@ -250,9 +250,6 @@ message ConsistentPartitionWindowRel {
 
     repeated FunctionArgument arguments = 9;
 
-    // Options to specify behavior for corner cases, or leave behavior
-    // unspecified if the consumer does not need specific behavior in these
-    // cases.
     repeated FunctionOption options = 11;
 
     // Must be set to the return type of the function, exactly as derived
