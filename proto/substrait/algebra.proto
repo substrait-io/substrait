@@ -246,9 +246,6 @@ message ConsistentPartitionWindowRel {
   // sorts, and bounds, since those must be consistent across the various functions in this rel.  Refer
   // to the `WindowFunction` message for a description of these fields.
   message WindowRelFunction {
-    // Points to a function_anchor defined in this plan, which must refer
-    // to a window function in the associated YAML file. Required; 0 is
-    // considered to be a valid anchor/reference.
     uint32 function_reference = 1;
 
     // The arguments to be bound to the function. This must have exactly the
