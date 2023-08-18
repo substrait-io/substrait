@@ -258,11 +258,6 @@ message ConsistentPartitionWindowRel {
 
     AggregateFunction.AggregationInvocation invocation = 10;
 
-    // Defines the record relative to the current record from which the window
-    // extends. The bound is inclusive. If the lower bound indexes a record
-    // greater than the upper bound, TODO (null range/no records passed?
-    // wrapping around as if lower/upper were swapped? error? null?).
-    // Optional; defaults to the start of the partition.
     Expression.WindowFunction.Bound lower_bound = 5;
 
     // Defines the record relative to the current record up to which the window
