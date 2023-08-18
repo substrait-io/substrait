@@ -260,11 +260,6 @@ message ConsistentPartitionWindowRel {
 
     Expression.WindowFunction.Bound lower_bound = 5;
 
-    // Defines the record relative to the current record up to which the window
-    // extends. The bound is inclusive. If the upper bound indexes a record
-    // less than the lower bound, TODO (null range/no records passed?
-    // wrapping around as if lower/upper were swapped? error? null?).
-    // Optional; defaults to the end of the partition.
     Expression.WindowFunction.Bound upper_bound = 4;
 
     // Defines the bounds type: ROWS, RANGE
