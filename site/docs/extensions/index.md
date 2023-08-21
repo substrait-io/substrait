@@ -48,6 +48,7 @@ Every compound function signature must be unique.  If two function implementatio
 | fp64                       | fp64           |
 | string                     | str            |
 | binary                     | vbin           |
+| boolean                    | bool           |
 | timestamp                  | ts             |
 | timestamp_tz               | tstz           |
 | date                       | date           |
