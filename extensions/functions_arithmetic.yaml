@@ -652,10 +652,16 @@ scalar_functions:
       - args:
           - name: x
             value: fp32
-        return: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+        return: fp32
       - args:
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "degrees"
@@ -666,10 +672,16 @@ scalar_functions:
       - args:
           - name: x
             value: fp32
-        return: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+        return: fp32
       - args:
           - name: x
             value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         return: fp64
   -
     name: "abs"
