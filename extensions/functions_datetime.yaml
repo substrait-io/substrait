@@ -694,7 +694,7 @@ scalar_functions:
       Return the current date in the local time zone.
 
       The `mode` option determines how often the date is evaluated. STREAMING mode
-      evaluates the current date for each row and BATCH mode evaluates the current date
+      evaluates the current date for each row. BATCH mode evaluates the current date
       once when the query starts and uses the same result for every row.
     impls:
       - args:
@@ -707,7 +707,7 @@ scalar_functions:
       Return the current timestamp in the local time zone.
 
       The `mode` option determines how often the timestamp is evaluated. STREAMING mode
-      evaluates the current timestamp for each row and BATCH mode evaluates the current
+      evaluates the current timestamp for each row. BATCH mode evaluates the current
       timestamp once when the query starts and uses the same result for every row.
     impls:
       - args:
