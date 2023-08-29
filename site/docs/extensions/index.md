@@ -33,9 +33,9 @@ A YAML file may contain one or more functions by the same name. The key used in 
 
 Rather than using a full data type representation, the input argument types (`short_arg_type`) are mapped to single-level short name. The mappings are listed in the table below.
 
-!!! note
+!!! note 
 
-Every compound function signature must be unique.  If two function implementations in a YAML file would generate the same compound function signature, then the YAML file is invalid and behavior is undefined.
+    Every compound function signature must be unique.  If two function implementations in a YAML file would generate the same compound function signature, then the YAML file is invalid and behavior is undefined.
 
 | Argument Type              | Signature Name |
 | -------------------------- | -------------- |
@@ -48,6 +48,7 @@ Every compound function signature must be unique.  If two function implementatio
 | fp64                       | fp64           |
 | string                     | str            |
 | binary                     | vbin           |
+| boolean                    | bool           |
 | timestamp                  | ts             |
 | timestamp_tz               | tstz           |
 | date                       | date           |
