@@ -7,7 +7,7 @@
 The specification has passed the initial design phase and is now in the final stages of being fleshed out.  The community is encouraged to identify (and address) any perceived gaps in functionality using GitHub issues and PRs.
 
 
-## Components
+## Components (Complete)
 
 | Section                                                      | Description                                                  |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -26,9 +26,14 @@ The specification has passed the initial design phase and is now in the final st
 | [Embedded Functions](/expressions/embedded_functions)        | Functions implementations embedded directly within the plan. Frequently used in data science workflows where business logic is interspersed with standard operations. |
 | [Relation Basics](/relations/basics)                         | Basic concepts around relational algebra, record emit and properties. |
 | [Logical Relations](/relations/logical_relations)            | Common relational operations used in compute plans including project, join, aggregation, etc. |
-| [Physical Relations](/relations/physical_relations)          | Specific execution sub-variations of common relational operations that describe have multiple unique physical variants associated with a single logical operation. Examples include hash join, merge join, nested loop join, etc. |
-| [User Defined Relations](/relations/user_defined_relations)  | Installed and reusable relational operations customized to a particular platform. |
-| [Embedded Relations](/relations/embedded_relations)          | Relational operations where plans contain the "machine code" to directly execute the necessary operations. |
 | [Text Serialization](/serialization/text_serialization)      | A human producible & consumable representation of the plan specification. |
 | [Binary Serialization](/serialization/binary_serialization)  | A high performance & compact binary representation of the plan specification. |
 
+
+## Components (Designed but not Implemented)
+
+| Section                                                      | Description                                                  |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [User Defined Relations](/relations/user_defined_relations)  | Installed and reusable relational operations customized to a particular platform. |
+| [Embedded Relations](/relations/embedded_relations)          | Relational operations where plans contain the "machine code" to directly execute the necessary operations. |
+| [Physical Relations](/relations/physical_relations)          | Specific execution sub-variations of common relational operations that describe have multiple unique physical variants associated with a single logical operation. Examples include hash join, merge join, nested loop join, etc. |
