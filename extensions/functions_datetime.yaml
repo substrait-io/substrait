@@ -691,7 +691,7 @@ scalar_functions:
   -
     name: "current_date"
     description: >-
-      Return the current date in the local time zone.
+      Return the current date.
 
       The `mode` option determines how often the date is evaluated. STREAMING mode
       evaluates the current date for each row. BATCH mode evaluates the current date
@@ -704,7 +704,7 @@ scalar_functions:
   -
     name: "current_timestamp"
     description: >-
-      Return the current timestamp in the local time zone.
+      Return the current timestamp.
 
       The `mode` option determines how often the timestamp is evaluated. STREAMING mode
       evaluates the current timestamp for each row. BATCH mode evaluates the current
