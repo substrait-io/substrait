@@ -695,7 +695,7 @@ scalar_functions:
 
       The `mode` option determines how often the date is evaluated. STREAMING mode
       evaluates the current date for each row. BATCH mode evaluates the current date
-      once when the query starts and uses the same result for every row.
+      once and uses the same result for every call to this function in the query.
     impls:
       - args:
           - name: mode
@@ -708,7 +708,7 @@ scalar_functions:
 
       The `mode` option determines how often the timestamp is evaluated. STREAMING mode
       evaluates the current timestamp for each row. BATCH mode evaluates the current
-      timestamp once when the query starts and uses the same result for every row.
+      timestamp once and uses the same result for every call to this function in the query.
     impls:
       - args:
           - name: mode
