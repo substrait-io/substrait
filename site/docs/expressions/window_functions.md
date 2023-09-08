@@ -21,5 +21,8 @@ When binding an aggregate function, the binding must include the following addit
 | Lower Bound | Bound Following(int64), Bound Trailing(int64) or CurrentRow. | False, defaults to start of partition                        |
 | Upper Bound | Bound Following(int64), Bound Trailing(int64) or CurrentRow. | False, defaults to end of partition                          |
 
+## Aggregate Functions as Window Functions
 
+Aggregate functions can be treated as a window functions with Window Type set to STREAMING.
 
+AVG, COUNT, MAX, MIN and SUM are examples of aggregate functions that are commonly allowed in window contexts.
