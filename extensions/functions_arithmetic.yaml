@@ -1674,7 +1674,7 @@ window_functions:
             name: expression
         nullability: DECLARED_OUTPUT
         decomposable: NONE
-        return: any1?
+        return: any1
         window_type: PARTITION
   - name: "nth_value"
     description: >
