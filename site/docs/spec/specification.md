@@ -4,7 +4,7 @@
 
 ## Status
 
-The specification has passed the initial design phase and is now in the final stages of being fleshed out.  The community is encouraged to identify (and address) any perceived gaps in functionality using GitHub issues and PRs.
+The specification has passed the initial design phase and is now in the final stages of being fleshed out.  The community is encouraged to identify (and address) any perceived gaps in functionality using GitHub issues and PRs.  Once all of the planned implementations have been completed all deprecated fields will be eliminated and version 1.0 will be released.
 
 
 ## Components (Complete)
