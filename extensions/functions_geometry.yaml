@@ -21,16 +21,16 @@ scalar_functions:
   -
     name: "makeline"
     description: >
-      Returns a linestring connecting the endpoint of geometry `x` to the begin point of
-      geometry `y`. Repeated points at the beginning of input geometries are collapsed to a single point.
+      Returns a linestring connecting the endpoint of geometry `geom1` to the begin point of
+      geometry `geom2`. Repeated points at the beginning of input geometries are collapsed to a single point.
 
       A linestring can be closed or simple.  A closed linestring starts and ends on the same
       point. A simple linestring does not cross or touch itself.
     impls:
       - args:
-          - name: x
+          - name: geom1
             value: u!geometry
-          - name: y
+          - name: geom2
             value: u!geometry
         return: u!geometry
   -
@@ -134,3 +134,68 @@ scalar_functions:
           - name: geom
             value: u!geometry
         return: i8
+  -
+    name: "isvalid"
+    description: >
+      Return true if the input geometry is a valid 2D geometry.
+
+      For 3 dimensional and 4 dimensional geometries, the validity is still only tested
+      in 2 dimensions.
+    impls:
+      - args:
+          - name: geom
+            value: u!geometry
+        return: boolean
+  -
+    name: "collection_extract"
+    description: >
+      Given the input geometry collection, return a homogenous multi-geometry.  All geometries
+      in the multi-geometry will have the same dimension.
+
+      If type is not specified, the multi-geometry will only contain geometries of the highest
+      dimension.  If type is specified, the multi-geometry will only contain geometries
+      of that type.  If there are no geometries of the specified type, an empty geometry
+      is returned.  Only points, linestrings, and polygons are supported.
+
+      Type numbers:
+      1 == POINT
+      2 == LINESTRING
+      3 == POLYGON
+    impls:
+      - args:
+          - name: geom_collection
+            value: u!geometry
+        return: u!geometry
+      - args:
+          - name: geom_collection
+            value: u!geometry
+          - name: type
+            value: i8
+        return: u!geometry
+  -
+    name: "flip_coordinates"
+    description: >
+      Return a version of the input geometry with the X and Y axis flipped.
+    impls:
+      - args:
+          - name: geom_collection
+            value: u!geometry
+        return: u!geometry
+  -
+    name: "remove_repeated_points"
+    description: >
+      Return a version of the input geometry with duplicate consecutive points removed.
+
+      If the `tolerance` argument is provided, consecutive points within the tolerance
+      distance of one another are considered to be duplicates.
+    impls:
+      - args:
+          - name: geom
+            value: u!geometry
+        return: u!geometry
+      - args:
+          - name: geom
+            value: u!geometry
+          - name: tolerance
+            value: fp64
+        return: u!geometry
