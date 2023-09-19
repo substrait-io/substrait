@@ -227,7 +227,7 @@ scalar_functions:
       - args:
           - value: geometry
             name: geom
-        return: crs_point
+        return: geometry
   -
     name: "minimum_bounding_circle"
     description: >
