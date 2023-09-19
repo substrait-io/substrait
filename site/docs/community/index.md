@@ -25,6 +25,10 @@ license. Development is done in the open leveraging GitHub issues and PRs.
 : Our website is all maintained in our source repository. If there is something you think
   can be improved, feel free to fork our repository and post a pull request.
 
+Meetings
+: Our community meets every other week on Wednesday.
+<iframe src="https://calendar.google.com/calendar/embed?height=400&wkst=1&bgcolor=%23ffffff&ctz=America%2FLos_Angeles&mode=AGENDA&showNav=0&showDate=0&showPrint=0&showTabs=0&showTz=1&showCalendars=1&showTitle=1&src=OWx1NWhmbGgxZ2dqa2JrbzBoYm9tZnRlNGtAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ&color=%23D81B60" style="border:solid 1px #777" width="800" height="400" frameborder="0" scrolling="no"></iframe>
+
 
 ## Talks
 Want to learn more about Substrait? Try the following presentations and slide decks.
