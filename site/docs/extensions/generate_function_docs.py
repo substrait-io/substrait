@@ -13,6 +13,13 @@ from mdutils.mdutils import MdUtils
 
 
 def write_markdown(file_obj: dict, file_name: str) -> None:
+    if 'types' in file_obj:
+        custom_types = file_obj.pop('types')
+        mdFile.new_header(level=2, title=f"Data Types")
+        for type in custom_types:
+            for key, value in type.items():
+                mdFile.new_line(f"{key}: {value}")
+
     for function_classification, value in file_obj.items():
         function_classification_str = function_classification.replace("_", " ").title()
         mdFile.new_header(level=2, title=f"{function_classification_str}")
