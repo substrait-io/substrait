@@ -15,7 +15,7 @@ from mdutils.mdutils import MdUtils
 def write_markdown(file_obj: dict, file_name: str) -> None:
     if "types" in file_obj:
         custom_types = file_obj.pop("types")
-        mdFile.new_header(level=2, title=f"Data Types")
+        mdFile.new_header(level=2, title="Data Types")
         for type in custom_types:
             for key, value in type.items():
                 mdFile.new_line(f"{key}: {value}")
