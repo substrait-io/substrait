@@ -1,20 +1,20 @@
 #!/usr/bin/python3
 # SPDX-License-Identifier: Apache-2.0
 
+import filecmp
 import os
-import mkdocs_gen_files
+import tempfile
 from itertools import cycle
 from pathlib import Path
-import tempfile
-import filecmp
 
+import mkdocs_gen_files
 import oyaml as yaml
 from mdutils.mdutils import MdUtils
 
 
 def write_markdown(file_obj: dict, file_name: str) -> None:
-    if 'types' in file_obj:
-        custom_types = file_obj.pop('types')
+    if "types" in file_obj:
+        custom_types = file_obj.pop("types")
         mdFile.new_header(level=2, title=f"Data Types")
         for type in custom_types:
             for key, value in type.items():

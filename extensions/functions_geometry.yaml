@@ -3,9 +3,9 @@
 types:
   - name: geometry
     structure: "BINARY"
-    description: |
-      An opaque type that can represent one or many points, lines, or shapes encompassing
-      2, 3 or 4 dimension.
+#    description: |
+#      An opaque type that can represent one or many points, lines, or shapes encompassing
+#      2, 3 or 4 dimension.
 scalar_functions:
   -
     name: "point"
