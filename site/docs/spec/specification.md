@@ -19,24 +19,24 @@ Once all portions of the specification have been moved to commit (or eliminated)
 
 | Priority | Status | Section                                                      | Description                                                  |
 | -------- | ------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 1        | wip    | [Simple Types](/types/type_classes#simple-types)                  | A way to describe the set of basic types that will be operated on within a plan. Only includes simple types such as integers and doubles (nothing configurable or compound). |
-|          | wip    | [Compound Types](/types/type_classes#compound-types)              | Expression of types that go beyond simple scalar values. Key concepts here include: configurable types such as fixed length and numeric types as well as compound types such as structs, maps, lists, etc. |
-|          | wip    | [Type Variations](/types/type_variations)                    | Physical variations to base types.                           |
-|          | sketch | [User Defined Types](/types/type_classes#user-defined-types)              | Extensions that can be defined for specific IR producers/consumers. |
-| 2        | sketch | [Field References](/expressions/field_references)            | Expressions to identify which portions of a record should be operated on.     |
-| 3        | sketch | [Scalar Functions](/expressions/scalar_functions)            | Description of how functions are specified. Concepts include arguments, variadic functions, output type derivation, etc. |
-|          | sketch | [Scalar Function List](https://github.com/substrait-io/substrait/blob/main/extensions/scalar_functions.yaml) | A list of well-known canonical functions in YAML format.     |
-|          | sketch | [Specialized Record Expressions](/expressions/specialized_record_expressions) | Specialized expression types that are more naturally expressed outside the function paradigm. Examples include items such as if/then/else and switch statements. |
-|          | sketch | [Aggregate Functions](/expressions/aggregate_functions)      | Functions that are expressed in aggregation operations. Examples include things such as SUM, COUNT, etc. Operations take many records and collapse them into a single (possibly compound) value. |
-|          | sketch | [Window Functions](/expressions/window_functions)            | Functions that relate a record to a set of encompassing records. Examples in SQL include RANK, NTILE, etc. |
+| 1        | commit | [Simple Types](/types/type_classes#simple-types)                  | A way to describe the set of basic types that will be operated on within a plan. Only includes simple types such as integers and doubles (nothing configurable or compound). |
+|          | commit | [Compound Types](/types/type_classes#compound-types)              | Expression of types that go beyond simple scalar values. Key concepts here include: configurable types such as fixed length and numeric types as well as compound types such as structs, maps, lists, etc. |
+|          | commit | [Type Variations](/types/type_variations)                    | Physical variations to base types.                           |
+|          | commit | [User Defined Types](/types/type_classes#user-defined-types)              | Extensions that can be defined for specific IR producers/consumers. |
+| 2        | commit | [Field References](/expressions/field_references)            | Expressions to identify which portions of a record should be operated on.     |
+| 3        | commit | [Scalar Functions](/expressions/scalar_functions)            | Description of how functions are specified. Concepts include arguments, variadic functions, output type derivation, etc. |
+|          | commit | [Scalar Function List](https://github.com/substrait-io/substrait/blob/main/extensions/scalar_functions.yaml) | A list of well-known canonical functions in YAML format.     |
+|          | commit | [Specialized Record Expressions](/expressions/specialized_record_expressions) | Specialized expression types that are more naturally expressed outside the function paradigm. Examples include items such as if/then/else and switch statements. |
+|          | commit | [Aggregate Functions](/expressions/aggregate_functions)      | Functions that are expressed in aggregation operations. Examples include things such as SUM, COUNT, etc. Operations take many records and collapse them into a single (possibly compound) value. |
+|          | commit | [Window Functions](/expressions/window_functions)            | Functions that relate a record to a set of encompassing records. Examples in SQL include RANK, NTILE, etc. |
 |          | empty  | [Table Functions](/expressions/table_functions)              | Functions that convert one or more values from an input record into 0..N output records. Example include operations such as explode, pos-explode, etc. |
 |          | sketch | [User Defined Functions](/expressions/user_defined_functions) | Reusable named functions that are built beyond the core specification. Implementations are typically registered thorough external means (drop a file in a directory, send a special command with implementation, etc.) |
 |          | sketch | [Embedded Functions](/expressions/embedded_functions)        | Functions implementations embedded directly within the plan. Frequently used in data science workflows where business logic is interspersed with standard operations. |
-| 4        | sketch | [Relation Basics](/relations/basics)                         | Basic concepts around relational algebra, record emit and properties. |
-|          | sketch | [Logical Relations](/relations/logical_relations)            | Common relational operations used in compute plans including project, join, aggregation, etc. |
-|          | sketch | [Physical Relations](/relations/physical_relations)          | Specific execution sub-variations of common relational operations that describe have multiple unique physical variants associated with a single logical operation. Examples include hash join, merge join, nested loop join, etc. |
-|          | empty  | [User Defined Relations](/relations/user_defined_relations)  | Installed and reusable relational operations customized to a particular platform. |
+| 4        | commit | [Relation Basics](/relations/basics)                         | Basic concepts around relational algebra, record emit and properties. |
+|          | commit | [Logical Relations](/relations/logical_relations)            | Common relational operations used in compute plans including project, join, aggregation, etc. |
+|          | commit | [Physical Relations](/relations/physical_relations)          | Specific execution sub-variations of common relational operations that describe have multiple unique physical variants associated with a single logical operation. Examples include hash join, merge join, nested loop join, etc. |
+|          | commit | [User Defined Relations](/relations/user_defined_relations)  | Installed and reusable relational operations customized to a particular platform. |
 |          | empty  | [Embedded Relations](/relations/embedded_relations)          | Relational operations where plans contain the "machine code" to directly execute the necessary operations. |
 | 5        | sketch | [Text Serialization](/serialization/text_serialization)      | A human producible & consumable representation of the plan specification. |
-| 6        | sketch | [Binary Serialization](/serialization/binary_serialization)  | A high performance & compact binary representation of the plan specification. |
+| 6        | commit | [Binary Serialization](/serialization/binary_serialization)  | A high performance & compact binary representation of the plan specification. |
 
