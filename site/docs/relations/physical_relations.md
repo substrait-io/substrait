@@ -205,6 +205,23 @@ The streaming aggregate operation leverages data ordered by the grouping express
 | Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional, defaults to 0.                |
 | Measures         | A list of one or more aggregate expressions. Aggregate expressions ordering requirements must be compatible with expected ordering. | Optional, required if no grouping sets. |
 
+## Consistent Partition Window Operation
+A consistent partition window operation is a special type of project operation where every function is a window function and all of the window functions share the same sorting and partitioning. This allows for the sort and partition to be calculated once and shared between the various function evaluations.
+
+| Signature            | Value                                                                |
+| -------------------- |----------------------------------------------------------------------|
+| Inputs               | 1                                                                    |
+| Outputs              | 1                                                                    |
+| Property Maintenance | Maintains distribution and ordering.                                 |
+| Direct Output Order  | Same as Project operator (input followed by each window expression). |
+
+### Window Properties
+
+| Property           | Description                     | Required               |
+| ------------------ | ------------------------------- | ---------------------- |
+| Input              | The relational input.           | Required               |
+| Window Functions | One or more window functions. | At least one required. |
+
 
 ## Expand Operation
 

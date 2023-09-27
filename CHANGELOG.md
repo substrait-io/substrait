@@ -1,6 +1,37 @@
 Release Notes
 ---
 
+## [0.34.0](https://github.com/substrait-io/substrait/compare/v0.33.0...v0.34.0) (2023-09-17)
+
+
+### Features
+
+* add more window functions ([#534](https://github.com/substrait-io/substrait/issues/534)) ([f2bfe15](https://github.com/substrait-io/substrait/commit/f2bfe15585943a137fafa560401e0cf0266c0650))
+* allow agg functions to be used in windows ([#540](https://github.com/substrait-io/substrait/issues/540)) ([565a1ef](https://github.com/substrait-io/substrait/commit/565a1ef26eccffba8f31ffe885667fab475d1da5))
+
+## [0.33.0](https://github.com/substrait-io/substrait/compare/v0.32.0...v0.33.0) (2023-08-27)
+
+
+### Features
+
+* add radians and degrees functions ([#544](https://github.com/substrait-io/substrait/issues/544)) ([2da2afa](https://github.com/substrait-io/substrait/commit/2da2afad579a428bb8f7460a153a1799af5c6ee3))
+
+## [0.32.0](https://github.com/substrait-io/substrait/compare/v0.31.0...v0.32.0) (2023-08-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* plans referencing functions using simple
+names (e.g. not vs not:bool) will no longer be valid.
+
+### Features
+
+* add ExchangeRel as a type in Rel ([#518](https://github.com/substrait-io/substrait/issues/518)) ([89b0c62](https://github.com/substrait-io/substrait/commit/89b0c6259a7440f760fafe32e8999d5d37cac8c7))
+* add expand rel ([#368](https://github.com/substrait-io/substrait/issues/368)) ([98380b0](https://github.com/substrait-io/substrait/commit/98380b0dd1dd9eb30457800ec49d7912b5dce11f))
+* add options to substring for start parameter being negative ([#508](https://github.com/substrait-io/substrait/issues/508)) ([281dc0f](https://github.com/substrait-io/substrait/commit/281dc0fba176df22fc35ff5f5acb7a05863b9d59))
+* add windowrel support  in proto ([#399](https://github.com/substrait-io/substrait/issues/399)) ([bd14e0e](https://github.com/substrait-io/substrait/commit/bd14e0e40782dbd0fa49de597ec30217b48961f2))
+* require compound functions names in extension references ([#537](https://github.com/substrait-io/substrait/issues/537)) ([2503beb](https://github.com/substrait-io/substrait/commit/2503beb3c872928483c05f76bf74d18188c84798))
+
 ## [0.31.0](https://github.com/substrait-io/substrait/compare/v0.30.0...v0.31.0) (2023-07-02)
 
 

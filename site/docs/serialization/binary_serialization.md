@@ -43,10 +43,12 @@ Once the YAML file URI anchor is defined, the anchor will be referenced by zero 
     ```
 
 !!! note
-  Anchors only have meaning within a single plan and exist simply to reduce plan size. They are not some form of global identifier. Different plans may use different anchors for the same specific functions, types, type variations, etc.
+
+    Anchors only have meaning within a single plan and exist simply to reduce plan size. They are not some form of global identifier. Different plans may use different anchors for the same specific functions, types, type variations, etc.
 
 !!! note
-  It is valid for a plan to include `SimpleExtensionURI`s and/or `SimpleExtensionDeclaration`s that are not referenced directly.
+
+    It is valid for a plan to include `SimpleExtensionURI`s and/or `SimpleExtensionDeclaration`s that are not referenced directly.
 
 
 
