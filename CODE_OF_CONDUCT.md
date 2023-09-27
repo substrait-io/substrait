@@ -70,7 +70,7 @@ their behavior violates the code of conduct.  Often, calling attention to
 negative behavior is sufficient to resolve the issue.
 
 When a situation becomes difficult to resolve or we feel that the conversation
-is getting out of control we can email the SMC at ???.
+is getting out of control we can email the SMC at substrait-harassment@googlegroups.com.
 
 ## Acknowledgements
 
