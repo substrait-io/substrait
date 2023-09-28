@@ -7,7 +7,7 @@ jobs:
     name: Build Website
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Python
         uses: ./.github/actions/dev-tool-python
         with:
@@ -21,13 +21,13 @@ jobs:
     name: Check editorconfig
     runs-on: ubuntu-latest
     steps:
-      - uses: editorconfig-checker/action-editorconfig-checker@v1
+      - uses: editorconfig-checker/action-editorconfig-checker@v2
   proto-format-check:
     name: Check Protobuf Style
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: bufbuild/buf-setup-action@v1.9.0
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-setup-action@v1.26.1
         with:
           github_token: ${{ github.token }}
       - run: buf format --diff --exit-code
@@ -35,8 +35,8 @@ jobs:
     name: Check Protobuf
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: bufbuild/buf-setup-action@v1.9.0
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-setup-action@v1.26.1
         with:
           github_token: ${{ github.token }}
       - uses: bufbuild/buf-lint-action@v1
@@ -46,14 +46,14 @@ jobs:
     name: Lint YAML extensions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run yamllint
         run: yamllint .
   yamlvalidate:
     name: Validate YAML extensions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: "18"
@@ -69,10 +69,10 @@ jobs:
     name: Dry-run release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: bufbuild/buf-setup-action@v1.9.0
+      - uses: bufbuild/buf-setup-action@v1.26.1
       - uses: actions/setup-node@v3
         with:
           node-version: "18"
@@ -81,7 +81,7 @@ jobs:
     name: Style-check and lint Python files
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Install dependencies
       run: python3 -m pip install --upgrade pip black==22.3.0 flake8==4.0.1
     - name: Black
@@ -92,8 +92,8 @@ jobs:
     name: Check proto-prefix.py
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: bufbuild/buf-setup-action@v0.7.0
+      - uses: actions/checkout@v4
+      - uses: bufbuild/buf-setup-action@v1.26.1
       - name: Run proto-prefix.py
         run: tools/proto_prefix.py output test proto go_package=github.com/test/proto
       - name: Modify buf config to build rewritten proto files

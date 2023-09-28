@@ -880,7 +880,7 @@ extension they come from.
 
 In our query, we used:
 
- * `index_in` (1), from `functions_string.yaml`,
+ * `index_in` (1), from `functions_set.yaml`,
  * `is_null` (2), from `functions_comparison.yaml`,
  * `equal` (3), from `functions_comparison.yaml`,
  * `sum` (4), from `functions_arithmetic_decimal.yaml`,
@@ -892,7 +892,7 @@ So first we can create the three extension uris:
 [
   {
     "extensionUriAnchor": 1,
-    "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_string.yaml"
+    "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_set.yaml"
   },
   {
     "extensionUriAnchor": 2,

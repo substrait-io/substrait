@@ -59,6 +59,8 @@ The rules require that a community member registering a negative vote must inclu
 | --------------------------------------------------------------------------------------------------------- | -------------------------- | -------------- | --------------- |
 | Process/Governance modifications & actions. This includes promoting new contributors to committer or SMC. | 3                          | SMC            | Mailing List    |
 | Format/Specification Modifications (including breaking extension changes)                                 | 2                          | SMC            | Github PR       |
+| Documentation Updates (formatting, moves)                                                                 | 1                          | SMC            | Github PR       |
+| Typos                                                                                                     | 1                          | Committers     | Github PR       |
 | Non-breaking function introductions                                                                       | 1 (not including proposer) | Committers     | Github PR       |
 | Non-breaking extension additions & non-format code modifications                                          | 1 (not including proposer) | Committers     | Github PR       |
 

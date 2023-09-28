@@ -1,6 +1,6 @@
 # Extensions
 
-In many cases, the existing objects in Substrait will be sufficient to accomplish a particular use case. However, it is sometimes helpful to create a new data type, scalar function signature or some other custom representation within a system. For that, Substrait provides a number of extension points. 
+In many cases, the existing objects in Substrait will be sufficient to accomplish a particular use case. However, it is sometimes helpful to create a new data type, scalar function signature or some other custom representation within a system. For that, Substrait provides a number of extension points.
 
 ## Simple Extensions
 
@@ -21,21 +21,21 @@ A Substrait plan can reference one or more YAML files via URI for extension. In 
 | ------------------ | ------------------------------------------------------------ |
 | Type               | The name as defined on the type object.                      |
 | Type Variation     | The name as defined on the type variation object.            |
-| Function Signature | In a specific YAML, if there is only one function implementation with a specific name, a extension type declaration can reference the function using either simple or compound references. Simple references are simply the name of the function (e.g. `add`). Compound references (e.g. `add:i8_i8`)are described below. |
+| Function Signature | A function signature compound name as described below.       |
 
 ### Function Signature Compound Names
 
-A YAML file may contain one or more functions by the same name. When only a single function is declared within the file, it can be referenced using the name of that function or a compound name. When more than one function of the same name is declared within a YAML file, the key used in the function extension declaration is a combination of the name of the function along with a list of the required input argument types. Optional arguments are not included in the signature.  The format is as follows:
+A YAML file may contain one or more functions by the same name. The key used in the function extension declaration to reference a function is a combination of the name of the function along with a list of the required input argument types. The format is as follows:
 
 ```
 <function name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>
 ```
 
-Rather than using a full data type representation, the input argument types (`short_arg_type`) are mapped to single-level short name. The mappings are listed in the table below. 
+Rather than using a full data type representation, the input argument types (`short_arg_type`) are mapped to single-level short name. The mappings are listed in the table below.
 
-!!! note
+!!! note 
 
-It is required that two function implementations with the same simple name must resolve to different compound names using types. If two function implementations in a YAML file resolve to the same compound name, the YAML file is invalid and behavior is undefined.
+    Every compound function signature must be unique.  If two function implementations in a YAML file would generate the same compound function signature, then the YAML file is invalid and behavior is undefined.
 
 | Argument Type              | Signature Name |
 | -------------------------- | -------------- |
@@ -48,6 +48,7 @@ It is required that two function implementations with the same simple name must 
 | fp64                       | fp64           |
 | string                     | str            |
 | binary                     | vbin           |
+| boolean                    | bool           |
 | timestamp                  | ts             |
 | timestamp_tz               | tstz           |
 | date                       | date           |

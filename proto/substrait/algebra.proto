@@ -205,10 +205,12 @@ message AggregateRel {
   // Input of the aggregation
   Rel input = 2;
 
-  // A list of expression grouping that the aggregation measured should be calculated for.
+  // A list of one or more grouping expression sets that the aggregation measures should be calculated for.
+  // Required if there are no measures.
   repeated Grouping groupings = 3;
 
   // A list of one or more aggregate expressions along with an optional filter.
+  // Required if there are no groupings.
   repeated Measure measures = 4;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -225,6 +227,42 @@ message AggregateRel {
     // within the measure.
     // Helps to support SUM(<c>) FILTER(WHERE...) syntax without masking opportunities for optimization
     Expression filter = 2;
+  }
+}
+
+// ConsistentPartitionWindowRel provides the ability to perform calculations across sets of rows
+// that are related to the current query row. It can be used to execute window functions where
+// all the windows share the same partitioning and ordering.
+message ConsistentPartitionWindowRel {
+  RelCommon common = 1;
+  Rel input = 2;
+  repeated WindowRelFunction window_functions = 3;
+  repeated Expression partition_expressions = 4;
+  repeated SortField sorts = 5;
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+
+  // This message mirrors the `WindowFunction` message but removes the fields defining the partition,
+  // sorts, and bounds, since those must be consistent across the various functions in this rel.  Refer
+  // to the `WindowFunction` message for a description of these fields.
+  message WindowRelFunction {
+    uint32 function_reference = 1;
+
+    repeated FunctionArgument arguments = 9;
+
+    repeated FunctionOption options = 11;
+
+    Type output_type = 7;
+
+    AggregationPhase phase = 6;
+
+    AggregateFunction.AggregationInvocation invocation = 10;
+
+    Expression.WindowFunction.Bound lower_bound = 5;
+
+    Expression.WindowFunction.Bound upper_bound = 4;
+
+    Expression.WindowFunction.BoundsType bounds_type = 12;
   }
 }
 
@@ -340,6 +378,34 @@ message ExchangeRel {
   }
 }
 
+// Duplicates records, possibly switching output expressions between each duplicate.
+// Default output is all of the fields declared followed by one int64 field that contains the
+// duplicate_id which is a zero-index ordinal of which duplicate of the original record this
+// corresponds to.
+message ExpandRel {
+  RelCommon common = 1;
+  Rel input = 2;
+  repeated ExpandField fields = 4;
+
+  message ExpandField {
+    oneof field_type {
+      // Field that switches output based on which duplicate_id we're outputting
+      SwitchingField switching_field = 2;
+
+      // Field that outputs the same value no matter which duplicate_id we're on.
+      Expression consistent_field = 3;
+    }
+  }
+
+  message SwitchingField {
+    // Array that contains an expression to output per duplicate_id
+    // each `switching_field` must have the same number of expressions
+    // all expressions within a switching field must be the same type class but can differ in nullability.
+    // this column will be nullable if any of the expressions are nullable.
+    repeated Expression duplicates = 1;
+  }
+}
+
 // A relation with output field names.
 //
 // This is for use at the root of a `Rel` tree.
@@ -365,10 +431,12 @@ message Rel {
     ExtensionMultiRel extension_multi = 10;
     ExtensionLeafRel extension_leaf = 11;
     CrossRel cross = 12;
-
     //Physical relations
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
+    ConsistentPartitionWindowRel window = 17;
+    ExchangeRel exchange = 15;
+    ExpandRel expand = 16;
   }
 }
 
@@ -777,9 +845,14 @@ message Expression {
 
   // A window function call.
   message WindowFunction {
-    // Points to a function_anchor defined in this plan, which must refer
-    // to a window function in the associated YAML file. Required; 0 is
-    // considered to be a valid anchor/reference.
+    // Points to a function_anchor defined in this plan. The function must be:
+    //  - a window function
+    //  - an aggregate function
+    //
+    // An aggregate function referenced here should be treated as a window
+    // function with Window Type STREAMING
+    //
+    // Required; 0 is considered to be a valid anchor/reference.
     uint32 function_reference = 1;
 
     // The arguments to be bound to the function. This must have exactly the
@@ -829,6 +902,9 @@ message Expression {
     // the same partition as the current record are aggregated.
     repeated Expression partitions = 2;
 
+    // Defines the bounds type: ROWS, RANGE
+    BoundsType bounds_type = 12;
+
     // Defines the record relative to the current record from which the window
     // extends. The bound is inclusive. If the lower bound indexes a record
     // greater than the upper bound, TODO (null range/no records passed?
@@ -845,6 +921,18 @@ message Expression {
 
     // Deprecated; use arguments instead.
     repeated Expression args = 8 [deprecated = true];
+
+    enum BoundsType {
+      BOUNDS_TYPE_UNSPECIFIED = 0;
+      // The lower and upper bound specify how many rows before and after the current row
+      // the window should extend.
+      BOUNDS_TYPE_ROWS = 1;
+      // The lower and upper bound describe a range of values.  The window should include all rows
+      // where the value of the ordering column is greater than or equal to (current_value - lower bound)
+      // and less than or equal to (current_value + upper bound).  This bounds type is only valid if there
+      // is a single ordering column.
+      BOUNDS_TYPE_RANGE = 2;
+    }
 
     // Defines one of the two boundaries for the window of a window function.
     message Bound {
@@ -892,7 +980,9 @@ message Expression {
   }
 
   message IfThen {
+    // A list of one or more IfClauses
     repeated IfClause ifs = 1;
+    // The returned Expression if no IfClauses are satisified
     Expression else = 2;
 
     message IfClause {
@@ -1004,7 +1094,7 @@ message Expression {
   // pipeline.
   //
   // Note that this does not fundamentally alter the structure of data beyond
-  // the elimination of unecessary elements.
+  // the elimination of unnecessary elements.
   message MaskExpression {
     StructSelect select = 1;
     bool maintain_singular_struct = 2;

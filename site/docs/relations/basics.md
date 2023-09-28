@@ -19,7 +19,7 @@ In functions, function signatures are declared externally to the use of those si
 Each relational operation must declare the following:
 
 * Transformation logic around properties of the data. For example, does a relational operation maintain sortedness of a field? Does an operation change the distribution of data? 
-* How many input sets does an operation produce?
+* How many input relations does an operation require?
 * Does the operator produce an output (by specification, we limit relational operations to a single output at this time)
 * What is the schema and field ordering of an output (see emit below)?
 
@@ -51,7 +51,7 @@ A guarantee that data output from this operation is provided with a sort order. 
 
 | Property              | Description                                                  | Required               |
 | --------------------- | ------------------------------------------------------------ | ---------------------- |
-| Sort Fields           | A list of fields that the data are ordered by. The list is in order of the sort. If sort by [0,1] this means we only consider the data for field 1 is only ordered within each discrete value of field 0. | At least one required. |
+| Sort Fields           | A list of fields that the data are ordered by. The list is in order of the sort. If we sort by [0,1] then this means we only consider the data for field 1 to be ordered within each discrete value of field 0. | At least one required. |
 | Per - Sort Field      | A field reference that the data is sorted by.                | Required               |
 | Per - Sort Direction  | The direction of the data. See direction options below.      | Required               |
 
@@ -64,7 +64,7 @@ A guarantee that data output from this operation is provided with a sort order. 
 | Ascending                  | Returns data in ascending order based on the quality function associated with the type. Nulls are included after any values. | Last                                            |
 | Descending                 | Returns data in descending order based on the quality function associated with the type. Nulls are included after any values. | Last                                            |
 | Custom function identifier | Returns data using a custom function that returns -1, 0, or 1 depending on the order of the data. | Per Function                                    |
-| Clustered                  | Ensures that all equal values are coalesced (but no ordering between values is defined). E.g, for values 1,2,3,1,2,3, output could be any of the following 1,1,2,2,3,3 or 2,2,3,3,1,1 or 3,3,2,2,1,1 or 3,3,1,1,2,2. | N/A, may appear anywhere but will be coalesced. |
+| Clustered                  | Ensures that all equal values are coalesced (but no ordering between values is defined). E.g. for values 1,2,3,1,2,3, output could be any of the following: 1,1,2,2,3,3 or 1,1,3,3,2,2 or 2,2,1,1,3,3 or 2,2,3,3,1,1 or 3,3,1,1,2,2 or 3,3,2,2,1,1. | N/A, may appear anywhere but will be coalesced. |
 
 
 
