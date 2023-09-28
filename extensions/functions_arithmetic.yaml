@@ -1654,3 +1654,141 @@ window_functions:
         decomposable: NONE
         return: i64?
         window_type: PARTITION
+  - name: "first_value"
+    description: >
+      Returns the first value in the window.
+    impls:
+      - args:
+          - value: any1
+            name: expression
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1
+        window_type: PARTITION
+  - name: "last_value"
+    description: >
+      Returns the last value in the window.
+    impls:
+      - args:
+          - value: any1
+            name: expression
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1
+        window_type: PARTITION
+  - name: "nth_value"
+    description: >
+      Returns a value from the nth row based on the `window_offset`. `window_offset` should
+      be a positive integer. If the value of the `window_offset` is outside the range
+      of the window, `null` is returned.
+
+      The `on_domain_error` option governs behavior in cases where `window_offset` is not
+      a positive integer or `null`.
+    impls:
+      - args:
+          - value: any1
+            name: expression
+          - value: i32
+            name: window_offset
+        options:
+          on_domain_error:
+            values: [ NAN, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+  - name: "lead"
+    description: >
+      Return a value from a following row based on a specified physical offset.
+      This allows you to compare a value in the current row against a following row.
+
+      The `expression` is evaluated against a row that comes after the current row based
+      on the `row_offset`.  The `row_offset` should be a positive integer and is set to
+      1 if not specified explicitly. If the `row_offset` is negative, the expression
+      will be evaluated against a row coming before the current row, similar to the `lag`
+      function. A `row_offset` of `null` will return `null`. The function returns the
+      `default` input value if `row_offset` goes beyond the scope of the window.
+      If a `default` value is not specified, it is set to `null`.
+
+      Example comparing the sales of the current year to the following year.
+      `row_offset` of 1.
+      | year | sales  | next_year_sales |
+      | 2019 | 20.50  | 30.00           |
+      | 2020 | 30.00  | 45.99           |
+      | 2021 | 45.99  | null            |
+    impls:
+      - args:
+          - value: any1
+            name: expression
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+      - args:
+          - value: any1
+            name: expression
+          - value: i32
+            name: row_offset
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+      - args:
+          - value: any1
+            name: expression
+          - value: i32
+            name: row_offset
+          - value: any1
+            name: default
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+  - name: "lag"
+    description: >
+      Return a column value from a previous row based on a specified physical offset.
+      This allows you to compare a value in the current row against a previous row.
+
+      The `expression` is evaluated against a row that comes before the current row based
+      on the `row_offset`.  The `expression` can be a column, expression or subquery that
+      evaluates to a single value. The `row_offset` should be a positive integer and is set to
+      1 if not specified explicitly. If the `row_offset` is negative, the expression will
+      be evaluated against a row coming after the current row, similar to the `lead` function.
+      A `row_offset` of `null` will return `null`. The function returns the `default`
+      input value if `row_offset` goes beyond the scope of the partition. If a `default`
+      value is not specified, it is set to `null`.
+
+      Example comparing the sales of the current year to the previous year.
+      `row_offset` of 1.
+      | year | sales  | previous_year_sales |
+      | 2019 | 20.50  | null                |
+      | 2020 | 30.00  | 20.50               |
+      | 2021 | 45.99  | 30.00               |
+    impls:
+      - args:
+          - value: any1
+            name: expression
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+      - args:
+          - value: any1
+            name: expression
+          - value: i32
+            name: row_offset
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION
+      - args:
+          - value: any1
+            name: expression
+          - value: i32
+            name: row_offset
+          - value: any1
+            name: default
+        nullability: DECLARED_OUTPUT
+        decomposable: NONE
+        return: any1?
+        window_type: PARTITION

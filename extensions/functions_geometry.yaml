@@ -1,0 +1,35 @@
+%YAML 1.2
+---
+types:
+  - name: geometry
+    structure: "BINARY"
+#    description: |
+#      An opaque type that can represent one or many points, lines, or shapes encompassing
+#      2, 3 or 4 dimension.
+scalar_functions:
+  -
+    name: "point"
+    description: >
+      Returns a 2D point with the given `x` and `y` coordinate values.
+    impls:
+      - args:
+          - name: x
+            value: fp64
+          - name: y
+            value: fp64
+        return: u!geometry
+  -
+    name: "makeline"
+    description: >
+      Returns a linestring connecting the endpoint of geometry `x` to the begin point of
+      geometry `y`. Repeated points at the beginning of input geometries are collapsed to a single point.
+
+      A linestring can be closed or simple.  A closed linestring starts and ends on the same
+      point. A simple linestring does not cross or touch itself.
+    impls:
+      - args:
+          - name: x
+            value: u!geometry
+          - name: y
+            value: u!geometry
+        return: u!geometry
