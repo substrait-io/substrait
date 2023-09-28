@@ -851,9 +851,14 @@ message Expression {
 
   // A window function call.
   message WindowFunction {
-    // Points to a function_anchor defined in this plan, which must refer
-    // to a window function in the associated YAML file. Required; 0 is
-    // considered to be a valid anchor/reference.
+    // Points to a function_anchor defined in this plan. The function must be:
+    //  - a window function
+    //  - an aggregate function
+    //
+    // An aggregate function referenced here should be treated as a window
+    // function with Window Type STREAMING
+    //
+    // Required; 0 is considered to be a valid anchor/reference.
     uint32 function_reference = 1;
 
     // The arguments to be bound to the function. This must have exactly the

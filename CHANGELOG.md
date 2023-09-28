@@ -1,6 +1,21 @@
 Release Notes
 ---
 
+## [0.34.0](https://github.com/substrait-io/substrait/compare/v0.33.0...v0.34.0) (2023-09-17)
+
+
+### Features
+
+* add more window functions ([#534](https://github.com/substrait-io/substrait/issues/534)) ([f2bfe15](https://github.com/substrait-io/substrait/commit/f2bfe15585943a137fafa560401e0cf0266c0650))
+* allow agg functions to be used in windows ([#540](https://github.com/substrait-io/substrait/issues/540)) ([565a1ef](https://github.com/substrait-io/substrait/commit/565a1ef26eccffba8f31ffe885667fab475d1da5))
+
+## [0.33.0](https://github.com/substrait-io/substrait/compare/v0.32.0...v0.33.0) (2023-08-27)
+
+
+### Features
+
+* add radians and degrees functions ([#544](https://github.com/substrait-io/substrait/issues/544)) ([2da2afa](https://github.com/substrait-io/substrait/commit/2da2afad579a428bb8f7460a153a1799af5c6ee3))
+
 ## [0.32.0](https://github.com/substrait-io/substrait/compare/v0.31.0...v0.32.0) (2023-08-21)
 
 
