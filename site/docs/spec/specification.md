@@ -21,7 +21,6 @@ The specification has passed the initial design phase and is now in the final st
 | [Specialized Record Expressions](/expressions/specialized_record_expressions) | Specialized expression types that are more naturally expressed outside the function paradigm. Examples include items such as if/then/else and switch statements. |
 | [Aggregate Functions](/expressions/aggregate_functions)      | Functions that are expressed in aggregation operations. Examples include things such as SUM, COUNT, etc. Operations take many records and collapse them into a single (possibly compound) value. |
 | [Window Functions](/expressions/window_functions)            | Functions that relate a record to a set of encompassing records. Examples in SQL include RANK, NTILE, etc. |
-| [Table Functions](/expressions/table_functions)              | Functions that convert one or more values from an input record into 0..N output records. Example include operations such as explode, pos-explode, etc. |
 | [User Defined Functions](/expressions/user_defined_functions) | Reusable named functions that are built beyond the core specification. Implementations are typically registered thorough external means (drop a file in a directory, send a special command with implementation, etc.) |
 | [Embedded Functions](/expressions/embedded_functions)        | Functions implementations embedded directly within the plan. Frequently used in data science workflows where business logic is interspersed with standard operations. |
 | [Relation Basics](/relations/basics)                         | Basic concepts around relational algebra, record emit and properties. |
@@ -34,6 +33,7 @@ The specification has passed the initial design phase and is now in the final st
 
 | Section                                                      | Description                                                  |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [Table Functions](/expressions/table_functions)              | Functions that convert one or more values from an input record into 0..N output records. Example include operations such as explode, pos-explode, etc. |
 | [User Defined Relations](/relations/user_defined_relations)  | Installed and reusable relational operations customized to a particular platform. |
 | [Embedded Relations](/relations/embedded_relations)          | Relational operations where plans contain the "machine code" to directly execute the necessary operations. |
 | [Physical Relations](/relations/physical_relations)          | Specific execution sub-variations of common relational operations that describe have multiple unique physical variants associated with a single logical operation. Examples include hash join, merge join, nested loop join, etc. |
