@@ -123,7 +123,8 @@ scalar_functions:
     name: "dimension"
     description: >
       Return the dimension of the input geometry.  If the input is a collection of geometries,
-      return the largest dimension from the collection.
+      return the largest dimension from the collection. Dimensionality is determined by
+      the complexity of the input and not the coordinate system being used.
 
       POINT   - 0
       LINE    - 1
