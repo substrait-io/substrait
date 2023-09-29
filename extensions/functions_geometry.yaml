@@ -126,6 +126,7 @@ scalar_functions:
       return the largest dimension from the collection. Dimensionality is determined by
       the complexity of the input and not the coordinate system being used.
 
+      Type dimensions:
       POINT   - 0
       LINE    - 1
       POLYGON - 2
@@ -158,9 +159,9 @@ scalar_functions:
       is returned.  Only points, linestrings, and polygons are supported.
 
       Type numbers:
-      1 == POINT
-      2 == LINESTRING
-      3 == POLYGON
+      POINT   - 0
+      LINE    - 1
+      POLYGON - 2
     impls:
       - args:
           - name: geom_collection
