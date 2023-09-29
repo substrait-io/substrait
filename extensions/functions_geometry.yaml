@@ -135,7 +135,7 @@ scalar_functions:
             value: u!geometry
         return: i8
   -
-    name: "isvalid"
+    name: "is_valid"
     description: >
       Return true if the input geometry is a valid 2D geometry.
 
