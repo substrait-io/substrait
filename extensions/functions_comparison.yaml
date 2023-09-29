@@ -48,6 +48,7 @@ scalar_functions:
           - value: any1
             name: y
         return: BOOLEAN
+        nullability: DECLARED_OUTPUT
   -
     name: "lt"
     description: >

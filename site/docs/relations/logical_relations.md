@@ -212,12 +212,13 @@ The join operation will combine two separate inputs into a single output, based 
 
 ### Join Properties
 
-| Property        | Description                                                  | Required                           |
-| --------------- | ------------------------------------------------------------ | ---------------------------------- |
-| Left Input      | A relational input.                                          | Required                           |
-| Right Input     | A relational input.                                          | Required                           |
-| Join Expression | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the direct output order of the data. | Required. Can be the literal True. |
-| Join Type       | One of the join types defined below.                         | Required                           |
+| Property         | Description                                                  | Required                           |
+| ---------------- | ------------------------------------------------------------ | ---------------------------------- |
+| Left Input       | A relational input.                                          | Required                           |
+| Right Input      | A relational input.                                          | Required                           |
+| Join Expression  | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the direct output order of the data. | Required. Can be the literal True. |
+| Post-Join Filter | A boolean condition to be applied to each result record after the inputs have been joined, yielding only the records that satisfied the condition. | Optional                           |
+| Join Type        | One of the join types defined below.                         | Required                           |
 
 ### Join Types
 
