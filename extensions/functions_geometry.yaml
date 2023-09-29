@@ -19,7 +19,7 @@ scalar_functions:
             value: fp64
         return: u!geometry
   -
-    name: "makeline"
+    name: "make_line"
     description: >
       Returns a linestring connecting the endpoint of geometry `geom1` to the begin point of
       geometry `geom2`. Repeated points at the beginning of input geometries are collapsed to a single point.
@@ -43,7 +43,7 @@ scalar_functions:
             value: u!geometry
         return: fp64
   -
-    name: "y_coodinate"
+    name: "y_coordinate"
     description: >
       Return the y coordinate of the point.  Return null if not available.
     impls:
@@ -52,7 +52,7 @@ scalar_functions:
             value: u!geometry
         return: fp64
   -
-    name: "numpoints"
+    name: "num_points"
     description: >
       Return the number of points in the geometry.  The geometry should be an linestring
       or circularstring.
@@ -62,7 +62,7 @@ scalar_functions:
             value: u!geometry
         return: i64
   -
-    name: "isempty"
+    name: "is_empty"
     description: >
       Return true is the geometry is an empty geometry.
     impls:
@@ -71,7 +71,7 @@ scalar_functions:
             value: u!geometry
         return: boolean
   -
-    name: "isclosed"
+    name: "is_closed"
     description: >
       Return true if the geometry's start and end points are the same.
     impls:
@@ -80,7 +80,7 @@ scalar_functions:
             value: geometry
         return: boolean
   -
-    name: "issimple"
+    name: "is_simple"
     description: >
       Return true if the geometry does not self intersect.
     impls:
@@ -89,7 +89,7 @@ scalar_functions:
             value: u!geometry
         return: boolean
   -
-    name: "isring"
+    name: "is_ring"
     description: >
       Return true if the geometry's start and end points are the same and it does not self
       intersect.
@@ -99,7 +99,7 @@ scalar_functions:
             value: u!geometry
         return: boolean
   -
-    name: "geometrytype"
+    name: "geometry_type"
     description: >
       Return the type of geometry as a string.
     impls:
