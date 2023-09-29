@@ -176,6 +176,9 @@ scalar_functions:
     name: "flip_coordinates"
     description: >
       Return a version of the input geometry with the X and Y axis flipped.
+
+      This operation can be performed on geometries with more than 2 dimensions. However,
+      only X and Y axis will be flipped.
     impls:
       - args:
           - name: geom_collection
