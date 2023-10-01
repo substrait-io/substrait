@@ -1,6 +1,28 @@
 Release Notes
 ---
 
+## [0.35.0](https://github.com/substrait-io/substrait/compare/v0.34.0...v0.35.0) (2023-10-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* nullability of is_not_distinct_from has changed
+* The minimum precision for floating point numbers is
+now mandated.
+
+### Features
+
+* add approval guidelines for documentation updates ([#553](https://github.com/substrait-io/substrait/issues/553)) ([da4b32a](https://github.com/substrait-io/substrait/commit/da4b32ac41827ae8b53a2833ec34872670904e57))
+* add geometric data types and functions ([#543](https://github.com/substrait-io/substrait/issues/543)) ([db52bbd](https://github.com/substrait-io/substrait/commit/db52bbd844f7d8db328f1b6f00758f07009ca95b))
+* add geometry editor functions ([#554](https://github.com/substrait-io/substrait/issues/554)) ([727467c](https://github.com/substrait-io/substrait/commit/727467cc66f4c4984c7a8ea1205a473644f00b23))
+* adding geometry accessor functions ([#552](https://github.com/substrait-io/substrait/issues/552)) ([784fa9b](https://github.com/substrait-io/substrait/commit/784fa9b1702a1df64a8286a25fce377a0aa29fd4))
+* explicitly reference IEEE 754 and mandate precision as well as range ([#449](https://github.com/substrait-io/substrait/issues/449)) ([54e3d52](https://github.com/substrait-io/substrait/commit/54e3d52bc07c8952af86f57250253d10a97dadc3)), closes [#447](https://github.com/substrait-io/substrait/issues/447)
+
+
+### Bug Fixes
+
+* specify nullability for is_not_distinct_from ([#555](https://github.com/substrait-io/substrait/issues/555)) ([30773b2](https://github.com/substrait-io/substrait/commit/30773b2fcb67413625535cd1ada144dccfdcde22))
+
 ## [0.34.0](https://github.com/substrait-io/substrait/compare/v0.33.0...v0.34.0) (2023-09-17)
 
 
