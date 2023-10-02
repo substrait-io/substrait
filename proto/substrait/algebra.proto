@@ -433,6 +433,7 @@ message Rel {
     CrossRel cross = 12;
     //Physical relations
     HashJoinRel hash_join = 13;
+    NestedLoopJoinRel nested_loop_join = 18;
     MergeJoinRel merge_join = 14;
     ConsistentPartitionWindowRel window = 17;
     ExchangeRel exchange = 15;
