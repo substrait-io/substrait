@@ -585,7 +585,7 @@ message NestedLoopJoinRel {
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
-  Expression join_filter = 4;
+  Expression expression = 4;
 
   JoinType type = 5;
 
