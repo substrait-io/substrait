@@ -578,6 +578,31 @@ message HashJoinRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
+// The nested loop join (NLJ) operator will hold the entire right input and iterate over it using the
+// left input, evaluating the join expression on the Cartesian product of all rows.
+message NestedLoopJoinRel {
+  RelCommon common = 1;
+  Rel left = 2;
+  Rel right = 3;
+  Expression join_filter = 4;
+
+  JoinType type = 5;
+
+  enum JoinType {
+    JOIN_TYPE_UNSPECIFIED = 0;
+    JOIN_TYPE_INNER = 1;
+    JOIN_TYPE_OUTER = 2;
+    JOIN_TYPE_LEFT = 3;
+    JOIN_TYPE_RIGHT = 4;
+    JOIN_TYPE_LEFT_SEMI = 5;
+    JOIN_TYPE_RIGHT_SEMI = 6;
+    JOIN_TYPE_LEFT_ANTI = 7;
+    JOIN_TYPE_RIGHT_ANTI = 8;
+  }
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
 // The merge equijoin does a join by taking advantage of two sets that are sorted on the join keys.
 // This allows the join operation to be done in a streaming fashion.
 message MergeJoinRel {
