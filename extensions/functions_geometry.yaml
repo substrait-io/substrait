@@ -203,3 +203,37 @@ scalar_functions:
           - name: tolerance
             value: fp64
         return: u!geometry
+  -
+    name: "buffer"
+    description: >
+      Compute and return an expanded version of the input geometry. All the points
+      of the returned geometry are at a distance of `buffer_radius` away from the points
+      of the input geometry. If a negative `buffer_radius` is provided, the geometry will
+      shrink instead of expand.  A negative `buffer_radius` may shrink the geometry completely,
+      in which case an empty geometry is returned. For input the geometries of points or lines,
+      a negative `buffer_radius` will always return an emtpy geometry.
+    impls:
+      - args:
+          - name: geom
+            value: u!geometry
+          - name: buffer_radius
+            value: fp64
+        return: u!geometry
+  -
+    name: "centroid"
+    description: >
+      Return a point which is the geometric center of mass of the input geometry.
+    impls:
+      - args:
+          - name: geom
+            value: u!geometry
+        return: u!geometry
+  -
+    name: "minimum_bounding_circle"
+    description: >
+      Return the smallest circle polygon that contains the input geometry.
+    impls:
+      - args:
+          - name: geom
+            value: u!geometry
+        return: u!geometry
