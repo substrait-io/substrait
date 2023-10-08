@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.36.0](https://github.com/substrait-io/substrait/compare/v0.35.0...v0.36.0) (2023-10-08)
+
+
+### Features
+
+* geometry processing functions ([#556](https://github.com/substrait-io/substrait/issues/556)) ([8406cf6](https://github.com/substrait-io/substrait/commit/8406cf6753b97829b2b5211344822d6f2f840eab))
+
 ## [0.35.0](https://github.com/substrait-io/substrait/compare/v0.34.0...v0.35.0) (2023-10-01)
 
 
