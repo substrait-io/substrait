@@ -433,8 +433,8 @@ message Rel {
     CrossRel cross = 12;
     //Physical relations
     HashJoinRel hash_join = 13;
-    NestedLoopJoinRel nested_loop_join = 18;
     MergeJoinRel merge_join = 14;
+    NestedLoopJoinRel nested_loop_join = 18;
     ConsistentPartitionWindowRel window = 17;
     ExchangeRel exchange = 15;
     ExpandRel expand = 16;
@@ -579,15 +579,17 @@ message HashJoinRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
-// The nested loop join (NLJ) operator will hold the entire right input and iterate over it using the
-// left input, evaluating the join expression on the Cartesian product of all rows.
-message NestedLoopJoinRel {
+// The merge equijoin does a join by taking advantage of two sets that are sorted on the join keys.
+// This allows the join operation to be done in a streaming fashion.
+message MergeJoinRel {
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
-  Expression expression = 4;
+  repeated Expression.FieldReference left_keys = 4;
+  repeated Expression.FieldReference right_keys = 5;
+  Expression post_join_filter = 6;
 
-  JoinType type = 5;
+  JoinType type = 7;
 
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;
@@ -604,17 +606,15 @@ message NestedLoopJoinRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
-// The merge equijoin does a join by taking advantage of two sets that are sorted on the join keys.
-// This allows the join operation to be done in a streaming fashion.
-message MergeJoinRel {
+// The nested loop join (NLJ) operator will hold the entire right input and iterate over it using the
+// left input, evaluating the join expression on the Cartesian product of all rows.
+message NestedLoopJoinRel {
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
-  repeated Expression.FieldReference left_keys = 4;
-  repeated Expression.FieldReference right_keys = 5;
-  Expression post_join_filter = 6;
+  Expression expression = 4;
 
-  JoinType type = 7;
+  JoinType type = 5;
 
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;
