@@ -612,6 +612,7 @@ message NestedLoopJoinRel {
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
+  // optional, defaults to true (a cartesian join)
   Expression expression = 4;
 
   JoinType type = 5;
