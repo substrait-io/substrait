@@ -218,27 +218,22 @@ scalar_functions:
   -
     name: "least"
     description: >-
-      Returns the smallest value.
-
-      The `null_handling` option specifies how to handle null arguments.  If `ANY_NULL`
-      is specified, the function will return null if any argument evaluate to null.
-      `ALL_NULLS` means the function will return null only if all arguments evaluate to null.
+      Returns the smallest value.  The function will return null if any argument evaluates
+      to null.
 
       String comparison is done in lexicographical ordering, one character at a time, from
       left to right. Uppercase letters are less than lowercase letters.
     impls:
       - args:
           - value: T
-        options:
-          null_handling:
-            values: [ ANY_NULL, ALL_NULLS ]
         variadic:
           min: 2
         return: T|?
   -
     name: "least_skip_null"
     description: >-
-      Returns the smallest value. Skip any null arguments.
+      Returns the smallest value. The function will return null only if all arguments evaluate
+      to null.
 
       String comparison is done in lexicographical ordering, one character at a time, from
       left to right. Uppercase letters are less than lowercase letters.
@@ -247,7 +242,7 @@ scalar_functions:
           - value: T
         variadic:
           min: 2
-        return: T
+        return: T&?
   -
     name: "greatest"
     description: >-
@@ -255,6 +250,8 @@ scalar_functions:
 
       String comparison is done in lexicographical ordering, one character at a time, from left to right.
       Uppercase letters are less than lowercase letters.
+
+      There is no greatest_skip_null function because it behaves the same as greatest.
     impls:
       - args:
           - value: T
