@@ -215,3 +215,47 @@ scalar_functions:
         variadic:
           min: 2
         return: any1
+  -
+    name: "least"
+    description: >-
+      Evaluates each argument and returns the smallest one.  The function will return
+      null if any argument evaluates to null.
+    impls:
+      - args:
+          - value: T
+        variadic:
+          min: 2
+        return: T|?
+  -
+    name: "least_skip_null"
+    description: >-
+      Evaluates each argument and returns the smallest one. The function will return
+      null only if all arguments evaluate to null.
+    impls:
+      - args:
+          - value: T
+        variadic:
+          min: 2
+        return: T&?
+  -
+    name: "greatest"
+    description: >-
+      Evaluates each argument and returns the largest one.  The function will return
+      null if any argument evaluates to null.
+    impls:
+      - args:
+          - value: T
+        variadic:
+          min: 2
+        return: T|?
+  -
+    name: "greatest_skip_null"
+    description: >-
+      Evaluates each argument and returns the largest one. The function will return
+      null only if all arguments evaluate to null.
+    impls:
+      - args:
+          - value: T
+        variadic:
+          min: 2
+        return: T&?
