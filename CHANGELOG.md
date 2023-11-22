@@ -1,6 +1,20 @@
 Release Notes
 ---
 
+## [0.38.0](https://github.com/substrait-io/substrait/compare/v0.37.0...v0.38.0) (2023-11-05)
+
+
+### Features
+
+* add least and greatest functions to functions_comparison.yml ([#247](https://github.com/substrait-io/substrait/issues/247)) ([b3071bc](https://github.com/substrait-io/substrait/commit/b3071bc9cd77cf916568641c83056a285f8123be))
+
+## [0.37.0](https://github.com/substrait-io/substrait/compare/v0.36.0...v0.37.0) (2023-10-22)
+
+
+### Features
+
+* add NestedLoopJoinRel definition ([#561](https://github.com/substrait-io/substrait/issues/561)) ([cf32750](https://github.com/substrait-io/substrait/commit/cf327502bdb187ae06d9210e9de460193027679e))
+
 ## [0.36.0](https://github.com/substrait-io/substrait/compare/v0.35.0...v0.36.0) (2023-10-08)
 
 
