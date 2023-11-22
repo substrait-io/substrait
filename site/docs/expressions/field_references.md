@@ -15,11 +15,78 @@ In Substrait, all fields are dealt with on a positional basis. Field names are o
 
 References are typically constructed as a sequence. For example: [struct position 0, struct position 1, array offset 2, array slice 1..3].
 
+Field references are in the same order they are defined in their schema. For example, let's consider the following schema:
+
+```
+column a:
+  struct<
+    b: list<
+      struct<
+        c: map<string, 
+          struct<
+            x: i32>>>>>
+```
+
+If we want to represent the SQL expression:
+
+```
+a.b[2].c['my_map_key'].x
+```
+
+We will need to declare the nested field such that:
+
+``
+Struct field reference a
+Struct field b
+List offset 2
+Struct field c
+Map key my_map_key
+Struct field x
+```
+
+Or more formally in Protobuf Text, we get:
+
+```
+selection {
+  direct_reference {
+    struct_field {
+      field: 0 # .a
+      child {
+        struct_field {
+          field: 0 # .b
+          child {
+            list_element {
+              offset: 2
+              child {
+                struct_field {
+                  field: 0 # .c
+                  child {
+                    map_key {
+                      map_key {
+                        string: "my_map_key" # ['my_map_key']
+                      }
+                      child {
+                        struct_field {
+                          field: 0 # .x
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  root_reference { }
+}
+```
+
 #### Validation
 
 References must validate against the schema of the record being referenced. If not, an error is expected.
-
-
 
 ### Masked Complex Expression 
 
@@ -40,7 +107,7 @@ struct:
   - i64
 ```
 
-Given this schema, you could declare a mask in pseudocode, such as:
+Given this schema, you could declare a mask of fields to include in pseudocode, such as:
 
 ```
 0:[0,1:[..5:[0,2]]],2,3
@@ -77,11 +144,7 @@ By default, when only a single field is selected from a struct, that struct is r
 
 
 
-## Discussion Points
+???+ question "Discussion Points"
 
-* Should we support column reordering/positioning using a masked complex expression? (Right now, you can only mask things out.)
-
-
-
-
+    * Should we support column reordering/positioning using a masked complex expression? (Right now, you can only mask things out.)
 

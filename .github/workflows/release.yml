@@ -18,22 +18,22 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'substrait-io/substrait'
     steps:
-      - uses: tibdex/github-app-token@v1
+      - uses: tibdex/github-app-token@v2
         id: generate-token
         with:
           app_id: ${{ secrets.APP_ID }}
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: "18"
 
-      - uses: bufbuild/buf-setup-action@v1.26.1
+      - uses: bufbuild/buf-setup-action@v1.28.1
         with:
           github_token: ${{ github.token }}
 

@@ -23,6 +23,27 @@ A Substrait plan can reference one or more YAML files via URI for extension. In 
 | Type Variation     | The name as defined on the type variation object.            |
 | Function Signature | A function signature compound name as described below.       |
 
+A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the YAML file it depends on using a key-value pair in the `dependencies` key, where the value is the URI to the YAML file, and the key is a valid identifier that can then be used as an identifier-safe alias for the URI. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected.
+
+For example, if the YAML file at `file:///extension_types.yaml` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
+
+```yaml
+dependencies:
+  ext: file:///extension_types.yaml
+scalar_functions:
+- name: distance
+  description: The distance between two points.
+  impls:
+  - args:
+    - name: a
+      value: ext.point
+    - name: b
+      value: ext.point
+    return: f64
+```
+
+Here, the choice for the name `ext` is arbitrary, as long as it does not conflict with anything else in the YAML file.
+
 ### Function Signature Compound Names
 
 A YAML file may contain one or more functions by the same name. The key used in the function extension declaration to reference a function is a combination of the name of the function along with a list of the required input argument types. The format is as follows:
@@ -33,9 +54,9 @@ A YAML file may contain one or more functions by the same name. The key used in 
 
 Rather than using a full data type representation, the input argument types (`short_arg_type`) are mapped to single-level short name. The mappings are listed in the table below.
 
-!!! note
+!!! note 
 
-Every compound function signature must be unique.  If two function implementations in a YAML file would generate the same compound function signature, then the YAML file is invalid and behavior is undefined.
+    Every compound function signature must be unique.  If two function implementations in a YAML file would generate the same compound function signature, then the YAML file is invalid and behavior is undefined.
 
 | Argument Type              | Signature Name |
 | -------------------------- | -------------- |
@@ -48,6 +69,7 @@ Every compound function signature must be unique.  If two function implementatio
 | fp64                       | fp64           |
 | string                     | str            |
 | binary                     | vbin           |
+| boolean                    | bool           |
 | timestamp                  | ts             |
 | timestamp_tz               | tstz           |
 | date                       | date           |

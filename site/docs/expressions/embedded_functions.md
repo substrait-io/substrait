@@ -19,10 +19,9 @@ The binary representation of an embedded function is:
     ```proto
 %%% proto.message.Expression.EmbeddedFunction %%%
     ```
+
 === "Human Readable Representation"
-    n/a
-=== "Example"
-    n/a
+    As the bytes are opaque to Substrait there is no equivalent human readable form.
 
 
 ## Function Details
@@ -49,16 +48,9 @@ There are many types of possible stored functions. For each, Substrait works to 
 
 
 
-## Discussion Points
+???+ question "Discussion Points"
 
-* What are the common embedded function formats?
-* How do we expose the data for a function?
-* How do we express batching capabilities?
-* How do we ensure/declare containerization?
-
-
-
-
-
-
-
+    * What are the common embedded function formats?
+    * How do we expose the data for a function?
+    * How do we express batching capabilities?
+    * How do we ensure/declare containerization?

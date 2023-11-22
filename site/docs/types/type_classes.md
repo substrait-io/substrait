@@ -15,8 +15,8 @@ Simple type classes are those that don't support any form of configuration. For 
 | i16             | A signed integer within [-32,768..32,767], typically represented as a 16-bit two's complement number. | `int32`
 | i32             | A signed integer within [-2147483648..2,147,483,647], typically represented as a 32-bit two's complement number. | `int32`
 | i64             | A signed integer within [−9,223,372,036,854,775,808..9,223,372,036,854,775,807], typically represented as a 64-bit two's complement number. | `int64`
-| fp32            | A 4-byte single-precision floating point number with range as defined [here](https://en.wikipedia.org/wiki/Single-precision_floating-point_format). | `float`
-| fp64            | An 8-byte double-precision floating point number with range as defined [here](https://en.wikipedia.org/wiki/Double-precision_floating-point_format). | `double`
+| fp32            | A 4-byte single-precision floating point number with the same range and precision as defined for the [IEEE 754 32-bit floating-point format](https://standards.ieee.org/ieee/754/6210/). | `float`
+| fp64            | An 8-byte double-precision floating point number with the same range and precision as defined for the [IEEE 754 64-bit floating-point format](https://standards.ieee.org/ieee/754/6210/). | `double`
 | string          | A unicode string of text, [0..2,147,483,647] UTF-8 bytes in length. | `string`
 | binary          | A binary value, [0..2,147,483,647] bytes in length.          | `binary`
 | timestamp       | A naive timestamp within [1000-01-01 00:00:00.000000..9999-12-31 23:59:59.999999], with microsecond precision. Does not include timezone information and can thus not be unambiguously mapped to a moment on the timeline without context. Similar to naive datetime in Python. | `int64` microseconds since 1970-01-01 00:00:00.000000 (in an unspecified timezone)
