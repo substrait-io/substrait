@@ -4,6 +4,12 @@ Extended Expression messages are provided for expression-level protocols as an a
 
 Since Extended Expression will be used seperately from the Plan rel representation, it will need to include basic fields like Version.
 
+=== "ExtendedExpression Message"
+
+    ```proto
+%%% proto.message.ExtendedExpression %%%
+    ```
+
 ## Input and output data schema
 
 Similar to `base_schema` defined in [ReadRel](https://github.com/substrait-io/substrait/blob/7f272f13f22cd5f5842baea42bcf7961e6251881/proto/substrait/algebra.proto#L58), the input data schema describes the name/type/nullibilty and layout info of input data for the target expression evalutation. It also has a field `name` to define the name of the output data.

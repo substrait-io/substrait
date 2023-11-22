@@ -27,7 +27,7 @@ The hash equijoin join operator will build a hash table out of the right input b
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                    | Required                 |
 
 
-## NLJ Operator
+## NLJ (Nested Loop Join) Operator
 
 The nested loop join operator does a join by holding the entire right input and then iterating over it using the left input, evaluating the join expression on the Cartesian product of all rows, only outputting rows where the expression is true. Will also include non-matching rows in the OUTER, LEFT and RIGHT operations per the join type requirements.
 

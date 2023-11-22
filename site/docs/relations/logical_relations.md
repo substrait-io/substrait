@@ -42,7 +42,11 @@ A filter expression must be interpreted against the direct schema before the pro
 
 ### Read Definition Types
 
-Read definition types are built by the community and added to the specification. This is a portion of specification that is expected to grow rapidly.
+???+ info inline end "Adding new Read Definition Types"
+
+    If you have a read definition that's not covered here, see the [process for adding new read definition types](/spec/extending).
+
+Read definition types (like the rest of the features in Substrait) are built by the community and added to the specification.
 
 #### Virtual Table
 
@@ -394,7 +398,11 @@ The write operator is an operator that consumes one output and writes it to stor
 
 ### Write Definition Types
 
-Write definition types are built by the community and added to the specification. This is a portion of specification that is expected to grow rapidly.
+???+ info inline end "Adding new Write Definition Types"
+
+    If you have a write definition that's not covered here, see the [process for adding new write definition types](/spec/extending).
+
+Write definition types are built by the community and added to the specification.
 
 
 === "WriteRel Message"
@@ -420,7 +428,7 @@ Write definition types are built by the community and added to the specification
 | Format   | Enumeration of available formats. Only current option is PARQUET. | Required |
 
 
-## DDL Operator
+## DDL (Data Definition Language) Operator
 
 The operator that defines modifications of a database schema (CREATE/DROP/ALTER for TABLE and VIEWS).
 
@@ -449,6 +457,6 @@ The operator that defines modifications of a database schema (CREATE/DROP/ALTER 
 %%% proto.algebra.DdlRel %%%
     ```
 
-## Discussion Points
+???+ question "Discussion Points"
 
-* How to handle correlated operations?
+    * How should correlated operations be handled?

@@ -5,7 +5,7 @@ Substrait can be serialized into a [protobuf](https://developers.google.com/prot
 
 ## Plan
 
-The main top-level object used to communicate a Substrait plan using protobuf is a Plan message. The plan message is composed of a set of data structures that minimize repetition in the serialization along with one (or more) Relation trees. 
+The main top-level object used to communicate a Substrait plan using protobuf is a Plan message (see the [ExtendedExpression](/expressions/extended_expression/) for an alternative other top-level object). The plan message is composed of a set of data structures that minimize repetition in the serialization along with one (or more) Relation trees. 
 
 === "Plan Message"
 
