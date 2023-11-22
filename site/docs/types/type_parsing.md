@@ -45,3 +45,23 @@ Structs are unique from other types because they have an arbitrary number of par
 In the normal (non-named) form, struct declares a set of types that are fields within that struct. In the named struct form, the parameters are formed by tuples of names + types, delineated by a colon. Names that are composed only of numbers and letters can be left unquoted. For other characters, names should be quoted with double quotes and use backslash for double-quote escaping.
 
 Note, in core Substrait algebra, fields are unnamed and references are always based on zero-index ordinal positions. However, data inputs must declare name-to-ordinal mappings and outputs must declare ordinal-to-name mappings. As such, Substrait also provides a named struct which is a pseudo-type that is useful for human consumption. Outside these places, most structs in a Substrait plan are structs, not named-structs. The two cannot be used interchangeably.
+
+### Other Complex Types
+
+Similar to structs, maps and lists can also have a type as one of their parameters. Type references may be recursive. The key for a map is typically a simple type but it is not required.
+
+
+=== "YAML"
+
+    ```
+    list?<type>>
+    map<type0, type1>
+    ```
+
+=== "Text Format Examples"
+
+    ```
+    list?<list<string>>
+    list<struct<string, i32>>
+    map<i32?, list<map<i32, string?>>>
+    ```
