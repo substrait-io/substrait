@@ -205,7 +205,49 @@ The streaming aggregate operation leverages data ordered by the grouping express
 | Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional, defaults to 0.                |
 | Measures         | A list of one or more aggregate expressions. Aggregate expressions ordering requirements must be compatible with expected ordering. | Optional, required if no grouping sets. |
 
+## Consistent Partition Window Operation
+A consistent partition window operation is a special type of project operation where every function is a window function and all of the window functions share the same sorting and partitioning. This allows for the sort and partition to be calculated once and shared between the various function evaluations.
 
+| Signature            | Value                                                                |
+| -------------------- |----------------------------------------------------------------------|
+| Inputs               | 1                                                                    |
+| Outputs              | 1                                                                    |
+| Property Maintenance | Maintains distribution and ordering.                                 |
+| Direct Output Order  | Same as Project operator (input followed by each window expression). |
+
+### Window Properties
+
+| Property           | Description                     | Required               |
+| ------------------ | ------------------------------- | ---------------------- |
+| Input              | The relational input.           | Required               |
+| Window Functions | One or more window functions. | At least one required. |
+
+
+## Expand Operation
+
+The expand operation creates duplicates of input records based on the Expand Fields. Each Expand Field can be a Switching Field or an expression. Switching Fields are described below.  If an Expand Field is an expression then its value is consistent across all duplicate rows.
+
+| Signature            | Value                                                                                                                                                                          |
+| -------------------- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Inputs               | 1                                                                                                                                                                              |
+| Outputs              | 1                                                                                                                                                                              |
+| Property Maintenance | Distribution is maintained if all the distribution fields are consistent fields with direct references. Ordering can only be maintained down to the level of consistent fields that are kept.|
+| Direct Output Order  | The expand fields followed by an i32 column describing the index of the duplicate that the row is derived from.                                                                                                                                           |
+
+### Expand Properties
+
+| Property  | Description                          | Required |
+| --------- |--------------------------------------| -------- |
+| Input     | The relational input.                | Required |
+| Direct Fields | Expressions describing the output fields.  These refer to the schema of the input.  Each Direct Field must be an expression or a Switching Field  | Required |
+
+### Switching Field Properties
+
+A switching field is a field whose value is different in each duplicated row.  All switching fields in an Expand Operation must have the same number of duplicates.
+
+| Property  | Description                          | Required |
+| --------- |--------------------------------------| -------- |
+| Duplicates | List of one or more expressions.  The output will contain a row for each expression. | Required |
 
 ## Hashing Window Operation
 

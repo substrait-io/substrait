@@ -1,6 +1,80 @@
 Release Notes
 ---
 
+## [0.38.0](https://github.com/substrait-io/substrait/compare/v0.37.0...v0.38.0) (2023-11-05)
+
+
+### Features
+
+* add least and greatest functions to functions_comparison.yml ([#247](https://github.com/substrait-io/substrait/issues/247)) ([b3071bc](https://github.com/substrait-io/substrait/commit/b3071bc9cd77cf916568641c83056a285f8123be))
+
+## [0.37.0](https://github.com/substrait-io/substrait/compare/v0.36.0...v0.37.0) (2023-10-22)
+
+
+### Features
+
+* add NestedLoopJoinRel definition ([#561](https://github.com/substrait-io/substrait/issues/561)) ([cf32750](https://github.com/substrait-io/substrait/commit/cf327502bdb187ae06d9210e9de460193027679e))
+
+## [0.36.0](https://github.com/substrait-io/substrait/compare/v0.35.0...v0.36.0) (2023-10-08)
+
+
+### Features
+
+* geometry processing functions ([#556](https://github.com/substrait-io/substrait/issues/556)) ([8406cf6](https://github.com/substrait-io/substrait/commit/8406cf6753b97829b2b5211344822d6f2f840eab))
+
+## [0.35.0](https://github.com/substrait-io/substrait/compare/v0.34.0...v0.35.0) (2023-10-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* nullability of is_not_distinct_from has changed
+* The minimum precision for floating point numbers is
+now mandated.
+
+### Features
+
+* add approval guidelines for documentation updates ([#553](https://github.com/substrait-io/substrait/issues/553)) ([da4b32a](https://github.com/substrait-io/substrait/commit/da4b32ac41827ae8b53a2833ec34872670904e57))
+* add geometric data types and functions ([#543](https://github.com/substrait-io/substrait/issues/543)) ([db52bbd](https://github.com/substrait-io/substrait/commit/db52bbd844f7d8db328f1b6f00758f07009ca95b))
+* add geometry editor functions ([#554](https://github.com/substrait-io/substrait/issues/554)) ([727467c](https://github.com/substrait-io/substrait/commit/727467cc66f4c4984c7a8ea1205a473644f00b23))
+* adding geometry accessor functions ([#552](https://github.com/substrait-io/substrait/issues/552)) ([784fa9b](https://github.com/substrait-io/substrait/commit/784fa9b1702a1df64a8286a25fce377a0aa29fd4))
+* explicitly reference IEEE 754 and mandate precision as well as range ([#449](https://github.com/substrait-io/substrait/issues/449)) ([54e3d52](https://github.com/substrait-io/substrait/commit/54e3d52bc07c8952af86f57250253d10a97dadc3)), closes [#447](https://github.com/substrait-io/substrait/issues/447)
+
+
+### Bug Fixes
+
+* specify nullability for is_not_distinct_from ([#555](https://github.com/substrait-io/substrait/issues/555)) ([30773b2](https://github.com/substrait-io/substrait/commit/30773b2fcb67413625535cd1ada144dccfdcde22))
+
+## [0.34.0](https://github.com/substrait-io/substrait/compare/v0.33.0...v0.34.0) (2023-09-17)
+
+
+### Features
+
+* add more window functions ([#534](https://github.com/substrait-io/substrait/issues/534)) ([f2bfe15](https://github.com/substrait-io/substrait/commit/f2bfe15585943a137fafa560401e0cf0266c0650))
+* allow agg functions to be used in windows ([#540](https://github.com/substrait-io/substrait/issues/540)) ([565a1ef](https://github.com/substrait-io/substrait/commit/565a1ef26eccffba8f31ffe885667fab475d1da5))
+
+## [0.33.0](https://github.com/substrait-io/substrait/compare/v0.32.0...v0.33.0) (2023-08-27)
+
+
+### Features
+
+* add radians and degrees functions ([#544](https://github.com/substrait-io/substrait/issues/544)) ([2da2afa](https://github.com/substrait-io/substrait/commit/2da2afad579a428bb8f7460a153a1799af5c6ee3))
+
+## [0.32.0](https://github.com/substrait-io/substrait/compare/v0.31.0...v0.32.0) (2023-08-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* plans referencing functions using simple
+names (e.g. not vs not:bool) will no longer be valid.
+
+### Features
+
+* add ExchangeRel as a type in Rel ([#518](https://github.com/substrait-io/substrait/issues/518)) ([89b0c62](https://github.com/substrait-io/substrait/commit/89b0c6259a7440f760fafe32e8999d5d37cac8c7))
+* add expand rel ([#368](https://github.com/substrait-io/substrait/issues/368)) ([98380b0](https://github.com/substrait-io/substrait/commit/98380b0dd1dd9eb30457800ec49d7912b5dce11f))
+* add options to substring for start parameter being negative ([#508](https://github.com/substrait-io/substrait/issues/508)) ([281dc0f](https://github.com/substrait-io/substrait/commit/281dc0fba176df22fc35ff5f5acb7a05863b9d59))
+* add windowrel support  in proto ([#399](https://github.com/substrait-io/substrait/issues/399)) ([bd14e0e](https://github.com/substrait-io/substrait/commit/bd14e0e40782dbd0fa49de597ec30217b48961f2))
+* require compound functions names in extension references ([#537](https://github.com/substrait-io/substrait/issues/537)) ([2503beb](https://github.com/substrait-io/substrait/commit/2503beb3c872928483c05f76bf74d18188c84798))
+
 ## [0.31.0](https://github.com/substrait-io/substrait/compare/v0.30.0...v0.31.0) (2023-07-02)
 
 
