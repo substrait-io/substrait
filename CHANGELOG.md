@@ -1,6 +1,34 @@
 Release Notes
 ---
 
+## [0.39.0](https://github.com/substrait-io/substrait/compare/v0.38.0...v0.39.0) (2023-11-26)
+
+
+### ⚠ BREAKING CHANGES
+
+*   * Map keys may be repeated.
+   * Map keys must not be NULL.
+   * The map key type may be nullable.
+
+This is based on the current restrictions found in the wild.
+
+DuckDB, Velox, Spark, and Acero all reject attempts to provide NULL as a
+key.
+
+Despite DuckDB specifically calling out that keys must be unique in its
+implementation other implementations such as Velox and Acero do not
+require the key to be unique so we cannot require the map key to be 1:1
+with map values.
+
+### Features
+
+* support for simple extensions dependencies ([#265](https://github.com/substrait-io/substrait/issues/265)) ([f0ecf54](https://github.com/substrait-io/substrait/commit/f0ecf54e271f060687d87707e58c0354b02fd769))
+
+
+### Documentation
+
+* clarify map key behavior ([#521](https://github.com/substrait-io/substrait/issues/521)) ([e3860f5](https://github.com/substrait-io/substrait/commit/e3860f56a262a41582503c61dd5095188e96f644))
+
 ## [0.38.0](https://github.com/substrait-io/substrait/compare/v0.37.0...v0.38.0) (2023-11-05)
 
 
