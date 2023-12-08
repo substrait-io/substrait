@@ -1413,9 +1413,10 @@ message AggregateFunction {
     AGGREGATION_INVOCATION_DISTINCT = 2;
   }
 
-  // This rel is used  to create references,
-  // in case we refer to a RelRoot field names will be ignored
-  message ReferenceRel {
-    int32 subtree_ordinal = 1;
-  }
+}
+
+// This rel is used  to create references,
+// in case we refer to a RelRoot field names will be ignored
+message ReferenceRel {
+  int32 subtree_ordinal = 1;
 }
