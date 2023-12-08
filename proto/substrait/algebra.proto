@@ -1412,7 +1412,6 @@ message AggregateFunction {
     // Use only distinct values in the aggregation calculation.
     AGGREGATION_INVOCATION_DISTINCT = 2;
   }
-
 }
 
 // This rel is used  to create references,
