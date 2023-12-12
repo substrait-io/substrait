@@ -284,32 +284,86 @@ scalar_functions:
             value: fp64
         return: fp64
   -
-    name: "modulus"
-    description: "Get the remainder when dividing one value by another."
+    name: "modulo"
+    description: >
+      Calculate the remainder (r) when dividing dividend (x) by divisor (y).
+
+      In mathematics, many conventions for the modulo operation exists. In computing the result of a modulo operation depends on the software implementation
+      and underlying hardware. Substrait is a format for describing compute operations on structured data and designed for
+      interoperability. Therefore the user is responsible for determining a definition of division as defined by the quotient (y).
+
+      The following basic conditions of division are satisfied:
+      (1) q ∈ ℤ (the quotient is an integer)
+      (2) x = y * q + r (division rule)
+      (3) abs(r) < abs(y)
+      where q is the quotient.
+
+      The `quotient` option determines the mathematical definition of quotient to use in the above definition of division.
+      When `quotient`=TRUNCATE, q = trunc(x/y).
+      When `quotient`=FLOOR, q = floor(x/y).
+      When `quotient`=CEILING, q = ceil(x/y).
+      When `quotient`=ROUND, q = round(x/y), where the round function is rounding half to even.
+      When `quotient`=EUCLIDIAN, q = sign(y) * floor(x/abs(y))
+
+      In the case of TRUNCATE, FLOOR, AND CEILING division: remainder r = x - round_func(x/y)
+      In the case of EUCLIDIAN division: remainder r = x - abs(y)*floor(x/abs(y))
+
+      The `on_domain_error` option governs behavior in cases where y is 0, y is +/-inf, or x is +/-inf.
+      Therefore, modulus is undefined.
+      The `overflow` option governs behavior when integer overflow occurs.
+      If x and y are both 0 or both +/-infinity, behavior will be governed by `on_domain_error`.
     impls:
       - args:
           - name: x
             value: i8
           - name: y
             value: i8
+        options:
+          quotient:
+            values: [ TRUNCATE, FLOOR, CEILING, ROUND, EUCLIDEAN ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: i8
       - args:
           - name: x
             value: i16
           - name: y
             value: i16
+        options:
+          quotient:
+            values: [ TRUNCATE, FLOOR, CEILING, ROUND, EUCLIDEAN ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: i16
       - args:
           - name: x
             value: i32
           - name: y
             value: i32
+        options:
+          quotient:
+            values: [ TRUNCATE, FLOOR, CEILING, ROUND, EUCLIDEAN ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: i32
       - args:
           - name: x
             value: i64
           - name: y
             value: i64
+        options:
+          quotient:
+            values: [ TRUNCATE, FLOOR, CEILING, ROUND, EUCLIDEAN ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ NAN, ERROR ]
         return: i64
   -
     name: "power"
