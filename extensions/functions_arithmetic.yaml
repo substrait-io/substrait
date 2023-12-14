@@ -299,17 +299,13 @@ scalar_functions:
       (3) abs(r) < abs(y)
       where q is the quotient.
 
-      The `quotient` option determines the mathematical definition of quotient to use in the above definition of
+      The `division_type` option determines the mathematical definition of quotient to use in the above definition of
       division.
 
-      When `quotient`=TRUNCATE, q = trunc(x/y).
-      When `quotient`=FLOOR, q = floor(x/y).
-      When `quotient`=CEILING, q = ceil(x/y).
-      When `quotient`=ROUND, q = round(x/y), where the round function is rounding half to even.
-      When `quotient`=EUCLIDIAN, q = sign(y) * floor(x/abs(y))
+      When `division_type`=TRUNCATE, q = trunc(x/y).
+      When `division_type`=FLOOR, q = floor(x/y).
 
-      In the case of TRUNCATE, FLOOR, AND CEILING division: remainder r = x - round_func(x/y)
-      In the case of EUCLIDIAN division: remainder r = x - abs(y)*floor(x/abs(y))
+      In the cases of TRUNCATE and FLOOR division: remainder r = x - round_func(x/y)
 
       The `on_domain_error` option governs behavior in cases where y is 0, y is +/-inf, or x is +/-inf. In these cases
       modulo is undefined.
@@ -322,12 +318,11 @@ scalar_functions:
           - name: y
             value: i8
         options:
-          quotient:
-            values: [ TRUNCATE, FLOOR, CEILING, ROUND, EUCLIDEAN ]
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
-          on_domain_error:
-            values: [ NAN, ERROR ]
+          on_domain_error: values: [ NAN, ERROR ]
         return: i8
       - args:
           - name: x
@@ -335,8 +330,8 @@ scalar_functions:
           - name: y
             value: i16
         options:
-          quotient:
-            values: [ TRUNCATE, FLOOR, CEILING, ROUND, EUCLIDEAN ]
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
           on_domain_error:
@@ -348,8 +343,8 @@ scalar_functions:
           - name: y
             value: i32
         options:
-          quotient:
-            values: [ TRUNCATE, FLOOR, CEILING, ROUND, EUCLIDEAN ]
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
           on_domain_error:
@@ -361,8 +356,8 @@ scalar_functions:
           - name: y
             value: i64
         options:
-          quotient:
-            values: [ TRUNCATE, FLOOR, CEILING, ROUND, EUCLIDEAN ]
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
           on_domain_error:
