@@ -322,7 +322,7 @@ scalar_functions:
             values: [ TRUNCATE, FLOOR ]
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
-          on_domain_error: values: [ NAN, ERROR ]
+          on_domain_error: values: [ NULL, ERROR ]
         return: i8
       - args:
           - name: x
