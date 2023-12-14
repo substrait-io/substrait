@@ -346,7 +346,7 @@ scalar_functions:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NULL, ERROR ]
         return: i32
       - args:
           - name: x
