@@ -288,7 +288,7 @@ scalar_functions:
     description: >
       Calculate the remainder (r) when dividing dividend (x) by divisor (y).
 
-      In mathematics, many conventions for the modulo operation exists. In computing the result of a modulo operation
+      In mathematics, many conventions for the modulo operation exists. The result of a modulo operation
       depends on the software implementation and underlying hardware. Substrait is a format for describing compute
       operations on structured data and designed for interoperability. Therefore the user is responsible for determining
       a definition of division as defined by the quotient (q).
