@@ -284,11 +284,11 @@ scalar_functions:
             value: fp64
         return: fp64
   -
-    name: "modulo"
+    name: "modulus"
     description: >
       Calculate the remainder (r) when dividing dividend (x) by divisor (y).
 
-      In mathematics, many conventions for the modulo operation exists. The result of a modulo operation
+      In mathematics, many conventions for the modulus (mod) operation exists. The result of a mod operation
       depends on the software implementation and underlying hardware. Substrait is a format for describing compute
       operations on structured data and designed for interoperability. Therefore the user is responsible for determining
       a definition of division as defined by the quotient (q).
@@ -308,7 +308,7 @@ scalar_functions:
       In the cases of TRUNCATE and FLOOR division: remainder r = x - round_func(x/y)
 
       The `on_domain_error` option governs behavior in cases where y is 0, y is +/-inf, or x is +/-inf. In these cases
-      modulo is undefined.
+      the mod is undefined.
       The `overflow` option governs behavior when integer overflow occurs.
       If x and y are both 0 or both +/-infinity, behavior will be governed by `on_domain_error`.
     impls:
@@ -335,6 +335,8 @@ scalar_functions:
             values: [ TRUNCATE, FLOOR ]
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
         return: i16
       - args:
           - name: x
@@ -360,7 +362,7 @@ scalar_functions:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
           on_domain_error:
-            values: [ NULL, ERROR ]
+            values: [ "NULL", ERROR ]
         return: i64
   -
     name: "power"
