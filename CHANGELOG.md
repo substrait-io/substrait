@@ -1,6 +1,21 @@
 Release Notes
 ---
 
+## [0.40.0](https://github.com/substrait-io/substrait/compare/v0.39.0...v0.40.0) (2023-12-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* The enum `WriteRel::OutputMode` had an option change
+from
+`OUTPUT_MODE_MODIFIED_TUPLES` to `OUTPUT_MODE_MODIFIED_RECORDS`
+* The message `AggregateFunction.ReferenceRel` has moved
+to `ReferenceRel`.
+
+### Features
+
+* add missing rels to rel message ([#582](https://github.com/substrait-io/substrait/issues/582)) ([d952b45](https://github.com/substrait-io/substrait/commit/d952b4566e806b5d759fa365c605eb7c4e2629c3)), closes [#288](https://github.com/substrait-io/substrait/issues/288)
+
 ## [0.39.0](https://github.com/substrait-io/substrait/compare/v0.38.0...v0.39.0) (2023-11-26)
 
 
