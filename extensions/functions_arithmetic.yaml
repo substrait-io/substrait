@@ -285,31 +285,84 @@ scalar_functions:
         return: fp64
   -
     name: "modulus"
-    description: "Get the remainder when dividing one value by another."
+    description: >
+      Calculate the remainder (r) when dividing dividend (x) by divisor (y).
+
+      In mathematics, many conventions for the modulus (mod) operation exists. The result of a mod operation
+      depends on the software implementation and underlying hardware. Substrait is a format for describing compute
+      operations on structured data and designed for interoperability. Therefore the user is responsible for determining
+      a definition of division as defined by the quotient (q).
+
+      The following basic conditions of division are satisfied:
+      (1) q ∈ ℤ (the quotient is an integer)
+      (2) x = y * q + r (division rule)
+      (3) abs(r) < abs(y)
+      where q is the quotient.
+
+      The `division_type` option determines the mathematical definition of quotient to use in the above definition of
+      division.
+
+      When `division_type`=TRUNCATE, q = trunc(x/y).
+      When `division_type`=FLOOR, q = floor(x/y).
+
+      In the cases of TRUNCATE and FLOOR division: remainder r = x - round_func(x/y)
+
+      The `on_domain_error` option governs behavior in cases where y is 0, y is +/-inf, or x is +/-inf. In these cases
+      the mod is undefined.
+      The `overflow` option governs behavior when integer overflow occurs.
+      If x and y are both 0 or both +/-infinity, behavior will be governed by `on_domain_error`.
     impls:
       - args:
           - name: x
             value: i8
           - name: y
             value: i8
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
         return: i8
       - args:
           - name: x
             value: i16
           - name: y
             value: i16
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
         return: i16
       - args:
           - name: x
             value: i32
           - name: y
             value: i32
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
         return: i32
       - args:
           - name: x
             value: i64
           - name: y
             value: i64
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
         return: i64
   -
     name: "power"
