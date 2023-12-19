@@ -323,7 +323,7 @@ scalar_functions:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
           on_domain_error:
-            values: [ NULL, ERROR ]
+            values: [ "NULL", ERROR ]
         return: i8
       - args:
           - name: x
