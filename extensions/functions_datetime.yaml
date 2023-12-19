@@ -219,7 +219,7 @@ scalar_functions:
             value: interval_day
         return: timestamp
   -
-    name: "multiply_interval"
+    name: "multiply"
     description: Multiply an interval by an integral number.
     impls:
       - args:
