@@ -1,6 +1,20 @@
 Release Notes
 ---
 
+## [0.41.0](https://github.com/substrait-io/substrait/compare/v0.40.0...v0.41.0) (2023-12-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* Renamed modulus to modulo. 
+
+Added options and documentation for the modulo operator as defined in
+math and comp sci.
+
+### Bug Fixes
+
+* renamed modulus to modulo; updated modulo operator defintion ([#583](https://github.com/substrait-io/substrait/issues/583)) ([aba1bc7](https://github.com/substrait-io/substrait/commit/aba1bc79acc5bf40a719b23276bfa6f7546e7ed5)), closes [#353](https://github.com/substrait-io/substrait/issues/353)
+
 ## [0.40.0](https://github.com/substrait-io/substrait/compare/v0.39.0...v0.40.0) (2023-12-17)
 
 
