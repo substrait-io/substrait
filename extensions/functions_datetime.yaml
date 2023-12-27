@@ -688,3 +688,16 @@ scalar_functions:
           - name: origin
             value: time
         return: time
+  -
+    name: "current_date"
+    description: "Return the current date"
+    impls:
+      - args: []
+        return: date
+
+  -
+    name: "current_timestamp"
+    description: "Return the current timestamp"
+    impls:
+      - args: []
+        return: timestamp
