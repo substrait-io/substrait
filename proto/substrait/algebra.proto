@@ -561,35 +561,18 @@ message WriteRel {
   }
 }
 
-// The hash equijoin join operator will build a hash table out of the right input based on a set of join keys.
-// It will then probe that hash table for incoming inputs, finding matches.
-//
-// Two rows are a match if the equality function returns true for all keys
-message HashJoinRel {
-  RelCommon common = 1;
-  Rel left = 2;
-  Rel right = 3;
-  repeated Expression.FieldReference left_keys = 4 [deprecated = true];
-  repeated Expression.FieldReference right_keys = 5 [deprecated = true];
-  // One or more keys to join on.  The relation is invalid if this is empty.
-  repeated HashJoinKey keys = 8;
-  Expression post_join_filter = 6;
+// Equality joins (equi-joins) are a specialization of the general join where the join expression
+// is an series of equality comparisons between fields that are ANDed together.  The exact definition
+// of "equality" is flexible.
+message EquiJoinKey {
+  // The key to compare from the left table
+  Expression.FieldReference left = 1;
+  // The key to compare from the right table
+  Expression.FieldReference right = 2;
+  // Describes how to compare the two keys, defaults to the equal function
+  EqualityType equality = 3;
 
-  JoinType type = 7;
-
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_LEFT_SEMI = 5;
-    JOIN_TYPE_RIGHT_SEMI = 6;
-    JOIN_TYPE_LEFT_ANTI = 7;
-    JOIN_TYPE_RIGHT_ANTI = 8;
-  }
-
-  // Most hash-joins will use one of the following equality behaviors.  To avoid the complexity
+  // Most equi-joins will use one of the following equality behaviors.  To avoid the complexity
   // of a function lookup we define the common behaviors here.
   enum SimpleEqualityType {
     // Returns true only if both values are equal and not null
@@ -611,20 +594,44 @@ message HashJoinRel {
   message EqualityType {
     oneof inner_type {
       // One of the simple equality behaviors is used
-      SimpleEqualityType simple = 0;
+      SimpleEqualityType simple = 1;
       // A custom equality behavior is used.  This can happen, for example, when using
       // collations, where we might want to do something like a case-insensitive comparison
-      uint32 custom_function_reference = 1;
+      uint32 custom_function_reference = 2;
     }
   }
+}
 
-  message HashJoinKey {
-    // The key to compare from the left table
-    Expression.FieldReference left = 0;
-    // The key to compare from the right table
-    Expression.FieldReference right = 1;
-    // Describes how to compare the two keys, defaults to the equal function
-    EqualityType equality = 2;
+
+// The hash equijoin join operator will build a hash table out of the right input based on a set of join keys.
+// It will then probe that hash table for incoming inputs, finding matches.
+//
+// Two rows are a match if the equality function returns true for all keys
+message HashJoinRel {
+  RelCommon common = 1;
+  Rel left = 2;
+  Rel right = 3;
+  // These fields are deprecated in favor of `keys`.  If they are set then
+  // the two lists (left_keys and right_keys) must have the same length and
+  // the comparion function is considered to be SimpleEqualityType::EQ
+  repeated Expression.FieldReference left_keys = 4 [deprecated = true];
+  repeated Expression.FieldReference right_keys = 5 [deprecated = true];
+  // One or more keys to join on.  The relation is invalid if this is empty.
+  repeated EquiJoinKey keys = 8;
+  Expression post_join_filter = 6;
+
+  JoinType type = 7;
+
+  enum JoinType {
+    JOIN_TYPE_UNSPECIFIED = 0;
+    JOIN_TYPE_INNER = 1;
+    JOIN_TYPE_OUTER = 2;
+    JOIN_TYPE_LEFT = 3;
+    JOIN_TYPE_RIGHT = 4;
+    JOIN_TYPE_LEFT_SEMI = 5;
+    JOIN_TYPE_RIGHT_SEMI = 6;
+    JOIN_TYPE_LEFT_ANTI = 7;
+    JOIN_TYPE_RIGHT_ANTI = 8;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -636,8 +643,13 @@ message MergeJoinRel {
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
-  repeated Expression.FieldReference left_keys = 4;
-  repeated Expression.FieldReference right_keys = 5;
+  // These fields are deprecated in favor of `keys`.  If they are set then
+  // the two lists (left_keys and right_keys) must have the same length and
+  // the comparion function is considered to be SimpleEqualityType::EQ
+  repeated Expression.FieldReference left_keys = 4 [deprecated = true];
+  repeated Expression.FieldReference right_keys = 5 [deprecated = true];
+  // One or more keys to join on.  The relation is invalid if this is empty.
+  repeated EquiJoinKey keys = 8;
   Expression post_join_filter = 6;
 
   JoinType type = 7;
