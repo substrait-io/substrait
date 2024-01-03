@@ -563,12 +563,16 @@ message WriteRel {
 
 // The hash equijoin join operator will build a hash table out of the right input based on a set of join keys.
 // It will then probe that hash table for incoming inputs, finding matches.
+//
+// Two rows are a match if the equality function returns true for all keys
 message HashJoinRel {
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
-  repeated Expression.FieldReference left_keys = 4;
-  repeated Expression.FieldReference right_keys = 5;
+  repeated Expression.FieldReference left_keys = 4 [deprecated = true];
+  repeated Expression.FieldReference right_keys = 5 [deprecated = true];
+  // One or more keys to join on.  The relation is invalid if this is empty.
+  repeated HashJoinKey keys = 8;
   Expression post_join_filter = 6;
 
   JoinType type = 7;
@@ -583,6 +587,44 @@ message HashJoinRel {
     JOIN_TYPE_RIGHT_SEMI = 6;
     JOIN_TYPE_LEFT_ANTI = 7;
     JOIN_TYPE_RIGHT_ANTI = 8;
+  }
+
+  // Most hash-joins will use one of the following equality behaviors.  To avoid the complexity
+  // of a function lookup we define the common behaviors here.
+  enum SimpleEqualityType {
+    // Returns true only if both values are equal and not null
+    EQ = 0;
+    // Returns true if both values are equal and not null
+    // Returns true if both values are null
+    // Returns false if one value is null and the other value is not null
+    //
+    // This can be expressed as a = b OR (isnull(a) AND isnull(b))
+    IS_NOT_DISTINCT_FROM = 1;
+    // Returns true if both values are equal and not null
+    // Returns true if either value is null
+    //
+    // This can be expressed as a = b OR isnull(a = b)
+    MIGHT_EQUAL = 2;
+  }
+
+  // Describes how the relation should consider if two rows are a match
+  message EqualityType {
+    oneof inner_type {
+      // One of the simple equality behaviors is used
+      SimpleEqualityType simple = 0;
+      // A custom equality behavior is used.  This can happen, for example, when using
+      // collations, where we might want to do something like a case-insensitive comparison
+      uint32 custom_function_reference = 1;
+    }
+  }
+
+  message HashJoinKey {
+    // The key to compare from the left table
+    Expression.FieldReference left = 0;
+    // The key to compare from the right table
+    Expression.FieldReference right = 1;
+    // Describes how to compare the two keys, defaults to the equal function
+    EqualityType equality = 2;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
