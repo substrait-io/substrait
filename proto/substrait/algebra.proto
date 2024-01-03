@@ -575,19 +575,20 @@ message EquiJoinKey {
   // Most equi-joins will use one of the following equality behaviors.  To avoid the complexity
   // of a function lookup we define the common behaviors here.
   enum SimpleEqualityType {
+    SIMPLE_EQUALITY_TYPE_UNSPECIFIED = 0;
     // Returns true only if both values are equal and not null
-    SIMPLE_EQUALITY_TYPE_EQ = 0;
+    SIMPLE_EQUALITY_TYPE_EQ = 1;
     // Returns true if both values are equal and not null
     // Returns true if both values are null
     // Returns false if one value is null and the other value is not null
     //
     // This can be expressed as a = b OR (isnull(a) AND isnull(b))
-    SIMPLE_EQUALITY_TYPE_IS_NOT_DISTINCT_FROM = 1;
+    SIMPLE_EQUALITY_TYPE_IS_NOT_DISTINCT_FROM = 2;
     // Returns true if both values are equal and not null
     // Returns true if either value is null
     //
     // This can be expressed as a = b OR isnull(a = b)
-    SIMPLE_EQUALITY_TYPE_MIGHT_EQUAL = 2;
+    SIMPLE_EQUALITY_TYPE_MIGHT_EQUAL = 3;
   }
 
   // Describes how the relation should consider if two rows are a match
