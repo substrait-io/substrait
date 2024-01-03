@@ -576,18 +576,18 @@ message EquiJoinKey {
   // of a function lookup we define the common behaviors here.
   enum SimpleEqualityType {
     // Returns true only if both values are equal and not null
-    EQ = 0;
+    SIMPLE_EQUALITY_TYPE_EQ = 0;
     // Returns true if both values are equal and not null
     // Returns true if both values are null
     // Returns false if one value is null and the other value is not null
     //
     // This can be expressed as a = b OR (isnull(a) AND isnull(b))
-    IS_NOT_DISTINCT_FROM = 1;
+    SIMPLE_EQUALITY_TYPE_IS_NOT_DISTINCT_FROM = 1;
     // Returns true if both values are equal and not null
     // Returns true if either value is null
     //
     // This can be expressed as a = b OR isnull(a = b)
-    MIGHT_EQUAL = 2;
+    SIMPLE_EQUALITY_TYPE_MIGHT_EQUAL = 2;
   }
 
   // Describes how the relation should consider if two rows are a match
@@ -601,7 +601,6 @@ message EquiJoinKey {
     }
   }
 }
-
 
 // The hash equijoin join operator will build a hash table out of the right input based on a set of join keys.
 // It will then probe that hash table for incoming inputs, finding matches.
