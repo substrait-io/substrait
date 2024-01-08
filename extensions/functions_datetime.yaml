@@ -688,3 +688,95 @@ scalar_functions:
           - name: origin
             value: time
         return: time
+
+aggregate_functions:
+  - name: "min"
+    description: Min a set of values.
+    impls:
+      - args:
+          - name: x
+            value: date
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: date?
+        return: date?
+      - args:
+          - name: x
+            value: time
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: time?
+        return: time?
+      - args:
+          - name: x
+            value: timestamp
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: timestamp?
+        return: timestamp?
+      - args:
+          - name: x
+            value: timestamp_tz
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: timestamp_tz?
+        return: timestamp_tz?
+      - args:
+          - name: x
+            value: interval_day
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: interval_day?
+        return: interval_day?
+      - args:
+          - name: x
+            value: interval_year
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: interval_year?
+        return: interval_year?
+  - name: "max"
+    description: Max a set of values.
+    impls:
+      - args:
+          - name: x
+            value: date
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: date?
+        return: date?
+      - args:
+          - name: x
+            value: time
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: time?
+        return: time?
+      - args:
+          - name: x
+            value: timestamp
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: timestamp?
+        return: timestamp?
+      - args:
+          - name: x
+            value: timestamp_tz
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: timestamp_tz?
+        return: timestamp_tz?
+      - args:
+          - name: x
+            value: interval_day
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: interval_day?
+        return: interval_day?
+      - args:
+          - name: x
+            value: interval_year
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: interval_year?
+        return: interval_year?
