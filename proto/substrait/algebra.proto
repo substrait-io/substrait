@@ -561,43 +561,45 @@ message WriteRel {
   }
 }
 
-// Equality joins (equi-joins) are a specialization of the general join where the join expression
-// is an series of equality comparisons between fields that are ANDed together.  The exact definition
-// of "equality" is flexible.
-message EquiJoinKey {
+// Hash joins and merge joins are a specialization of the general join where the join
+// expression is an series of comparisons between fields that are ANDed together.  The
+// behavior of this comparison is flexible
+message ComparisonJoinKey {
   // The key to compare from the left table
   Expression.FieldReference left = 1;
   // The key to compare from the right table
   Expression.FieldReference right = 2;
-  // Describes how to compare the two keys, defaults to the equal function
-  EqualityType equality = 3;
+  // Describes how to compare the two keys, defaults to the equal function.
+  ComparisonType comparison = 3;
 
-  // Most equi-joins will use one of the following equality behaviors.  To avoid the complexity
-  // of a function lookup we define the common behaviors here.
-  enum SimpleEqualityType {
-    SIMPLE_EQUALITY_TYPE_UNSPECIFIED = 0;
+  // Most joins will use one of the following behaviors.  To avoid the complexity
+  // of a function lookup we define the common behaviors here
+  enum SimpleComparisonType {
+    SIMPLE_COMPARISON_TYPE_UNSPECIFIED = 0;
     // Returns true only if both values are equal and not null
-    SIMPLE_EQUALITY_TYPE_EQ = 1;
+    SIMPLE_COMPARISON_TYPE_EQ = 1;
     // Returns true if both values are equal and not null
     // Returns true if both values are null
     // Returns false if one value is null and the other value is not null
     //
     // This can be expressed as a = b OR (isnull(a) AND isnull(b))
-    SIMPLE_EQUALITY_TYPE_IS_NOT_DISTINCT_FROM = 2;
+    SIMPLE_COMPARISON_TYPE_IS_NOT_DISTINCT_FROM = 2;
     // Returns true if both values are equal and not null
     // Returns true if either value is null
     //
     // This can be expressed as a = b OR isnull(a = b)
-    SIMPLE_EQUALITY_TYPE_MIGHT_EQUAL = 3;
+    SIMPLE_COMPARISON_TYPE_MIGHT_EQUAL = 3;
   }
 
   // Describes how the relation should consider if two rows are a match
-  message EqualityType {
+  message ComparisonType {
     oneof inner_type {
-      // One of the simple equality behaviors is used
-      SimpleEqualityType simple = 1;
-      // A custom equality behavior is used.  This can happen, for example, when using
-      // collations, where we might want to do something like a case-insensitive comparison
+      // One of the simple comparison behaviors is used
+      SimpleComparisonType simple = 1;
+      // A custom comparison behavior is used.  This can happen, for example, when using
+      // collations, where we might want to do something like a case-insensitive comparison.
+      //
+      // This must be a binary function with a boolean return type
       uint32 custom_function_reference = 2;
     }
   }
@@ -606,7 +608,7 @@ message EquiJoinKey {
 // The hash equijoin join operator will build a hash table out of the right input based on a set of join keys.
 // It will then probe that hash table for incoming inputs, finding matches.
 //
-// Two rows are a match if the equality function returns true for all keys
+// Two rows are a match if the comparison function returns true for all keys
 message HashJoinRel {
   RelCommon common = 1;
   Rel left = 2;
@@ -617,7 +619,9 @@ message HashJoinRel {
   repeated Expression.FieldReference left_keys = 4 [deprecated = true];
   repeated Expression.FieldReference right_keys = 5 [deprecated = true];
   // One or more keys to join on.  The relation is invalid if this is empty.
-  repeated EquiJoinKey keys = 8;
+  // If a custom comparison function is used then it must be consistent with
+  // the hash function used for the keys.
+  repeated ComparisonJoinKey keys = 8;
   Expression post_join_filter = 6;
 
   JoinType type = 7;
@@ -649,7 +653,9 @@ message MergeJoinRel {
   repeated Expression.FieldReference left_keys = 4 [deprecated = true];
   repeated Expression.FieldReference right_keys = 5 [deprecated = true];
   // One or more keys to join on.  The relation is invalid if this is empty.
-  repeated EquiJoinKey keys = 8;
+  // If a custom comparison function is used then it must be consistent with
+  // the ordering of the input data.
+  repeated ComparisonJoinKey keys = 8;
   Expression post_join_filter = 6;
 
   JoinType type = 7;
