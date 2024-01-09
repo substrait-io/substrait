@@ -569,7 +569,7 @@ message ComparisonJoinKey {
   Expression.FieldReference left = 1;
   // The key to compare from the right table
   Expression.FieldReference right = 2;
-  // Describes how to compare the two keys, defaults to the equal function.
+  // Describes how to compare the two keys
   ComparisonType comparison = 3;
 
   // Most joins will use one of the following behaviors.  To avoid the complexity
