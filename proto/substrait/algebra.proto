@@ -618,9 +618,19 @@ message HashJoinRel {
   // the comparion function is considered to be SimpleEqualityType::EQ
   repeated Expression.FieldReference left_keys = 4 [deprecated = true];
   repeated Expression.FieldReference right_keys = 5 [deprecated = true];
-  // One or more keys to join on.  The relation is invalid if this is empty.
+  // One or more keys to join on.  The relation is invalid if this is empty
+  // (unless the deprecated left_keys/right_keys fields are being used).
+  //
   // If a custom comparison function is used then it must be consistent with
   // the hash function used for the keys.
+  //
+  // In other words, the hash function must return the same hash code when the
+  // comparison returns true.  For example, if the comparison function is
+  // "equals ignoring case" then the hash function must return the same hash
+  // code for strings that differ only by case.  Note: the hash function is not
+  // specified here.  It is the responsibility of the consumer to find an appropriate
+  // hash function for a given comparsion function or to reject the plan if it cannot
+  // do so.
   repeated ComparisonJoinKey keys = 8;
   Expression post_join_filter = 6;
 
@@ -652,9 +662,21 @@ message MergeJoinRel {
   // the comparion function is considered to be SimpleEqualityType::EQ
   repeated Expression.FieldReference left_keys = 4 [deprecated = true];
   repeated Expression.FieldReference right_keys = 5 [deprecated = true];
-  // One or more keys to join on.  The relation is invalid if this is empty.
+  // One or more keys to join on.  The relation is invalid if this is empty
+  // (unless the deprecated left_keys/right_keys fields are being used).
+  //
   // If a custom comparison function is used then it must be consistent with
-  // the ordering of the input data.
+  // the ordering of the input data.  For example, if the comparison function
+  // is "<" then we generally expect the data to be sorted in ascending order.
+  //
+  // If the comparison function is something like "less than ignoring case" then
+  // the data should be sorted appropriately (e.g. both "A" and "a" should come
+  // before "b")
+  //
+  // The sort order is not specified here.  It is typically the responsibility of
+  // the producer to ensure the plan sorts the data if needed (although the consumer
+  // is free to do so as well).  If possible, the consumer should verify the sort
+  // order and reject invalid plans.
   repeated ComparisonJoinKey keys = 8;
   Expression post_join_filter = 6;
 
