@@ -1,6 +1,15 @@
 Release Notes
 ---
 
+## [0.42.0](https://github.com/substrait-io/substrait/compare/v0.41.0...v0.42.0) (2024-01-21)
+
+
+### Features
+
+* add custom equality behavior to the hash/merge join ([#585](https://github.com/substrait-io/substrait/issues/585)) ([daeac31](https://github.com/substrait-io/substrait/commit/daeac314e9efb6c385306c7f14b95ded2da226ac))
+* add interval multiplication ([#580](https://github.com/substrait-io/substrait/issues/580)) ([c1254ac](https://github.com/substrait-io/substrait/commit/c1254ac5c5f1105478d26b7d715bab8d21dd31d1))
+* add min/max for datetime types ([#584](https://github.com/substrait-io/substrait/issues/584)) ([5c8fa04](https://github.com/substrait-io/substrait/commit/5c8fa047993835b2bba60b196af0855316e5efdb))
+
 ## [0.41.0](https://github.com/substrait-io/substrait/compare/v0.40.0...v0.41.0) (2023-12-24)
 
 
