@@ -219,6 +219,58 @@ scalar_functions:
             value: interval_day
         return: timestamp
   -
+    name: "multiply"
+    description: Multiply an interval by an integral number.
+    impls:
+      - args:
+          - name: x
+            value: i8
+          - name: y
+            value: interval_day
+        return: interval_day
+      - args:
+          - name: x
+            value: i16
+          - name: y
+            value: interval_day
+        return: interval_day
+      - args:
+          - name: x
+            value: i32
+          - name: y
+            value: interval_day
+        return: interval_day
+      - args:
+          - name: x
+            value: i64
+          - name: y
+            value: interval_day
+        return: interval_day
+      - args:
+          - name: x
+            value: i8
+          - name: y
+            value: interval_year
+        return: interval_year
+      - args:
+          - name: x
+            value: i16
+          - name: y
+            value: interval_year
+        return: interval_year
+      - args:
+          - name: x
+            value: i32
+          - name: y
+            value: interval_year
+        return: interval_year
+      - args:
+          - name: x
+            value: i64
+          - name: y
+            value: interval_year
+        return: interval_year
+  -
     name: "add_intervals"
     description: Add two intervals together.
     impls:

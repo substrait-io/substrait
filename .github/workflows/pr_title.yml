@@ -10,12 +10,17 @@ jobs:
     steps:
       - uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "20"
       - run: npm install @commitlint/config-conventional
       - run: >
           echo 'module.exports = {
             // Workaround for https://github.com/dependabot/dependabot-core/issues/5923
-            "ignores": [(message) => /^Bumps \[.+]\(.+\) from .+ to .+\.$/m.test(message)]
+            "ignores": [(message) => /^Bumps \[.+]\(.+\) from .+ to .+\.$/m.test(message)],
+            "rules": {
+              "body-max-line-length": [0, "always", Infinity],
+              "footer-max-line-length": [0, "always", Infinity],
+              "body-leading-blank": [0, "always"]
+            }
           }' > .commitlintrc.js
       - run: npx commitlint --extends @commitlint/config-conventional --verbose <<< $COMMIT_MSG
         env:
