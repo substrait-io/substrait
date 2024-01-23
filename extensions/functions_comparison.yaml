@@ -15,7 +15,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: BOOLEAN
+        return: boolean
   -
     name: "equal"
     description: >
@@ -30,7 +30,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: BOOLEAN
+        return: boolean
   -
     name: "is_not_distinct_from"
     description: >
@@ -47,7 +47,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: BOOLEAN
+        return: boolean
         nullability: DECLARED_OUTPUT
   -
     name: "lt"
@@ -63,7 +63,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: BOOLEAN
+        return: boolean
   -
     name: "gt"
     description: >
@@ -78,7 +78,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: BOOLEAN
+        return: boolean
   -
     name: "lte"
     description: >
@@ -93,7 +93,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: BOOLEAN
+        return: boolean
   -
     name: "gte"
     description: >
@@ -108,7 +108,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: BOOLEAN
+        return: boolean
   -
     name: "between"
     description: >-
@@ -128,7 +128,7 @@ scalar_functions:
           - value: any1
             name: high
             description: The value to check if less than or equal to.
-        return: BOOLEAN
+        return: boolean
   -
     name: "is_null"
     description: Whether a value is null. NaN is not null.
@@ -136,7 +136,7 @@ scalar_functions:
       - args:
           - value: any1
             name: x
-        return: BOOLEAN
+        return: boolean
         nullability: DECLARED_OUTPUT
   -
     name: "is_not_null"
@@ -145,7 +145,7 @@ scalar_functions:
       - args:
           - value: any1
             name: x
-        return: BOOLEAN
+        return: boolean
         nullability: DECLARED_OUTPUT
   -
     name: "is_nan"
@@ -157,11 +157,11 @@ scalar_functions:
       - args:
           - value: fp32
             name: x
-        return: BOOLEAN
+        return: boolean
       - args:
           - value: fp64
             name: x
-        return: BOOLEAN
+        return: boolean
   -
     name: "is_finite"
     description: >
@@ -172,11 +172,11 @@ scalar_functions:
       - args:
           - value: fp32
             name: x
-        return: BOOLEAN
+        return: boolean
       - args:
           - value: fp64
             name: x
-        return: BOOLEAN
+        return: boolean
   -
     name: "is_infinite"
     description: >
@@ -187,11 +187,11 @@ scalar_functions:
       - args:
           - value: fp32
             name: x
-        return: BOOLEAN
+        return: boolean
       - args:
           - value: fp64
             name: x
-        return: BOOLEAN
+        return: boolean
   -
     name: "nullif"
     description: If two values are equal, return null. Otherwise, return the first value.
