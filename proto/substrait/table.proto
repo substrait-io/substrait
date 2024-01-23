@@ -1,0 +1,24 @@
+// SPDX-License-Identifier: Apache-2.0
+syntax = "proto3";
+
+package substrait;
+
+import "google/protobuf/any.proto";
+import "substrait/extensions/extensions.proto";
+import "substrait/type.proto";
+
+option csharp_namespace = "Substrait.Protobuf";
+option go_package = "github.com/substrait-io/substrait-go/proto";
+option java_multiple_files = true;
+option java_package = "io.substrait.proto";
+
+message Table {
+  string table_name = 1;
+  NamedStruct table_schema = 2;
+  ExtentionObject table_metadata = 3;
+  repeated string primary_keys = 4;
+}
+
+message Tables {
+  repeated Table tables = 1;
+}
