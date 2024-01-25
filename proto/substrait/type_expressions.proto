@@ -34,7 +34,7 @@ message DerivationExpression {
     ExpressionVarChar varchar = 22;
     ExpressionFixedBinary fixed_binary = 23;
     ExpressionDecimal decimal = 24;
-    ExpressionTimeStamp timestamp = 40;
+    ExpressionTimestamp timestamp = 40;
 
     ExpressionStruct struct = 25;
     ExpressionList list = 27;
