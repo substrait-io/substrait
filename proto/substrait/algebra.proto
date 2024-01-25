@@ -797,7 +797,7 @@ message Expression {
       bytes binary = 13;
       // Timestamp in units of microseconds since the UNIX epoch.
       // Deprecated in favor of `Timestamp timestamp`
-      int64 timestamp = 14 [deprecated = true];
+      // int64 timestamp = 14 [deprecated = true];
       // Date in units of days since the UNIX epoch.
       int32 date = 16;
       // Time in units of microseconds past midnight

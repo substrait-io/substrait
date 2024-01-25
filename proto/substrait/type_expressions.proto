@@ -22,7 +22,7 @@ message DerivationExpression {
     Type.String string = 12;
     Type.Binary binary = 13;
     // Deprecated in favor of `ExpressionTimeStamp timestamp`
-    Type.Timestamp timestamp = 14 [deprecated = true];
+    // Type.Timestamp timestamp = 14 [deprecated = true];
     Type.Date date = 16;
     Type.Time time = 17;
     Type.IntervalYear interval_year = 19;
