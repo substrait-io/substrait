@@ -21,7 +21,8 @@ message ParameterizedType {
     Type.FP64 fp64 = 11;
     Type.String string = 12;
     Type.Binary binary = 13;
-    Type.Timestamp timestamp = 14;
+    // Deprecated in favor of `ParameterizedTimestamp timestamp`
+    Type.Timestamp timestamp = 14 [deprecated = true];
     Type.Date date = 16;
     Type.Time time = 17;
     Type.IntervalYear interval_year = 19;
@@ -33,6 +34,7 @@ message ParameterizedType {
     ParameterizedVarChar varchar = 22;
     ParameterizedFixedBinary fixed_binary = 23;
     ParameterizedDecimal decimal = 24;
+    ParameterizedTimestamp timestamp = 34;
 
     ParameterizedStruct struct = 25;
     ParameterizedList list = 27;
@@ -86,6 +88,12 @@ message ParameterizedType {
     IntegerOption precision = 2;
     uint32 variation_pointer = 3;
     Type.Nullability nullability = 4;
+  }
+
+  message ParameterizedTimestamp {
+    IntegerOption precision = 1;
+    uint32 variation_pointer = 2;
+    Type.Nullability nullability = 3;
   }
 
   message ParameterizedStruct {

@@ -99,8 +99,9 @@ message Type {
   }
 
   message Timestamp {
-    uint32 type_variation_reference = 1;
-    Nullability nullability = 2;
+    optional int32 precision = 1;
+    uint32 type_variation_reference = 2;
+    Nullability nullability = 3;
   }
 
   message Date {
