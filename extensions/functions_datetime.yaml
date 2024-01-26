@@ -33,7 +33,7 @@ scalar_functions:
       * MILLISECOND Return number of milliseconds since the last full second.
       * MICROSECOND Return number of microseconds since the last full millisecond.
       * NANOSECOND Return number of nanoseconds since the last full microsecond.
-      * SUBSECOND Return number of nanoseconds since the last full second of the given timestamp.
+      * SUBSECOND Return number of microseconds since the last full second of the given timestamp.
       * UNIX_TIME Return number of seconds that have elapsed since 1970-01-01 00:00:00 UTC, ignoring leap seconds.
       * TIMEZONE_OFFSET Return number of seconds of timezone offset to UTC.
 
