@@ -34,7 +34,7 @@ message Type {
     VarChar varchar = 22;
     FixedBinary fixed_binary = 23;
     Decimal decimal = 24;
-    ParametrizedTimestamp parametrized_timestamp = 33
+    ParametrizedTimestamp parametrized_timestamp = 33;
 
     Struct struct = 25;
     List list = 27;
