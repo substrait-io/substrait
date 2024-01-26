@@ -21,8 +21,8 @@ message DerivationExpression {
     Type.FP64 fp64 = 11;
     Type.String string = 12;
     Type.Binary binary = 13;
-    // Deprecated in favor of `ExpressionTimeStamp timestamp`
-    // Type.Timestamp timestamp = 14 [deprecated = true];
+    // Deprecated in favor of `ExpressionParametrizedTimestamp parametrized_timestamp`
+    Type.Timestamp timestamp = 14 [deprecated = true];
     Type.Date date = 16;
     Type.Time time = 17;
     Type.IntervalYear interval_year = 19;
@@ -34,7 +34,7 @@ message DerivationExpression {
     ExpressionVarChar varchar = 22;
     ExpressionFixedBinary fixed_binary = 23;
     ExpressionDecimal decimal = 24;
-    ExpressionTimestamp timestamp = 40;
+    ExpressionParametrizedTimestamp parametrized_timestamp = 40;
 
     ExpressionStruct struct = 25;
     ExpressionList list = 27;
@@ -82,7 +82,7 @@ message DerivationExpression {
     Type.Nullability nullability = 4;
   }
 
-  message ExpressionTimestamp {
+  message ExpressionParametrizedTimestamp {
     DerivationExpression precision = 1;
     uint32 variation_pointer = 2;
     Type.Nullability nullability = 3;

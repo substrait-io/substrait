@@ -21,7 +21,8 @@ message Type {
     FP64 fp64 = 11;
     String string = 12;
     Binary binary = 13;
-    Timestamp timestamp = 14;
+    // Deprecated in favor of `ParametrizedTimestamp parametrized_timestamp`
+    Timestamp timestamp = 14 [deprecated = true];
     Date date = 16;
     Time time = 17;
     IntervalYear interval_year = 19;
@@ -33,6 +34,7 @@ message Type {
     VarChar varchar = 22;
     FixedBinary fixed_binary = 23;
     Decimal decimal = 24;
+    ParametrizedTimestamp parametrized_timestamp = 33
 
     Struct struct = 25;
     List list = 27;
@@ -99,9 +101,8 @@ message Type {
   }
 
   message Timestamp {
-    optional int32 precision = 1;
-    uint32 type_variation_reference = 2;
-    Nullability nullability = 3;
+    uint32 type_variation_reference = 1;
+    Nullability nullability = 2;
   }
 
   message Date {
@@ -158,6 +159,12 @@ message Type {
     int32 precision = 2;
     uint32 type_variation_reference = 3;
     Nullability nullability = 4;
+  }
+
+  message ParametrizedTimestamp {
+    optional int32 precision = 1;
+    uint32 type_variation_reference = 2;
+    Nullability nullability = 3;
   }
 
   message Struct {
