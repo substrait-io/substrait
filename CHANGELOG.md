@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.42.1](https://github.com/substrait-io/substrait/compare/v0.42.0...v0.42.1) (2024-01-28)
+
+
+### Bug Fixes
+
+* add missing RelCommon field to WriteRel and DdlRel ([#591](https://github.com/substrait-io/substrait/issues/591)) ([d55703a](https://github.com/substrait-io/substrait/commit/d55703a18a7a8f2ecf695f9367ca33fab6b1ef33))
+
 ## [0.42.0](https://github.com/substrait-io/substrait/compare/v0.41.0...v0.42.0) (2024-01-21)
 
 
