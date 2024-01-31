@@ -808,8 +808,9 @@ message Expression {
       VarChar var_char = 22;
       bytes fixed_binary = 23;
       Decimal decimal = 24;
-      // Timestamp in units of fractional seconds since the UNIX epoch.
-      PrecisionTimestamp precision_timestamp = 34;
+      // If the precision is 6 or less then this is the microseconds since the UNIX epoch
+      // If the precision is more than 6 then this is the nanoseconds since the UNIX epoch
+      uint64 precision_timestamp = 34;
       Struct struct = 25;
       Map map = 26;
       // Timestamp in units of microseconds since the UNIX epoch.
