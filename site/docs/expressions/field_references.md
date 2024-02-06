@@ -35,7 +35,7 @@ a.b[2].c['my_map_key'].x
 
 We will need to declare the nested field such that:
 
-``
+```
 Struct field reference a
 Struct field b
 List offset 2
