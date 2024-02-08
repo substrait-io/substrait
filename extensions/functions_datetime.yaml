@@ -80,6 +80,17 @@ scalar_functions:
       - args:
           - name: component
             options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
+                       MILLISECOND, MICROSECOND, NANOSECOND, SUBSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
+            description: The part of the value to extract.
+          - name: x
+            value: precision_timestamp_tz<P1>
+          - name: timezone
+            description: Timezone string from IANA tzdb.
+            value: string
+        return: i64
+      - args:
+          - name: component
+            options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
                        MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME ]
             description: The part of the value to extract.
           - name: x
@@ -117,6 +128,20 @@ scalar_functions:
             description: Start counting from 1 or 0.
           - name: x
             value: timestamp_tz
+          - name: timezone
+            description: Timezone string from IANA tzdb.
+            value: string
+        return: i64
+      - args:
+          - name: component
+            options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
+                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
+            description: The part of the value to extract.
+          - name: indexing
+            options: [ ONE, ZERO ]
+            description: Start counting from 1 or 0.
+          - name: x
+            value: precision_timestamp_tz<P1>
           - name: timezone
             description: Timezone string from IANA tzdb.
             value: string

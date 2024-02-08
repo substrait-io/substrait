@@ -811,10 +811,12 @@ message Expression {
       // If the precision is 6 or less then this is the microseconds since the UNIX epoch
       // If the precision is more than 6 then this is the nanoseconds since the UNIX epoch
       uint64 precision_timestamp = 34;
+      uint64 precision_timestamp_tz = 35;
       Struct struct = 25;
       Map map = 26;
       // Timestamp in units of microseconds since the UNIX epoch.
-      int64 timestamp_tz = 27;
+      // Deprecated in favor of `PrecisionTimestampTZ precision_timestamp_tz`
+      int64 timestamp_tz = 27 [deprecated = true];
       bytes uuid = 28;
       Type null = 29; // a typed null literal
       List list = 30;
@@ -850,6 +852,12 @@ message Expression {
     }
 
     message PrecisionTimestamp {
+      // The maximum number of digits allowed in the value.
+      // Supported values are 0, 3, 6, and 9.  The default is 6.
+      int32 precision = 1;
+    }
+
+    message PrecisionTimestampTZ {
       // The maximum number of digits allowed in the value.
       // Supported values are 0, 3, 6, and 9.  The default is 6.
       int32 precision = 1;

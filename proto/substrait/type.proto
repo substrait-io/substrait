@@ -27,7 +27,8 @@ message Type {
     Time time = 17;
     IntervalYear interval_year = 19;
     IntervalDay interval_day = 20;
-    TimestampTZ timestamp_tz = 29;
+    // Deprecated in favor of `PrecisionTimestampTZ precision_timestamp_tz`
+    TimestampTZ timestamp_tz = 29 [deprecated = true];
     UUID uuid = 32;
 
     FixedChar fixed_char = 21;
@@ -35,6 +36,7 @@ message Type {
     FixedBinary fixed_binary = 23;
     Decimal decimal = 24;
     PrecisionTimestamp precision_timestamp = 33;
+    PrecisionTimestampTZ precision_timestamp_tz = 34;
 
     Struct struct = 25;
     List list = 27;
@@ -162,6 +164,12 @@ message Type {
   }
 
   message PrecisionTimestamp {
+    optional int32 precision = 1;
+    uint32 type_variation_reference = 2;
+    Nullability nullability = 3;
+  }
+
+  message PrecisionTimestampTZ {
     optional int32 precision = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
