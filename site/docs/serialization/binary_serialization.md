@@ -1,6 +1,6 @@
 # Binary Serialization
 
-Substrait can be serialized into a [protobuf](https://developers.google.com/protocol-buffers)-based binary representation. The proto schema/IDL files can be found on [GitHub](https://github.com/substrait-io/substrait/tree/main/binary). Proto files are place in the `io.substrait` namespace for C++/Java and the `Substrait.Protobuf` namespace for C#.
+Substrait can be serialized into a [protobuf](https://developers.google.com/protocol-buffers)-based binary representation. The proto schema/IDL files can be found on [GitHub](https://github.com/substrait-io/substrait/tree/main/proto/substrait). Proto files are place in the `io.substrait` namespace for C++/Java and the `Substrait.Protobuf` namespace for C#.
 
 
 ## Plan
