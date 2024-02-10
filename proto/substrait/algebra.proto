@@ -796,7 +796,7 @@ message Expression {
       string string = 12;
       bytes binary = 13;
       // Timestamp in units of microseconds since the UNIX epoch.
-      // Deprecated in favor of `PrecisionTimestamp precision_timestamp`
+      // Deprecated in favor of `precision_timestamp`
       int64 timestamp = 14 [deprecated = true];
       // Date in units of days since the UNIX epoch.
       int32 date = 16;
@@ -815,7 +815,7 @@ message Expression {
       Struct struct = 25;
       Map map = 26;
       // Timestamp in units of microseconds since the UNIX epoch.
-      // Deprecated in favor of `PrecisionTimestampTZ precision_timestamp_tz`
+      // Deprecated in favor of `precision_timestamp_tz`
       int64 timestamp_tz = 27 [deprecated = true];
       bytes uuid = 28;
       Type null = 29; // a typed null literal
@@ -849,18 +849,6 @@ message Expression {
       int32 precision = 2;
       // declared scale of decimal literal
       int32 scale = 3;
-    }
-
-    message PrecisionTimestamp {
-      // The maximum number of digits allowed in the value.
-      // Supported values are 0, 3, 6, and 9.  The default is 6.
-      int32 precision = 1;
-    }
-
-    message PrecisionTimestampTZ {
-      // The maximum number of digits allowed in the value.
-      // Supported values are 0, 3, 6, and 9.  The default is 6.
-      int32 precision = 1;
     }
 
     message Map {

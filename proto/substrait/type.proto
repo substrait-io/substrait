@@ -164,12 +164,14 @@ message Type {
   }
 
   message PrecisionTimestamp {
+    // Defaults to 6
     optional int32 precision = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
   }
 
   message PrecisionTimestampTZ {
+    // Defaults to 6
     optional int32 precision = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
