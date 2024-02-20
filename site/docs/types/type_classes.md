@@ -46,20 +46,50 @@ Compound type classes are type classes that need to be configured by means of a 
 
 ## User-Defined Types
 
-User-defined type classes can be created using a combination of pre-defined types. User-defined types are defined as part of [simple extensions](../extensions/index.md#simple-extensions). An extension can declare an arbitrary number of user defined extension types. Once a type has been declared, it can be used in function declarations.
+User-defined type classes are defined as part of [simple extensions](../extensions/index.md#simple-extensions). An extension can declare an arbitrary number of user-defined extension types. Once a type has been declared, it can be used in function declarations.
 
-A YAML example of an extension type is below:
+For example, the following declares a type named `point` (namespaced to the associated YAML file) and two scalar functions that operate on it.
 
-```yaml
-name: point
-structure:
-  longitude: i32
-  latitude: i32
+```
+---
+types:
+  - name: "point"
+
+scalar_functions:
+  - name: "lat"
+    impls:
+      - args:
+        - name: p
+        - value: u!point
+    return: fp64
+  - name: "lon"
+    impls:
+      - args:
+        - name: p
+        - value: u!point
+    return: fp64
 ```
 
-This declares a new type (namespaced to the associated YAML file) called "point". This type is composed of two `i32` values named longitude and latitude.
+### Handling User-Defined Types
 
-### Structure and opaque types
+Systems without support for a specific user-defined type:
+* Cannot generate values of the type.
+* Cannot implement functions operating on the type.
+* _May_ support consuming and emitting values of the type _without_ modifying them.
+
+### Communicating User-Defined Types
+
+Specifiers of user-defined types may provide additional structure information for the type to assist in communicating values of the type to and from systems without built-in support.
+
+For example, the following declares a `point` type with two `i32` values named longitude and latitude:
+
+```yaml
+types:
+  - name: point
+    structure:
+      longitude: i32
+      latitude: i32
+```
 
 The name-type object notation used above is syntactic sugar for `NSTRUCT<longitude: i32, latitude: i32>`. The following means the same thing:
 
@@ -68,22 +98,17 @@ name: point
 structure: "NSTRUCT<longitude: i32, latitude: i32>"
 ```
 
-The structure field of a type is only intended to inform systems that don't have built-in support for the type how they can transfer the data type from one point to another without unnecessary serialization/deserialization *and* without loss of type safety. Note that it is currently not possible to "unpack" a user-defined type class into its structure type or components thereof using `FieldReference`s or any other specialized record expression; if support for this is desired for a particular type, this can be accomplished with an extension function.
+The structure field of a type is only intended to inform systems that don't have built-in support for the type about how they can create and transfer values of that type to systems that do support the type.
 
-The structure field is optional. If not specified, the type class is considered to be fully opaque. This implies that a systems without built-in support for the type cannot manipulate values in any way, including moving and cloning. This may be useful for exotic, context-sensitive types, such as raw pointers or identifiers that cannot be cloned.
+The structure field _does not_ restrict or bind the internal representation of the type in any system.
 
-Note however that the vast majority of types can be trivially moved and copied, even if they cannot be precisely represented using Substrait's built-in types. In this case, it is recommended to use `binary` or `FIXEDBINARY<n>` (where n is the size of the type) as the structure type. For example, an unsigned 32-bit integer type could be defined as follows:
-
-```yaml
-name: u32
-structure: "FIXEDBINARY<4>"
-```
-
-In this case, `i32` might also be used.
+As such, it's currently not possible to "unpack" a user-defined type into its structure type or components thereof using `FieldReference`s or any other specialized record expression; if support for this is desired for a particular type, this can be accomplished with an extension function.
 
 ### Literals
 
-Literals for user-defined types are represented using protobuf [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) messages.
+Literals for user-defined types can be represented in one of two ways:
+* Using protobuf [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) messages.
+* Using the structure representation of the type.
 
 ### Compound User-Defined Types
 
