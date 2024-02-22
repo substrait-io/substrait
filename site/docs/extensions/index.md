@@ -58,34 +58,36 @@ Rather than using a full data type representation, the input argument types (`sh
 
     Every compound function signature must be unique.  If two function implementations in a YAML file would generate the same compound function signature, then the YAML file is invalid and behavior is undefined.
 
-| Argument Type              | Signature Name |
-| -------------------------- | -------------- |
-| Required Enumeration       | req            |
-| i8                         | i8             |
-| i16                        | i16            |
-| i32                        | i32            |
-| i64                        | i64            |
-| fp32                       | fp32           |
-| fp64                       | fp64           |
-| string                     | str            |
-| binary                     | vbin           |
-| boolean                    | bool           |
-| timestamp                  | ts             |
-| timestamp_tz               | tstz           |
-| date                       | date           |
-| time                       | time           |
-| interval_year              | iyear          |
-| interval_day               | iday           |
-| uuid                       | uuid           |
-| fixedchar&lt;N&gt;         | fchar          |
-| varchar&lt;N&gt;           | vchar          |
-| fixedbinary&lt;N&gt;       | fbin           |
-| decimal&lt;P,S&gt;         | dec            |
-| struct&lt;T1,T2,...,TN&gt; | struct         |
-| list&lt;T&gt;              | list           |
-| map&lt;K,V&gt;             | map            |
-| any[\d]?                   | any            |
-| user defined type          | u!name         |
+| Argument Type                   | Signature Name |
+|---------------------------------|----------------|
+| Required Enumeration            | req            |
+| i8                              | i8             |
+| i16                             | i16            |
+| i32                             | i32            |
+| i64                             | i64            |
+| fp32                            | fp32           |
+| fp64                            | fp64           |
+| string                          | str            |
+| binary                          | vbin           |
+| boolean                         | bool           |
+| timestamp                       | ts             |
+| timestamp_tz                    | tstz           |
+| date                            | date           |
+| time                            | time           |
+| interval_year                   | iyear          |
+| interval_day                    | iday           |
+| uuid                            | uuid           |
+| fixedchar&lt;N&gt;              | fchar          |
+| varchar&lt;N&gt;                | vchar          |
+| fixedbinary&lt;N&gt;            | fbin           |
+| decimal&lt;P,S&gt;              | dec            |
+| precision_timestamp&lt;P&gt;    | pts            |
+| precision_timestamp_tz&lt;P&gt; | ptstz          |
+| struct&lt;T1,T2,...,TN&gt;      | struct         |
+| list&lt;T&gt;                   | list           |
+| map&lt;K,V&gt;                  | map            |
+| any[\d]?                        | any            |
+| user defined type               | u!name         |
 
 #### Examples
 

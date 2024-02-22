@@ -796,7 +796,8 @@ message Expression {
       string string = 12;
       bytes binary = 13;
       // Timestamp in units of microseconds since the UNIX epoch.
-      int64 timestamp = 14;
+      // Deprecated in favor of `precision_timestamp`
+      int64 timestamp = 14 [deprecated = true];
       // Date in units of days since the UNIX epoch.
       int32 date = 16;
       // Time in units of microseconds past midnight
@@ -807,10 +808,15 @@ message Expression {
       VarChar var_char = 22;
       bytes fixed_binary = 23;
       Decimal decimal = 24;
+      // If the precision is 6 or less then this is the microseconds since the UNIX epoch
+      // If the precision is more than 6 then this is the nanoseconds since the UNIX epoch
+      uint64 precision_timestamp = 34;
+      uint64 precision_timestamp_tz = 35;
       Struct struct = 25;
       Map map = 26;
       // Timestamp in units of microseconds since the UNIX epoch.
-      int64 timestamp_tz = 27;
+      // Deprecated in favor of `precision_timestamp_tz`
+      int64 timestamp_tz = 27 [deprecated = true];
       bytes uuid = 28;
       Type null = 29; // a typed null literal
       List list = 30;

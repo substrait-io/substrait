@@ -9,7 +9,7 @@ scalar_functions:
       * ISO_YEAR Return the ISO 8601 week-numbering year. First week of an ISO year has the majority (4 or more) of
         its days in January.
       * US_YEAR Return the US epidemiological year. First week of US epidemiological year has the majority (4 or more)
-        of its days in January. Last week of US epidemiological year has the year's last Wednesday in it. US 
+        of its days in January. Last week of US epidemiological year has the year's last Wednesday in it. US
         epidemiological week starts on Sunday.
       * QUARTER Return the number of the quarter within the year. January 1 through March 31 map to the first quarter,
         April 1 through June 30 map to the second quarter, etc.
@@ -32,6 +32,7 @@ scalar_functions:
       * SECOND Return the second (0-59).
       * MILLISECOND Return number of milliseconds since the last full second.
       * MICROSECOND Return number of microseconds since the last full millisecond.
+      * NANOSECOND Return number of nanoseconds since the last full microsecond.
       * SUBSECOND Return number of microseconds since the last full second of the given timestamp.
       * UNIX_TIME Return number of seconds that have elapsed since 1970-01-01 00:00:00 UTC, ignoring leap seconds.
       * TIMEZONE_OFFSET Return number of seconds of timezone offset to UTC.
@@ -57,7 +58,7 @@ scalar_functions:
       * MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, and US_WEEK return values in range 0-52
 
       The indexing option must be specified when the component is QUARTER, MONTH, DAY, DAY_OF_YEAR,
-      MONDAY_DAY_OF_WEEK, SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, or US_WEEK. The 
+      MONDAY_DAY_OF_WEEK, SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, or US_WEEK. The
       indexing option cannot be specified when the component is YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
       MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME, or TIMEZONE_OFFSET.
 
@@ -79,10 +80,29 @@ scalar_functions:
       - args:
           - name: component
             options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
+                       MILLISECOND, MICROSECOND, NANOSECOND, SUBSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
+            description: The part of the value to extract.
+          - name: x
+            value: precision_timestamp_tz<P1>
+          - name: timezone
+            description: Timezone string from IANA tzdb.
+            value: string
+        return: i64
+      - args:
+          - name: component
+            options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
                        MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME ]
             description: The part of the value to extract.
           - name: x
             value: timestamp
+        return: i64
+      - args:
+          - name: component
+            options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
+                       MILLISECOND, MICROSECOND, NANOSECOND, SUBSECOND, UNIX_TIME ]
+            description: The part of the value to extract.
+          - name: x
+            value: precision_timestamp<P1>
         return: i64
       - args:
           - name: component
@@ -121,7 +141,32 @@ scalar_functions:
             options: [ ONE, ZERO ]
             description: Start counting from 1 or 0.
           - name: x
+            value: precision_timestamp_tz<P1>
+          - name: timezone
+            description: Timezone string from IANA tzdb.
+            value: string
+        return: i64
+      - args:
+          - name: component
+            options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
+                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
+            description: The part of the value to extract.
+          - name: indexing
+            options: [ ONE, ZERO ]
+            description: Start counting from 1 or 0.
+          - name: x
             value: timestamp
+        return: i64
+      - args:
+          - name: component
+            options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
+                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
+            description: The part of the value to extract.
+          - name: indexing
+            options: [ ONE, ZERO ]
+            description: Start counting from 1 or 0.
+          - name: x
+            value: precision_timestamp<P1>
         return: i64
       - args:
           - name: component
