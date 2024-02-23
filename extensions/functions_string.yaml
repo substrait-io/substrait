@@ -3,19 +3,31 @@
 scalar_functions:
   -
     name: concat
-    description: Concatenate strings.
+    description: >-
+      Concatenate strings.
+
+      The `ignore_nulls` option determines whether or not null values will be recognized by the function.
+      If `ignore_nulls` is set to `TRUE`, null value arguments will be ignored when strings are concatenated.
+      If set to `False`, the result will be null if argument passed to the concat function is null.
+
     impls:
       - args:
           - value: "varchar<L1>"
             name: "input"
         variadic:
           min: 1
+        options:
+          ignore_nulls:
+            values: [ TRUE, FALSE ]
         return: "varchar<L1>"
       - args:
           - value: "string"
             name: "input"
         variadic:
           min: 1
+        options:
+          ignore_nulls:
+            values: [ TRUE, FALSE ]
         return: "string"
   -
     name: like
