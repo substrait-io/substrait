@@ -1045,6 +1045,18 @@ scalar_functions:
       - args:
           - value: "string"
             name: "input"
+        return: i32
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        return: i32
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: i32
+      - args:
+          - value: "string"
+            name: "input"
         return: i64
       - args:
           - value: "varchar<L1>"
@@ -1061,6 +1073,18 @@ scalar_functions:
       - args:
           - value: "string"
             name: "input"
+        return: i32
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        return: i32
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: i32
+      - args:
+          - value: "string"
+            name: "input"
         return: i64
       - args:
           - value: "varchar<L1>"
@@ -1074,6 +1098,18 @@ scalar_functions:
     name: octet_length
     description: Return the number of bytes in the input string.
     impls:
+      - args:
+          - value: "string"
+            name: "input"
+        return: i32
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        return: i32
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+        return: i32
       - args:
           - value: "string"
             name: "input"
