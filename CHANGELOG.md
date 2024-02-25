@@ -1,6 +1,18 @@
 Release Notes
 ---
 
+## [0.43.0](https://github.com/substrait-io/substrait/compare/v0.42.1...v0.43.0) (2024-02-25)
+
+
+### Features
+
+* include precision parameter in timestamp types ([#594](https://github.com/substrait-io/substrait/issues/594)) ([087f87c](https://github.com/substrait-io/substrait/commit/087f87c0307572cf2e9a7d1db7fdd673662699c3))
+
+
+### Bug Fixes
+
+* remove function definitions w/ invalid return types ([#599](https://github.com/substrait-io/substrait/issues/599)) ([a3b1f32](https://github.com/substrait-io/substrait/commit/a3b1f32b0e6aac08bf0ee7437a5ae1c10100a859))
+
 ## [0.42.1](https://github.com/substrait-io/substrait/compare/v0.42.0...v0.42.1) (2024-01-28)
 
 
