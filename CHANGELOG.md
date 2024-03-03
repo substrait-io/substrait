@@ -1,6 +1,20 @@
 Release Notes
 ---
 
+## [0.44.0](https://github.com/substrait-io/substrait/compare/v0.43.0...v0.44.0) (2024-03-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* Adding a NULL option to the on_domain_errors.
+
+SQLite returns null for some inputs such as negative infinity
+
+### Features
+
+* add extra option for on domain errors in log functions ([#536](https://github.com/substrait-io/substrait/issues/536)) ([cbec079](https://github.com/substrait-io/substrait/commit/cbec079ea03bec65cc063daa15e42807c4039707))
+* add ignore nulls options to concat function ([#605](https://github.com/substrait-io/substrait/issues/605)) ([55db05b](https://github.com/substrait-io/substrait/commit/55db05b4cf8cbb1e2bf565e4f5f0c6def6f0e6ed))
+
 ## [0.43.0](https://github.com/substrait-io/substrait/compare/v0.42.1...v0.43.0) (2024-02-25)
 
 
