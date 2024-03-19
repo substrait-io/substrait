@@ -127,7 +127,13 @@ message ReadRel {
       // The length in byte to read from this item
       uint64 length = 8;
 
-      message ParquetReadOptions {}
+      message ParquetReadOptions {
+        // An optional list of parquet field IDs.  If specified, there must
+        // be one field id for each field in the base_schema.  The consumer
+        // should use this field id to match the appropriate column with the
+        // respective field in the base_schema.
+        repeated int32 field_ids = 14;
+      }
       message ArrowReadOptions {}
       message OrcReadOptions {}
       message DwrfReadOptions {}
