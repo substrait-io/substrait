@@ -149,3 +149,19 @@ aggregate_functions:
         decomposable: MANY
         intermediate: "DECIMAL?<P, S>"
         return: "DECIMAL?<P, S>"
+  - name: "sum0"
+    description: >
+      Sum a set of values. The sum of zero elements yields zero.
+
+      Null values are ignored.
+    impls:
+      - args:
+          - name: x
+            value: "DECIMAL<P, S>"
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: "DECIMAL<38,S>"
+        return: "DECIMAL<38,S>"
