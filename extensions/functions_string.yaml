@@ -28,6 +28,28 @@ scalar_functions:
           null_handling:
             values: [ IGNORE_NULLS, ACCEPT_NULLS ]
         return: "string"
+  - name: chr
+    description: >-
+    Returns the ASCII character having the binary equivalent to input.
+    If n is larger than 256 the result is equivalent to chr(n % 256).
+    If n is negative value, the result is null.
+    impls:
+    - args:
+      - value: i8
+        name: "input"
+      return: "fixedchar<L1>"
+    - args:
+      - value: i16
+        name: "input"
+      return: "fixedchar<L1>"
+    - args:
+      - value: i32
+        name: "input"
+      return: "fixedchar<L1>"
+    - args:
+      - value: i64
+        name: "input"
+      return: "fixedchar<L1>"
   -
     name: like
     description: >-
