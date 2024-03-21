@@ -607,6 +607,18 @@ message ComparisonJoinKey {
   }
 }
 
+enum PhysicalJoinType {
+  PHYSICAL_JOIN_TYPE_UNSPECIFIED = 0;
+  PHYSICAL_JOIN_TYPE_INNER = 1;
+  PHYSICAL_JOIN_TYPE_OUTER = 2;
+  PHYSICAL_JOIN_TYPE_LEFT = 3;
+  PHYSICAL_JOIN_TYPE_RIGHT = 4;
+  PHYSICAL_JOIN_TYPE_LEFT_SEMI = 5;
+  PHYSICAL_JOIN_TYPE_RIGHT_SEMI = 6;
+  PHYSICAL_JOIN_TYPE_LEFT_ANTI = 7;
+  PHYSICAL_JOIN_TYPE_RIGHT_ANTI = 8;
+}
+
 // The hash equijoin join operator will build a hash table out of the right input based on a set of join keys.
 // It will then probe that hash table for incoming inputs, finding matches.
 //
@@ -636,19 +648,8 @@ message HashJoinRel {
   repeated ComparisonJoinKey keys = 8;
   Expression post_join_filter = 6;
 
-  JoinType type = 7;
-
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_LEFT_SEMI = 5;
-    JOIN_TYPE_RIGHT_SEMI = 6;
-    JOIN_TYPE_LEFT_ANTI = 7;
-    JOIN_TYPE_RIGHT_ANTI = 8;
-  }
+  PhysicalJoinType type = 7;
+  bool is_null_aware = 8;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
@@ -682,19 +683,8 @@ message MergeJoinRel {
   repeated ComparisonJoinKey keys = 8;
   Expression post_join_filter = 6;
 
-  JoinType type = 7;
-
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_LEFT_SEMI = 5;
-    JOIN_TYPE_RIGHT_SEMI = 6;
-    JOIN_TYPE_LEFT_ANTI = 7;
-    JOIN_TYPE_RIGHT_ANTI = 8;
-  }
+  PhysicalJoinType type = 7;
+  bool is_null_aware = 8;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
@@ -708,19 +698,8 @@ message NestedLoopJoinRel {
   // optional, defaults to true (a cartesian join)
   Expression expression = 4;
 
-  JoinType type = 5;
-
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_LEFT_SEMI = 5;
-    JOIN_TYPE_RIGHT_SEMI = 6;
-    JOIN_TYPE_LEFT_ANTI = 7;
-    JOIN_TYPE_RIGHT_ANTI = 8;
-  }
+  PhysicalJoinType type = 5;
+  bool is_null_aware = 6;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
