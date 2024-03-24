@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.45.0](https://github.com/substrait-io/substrait/compare/v0.44.0...v0.45.0) (2024-03-24)
+
+
+### Features
+
+* add decimal type support for sum0 function ([#610](https://github.com/substrait-io/substrait/issues/610)) ([6bd0c7b](https://github.com/substrait-io/substrait/commit/6bd0c7be43149a5b6e2f2ec8decdbb47f64577b7))
+
 ## [0.44.0](https://github.com/substrait-io/substrait/compare/v0.43.0...v0.44.0) (2024-03-03)
 
 
