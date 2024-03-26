@@ -189,6 +189,10 @@ scalar_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
         return: i8
       - args:
           - name: x
@@ -198,6 +202,10 @@ scalar_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
         return: i16
       - args:
           - name: x
@@ -207,6 +215,10 @@ scalar_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
         return: i32
       - args:
           - name: x
@@ -216,6 +228,10 @@ scalar_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
         return: i64
       - args:
           - name: x
@@ -226,9 +242,9 @@ scalar_functions:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
           on_division_by_zero:
-            values: [ LIMIT, NAN, ERROR ]
+            values: [ LIMIT, NAN, "NULL", ERROR ]
         return: fp32
       - args:
           - name: x
@@ -239,9 +255,9 @@ scalar_functions:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
           on_division_by_zero:
-            values: [ LIMIT, NAN, ERROR ]
+            values: [ LIMIT, NAN, "NULL", ERROR ]
         return: fp64
   -
     name: "negate"
