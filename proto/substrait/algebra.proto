@@ -891,7 +891,7 @@ message Expression {
 
       // the value of the literal, serialized using some type-specific protobuf message
       // DEPRECATED: use the val oneof instead
-      google.protobuf.Any value = 2 [deprecated=true];
+      google.protobuf.Any value = 2 [deprecated = true];
 
       // a user-defined literal can be encoded in one of two ways
       oneof val {
