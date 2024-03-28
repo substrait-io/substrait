@@ -50,8 +50,7 @@ User-defined type classes are defined as part of [simple extensions](../extensio
 
 For example, the following declares a type named `point` (namespaced to the associated YAML file) and two scalar functions that operate on it.
 
-```
----
+```yaml
 types:
   - name: "point"
 
