@@ -258,7 +258,7 @@ scalar_functions:
           on_domain_error:
             values: [ NAN, "NULL", ERROR ]
           on_division_by_zero:
-            values: [ NAN, "NULL", ERROR ]
+            values: [ IEEE, "NULL", ERROR ]
         return: fp64
   -
     name: "negate"
