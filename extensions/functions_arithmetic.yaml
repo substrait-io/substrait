@@ -448,7 +448,7 @@ scalar_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-        return: fp64
+        return: fp32
       - args:
           - name: x
             value: fp64
@@ -466,7 +466,7 @@ scalar_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-        return: fp64
+        return: fp32
       - args:
           - name: x
             value: fp64
@@ -484,7 +484,7 @@ scalar_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-        return: fp64
+        return: fp32
       - args:
           - name: x
             value: fp64
@@ -558,7 +558,7 @@ scalar_functions:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
             values: [ NAN, ERROR ]
-        return: fp64
+        return: fp32
       - args:
           - name: x
             value: fp64
@@ -580,7 +580,7 @@ scalar_functions:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
             values: [ NAN, ERROR ]
-        return: fp64
+        return: fp32
       - args:
           - name: x
             value: fp64
@@ -600,7 +600,7 @@ scalar_functions:
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-        return: fp64
+        return: fp32
       - args:
           - name: x
             value: fp64
@@ -684,7 +684,7 @@ scalar_functions:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
             values: [ NAN, ERROR ]
-        return: fp64
+        return: fp32
       - args:
           - name: x
             value: fp64
