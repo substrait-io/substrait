@@ -67,9 +67,34 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | Left Input          | A relational input.                                                                                                                                                                                                     | Required                    |
 | Right Input         | A relational input.                                                                                                                                                                                                     | Required                    |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                  | Required                    |
-| Right Keys          | References to the fields to join on in the right input.                                                                                                                                                            | Reauired                    |    
+| Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                 | Required                    |
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.    |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                    |
+
+
+
+## Single Join Operator
+
+The single match join works by enforcing that each row is involved in only a single match.  If this violated, an error
+is raised.  Typical use would be to have one side's duplicates eliminated and then be pushed into a column scan on the
+other side. This operator is useful when converting subqueries into joins.
+
+| Signature            | Value                                                        |
+| -------------------- | ------------------------------------------------------------ |
+| Inputs               | 2                                                            |
+| Outputs              | 1                                                            |
+| Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
+
+### Single Join Properties
+
+| Property         | Description                                                                                                                                                                          | Required                                                    |
+|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
+| Left Input       | A relational input.                                                                                                                                                                  | Required                                                    |
+| Right Input      | A relational input.                                                                                                                                                                  | Required                                                    |
+| Join Expression  | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the direct output order of the data.  | Required. Can be (but not expected to be) the literal True. |
+
+
 
 ## Exchange Operator
 
