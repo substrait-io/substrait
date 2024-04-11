@@ -179,6 +179,7 @@ scalar_functions:
       Divide x by y. In the case of integer division, partial values are truncated (i.e. rounded towards 0).
       The `on_division_by_zero` option governs behavior in cases where y is 0.  If the option is IEEE then
       the IEEE754 standard is followed: all values except +/-infinity return NaN and +/-infinity are unchanged.
+      If the option is LIMIT then the result is +/-infinity in all cases.
       If either x or y are NaN then behavior will be governed by `on_domain_error`.
       If x and y are both +/-infinity, behavior will be governed by `on_domain_error`.
     impls:
@@ -245,7 +246,7 @@ scalar_functions:
           on_domain_error:
             values: [ NAN, "NULL", ERROR ]
           on_division_by_zero:
-            values: [ IEEE, "NULL", ERROR ]
+            values: [ IEEE, LIMIT, "NULL", ERROR ]
         return: fp32
       - args:
           - name: x
@@ -258,7 +259,7 @@ scalar_functions:
           on_domain_error:
             values: [ NAN, "NULL", ERROR ]
           on_division_by_zero:
-            values: [ IEEE, "NULL", ERROR ]
+            values: [ IEEE, LIMIT, "NULL", ERROR ]
         return: fp64
   -
     name: "negate"
