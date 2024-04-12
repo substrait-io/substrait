@@ -445,6 +445,7 @@ message Rel {
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
     NestedLoopJoinRel nested_loop_join = 18;
+    MarkJoinRel mark_join = 23;
     ConsistentPartitionWindowRel window = 17;
     ExchangeRel exchange = 15;
     ExpandRel expand = 16;
@@ -722,6 +723,21 @@ message NestedLoopJoinRel {
     JOIN_TYPE_LEFT_ANTI = 7;
     JOIN_TYPE_RIGHT_ANTI = 8;
   }
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
+// A mark join utilizes a previously applied mark to greatly reduce the
+// input to be processed.  A mark is a nullable boolean field.
+message MarkJoinRel {
+  RelCommon common = 1;
+  Rel left = 2;
+  Rel right = 3;
+  // optional, defaults to true (a cartesian join)
+  Expression expression = 4;
+
+  // A reference to the mark field.
+  Expression.FieldReference mark_field = 6;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
