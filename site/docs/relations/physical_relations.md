@@ -71,6 +71,33 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.    |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                    |
 
+
+
+## Delimiter Join Operator
+
+A delimiter join performs duplicate elimination on one side and then pushes the rows with the duplicates eliminated
+into an arbitrary number of scans on the opposing side to enact the join.  The keys are used to implement the join
+condition.
+
+| Signature            | Value                                                        |
+| -------------------- | ------------------------------------------------------------ |
+| Inputs               | 2                                                            |
+| Outputs              | 1                                                            |
+| Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
+
+### Delimiter Join Properties
+
+| Property         | Description                                                                                                                                                                    | Required          |
+|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|
+| Left Input       | A relational input.                                                                                                                                                            | Required          |
+| Right Input      | A relational input.                                                                                                                                                            | Required          |
+| Left Keys        | References to the fields to join on in the left input.                                                                                                                         | Required          |
+| Right Keys       | References to the fields to join on in the right input.                                                                                                                        | Required          |
+| Join Type        | One of the join types defined in the Join operator.                                                                                                                            | Required          |
+
+
+
 ## Exchange Operator
 
 The exchange operator will redistribute data based on an exchange type definition. Applying this operation will lead to an output that presents the desired distribution.
