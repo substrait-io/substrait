@@ -234,6 +234,7 @@ The join operation will combine two separate inputs into a single output, based 
 | Right Anti  | Return records from the right input. These are returned only if the records do not have a join partner on the left side. |
 | Left Single | Return all records from the left input with no join expansion. If at least one record from the right input matches the left, return one arbitrary matching record from the right input. For any left records without matching right records, return the left record along with nulls for the right input. Similar to a left outer join but only returns one right match at most. Useful for nested sub-queries where we need exactly one record in output (or throw exception).  See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf for more information. |
 | Right Single | Same as left single except that the right and left inputs are switched. |
+| Mark | Returns at most one join partner for each of the primary input records. Uses a hash to first determine if there are matches in the secondary input. |
 
 
 === "JoinRel Message"
