@@ -1,6 +1,18 @@
 Release Notes
 ---
 
+## [0.46.0](https://github.com/substrait-io/substrait/compare/v0.45.0...v0.46.0) (2024-04-14)
+
+
+### Features
+
+* expand division function options ([#615](https://github.com/substrait-io/substrait/issues/615)) ([7b79437](https://github.com/substrait-io/substrait/commit/7b794379c51436620515b5ebad7720c502aab991))
+
+
+### Bug Fixes
+
+* remove implicit casts in trig extension functions ([#620](https://github.com/substrait-io/substrait/issues/620)) ([b883120](https://github.com/substrait-io/substrait/commit/b8831200909d6494e1c3bc1ba1157e4741f60377))
+
 ## [0.45.0](https://github.com/substrait-io/substrait/compare/v0.44.0...v0.45.0) (2024-03-24)
 
 
