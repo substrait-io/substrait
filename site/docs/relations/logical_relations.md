@@ -293,11 +293,11 @@ The fetch operation eliminates records outside a desired window. Typically corre
 
 ### Fetch Properties
 
-| Property | Description                                                  | Required                 |
-| -------- | ------------------------------------------------------------ | ------------------------ |
-| Input    | A relational input, typically with a desired orderedness property. | Required                 |
-| Offset   | A positive integer. Declares the offset for retrieval of records. | Optional, defaults to 0. |
-| Count    | A positive integer. Declares the number of records that should be returned. | Required                 |
+| Property | Description                                                           | Required                 |
+| -------- | --------------------------------------------------------------------- | ------------------------ |
+| Input    | A relational input, typically with a desired orderedness property.    | Required                 |
+| Offset   | A non-negative integer. Declares the offset for retrieval of records. | Optional, defaults to 0. |
+| Count    | A non-negative integer or -1. Declares the number of records that should be returned. -1 signals that ALL records should be returned. | Required |
 
 === "FetchRel Message"
 

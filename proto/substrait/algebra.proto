@@ -194,6 +194,7 @@ message FetchRel {
   // the offset expressed in number of records
   int64 offset = 3;
   // the amount of records to return
+  // use -1 to signal that ALL records should be returned
   int64 count = 4;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
