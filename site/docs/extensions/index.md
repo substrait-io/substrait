@@ -125,7 +125,7 @@ scalar_functions:
       value: any1
     return: int64
 ```
-The `any[\d]` types (i.e. `any1`, `any2`, etc) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can be bound to any values within a specific function invocation as long as both values have the same type.
+The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
 
 
 ## Advanced Extensions
