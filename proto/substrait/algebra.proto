@@ -894,7 +894,7 @@ message Expression {
         // the value of the literal, serialized using some type-specific protobuf message
         google.protobuf.Any value = 2;
         // the value of the literal, serialized using the structure definition in its declaration
-        Type.Struct struct = 4;
+        Literal.Struct struct = 4;
       }
     }
   }
