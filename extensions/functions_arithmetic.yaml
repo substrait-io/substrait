@@ -444,6 +444,13 @@ scalar_functions:
     impls:
       - args:
           - name: x
+            value: i64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+        return: fp64
+      - args:
+          - name: x
             value: fp32
         options:
           rounding:

@@ -7,6 +7,17 @@ scalar_functions:
     impls:
       - args:
           - name: x
+            value: i64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
+          - name: x
             value: fp32
         options:
           rounding:
@@ -33,6 +44,17 @@ scalar_functions:
     impls:
       - args:
           - name: x
+            value: i64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
+          - name: x
             value: fp32
         options:
           rounding:
@@ -57,6 +79,17 @@ scalar_functions:
     name: "log2"
     description: "Logarithm to base 2 of the value"
     impls:
+      - args:
+          - name: x
+            value: i64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
       - args:
           - name: x
             value: fp32
@@ -86,6 +119,21 @@ scalar_functions:
 
       logb(x, b) => log_{b} (x)
     impls:
+      - args:
+          - value: i64
+            name: "x"
+            description: "The number `x` to compute the logarithm of"
+          - value: i64
+            name: "base"
+            description: "The logarithm base `b` to use"
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
       - args:
           - value: fp32
             name: "x"
