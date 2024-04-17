@@ -890,9 +890,13 @@ message Expression {
       // parameterizable.
       repeated Type.Parameter type_parameters = 3;
 
-      // the value of the literal, serialized using some type-specific
-      // protobuf message
-      google.protobuf.Any value = 2;
+      // a user-defined literal can be encoded in one of two ways
+      oneof val {
+        // the value of the literal, serialized using some type-specific protobuf message
+        google.protobuf.Any value = 2;
+        // the value of the literal, serialized using the structure definition in its declaration
+        Literal.Struct struct = 4;
+      }
     }
   }
 
