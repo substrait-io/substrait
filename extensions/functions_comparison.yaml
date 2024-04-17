@@ -222,10 +222,10 @@ scalar_functions:
       The function will return null if any argument evaluates to null.
     impls:
       - args:
-          - value: T
+          - value: any1
         variadic:
           min: 2
-        return: T
+        return: any1
         nullability: MIRROR
   -
     name: "least_skip_null"
@@ -234,10 +234,10 @@ scalar_functions:
       The function will return null only if all arguments evaluate to null.
     impls:
       - args:
-          - value: T
+          - value: any1
         variadic:
           min: 2
-        return: T
+        return: any1
         # NOTE: The return type nullability as described above cannot be expressed currently
         # See https://github.com/substrait-io/substrait/issues/601
         # Using MIRROR for now until it can be expressed
@@ -249,10 +249,10 @@ scalar_functions:
       The function will return null if any argument evaluates to null.
     impls:
       - args:
-          - value: T
+          - value: any1
         variadic:
           min: 2
-        return: T
+        return: any1
         nullability: MIRROR
   -
     name: "greatest_skip_null"
@@ -261,10 +261,10 @@ scalar_functions:
       The function will return null only if all arguments evaluate to null.
     impls:
       - args:
-          - value: T
+          - value: any1
         variadic:
           min: 2
-        return: T
+        return: any1
         # NOTE: The return type nullability as described above cannot be expressed currently
         # See https://github.com/substrait-io/substrait/issues/601
         # Using MIRROR for now until it can be expressed
