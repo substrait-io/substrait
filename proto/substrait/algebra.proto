@@ -826,9 +826,11 @@ message Expression {
       UserDefined user_defined = 33;
     }
 
-    // whether the literal type should be treated as a nullable type. Applies to
-    // all members of union other than the Typed null (which should directly
-    // declare nullability).
+    // Whether the literal_type above should be treated as a nullable type.
+    // Applies to all members of the literal_type oneof EXCEPT:
+    //  * Type null             (must be nullable by definition)
+    //  * Type.List empty_list  (use Type.List::nullability)
+    //  * Type.Map empty_map    (use Type.Map::nullability)
     bool nullable = 50;
 
     // optionally points to a type_variation_anchor defined in this plan.
