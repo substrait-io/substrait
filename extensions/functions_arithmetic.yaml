@@ -1214,20 +1214,6 @@ aggregate_functions:
         decomposable: MANY
         intermediate: fp64?
         return: fp64?
-      - args:
-          - name: x
-            value: timestamp
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: timestamp?
-        return: timestamp?
-      - args:
-          - name: x
-            value: timestamp_tz
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: timestamp_tz?
-        return: timestamp_tz?
   - name: "max"
     description: Max a set of values.
     impls:
@@ -1273,20 +1259,6 @@ aggregate_functions:
         decomposable: MANY
         intermediate: fp64?
         return: fp64?
-      - args:
-          - name: x
-            value: timestamp
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: timestamp?
-        return: timestamp?
-      - args:
-          - name: x
-            value: timestamp_tz
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: timestamp_tz?
-        return: timestamp_tz?
   - name: "product"
     description: Product of a set of values. Returns 1 for empty input.
     impls:
