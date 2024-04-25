@@ -1,6 +1,18 @@
 Release Notes
 ---
 
+## [0.48.0](https://github.com/substrait-io/substrait/compare/v0.47.0...v0.48.0) (2024-04-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* min:ts has been moved to functions_datetime
+* max:ts has been moved to functions_datetime
+
+### Bug Fixes
+
+* duplicate declaration of min:ts and max:ts ([#631](https://github.com/substrait-io/substrait/issues/631)) ([7fc86f8](https://github.com/substrait-io/substrait/commit/7fc86f85e468ab404825ca093e718bd3996d8241))
+
 ## [0.47.0](https://github.com/substrait-io/substrait/compare/v0.46.0...v0.47.0) (2024-04-18)
 
 
