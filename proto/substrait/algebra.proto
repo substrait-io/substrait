@@ -194,6 +194,7 @@ message FetchRel {
   // the offset expressed in number of records
   int64 offset = 3;
   // the amount of records to return
+  // use -1 to signal that ALL records should be returned
   int64 count = 4;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
@@ -825,9 +826,11 @@ message Expression {
       UserDefined user_defined = 33;
     }
 
-    // whether the literal type should be treated as a nullable type. Applies to
-    // all members of union other than the Typed null (which should directly
-    // declare nullability).
+    // Whether the literal_type above should be treated as a nullable type.
+    // Applies to all members of the literal_type oneof EXCEPT:
+    //  * Type null             (must be nullable by definition)
+    //  * Type.List empty_list  (use Type.List::nullability)
+    //  * Type.Map empty_map    (use Type.Map::nullability)
     bool nullable = 50;
 
     // optionally points to a type_variation_anchor defined in this plan.
@@ -889,9 +892,13 @@ message Expression {
       // parameterizable.
       repeated Type.Parameter type_parameters = 3;
 
-      // the value of the literal, serialized using some type-specific
-      // protobuf message
-      google.protobuf.Any value = 2;
+      // a user-defined literal can be encoded in one of two ways
+      oneof val {
+        // the value of the literal, serialized using some type-specific protobuf message
+        google.protobuf.Any value = 2;
+        // the value of the literal, serialized using the structure definition in its declaration
+        Literal.Struct struct = 4;
+      }
     }
   }
 
