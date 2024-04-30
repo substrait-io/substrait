@@ -144,6 +144,118 @@ message ReadRel {
   }
 }
 
+message MatchRecognizeRel {
+  RelCommon common = 10;
+  Rel input = 20;
+
+  repeated Expression partition_keys = 30;
+  repeated Expression sort_keys = 40;
+  // TODO: HOW TO HANDLE first, prev, next and last functions
+  // Should they just be defined as window functions
+  repeated Expression measures = 50;
+
+  RowsPerMatch rows_per_match = 55;
+  AfterMatchSkip after_match_skip = 60;
+
+  Pattern pattern = 80;
+  repeated Subset subsets = 6;
+  repeated Definition definitions = 100;
+
+  message AfterMatchSkip {
+    AfterMatch option = 1;
+    // For use with
+    // * AFTER_MATCH_SKIP_TO_FIRST
+    // * AFTER_MATCH_SKIP_TO_LAST
+    Expression.PatternVariable after_match_skip_to_pattern_variable = 70;
+
+    enum AfterMatch {
+      AFTER_MATCH_UNSPECIFIED = 0;
+      AFTER_MATCH_SKIP_PAST_LAST_ROW = 1;
+      AFTER_MATCH_SKIP_TO_NEXT_ROW = 2;
+      AFTER_MATCH_SKIP_TO_FIRST = 3;
+      AFTER_MATCH_SKIP_TO_LAST = 4;
+    }
+  }
+
+  enum RowsPerMatch {
+    ROWS_PER_MATCH_UNSPECIFIED = 0;
+    ROWS_PER_MATCH_ONE = 1;
+    ROWS_PER_MATCH_ALL = 2;
+    ROWS_PER_MATCH_ALL_SHOW_EMPTY_MATCHES = 3;
+    ROWS_PER_MATCH_ALL_OMIT_EMPTY_MATCHES = 4;
+    ROWS_PER_MATCH_ALL_WITH_UNMATCHED_ROWS = 5;
+  }
+
+  message Pattern {
+    bool start_anchor = 1;
+    bool end_anchor = 2;
+
+    message Quantifier {
+      MatchingStrategy strategy = 1;
+      oneof quantifier {
+        QuantifierBase base = 2;
+        QuantifierExact exact = 3;
+        QuantifierRange range = 4;
+      }
+
+      enum MatchingStrategy {
+        MATCHING_STRATEGY_UNSPECIFIED = 0;
+        MATCHING_STRATEGY_GREEDY = 1;
+        MATCHING_STRATEGY_RELUCTANT = 2;
+      }
+
+      enum QuantifierBase {
+        QUANTIFIER_BASE_UNSPECIFIED = 0;
+        QUANTIFIER_BASE_ONCE = 1; // A
+        QUANTIFIER_BASE_ZERO_OR_MORE = 2; // A*
+        QUANTIFIER_BASE_ONE_OR_MORE = 3; // A+
+        QUANTIFIER_BASE_ZERO_OR_ONE = 4; // A?
+      }
+
+      message QuantifierExact {
+        // A{n}
+        int32 matches = 1;
+      }
+
+      message QuantifierRange {
+        // A{m,} | A{,n} | A{m,n}
+        optional int32 min = 1;
+        optional int32 max = 2;
+      }
+    }
+
+    message PatternTerm {
+      Quantifier quantifier = 1;
+      oneof term {
+        Expression.PatternVariable leaf = 2;
+        PatternGroup group = 3;
+      }
+    }
+
+    message PatternGroup {
+      PatternGrouping grouping = 1;
+      repeated PatternTerm terms = 2;
+    }
+
+    enum PatternGrouping {
+      PATTERN_GROUPING_UNSPECIFIED = 0;
+      PATTERN_GROUPING_CONCATENATION = 1;
+      PATTERN_GROUPING_ALTERNATION = 2;
+      PATTERN_GROUPING_EXCLUDE = 3;
+    }
+  }
+
+  message Subset {
+    Expression.PatternVariable name = 1;
+    repeated Expression.PatternVariable correlation_variables = 2;
+  }
+
+  message Definition {
+    Expression.PatternVariable identifer = 1;
+    Expression condition = 2;
+  }
+}
+
 // This operator allows to represent calculated expressions of fields (e.g., a+b). Direct/Emit are used to represent classical relational projections
 message ProjectRel {
   RelCommon common = 1;
@@ -439,6 +551,7 @@ message Rel {
     ExtensionLeafRel extension_leaf = 11;
     CrossRel cross = 12;
     ReferenceRel reference = 21;
+    MatchRecognizeRel match_recognize = 22;
     WriteRel write = 19;
     DdlRel ddl = 20;
     // Physical relations
@@ -765,6 +878,8 @@ message Expression {
     Cast cast = 11;
     Subquery subquery = 12;
     Nested nested = 13;
+    // For use w/ MatchRel
+    PatternVariable pattern_var = 14;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -900,6 +1015,14 @@ message Expression {
         Literal.Struct struct = 4;
       }
     }
+  }
+
+  // Pattern Variable Identifier for use w/ MatchRel
+  message PatternVariable {
+    // TODO: Should this be split out into a PatternIdentifier component for use in DEFINE, SUBSET and PATTERN clauses?
+    string identifier = 1;
+    // Needed for MEASURES which reference specific columns on the row associated with the identifiers
+    FieldReference column = 2;
   }
 
   // Expression to dynamically construct nested types.
