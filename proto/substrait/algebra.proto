@@ -728,9 +728,9 @@ message NestedLoopJoinRel {
 }
 
 // A delimiter join performs duplicate elimination on one side and then
-// pushes the rows with the duplicates eliminated into an arbitrary
-// number of scans on the opposing side to enact the join.  The keys are
-// used to implement the join condition.
+// pushes the rows with the duplicates eliminated into a join utilizing
+// the preconstructed delimiter on the opposing side to enact the join.
+// The keys are used to implement the join condition.
 message DelimiterJoinRel {
   RelCommon common = 1;
   Rel left = 2;
@@ -740,6 +740,10 @@ message DelimiterJoinRel {
   repeated Expression.FieldReference right_keys = 5;
 
   JoinType type = 6;
+
+  // A reference to the delimiter field reference computed on the
+  // input earlier during the plan.
+  Expression.FieldReference delimiter_field = 7;
 
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;

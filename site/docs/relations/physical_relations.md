@@ -75,9 +75,7 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 
 ## Delimiter Join Operator
 
-A delimiter join performs duplicate elimination on one side and then pushes the rows with the duplicates eliminated
-into an arbitrary number of scans on the opposing side to enact the join.  The keys are used to implement the join
-condition.
+A delimiter join performs duplicate elimination on one side and then pushes the rows with the duplicates eliminated into a join utilizing the preconstructed delimiter on the opposing side to enact the join. The keys are used to implement the join condition.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
