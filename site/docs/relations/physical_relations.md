@@ -75,7 +75,7 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 
 ## Mark Join Operator
 
-A mark join utilizes a previously applied mark to greatly reduce the input to be processed.
+A mark join internally scans the left side, constructing a hash table that is used to mark the right side as having a join partner on the left side.  This mark can end up being True, False, or NULL.  The NULL mark is used to indicate that the right side does not have a join partner on the left side.  The mark join operator is used to implement semi-joins, anti-joins, and other join types that are not equijoins.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -90,7 +90,6 @@ A mark join utilizes a previously applied mark to greatly reduce the input to be
 |-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
 | Left Input      | A relational input.                                                                                                                                                                 | Required                                                    |
 | Right Input     | A relational input.                                                                                                                                                                 | Required                                                    |
-| Mark Reference  | A nullable boolean field reference that is used to filter the right input.  If the mark is null, the row is not included in the join.                                               | Required.                                                   |
 | Join Expression | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the direct output order of the data. | Required. Can be (but not expected to be) the literal True. |
 
 
