@@ -727,17 +727,16 @@ message NestedLoopJoinRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
-// A mark join utilizes a previously applied mark to greatly reduce the
-// input to be processed.  A mark is a nullable boolean field.
+// A mark join internally scans the left side, constructing a hash table that
+// is used to mark the right side as having a join partner on the left side. A
+// mark is a nullable boolean field.  The mark join operator is used to
+// implement semi-joins, anti-joins, and other join types that are not equijoins.
 message MarkJoinRel {
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
   // optional, defaults to true (a cartesian join)
   Expression expression = 4;
-
-  // A reference to the mark field.
-  Expression.FieldReference mark_field = 6;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
