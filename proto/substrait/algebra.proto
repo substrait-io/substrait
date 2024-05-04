@@ -161,6 +161,8 @@ message MatchRecognizeRel {
   repeated Subset subsets = 6;
   repeated Definition definitions = 100;
 
+  substrait.extensions.AdvancedExtension advanced_extension = 110;
+
   message Measure {
     FrameSemantics frame_semantics = 1;
     Expression expr = 2;
