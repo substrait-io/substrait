@@ -152,7 +152,7 @@ message MatchRecognizeRel {
   repeated Expression sort_keys = 40;
   // TODO: HOW TO HANDLE first, prev, next and last functions
   // Should they just be defined as window functions
-  repeated Expression measures = 50;
+  repeated Measure measures = 50;
 
   RowsPerMatch rows_per_match = 55;
   AfterMatchSkip after_match_skip = 60;
@@ -160,6 +160,17 @@ message MatchRecognizeRel {
   Pattern pattern = 80;
   repeated Subset subsets = 6;
   repeated Definition definitions = 100;
+
+  message Measure {
+    FrameSemantics frame_semantics = 1;
+    Expression expr = 2;
+
+    enum FrameSemantics {
+      FRAME_SEMANTICS_UNSPECIFIED = 0;
+      FRAME_SEMANTICS_RUNNING = 1;
+      FRAME_SEMANTICS_FINAL = 2;
+    }
+  }
 
   message AfterMatchSkip {
     AfterMatch option = 1;
