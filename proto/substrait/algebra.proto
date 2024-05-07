@@ -208,11 +208,6 @@ message MatchRecognizeRel {
 
     message Quantifier {
       MatchingStrategy strategy = 1;
-      oneof quantifier {
-        QuantifierBase base = 2;
-        QuantifierExact exact = 3;
-        QuantifierRange range = 4;
-      }
 
       enum MatchingStrategy {
         MATCHING_STRATEGY_UNSPECIFIED = 0;
@@ -220,24 +215,16 @@ message MatchRecognizeRel {
         MATCHING_STRATEGY_RELUCTANT = 2;
       }
 
-      enum QuantifierBase {
-        QUANTIFIER_BASE_UNSPECIFIED = 0;
-        QUANTIFIER_BASE_ONCE = 1; // A
-        QUANTIFIER_BASE_ZERO_OR_MORE = 2; // A*
-        QUANTIFIER_BASE_ONE_OR_MORE = 3; // A+
-        QUANTIFIER_BASE_ZERO_OR_ONE = 4; // A?
-      }
+      // Ranges can be used to encode ALL quantifiers
+      // A  -> A{1,1}
+      // A* -> A{0,}
+      // A+ -> A{1,}
+      // A? -> A{0,1}
 
-      message QuantifierExact {
-        // A{n}
-        int32 matches = 1;
-      }
-
-      message QuantifierRange {
-        // A{m,} | A{,n} | A{m,n}
-        optional int32 min = 1;
-        optional int32 max = 2;
-      }
+      // A{n}    -> A{n, n}
+      // A{m, n} -> A{m, n}
+      optional int32 min = 2;
+      optional int32 max = 3;
     }
 
     message PatternTerm {
