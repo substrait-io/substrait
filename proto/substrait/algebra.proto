@@ -144,14 +144,16 @@ message ReadRel {
   }
 }
 
+message PatternIdentifier {
+  string id = 1;
+}
+
 message MatchRecognizeRel {
   RelCommon common = 10;
   Rel input = 20;
 
   repeated Expression partition_keys = 30;
-  repeated Expression sort_keys = 40;
-  // TODO: HOW TO HANDLE first, prev, next and last functions
-  // Should they just be defined as window functions
+  repeated SortField sort_keys = 40;
   repeated Measure measures = 50;
 
   RowsPerMatch rows_per_match = 55;
@@ -159,7 +161,7 @@ message MatchRecognizeRel {
 
   Pattern pattern = 80;
   repeated Subset subsets = 6;
-  repeated Definition definitions = 100;
+  repeated PatternDefinition definitions = 100;
 
   substrait.extensions.AdvancedExtension advanced_extension = 110;
 
@@ -202,6 +204,8 @@ message MatchRecognizeRel {
   message Pattern {
     bool start_anchor = 1;
     bool end_anchor = 2;
+    PatternTerm root = 3;
+
 
     message Quantifier {
       MatchingStrategy strategy = 1;
@@ -240,7 +244,7 @@ message MatchRecognizeRel {
     message PatternTerm {
       Quantifier quantifier = 1;
       oneof term {
-        Expression.PatternVariable leaf = 2;
+        PatternIdentifier leaf = 2;
         PatternGroup group = 3;
       }
     }
@@ -259,12 +263,12 @@ message MatchRecognizeRel {
   }
 
   message Subset {
-    Expression.PatternVariable name = 1;
-    repeated Expression.PatternVariable correlation_variables = 2;
+    PatternIdentifier name = 1;
+    repeated PatternIdentifier correlation_variables = 2;
   }
 
-  message Definition {
-    Expression.PatternVariable identifer = 1;
+  message PatternDefinition {
+    PatternIdentifier identifier = 1;
     Expression condition = 2;
   }
 }
@@ -1032,8 +1036,7 @@ message Expression {
 
   // Pattern Variable Identifier for use w/ MatchRel
   message PatternVariable {
-    // TODO: Should this be split out into a PatternIdentifier component for use in DEFINE, SUBSET and PATTERN clauses?
-    string identifier = 1;
+    PatternIdentifier identifier = 1;
     // Needed for MEASURES which reference specific columns on the row associated with the identifiers
     FieldReference column = 2;
   }

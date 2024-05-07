@@ -1,0 +1,66 @@
+%YAML 1.2
+---
+scalar_functions:
+  - name: "pattern_ref"
+    description: "the number of the current row within its partition."
+    impls:
+      - args:
+          - value: string
+            name: pattern_identifier
+          - value: i32
+            name: column_reference
+        # TODO: the nullability here is the nullability of the column being referenced
+        #  MIRROR does not actually represent this
+        #  this may be better served by being an actual expression
+        nullability: MIRROR
+        return: any
+  - name: "classifier"
+    description: "returns the primary pattern associated with the row"
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        return: string
+  - name: "match_number"
+    description: "returns the sequential number of the match within partition, starting from 1"
+    impls:
+      - args: []
+        nullability: DECLARED_OUTPUT
+        return: i32
+  - name: "prev"
+    description: "the previous row before the currently matched row"
+    impls:
+      - args:
+          - value: string
+            name: pattern_identifier
+          - value: i32
+            name: column_reference
+        nullability: DECLARED_OUTPUT
+        return: any?
+  - name: "next"
+    description: "the next row after the currently matched row"
+    impls:
+      - args:
+          - value: string
+            name: pattern_identifier
+          - value: i32
+            name: column_reference
+        nullability: DECLARED_OUTPUT
+        return: any?
+  - name: "last"
+    description: "return the last value of the column_reference matched by pattern_identifier"
+    impls:
+      - args:
+          - value: string
+            name: pattern_identifier
+          - value: i32
+            name: column_reference
+        nullability: DECLARED_OUTPUT
+        return: any?
+  - name: "last"
+    description: "return the last value of the given column_reference in the matches"
+    impls:
+      - args:
+          - value: i32
+            name: column_reference
+        nullability: DECLARED_OUTPUT
+        return: any?
