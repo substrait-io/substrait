@@ -206,7 +206,6 @@ message MatchRecognizeRel {
     bool end_anchor = 2;
     PatternTerm root = 3;
 
-
     message Quantifier {
       MatchingStrategy strategy = 1;
       oneof quantifier {
