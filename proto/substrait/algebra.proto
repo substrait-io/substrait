@@ -149,6 +149,10 @@ message PatternIdentifier {
 }
 
 message MatchRecognizeRel {
+    // TODO: specify the output columns of the MatchRecognizeRel
+    // The actual columns differ depending on whether ONE match is emitted per row or ALL rows are emitted.
+    // See: https://docs.oracle.com/en/database/oracle/oracle-database/23/dwhsg/sql-pattern-matching-data-warehouses.html#GUID-CAE4A0B5-41D3-4F4B-BEE7-5B7953CDFBB5
+
   RelCommon common = 10;
   Rel input = 20;
 
@@ -881,7 +885,7 @@ message Expression {
     Cast cast = 11;
     Subquery subquery = 12;
     Nested nested = 13;
-    // For use w/ MatchRel
+    // For use w/ MatchRecognizeRel
     PatternVariable pattern_var = 14;
 
     // deprecated: enum literals are only sensible in the context of
@@ -1020,7 +1024,7 @@ message Expression {
     }
   }
 
-  // Pattern Variable Identifier for use w/ MatchRel
+  // Pattern Variable Identifier for use w/ MatchRecognizeRel
   message PatternVariable {
     PatternIdentifier identifier = 1;
     // Needed for MEASURES which reference specific columns on the row associated with the identifiers
