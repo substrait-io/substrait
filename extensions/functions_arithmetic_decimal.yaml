@@ -109,9 +109,6 @@ scalar_functions:
       - args:
           - name: x
             value: decimal<P,S>
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
         return: decimal<P,S>
 
 aggregate_functions:
