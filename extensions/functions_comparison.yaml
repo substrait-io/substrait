@@ -50,6 +50,24 @@ scalar_functions:
         return: boolean
         nullability: DECLARED_OUTPUT
   -
+    name: "is_distinct_from"
+    description: >
+      Whether two values are not equal.
+
+      This function treats `null` values as comparable, so
+
+      `is_distinct_from(null, null) == False`
+
+      This is in contrast to `equal`, in which `null` values do not compare.
+    impls:
+      - args:
+          - value: any1
+            name: x
+          - value: any1
+            name: y
+        return: boolean
+        nullability: DECLARED_OUTPUT
+  -
     name: "lt"
     description: >
       Less than.
