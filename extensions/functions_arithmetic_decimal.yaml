@@ -102,6 +102,15 @@ scalar_functions:
           scale_after_borrow = max(init_scale - delta, min_scale)
           scale = init_prec > 38 ? scale_after_borrow : init_scale
           DECIMAL<prec, scale>
+  - 
+    name: "abs"
+    description: Calculate the absolute value of the argument.
+    impls:
+      - args:
+          - name: x
+            value: decimal<P,S>
+        return: decimal<P,S>
+
 aggregate_functions:
   - name: "sum"
     description: Sum a set of values.
