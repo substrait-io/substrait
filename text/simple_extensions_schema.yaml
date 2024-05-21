@@ -109,6 +109,8 @@ $defs:
               type: string
             options:
               type: array
+              minItems: 1
+              uniqueItems: true
               items:
                 type: string
         - type: object # value
