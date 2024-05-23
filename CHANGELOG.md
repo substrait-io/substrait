@@ -1,6 +1,20 @@
 Release Notes
 ---
 
+## [0.49.0](https://github.com/substrait-io/substrait/compare/v0.48.0...v0.49.0) (2024-05-23)
+
+
+### Features
+
+* abs add decimal type ([#637](https://github.com/substrait-io/substrait/issues/637)) ([beff1f0](https://github.com/substrait-io/substrait/commit/beff1f039b618f8f14b3c699e139234964c0b2f7))
+* add is distinct from function ([#638](https://github.com/substrait-io/substrait/issues/638)) ([de4fcbc](https://github.com/substrait-io/substrait/commit/de4fcbc066315ca874ca163275affdc4156e570e))
+
+
+### Bug Fixes
+
+* **ci:** pin `conventional-changelog-conventionalcommits` to `7.0.2` ([#644](https://github.com/substrait-io/substrait/issues/644)) ([9528bd2](https://github.com/substrait-io/substrait/commit/9528bd28c9c403f00d2f018fa50b572c9aa93a89))
+* specify a minimum length for the options of enum args ([#642](https://github.com/substrait-io/substrait/issues/642)) ([8e65af5](https://github.com/substrait-io/substrait/commit/8e65af5363da41fd73c131c2a465d5186c52c403)), closes [/github.com/substrait-io/substrait-rs/pull/185#discussion_r1603513149](https://github.com/substrait-io//github.com/substrait-io/substrait-rs/pull/185/issues/discussion_r1603513149)
+
 ## [0.48.0](https://github.com/substrait-io/substrait/compare/v0.47.0...v0.48.0) (2024-04-25)
 
 
