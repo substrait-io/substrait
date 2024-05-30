@@ -136,14 +136,24 @@ message ReadRel {
       message ArrowReadOptions {}
       message OrcReadOptions {}
       message DwrfReadOptions {}
+      message TextReadOptions {
+        string field_delimiter = 1;
+        uint64 max_block_size = 2;
+        string quote = 3;
+        uint64 header = 4;
+        string escape = 5;
+        string null_value = 6;
+        bool empty_as_default = 7;
+      }
 
-      // The format of the files.
+      // File reading options.
       oneof file_format {
         ParquetReadOptions parquet = 9;
         ArrowReadOptions arrow = 10;
         OrcReadOptions orc = 11;
         google.protobuf.Any extension = 12;
         DwrfReadOptions dwrf = 13;
+        TextReadOptions text = 14;
       }
     }
   }
