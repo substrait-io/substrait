@@ -137,16 +137,30 @@ message ReadRel {
       message OrcReadOptions {}
       message DwrfReadOptions {}
       message TextReadOptions {
+        // The character(s) used to separate fields.  Common values are comma,
+        // tab, and pipe.
         string field_delimiter = 1;
+        // The maximum number of bytes to read from a single row.  If a row
+        // exceeds this limit the resulting behavior is undefined.
         uint64 max_block_size = 2;
+        // The character(s) used to quote strings.  Common values are single
+        // and double quotation marks.
         string quote = 3;
+        // If true, consume the first row as names of the columns.  These names
+        // are not used elsewhere in the plan.
         uint64 header = 4;
+        // The character(s) used to escape characters in strings.  Backslash is
+        // the most common value.
         string escape = 5;
-        string null_value = 6;
-        bool empty_as_default = 7;
+        // If this value is encountered (including empty string), the resulting
+        // value is null instead.  Leave unset to disable.  If this value is
+        // provided, the effective schema of this file is comprised entirely of
+        // nullable strings.  If not provided, the effective schema is
+        // instead made up of non-nullable strings.
+        optional string null_value = 6;
       }
 
-      // File reading options.
+      // File reading options
       oneof file_format {
         ParquetReadOptions parquet = 9;
         ArrowReadOptions arrow = 10;
