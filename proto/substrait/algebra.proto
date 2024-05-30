@@ -160,7 +160,7 @@ message ReadRel {
         optional string null_value = 6;
       }
 
-      // File reading options
+      // The format of the files along with options for reading those files.
       oneof file_format {
         ParquetReadOptions parquet = 9;
         ArrowReadOptions arrow = 10;
