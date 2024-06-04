@@ -136,13 +136,16 @@ message ReadRel {
       message ArrowReadOptions {}
       message OrcReadOptions {}
       message DwrfReadOptions {}
-      message TextReadOptions {
+      message DelimeterSeparatedTextReadOptions {
+        // Delimiter separated files may be compressed.  The reader should
+        // autodetect this and decompress as needed.
+
         // The character(s) used to separate fields.  Common values are comma,
-        // tab, and pipe.
+        // tab, and pipe.  Multiple characters are allowed.
         string field_delimiter = 1;
-        // The maximum number of bytes to read from a single row.  If a row
+        // The maximum number of bytes to read from a single line.  If a line
         // exceeds this limit the resulting behavior is undefined.
-        uint64 max_block_size = 2;
+        uint64 max_line_size = 2;
         // The character(s) used to quote strings.  Common values are single
         // and double quotation marks.
         string quote = 3;
@@ -153,10 +156,11 @@ message ReadRel {
         // the most common value.
         string escape = 5;
         // If this value is encountered (including empty string), the resulting
-        // value is null instead.  Leave unset to disable.  If this value is
-        // provided, the effective schema of this file is comprised entirely of
-        // nullable strings.  If not provided, the effective schema is
-        // instead made up of non-nullable strings.
+        // value is null instead.  This value is checked before quotes are
+        // removed.  Leave unset to disable.  If this value is provided, the
+        // effective schema of this file is comprised entirely of nullable
+        // strings.  If not provided, the effective schema is instead made up of
+        // non-nullable strings.
         optional string null_value = 6;
       }
 
@@ -167,7 +171,7 @@ message ReadRel {
         OrcReadOptions orc = 11;
         google.protobuf.Any extension = 12;
         DwrfReadOptions dwrf = 13;
-        TextReadOptions text = 14;
+        DelimeterSeparatedTextReadOptions text = 14;
       }
     }
   }
