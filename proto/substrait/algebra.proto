@@ -442,7 +442,7 @@ message Rel {
     JoinRel join = 6;
     ProjectRel project = 7;
     SetRel set = 8;
-    SubqueryAliasRel subqueryAlias = 22;
+    SubqueryAliasRel subquery_alias = 22;
     ExtensionSingleRel extension_single = 9;
     ExtensionMultiRel extension_multi = 10;
     ExtensionLeafRel extension_leaf = 11;
