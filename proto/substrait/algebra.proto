@@ -144,6 +144,14 @@ message ReadRel {
   }
 }
 
+// (Re)qualify column names in a relation. If the system does not need qualified names, this can be ignored.
+message SubqueryAliasRel {
+  RelCommon common = 1;
+  Rel input = 2;
+  repeated string names = 3;
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
 // This operator allows to represent calculated expressions of fields (e.g., a+b). Direct/Emit are used to represent classical relational projections
 message ProjectRel {
   RelCommon common = 1;
@@ -434,6 +442,7 @@ message Rel {
     JoinRel join = 6;
     ProjectRel project = 7;
     SetRel set = 8;
+    SubqueryAliasRel subqueryAlias = 22;
     ExtensionSingleRel extension_single = 9;
     ExtensionMultiRel extension_multi = 10;
     ExtensionLeafRel extension_leaf = 11;
