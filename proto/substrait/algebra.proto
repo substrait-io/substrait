@@ -24,6 +24,11 @@ message RelCommon {
   Hint hint = 3;
   substrait.extensions.AdvancedExtension advanced_extension = 4;
 
+  // Optional name (alias) for this relation, if provided, should be unique across the root.
+  // Safe to ignore, or can be used for qualifying the relation or debugging.
+  // Repeated to allow for multiple levels of naming, e.g. catalog/schema/table
+  repeated string rel_names = 5;
+
   // Direct indicates no change on presence and ordering of fields in the output
   message Direct {}
 
