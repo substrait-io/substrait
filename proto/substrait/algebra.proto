@@ -22,12 +22,8 @@ message RelCommon {
   }
 
   Hint hint = 3;
+  Metadata metadata = 5;
   substrait.extensions.AdvancedExtension advanced_extension = 4;
-
-  // Optional name (alias) for this relation, if provided, should be unique across the root.
-  // Safe to ignore, or can be used for qualifying the relation or debugging.
-  // Repeated to allow for multiple levels of naming, e.g. catalog/schema/table
-  repeated string rel_names = 5;
 
   // Direct indicates no change on presence and ordering of fields in the output
   message Direct {}
@@ -56,6 +52,20 @@ message RelCommon {
 
       substrait.extensions.AdvancedExtension advanced_extension = 10;
     }
+  }
+
+  message Metadata {
+    // Optional name (alias) for this relation.
+    // If provided, must be unique across the relations in the plan/root.
+    // Safe to ignore, or can be used for e.g. qualifying the relation
+    // (see e.g. Spark's SubqueryAlias), or debugging.
+    // Repeated to allow for multiple levels of naming, e.g. catalog/schema/table.
+    repeated string alias = 1;
+
+    // Any custom metadata that the producer wants to attach to the relation.
+    // Consumer should hold no expectations about the existence, or lack of,
+    // or meaning of, of any specific key, unless the producer is known.
+    map<string, string> custom = 2;
   }
 }
 
