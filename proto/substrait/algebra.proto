@@ -54,11 +54,13 @@ message RelCommon {
     }
   }
 
+  // Optional metadata that the producer may attach to the relation.
+  // Consumer should hold no expectations about the existance metadata.
   message Metadata {
-    // Optional name (alias) for this relation.
+    // Name (alias) for this relation.
     // If provided, must be unique across the relations in the plan/root.
-    // Safe to ignore, or can be used for e.g. qualifying the relation
-    // (see e.g. Spark's SubqueryAlias), or debugging.
+    // Safe to ignore, or can be used for e.g. qualifying the relation (see e.g.
+    // Spark's SubqueryAlias), or debugging.
     // Repeated to allow for multiple levels of naming, e.g. catalog/schema/table.
     repeated string alias = 1;
 
