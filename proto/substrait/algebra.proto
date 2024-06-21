@@ -22,7 +22,6 @@ message RelCommon {
   }
 
   Hint hint = 3;
-  Metadata metadata = 5;
   substrait.extensions.AdvancedExtension advanced_extension = 4;
 
   // Direct indicates no change on presence and ordering of fields in the output
@@ -38,6 +37,11 @@ message RelCommon {
   message Hint {
     Stats stats = 1;
     RuntimeConstraint constraint = 2;
+
+    // Name (alias) for this relation. Can be used for e.g. qualifying the relation (see e.g.
+    // Spark's SubqueryAlias), or debugging.
+    string alias = 3;
+
     substrait.extensions.AdvancedExtension advanced_extension = 10;
 
     // The statistics related to a hint (physical properties of records)
@@ -52,22 +56,6 @@ message RelCommon {
 
       substrait.extensions.AdvancedExtension advanced_extension = 10;
     }
-  }
-
-  // Optional metadata that the producer may attach to the relation.
-  // Consumer should hold no expectations about the existance metadata.
-  message Metadata {
-    // Name (alias) for this relation.
-    // If provided, must be unique across the relations in the plan/root.
-    // Safe to ignore, or can be used for e.g. qualifying the relation (see e.g.
-    // Spark's SubqueryAlias), or debugging.
-    // Repeated to allow for multiple levels of naming, e.g. catalog/schema/table.
-    repeated string alias = 1;
-
-    // Any custom metadata that the producer wants to attach to the relation.
-    // Consumer should hold no expectations about the existence, or lack of,
-    // or meaning of, of any specific key, unless the producer is known.
-    map<string, string> custom = 2;
   }
 }
 
