@@ -249,7 +249,7 @@ The set operation encompasses several set-level operations that support combinin
 | Inputs               | 2 or more                                                    |
 | Outputs              | 1                                                            |
 | Property Maintenance | Maintains distribution if all inputs have the same ordinal distribution. Orderedness is not maintained. |
-| Direct Output Order  | The field order of the inputs.  All inputs must have identical fields. |
+| Direct Output Order  | The field order of the inputs. All inputs must have identical field *types*, but field nullabilities may vary |
 
 ### Set Properties
 
@@ -261,14 +261,35 @@ The set operation encompasses several set-level operations that support combinin
 
 ### Set Operation Types
 
-| Property                | Description                                                  |
-| ----------------------- | ------------------------------------------------------------ |
-| Minus (Primary)         | Returns the primary input excluding any matching records from secondary inputs. |
-| Minus (Multiset)        | Returns the primary input minus any records that are included in all sets. |
-| Intersection (Primary)  | Returns all rows primary rows that intersect at least one secondary input. |
-| Intersection (Multiset) | Returns all rows that intersect at least one record from each secondary inputs. |
-| Union Distinct          | Returns all the records from each set, removing any rows that are duplicated (within or across sets). |
-| Union All               | Returns all records from each set, allowing duplicates.      |
+The set operation type determines both the records that are emitted and the type of the output record.
+
+| Property                | Description                                                                                                   | Output Shape
+| ----------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| Minus (Primary)         | Returns all records from the primary input excluding any matching records from secondary inputs.              | The same as the primary input
+| Minus (Multiset)        | Returns all records from the primary input excluding any records that are included in *all* secondary inputs. | The same as the primary input
+| Intersection (Primary)  | Returns all records from the primary input that match at least one record from *any* secondary inputs.        | If a field is nullabe in in the primary input and in any of the secondary inputs, is nullable in the output.
+| Intersection (Multiset) | Returns all records from the primary input that match at least one record from *all* secondary inputs.        | If a field is non-null in any of the inputs, it is non-null in the output.
+| Union Distinct          | Returns all the records from each set, removing any rows that are duplicated (within or across sets).         | If a field is nullable in any of the inputs, it is nullable in the output.
+| Union All               | Returns all records from each set, allowing duplicates.                                                       | If a field is nullable in any of the inputs, it is nullable in the output |
+
+#### Output Type Derivation Examples
+Given the following inputs, where R is Required and N is Nullable:
+```
+Input 1: (R, R, R, R, N, N, N, N)  Primary Input
+Input 2: (R, R, N, N, R, R, N, N)  Secondary Input
+Input 3: (R, N, R, N, R, N, R, N)  Secondary Input
+```
+
+The output type is as follows for the various operations
+
+| Property                | Output Type
+| ----------------------- | -----------------------------------------------------------------------------------------------------
+| Minus (Primary)         | (R, R, R, R, N, N, N, N)
+| Minus (Multiset)        | (R, R, R, R, N, N, N, N)
+| Intersection (Primary)  | (R, R, R, R, R, N, R, N)
+| Intersection (Multiset) | (R, R, R, R, R, R, R, N)
+| Union Distinct          | (R, N, N, N, N, N, N, N)
+| Union All               | (R, N, N, N, N, N, N, N)
 
 
 === "SetRel Message"
@@ -288,8 +309,6 @@ The fetch operation eliminates records outside a desired window. Typically corre
 | Outputs              | 1                                       |
 | Property Maintenance | Maintains distribution and orderedness. |
 | Direct Output Order  | Unchanged from input.                   |
-
-
 
 ### Fetch Properties
 
