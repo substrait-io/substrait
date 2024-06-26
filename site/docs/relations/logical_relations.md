@@ -249,7 +249,7 @@ The set operation encompasses several set-level operations that support combinin
 | Inputs               | 2 or more                                                    |
 | Outputs              | 1                                                            |
 | Property Maintenance | Maintains distribution if all inputs have the same ordinal distribution. Orderedness is not maintained. |
-| Direct Output Order  | The field order of the inputs. All inputs must have identical field *types*, but field nullabilities may vary |
+| Direct Output Order  | The field order of the inputs. All inputs must have identical field *types*, but field nullabilities may vary. |
 
 ### Set Properties
 
