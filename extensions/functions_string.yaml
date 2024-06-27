@@ -1051,10 +1051,9 @@ scalar_functions:
   -
     name: initcap
     description: >-
-      Converts the input string into init cap case. Capitalize the first character of each word in the
-      input string, including articles. Implementation should follow the
-      utf8_unicode_ci collations according to the Unicode Collation Algorithm described at
-      http://www.unicode.org/reports/tr10/.
+      Capitalizes the first character of each word in the input string, including articles,
+      and lowercases the rest. Implementation should follow the utf8_unicode_ci collations
+      according to the Unicode Collation Algorithm described at http://www.unicode.org/reports/tr10/.
     impls:
       - args:
           - value: "string"
