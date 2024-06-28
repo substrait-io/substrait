@@ -267,7 +267,7 @@ The set operation type determines both the records that are emitted and the type
 | ----------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------- |
 | Minus (Primary)         | Returns all records from the primary input excluding any matching records from secondary inputs.              | The same as the primary input.
 | Minus (Multiset)        | Returns all records from the primary input excluding any records that are included in *all* secondary inputs. | The same as the primary input.
-| Intersection (Primary)  | Returns all records from the primary input that match at least one record from *any* secondary inputs.        | If a field is nullable in in the primary input and in any of the secondary inputs, is nullable in the output.
+| Intersection (Primary)  | Returns all records from the primary input that match at least one record from *any* secondary inputs.        | If a field is nullable in the primary input and in any of the secondary inputs, it is nullable in the output.
 | Intersection (Multiset) | Returns all records from the primary input that match at least one record from *all* secondary inputs.        | If a field is required in any of the inputs, it is required in the output.
 | Union Distinct          | Returns all the records from each set, removing any rows that are duplicated (within or across sets).         | If a field is nullable in any of the inputs, it is nullable in the output.
 | Union All               | Returns all records from each set, allowing duplicates.                                                       | If a field is nullable in any of the inputs, it is nullable in the output. |
