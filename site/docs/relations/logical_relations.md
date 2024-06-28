@@ -263,7 +263,7 @@ The set operation encompasses several set-level operations that support combinin
 
 The set operation type determines both the records that are emitted and the type of the output record.
 
-| Property                | Description                                                                                                   | Output Shape
+| Property                | Description                                                                                                   | Output Nullability
 | ----------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------- |
 | Minus (Primary)         | Returns all records from the primary input excluding any matching records from secondary inputs.              | The same as the primary input.
 | Minus (Multiset)        | Returns all records from the primary input excluding any records that are included in *all* secondary inputs. | The same as the primary input.
