@@ -272,6 +272,13 @@ The set operation type determines both the records that are emitted and the type
 | Union Distinct          | Returns all the records from each set, removing any rows that are duplicated (within or across sets).         | If a field is nullable in any of the inputs, it is nullable in the output.
 | Union All               | Returns all records from each set, allowing duplicates.                                                       | If a field is nullable in any of the inputs, it is nullable in the output. |
 
+Note that for set operations, NULL matches NULL. That is
+```
+{NULL, 1, 3} MINUS          {NULL, 2, 4} === (1), (3)
+{NULL, 1, 3} INTERSECTION   {NULL, 2, 3} === (NULL)
+{NULL, 1, 3} UNION DISTINCT {NULL, 2, 4} === (NULL), (1), (2), (3), (4)
+```
+
 #### Output Type Derivation Examples
 Given the following inputs, where R is Required and N is Nullable:
 ```
