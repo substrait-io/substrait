@@ -286,7 +286,7 @@ The output type is as follows for the various operations
 | ----------------------- | -----------------------------------------------------------------------------------------------------
 | Minus (Primary)         | (R, R, R, R, N, N, N, N)
 | Minus (Multiset)        | (R, R, R, R, N, N, N, N)
-| Intersection (Primary)  | (R, R, R, R, R, N, R, N)
+| Intersection (Primary)  | (R, R, R, R, R, N, N, N)
 | Intersection (Multiset) | (R, R, R, R, R, R, R, N)
 | Union Distinct          | (R, N, N, N, N, N, N, N)
 | Union All               | (R, N, N, N, N, N, N, N)
