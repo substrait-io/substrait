@@ -1,6 +1,17 @@
 Release Notes
 ---
 
+## [0.50.0](https://github.com/substrait-io/substrait/compare/v0.49.0...v0.50.0) (2024-06-30)
+
+### ⚠ BREAKING CHANGES
+
+* consumers must now check for multiple optimization
+messages within an AdvancedExtension
+
+### Features
+
+* make optimization a repeated field ([#653](https://github.com/substrait-io/substrait/issues/653)) ([e523d5d](https://github.com/substrait-io/substrait/commit/e523d5d9fa25cf432bd07cd418a3d7f829f01037))
+
 ## [0.49.0](https://github.com/substrait-io/substrait/compare/v0.48.0...v0.49.0) (2024-05-23)
 
 
