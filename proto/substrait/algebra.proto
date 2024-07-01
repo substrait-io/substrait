@@ -37,6 +37,11 @@ message RelCommon {
   message Hint {
     Stats stats = 1;
     RuntimeConstraint constraint = 2;
+
+    // Name (alias) for this relation. Can be used for e.g. qualifying the relation (see e.g.
+    // Spark's SubqueryAlias), or debugging.
+    string alias = 3;
+
     substrait.extensions.AdvancedExtension advanced_extension = 10;
 
     // The statistics related to a hint (physical properties of records)
