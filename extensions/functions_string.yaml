@@ -1049,6 +1049,34 @@ scalar_functions:
             values: [ UTF8, ASCII_ONLY ]
         return: "fixedchar<L1>"
   -
+    name: initcap
+    description: >-
+      Capitalizes the first character of each word in the input string, including articles,
+      and lowercases the rest. Implementation should follow the utf8_unicode_ci collations
+      according to the Unicode Collation Algorithm described at http://www.unicode.org/reports/tr10/.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
+        return: "string"
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
+        return: "varchar<L1>"
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
+        return: "fixedchar<L1>"
+  -
     name: char_length
     description: >-
       Return the number of characters in the input string.  The length includes trailing spaces.
