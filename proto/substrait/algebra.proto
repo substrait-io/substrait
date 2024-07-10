@@ -387,6 +387,8 @@ message ExchangeRel {
 message ExpandRel {
   RelCommon common = 1;
   Rel input = 2;
+  // The columns emitted as a result of applying the Expand fields
+  NamedStruct output_schema = 3;
   // There should be one definition here for each input field.  Any fields beyond the provided
   // definitions will be emitted as is (as if a consistent_field record with an identity
   // expression was provided).

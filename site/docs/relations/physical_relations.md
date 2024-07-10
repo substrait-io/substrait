@@ -236,10 +236,11 @@ The expand operation creates duplicates of input records based on the Expand Fie
 
 ### Expand Properties
 
-| Property  | Description                          | Required |
-| --------- |--------------------------------------| -------- |
-| Input     | The relational input.                | Required |
-| Direct Fields | Expressions describing the output fields.  These refer to the schema of the input.  Each Direct Field must be an expression or a Switching Field  | Required |
+| Property      | Description                                                                                                                                      | Required |
+|---------------|--------------------------------------------------------------------------------------------------------------------------------------------------| -------- |
+| Input         | The relational input.                                                                                                                            | Required |
+| Output Schema | The schema describing the columns emitted as a result of applying the field expressions.                                                         | Required |
+| Direct Fields | Expressions describing the output fields.  These refer to the schema of the input.  Each Direct Field must be an expression or a Switching Field | Required |
 
 ### Switching Field Properties
 
