@@ -1,6 +1,26 @@
 Release Notes
 ---
 
+## [0.51.0](https://github.com/substrait-io/substrait/compare/v0.50.0...v0.51.0) (2024-07-07)
+
+### Features
+
+* add "initcap" function ([#656](https://github.com/substrait-io/substrait/issues/656)) ([95bc6ba](https://github.com/substrait-io/substrait/commit/95bc6ba0ca5056274ccc81608919de22032084ad)), closes [/github.com/Blizzara/substrait/blob/70d1eb71623ca0754157dd5d87348bae51d420c4/extensions/functions_string.yaml#L1023](https://github.com/substrait-io//github.com/Blizzara/substrait/blob/70d1eb71623ca0754157dd5d87348bae51d420c4/extensions/functions_string.yaml/issues/L1023)
+* add null input handling options for `any_value` ([#652](https://github.com/substrait-io/substrait/issues/652)) ([1890e6a](https://github.com/substrait-io/substrait/commit/1890e6a7814c5161f38a31aba3e284dde1bc79d4))
+* allow naming/aliasing relations ([#649](https://github.com/substrait-io/substrait/issues/649)) ([4cf8108](https://github.com/substrait-io/substrait/commit/4cf8108e0746bbe6d6cf5ea95a6a5276580e0dde)), closes [#648](https://github.com/substrait-io/substrait/issues/648) [#571](https://github.com/substrait-io/substrait/issues/571)
+* define SetRel output nullability derivation ([#558](https://github.com/substrait-io/substrait/issues/558)) ([#654](https://github.com/substrait-io/substrait/issues/654)) ([612123a](https://github.com/substrait-io/substrait/commit/612123a4a84cf9554e0b8f92671ea5159c6deb21))
+
+## [0.50.0](https://github.com/substrait-io/substrait/compare/v0.49.0...v0.50.0) (2024-06-30)
+
+### ⚠ BREAKING CHANGES
+
+* consumers must now check for multiple optimization
+messages within an AdvancedExtension
+
+### Features
+
+* make optimization a repeated field ([#653](https://github.com/substrait-io/substrait/issues/653)) ([e523d5d](https://github.com/substrait-io/substrait/commit/e523d5d9fa25cf432bd07cd418a3d7f829f01037))
+
 ## [0.49.0](https://github.com/substrait-io/substrait/compare/v0.48.0...v0.49.0) (2024-05-23)
 
 

@@ -32,6 +32,11 @@ aggregate_functions:
     impls:
       - args:
           - name: x
-            value: any
+            value: any1
+        options:
+          ignore_nulls:
+            values: [ "TRUE", "FALSE" ]
         nullability: DECLARED_OUTPUT
-        return: any?
+        decomposable: MANY
+        intermediate: any1?
+        return: any1?
