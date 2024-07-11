@@ -173,8 +173,8 @@ message JoinRel {
     JOIN_TYPE_OUTER = 2;
     JOIN_TYPE_LEFT = 3;
     JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_SEMI = 5;  // This is the left semi join.
-    JOIN_TYPE_ANTI = 6;  // This is the left anti join.
+    JOIN_TYPE_SEMI = 5; // This is the left semi join.
+    JOIN_TYPE_ANTI = 6; // This is the left anti join.
     // This join is useful for nested sub-queries where we need exactly one record in output (or throw exception)
     // See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf
     JOIN_TYPE_SINGLE = 7;
