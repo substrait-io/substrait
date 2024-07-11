@@ -71,29 +71,6 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.    |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                    |
 
-
-
-## Mark Join Operator
-
-A mark join internally scans the left side, constructing a hash table that is used to mark the right side as having a join partner on the left side.  This mark can end up being True, False, or NULL.  The NULL mark is used to indicate that the right side does not have a join partner on the left side.  The mark join operator is used to implement semi-joins, anti-joins, and other join types that are not equijoins.
-
-| Signature            | Value                                                        |
-| -------------------- | ------------------------------------------------------------ |
-| Inputs               | 2                                                            |
-| Outputs              | 1                                                            |
-| Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
-| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
-
-### Mark Join Properties
-
-| Property        | Description                                                                                                                                                                         | Required                                                    |
-|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
-| Left Input      | A relational input.                                                                                                                                                                 | Required                                                    |
-| Right Input     | A relational input.                                                                                                                                                                 | Required                                                    |
-| Join Expression | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the direct output order of the data. | Required. Can be (but not expected to be) the literal True. |
-
-
-
 ## Exchange Operator
 
 The exchange operator will redistribute data based on an exchange type definition. Applying this operation will lead to an output that presents the desired distribution.

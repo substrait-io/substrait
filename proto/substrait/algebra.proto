@@ -178,6 +178,7 @@ message JoinRel {
     // This join is useful for nested sub-queries where we need exactly one record in output (or throw exception)
     // See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf
     JOIN_TYPE_SINGLE = 7;
+    JOIN_TYPE_MARK = 10;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -450,7 +451,6 @@ message Rel {
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
     NestedLoopJoinRel nested_loop_join = 18;
-    MarkJoinRel mark_join = 23;
     ConsistentPartitionWindowRel window = 17;
     ExchangeRel exchange = 15;
     ExpandRel expand = 16;
@@ -655,6 +655,7 @@ message HashJoinRel {
     JOIN_TYPE_RIGHT_SEMI = 6;
     JOIN_TYPE_LEFT_ANTI = 7;
     JOIN_TYPE_RIGHT_ANTI = 8;
+    JOIN_TYPE_MARK = 10;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -701,6 +702,7 @@ message MergeJoinRel {
     JOIN_TYPE_RIGHT_SEMI = 6;
     JOIN_TYPE_LEFT_ANTI = 7;
     JOIN_TYPE_RIGHT_ANTI = 8;
+    JOIN_TYPE_MARK = 10;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -727,21 +729,8 @@ message NestedLoopJoinRel {
     JOIN_TYPE_RIGHT_SEMI = 6;
     JOIN_TYPE_LEFT_ANTI = 7;
     JOIN_TYPE_RIGHT_ANTI = 8;
+    JOIN_TYPE_MARK = 10;
   }
-
-  substrait.extensions.AdvancedExtension advanced_extension = 10;
-}
-
-// A mark join internally scans the left side, constructing a hash table that
-// is used to mark the right side as having a join partner on the left side. A
-// mark is a nullable boolean field.  The mark join operator is used to
-// implement semi-joins, anti-joins, and other join types that are not equijoins.
-message MarkJoinRel {
-  RelCommon common = 1;
-  Rel left = 2;
-  Rel right = 3;
-  // optional, defaults to true (a cartesian join)
-  Expression expression = 4;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
