@@ -229,10 +229,11 @@ The join operation will combine two separate inputs into a single output, based 
 | Left  | Return all records from the left input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the left input, return the left record along with nulls for the right input. |
 | Right | Return all records from the right input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the right input, return the right record along with nulls for the left input. |
 | Semi | Returns records from the left input. These are returned only if the records have a join partner on the right side. |
-| Anti  | Return records from the left input. These are returned only if the records do not have a join partner on the right side. |
-| Single | Return all records from the left input.  For each cross input match, return a record including the data from both sides.  For any remaining non-matching records from the left input, return the left record along with nulls for the right input.  If a record from the left input has more than one match in the right input then an error must be raised.  Useful for nested sub-queries where we need exactly one record in output (or throw exception).  See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf for more information. |
 | Right Semi | Returns records from the right input. These are returned only if the records have a join partner on the left side. |
+| Anti  | Return records from the left input. These are returned only if the records do not have a join partner on the right side. |
 | Right Anti  | Return records from the right input. These are returned only if the records do not have a join partner on the left side. |
+| Single | Return all records from the left input.  For each cross input match, return a record including the data from both sides.  For any remaining non-matching records from the left input, return the left record along with nulls for the right input.  If a record from the left input has more than one match in the right input then an error must be raised.  Useful for nested sub-queries where we need exactly one record in output (or throw exception).  See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf for more information. |
+| Right Single | Same as single except that the right input is treated as primary. |
 
 
 === "JoinRel Message"
