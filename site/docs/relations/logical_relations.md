@@ -231,7 +231,7 @@ The join operation will combine two separate inputs into a single output, based 
 | Semi | Returns records from the left input. These are returned only if the records have a join partner on the right side. |
 | Anti  | Return records from the left input. These are returned only if the records do not have a join partner on the right side. |
 | Single | Returns one join partner per entry on the left input. If more than one join partner exists, there are two valid semantics. 1) Only the first match is returned. 2) The system throws an error. If there is no match between the left and right inputs, NULL is returned. |
-| Mark | Returns one record for each of the left inputs??? |
+| Mark | Returns at most one join partner for each of the primary input records. Uses a hash to first determine if there are matches in the secondary input. |
 
 
 === "JoinRel Message"
