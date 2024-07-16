@@ -76,6 +76,7 @@ Rather than using a full data type representation, the input argument types (`sh
 | time                            | time           |
 | interval_year                   | iyear          |
 | interval_day                    | iday           |
+| interval_month                  | imonth         |
 | uuid                            | uuid           |
 | fixedchar&lt;N&gt;              | fchar          |
 | varchar&lt;N&gt;                | vchar          |

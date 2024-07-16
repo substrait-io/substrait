@@ -27,6 +27,7 @@ message ParameterizedType {
     Type.Time time = 17;
     Type.IntervalYear interval_year = 19;
     Type.IntervalDay interval_day = 20;
+    Type.IntervalMonth interval_month = 36;
     // Deprecated in favor of `ParameterizedPrecisionTimestampTZ precision_timestamp_tz`
     Type.TimestampTZ timestamp_tz = 29 [deprecated = true];
     Type.UUID uuid = 32;

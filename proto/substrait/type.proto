@@ -27,6 +27,7 @@ message Type {
     Time time = 17;
     IntervalYear interval_year = 19;
     IntervalDay interval_day = 20;
+    IntervalMonth interval_month = 35;
     // Deprecated in favor of `PrecisionTimestampTZ precision_timestamp_tz`
     TimestampTZ timestamp_tz = 29 [deprecated = true];
     UUID uuid = 32;
@@ -122,12 +123,20 @@ message Type {
     Nullability nullability = 2;
   }
 
+  // An interval consisting of years and months
   message IntervalYear {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
   }
 
+  // An interval consisting of days, seconds, and microseconds
   message IntervalDay {
+    uint32 type_variation_reference = 1;
+    Nullability nullability = 2;
+  }
+
+  // An interval consisting of months, days, and nanoseconds
+  message IntervalMonth {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
   }
