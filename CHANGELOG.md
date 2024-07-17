@@ -1,6 +1,19 @@
 Release Notes
 ---
 
+## [0.52.0](https://github.com/substrait-io/substrait/compare/v0.51.0...v0.52.0) (2024-07-14)
+
+### ⚠ BREAKING CHANGES
+
+* changes the message type for Literal PrecisionTimestamp
+and PrecisionTimestampTZ
+
+The PrecisionTimestamp and PrecisionTimestampTZ literals were introduced
+
+### Bug Fixes
+
+* include precision information in PrecisionTimestamp and PrecisionTimestampTZ literals ([#659](https://github.com/substrait-io/substrait/issues/659)) ([f9e5f9c](https://github.com/substrait-io/substrait/commit/f9e5f9c515d4b8be079bc7d9dfcd89a6fa5e6c7e)), closes [#594](https://github.com/substrait-io/substrait/issues/594) [/github.com/substrait-io/substrait/pull/594#discussion_r1471844566](https://github.com/substrait-io//github.com/substrait-io/substrait/pull/594/issues/discussion_r1471844566)
+
 ## [0.51.0](https://github.com/substrait-io/substrait/compare/v0.50.0...v0.51.0) (2024-07-07)
 
 ### Features
