@@ -355,4 +355,6 @@ scalar_functions:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR,
               AWAY_FROM_ZERO, TIE_DOWN, TIE_UP, TIE_TOWARDS_ZERO, TIE_TO_ODD ]
         nullability: DECLARED_OUTPUT
-        return: decimal?<P1,S2>
+        return: |-
+          S2 = iff(s > 0, s, 0)
+          decimal?<P1,S2>
