@@ -2,7 +2,7 @@
 ---
 aggregate_functions:
   - name: "count"
-    description: Count a set of values
+    description: Count a set of values. Result is returned as a decimal instead of i64.
     impls:
       - args:
           - name: x
@@ -15,7 +15,7 @@ aggregate_functions:
         intermediate: decimal<38,0>
         return: decimal<38,0>
   - name: "count_star"
-    description: "Count a set of records (not field referenced)"
+    description: "Count a set of records (not field referenced). Result is returned as a decimal instead of i64."
     impls:
       - options:
           overflow:
@@ -30,7 +30,7 @@ aggregate_functions:
       HyperLogLog. This function provides an alternative to the COUNT (DISTINCT expression) function, which
       returns the exact number of rows that contain distinct values of an expression. APPROX_COUNT_DISTINCT
       processes large amounts of data significantly faster than COUNT, with negligible deviation from the exact
-      result.
+      result. Result is returned as a decimal instead of i64.
     impls:
       - args:
           - name: x
