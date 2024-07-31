@@ -14,7 +14,7 @@ aggregate_functions:
         decomposable: MANY
         intermediate: decimal<38,0>
         return: decimal<38,0>
-  - name: "count_star"
+  - name: "count"
     description: "Count a set of records (not field referenced). Result is returned as a decimal instead of i64."
     impls:
       - options:
