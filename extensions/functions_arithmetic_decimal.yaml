@@ -183,6 +183,17 @@ scalar_functions:
             values: [ NAN, ERROR ]
         return: fp64
 
+  - name: "bitwise_not"
+    description: >
+      Return the bitwise NOT result for one decimal input.
+      In inputs scale must be 0 (i.e. only integer types are allowed).
+      Result precision should be one more than input precision.
+      Result exceeding precision limit will raise an error.
+    impls:
+      - args:
+          - name: x
+            value: "DECIMAL<P,0>"
+        return: "DECIMAL<P+1,0>"
 aggregate_functions:
   - name: "sum"
     description: Sum a set of values.
