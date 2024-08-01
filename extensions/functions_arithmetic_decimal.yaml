@@ -102,7 +102,7 @@ scalar_functions:
           scale_after_borrow = max(init_scale - delta, min_scale)
           scale = init_prec > 38 ? scale_after_borrow : init_scale
           DECIMAL<prec, scale>
-  - 
+  -
     name: "abs"
     description: Calculate the absolute value of the argument.
     impls:
@@ -110,7 +110,45 @@ scalar_functions:
           - name: x
             value: decimal<P,S>
         return: decimal<P,S>
-
+  - name: "bitwise_and"
+    description: >
+      Return the bitwise AND result for two decimal inputs.
+      In inputs scale must be 0 (i.e. only integer types are allowed)
+    impls:
+      - args:
+          - name: x
+            value: "DECIMAL<P1,0>"
+          - name: y
+            value: "DECIMAL<P2,0>"
+        return: |-
+          max_precision = max(P1, P2)
+          DECIMAL<max_precision, 0>
+  - name: "bitwise_or"
+    description: >
+      Return the bitwise OR result for two given decimal inputs.
+      In inputs scale must be 0 (i.e. only integer types are allowed)
+    impls:
+      - args:
+          - name: x
+            value: "DECIMAL<P1,0>"
+          - name: y
+            value: "DECIMAL<P2,0>"
+        return: |-
+          max_precision = max(P1, P2)
+          DECIMAL<max_precision, 0>
+  - name: "bitwise_xor"
+    description: >
+      Return the bitwise XOR result for two given decimal inputs.
+      In inputs scale must be 0 (i.e. only integer types are allowed)
+    impls:
+      - args:
+          - name: x
+            value: "DECIMAL<P1,0>"
+          - name: y
+            value: "DECIMAL<P2,0>"
+        return: |-
+          max_precision = max(P1, P2)
+          DECIMAL<max_precision, 0>
 aggregate_functions:
   - name: "sum"
     description: Sum a set of values.
