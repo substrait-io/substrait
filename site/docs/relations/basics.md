@@ -1,15 +1,12 @@
 # Basics
 
-Substrait is designed to allow a user to describe arbitrarily complex data transformations.  These transformations are composed of one
-or more relational operations.  Relational operations are well-defined transformation operations that work by taking zero or more input datasets and transforming them into zero or more output transformations.  Substrait defines a core set of transformations, but users are also able to extend the operations with their own specialized operations.
+Substrait is designed to allow a user to describe arbitrarily complex data transformations.  These transformations are composed of one or more relational operations.  Relational operations are well-defined transformation operations that work by taking zero or more input datasets and transforming them into zero or more output transformations.  Substrait defines a core set of transformations, but users are also able to extend the operations with their own specialized operations.
 
 ## Plans
 
 A plan is a tree of relations.  The root of the tree is the final output of the plan.  Each node in the tree is a relational operation.  The children of a node are the inputs to the operation.  The leaves of the tree are the input datasets to the plan.
 
-Plans can be composed together using reference relations.  This allows for the construction of common plans that can be reused in multiple
-places.  If a plan has no cycles (there is only one plan or each reference relation only references later plans) then the plan will form a
- DAG (Directed Acyclic Graph).
+Plans can be composed together using reference relations.  This allows for the construction of common plans that can be reused in multiple places.  If a plan has no cycles (there is only one plan or each reference relation only references later plans) then the plan will form a  DAG (Directed Acyclic Graph).
 
 ## Relational Operators
 
