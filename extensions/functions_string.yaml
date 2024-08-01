@@ -3,19 +3,30 @@
 scalar_functions:
   -
     name: concat
-    description: Concatenate strings.
+    description: >-
+      Concatenate strings.
+
+      The `null_handling` option determines whether or not null values will be recognized by the function.
+      If `null_handling` is set to `IGNORE_NULLS`, null value arguments will be ignored when strings are concatenated.
+      If set to `ACCEPT_NULLS`, the result will be null if any argument passed to the concat function is null.
     impls:
       - args:
           - value: "varchar<L1>"
             name: "input"
         variadic:
           min: 1
+        options:
+          null_handling:
+            values: [ IGNORE_NULLS, ACCEPT_NULLS ]
         return: "varchar<L1>"
       - args:
           - value: "string"
             name: "input"
         variadic:
           min: 1
+        options:
+          null_handling:
+            values: [ IGNORE_NULLS, ACCEPT_NULLS ]
         return: "string"
   -
     name: like
@@ -1015,6 +1026,34 @@ scalar_functions:
       input string except for articles (a, an, the). Implementation should follow the
       utf8_unicode_ci collations according to the Unicode Collation Algorithm described at
       http://www.unicode.org/reports/tr10/.
+    impls:
+      - args:
+          - value: "string"
+            name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
+        return: "string"
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
+        return: "varchar<L1>"
+      - args:
+          - value: "fixedchar<L1>"
+            name: "input"
+        options:
+          char_set:
+            values: [ UTF8, ASCII_ONLY ]
+        return: "fixedchar<L1>"
+  -
+    name: initcap
+    description: >-
+      Capitalizes the first character of each word in the input string, including articles,
+      and lowercases the rest. Implementation should follow the utf8_unicode_ci collations
+      according to the Unicode Collation Algorithm described at http://www.unicode.org/reports/tr10/.
     impls:
       - args:
           - value: "string"

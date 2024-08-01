@@ -63,6 +63,7 @@ The rules require that a community member registering a negative vote must inclu
 | Typos                                                                                                     | 1                          | Committers     | Github PR       |
 | Non-breaking function introductions                                                                       | 1 (not including proposer) | Committers     | Github PR       |
 | Non-breaking extension additions & non-format code modifications                                          | 1 (not including proposer) | Committers     | Github PR       |
+| Changes (non-breaking or breaking) to a Substrait *library* (i.e. substrait-java, substrait-validator)    | 1 (not including proposer) | Committers     | Github PR       |
 
 ### Review-Then-Commit
 

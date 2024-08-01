@@ -26,25 +26,28 @@ There are three main types of arguments: value arguments, type arguments, and en
 
 #### Value Argument Properties
 
-| Property | Description                                                  | Required                                                   |
-| -------- | ------------------------------------------------------------ | ---------------------------------------------------------- |
-| Name     | A human-readable name for this argument to help clarify use. | Optional, defaults to a name based on position (e.g. `arg0`) |
-| Type     | A fully defined type or a type expression.                   | Required                                                   |
-| Constant | Whether this argument is required to be a constant for invocation. For example, in some system a regular expression pattern would only be accepted as a literal and not a column value reference. | Optional, defaults to false                                |
+| Property    | Description                                                   | Required                                                   |
+| ----------- | ------------------------------------------------------------- | ---------------------------------------------------------- |
+| Name        | A human-readable name for this argument to help clarify use.  | Optional, defaults to a name based on position (e.g. `arg0`) |
+| Description | Additional description of this argument.                      | Optional                                                   |
+| Value       | A fully defined type or a type expression.                    | Required                                                   |
+| Constant    | Whether this argument is required to be a constant for invocation. For example, in some system a regular expression pattern would only be accepted as a literal and not a column value reference. | Optional, defaults to false                                |
 
 #### Type Argument Properties
 
-| Property | Description                                                         | Required                                                   |
-| -------- | ------------------------------------------------------------------- | ---------------------------------------------------------- |
-| Type     | A partially or completely parameterized type. E.g. `List<K>` or `K` | Required                                                   |
-| Name     | A human-readable name for this argument to help clarify use.        | Optional, defaults to a name based on position (e.g. `arg0`) |
+| Property    | Description                                                         | Required                                                   |
+| ----------- | ------------------------------------------------------------------- | ---------------------------------------------------------- |
+| Type        | A partially or completely parameterized type. E.g. `List<K>` or `K` | Required                                                   |
+| Name        | A human-readable name for this argument to help clarify use.        | Optional, defaults to a name based on position (e.g. `arg0`) |
+| Description | Additional description of this argument.                            | Optional                                                   |
 
 #### Required Enumeration Properties
 
-| Property | Description                                                  | Required                                                     |
-| -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Options  | List of valid string options for this argument               | Required                                                     |
-| Name     | A human-readable name for this argument to help clarify use. | Optional, defaults to a name based on position (e.g. `arg0`) |
+| Property    | Description                                                   | Required                                                     |
+| ----------- | ------------------------------------------------------------- | ------------------------------------------------------------ |
+| Options     | List of valid string options for this argument                | Required                                                     |
+| Name        | A human-readable name for this argument to help clarify use.  | Optional, defaults to a name based on position (e.g. `arg0`) |
+| Description | Additional description of this argument.                      | Optional                                                     |
 
 ## Options
 

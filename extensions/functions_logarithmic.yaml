@@ -7,12 +7,23 @@ scalar_functions:
     impls:
       - args:
           - name: x
+            value: i64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
+          - name: x
             value: fp32
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
           on_log_zero:
             values: [NAN, ERROR, MINUS_INFINITY]
         return: fp32
@@ -23,9 +34,20 @@ scalar_functions:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
           on_log_zero:
             values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
+          - name: x
+            value: decimal<P,S>
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [ NAN, ERROR, MINUS_INFINITY ]
         return: fp64
   -
     name: "log10"
@@ -33,12 +55,23 @@ scalar_functions:
     impls:
       - args:
           - name: x
+            value: i64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
+          - name: x
             value: fp32
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
           on_log_zero:
             values: [NAN, ERROR, MINUS_INFINITY]
         return: fp32
@@ -49,9 +82,20 @@ scalar_functions:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
           on_log_zero:
             values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
+          - name: x
+            value: decimal<P,S>
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [ NAN, ERROR, MINUS_INFINITY ]
         return: fp64
   -
     name: "log2"
@@ -59,12 +103,23 @@ scalar_functions:
     impls:
       - args:
           - name: x
+            value: i64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
+          - name: x
             value: fp32
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
           on_log_zero:
             values: [NAN, ERROR, MINUS_INFINITY]
         return: fp32
@@ -75,9 +130,20 @@ scalar_functions:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
           on_log_zero:
             values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
+          - name: x
+            value: decimal<P,S>
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [ NAN, ERROR, MINUS_INFINITY ]
         return: fp64
   -
     name: "logb"
@@ -87,6 +153,21 @@ scalar_functions:
       logb(x, b) => log_{b} (x)
     impls:
       - args:
+          - value: i64
+            name: "x"
+            description: "The number `x` to compute the logarithm of"
+          - value: i64
+            name: "base"
+            description: "The logarithm base `b` to use"
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
           - value: fp32
             name: "x"
             description: "The number `x` to compute the logarithm of"
@@ -97,7 +178,7 @@ scalar_functions:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
           on_log_zero:
             values: [NAN, ERROR, MINUS_INFINITY]
         return: fp32
@@ -112,7 +193,22 @@ scalar_functions:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
+          - value: decimal<P1,S1>
+            name: "x"
+            description: "The number `x` to compute the logarithm of"
+          - value: decimal<P1,S1>
+            name: "base"
+            description: "The logarithm base `b` to use"
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
           on_log_zero:
             values: [NAN, ERROR, MINUS_INFINITY]
         return: fp64
@@ -130,7 +226,7 @@ scalar_functions:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
           on_log_zero:
             values: [NAN, ERROR, MINUS_INFINITY]
         return: fp32
@@ -141,7 +237,18 @@ scalar_functions:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ NAN, "NULL", ERROR ]
+          on_log_zero:
+            values: [NAN, ERROR, MINUS_INFINITY]
+        return: fp64
+      - args:
+          - name: x
+            value: decimal<P,S>
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
           on_log_zero:
             values: [NAN, ERROR, MINUS_INFINITY]
         return: fp64

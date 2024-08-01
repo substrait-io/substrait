@@ -54,7 +54,7 @@ A YAML file may contain one or more functions by the same name. The key used in 
 
 Rather than using a full data type representation, the input argument types (`short_arg_type`) are mapped to single-level short name. The mappings are listed in the table below.
 
-!!! note 
+!!! note
 
     Every compound function signature must be unique.  If two function implementations in a YAML file would generate the same compound function signature, then the YAML file is invalid and behavior is undefined.
 
@@ -98,6 +98,34 @@ Rather than using a full data type representation, the input argument types (`sh
 | `extract(required enumeration, timestamp) => i64` | `extract:req_ts` |
 | `sum(any1) => any1`                               | `sum:any`        |
 
+### Any Types
+
+```yaml
+scalar_functions:
+- name: foo
+  impls:
+  - args:
+    - name: a
+      value: any
+    - name: b
+      value: any
+    return: int64
+```
+
+The `any` type indicates that the argument can take any possible type. In the `foo` function above, arguments `a` and `b` can be of any type, even different ones in the same function invocation.
+
+```yaml
+scalar_functions:
+- name: bar
+  impls:
+  - args:
+    - name: a
+      value: any1
+    - name: b
+      value: any1
+    return: int64
+```
+The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
 
 
 ## Advanced Extensions

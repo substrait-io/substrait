@@ -1,6 +1,124 @@
 Release Notes
 ---
 
+## [0.52.0](https://github.com/substrait-io/substrait/compare/v0.51.0...v0.52.0) (2024-07-14)
+
+### ⚠ BREAKING CHANGES
+
+* changes the message type for Literal PrecisionTimestamp
+and PrecisionTimestampTZ
+
+The PrecisionTimestamp and PrecisionTimestampTZ literals were introduced
+
+### Bug Fixes
+
+* include precision information in PrecisionTimestamp and PrecisionTimestampTZ literals ([#659](https://github.com/substrait-io/substrait/issues/659)) ([f9e5f9c](https://github.com/substrait-io/substrait/commit/f9e5f9c515d4b8be079bc7d9dfcd89a6fa5e6c7e)), closes [#594](https://github.com/substrait-io/substrait/issues/594) [/github.com/substrait-io/substrait/pull/594#discussion_r1471844566](https://github.com/substrait-io//github.com/substrait-io/substrait/pull/594/issues/discussion_r1471844566)
+
+## [0.51.0](https://github.com/substrait-io/substrait/compare/v0.50.0...v0.51.0) (2024-07-07)
+
+### Features
+
+* add "initcap" function ([#656](https://github.com/substrait-io/substrait/issues/656)) ([95bc6ba](https://github.com/substrait-io/substrait/commit/95bc6ba0ca5056274ccc81608919de22032084ad)), closes [/github.com/Blizzara/substrait/blob/70d1eb71623ca0754157dd5d87348bae51d420c4/extensions/functions_string.yaml#L1023](https://github.com/substrait-io//github.com/Blizzara/substrait/blob/70d1eb71623ca0754157dd5d87348bae51d420c4/extensions/functions_string.yaml/issues/L1023)
+* add null input handling options for `any_value` ([#652](https://github.com/substrait-io/substrait/issues/652)) ([1890e6a](https://github.com/substrait-io/substrait/commit/1890e6a7814c5161f38a31aba3e284dde1bc79d4))
+* allow naming/aliasing relations ([#649](https://github.com/substrait-io/substrait/issues/649)) ([4cf8108](https://github.com/substrait-io/substrait/commit/4cf8108e0746bbe6d6cf5ea95a6a5276580e0dde)), closes [#648](https://github.com/substrait-io/substrait/issues/648) [#571](https://github.com/substrait-io/substrait/issues/571)
+* define SetRel output nullability derivation ([#558](https://github.com/substrait-io/substrait/issues/558)) ([#654](https://github.com/substrait-io/substrait/issues/654)) ([612123a](https://github.com/substrait-io/substrait/commit/612123a4a84cf9554e0b8f92671ea5159c6deb21))
+
+## [0.50.0](https://github.com/substrait-io/substrait/compare/v0.49.0...v0.50.0) (2024-06-30)
+
+### ⚠ BREAKING CHANGES
+
+* consumers must now check for multiple optimization
+messages within an AdvancedExtension
+
+### Features
+
+* make optimization a repeated field ([#653](https://github.com/substrait-io/substrait/issues/653)) ([e523d5d](https://github.com/substrait-io/substrait/commit/e523d5d9fa25cf432bd07cd418a3d7f829f01037))
+
+## [0.49.0](https://github.com/substrait-io/substrait/compare/v0.48.0...v0.49.0) (2024-05-23)
+
+
+### Features
+
+* abs add decimal type ([#637](https://github.com/substrait-io/substrait/issues/637)) ([beff1f0](https://github.com/substrait-io/substrait/commit/beff1f039b618f8f14b3c699e139234964c0b2f7))
+* add is distinct from function ([#638](https://github.com/substrait-io/substrait/issues/638)) ([de4fcbc](https://github.com/substrait-io/substrait/commit/de4fcbc066315ca874ca163275affdc4156e570e))
+
+
+### Bug Fixes
+
+* **ci:** pin `conventional-changelog-conventionalcommits` to `7.0.2` ([#644](https://github.com/substrait-io/substrait/issues/644)) ([9528bd2](https://github.com/substrait-io/substrait/commit/9528bd28c9c403f00d2f018fa50b572c9aa93a89))
+* specify a minimum length for the options of enum args ([#642](https://github.com/substrait-io/substrait/issues/642)) ([8e65af5](https://github.com/substrait-io/substrait/commit/8e65af5363da41fd73c131c2a465d5186c52c403)), closes [/github.com/substrait-io/substrait-rs/pull/185#discussion_r1603513149](https://github.com/substrait-io//github.com/substrait-io/substrait-rs/pull/185/issues/discussion_r1603513149)
+
+## [0.48.0](https://github.com/substrait-io/substrait/compare/v0.47.0...v0.48.0) (2024-04-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* min:ts has been moved to functions_datetime
+* max:ts has been moved to functions_datetime
+
+### Bug Fixes
+
+* duplicate declaration of min:ts and max:ts ([#631](https://github.com/substrait-io/substrait/issues/631)) ([7fc86f8](https://github.com/substrait-io/substrait/commit/7fc86f85e468ab404825ca093e718bd3996d8241))
+
+## [0.47.0](https://github.com/substrait-io/substrait/compare/v0.46.0...v0.47.0) (2024-04-18)
+
+
+### Features
+
+* add i64 variant for exp, ln, log10, log2 and logb functions ([#628](https://github.com/substrait-io/substrait/issues/628)) ([fef2253](https://github.com/substrait-io/substrait/commit/fef225343d8b686c3150deea7436792252057fb9))
+* allow FetchRel to specify a return of ALL results ([#622](https://github.com/substrait-io/substrait/issues/622)) ([#627](https://github.com/substrait-io/substrait/issues/627)) ([37f43b4](https://github.com/substrait-io/substrait/commit/37f43b4f8f74ad36e8d2d9dc7c5fecb740ac7ca1))
+
+
+### Bug Fixes
+
+* index_in has wrong return type ([#632](https://github.com/substrait-io/substrait/issues/632)) ([4cd2089](https://github.com/substrait-io/substrait/commit/4cd2089fe85ba53eb22718b314b3bc1132dc4265))
+* use any1 instead of T in function extensions ([#629](https://github.com/substrait-io/substrait/issues/629)) ([0bddf68](https://github.com/substrait-io/substrait/commit/0bddf681feb8176bb111cd5139c884f9137c2e0b))
+
+## [0.46.0](https://github.com/substrait-io/substrait/compare/v0.45.0...v0.46.0) (2024-04-14)
+
+
+### Features
+
+* expand division function options ([#615](https://github.com/substrait-io/substrait/issues/615)) ([7b79437](https://github.com/substrait-io/substrait/commit/7b794379c51436620515b5ebad7720c502aab991))
+
+
+### Bug Fixes
+
+* remove implicit casts in trig extension functions ([#620](https://github.com/substrait-io/substrait/issues/620)) ([b883120](https://github.com/substrait-io/substrait/commit/b8831200909d6494e1c3bc1ba1157e4741f60377))
+
+## [0.45.0](https://github.com/substrait-io/substrait/compare/v0.44.0...v0.45.0) (2024-03-24)
+
+
+### Features
+
+* add decimal type support for sum0 function ([#610](https://github.com/substrait-io/substrait/issues/610)) ([6bd0c7b](https://github.com/substrait-io/substrait/commit/6bd0c7be43149a5b6e2f2ec8decdbb47f64577b7))
+
+## [0.44.0](https://github.com/substrait-io/substrait/compare/v0.43.0...v0.44.0) (2024-03-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* Adding a NULL option to the on_domain_errors.
+
+SQLite returns null for some inputs such as negative infinity
+
+### Features
+
+* add extra option for on domain errors in log functions ([#536](https://github.com/substrait-io/substrait/issues/536)) ([cbec079](https://github.com/substrait-io/substrait/commit/cbec079ea03bec65cc063daa15e42807c4039707))
+* add ignore nulls options to concat function ([#605](https://github.com/substrait-io/substrait/issues/605)) ([55db05b](https://github.com/substrait-io/substrait/commit/55db05b4cf8cbb1e2bf565e4f5f0c6def6f0e6ed))
+
+## [0.43.0](https://github.com/substrait-io/substrait/compare/v0.42.1...v0.43.0) (2024-02-25)
+
+
+### Features
+
+* include precision parameter in timestamp types ([#594](https://github.com/substrait-io/substrait/issues/594)) ([087f87c](https://github.com/substrait-io/substrait/commit/087f87c0307572cf2e9a7d1db7fdd673662699c3))
+
+
+### Bug Fixes
+
+* remove function definitions w/ invalid return types ([#599](https://github.com/substrait-io/substrait/issues/599)) ([a3b1f32](https://github.com/substrait-io/substrait/commit/a3b1f32b0e6aac08bf0ee7437a5ae1c10100a859))
+
 ## [0.42.1](https://github.com/substrait-io/substrait/compare/v0.42.0...v0.42.1) (2024-01-28)
 
 

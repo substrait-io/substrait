@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck shell=bash
+# SPDX-License-Identifier: Apache-2.0
 
 set -euo pipefail
 
@@ -23,13 +24,13 @@ cd "$worktree" || exit 1
 export GITHUB_REF="$branch"
 
 npx --yes \
-  -p semantic-release \
+  -p "semantic-release@24.0.0" \
   -p "@semantic-release/commit-analyzer" \
   -p "@semantic-release/release-notes-generator" \
   -p "@semantic-release/changelog" \
   -p "@semantic-release/exec" \
   -p "@semantic-release/git" \
-  -p "conventional-changelog-conventionalcommits" \
+  -p "conventional-changelog-conventionalcommits@8.0.0" \
   semantic-release \
   --ci false \
   --dry-run \
