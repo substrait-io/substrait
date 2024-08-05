@@ -404,6 +404,6 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
         return: |-
           S2 = (s > 0) ? min(s, S1) : 0
-          P2 = (s > 0) ? ((S1 >= s) ? P1 : (P1 + 1)) : ((P1 + s >= S1) ? P1 + 1 : (S1 - s + 1))
+          P2 = (s > 0) ? ((S1 < s) ? (P1 + 1): P1) : ((P1 + s < S1) ? (S1 - s + 1) : (P1 + 1))
           P2 = min(38, P2);
           decimal?<P2,S2>
