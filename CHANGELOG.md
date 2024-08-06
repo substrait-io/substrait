@@ -1,6 +1,26 @@
 Release Notes
 ---
 
+## [0.53.0](https://github.com/substrait-io/substrait/compare/v0.52.0...v0.53.0) (2024-08-04)
+
+### ⚠ BREAKING CHANGES
+
+* PrecisionTimestamp(Tz) literal's value is now int64
+instead of uint64
+
+### Features
+
+* add aggregate count functions with decimal return type ([#670](https://github.com/substrait-io/substrait/issues/670)) ([2aa516b](https://github.com/substrait-io/substrait/commit/2aa516bff3b2cc3e5ad262152c98f1d9b15c6765))
+* add arithmetic function "sqrt" and "factorial" with decimal type ([#674](https://github.com/substrait-io/substrait/issues/674)) ([e4f5b68](https://github.com/substrait-io/substrait/commit/e4f5b68981953d3546835572ce566e9586d497be))
+* add arithmetic function for bitwise(AND/OR/XOR) operation with decimal arguments ([#675](https://github.com/substrait-io/substrait/issues/675)) ([a70cf72](https://github.com/substrait-io/substrait/commit/a70cf72425c3a0eed432238c2a8afedab1cc025b))
+* add logarithmic functions with decimal type args ([#669](https://github.com/substrait-io/substrait/issues/669)) ([d9fb1e3](https://github.com/substrait-io/substrait/commit/d9fb1e355e0b378e1b6460f256d724a3aae931d3))
+* add precision timestamp datetime fn variants ([#666](https://github.com/substrait-io/substrait/issues/666)) ([60c93d2](https://github.com/substrait-io/substrait/commit/60c93d28c8e4df3174ba6b3f687a30d256acdcae))
+* clarify the meaning of plans ([#616](https://github.com/substrait-io/substrait/issues/616)) ([c1553df](https://github.com/substrait-io/substrait/commit/c1553dfafa09de1b2441cdb1d22a251a675419a7)), closes [#612](https://github.com/substrait-io/substrait/issues/612) [#613](https://github.com/substrait-io/substrait/issues/613)
+
+### Bug Fixes
+
+* use int64 instead of uint64 for PrecisionTimestamp(Tz) literal value ([#668](https://github.com/substrait-io/substrait/issues/668)) ([da3c74e](https://github.com/substrait-io/substrait/commit/da3c74eccc4978bdaeca4760e98a77aff560e19b))
+
 ## [0.52.0](https://github.com/substrait-io/substrait/compare/v0.51.0...v0.52.0) (2024-07-14)
 
 ### ⚠ BREAKING CHANGES

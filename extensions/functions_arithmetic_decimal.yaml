@@ -102,7 +102,7 @@ scalar_functions:
           scale_after_borrow = max(init_scale - delta, min_scale)
           scale = init_prec > 38 ? scale_after_borrow : init_scale
           DECIMAL<prec, scale>
-  - 
+  -
     name: "abs"
     description: Calculate the absolute value of the argument.
     impls:
@@ -110,6 +110,78 @@ scalar_functions:
           - name: x
             value: decimal<P,S>
         return: decimal<P,S>
+  - name: "bitwise_and"
+    description: >
+      Return the bitwise AND result for two decimal inputs.
+      In inputs scale must be 0 (i.e. only integer types are allowed)
+    impls:
+      - args:
+          - name: x
+            value: "DECIMAL<P1,0>"
+          - name: y
+            value: "DECIMAL<P2,0>"
+        return: |-
+          max_precision = max(P1, P2)
+          DECIMAL<max_precision, 0>
+  - name: "bitwise_or"
+    description: >
+      Return the bitwise OR result for two given decimal inputs.
+      In inputs scale must be 0 (i.e. only integer types are allowed)
+    impls:
+      - args:
+          - name: x
+            value: "DECIMAL<P1,0>"
+          - name: y
+            value: "DECIMAL<P2,0>"
+        return: |-
+          max_precision = max(P1, P2)
+          DECIMAL<max_precision, 0>
+  - name: "bitwise_xor"
+    description: >
+      Return the bitwise XOR result for two given decimal inputs.
+      In inputs scale must be 0 (i.e. only integer types are allowed)
+    impls:
+      - args:
+          - name: x
+            value: "DECIMAL<P1,0>"
+          - name: y
+            value: "DECIMAL<P2,0>"
+        return: |-
+          max_precision = max(P1, P2)
+          DECIMAL<max_precision, 0>
+  - name: "sqrt"
+    description: Square root of the value. Sqrt of 0 is 0 and sqrt of negative values will raise an error.
+    impls:
+      - args:
+          - name: x
+            value: "DECIMAL<P,S>"
+        return: fp64
+  - name: "factorial"
+    description: >
+      Return the factorial of a given decimal input. Scale should be 0 for factorial decimal input.
+      The factorial of 0! is 1 by convention. Negative inputs will raise an error.
+      Input which cause overflow of result will raise an error.
+    impls:
+      - args:
+          - name: "n"
+            value: "DECIMAL<P,0>"
+        return: "DECIMAL<38,0>"
+  -
+    name: "power"
+    description: "Take the power with x as the base and y as exponent.
+    Behavior for complex number result is indicated by option complex_number_result"
+    impls:
+      - args:
+          - name: x
+            value: "DECIMAL<P1,S1>"
+          - name: y
+            value: "DECIMAL<P2,S2>"
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          complex_number_result:
+            values: [ NAN, ERROR ]
+        return: fp64
 
 aggregate_functions:
   - name: "sum"
