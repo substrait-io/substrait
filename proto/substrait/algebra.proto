@@ -136,7 +136,7 @@ message ReadRel {
       message ArrowReadOptions {}
       message OrcReadOptions {}
       message DwrfReadOptions {}
-      message DelimeterSeparatedTextReadOptions {
+      message DelimiterSeparatedTextReadOptions {
         // Delimiter separated files may be compressed.  The reader should
         // autodetect this and decompress as needed.
 
@@ -151,9 +151,10 @@ message ReadRel {
         string quote = 3;
         // If true, consume the first row as names of the columns.  These names
         // are not used elsewhere in the plan.
-        uint64 header = 4;
-        // The character(s) used to escape characters in strings.  Backslash is
-        // the most common value.
+        uint64 treat_first_row_as_header = 4;
+        // The character used to escape characters in strings.  Backslash is
+        // a common value.  Note that a double quote mark can also be used as an
+        // escape character but the external quotes should be removed first.
         string escape = 5;
         // If this value is encountered (including empty string), the resulting
         // value is null instead.  This value is checked before quotes are
@@ -161,7 +162,7 @@ message ReadRel {
         // effective schema of this file is comprised entirely of nullable
         // strings.  If not provided, the effective schema is instead made up of
         // non-nullable strings.
-        optional string null_value = 6;
+        optional string value_treated_as_null = 6;
       }
 
       // The format of the files along with options for reading those files.
@@ -171,7 +172,7 @@ message ReadRel {
         OrcReadOptions orc = 11;
         google.protobuf.Any extension = 12;
         DwrfReadOptions dwrf = 13;
-        DelimeterSeparatedTextReadOptions text = 14;
+        DelimiterSeparatedTextReadOptions text = 14;
       }
     }
   }
