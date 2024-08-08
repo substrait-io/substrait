@@ -883,14 +883,13 @@ message Expression {
       int32 days = 1;
       int32 seconds = 2;
 
-      // oneof ensures that a user can only use precision (and subseconds) or microseconds
       oneof precision_mode {
         int32 microseconds = 3 [deprecated = true]; // use precision and subseconds below, they cover and replace microseconds.
-        // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds.
+        // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds. Should be used with subseconds below.
         int32 precision = 4;
       }
 
-      // the number of fractional seconds using  1e(-precision) units. Should be ignored if microseconds is set above.
+      // the number of fractional seconds using 1e(-precision) units. Should only be used with precision field, not microseconds.
       int64 subseconds = 5;
     }
 

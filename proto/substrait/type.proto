@@ -135,11 +135,11 @@ message Type {
     Nullability nullability = 2;
 
     // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, etc.
-    // if unset, treat as 6. this allows non-backwards breaking change
+    // if unset, treat as 6.
     optional int32 precision = 3;
   }
 
-  // An interval consisting of months, days, and nanoseconds
+  // An interval consisting of the components of both IntervalMonth and IntervalDay
   message IntervalCompound {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
