@@ -810,7 +810,7 @@ message Expression {
       int64 time = 17;
       IntervalYearToMonth interval_year_to_month = 19;
       IntervalDayToSecond interval_day_to_second = 20;
-      IntervalMonthToNano interval_month_to_nano = 36;
+      IntervalCompound interval_compound = 36;
       string fixed_char = 21;
       VarChar var_char = 22;
       bytes fixed_binary = 23;
@@ -882,13 +882,21 @@ message Expression {
     message IntervalDayToSecond {
       int32 days = 1;
       int32 seconds = 2;
-      int32 microseconds = 3;
+
+      // oneof ensures that a user can only use precision (and subseconds) or microseconds
+      oneof { 
+        int32 microseconds = 3; [deprecated = true] // use precision and subseconds below, they cover and replace microseconds.
+        // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds.
+        int32 precision = 4;
+      }
+
+      // the number of fractional seconds using  1e(-precision) units. Should be ignored if microseconds is set above.
+      int64 subseconds = 5; 
     }
 
-    message IntervalMonthToNano {
-      int32 months = 1;
-      int32 days = 2;
-      int64 nanoseconds = 3;
+    message IntervalCompound {
+      IntervalYearToMonth interval_year_to_month = 1;
+      IntervalDayToSecond interval_day_to_second = 2;
     }
 
     message Struct {

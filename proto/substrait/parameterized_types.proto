@@ -26,8 +26,8 @@ message ParameterizedType {
     Type.Date date = 16;
     Type.Time time = 17;
     Type.IntervalYear interval_year = 19;
-    Type.IntervalDay interval_day = 20;
-    Type.IntervalMonth interval_month = 36;
+    ParameterizedIntervalDay interval_day = 20;
+    ParameterizedIntervalCompound interval_compound = 36;
     // Deprecated in favor of `ParameterizedPrecisionTimestampTZ precision_timestamp_tz`
     Type.TimestampTZ timestamp_tz = 29 [deprecated = true];
     Type.UUID uuid = 32;
@@ -91,6 +91,18 @@ message ParameterizedType {
     IntegerOption precision = 2;
     uint32 variation_pointer = 3;
     Type.Nullability nullability = 4;
+  }
+
+  message ParameterizedIntervalDay {
+    IntegerOption precision = 1;
+    uint32 variation_pointer = 2;
+    Type.Nullability nullability = 3;
+  }
+
+  message ParameterizedIntervalCompound {
+    IntegerOption precision = 1;
+    uint32 variation_pointer = 2;
+    Type.Nullability nullability = 3;
   }
 
   message ParameterizedPrecisionTimestamp {
