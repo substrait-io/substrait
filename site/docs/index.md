@@ -18,12 +18,14 @@ Substrait provides a well-defined, cross-language [specification](spec/specifica
 We highly recommend the [tutorial](/tutorial/sql_to_substrait/) to learn how a Substrait plan is constructed.
 
 
+
 ## Benefits
 
 * Avoids every system needing to create a communication method between every other system -- each system merely supports ingesting and producing Substrait and it instantly becomes a part of the greater ecosystem.
 * Makes every part of the system upgradable.  There's a new query engine that's ten times faster?  Just plug it in!
 * Enables heterogeneous environments -- run on a cluster of an unknown set of execution engines!
 * The text version of the Substrait plan allows you to quickly see how a plan functions without needing a visualizer (although there are Substrait visualizers as well!).
+
 
 
 ## Example Use Cases
