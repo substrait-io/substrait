@@ -133,10 +133,10 @@ message Type {
   message IntervalDay {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
-    
+  
     // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, etc.
     // if unset, treat as 6. this allows non-backwards breaking change
-    optional int32 precision = 3; 
+    optional int32 precision = 3;
   }
 
   // An interval consisting of months, days, and nanoseconds

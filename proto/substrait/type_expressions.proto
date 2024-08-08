@@ -90,7 +90,7 @@ message DerivationExpression {
     uint32 variation_pointer = 2;
     Type.Nullability nullability = 3;
   }
-  
+
   message ExpressionIntervalDay {
     DerivationExpression precision = 1;
     uint32 variation_pointer = 2;
