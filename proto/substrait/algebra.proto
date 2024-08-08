@@ -156,11 +156,10 @@ message ReadRel {
         // escape character but the external quotes should be removed first.
         string escape = 5;
         // If this value is encountered (including empty string), the resulting
-        // value is null instead.  This value is checked before quotes are
-        // removed.  Leave unset to disable.  If this value is provided, the
-        // effective schema of this file is comprised entirely of nullable
-        // strings.  If not provided, the effective schema is instead made up of
-        // non-nullable strings.
+        // value is null instead.  Leave unset to disable.  If this value is
+        // provided, the effective schema of this file is comprised entirely of
+        // nullable strings.  If not provided, the effective schema is instead
+        // made up of non-nullable strings.
         optional string value_treated_as_null = 6;
       }
 
