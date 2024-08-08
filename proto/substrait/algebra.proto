@@ -884,7 +884,7 @@ message Expression {
       int32 seconds = 2;
 
       // oneof ensures that a user can only use precision (and subseconds) or microseconds
-      oneof { 
+      oneof precision_mode { 
         int32 microseconds = 3 [deprecated = true]; // use precision and subseconds below, they cover and replace microseconds.
         // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds.
         int32 precision = 4;
