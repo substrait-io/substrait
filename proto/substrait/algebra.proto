@@ -883,6 +883,7 @@ message Expression {
       int32 days = 1;
       int32 seconds = 2;
 
+      // Consumers should expect either (miroseconds) to be set or (precision and subseconds) to be set
       oneof precision_mode {
         int32 microseconds = 3 [deprecated = true]; // use precision and subseconds below, they cover and replace microseconds.
         // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds. Should be used with subseconds below.
