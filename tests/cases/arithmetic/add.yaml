@@ -1,0 +1,31 @@
+### SUBSTRAIT_SCALAR_TEST: 1.0
+### SUBSTRAIT_INCLUDE: /extensions/functions_arithmetic.yaml
+
+# basic: Basic examples without any special cases
+add(120::i8, 5::i8) = 125::i8
+add(100::i16, 100::i16) = 200::i16
+add(30000::i32, 30000::i32) = 60000::i32
+add(2000000000::i64, 2000000000::i64) = 4000000000::i64
+
+# overflow: Examples demonstrating overflow behavior
+add(120::i8, 10::i8) [overflow:ERROR] = error
+add(30000::i16, 30000::i16) [overflow:ERROR] = error
+add(2000000000::i32, 2000000000::i32) [overflow:ERROR] = error
+add(9223372036854775807::i64, 1::i64) [overflow:ERROR] = error
+
+# overflow: Examples demonstrating overflow behavior tests: overflow with SATURATE
+add(120::i8, 10::i8) [overflow:SATURATE] = 127::i8
+add(-120::i8, -10::i8) [overflow:SATURATE] = -128::i8
+
+# overflow: Examples demonstrating overflow behavior tests: overflow with SILENT
+add(120::i8, 10::i8) [overflow:SILENT] = undefined
+
+# floating_exception: Examples demonstrating exceptional floating point cases
+add(1.5e+308::fp64, 1.5e+308::fp64) = inf::fp64
+add(-1.5e+308::fp64, -1.5e+308::fp64) = -inf::fp64
+
+# rounding: Examples demonstrating floating point rounding behavior
+add(4.5::fp32, 2.500001::fp32) [rounding:TIE_TO_EVEN] = 7.000001::fp32
+
+# types: Examples demonstrating behavior of different data types
+add(4.5::fp64, 2.5000007152557373::fp64) = 7.00000071525573::fp64
