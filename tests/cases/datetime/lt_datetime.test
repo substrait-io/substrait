@@ -2,24 +2,24 @@
 ### SUBSTRAIT_INCLUDE: /extensions/functions_datetime.yaml
 
 # timestamps: examples using the timestamp type
-lt(2016-12-31 13:30:15::timestamp, 2017-12-31 13:30:15::timestamp) = True::boolean
-lt(2018-12-31 13:30:15::timestamp, 2017-12-31 13:30:15::timestamp) = False::boolean
+lt(2016-12-31 13:30:15::ts, 2017-12-31 13:30:15::ts) = True::bool
+lt(2018-12-31 13:30:15::ts, 2017-12-31 13:30:15::ts) = False::bool
 
 # timestamp_tz: examples using the timestamp_tz type
-lt(1999-01-08 01:05:05-08:00::timestamp_tz, 1999-01-08 04:05:06-05:00::timestamp_tz) = True::boolean
-lt(1999-01-08 01:05:06-08:00::timestamp_tz, 1999-01-08 04:05:06-05:00::timestamp_tz) = False::boolean
+lt(1999-01-08 01:05:05-08:00::tstz, 1999-01-08 04:05:06-05:00::tstz) = True::bool
+lt(1999-01-08 01:05:06-08:00::tstz, 1999-01-08 04:05:06-05:00::tstz) = False::bool
 
 # date: examples using the date type
-lt(2020-12-30::date, 2020-12-31::date) = True::boolean
-lt(2020-12-31::date, 2020-12-30::date) = False::boolean
+lt(2020-12-30::date, 2020-12-31::date) = True::bool
+lt(2020-12-31::date, 2020-12-30::date) = False::bool
 
 # interval: examples using the interval type
-lt(INTERVAL 'P7D'::interval, INTERVAL 'P6D'::interval) = False::boolean
-lt(INTERVAL 'P5D'::interval, INTERVAL '6D'::interval) = True::boolean
-lt(INTERVAL 'P5Y'::interval, INTERVAL 'P6Y'::interval) = True::boolean
-lt(INTERVAL 'P7Y'::interval, INTERVAL 'P6Y'::interval) = False::boolean
+lt('P7D'::iday, 'P6D'::iday) = False::bool
+lt('P5D'::iday, '6D'::iday) = True::bool
+lt('P5Y'::iyear, 'P6Y'::iyear) = True::bool
+lt('P7Y'::iyear, 'P6Y'::iyear) = False::bool
 
 # null_input: examples with null args or return
-lt(None::interval, INTERVAL 'P5D'::interval) = Null::boolean
-lt(None::date, 2020-12-30::date) = Null::boolean
-lt(None::timestamp, 2018-12-31 13:30:15::timestamp) = Null::boolean
+lt(null::iday, 'P5D'::iday) = null::bool
+lt(null::date, 2020-12-30::date) = null::bool
+lt(null::ts, 2018-12-31 13:30:15::ts) = null::bool

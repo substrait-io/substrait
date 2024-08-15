@@ -96,8 +96,8 @@ All date and time literals use ISO 8601 format:
 - **time**: `HH:MM:SS[.fraction]`, example: `12:00:00.000`
 - **timestamp**: `YYYY-MM-DD HH:MM:SS[.fraction]`, example: `2021-01-01 12:00:00`
 - **timestamp_tz**: `YYYY-MM-DD HH:MM:SS[.fraction]±HH:MM`, example: `2021-01-01 12:00:00+05:30`
-- **interval year**: `INTERVAL 'P[n]Y[n]M'`, example: `INTERVAL 'P2Y3M'` (2 years, 3 months)
-- **interval days**: `INTERVAL 'P[n]DT[n]H[n]M[n]S'`, example: `INTERVAL 'P2DT3H2M9S'` (2 days, 3 hours, 2 minutes, 9 seconds)
+- **interval year**: `'P[n]Y[n]M'`, example: `'P2Y3M'` (2 years, 3 months)
+- **interval days**: `'P[n]DT[n]H[n]M[n]S'`, example: `'P2DT3H2M9S'` (2 days, 3 hours, 2 minutes, 9 seconds)
 
 #### Other complex types
 **TODO** Add support for complex types like arrays, structs, maps etc.
