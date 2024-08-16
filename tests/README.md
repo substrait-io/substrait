@@ -22,7 +22,7 @@ Include statements should have at least one include statement. The include state
 ```
 
 ### Test Groups
-A test group is a collection of test cases that are logically related.
+A test group is a collection of test cases that are logically related. Test groups are purely for categorization purposes and do not affect the execution or meaning of tests.
 - **description**: A string describing the test group or case. The description must start with a `#` character.
     ```code
     # Common Maths
@@ -30,11 +30,11 @@ A test group is a collection of test cases that are logically related.
 ### Test Cases
 A test case consists of the following elements:
 
-- **function**: The name of the function being tested. The function name must be a string.
+- **function**: The name of the function being tested. The function name must be an identifier alphanumeric string.
 - **arguments**: Comma-separated list of arguments to the function. The arguments must be literals.
 - **options**: Optional comma-separated list of options in `key:value` format. The options describe the behavior of the function. The test should be run only on dialects that support the options. If options are not specified, the test should be run for all permutations of the options.
 - **result**: The expected result of the function. Either `SUBSTRAIT_ERROR` or a literal value.
-- **literal**: In the format `<name>::<datatype>`
+- **literal**: In the format `<literal_value>::<datatype>`
 - **description**: A string describing the test case
 
     ```code
@@ -55,14 +55,22 @@ description := string
 function    := string
 arguments   := <argument>, <argument>, ... <argument>
 argument    := <literal>
-literal     := <name>::<datatype>
-result      := SUBSTRAIT_ERROR | <literal>
+literal     := <literal_value>::<datatype>
+result      := <substrait_error> | <literal>
 options     := <optLiteral>, <optLiteral>, ... <optLiteral>
 optLiteral  := <option_name>:<option_value>
+lietral_value := string | integer | decimal | float | boolean | date | time | timestamp | timestamp_tz | interval year | interval days | null
+datatype    := <basic_type> | <parametrized_type> | <complex_type>
+basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | time | ts | tstz | iyear | iday | <parametrized_type>
+parametrized_type := dec<int,int> | fchar<int> | vchar<int> | vbin<int>
+complex_type := <struct> | <list> | <map>
+substrait_error := <!ERROR> | <!UNDEFINED>
 ```
 
 **TODO:** use ANTLR to describe the grammar and generate parser
 ### Literals
+
+`<literal_value>` described in this section.
 
 #### String
 - **string**, **fixedchar**, **varchar**: A sequence of characters enclosed in single quotes. Example: 'Hello, world!'
@@ -70,9 +78,9 @@ optLiteral  := <option_name>:<option_value>
 #### Integer
 Integers are represented as sequences of digits. Negative numbers are preceded by a minus sign.
 - **i8**: 8-bit integer, range: -128 to 127
-- **i16**: 16-bit integer, range: -32,768 to 32,767
-- **i32**: 32-bit integer, range: -2,147,483,648 to 2,147,483,647
-- **i64**: 64-bit integer, range: -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+- **i16**: 16-bit integer, range: -32768 to 32767
+- **i32**: 32-bit integer, range: -2147483648 to 2147483647
+- **i64**: 64-bit integer, range: -9223372036854775808 to 9223372036854775807
 
 #### Fixed Point decimals
 - **decimal**: Fixed-point decimal number. Maximum 38 digits total, with up to 37 digits after the decimal point.
@@ -82,12 +90,12 @@ Integers are represented as sequences of digits. Negative numbers are preceded b
 - **float**: General floating-point number, can be represented as:
   * Standard decimal notation: 123.456
   * Scientific notation: 1.23e4
-  * Special values: `nan` (Not a Number), `+inf` (Positive Infinity), `-inf` (Negative Infinity)
+  * Special values: `+inf` (Positive Infinity), `-inf` (Negative Infinity), `+0` (Positive Zero), `-0` (Negative Zero), `nan` (Not a Number), `snan` (Signaling NaN)
 - **float32**: Single-precision float, approximately 6 significant digits, range: ~1.2e-38 to ~3.4e38
 - **float64**: Double-precision float, approximately 15 significant digits, range: ~2.3e-308 to ~1.7e308
 
 #### Boolean
-- Valid values: TRUE, FALSE, NULL
+- Valid values: true, false
 
 #### Date and Time
 All date and time literals use ISO 8601 format:
@@ -97,12 +105,15 @@ All date and time literals use ISO 8601 format:
 - **timestamp**: `YYYY-MM-DD HH:MM:SS[.fraction]`, example: `2021-01-01 12:00:00`
 - **timestamp_tz**: `YYYY-MM-DD HH:MM:SS[.fraction]±HH:MM`, example: `2021-01-01 12:00:00+05:30`
 - **interval year**: `'P[n]Y[n]M'`, example: `'P2Y3M'` (2 years, 3 months)
-- **interval days**: `'P[n]DT[n]H[n]M[n]S'`, example: `'P2DT3H2M9S'` (2 days, 3 hours, 2 minutes, 9 seconds)
+- **interval days**: `'P[n]DT[n]H[n]M[n]S[n]F'`, Valid values for F are 1-9, representing fraction of a second. example: `'P2DT3H2M9S'` (2 days, 3 hours, 2 minutes, 9 seconds)
+  ex2: 'P1DT2H3M4S99::iday<3>' (1 day, 2 hours, 3 minutes, 4 seconds, 99 milliseconds)`
 
 #### Other complex types
 **TODO** Add support for complex types like arrays, structs, maps etc.
 
 ### Data Types
+
+Use short names listed in https://substrait.io/extensions/#function-signature-compound-names
 
 - **bool**: Boolean
 - **i8**: 8-bit signed integer
@@ -123,6 +134,14 @@ All date and time literals use ISO 8601 format:
 - **iyear**: Interval year
 - **iday**: Interval days
 
+
+### Options
+
+**TODO** Add option names and values to the grammar. Option names and values can be found in extension files.
+
+### Errors
+
+If return type is `<!ERROR>` then the test case should fail with an error. If the return type is `<!UNDEFINED>` then the test case should not fail result could be anything.
 ### Example of a test file
 
 ```code
@@ -133,6 +152,6 @@ All date and time literals use ISO 8601 format:
 add(126::i8, 1::i8) = 127::i8
 
 # Arithmetic Overflow Tests
-add(127::i8, 1::i8) [overflow:ERROR] = <!ERROR>  #check overflow
+add(127::i8, 1::i8) [overflow:ERROR] = ERROR  #check overflow
 ```
 The above test file has two test groups "Common Maths" and "Arithmetic Overflow Tests". Each has one test case. The test case in the second group has a name whereas case in the first one does not.

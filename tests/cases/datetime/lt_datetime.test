@@ -2,22 +2,22 @@
 ### SUBSTRAIT_INCLUDE: /extensions/functions_datetime.yaml
 
 # timestamps: examples using the timestamp type
-lt(2016-12-31 13:30:15::ts, 2017-12-31 13:30:15::ts) = True::bool
-lt(2018-12-31 13:30:15::ts, 2017-12-31 13:30:15::ts) = False::bool
+lt(2016-12-31 13:30:15::ts, 2017-12-31 13:30:15::ts) = true::bool
+lt(2018-12-31 13:30:15::ts, 2017-12-31 13:30:15::ts) = false::bool
 
 # timestamp_tz: examples using the timestamp_tz type
-lt(1999-01-08 01:05:05-08:00::tstz, 1999-01-08 04:05:06-05:00::tstz) = True::bool
-lt(1999-01-08 01:05:06-08:00::tstz, 1999-01-08 04:05:06-05:00::tstz) = False::bool
+lt(1999-01-08 01:05:05-08:00::tstz, 1999-01-08 04:05:06-05:00::tstz) = true::bool
+lt(1999-01-08 01:05:06-08:00::tstz, 1999-01-08 04:05:06-05:00::tstz) = false::bool
 
 # date: examples using the date type
-lt(2020-12-30::date, 2020-12-31::date) = True::bool
-lt(2020-12-31::date, 2020-12-30::date) = False::bool
+lt(2020-12-30::date, 2020-12-31::date) = true::bool
+lt(2020-12-31::date, 2020-12-30::date) = false::bool
 
 # interval: examples using the interval type
-lt('P7D'::iday, 'P6D'::iday) = False::bool
-lt('P5D'::iday, '6D'::iday) = True::bool
-lt('P5Y'::iyear, 'P6Y'::iyear) = True::bool
-lt('P7Y'::iyear, 'P6Y'::iyear) = False::bool
+lt('P7D'::iday, 'P6D'::iday) = false::bool
+lt('P5D'::iday, '6D'::iday) = true::bool
+lt('P5Y'::iyear, 'P6Y'::iyear) = true::bool
+lt('P7Y'::iyear, 'P6Y'::iyear) = false::bool
 
 # null_input: examples with null args or return
 lt(null::iday, 'P5D'::iday) = null::bool

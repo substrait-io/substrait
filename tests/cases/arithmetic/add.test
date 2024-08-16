@@ -8,10 +8,10 @@ add(30000::i32, 30000::i32) = 60000::i32
 add(2000000000::i64, 2000000000::i64) = 4000000000::i64
 
 # overflow: Examples demonstrating overflow behavior
-add(120::i8, 10::i8) [overflow:ERROR] = error
-add(30000::i16, 30000::i16) [overflow:ERROR] = error
-add(2000000000::i32, 2000000000::i32) [overflow:ERROR] = error
-add(9223372036854775807::i64, 1::i64) [overflow:ERROR] = error
+add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
+add(30000::i16, 30000::i16) [overflow:ERROR] = <!ERROR>
+add(2000000000::i32, 2000000000::i32) [overflow:ERROR] = <!ERROR>
+add(9223372036854775807::i64, 1::i64) [overflow:ERROR] = <!ERROR>
 
 # overflow: Examples demonstrating overflow behavior tests: overflow with SATURATE
 add(120::i8, 10::i8) [overflow:SATURATE] = 127::i8

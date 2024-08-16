@@ -18,4 +18,4 @@ power(-16::decimal<4, 0>, 1001::decimal<4, 0>) = -inf::fp64
 power(-1::decimal, 0.5::decimal<38,1>) [complex_number_result:NAN] = nan
 
 # complex_number: Examples demonstrating complex number output tests: complex_number_result with ERROR
-power(-1::decimal, 0.5::decimal<38,1>) [complex_number_result:ERROR] = error
+power(-1::decimal, 0.5::decimal<38,1>) [complex_number_result:ERROR] = <!ERROR>
