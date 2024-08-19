@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.55.0](https://github.com/substrait-io/substrait/compare/v0.54.0...v0.55.0) (2024-08-18)
+
+### Features
+
+* update interval_day function extensions to include precision param ([#679](https://github.com/substrait-io/substrait/issues/679)) ([28025cb](https://github.com/substrait-io/substrait/commit/28025cbaa8dc3c65b736d8a68fa7070c465fb494))
+
 ## [0.54.0](https://github.com/substrait-io/substrait/compare/v0.53.0...v0.54.0) (2024-08-11)
 
 ### ⚠ BREAKING CHANGES
