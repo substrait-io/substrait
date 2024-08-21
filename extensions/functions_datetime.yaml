@@ -1047,8 +1047,8 @@ aggregate_functions:
             value: interval_day<P>
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: interval_day<P>?
-        return: interval_day<P>?
+        intermediate: interval_day?<P>
+        return: interval_day?<P>
       - args:
           - name: x
             value: interval_year
@@ -1099,8 +1099,8 @@ aggregate_functions:
             value: interval_day<P>
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: interval_day<P>?
-        return: interval_day<P>?
+        intermediate: interval_day?<P>
+        return: interval_day?<P>
       - args:
           - name: x
             value: interval_year
