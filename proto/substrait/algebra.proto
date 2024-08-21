@@ -206,6 +206,8 @@ message JoinRel {
     JOIN_TYPE_RIGHT_SEMI = 8;
     JOIN_TYPE_RIGHT_ANTI = 9;
     JOIN_TYPE_RIGHT_SINGLE = 10;
+    JOIN_TYPE_LEFT_MARK = 11;
+    JOIN_TYPE_RIGHT_MARK = 12;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -684,6 +686,8 @@ message HashJoinRel {
     JOIN_TYPE_RIGHT_ANTI = 8;
     JOIN_TYPE_LEFT_SINGLE = 9;
     JOIN_TYPE_RIGHT_SINGLE = 10;
+    JOIN_TYPE_LEFT_MARK = 11;
+    JOIN_TYPE_RIGHT_MARK = 12;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -732,6 +736,8 @@ message MergeJoinRel {
     JOIN_TYPE_RIGHT_ANTI = 8;
     JOIN_TYPE_LEFT_SINGLE = 9;
     JOIN_TYPE_RIGHT_SINGLE = 10;
+    JOIN_TYPE_LEFT_MARK = 11;
+    JOIN_TYPE_RIGHT_MARK = 12;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -760,6 +766,8 @@ message NestedLoopJoinRel {
     JOIN_TYPE_RIGHT_ANTI = 8;
     JOIN_TYPE_LEFT_SINGLE = 9;
     JOIN_TYPE_RIGHT_SINGLE = 10;
+    JOIN_TYPE_LEFT_MARK = 11;
+    JOIN_TYPE_RIGHT_MARK = 12;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
