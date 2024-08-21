@@ -3,3 +3,4 @@ arrange:
   - type_classes.md
   - type_variations.md
   - type_parsing.md
+  - named_structs.md
