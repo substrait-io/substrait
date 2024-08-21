@@ -22,8 +22,8 @@ struct<i64, fp64>
 ```
 has 2 names, one for each of its inner fields.
 
-### Nested Structs
-Struct types nested in other types must also be be named.
+### Structs within Compound Types
+Struct types nested in compound types must also be be named.
 
 #### Structs within Maps
 If a Map contains Structs, the Struct fields must be named. For example the following Map
@@ -32,13 +32,13 @@ If a Map contains Structs, the Struct fields must be named. For example the foll
 map<struct<i64, fp64>, struct<i64, i64, i64>>
 ```
 has 5 named fields
-* 2 names [b, c] for the struct fields used as a key
-* 3 names [d, e, f] for the struct fields used as a value
+* 2 names [a, b] for the struct fields used as a key
+* 3 names [c, d, e] for the struct fields used as a value
 
 #### Structs within List
 If a List contains Structs, the Struct fields must be named. For example the following List
 ```
-              b     c
+              a     b
 list<struct<i64, fp64>>
 ```
 has 2 named fields [a, b] for the struct fields.
@@ -68,12 +68,21 @@ NamedStruct {
 }
 ```
 
-#### Named Struct w/ Nested Structs
+#### Structs in Compound Types
 ```
 NamedStruct {
     names: [a, b, c, d, e, f, g, h]
     //               a     b          c    d      e                f     g       h
     struct: struct<i64, list<struct<i64, i64>>, map<i64, struct<fp64, fp64>>, fp64>
+}
+```
+
+#### Structs in Structs
+```
+NamedStruct {
+    names: [a, b, c, d, e, f, g, h, i]
+    //               a       b   c       d    e     f     g       h   i    j
+    struct: struct<i64, struct<i64, struct<fp64, fp64>, i64, struct<i64, i64>>>>
 }
 ```
 
