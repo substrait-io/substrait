@@ -26,7 +26,7 @@ has 2 names, one for each of its inner fields.
 Struct types nested in compound types must also be be named.
 
 #### Structs within Maps
-If a Map contains Structs, the Struct fields must be named. For example the following Map
+If a Map contains Structs, either as keys or values or both, the Struct fields must be named. Keys are named before values. For example the following Map
 ```
              a     b            c    d    e
 map<struct<i64, fp64>, struct<i64, i64, i64>>
