@@ -9,7 +9,7 @@ The depth-first search order for names arises from the the ability to nest Struc
 Named Structs are most commonly used to model the schema of Read relations.
 
 > Note: In this page Structs are annotated with names for readabilty.
-> In practice Structs to not contain name information.
+> In practice Structs do not contain name information.
 
 ## Determining Names
 When producing/consuming names for a NamedStruct, some types require special handling:
