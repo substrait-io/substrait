@@ -4,12 +4,9 @@ A Named Struct is a special type construct that combines:
 * A Struct type
 * A list of names for the fields in the Struct, in depth-first search order
 
-The depth-first search order for names arises from the the ability to nest Structs within other types. All struct fields must be named, even nested fields.
+The depth-first search order for names arises from the the ability to nest Structs within other types. All Struct fields must be named, even nested fields.
 
 Named Structs are most commonly used to model the schema of Read relations.
-
-> Note: In this page Structs are annotated with names for readabilty.
-> In practice Structs do not contain name information.
 
 ## Determining Names
 When producing/consuming names for a NamedStruct, some types require special handling:
@@ -19,7 +16,9 @@ A struct has names for each of its inner fields.
 
 For example, the following Struct
 ```
-struct<a: i64, b: i64>
+struct<i64, i64>
+       ↑    ↑
+       a    b
 ```
 has 2 names, one for each of its inner fields.
 
@@ -29,7 +28,10 @@ Struct types nested in compound types must also be be named.
 #### Structs within Maps
 If a Map contains Structs, either as keys or values or both, the Struct fields must be named. Keys are named before values. For example the following Map
 ```
-map<struct<a: i64, b: i64>, c: struct<d: i64, e: i64, f: i64>>
+map<struct<i64, i64>, struct<i64, i64, i64>>
+           ↑    ↑            ↑    ↑    ↑
+           a    b            c    d    e
+
 ```
 has 5 named fields
 * 2 names [a, b] for the struct fields used as a key
@@ -38,7 +40,9 @@ has 5 named fields
 #### Structs within List
 If a List contains Structs, the Struct fields must be named. For example the following List
 ```
-list<struct<a: i64, b: i64>>
+list<struct<i64, i64>>
+            ↑    ↑
+            a    b
 ```
 has 2 named fields [a, b] for the struct fields.
 
@@ -47,7 +51,9 @@ Structs can also be embedded within Structs.
 
 A Struct like
 ```
-struct<a: struct<b: i64, c: i64>, d: struct<e: i64, f: i64, g: i64>>
+struct<struct<i64, i64>, struct<i64, i64, i64>>
+       ↑      ↑    ↑     ↑      ↑    ↑    ↑
+       a      b    c     d      e    f    g
 ```
 has 7 names
 * 1 name [a] for the 1st nested struct field
@@ -61,7 +67,9 @@ has 7 names
 ```
 NamedStruct {
     names: [a, b, c, d]
-    struct: struct<a: i64, b: list<i64>, c: map<i64, i64>, d: i64>
+    struct: struct<i64, list<i64>, map<i64, i64>, i64>
+                   ↑    ↑          ↑              ↑
+                   a    b          c              d
 }
 ```
 
@@ -69,7 +77,9 @@ NamedStruct {
 ```
 NamedStruct {
     names: [a, b, c, d, e, f, g, h]
-    struct: struct<a: i64, b: list<struct<c: i64, d: i64>>, e: map<i64, struct<f: i64, g: i64>>, h:i64>
+    struct: struct<i64, list<struct<i64, i64>>, map<i64, struct<i64, i64>>, i64>
+                   ↑    ↑          ↑     ↑      ↑               ↑    ↑      ↑
+                   a    b          c     d      e               f    g      h
 }
 ```
 
@@ -77,7 +87,9 @@ NamedStruct {
 ```
 NamedStruct {
     names: [a, b, c, d, e, f, g, h, i]
-    struct: struct<a: i64, b: struct<c: i64, d: struct<e: i64, f: i64>, g: i64, h: struct<i: i64, j: i64>>>>
+    struct: struct<i64, struct<i64, struct<i64, i64>, i64, struct<i64, i64>>>>
+                   ↑    ↑      ↑    ↑      ↑    ↑     ↑    ↑      ↑    ↑
+                   a    b      c    d      e    f     g    h      i    j
 }
 ```
 
