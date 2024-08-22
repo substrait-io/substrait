@@ -77,7 +77,7 @@ NamedStruct {
 ```
 NamedStruct {
     names: [a, b, c, d, e, f, g, h, i]
-    struct: struct<i64, struct<i64, struct<i64, i64>, i64, struct<i64, i64>>>>
+    struct: struct<a: i64, b: struct<c: i64, d: struct<e: i64, f: i64>, g: i64, h: struct<i: i64, j: i64>>>>
 }
 ```
 
