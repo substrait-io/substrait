@@ -8,17 +8,18 @@ The depth-first search order for names arises from the the ability to nest Struc
 
 Named Structs are most commonly used to model the schema of Read relations.
 
+> Note: In this page Structs are annotated with names for readabilty.
+> In practice Structs to not contain name information.
+
 ## Determining Names
-When producing/consuming names for a NamedStruct, some types requires special handling:
+When producing/consuming names for a NamedStruct, some types require special handling:
 
 ### Struct
 A struct has names for each of its inner fields.
 
 For example, the following Struct
 ```
-        a     b
-struct<i64, fp64>
-
+struct<a: i64, b: i64>
 ```
 has 2 names, one for each of its inner fields.
 
@@ -28,8 +29,7 @@ Struct types nested in compound types must also be be named.
 #### Structs within Maps
 If a Map contains Structs, either as keys or values or both, the Struct fields must be named. Keys are named before values. For example the following Map
 ```
-             a     b            c    d    e
-map<struct<i64, fp64>, struct<i64, i64, i64>>
+map<struct<a: i64, b: i64>, c: struct<d: i64, e: i64, f: i64>>
 ```
 has 5 named fields
 * 2 names [a, b] for the struct fields used as a key
@@ -38,8 +38,7 @@ has 5 named fields
 #### Structs within List
 If a List contains Structs, the Struct fields must be named. For example the following List
 ```
-              a     b
-list<struct<i64, fp64>>
+list<struct<a: i64, b: i64>>
 ```
 has 2 named fields [a, b] for the struct fields.
 
@@ -48,8 +47,7 @@ Structs can also be embedded within Structs.
 
 A Struct like
 ```
-            a   b     c        d   e    f    g
-struct<struct<i64, fp64>, struct<i64, i64, i64>>
+struct<a: struct<b: i64, c: i64>, d: struct<e: i64, f: i64, g: i64>>
 ```
 has 7 names
 * 1 name [a] for the 1st nested struct field
@@ -63,8 +61,7 @@ has 7 names
 ```
 NamedStruct {
     names: [a, b, c, d]
-    //               a     b         c                d
-    struct: struct<i64, list<i64>, map<i64, fp64>, fp64>
+    struct: struct<a: i64, b: list<i64>, c: map<i64, i64>, d: i64>
 }
 ```
 
@@ -72,8 +69,7 @@ NamedStruct {
 ```
 NamedStruct {
     names: [a, b, c, d, e, f, g, h]
-    //               a     b          c    d      e                f     g       h
-    struct: struct<i64, list<struct<i64, i64>>, map<i64, struct<fp64, fp64>>, fp64>
+    struct: struct<a: i64, b: list<struct<c: i64, d: i64>>, e: map<i64, struct<f: i64, g: i64>>, h:i64>
 }
 ```
 
@@ -81,8 +77,7 @@ NamedStruct {
 ```
 NamedStruct {
     names: [a, b, c, d, e, f, g, h, i]
-    //               a       b   c       d    e     f     g       h   i    j
-    struct: struct<i64, struct<i64, struct<fp64, fp64>, i64, struct<i64, i64>>>>
+    struct: struct<i64, struct<i64, struct<i64, i64>, i64, struct<i64, i64>>>>
 }
 ```
 
