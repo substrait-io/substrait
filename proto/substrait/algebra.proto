@@ -163,7 +163,7 @@ message ReadRel {
         optional string value_treated_as_null = 6;
       }
       message JsonReadOptions {
-        // JSON encode files are considered to be in UTF-8.  If any errors are
+        // JSON encoded files are considered to be in UTF-8.  If any errors are
         // encountered an error should be raised.
 
         // The maximum number of bytes to read from a single line.  If a line
