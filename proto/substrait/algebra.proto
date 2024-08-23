@@ -162,6 +162,14 @@ message ReadRel {
         // made up of non-nullable strings.
         optional string value_treated_as_null = 6;
       }
+      message JsonReadOptions {
+        // JSON encode files are considered to be in UTF-8.  If any errors are
+        // encountered an error should be raised.
+
+        // The maximum number of bytes to read from a single line.  If a line
+        // exceeds this limit the resulting behavior is undefined.
+        uint64 max_line_size = 1;
+      }
 
       // The format of the files along with options for reading those files.
       oneof file_format {
@@ -171,6 +179,7 @@ message ReadRel {
         google.protobuf.Any extension = 12;
         DwrfReadOptions dwrf = 13;
         DelimiterSeparatedTextReadOptions text = 14;
+        JsonReadOptions json = 15;
       }
     }
   }
