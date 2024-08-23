@@ -1147,10 +1147,11 @@ message Expression {
       // Defines that the bound extends to or from the current record.
       message CurrentRow {}
 
-      // Defines an "unbounded bound": for lower bounds this means the start
-      // of the partition, and for upper bounds this means the end of the
-      // partition.
-      message Unbounded {}
+      // Defines an "unbounded bound" to the start of the partition.
+      message Unbounded_Preceding {}
+
+      // Defines an "unbounded bound" to the end of the partition.
+      message Unbounded_Following {}
 
       oneof kind {
         // The bound extends some number of records behind the current record.
@@ -1163,10 +1164,11 @@ message Expression {
         // The bound extends to the current record.
         CurrentRow current_row = 3;
 
-        // The bound extends to the start of the partition or the end of the
-        // partition, depending on whether this represents the upper or lower
-        // bound.
-        Unbounded unbounded = 4;
+        // The bound extends to the start of the partition.
+        Unbounded_Preceeding unbounded_preceding = 4;
+
+        // The bound extends to the end of the partition.
+        Unbounded_Following unbounded_following = 5;
       }
     }
   }
