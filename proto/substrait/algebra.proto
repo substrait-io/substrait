@@ -1165,7 +1165,7 @@ message Expression {
         CurrentRow current_row = 3;
 
         // The bound extends to the start of the partition.
-        Unbounded_Preceeding unbounded_preceding = 4;
+        Unbounded_Preceding unbounded_preceding = 4;
 
         // The bound extends to the end of the partition.
         Unbounded_Following unbounded_following = 5;
