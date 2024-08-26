@@ -57,9 +57,9 @@ arguments   := <argument>, <argument>, ... <argument>
 argument    := <literal>
 literal     := <literal_value>::<datatype>
 result      := <substrait_error> | <literal>
-options     := <optLiteral>, <optLiteral>, ... <optLiteral>
-optLiteral  := <option_name>:<option_value>
-lietral_value := string | integer | decimal | float | boolean | date | time | timestamp | timestamp_tz | interval year | interval days | null
+options     := <option>, <option>, ... <option>
+option      := <option_name>:<option_value>
+literal_value := string | integer | decimal | float | boolean | date | time | timestamp | timestamp_tz | interval year | interval days | null
 datatype    := <basic_type> | <parametrized_type> | <complex_type>
 basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | time | ts | tstz | iyear | iday | <parametrized_type>
 parametrized_type := dec<int,int> | fchar<int> | vchar<int> | vbin<int>
@@ -73,7 +73,7 @@ substrait_error := <!ERROR> | <!UNDEFINED>
 `<literal_value>` described in this section.
 
 #### String
-- **string**, **fixedchar**, **varchar**: A sequence of characters enclosed in single quotes. Example: 'Hello, world!'
+- **string**, **fixedchar**, **varchar**: A sequence of characters enclosed in single quotes. To include a single quote or backslash within the sequence, escape them with a backslash (e.g., `\'` for a single quote and `\\` for a backslash). Example: 'Hello, world!'
 
 #### Integer
 Integers are represented as sequences of digits. Negative numbers are preceded by a minus sign.
