@@ -40,3 +40,13 @@ aggregate_functions:
         decomposable: MANY
         intermediate: any1?
         return: any1?
+  - name: "first"
+    description: First of a set of values.
+    impls:
+      - args:
+          - name: x
+            value: any
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: any
+        return: any
