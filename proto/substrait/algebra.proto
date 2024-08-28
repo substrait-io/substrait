@@ -41,6 +41,9 @@ message RelCommon {
     // Name (alias) for this relation. Can be used for e.g. qualifying the relation (see e.g.
     // Spark's SubqueryAlias), or debugging.
     string alias = 3;
+    // Assigns alternative output field names for any relation.  Equivalent to the names field
+    // in RelRoot but applies to the output of the relation this RelCommon is attached to.
+    repeated string output_names = 4;
 
     substrait.extensions.AdvancedExtension advanced_extension = 10;
 
