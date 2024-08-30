@@ -136,14 +136,41 @@ message ReadRel {
       message ArrowReadOptions {}
       message OrcReadOptions {}
       message DwrfReadOptions {}
+      message DelimiterSeparatedTextReadOptions {
+        // Delimiter separated files may be compressed.  The reader should
+        // autodetect this and decompress as needed.
 
-      // The format of the files.
+        // The character(s) used to separate fields.  Common values are comma,
+        // tab, and pipe.  Multiple characters are allowed.
+        string field_delimiter = 1;
+        // The maximum number of bytes to read from a single line.  If a line
+        // exceeds this limit the resulting behavior is undefined.
+        uint64 max_line_size = 2;
+        // The character(s) used to quote strings.  Common values are single
+        // and double quotation marks.
+        string quote = 3;
+        // The number of lines to skip at the beginning of the file.
+        uint64 header_lines_to_skip = 4;
+        // The character used to escape characters in strings.  Backslash is
+        // a common value.  Note that a double quote mark can also be used as an
+        // escape character but the external quotes should be removed first.
+        string escape = 5;
+        // If this value is encountered (including empty string), the resulting
+        // value is null instead.  Leave unset to disable.  If this value is
+        // provided, the effective schema of this file is comprised entirely of
+        // nullable strings.  If not provided, the effective schema is instead
+        // made up of non-nullable strings.
+        optional string value_treated_as_null = 6;
+      }
+
+      // The format of the files along with options for reading those files.
       oneof file_format {
         ParquetReadOptions parquet = 9;
         ArrowReadOptions arrow = 10;
         OrcReadOptions orc = 11;
         google.protobuf.Any extension = 12;
         DwrfReadOptions dwrf = 13;
+        DelimiterSeparatedTextReadOptions text = 14;
       }
     }
   }
@@ -173,11 +200,14 @@ message JoinRel {
     JOIN_TYPE_OUTER = 2;
     JOIN_TYPE_LEFT = 3;
     JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_SEMI = 5;
-    JOIN_TYPE_ANTI = 6;
-    // This join is useful for nested sub-queries where we need exactly one record in output (or throw exception)
-    // See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf
-    JOIN_TYPE_SINGLE = 7;
+    JOIN_TYPE_LEFT_SEMI = 5;
+    JOIN_TYPE_LEFT_ANTI = 6;
+    JOIN_TYPE_LEFT_SINGLE = 7;
+    JOIN_TYPE_RIGHT_SEMI = 8;
+    JOIN_TYPE_RIGHT_ANTI = 9;
+    JOIN_TYPE_RIGHT_SINGLE = 10;
+    JOIN_TYPE_LEFT_MARK = 11;
+    JOIN_TYPE_RIGHT_MARK = 12;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -654,6 +684,10 @@ message HashJoinRel {
     JOIN_TYPE_RIGHT_SEMI = 6;
     JOIN_TYPE_LEFT_ANTI = 7;
     JOIN_TYPE_RIGHT_ANTI = 8;
+    JOIN_TYPE_LEFT_SINGLE = 9;
+    JOIN_TYPE_RIGHT_SINGLE = 10;
+    JOIN_TYPE_LEFT_MARK = 11;
+    JOIN_TYPE_RIGHT_MARK = 12;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -700,6 +734,10 @@ message MergeJoinRel {
     JOIN_TYPE_RIGHT_SEMI = 6;
     JOIN_TYPE_LEFT_ANTI = 7;
     JOIN_TYPE_RIGHT_ANTI = 8;
+    JOIN_TYPE_LEFT_SINGLE = 9;
+    JOIN_TYPE_RIGHT_SINGLE = 10;
+    JOIN_TYPE_LEFT_MARK = 11;
+    JOIN_TYPE_RIGHT_MARK = 12;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -726,6 +764,10 @@ message NestedLoopJoinRel {
     JOIN_TYPE_RIGHT_SEMI = 6;
     JOIN_TYPE_LEFT_ANTI = 7;
     JOIN_TYPE_RIGHT_ANTI = 8;
+    JOIN_TYPE_LEFT_SINGLE = 9;
+    JOIN_TYPE_RIGHT_SINGLE = 10;
+    JOIN_TYPE_LEFT_MARK = 11;
+    JOIN_TYPE_RIGHT_MARK = 12;
   }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -810,6 +852,7 @@ message Expression {
       int64 time = 17;
       IntervalYearToMonth interval_year_to_month = 19;
       IntervalDayToSecond interval_day_to_second = 20;
+      IntervalCompound interval_compound = 36;
       string fixed_char = 21;
       VarChar var_char = 22;
       bytes fixed_binary = 23;
@@ -881,7 +924,21 @@ message Expression {
     message IntervalDayToSecond {
       int32 days = 1;
       int32 seconds = 2;
-      int32 microseconds = 3;
+
+      // Consumers should expect either (miroseconds) to be set or (precision and subseconds) to be set
+      oneof precision_mode {
+        int32 microseconds = 3 [deprecated = true]; // use precision and subseconds below, they cover and replace microseconds.
+        // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds. Should be used with subseconds below.
+        int32 precision = 4;
+      }
+
+      // the number of fractional seconds using 1e(-precision) units. Should only be used with precision field, not microseconds.
+      int64 subseconds = 5;
+    }
+
+    message IntervalCompound {
+      IntervalYearToMonth interval_year_to_month = 1;
+      IntervalDayToSecond interval_day_to_second = 2;
     }
 
     message Struct {

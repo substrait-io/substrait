@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: "20"
 
-      - uses: bufbuild/buf-setup-action@v1.35.1
+      - uses: bufbuild/buf-setup-action@v1.39.0
         with:
           github_token: ${{ github.token }}
 

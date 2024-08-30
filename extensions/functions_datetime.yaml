@@ -281,31 +281,31 @@ scalar_functions:
           - name: x
             value: timestamp
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: timestamp
       - args:
           - name: x
             value: precision_timestamp<P>
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: precision_timestamp<P>
       - args:
           - name: x
             value: timestamp_tz
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: timestamp_tz
       - args:
           - name: x
             value: precision_timestamp_tz<P>
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: precision_timestamp_tz<P>
       - args:
           - name: x
             value: date
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: timestamp
   -
     name: "multiply"
@@ -315,26 +315,26 @@ scalar_functions:
           - name: x
             value: i8
           - name: y
-            value: interval_day
-        return: interval_day
+            value: interval_day<P>
+        return: interval_day<P>
       - args:
           - name: x
             value: i16
           - name: y
-            value: interval_day
-        return: interval_day
+            value: interval_day<P>
+        return: interval_day<P>
       - args:
           - name: x
             value: i32
           - name: y
-            value: interval_day
-        return: interval_day
+            value: interval_day<P>
+        return: interval_day<P>
       - args:
           - name: x
             value: i64
           - name: y
-            value: interval_day
-        return: interval_day
+            value: interval_day<P>
+        return: interval_day<P>
       - args:
           - name: x
             value: i8
@@ -365,10 +365,10 @@ scalar_functions:
     impls:
       - args:
           - name: x
-            value: interval_day
+            value: interval_day<P>
           - name: y
-            value: interval_day
-        return: interval_day
+            value: interval_day<P>
+        return: interval_day<P>
       - args:
           - name: x
             value: interval_year
@@ -436,31 +436,31 @@ scalar_functions:
           - name: x
             value: timestamp
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: timestamp
       - args:
           - name: x
             value: precision_timestamp<P>
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: precision_timestamp<P>
       - args:
           - name: x
             value: timestamp_tz
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: timestamp_tz
       - args:
           - name: x
             value: precision_timestamp_tz<P>
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: precision_timestamp_tz<P>
       - args:
           - name: x
             value: date
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: date
   -
     name: "lte"
@@ -498,9 +498,9 @@ scalar_functions:
         return: boolean
       - args:
           - name: x
-            value: interval_day
+            value: interval_day<P>
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: boolean
       - args:
           - name: x
@@ -544,9 +544,9 @@ scalar_functions:
         return: boolean
       - args:
           - name: x
-            value: interval_day
+            value: interval_day<P>
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: boolean
       - args:
           - name: x
@@ -590,9 +590,9 @@ scalar_functions:
         return: boolean
       - args:
           - name: x
-            value: interval_day
+            value: interval_day<P>
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: boolean
       - args:
           - name: x
@@ -636,9 +636,9 @@ scalar_functions:
         return: boolean
       - args:
           - name: x
-            value: interval_day
+            value: interval_day<P>
           - name: y
-            value: interval_day
+            value: interval_day<P>
         return: boolean
       - args:
           - name: x
@@ -1044,11 +1044,11 @@ aggregate_functions:
         return: precision_timestamp_tz?<P>
       - args:
           - name: x
-            value: interval_day
+            value: interval_day<P>
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: interval_day?
-        return: interval_day?
+        intermediate: interval_day?<P>
+        return: interval_day?<P>
       - args:
           - name: x
             value: interval_year
@@ -1096,11 +1096,11 @@ aggregate_functions:
         return: precision_timestamp_tz?<P>
       - args:
           - name: x
-            value: interval_day
+            value: interval_day<P>
         nullability: DECLARED_OUTPUT
         decomposable: MANY
-        intermediate: interval_day?
-        return: interval_day?
+        intermediate: interval_day?<P>
+        return: interval_day?<P>
       - args:
           - name: x
             value: interval_year

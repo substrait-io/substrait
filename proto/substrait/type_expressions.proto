@@ -26,11 +26,12 @@ message DerivationExpression {
     Type.Date date = 16;
     Type.Time time = 17;
     Type.IntervalYear interval_year = 19;
-    Type.IntervalDay interval_day = 20;
     // Deprecated in favor of `ExpressionPrecisionTimestampTZ precision_timestamp_tz`
     Type.TimestampTZ timestamp_tz = 29 [deprecated = true];
     Type.UUID uuid = 32;
 
+    ExpressionIntervalDay interval_day = 20;
+    ExpressionIntervalCompound interval_compound = 42;
     ExpressionFixedChar fixed_char = 21;
     ExpressionVarChar varchar = 22;
     ExpressionFixedBinary fixed_binary = 23;
@@ -85,6 +86,18 @@ message DerivationExpression {
   }
 
   message ExpressionPrecisionTimestamp {
+    DerivationExpression precision = 1;
+    uint32 variation_pointer = 2;
+    Type.Nullability nullability = 3;
+  }
+
+  message ExpressionIntervalDay {
+    DerivationExpression precision = 1;
+    uint32 variation_pointer = 2;
+    Type.Nullability nullability = 3;
+  }
+
+  message ExpressionIntervalCompound {
     DerivationExpression precision = 1;
     uint32 variation_pointer = 2;
     Type.Nullability nullability = 3;

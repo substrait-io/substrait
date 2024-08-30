@@ -27,6 +27,7 @@ message Type {
     Time time = 17;
     IntervalYear interval_year = 19;
     IntervalDay interval_day = 20;
+    IntervalCompound interval_compound = 35;
     // Deprecated in favor of `PrecisionTimestampTZ precision_timestamp_tz`
     TimestampTZ timestamp_tz = 29 [deprecated = true];
     UUID uuid = 32;
@@ -122,14 +123,28 @@ message Type {
     Nullability nullability = 2;
   }
 
+  // An interval consisting of years and months
   message IntervalYear {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
   }
 
+  // An interval consisting of days, seconds, and microseconds
   message IntervalDay {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
+
+    // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, etc.
+    // if unset, treat as 6.
+    optional int32 precision = 3;
+  }
+
+  // An interval consisting of the components of both IntervalMonth and IntervalDay
+  message IntervalCompound {
+    uint32 type_variation_reference = 1;
+    Nullability nullability = 2;
+    // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, etc.
+    int32 precision = 3;
   }
 
   message UUID {

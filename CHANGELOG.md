@@ -1,6 +1,42 @@
 Release Notes
 ---
 
+## [0.55.0](https://github.com/substrait-io/substrait/compare/v0.54.0...v0.55.0) (2024-08-18)
+
+### Features
+
+* update interval_day function extensions to include precision param ([#679](https://github.com/substrait-io/substrait/issues/679)) ([28025cb](https://github.com/substrait-io/substrait/commit/28025cbaa8dc3c65b736d8a68fa7070c465fb494))
+
+## [0.54.0](https://github.com/substrait-io/substrait/compare/v0.53.0...v0.54.0) (2024-08-11)
+
+### ⚠ BREAKING CHANGES
+
+* The encoding of IntervalDay literals has changed in a
+strictly backwards incompatible way. However, the logical meaning across
+encoding is maintained using a oneof. Moving a field into a oneof makes
+unset/set to zero unclear with older messages but the fields are defined
+such that the logical meaning of the two is indistinct. If neither
+microseconds nor precision is set, the value can be considered a
+precision 6 value. If you aren't using IntervalDay type, you will not
+need to make any changes.
+* TypeExpression and Parameterized type protobufs (used
+to serialize output derivation) are updated to match the now compound
+nature of IntervalDay. If you use protobuf to serialize output
+derivation that refer to IntervalDay type, you will need to rework that
+logic.
+* JoinRel's type enum now has LEFT_SINGLE
+instead of SINGLE.  Similarly there is now LEFT_ANTI and LEFT_SEMI.
+Other values are available in all join type enums. This affects JSON and
+text formats only (binary plans -- the interoperable part of Substrait --
+will still be compatible before and after this change).
+
+### Features
+
+* add arithmetic function "power" with decimal type ([#660](https://github.com/substrait-io/substrait/issues/660)) ([9af2d66](https://github.com/substrait-io/substrait/commit/9af2d66addc30ef49ed8b570a2bf9c2e1c21bad2))
+* add CSV (text) file support ([#646](https://github.com/substrait-io/substrait/issues/646)) ([5d49e04](https://github.com/substrait-io/substrait/commit/5d49e04325fcdd7c9632bda9e869a71a9d8fa8dc))
+* add precision to IntervalDay and new IntervalCompound type ([#665](https://github.com/substrait-io/substrait/issues/665)) ([e41eff2](https://github.com/substrait-io/substrait/commit/e41eff2cfed5ae6f20d0fde9b6b86da91f9d6542)), closes [#664](https://github.com/substrait-io/substrait/issues/664)
+* normalize the join types ([#662](https://github.com/substrait-io/substrait/issues/662)) ([bed84ec](https://github.com/substrait-io/substrait/commit/bed84ecb6193c22bf2ff83dc3a391ec5a9a3aa68))
+
 ## [0.53.0](https://github.com/substrait-io/substrait/compare/v0.52.0...v0.53.0) (2024-08-04)
 
 ### ⚠ BREAKING CHANGES
