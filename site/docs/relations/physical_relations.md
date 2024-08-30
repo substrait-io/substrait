@@ -72,7 +72,7 @@ The Duplicate Eliminated Join is essentially a [Regular Join Operator](logical_r
 | Duplicate Eliminated Side | The side that is deduplicated and pushed into the other side.                                                                                                                                                           | Required                 |
 
 ## Duplicate Eliminated Get Operator
-An operator that takes as its input the result of the deduplicated side of the Duplicate Eliminated Join. It simply scans the input and outputs the deduplicated.
+An operator that takes as its input the result of the deduplicated side of the Duplicate Eliminated Join. It simply scans the input and outputs the deduplicated values.
 | Signature            | Value                                                                               |
 | -------------------- |-------------------------------------------------------------------------------------|
 | Inputs               | 1                                                                                   |
