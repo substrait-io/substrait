@@ -54,12 +54,12 @@ The Duplicate Eliminated Join is essentially a [Regular Join Operator](logical_r
 
 The duplicate eliminated join has two outputs.  The first output is no different than a regular join output.  The second output is the output to the duplicate eliminated get operator.  This output contains only the columns listed in the `duplicate_eliminated_columns` property.  This output must be emitted as soon as the build phase is complete.  This is because this output is required to compute the probe input.
 
-| Signature            | Value                                                                                        |
-| -------------------- |----------------------------------------------------------------------------------------------|
-| Inputs               | 2                                                                                            |
-| Outputs              | 1                                                                                            |
-| Property Maintenance | It is the same as the [Hash Equijoin Operator](physical_relations.md#hash-equijoin-operator) |
-| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator.                             |
+| Signature            | Value                                                                                                             |
+| -------------------- |-------------------------------------------------------------------------------------------------------------------|
+| Inputs               | 2                                                                                                                 |
+| Outputs              | 2 One output is from the deduplicated columns in the Duplicate Eliminated Get, and the second is the join output. |
+| Property Maintenance | It is the same as the [Hash Equijoin Operator](physical_relations.md#hash-equijoin-operator)                      |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator.                                                  |
 
 ### Duplicate Eliminated Join Properties
 

@@ -778,7 +778,6 @@ message NestedLoopJoinRel {
 message DuplicateEliminatedGetRel {
   RelCommon common = 1;
   ReferenceRel input = 2;
-  repeated Expression.FieldReference column_ids = 3;
 }
 
 message DuplicateEliminatedJoinRel {
