@@ -88,7 +88,6 @@ An operator that takes as its input the result of the deduplicated side of the D
 | Property   | Description                                        | Required                    |
 |------------|----------------------------------------------------|-----------------------------|
 | Input      | A relational input.                                | Required                    |
-| Column IDs | The columns that were deduplicated from the input. | Required                    |
 
 ## Merge Equijoin Operator
 
