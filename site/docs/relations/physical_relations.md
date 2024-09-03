@@ -72,6 +72,7 @@ The duplicate eliminated join has two outputs.  The first output is no different
 | Post Join Predicate       | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true. |
 | Join Type                 | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                 |
 | Duplicate Eliminated Side | The side that is deduplicated and pushed into the other side.                                                                                                                                                           | Required                 |
+| Duplicate Eliminated Columns | The columns that should be included in the deduplicated output.  These columns must be key columns. | Required |
 
 ## Duplicate Eliminated Get Operator
 An operator that takes as its input the result of the deduplicated side of the Duplicate Eliminated Join. It simply scans the input and outputs the deduplicated values.
