@@ -256,18 +256,18 @@ message AggregateRel {
   // A list of zero or more grouping expressions that grouping sets (i.e.,
   // `Grouping` messages in the `groupings` field) can reference. Each
   // expression in this list must be referred to by at least one
-  // `Grouping.expression_reference`.
+  // `Grouping.expression_references`.
   repeated Expression grouping_expressions = 5;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
   message Grouping {
-    // Deprecated in favor of `expression_reference` below.
+    // Deprecated in favor of `expression_references` below.
     repeated Expression grouping_expressions = 1 [deprecated = true];
 
     // A list of zero or more references to grouping expressions, i.e., indices
     // into the `grouping_expression` list.
-    repeated uint32 expression_reference = 2;
+    repeated uint32 expression_references = 2;
   }
 
   message Measure {
