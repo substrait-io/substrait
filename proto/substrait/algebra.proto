@@ -47,6 +47,12 @@ message RelCommon {
 
     substrait.extensions.AdvancedExtension advanced_extension = 10;
 
+    // Save or load a system-specific datastructure for use in optimizing a remote operation.
+    // The value corresponds to a plan unique number for that datastructure.  Any particular
+    // computation may be saved only once but it may be loaded multiple times.
+    optional int32 save_intermediate_computation = 11;
+    optional int32 load_intermediate_computation = 12;
+
     // The statistics related to a hint (physical properties of records)
     message Stats {
       double row_count = 1;
