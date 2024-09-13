@@ -15,7 +15,7 @@ More details about concrete things Substrait looks to avoid can be found below.
 
 ## The Substrait Project
 
-The Substrait project consists of the code and repositories that reside in the [substrait-io GitHub organization](https://github.com/substrait-io), the [Substrait.io website](https://substrait.io), the [Substrait mailing list](https://groups.google.com/g/substrait), MS-hosted teams community calls and the [Substrait Slack workspace]({{versions.slackinvitelink}}). (All are open to everyone and recordings/transcripts are made where technology supports it.)
+The Substrait project consists of the code and repositories that reside in the [substrait-io GitHub organization](https://github.com/substrait-io) (consisting of core repositories and `-contrib` repositories, which have relaxed requirements), the [Substrait.io website](https://substrait.io), the [Substrait mailing list](https://groups.google.com/g/substrait), MS-hosted teams community calls and the [Substrait Slack workspace]({{versions.slackinvitelink}}). (All are open to everyone and recordings/transcripts are made where technology supports it.)
 
 ## Substrait Volunteers
 
@@ -27,11 +27,11 @@ A user is someone who uses Substrait. They may contribute to Substrait by provid
 
 ### Contributors
 
-A contributor is a user who contributes to the project in the form of code or documentation. They take extra steps to participate in the project (loosely defined as the set of repositories under the github substrait-io organization) , are active on the developer mailing list, participate in discussions, and provide patches, documentation, suggestions, and criticism.
+A contributor is a user who contributes to the project in the form of code or documentation. They take extra steps to participate in the project (loosely defined as the set of repositories under the github substrait-io organization), are active on the developer mailing list, participate in discussions, and provide patches, documentation, suggestions, and criticism. Contributers may be given write access to `-contrib` repositories.
 
 ### Committer
 
-A committer is a developer who has write access to the code repositories and has a signed [Contributor License Agreement (CLA)](https://cla-assistant.io/substrait-io/substrait) on file. Not needing to depend on other people to make patches to the code or documentation, they are actually making short-term decisions for the project. The SMC can (even tacitly) agree and approve the changes into permanency, or they can reject them. Remember that the SMC makes the decisions, not the individual committers.
+A committer is a developer who has write access to the core (i.e., non `-contrib`) repositories and has a signed [Contributor License Agreement (CLA)](https://cla-assistant.io/substrait-io/substrait) on file. Not needing to depend on other people to make patches to the code or documentation, they are actually making short-term decisions for the project. The SMC can (even tacitly) agree and approve the changes into permanency, or they can reject them. Remember that the SMC makes the decisions, not the individual committers.
 
 ### SMC Member
 
@@ -64,6 +64,7 @@ The rules require that a community member registering a negative vote must inclu
 | Non-breaking function introductions                                                                       | 1 (not including proposer) | Committers     | Github PR       |
 | Non-breaking extension additions & non-format code modifications                                          | 1 (not including proposer) | Committers     | Github PR       |
 | Changes (non-breaking or breaking) to a Substrait *library* (i.e. substrait-java, substrait-validator)    | 1 (not including proposer) | Committers     | Github PR       |
+| Changes to a Substrait `-contrib` repository                                                              | 1 (not including proposer) | Contributers   | Github PR       |
 
 ### Review-Then-Commit
 
