@@ -88,7 +88,7 @@ message RelCommon {
       // The local system can use any numbering system it wants but for better compatibility
       // it is suggested to refer to computations in order of the input that they are derived
       // from.
-      optional int computation_number = 3 (default = 1);
+      optional int computation_number = 3 [default = 1];
     }
   }
 }
