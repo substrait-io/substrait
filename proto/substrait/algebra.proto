@@ -87,8 +87,8 @@ message RelCommon {
       // with computation type COMPUTATION_TYPE_BLOOM_FILTER refers to the second bloom filter.
       // The local system can use any numbering system it wants but for better compatibility
       // it is suggested to refer to computations in order of the input that they are derived
-      // from.
-      optional int computation_number = 3 [default = 1];
+      // from.  Computation numbers start at 1.
+      int computation_number = 3;
     }
   }
 }
