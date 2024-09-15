@@ -1,6 +1,17 @@
 Release Notes
 ---
 
+## [0.56.0](https://github.com/substrait-io/substrait/compare/v0.55.0...v0.56.0) (2024-09-15)
+
+### Features
+
+* add optional metadata containing field names to RelCommon ([#696](https://github.com/substrait-io/substrait/issues/696)) ([5a73281](https://github.com/substrait-io/substrait/commit/5a73281e14448a69d5cb38515cb1a79050eb54eb))
+* define mark join ([#682](https://github.com/substrait-io/substrait/issues/682)) ([bc1b93f](https://github.com/substrait-io/substrait/commit/bc1b93f2bf5d2485f417f022c11500a341354ce5))
+
+### Bug Fixes
+
+* correct format for nullable interval_day parameters ([#687](https://github.com/substrait-io/substrait/issues/687)) ([8ae1084](https://github.com/substrait-io/substrait/commit/8ae1084761c0c384c9c54bd4d7af62c4a58ea1cc)), closes [#679](https://github.com/substrait-io/substrait/issues/679)
+
 ## [0.55.0](https://github.com/substrait-io/substrait/compare/v0.54.0...v0.55.0) (2024-08-18)
 
 ### Features
