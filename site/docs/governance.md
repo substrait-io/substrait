@@ -35,7 +35,7 @@ A committer is a developer who has write access to the core (i.e., non `-contrib
 
 ### SMC Member
 
-A SMC member is a committer who was elected due to merit for the evolution of the project. They have write access to the code repository, the right to cast binding votes on all proposals on community-related decisions,the right to propose other active contributors for committership, and the right to invite active committers to the SMC. The SMC as a whole is the entity that controls the project, nobody else. They are responsible for the continued shaping of this governance model.
+A SMC member is a committer who was elected due to merit for the evolution of the project. They have write access to the code repository, the right to cast binding votes on all proposals on community-related decisions, the right to propose other active contributors for committership, and the right to invite active committers to the SMC. The SMC as a whole is the entity that controls the project, nobody else. They are responsible for the continued shaping of this governance model.
 
 ## Substrait Management and Collaboration
 
