@@ -337,8 +337,10 @@ message SetRel {
     SET_OP_MINUS_MULTISET = 2;
     SET_OP_INTERSECTION_PRIMARY = 3;
     SET_OP_INTERSECTION_MULTISET = 4;
-    SET_OP_UNION_DISTINCT = 5;
-    SET_OP_UNION_ALL = 6;
+    // Deprecated: Use SET_OP_UNION in conjunction with the mode field
+    // (SET_OP_MODE_DISTINCT or SET_OP_MODE_ALL) instead.
+    SET_OP_UNION_DISTINCT = 5 [deprecated = true];
+    SET_OP_UNION_ALL = 6 [deprecated = true];
     SET_OP_UNION = 7;
   }
 
