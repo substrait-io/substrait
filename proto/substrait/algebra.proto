@@ -345,9 +345,9 @@ message SetRel {
   }
 
   enum SetMode {
-    SET_OP_MODE_UNSPECIFIED = 0;
-    SET_OP_MODE_DISTINCT = 1;
-    SET_OP_MODE_ALL = 2;
+    SET_MODE_UNSPECIFIED = 0;
+    SET_MODE_DISTINCT = 1;
+    SET_MODE_ALL = 2;
   }
 }
 
