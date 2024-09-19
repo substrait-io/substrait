@@ -328,7 +328,6 @@ message SetRel {
   // inputs.  There must be at least two inputs.
   repeated Rel inputs = 2;
   SetOp op = 3;
-  SetMode mode = 4;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
   enum SetOp {
@@ -337,17 +336,10 @@ message SetRel {
     SET_OP_MINUS_MULTISET = 2;
     SET_OP_INTERSECTION_PRIMARY = 3;
     SET_OP_INTERSECTION_MULTISET = 4;
-    // Deprecated: Use SET_OP_UNION in conjunction with the mode field
-    // (SET_OP_MODE_DISTINCT or SET_OP_MODE_ALL) instead.
-    SET_OP_UNION_DISTINCT = 5 [deprecated = true];
-    SET_OP_UNION_ALL = 6 [deprecated = true];
-    SET_OP_UNION = 7;
-  }
-
-  enum SetMode {
-    SET_MODE_UNSPECIFIED = 0;
-    SET_MODE_DISTINCT = 1;
-    SET_MODE_ALL = 2;
+    SET_OP_UNION_DISTINCT = 5;
+    SET_OP_UNION_ALL = 6;
+    SET_OP_MINUS_DISTINCT = 7;
+    SET_OP_INTERSECTION_DISTINCT = 8;
   }
 }
 
