@@ -50,8 +50,8 @@ message RelCommon {
     // Save or load a system-specific computation for use in optimizing a remote operation.
     // The anchor refers to the source/destination of the computation.  The computation type
     // and number refer to the current relation.
-    repeated Computation saved_computations = 11;
-    repeated Computation loaded_computations = 12;
+    repeated SavedComputation saved_computations = 11;
+    repeated LoadedComputation loaded_computations = 12;
 
     // The statistics related to a hint (physical properties of records)
     message Stats {
@@ -73,7 +73,7 @@ message RelCommon {
       COMPUTATION_TYPE_UNKNOWN = 9999;
     }
 
-    message Computation {
+    message SavedComputation {
       // The value corresponds to a plan unique number for that datastructure.  Any particular
       // computation may be saved only once but it may be loaded multiple times.
       int32 anchor = 1;
@@ -84,6 +84,24 @@ message RelCommon {
       // are mismatched.
       ComputationType type = 2;
       // The instance of the given computation type on this relation.  For instance, a 2 here
+      // with computation type COMPUTATION_TYPE_BLOOM_FILTER refers to the second bloom filter.
+      // The local system can use any numbering system it wants but for better compatibility
+      // it is suggested to refer to computations in order of the input that they are derived
+      // from.  Computation numbers start at 1.
+      int32 number = 3;
+    }
+
+    message LoadedComputation {
+      // The value corresponds to a plan unique number for that datastructure.  Any particular
+      // computation may be saved only once but it may be loaded multiple times.
+      int32 anchor_reference = 1;
+      // The type of this computation.  While a plan may use COMPUTATION_TYPE_UNKNOWN for all
+      // of its types it is recommended to use a more specific type so that the optimization
+      // is more portable.  The consumer should be able to decide if an unknown type here
+      // matches the same unknown type at a different plan and ignore the optimization if they
+      // are mismatched.
+      ComputationType type = 2;
+      // The instance of the given computation type on this relation.  For instance, a two here
       // with computation type COMPUTATION_TYPE_BLOOM_FILTER refers to the second bloom filter.
       // The local system can use any numbering system it wants but for better compatibility
       // it is suggested to refer to computations in order of the input that they are derived
