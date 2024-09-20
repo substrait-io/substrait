@@ -270,14 +270,22 @@ The set operation type determines both the records that are emitted and the type
 
 | Property                | Description                                                                                                   | Output Nullability
 | ----------------------- | ------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| Minus (Primary)         | Returns all records (including duplicates) from the primary input excluding any matching records from secondary inputs.              | The same as the primary input.
-| Minus (Multiset)        | Returns all records from the primary input excluding any records that are included in *all* secondary inputs. | The same as the primary input.
-| Intersection (Primary)  | Returns all records (including duplicates) from the primary input that match at least one record from *any* secondary inputs.        | If a field is nullable in the primary input and in any of the secondary inputs, it is nullable in the output.
-| Intersection (Multiset) | Returns all records from the primary input that match at least one record from *all* secondary inputs.        | If a field is required in any of the inputs, it is required in the output.
-| Union Distinct          | Returns all the records from each set, removing any rows that are duplicated (within or across sets).         | If a field is nullable in any of the inputs, it is nullable in the output.
-| Union All               | Returns all records from each set, allowing duplicates.                                                       | If a field is nullable in any of the inputs, it is nullable in the output. |
-| Minus Distinct          | Returns all records (excluding duplicates) from the primary input excluding any matching records from secondary inputs.       | The same as the primary input. |
-| Intersection Distinct   | Returns all records (excluding duplicates) from the primary input that match any records in secondary inputs.                 | If a field is nullable in the primary input and in any of the secondary inputs, it is nullable in the output. |
+| Minus (Primary)             | Returns all records (removing duplicates) from the primary input excluding any matching records from secondary inputs.           | The same as the primary input.
+| Minus (Primary All)         | Returns all records (allowing duplicates) from the primary input excluding any matching records from secondary inputs.              | The same as the primary input.
+| Minus (Multiset)            | Returns all records (removing duplicates) from the primary input excluding any records that are included in *all* secondary inputs. | The same as the primary input.
+| Minus (Multiset All)        | Returns all records (allowing duplicates) from the primary input excluding any records that are included in *all* secondary inputs. | The same as the primary input.
+| Intersection (Primary)      | Returns all records (removing duplicates) from the primary input that match at least one record from *any* secondary inputs.        | If a field is nullable in the primary input and in any of the secondary inputs, it is nullable in the output.
+| Intersection (Primary All)  | Returns all records (allowing duplicates) from the primary input that match at least one record from *any* secondary inputs.        | If a field is nullable in the primary input and in any of the secondary inputs, it is nullable in the output.
+| Intersection (Multiset)     | Returns all records (removing duplicates) from the primary input that match at least one record from *all* secondary inputs.        | If a field is required in any of the inputs, it is required in the output.
+| Intersection (Multiset All) | Returns all records (allowing duplicates) from the primary input that match at least one record from *all* secondary inputs.        | If a field is required in any of the inputs, it is required in the output.
+| Union Distinct              | Returns all the records from each set, removing any rows that are duplicated (within or across sets).                               | If a field is nullable in any of the inputs, it is nullable in the output.
+| Union All                   | Returns all records from each set, allowing duplicates.                                                                             | If a field is nullable in any of the inputs, it is nullable in the output. |
+
+Intersection All looks at all occurrences of values in both tables, but the output is limited by the smallest number of matches between the two:
+```
+{1, 3, 2, 2, 2} INTERSECTION ALL {1, 1, 2, 3, 2} === {1, 3, 2, 2}
+{1, 3, 2, 2, 2} INTERSECTION DISTINCT {1, 1, 2, 3, 2} === {1, 3, 2}
+```
 
 Note that for set operations, NULL matches NULL. That is
 ```
