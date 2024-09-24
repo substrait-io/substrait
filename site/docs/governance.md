@@ -27,11 +27,13 @@ A user is someone who uses Substrait. They may contribute to Substrait by provid
 
 ### Contributors
 
-A contributor is a user who contributes to the project in the form of code or documentation. They take extra steps to participate in the project (loosely defined as the set of repositories under the github substrait-io organization), are active on the developer mailing list, participate in discussions, and provide patches, documentation, suggestions, and criticism. Contributers may be given write access to `-contrib` repositories.
+A contributor is a user who contributes to the project in the form of code or documentation. They take extra steps to participate in the project (loosely defined as the set of repositories under the github substrait-io organization), are active on the developer mailing list, participate in discussions, and provide patches, documentation, suggestions, and criticism.
+
+Contributors may be given write access to specific `-contrib` repositories by an SMC consensus vote per repository. The vote should be open for a week to allow adequate time for other SMC members to voice any concerns prior to providing write access.
 
 ### Committer
 
-A committer is a developer who has write access to the core (i.e., non `-contrib`) repositories and has a signed [Contributor License Agreement (CLA)](https://cla-assistant.io/substrait-io/substrait) on file. Not needing to depend on other people to make patches to the code or documentation, they are actually making short-term decisions for the project. The SMC can (even tacitly) agree and approve the changes into permanency, or they can reject them. Remember that the SMC makes the decisions, not the individual committers.
+A committer is a developer who has write access to the all (i.e., core and `-contrib`) repositories and has a signed [Contributor License Agreement (CLA)](https://cla-assistant.io/substrait-io/substrait) on file. Not needing to depend on other people to make patches to the code or documentation, they are actually making short-term decisions for the project. The SMC can (even tacitly) agree and approve the changes into permanency, or they can reject them. Remember that the SMC makes the decisions, not the individual committers.
 
 ### SMC Member
 
@@ -58,13 +60,14 @@ The rules require that a community member registering a negative vote must inclu
 |                                                                                                           | +1 votes required          | Binding voters | Voting Location |
 | --------------------------------------------------------------------------------------------------------- | -------------------------- | -------------- | --------------- |
 | Process/Governance modifications & actions. This includes promoting new contributors to committer or SMC. | 3                          | SMC            | Mailing List    |
+| Management of `-contrib` repositories including adding repositories and giving write access to them       | 3                          | SMC            | Mailing List    |
 | Format/Specification Modifications (including breaking extension changes)                                 | 2                          | SMC            | Github PR       |
 | Documentation Updates (formatting, moves)                                                                 | 1                          | SMC            | Github PR       |
 | Typos                                                                                                     | 1                          | Committers     | Github PR       |
 | Non-breaking function introductions                                                                       | 1 (not including proposer) | Committers     | Github PR       |
 | Non-breaking extension additions & non-format code modifications                                          | 1 (not including proposer) | Committers     | Github PR       |
 | Changes (non-breaking or breaking) to a Substrait *library* (i.e. substrait-java, substrait-validator)    | 1 (not including proposer) | Committers     | Github PR       |
-| Changes to a Substrait `-contrib` repository                                                              | 1 (not including proposer) | Contributers   | Github PR       |
+| Changes to a Substrait `-contrib` repository                                                              | 1 (not including proposer) | Contributors   | Github PR       |
 
 ### Review-Then-Commit
 
