@@ -7,7 +7,7 @@ Every relation contains a common section containing optional hints and emit beha
 
 A relation which has a direct emit kind outputs the relation's output without reordering or selection.  A relation that specifies an emit output mapping can output its output columns in any order and may leave output columns out.
 
-???+ note "Relation Output"
+???+ info "Relation Output"
 
     * Relations by default provide as their output the list of all of its input columns plus any generated columns as its output columns.  One notable exception is aggregations which only output new columns.
 
@@ -16,7 +16,7 @@ A relation which has a direct emit kind outputs the relation's output without re
 
 Hints provide information that can improve performance but cannot be used to control the behavior.  Table statistics, runtime constraints, name hints, and saved computations all fall into this category.
 
-???+ note "Hint Design"
+???+ info "Hint Design"
 
     * If a hint is not present or has incorrect data the consumer should be able to arrive at the correct result.
 
