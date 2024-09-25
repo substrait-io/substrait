@@ -76,7 +76,7 @@ message RelCommon {
     message SavedComputation {
       // The value corresponds to a plan unique number for that datastructure.  Any particular
       // computation may be saved only once but it may be loaded multiple times.
-      int32 anchor = 1;
+      int32 computation_id = 1;
       // The type of this computation.  While a plan may use COMPUTATION_TYPE_UNKNOWN for all
       // of its types it is recommended to use a more specific type so that the optimization
       // is more portable.  The consumer should be able to decide if an unknown type here
@@ -94,7 +94,7 @@ message RelCommon {
     message LoadedComputation {
       // The value corresponds to a plan unique number for that datastructure.  Any particular
       // computation may be saved only once but it may be loaded multiple times.
-      int32 anchor_reference = 1;
+      int32 computation_id_reference = 1;
       // The type of this computation.  While a plan may use COMPUTATION_TYPE_UNKNOWN for all
       // of its types it is recommended to use a more specific type so that the optimization
       // is more portable.  The consumer should be able to decide if an unknown type here
