@@ -57,6 +57,16 @@ is encoded as records consisting of literal values.
 | -------- | ----------- | -------- |
 | Data     | Required    | Required |
 
+#### Virtual Expression Table
+
+A virtual expression table is a table whose contents are embedded in the plan itself.  The table data
+is encoded as records consisting of expression values.
+
+| Property | Description | Required |
+| -------- | ----------- | -------- |
+| Data     | Required    | Required |
+
+
 #### Named Table
 
 A named table is a reference to data defined elsewhere.  For example, there may be a catalog
