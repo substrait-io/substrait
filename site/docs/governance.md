@@ -33,7 +33,7 @@ Contributors may be given write access to specific `-contrib` repositories by an
 
 ### Committer
 
-A committer is a developer who has write access to the all (i.e., core and `-contrib`) repositories and has a signed [Contributor License Agreement (CLA)](https://cla-assistant.io/substrait-io/substrait) on file. Not needing to depend on other people to make patches to the code or documentation, they are actually making short-term decisions for the project. The SMC can (even tacitly) agree and approve the changes into permanency, or they can reject them. Remember that the SMC makes the decisions, not the individual committers.
+A committer is a developer who has write access to all (i.e., core and `-contrib`) repositories and has a signed [Contributor License Agreement (CLA)](https://cla-assistant.io/substrait-io/substrait) on file. Not needing to depend on other people to make patches to the code or documentation, they are actually making short-term decisions for the project. The SMC can (even tacitly) agree and approve the changes into permanency, or they can reject them. Remember that the SMC makes the decisions, not the individual committers.
 
 ### SMC Member
 
