@@ -625,7 +625,7 @@ message WriteRel {
   // occur in case of DELETE to ensure multi-engine plans are unequivocal.
   Rel input = 5;
 
-  CreateMode create_mode = 8;  // Used with CTAS to determine what to do if the table already exists
+  CreateMode create_mode = 8; // Used with CTAS to determine what to do if the table already exists
 
   // Output mode determines what is the output of executing this rel
   OutputMode output = 6;
@@ -645,9 +645,9 @@ message WriteRel {
 
   enum CreateMode {
     CREATE_MODE_UNSPECIFIED = 0;
-    CREATE_MODE_ERROR_IF_EXISTS = 1;     // Throw an error if the table already exists (default behavior)
-    CREATE_MODE_REPLACE_IF_EXISTS = 2;   // Replace the table if it already exists ("OR REPLACE")
-    CREATE_MODE_IGNORE_IF_EXISTS = 3;    // Ignore the request if the table already exists ("IF NOT EXISTS")
+    CREATE_MODE_ERROR_IF_EXISTS = 1; // Throw an error if the table already exists (default behavior)
+    CREATE_MODE_REPLACE_IF_EXISTS = 2; // Replace the table if it already exists ("OR REPLACE")
+    CREATE_MODE_IGNORE_IF_EXISTS = 3; // Ignore the request if the table already exists ("IF NOT EXISTS")
   }
 
   enum OutputMode {
