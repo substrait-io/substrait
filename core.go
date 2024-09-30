@@ -1,3 +1,5 @@
+// Package substrait provides access to Substrait artifacts via embed.FS.
+// Use substrait.GetSubstraitFS() to retrieve the embed.FS object.
 package substrait
 
 import "embed"
