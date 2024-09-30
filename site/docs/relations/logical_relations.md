@@ -59,8 +59,10 @@ is encoded as records consisting of literal values.
 
 #### Virtual Expression Table
 
-A virtual expression table is a table whose contents are embedded in the plan itself.  The table data
-is encoded as records consisting of expression values.
+A virtual expression table is a table whose contents are embedded in the plan itself.
+Each column is an expression that can be resolved without referencing any input data.
+For example, a literal, a function call involving literals, or any other expression that does
+not require input.
 
 | Property | Description | Required |
 | -------- | ----------- | -------- |
