@@ -5,7 +5,7 @@
 set -euo pipefail
 
 npx --yes \
-  -p "semantic-release@24.0.0" \
+  -p "semantic-release@24.1.2" \
   -p "@semantic-release/commit-analyzer" \
   -p "@semantic-release/release-notes-generator" \
   -p "@semantic-release/changelog" \
