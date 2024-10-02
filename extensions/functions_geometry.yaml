@@ -77,7 +77,7 @@ scalar_functions:
     impls:
       - args:
           - name: geom
-            value: geometry
+            value: u!geometry
         return: boolean
   -
     name: "is_simple"
