@@ -1,6 +1,49 @@
 Release Notes
 ---
 
+## [0.57.0](https://github.com/substrait-io/substrait/compare/v0.56.0...v0.57.0) (2024-10-02)
+
+### ⚠ BREAKING CHANGES
+
+* This PR changes the definition of grouping sets in
+`AggregateRel` to consist of references into a list of grouping
+expressions instead of consisting of expressions directly.
+
+With the previous definition, consumers had to deduplicate the
+expressions in the grouping sets in order to execute the query or even
+derive the output schema (which is problematic, as explained below).
+With this change, the responsibility of deduplicating expressions is now
+on the producer. Concretely, consumers are now expected to be simpler:
+The list of grouping expressions immediately provides the information
+needed to derive the output schema and the list of grouping sets
+explicitly and unambiguously provides the equality of grouping
+expressions. Producers now have to specify the grouping sets explicitly.
+If their internal representation of grouping sets consists of full
+grouping expressions (rather than references), then they must
+deduplicate these expressions according to their internal notion of
+expression equality in order to produce grouping sets consisting of
+references to these deduplicated expressions.
+
+If the previous format is desired, it can be obtained from the new
+format by (1) deduplicating the grouping expressions (according to the
+previously applicable definition of expression equality), (2)
+re-establishing the duplicates using the emit clause, and (3)
+"dereferencing" the references in the grouping sets, i.e., by replacing
+each reference in the grouping sets with the expression it refers to.
+
+The previous version was problematic because it required the *consumers*
+to deduplicate the expressions from the grouping sets. This, in turn,
+requires to parse and understand 100% of these expression even in cases
+where that understanding is otherwise optional, which is in opposition
+to the general philosophy of allowing for simple-minded consumers. The
+new version avoids that problem and, thus, allows consumers to be
+
+### Features
+
+* change grouping expressions in AggregateRel to references ([#706](https://github.com/substrait-io/substrait/issues/706)) ([65a7d38](https://github.com/substrait-io/substrait/commit/65a7d38146f513c82bf2ab27c8597a8c09427a05)), closes [#700](https://github.com/substrait-io/substrait/issues/700)
+* clarify behaviour of SetRel operations ([#708](https://github.com/substrait-io/substrait/issues/708)) ([f796521](https://github.com/substrait-io/substrait/commit/f796521d64144a74bf0ac602c46fb66336afe74f))
+* make substrait repo a go module ([#712](https://github.com/substrait-io/substrait/issues/712)) ([3dca9b5](https://github.com/substrait-io/substrait/commit/3dca9b505d8122542de311a7d21973b74b58b761))
+
 ## [0.56.0](https://github.com/substrait-io/substrait/compare/v0.55.0...v0.56.0) (2024-09-15)
 
 ### Features
