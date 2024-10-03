@@ -73,11 +73,10 @@ message ReadRel {
 
   // Definition of which type of scan operation is to be performed
   oneof read_type {
-    VirtualTable virtual_table = 5 [deprecated = true];
+    VirtualTable virtual_table = 5;
     LocalFiles local_files = 6;
     NamedTable named_table = 7;
     ExtensionTable extension_table = 8;
-    VirtualExpressionTable virtual_expression_table = 9;
   }
 
   // A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
@@ -89,12 +88,8 @@ message ReadRel {
 
   // A table composed of literals.
   message VirtualTable {
-    repeated Expression.Literal.Struct values = 1;
-  }
-
-  // A table composed of expressions.
-  message VirtualExpressionTable {
-    repeated Expression values = 1;
+    repeated Expression.Literal.Struct values = 1 [deprecated = true];
+    repeated Expression expression_values = 2;
   }
 
   // A stub type that can be used to extend/introduce new table types outside
