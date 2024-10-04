@@ -12,7 +12,7 @@ See the example [here](https://facebookincubator.github.io/velox/develop/joins.h
 
 ## Why does the project relation keep existing columns?
 
-In several relational algebra systems (DuckDb, Velox, Spark, Datafusion, etc.) the project relation is used both
+In several relational algebra systems ([DuckDB](https://duckdb.org/), [Velox](https://velox-lib.io/), [Apache Spark](https://spark.apache.org/), [Apache DataFusion](https://datafusion.apache.org/), etc.) the project relation is used both
 to add new columns and remove existing columns. It is defined by a list of expressions and there is one output
 column for each expression.
 
@@ -27,19 +27,19 @@ However, the output columns are a combination of the input columns and one colum
 ## Where are field names represented?
 
 Some relational algebra systems, such as Spark, give names to the output fields of a relation. For example, in
-pyspark I might run `df.withColumn("num_chars", length("text")).filter("num_chars > 10")`. This creates a
+PySpark I might run `df.withColumn("num_chars", length("text")).filter("num_chars > 10")`. This creates a
 project relation, which calculates a new field named `num_chars`. This field is then referenced in the filter
 relation. Spark's logical plan maps closely to this and includes both the expression (`length("text")`) and the
 name of the output field (`num_chars`) in its project relation.
 
 Substrait does not name intermediate fields in a plan. This is because these field names have no effect on
-the computation that must be performed. In addition, it opens the door to named based references, which Substrait
+the computation that must be performed. In addition, it opens the door to name-based references, which Substrait
 also does not support, because these can be a source of errors and confusion. One of the goals of Substrait is
 to make it very easy for consumers to understand plans. All references in Substrait are done with ordinals.
 
 In order to allow plans that do use named fields to round-trip through Substrait there is a hint that can be
 used to add field names to a plan. This hint is called `output_names` and is located in `RelCommon`. Consumers
-should not rely on this hint being present in a plan, but if present, it can be used to provide field names to
+should not rely on this hint being present in a plan but, if present, it can be used to provide field names to
 intermediate relations in a plan for round-trip or debugging purposes.
 
 There are a few places where Substrait DOES define field names:
