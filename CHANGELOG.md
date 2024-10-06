@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.57.1](https://github.com/substrait-io/substrait/compare/v0.57.0...v0.57.1) (2024-10-06)
+
+### Bug Fixes
+
+* add missing udt identifier in functions_geometry ([#716](https://github.com/substrait-io/substrait/issues/716)) ([f1cedd2](https://github.com/substrait-io/substrait/commit/f1cedd2394bde76f173875a960af061d6b7244ab))
+
 ## [0.57.0](https://github.com/substrait-io/substrait/compare/v0.56.0...v0.57.0) (2024-10-02)
 
 ### ⚠ BREAKING CHANGES
