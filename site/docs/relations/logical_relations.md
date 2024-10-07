@@ -51,11 +51,14 @@ Read definition types (like the rest of the features in Substrait) are built by 
 #### Virtual Table
 
 A virtual table is a table whose contents are embedded in the plan itself.  The table data
-is encoded as records consisting of literal values.
+is encoded as records consisting of literal values or expressions that can be resolved without referencing any input data.
+For example, a literal, a function call involving literals, or any other expression that does
+not require input.
 
 | Property | Description | Required |
 | -------- | ----------- | -------- |
 | Data     | Required    | Required |
+
 
 #### Named Table
 
