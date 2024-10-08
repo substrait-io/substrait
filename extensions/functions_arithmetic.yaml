@@ -1648,7 +1648,7 @@ aggregate_functions:
 
 window_functions:
   - name: "row_number"
-    description: "the number of the current row within its partition."
+    description: "the number of the current row within its partition, starting at 1"
     impls:
       - args: []
         nullability: DECLARED_OUTPUT
