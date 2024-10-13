@@ -1,6 +1,14 @@
 Release Notes
 ---
 
+## [0.58.0](https://github.com/substrait-io/substrait/compare/v0.57.1...v0.58.0) (2024-10-13)
+
+### Features
+
+* define sideband optimization hints ([#705](https://github.com/substrait-io/substrait/issues/705)) ([e386a29](https://github.com/substrait-io/substrait/commit/e386a29377c4138a6a2aee87750501b35edae86d))
+* enhance VirtualTable to have expression as value ([#711](https://github.com/substrait-io/substrait/issues/711)) ([954bcbc](https://github.com/substrait-io/substrait/commit/954bcbc1a3eeabb696e7dc10721b85e1f475ecfd))
+* specify row_number start ([#722](https://github.com/substrait-io/substrait/issues/722)) ([#723](https://github.com/substrait-io/substrait/issues/723)) ([a0388ff](https://github.com/substrait-io/substrait/commit/a0388ff69a83aa4addf51236b77bf275b3647590))
+
 ## [0.57.1](https://github.com/substrait-io/substrait/compare/v0.57.0...v0.57.1) (2024-10-06)
 
 ### Bug Fixes
