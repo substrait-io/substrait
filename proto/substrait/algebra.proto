@@ -645,9 +645,10 @@ message WriteRel {
 
   enum CreateMode {
     CREATE_MODE_UNSPECIFIED = 0;
-    CREATE_MODE_ERROR_IF_EXISTS = 1; // Throw an error if the table already exists (default behavior)
+    CREATE_MODE_APPEND_IF_EXISTS = 1; // Append the data to the table if it already exists
     CREATE_MODE_REPLACE_IF_EXISTS = 2; // Replace the table if it already exists ("OR REPLACE")
     CREATE_MODE_IGNORE_IF_EXISTS = 3; // Ignore the request if the table already exists ("IF NOT EXISTS")
+    CREATE_MODE_ERROR_IF_EXISTS = 4; // Throw an error if the table already exists (default behavior)
   }
 
   enum OutputMode {
