@@ -126,7 +126,7 @@ message ReadRel {
   // A table composed of expressions.
   message VirtualTable {
     repeated Expression.Literal.Struct values = 1 [deprecated = true];
-    repeated Expression expressions = 2;
+    repeated Expression.Nested.Struct expressions = 2;
   }
 
   // A stub type that can be used to extend/introduce new table types outside
