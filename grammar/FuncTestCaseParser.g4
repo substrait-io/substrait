@@ -18,7 +18,7 @@ version
     ;
 
 include
-    : SUBSTRAIT_INCLUDE STRING_LITERAL (COMMA STRING_LITERAL)*
+    : SUBSTRAIT_INCLUDE STRING_LITERAL (Comma STRING_LITERAL)*
     ;
 
 testGroupDescription
@@ -26,7 +26,7 @@ testGroupDescription
     ;
 
 testCase
-    : functionName=IDENTIFIER OPAREN arguments CPAREN ( OBRACKET func_options CBRACKET )? EQ result
+    : functionName=Identifier OParen arguments CParen ( OBracket func_options CBracket )? Eq result
     ;
 
 testGroup
@@ -34,7 +34,7 @@ testGroup
     ;
 
 arguments
-    : argument (COMMA argument)*
+    : argument (Comma argument)*
     ;
 
 result
@@ -61,58 +61,58 @@ numericLiteral
     : DECIMAL_LITERAL | INTEGER_LITERAL | FLOAT_LITERAL
     ;
 
-nullArg: NULL_LITERAL DOUBLE_COLON datatype;
+nullArg: NULL_LITERAL DoubleColon datatype;
 
-i8Arg: INTEGER_LITERAL DOUBLE_COLON I8;
+i8Arg: INTEGER_LITERAL DoubleColon I8;
 
-i16Arg: INTEGER_LITERAL DOUBLE_COLON I16;
+i16Arg: INTEGER_LITERAL DoubleColon I16;
 
-i32Arg: INTEGER_LITERAL DOUBLE_COLON I32;
+i32Arg: INTEGER_LITERAL DoubleColon I32;
 
-i64Arg: INTEGER_LITERAL DOUBLE_COLON I64;
+i64Arg: INTEGER_LITERAL DoubleColon I64;
 
 fp32Arg
-    : numericLiteral DOUBLE_COLON FP32
+    : numericLiteral DoubleColon FP32
     ;
 
 fp64Arg
-    : numericLiteral DOUBLE_COLON FP64
+    : numericLiteral DoubleColon FP64
     ;
 
 decimalArg
-    : numericLiteral DOUBLE_COLON decimalType
+    : numericLiteral DoubleColon decimalType
     ;
 
 booleanArg
-    : BOOLEAN_LITERAL DOUBLE_COLON Bool
+    : BOOLEAN_LITERAL DoubleColon Bool
     ;
 
 stringArg
-    : STRING_LITERAL DOUBLE_COLON Str
+    : STRING_LITERAL DoubleColon Str
     ;
 
 dateArg
-    : DATE_LITERAL DOUBLE_COLON Date
+    : DATE_LITERAL DoubleColon Date
     ;
 
 timeArg
-    : TIME_LITERAL DOUBLE_COLON Time
+    : TIME_LITERAL DoubleColon Time
     ;
 
 timestampArg
-    : TIMESTAMP_LITERAL DOUBLE_COLON Ts
+    : TIMESTAMP_LITERAL DoubleColon Ts
     ;
 
 timestampTzArg
-    : TIMESTAMP_TZ_LITERAL DOUBLE_COLON TsTZ
+    : TIMESTAMP_TZ_LITERAL DoubleColon TsTZ
     ;
 
 intervalYearArg
-    : INTERVAL_YEAR_LITERAL DOUBLE_COLON IYear
+    : INTERVAL_YEAR_LITERAL DoubleColon IYear
     ;
 
 intervalDayArg
-    : INTERVAL_DAY_LITERAL DOUBLE_COLON IDay
+    : INTERVAL_DAY_LITERAL DoubleColon IDay
     ;
 
 intervalYearLiteral
@@ -155,31 +155,31 @@ scalarType
   | IDay #intervalDay
   | IYear #intervalYear
   | UUID #uuid
-  | UserDefined IDENTIFIER #userDefined
+  | UserDefined Identifier #userDefined
   ;
 
 fixedCharType
-    : FChar isnull=QMARK? O_ANGLE_BRACKET len=numericParameter C_ANGLE_BRACKET #fixedChar
+    : FChar isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #fixedChar
     ;
 
 varCharType
-    : VChar isnull=QMARK? O_ANGLE_BRACKET len=numericParameter C_ANGLE_BRACKET #varChar
+    : VChar isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #varChar
     ;
 
 fixedBinaryType
-    : FBin isnull=QMARK? O_ANGLE_BRACKET len=numericParameter C_ANGLE_BRACKET #fixedBinary
+    : FBin isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #fixedBinary
     ;
 
 decimalType
-    : Dec isnull=QMARK? (O_ANGLE_BRACKET precision=numericParameter COMMA scale=numericParameter C_ANGLE_BRACKET)?  #decimal
+    : Dec isnull=QMark? (OAngleBracket precision=numericParameter Comma scale=numericParameter CAngleBracket)?  #decimal
     ;
 
 precisionTimestampType
-    : PTs isnull=QMARK? O_ANGLE_BRACKET precision=numericParameter C_ANGLE_BRACKET #precisionTimestamp
+    : PTs isnull=QMark? OAngleBracket precision=numericParameter CAngleBracket #precisionTimestamp
     ;
 
 precisionTimestampTZType
-    : PTsTZ isnull=QMARK? O_ANGLE_BRACKET precision=numericParameter C_ANGLE_BRACKET #precisionTimestampTZ
+    : PTsTZ isnull=QMark? OAngleBracket precision=numericParameter CAngleBracket #precisionTimestampTZ
     ;
 
 parameterizedType
@@ -205,12 +205,12 @@ substraitError
     ;
 
 func_option
-    : option_name COLON option_value
+    : option_name Colon option_value
     ;
 
 option_name
     : OVERFLOW | ROUNDING
-    | IDENTIFIER
+    | Identifier
     ;
 
 option_value
@@ -218,5 +218,5 @@ option_value
     ;
 
 func_options
-    : func_option (COMMA func_option)*
+    : func_option (Comma func_option)*
     ;
