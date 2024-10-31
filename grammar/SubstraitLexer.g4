@@ -1,5 +1,9 @@
 lexer grammar SubstraitLexer;
 
+options {
+    caseInsensitive = true;
+}
+
 // Whitespace and comment handling
 LineComment   : '//' ~[\r\n]* -> channel(HIDDEN) ;
 BlockComment  : ( '/*' ( ~'*' | '*'+ ~[*/] ) '*'* '*/' ) -> channel(HIDDEN) ;
@@ -8,91 +12,59 @@ Whitespace    : [ \t\r]+ -> channel(HIDDEN) ;
 // Substrait is case-insensitive, ANTLR is not. So, in order to define our
 // keywords in a somewhat readable way, we have to define these shortcuts.
 
-fragment A : [aA];
-fragment B : [bB];
-fragment C : [cC];
-fragment D : [dD];
-fragment E : [eE];
-fragment F : [fF];
-fragment G : [gG];
-fragment H : [hH];
-fragment I : [iI];
-fragment J : [jJ];
-fragment K : [kK];
-fragment L : [lL];
-fragment M : [mM];
-fragment N : [nN];
-fragment O : [oO];
-fragment P : [pP];
-fragment Q : [qQ];
-fragment R : [rR];
-fragment S : [sS];
-fragment T : [tT];
-fragment U : [uU];
-fragment V : [vV];
-fragment W : [wW];
-fragment X : [xX];
-fragment Y : [yY];
-fragment Z : [zZ];
-
 fragment DIGIT: [0-9];
 
-fragment INTEGER
-  : '0'
-  | [1-9] [0-9]*
-  ;
-
 // Syntactic keywords.
-If       : I F;
-Then     : T H E N;
-Else     : E L S E;
+If       : 'IF';
+Then     : 'THEN';
+Else     : 'ELSE';
 
 // TYPES
-Boolean  : B O O L E A N;
-I8       : I '8';
-I16      : I '16';
-I32      : I '32';
-I64      : I '64';
-FP32     : F P '32';
-FP64     : F P '64';
-String   : S T R I N G;
-Binary   : B I N A R Y;
-Timestamp: T I M E S T A M P;
-Timestamp_TZ: T I M E S T A M P '_' T Z;
-Date     : D A T E;
-Time     : T I M E;
-Interval_Year: I N T E R V A L '_' Y E A R;
-Interval_Day: I N T E R V A L '_' D A Y;
-UUID     : U U I D;
-Decimal  : D E C I M A L;
-Precision_Timestamp: P R E C I S I O N '_' T I M E S T A M P;
-Precision_Timestamp_TZ: P R E C I S I O N '_' T I M E S T A M P '_' T Z;
-FixedChar: F I X E D C H A R;
-VarChar  : V A R C H A R;
-FixedBinary: F I X E D B I N A R Y;
-Struct   : S T R U C T;
-NStruct  : N S T R U C T;
-List     : L I S T;
-Map      : M A P;
-UserDefined: U '!';
+Boolean  : 'BOOLEAN';
+I8       : 'I8';
+I16      : 'I16';
+I32      : 'I32';
+I64      : 'I64';
+FP32     : 'FP32';
+FP64     : 'FP64';
+String   : 'STRING';
+Binary   : 'BINARY';
+Timestamp: 'TIMESTAMP';
+Timestamp_TZ: 'TIMESTAMP_TZ';
+Date     : 'DATE';
+Time     : 'TIME';
+Interval_Year: 'INTERVAL_YEAR';
+Interval_Day: 'INTERVAL_DAY';
+UUID     : 'UUID';
+Decimal  : 'DECIMAL';
+Precision_Timestamp: 'PRECISION_TIMESTAMP';
+Precision_Timestamp_TZ: 'PRECISION_TIMESTAMP_TZ';
+FixedChar: 'FIXEDCHAR';
+VarChar  : 'VARCHAR';
+FixedBinary: 'FIXEDBINARY';
+Struct   : 'STRUCT';
+NStruct  : 'NSTRUCT';
+List     : 'LIST';
+Map      : 'MAP';
+UserDefined: 'U!';
 
 // short names for types
-Bool: B O O L;
-Str: S T R;
-VBin: V B I N;
-Ts: T S;
-TsTZ: T S T Z;
-IYear: I Y E A R;
-IDay: I D A Y;
-Dec: D E C;
-PTs: P T S;
-PTsTZ: P T S T Z;
-FChar: F C H A R;
-VChar: V C H A R;
-FBin: F B I N;
+Bool: 'BOOL';
+Str: 'STR';
+VBin: 'VBIN';
+Ts: 'TS';
+TsTZ: 'TSTZ';
+IYear: 'IYEAR';
+IDay: 'IDAY';
+Dec: 'DEC';
+PTs: 'PTS';
+PTsTZ: 'PTSTZ';
+FChar: 'FCHAR';
+VChar: 'VCHAR';
+FBin: 'FBIN';
 
-Any: A N Y;
-AnyVar: A N Y [0-9];
+Any: 'ANY';
+AnyVar: Any [0-9];
 
 DoubleColon: '::';
 
@@ -127,8 +99,8 @@ Dot: '.';
 
 
 // OPERATIONS
-And      : A N D;
-Or       : O R;
+And      : 'AND';
+Or       : 'OR';
 Assign   : ':=';
 
 
@@ -147,7 +119,7 @@ Number
   ;
 
 Identifier
-  : ('a'..'z' | 'A'..'Z' | '_' | '$') ('a'..'z' | 'A'..'Z' | '_' | '$' | Digit)*
+  : ('A'..'Z' | '_' | '$') ('A'..'Z' | '_' | '$' | Digit)*
   ;
 
 Newline

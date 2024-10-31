@@ -1,5 +1,9 @@
 grammar SubstraitType;
 
+options {
+    caseInsensitive = true;
+}
+
 import SubstraitLexer;
 
 startRule: expr EOF;
@@ -46,9 +50,9 @@ numericParameter
   ;
 
 anyType
-    : Any isnull=QMark?
-    | AnyVar isnull=QMark?
-    ;
+  : Any isnull=QMark?
+  | AnyVar isnull=QMark?
+  ;
 
 typeDef
   : scalarType isnull=QMark?
