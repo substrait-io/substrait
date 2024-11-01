@@ -64,8 +64,8 @@ expr
   : OParen expr CParen                                                                      #ParenExpression
   | Identifier Eq expr Newline+ (Identifier Eq expr Newline+)* finalType=typeDef Newline*   #MultilineDefinition
   | typeDef                                                                                 #TypeLiteral
-  | number=Number                                                                           #LiteralNumber
-  | identifier=Identifier isnull=QMark?                                                     #ParameterName
+  | Number                                                                                  #LiteralNumber
+  | Identifier isnull=QMark?                                                                #ParameterName
   | Identifier OParen (expr (Comma expr)*)? CParen                                          #FunctionCall
   | left=expr op=(And | Or | Plus | Minus | Lt | Gt | Eq | Ne |
         Lte | Gte | Asterisk | ForwardSlash) right=expr                                     #BinaryExpr

@@ -9,9 +9,6 @@ LineComment   : '//' ~[\r\n]* -> channel(HIDDEN) ;
 BlockComment  : ( '/*' ( ~'*' | '*'+ ~[*/] ) '*'* '*/' ) -> channel(HIDDEN) ;
 Whitespace    : [ \t\r]+ -> channel(HIDDEN) ;
 
-// Substrait is case-insensitive, ANTLR is not. So, in order to define our
-// keywords in a somewhat readable way, we have to define these shortcuts.
-
 fragment DIGIT: [0-9];
 
 // Syntactic keywords.
