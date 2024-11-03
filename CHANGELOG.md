@@ -1,6 +1,21 @@
 Release Notes
 ---
 
+## [0.59.0](https://github.com/substrait-io/substrait/compare/v0.58.0...v0.59.0) (2024-11-03)
+
+### ⚠ BREAKING CHANGES
+
+* changes the message type for Expressions field in
+VirtualTable
+
+### Features
+
+* add antlr grammar for types ([#730](https://github.com/substrait-io/substrait/issues/730)) ([820085f](https://github.com/substrait-io/substrait/commit/820085fc913692147d0c8fdfcbf289fb8b348835))
+
+### Bug Fixes
+
+* virtualTable expression should represent a row of expression ([#727](https://github.com/substrait-io/substrait/issues/727)) ([a2df42c](https://github.com/substrait-io/substrait/commit/a2df42c76282854d8674aa664d69dacd43630551))
+
 ## [0.58.0](https://github.com/substrait-io/substrait/compare/v0.57.1...v0.58.0) (2024-10-13)
 
 ### Features
