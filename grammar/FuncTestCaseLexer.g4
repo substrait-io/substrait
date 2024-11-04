@@ -8,8 +8,9 @@ options {
 
 Whitespace    : [ \t\n\r]+ -> channel(HIDDEN) ;
 
-SubstraitScalarTest: '### SUBSTRAIT_SCALAR_TEST:';
-SubstraitInclude: '### SUBSTRAIT_INCLUDE:';
+TripleHash: '###';
+SubstraitScalarTest: 'SUBSTRAIT_SCALAR_TEST';
+SubstraitInclude: 'SUBSTRAIT_INCLUDE';
 
 FormatVersion
     : 'v' DIGIT+ ('.' DIGIT+)?
@@ -21,8 +22,8 @@ DescriptionLine
 
 ErrorResult: '<!ERROR>';
 UndefineResult: '<!UNDEFINED>';
-Overflow: 'overlfow';
-Rounding: 'rounding';
+Overflow: 'OVERLFOW';
+Rounding: 'ROUNDING';
 Error: 'ERROR';
 Saturate: 'SATURATE';
 Silent: 'SILENT';

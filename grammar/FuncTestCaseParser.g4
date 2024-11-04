@@ -15,11 +15,11 @@ header
     ;
 
 version
-    : SubstraitScalarTest FormatVersion
+    : TripleHash SubstraitScalarTest Colon FormatVersion
     ;
 
 include
-    : SubstraitInclude StringLiteral (Comma StringLiteral)*
+    : TripleHash SubstraitInclude Colon StringLiteral (Comma StringLiteral)*
     ;
 
 testGroupDescription
