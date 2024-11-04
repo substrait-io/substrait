@@ -1,6 +1,7 @@
 parser grammar FuncTestCaseParser;
 
 options {
+    caseInsensitive = true;
     tokenVocab=SubstraitLexer;
     tokenVocab=FuncTestCaseLexer;
 }
@@ -14,15 +15,15 @@ header
     ;
 
 version
-    : SUBSTRAIT_SCALAR_TEST FORMAT_VERSION
+    : SubstraitScalarTest FormatVersion
     ;
 
 include
-    : SUBSTRAIT_INCLUDE STRING_LITERAL (Comma STRING_LITERAL)*
+    : SubstraitInclude StringLiteral (Comma StringLiteral)*
     ;
 
 testGroupDescription
-    : DESCRIPTION_LINE
+    : DescriptionLine
     ;
 
 testCase
@@ -58,18 +59,22 @@ argument
     ;
 
 numericLiteral
-    : DECIMAL_LITERAL | INTEGER_LITERAL | FLOAT_LITERAL
+    : DecimalLiteral | IntegerLiteral | floatLiteral
     ;
 
-nullArg: NULL_LITERAL DoubleColon datatype;
+floatLiteral
+    : FloatLiteral | NaN
+    ;
 
-i8Arg: INTEGER_LITERAL DoubleColon I8;
+nullArg: NullLiteral DoubleColon datatype;
 
-i16Arg: INTEGER_LITERAL DoubleColon I16;
+i8Arg: IntegerLiteral DoubleColon I8;
 
-i32Arg: INTEGER_LITERAL DoubleColon I32;
+i16Arg: IntegerLiteral DoubleColon I16;
 
-i64Arg: INTEGER_LITERAL DoubleColon I64;
+i32Arg: IntegerLiteral DoubleColon I32;
+
+i64Arg: IntegerLiteral DoubleColon I64;
 
 fp32Arg
     : numericLiteral DoubleColon FP32
@@ -84,53 +89,53 @@ decimalArg
     ;
 
 booleanArg
-    : BOOLEAN_LITERAL DoubleColon Bool
+    : BooleanLiteral DoubleColon Bool
     ;
 
 stringArg
-    : STRING_LITERAL DoubleColon Str
+    : StringLiteral DoubleColon Str
     ;
 
 dateArg
-    : DATE_LITERAL DoubleColon Date
+    : DateLiteral DoubleColon Date
     ;
 
 timeArg
-    : TIME_LITERAL DoubleColon Time
+    : TimeLiteral DoubleColon Time
     ;
 
 timestampArg
-    : TIMESTAMP_LITERAL DoubleColon Ts
+    : TimestampLiteral DoubleColon Ts
     ;
 
 timestampTzArg
-    : TIMESTAMP_TZ_LITERAL DoubleColon TsTZ
+    : TimestampTzLiteral DoubleColon TsTZ
     ;
 
 intervalYearArg
-    : INTERVAL_YEAR_LITERAL DoubleColon IYear
+    : IntervalYearLiteral DoubleColon IYear
     ;
 
 intervalDayArg
-    : INTERVAL_DAY_LITERAL DoubleColon IDay
+    : IntervalDayLiteral DoubleColon IDay
     ;
 
 intervalYearLiteral
-    : PERIOD_PREFIX (years=INTEGER_LITERAL YEAR_SUFFIX) (months=INTEGER_LITERAL M_SUFFIX)?
-    | PERIOD_PREFIX (months=INTEGER_LITERAL M_SUFFIX)
+    : PeriodPrefix (years=IntegerLiteral YearPrefix) (months=IntegerLiteral MSuffix)?
+    | PeriodPrefix (months=IntegerLiteral MSuffix)
     ;
 
 intervalDayLiteral
-    : PERIOD_PREFIX (days=INTEGER_LITERAL DAY_SUFFIX) (TIME_PREFIX timeInterval)?
-    | PERIOD_PREFIX TIME_PREFIX timeInterval
+    : PeriodPrefix (days=IntegerLiteral DaySuffix) (TimePrefix timeInterval)?
+    | PeriodPrefix TimePrefix timeInterval
     ;
 
 timeInterval
-    : hours=INTEGER_LITERAL HOUR_SUFFIX (minutes=INTEGER_LITERAL M_SUFFIX)? (seconds=INTEGER_LITERAL SECOND_SUFFIX)?
-        (fractionalSeconds=INTEGER_LITERAL FRACTIONAL_SECOND_SUFFIX)?
-    | minutes=INTEGER_LITERAL M_SUFFIX (seconds=INTEGER_LITERAL SECOND_SUFFIX)? (fractionalSeconds=INTEGER_LITERAL FRACTIONAL_SECOND_SUFFIX)?
-    | seconds=INTEGER_LITERAL SECOND_SUFFIX (fractionalSeconds=INTEGER_LITERAL FRACTIONAL_SECOND_SUFFIX)?
-    | fractionalSeconds=INTEGER_LITERAL FRACTIONAL_SECOND_SUFFIX
+    : hours=IntegerLiteral HourSuffix (minutes=IntegerLiteral MSuffix)? (seconds=IntegerLiteral SecondSuffix)?
+        (fractionalSeconds=IntegerLiteral FractionalSecondSuffix)?
+    | minutes=IntegerLiteral MSuffix (seconds=IntegerLiteral SecondSuffix)? (fractionalSeconds=IntegerLiteral FractionalSecondSuffix)?
+    | seconds=IntegerLiteral SecondSuffix (fractionalSeconds=IntegerLiteral FractionalSecondSuffix)?
+    | fractionalSeconds=IntegerLiteral FractionalSecondSuffix
     ;
 
 datatype
@@ -197,11 +202,11 @@ parameterizedType
   ;
 
 numericParameter
-  : INTEGER_LITERAL #integerLiteral
+  : IntegerLiteral #integerLiteral
   ;
 
 substraitError
-    : ERROR_RESULT | UNDEFINED_RESULT
+    : ErrorResult | UndefineResult
     ;
 
 func_option
@@ -209,12 +214,12 @@ func_option
     ;
 
 option_name
-    : OVERFLOW | ROUNDING
+    : Overflow | Rounding
     | Identifier
     ;
 
 option_value
-    : ERROR | SATURATE | SILENT | TIE_TO_EVEN | NAN
+    : Error | Saturate | Silent | TieToEven | NaN
     ;
 
 func_options

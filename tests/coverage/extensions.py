@@ -2,7 +2,7 @@
 import os
 import yaml
 
-from tests.coverage.antlr_parser.SubstraitLexer import SubstraitLexer
+from tests.coverage.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
 
 enable_debug = False
 
@@ -17,43 +17,42 @@ def debug(msg):
 
 
 def substrait_type_str(rule_num):
-    return SubstraitLexer.symbolicNames[rule_num].lower()
+    return FuncTestCaseLexer.symbolicNames[rule_num].lower()
 
 
 def build_type_to_short_type():
     rule_map = {
-        SubstraitLexer.I8: SubstraitLexer.I8,
-        SubstraitLexer.I16: SubstraitLexer.I16,
-        SubstraitLexer.I32: SubstraitLexer.I32,
-        SubstraitLexer.I64: SubstraitLexer.I64,
-        SubstraitLexer.FP32: SubstraitLexer.FP32,
-        SubstraitLexer.FP64: SubstraitLexer.FP64,
-        SubstraitLexer.String: SubstraitLexer.Str,
-        SubstraitLexer.Binary: SubstraitLexer.VBin,
-        SubstraitLexer.Boolean: SubstraitLexer.Bool,
-        SubstraitLexer.Timestamp: SubstraitLexer.Ts,
-        SubstraitLexer.Timestamp_TZ: SubstraitLexer.TsTZ,
-        SubstraitLexer.Date: SubstraitLexer.Date,
-        SubstraitLexer.Time: SubstraitLexer.Time,
-        SubstraitLexer.Interval_Year: SubstraitLexer.IYear,
-        SubstraitLexer.Interval_Day: SubstraitLexer.IDay,
-        SubstraitLexer.UUID: SubstraitLexer.UUID,
-        SubstraitLexer.FixedChar: SubstraitLexer.FChar,
-        SubstraitLexer.VarChar: SubstraitLexer.VChar,
-        SubstraitLexer.FixedBinary: SubstraitLexer.FBin,
-        SubstraitLexer.Decimal: SubstraitLexer.Dec,
-        SubstraitLexer.Precision_Timestamp: SubstraitLexer.PTs,
-        SubstraitLexer.Precision_Timestamp_TZ: SubstraitLexer.PTsTZ,
-        SubstraitLexer.Struct: SubstraitLexer.Struct,
-        SubstraitLexer.List: SubstraitLexer.List,
-        SubstraitLexer.Map: SubstraitLexer.Map,
-        SubstraitLexer.ANY: SubstraitLexer.ANY,
-        SubstraitLexer.Geometry: SubstraitLexer.Geometry,
+        FuncTestCaseLexer.I8: FuncTestCaseLexer.I8,
+        FuncTestCaseLexer.I16: FuncTestCaseLexer.I16,
+        FuncTestCaseLexer.I32: FuncTestCaseLexer.I32,
+        FuncTestCaseLexer.I64: FuncTestCaseLexer.I64,
+        FuncTestCaseLexer.FP32: FuncTestCaseLexer.FP32,
+        FuncTestCaseLexer.FP64: FuncTestCaseLexer.FP64,
+        FuncTestCaseLexer.String: FuncTestCaseLexer.Str,
+        FuncTestCaseLexer.Binary: FuncTestCaseLexer.VBin,
+        FuncTestCaseLexer.Boolean: FuncTestCaseLexer.Bool,
+        FuncTestCaseLexer.Timestamp: FuncTestCaseLexer.Ts,
+        FuncTestCaseLexer.Timestamp_TZ: FuncTestCaseLexer.TsTZ,
+        FuncTestCaseLexer.Date: FuncTestCaseLexer.Date,
+        FuncTestCaseLexer.Time: FuncTestCaseLexer.Time,
+        FuncTestCaseLexer.Interval_Year: FuncTestCaseLexer.IYear,
+        FuncTestCaseLexer.Interval_Day: FuncTestCaseLexer.IDay,
+        FuncTestCaseLexer.UUID: FuncTestCaseLexer.UUID,
+        FuncTestCaseLexer.FixedChar: FuncTestCaseLexer.FChar,
+        FuncTestCaseLexer.VarChar: FuncTestCaseLexer.VChar,
+        FuncTestCaseLexer.FixedBinary: FuncTestCaseLexer.FBin,
+        FuncTestCaseLexer.Decimal: FuncTestCaseLexer.Dec,
+        FuncTestCaseLexer.Precision_Timestamp: FuncTestCaseLexer.PTs,
+        FuncTestCaseLexer.Precision_Timestamp_TZ: FuncTestCaseLexer.PTsTZ,
+        FuncTestCaseLexer.Struct: FuncTestCaseLexer.Struct,
+        FuncTestCaseLexer.List: FuncTestCaseLexer.List,
+        FuncTestCaseLexer.Map: FuncTestCaseLexer.Map,
+        FuncTestCaseLexer.Any: FuncTestCaseLexer.Any,
     }
     to_short_type = {
         substrait_type_str(k): substrait_type_str(v) for k, v in rule_map.items()
     }
-    any_type = substrait_type_str(SubstraitLexer.ANY)
+    any_type = substrait_type_str(FuncTestCaseLexer.Any)
     for i in range(1, 3):
         to_short_type[f"{any_type}{i}"] = f"{any_type}{i}"
     return to_short_type

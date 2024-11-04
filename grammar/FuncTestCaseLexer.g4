@@ -2,108 +2,102 @@ lexer grammar FuncTestCaseLexer;
 
 import SubstraitLexer;
 
-SUBSTRAIT_SCALAR_TEST
-    : '### SUBSTRAIT_SCALAR_TEST:'
-    ;
+options {
+    caseInsensitive = true;
+}
 
-FORMAT_VERSION
+Whitespace    : [ \t\n\r]+ -> channel(HIDDEN) ;
+
+SubstraitScalarTest: '### SUBSTRAIT_SCALAR_TEST:';
+SubstraitInclude: '### SUBSTRAIT_INCLUDE:';
+
+FormatVersion
     : 'v' DIGIT+ ('.' DIGIT+)?
     ;
 
-SUBSTRAIT_INCLUDE
-    : '### SUBSTRAIT_INCLUDE:'
-    ;
-
-DESCRIPTION_LINE
+DescriptionLine
     : '# ' ~[\r\n]* '\r'? '\n'
     ;
 
-ERROR_RESULT
-    : '<!ERROR>'
+ErrorResult: '<!ERROR>';
+UndefineResult: '<!UNDEFINED>';
+Overflow: 'overlfow';
+Rounding: 'rounding';
+Error: 'ERROR';
+Saturate: 'SATURATE';
+Silent: 'SILENT';
+TieToEven: 'TIE_TO_EVEN';
+NaN: 'NAN';
+
+IntegerLiteral
+    : [+-]? Int
     ;
 
-UNDEFINED_RESULT
-    : '<!UNDEFINED>'
-    ;
-
-
-OVERFLOW: 'overlfow';
-ROUNDING: 'rounding';
-ERROR: 'ERROR';
-SATURATE: 'SATURATE';
-SILENT: 'SILENT';
-TIE_TO_EVEN: 'TIE_TO_EVEN';
-NAN: 'NAN';
-
-
-INTEGER_LITERAL
-    : [+-]? INTEGER
-    ;
-
-DECIMAL_LITERAL
+DecimalLiteral
     : [+-]? [0-9]+ ('.' [0-9]+)?
     ;
 
-FLOAT_LITERAL
-    : [+-]? [0-9]+ ('.' [0-9]*)? ( [eE] [+-]? [0-9]+ )?
+FloatLiteral
+    : [+-]? [0-9]+ ('.' [0-9]*)? ( 'E' [+-]? [0-9]+ )?
     | [+-]? 'inf'
-    | 'nan' | 'NaN'
     | 'snan'
     ;
 
-BOOLEAN_LITERAL
+BooleanLiteral
     : 'true' | 'false'
     ;
 
 fragment FourDigits: [0-9][0-9][0-9][0-9];
 fragment TwoDigits: [0-9][0-9];
 
-TIMESTAMP_TZ_LITERAL
+TimestampTzLiteral
     : '\'' FourDigits '-' TwoDigits '-' TwoDigits 'T' TwoDigits ':' TwoDigits ':' TwoDigits ( '.' [0-9]+ )?
         [+-] TwoDigits ':' TwoDigits '\''
     ;
 
-TIMESTAMP_LITERAL
+TimestampLiteral
     : '\'' FourDigits '-' TwoDigits '-' TwoDigits 'T' TwoDigits ':' TwoDigits ':' TwoDigits ( '.' [0-9]+ )? '\''
     ;
 
-TIME_LITERAL
+TimeLiteral
     : '\'' TwoDigits ':' TwoDigits ':' TwoDigits ( '.' [0-9]+ )? '\''
     ;
 
-DATE_LITERAL
+DateLiteral
     : '\'' FourDigits '-' TwoDigits '-' TwoDigits '\''
     ;
 
-PERIOD_PREFIX: 'P';
-TIME_PREFIX: 'T';
-YEAR_SUFFIX: 'Y';
-M_SUFFIX: 'M';  // used for both months and minutes
-DAY_SUFFIX: 'D';
-HOUR_SUFFIX: 'H';
-SECOND_SUFFIX: 'S';
-FRACTIONAL_SECOND_SUFFIX: 'F';
+PeriodPrefix: 'P';
+TimePrefix: 'T';
+YearPrefix: 'Y';
+MSuffix: 'M';  // used for both months and minutes
+DaySuffix: 'D';
+HourSuffix: 'H';
+SecondSuffix: 'S';
+FractionalSecondSuffix: 'F';
+OAngleBracket: Lt;
+CAngleBracket: Gt;
 
-INTERVAL_YEAR_LITERAL
-    : '\'' PERIOD_PREFIX INTEGER_LITERAL YEAR_SUFFIX (INTEGER_LITERAL M_SUFFIX)? '\''
-    | '\'' PERIOD_PREFIX INTEGER_LITERAL M_SUFFIX '\''
+IntervalYearLiteral
+    : '\'' PeriodPrefix IntegerLiteral YearPrefix (IntegerLiteral MSuffix)? '\''
+    | '\'' PeriodPrefix IntegerLiteral MSuffix '\''
     ;
 
-INTERVAL_DAY_LITERAL
-    : '\'' PERIOD_PREFIX INTEGER_LITERAL DAY_SUFFIX (TIME_PREFIX TIME_INTERVAL)? '\''
-    | '\'' PERIOD_PREFIX TIME_PREFIX TIME_INTERVAL '\''
+IntervalDayLiteral
+    : '\'' PeriodPrefix IntegerLiteral DaySuffix (TimePrefix TimeInterval)? '\''
+    | '\'' PeriodPrefix TimePrefix TimeInterval '\''
     ;
 
-fragment TIME_INTERVAL
-    : INTEGER_LITERAL HOUR_SUFFIX (INTEGER_LITERAL M_SUFFIX)? (INTEGER_LITERAL SECOND_SUFFIX)?
-        (INTEGER_LITERAL FRACTIONAL_SECOND_SUFFIX)?
-    | INTEGER_LITERAL M_SUFFIX (INTEGER_LITERAL SECOND_SUFFIX)? (INTEGER_LITERAL FRACTIONAL_SECOND_SUFFIX)?
-    | INTEGER_LITERAL SECOND_SUFFIX (INTEGER_LITERAL FRACTIONAL_SECOND_SUFFIX)?
-    | INTEGER_LITERAL FRACTIONAL_SECOND_SUFFIX
+fragment TimeInterval
+    : IntegerLiteral HourSuffix (IntegerLiteral MSuffix)? (IntegerLiteral SecondSuffix)?
+        (IntegerLiteral FractionalSecondSuffix)?
+    | IntegerLiteral MSuffix (IntegerLiteral SecondSuffix)? (IntegerLiteral FractionalSecondSuffix)?
+    | IntegerLiteral SecondSuffix (IntegerLiteral FractionalSecondSuffix)?
+    | IntegerLiteral FractionalSecondSuffix
     ;
 
-NULL_LITERAL: 'null';
+NullLiteral: 'null';
 
-STRING_LITERAL
+StringLiteral
     : '\'' ('\\' . | '\'\'' | ~['\\])* '\''
     ;

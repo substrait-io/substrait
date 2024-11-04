@@ -53,9 +53,10 @@ def test_parse_decimal_example():
     tests = """# basic
 power(8::dec<38,0>, 2::dec<38, 0>) = 64::fp64
 power(1.0::dec<38, 0>, -1.0::dec<38, 0>) = 1.0::fp64
+power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
 """
     test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 2
+    assert len(test_file.testcases) == 3
     assert test_file.testcases[0].func_name == "power"
     assert (
         test_file.testcases[0].base_uri
@@ -67,18 +68,40 @@ power(1.0::dec<38, 0>, -1.0::dec<38, 0>) = 1.0::fp64
     assert test_file.testcases[0].args[1] == CaseLiteral("2", "dec<38,0>")
 
 
-def test_parse_file():
+def test_parse_decimal_example_with_nan():
+    header = make_header("v1.0", "extensions/functions_arithmetic_decimal.yaml")
+    tests = """# basic
+power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "power"
+    assert (
+        test_file.testcases[0].base_uri
+        == "extensions/functions_arithmetic_decimal.yaml"
+    )
+    assert test_file.testcases[0].group.name == "basic"
+    assert test_file.testcases[0].result == CaseLiteral("nan", "fp64")
+    assert test_file.testcases[0].args[0] == CaseLiteral("-1", "dec")
+    assert test_file.testcases[0].args[1] == CaseLiteral("0.5", "dec<38,1>")
+
+
+def test_parse_file_add():
     test_file = parse_one_file("../cases/arithmetic/add.test")
     assert len(test_file.testcases) == 15
     assert test_file.testcases[0].func_name == "add"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
     assert test_file.include == "/extensions/functions_arithmetic.yaml"
 
+
+def test_parse_file_lt_datetime():
     test_file = parse_one_file("../cases/datetime/lt_datetime.test")
     assert len(test_file.testcases) == 13
     assert test_file.testcases[0].func_name == "lt"
     assert test_file.testcases[0].base_uri == "/extensions/functions_datetime.yaml"
 
+
+def test_parse_file_power_decimal():
     test_file = parse_one_file("../cases/arithmetic_decimal/power.test")
     assert len(test_file.testcases) == 9
     assert test_file.testcases[0].func_name == "power"

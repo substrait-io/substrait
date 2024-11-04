@@ -20,12 +20,12 @@ class CaseLiteral:
     type: str
 
     def get_base_type(self):
-        type = self.type
-        if "<" in type:
-            type = type[: type.find("<")]
-        if type.endswith("?"):
-            return type[:-1]
-        return type
+        type_str = self.type
+        if "<" in type_str:
+            type_str = type_str[: type_str.find("<")]
+        if type_str.endswith("?"):
+            return type_str[:-1]
+        return type_str
 
 
 @dataclass

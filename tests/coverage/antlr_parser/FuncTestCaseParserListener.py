@@ -1,6 +1,5 @@
-# SPDX-License-Identifier: Apache-2.0
 # Generated from FuncTestCaseParser.g4 by ANTLR 4.13.2
-from antlr4 import ParseTreeListener
+from antlr4 import *
 
 if "." in __name__:
     from .FuncTestCaseParser import FuncTestCaseParser
@@ -100,6 +99,14 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#numericLiteral.
     def exitNumericLiteral(self, ctx: FuncTestCaseParser.NumericLiteralContext):
+        pass
+
+    # Enter a parse tree produced by FuncTestCaseParser#floatLiteral.
+    def enterFloatLiteral(self, ctx: FuncTestCaseParser.FloatLiteralContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#floatLiteral.
+    def exitFloatLiteral(self, ctx: FuncTestCaseParser.FloatLiteralContext):
         pass
 
     # Enter a parse tree produced by FuncTestCaseParser#nullArg.

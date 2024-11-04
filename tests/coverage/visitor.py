@@ -33,16 +33,16 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return version, include
 
     def visitVersion(self, ctx: FuncTestCaseParser.VersionContext):
-        return ctx.FORMAT_VERSION().getText()
+        return ctx.FormatVersion().getText()
 
     def visitInclude(self, ctx: FuncTestCaseParser.IncludeContext):
         # TODO handle multiple includes
-        return ctx.STRING_LITERAL(0).getText().strip("'")
+        return ctx.StringLiteral(0).getText().strip("'")
 
     def visitTestGroupDescription(
         self, ctx: FuncTestCaseParser.TestGroupDescriptionContext
     ):
-        group = ctx.DESCRIPTION_LINE().getText().strip("#").strip()
+        group = ctx.DescriptionLine().getText().strip("#").strip()
         return CaseGroup(group, "")
 
     def visitTestGroup(self, ctx: FuncTestCaseParser.TestGroupContext):
@@ -62,7 +62,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.func_options() is not None:
             options = self.visitFunc_options(ctx.func_options())
         return TestCase(
-            func_name=ctx.IDENTIFIER().getText(),
+            func_name=ctx.Identifier().getText(),
             base_uri="",
             group=None,
             options=options,
@@ -126,27 +126,32 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return CaseLiteral(value="unknown_value", type="unknown_type")
 
     def visitNumericLiteral(self, ctx: FuncTestCaseParser.NumericLiteralContext):
-        if ctx.INTEGER_LITERAL() is not None:
-            return ctx.INTEGER_LITERAL().getText()
-        if ctx.DECIMAL_LITERAL() is not None:
-            return ctx.DECIMAL_LITERAL().getText()
-        return ctx.FLOAT_LITERAL
+        if ctx.IntegerLiteral() is not None:
+            return ctx.IntegerLiteral().getText()
+        if ctx.DecimalLiteral() is not None:
+            return ctx.DecimalLiteral().getText()
+        return self.visitFloatLiteral(ctx.floatLiteral())
+
+    def visitFloatLiteral(self, ctx: FuncTestCaseParser.FloatLiteralContext):
+        if ctx.FloatLiteral() is not None:
+            return ctx.FloatLiteral().getText()
+        return ctx.NaN().getText()
 
     def visitNullArg(self, ctx: FuncTestCaseParser.NullArgContext):
         datatype = ctx.datatype().getText()
         return CaseLiteral(value=None, type=datatype)
 
     def visitI8Arg(self, ctx: FuncTestCaseParser.I8ArgContext):
-        return CaseLiteral(value=ctx.INTEGER_LITERAL().getText(), type="i8")
+        return CaseLiteral(value=ctx.IntegerLiteral().getText(), type="i8")
 
     def visitI16Arg(self, ctx: FuncTestCaseParser.I16ArgContext):
-        return CaseLiteral(value=ctx.INTEGER_LITERAL().getText(), type="i16")
+        return CaseLiteral(value=ctx.IntegerLiteral().getText(), type="i16")
 
     def visitI32Arg(self, ctx: FuncTestCaseParser.I32ArgContext):
-        return CaseLiteral(value=ctx.INTEGER_LITERAL().getText(), type="i32")
+        return CaseLiteral(value=ctx.IntegerLiteral().getText(), type="i32")
 
     def visitI64Arg(self, ctx: FuncTestCaseParser.I64ArgContext):
-        return CaseLiteral(value=ctx.INTEGER_LITERAL().getText(), type="i64")
+        return CaseLiteral(value=ctx.IntegerLiteral().getText(), type="i64")
 
     def visitFp32Arg(self, ctx: FuncTestCaseParser.Fp32ArgContext):
         # TODO add checks on number of decimal places
@@ -162,10 +167,10 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         )
 
     def visitBooleanArg(self, ctx: FuncTestCaseParser.BooleanArgContext):
-        return CaseLiteral(value=ctx.BOOLEAN_LITERAL().getText(), type="bool")
+        return CaseLiteral(value=ctx.BooleanLiteral().getText(), type="bool")
 
     def visitStringArg(self, ctx: FuncTestCaseParser.StringArgContext):
-        return CaseLiteral(value=ctx.STRING_LITERAL().getText(), type="str")
+        return CaseLiteral(value=ctx.StringLiteral().getText(), type="str")
 
     def visitDecimalArg(self, ctx: FuncTestCaseParser.DecimalArgContext):
         return CaseLiteral(
@@ -174,29 +179,27 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         )
 
     def visitDateArg(self, ctx: FuncTestCaseParser.DateArgContext):
-        return CaseLiteral(value=ctx.DATE_LITERAL().getText().strip("'"), type="date")
+        return CaseLiteral(value=ctx.DateLiteral().getText().strip("'"), type="date")
 
     def visitTimeArg(self, ctx: FuncTestCaseParser.TimeArgContext):
-        return CaseLiteral(value=ctx.TIME_LITERAL().getText().strip("'"), type="time")
+        return CaseLiteral(value=ctx.TimeLiteral().getText().strip("'"), type="time")
 
     def visitTimestampArg(self, ctx: FuncTestCaseParser.TimestampArgContext):
-        return CaseLiteral(
-            value=ctx.TIMESTAMP_LITERAL().getText().strip("'"), type="ts"
-        )
+        return CaseLiteral(value=ctx.TimestampLiteral().getText().strip("'"), type="ts")
 
     def visitTimestampTzArg(self, ctx: FuncTestCaseParser.TimestampTzArgContext):
         return CaseLiteral(
-            value=ctx.TIMESTAMP_TZ_LITERAL().getText().strip("'"), type="tstz"
+            value=ctx.TimestampTzLiteral().getText().strip("'"), type="tstz"
         )
 
     def visitIntervalDayArg(self, ctx: FuncTestCaseParser.IntervalDayArgContext):
         return CaseLiteral(
-            value=ctx.INTERVAL_DAY_LITERAL().getText().strip("'"), type="iday"
+            value=ctx.IntervalDayLiteral().getText().strip("'"), type="iday"
         )
 
     def visitIntervalYearArg(self, ctx: FuncTestCaseParser.IntervalYearArgContext):
         return CaseLiteral(
-            value=ctx.INTERVAL_YEAR_LITERAL().getText().strip("'"), type="iyear"
+            value=ctx.IntervalYearLiteral().getText().strip("'"), type="iyear"
         )
 
     def visitResult(self, ctx: FuncTestCaseParser.ResultContext):
@@ -205,8 +208,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return self.visitSubstraitError(ctx.substraitError())
 
     def visitSubstraitError(self, ctx: FuncTestCaseParser.SubstraitErrorContext):
-        if ctx.ERROR_RESULT() is not None:
+        if ctx.ErrorResult() is not None:
             return SubstraitError("error")
-        if ctx.UNDEFINED_RESULT() is not None:
+        if ctx.UndefineResult() is not None:
             return SubstraitError("undefined")
         return SubstraitError("unknown_error")
