@@ -45,8 +45,8 @@ result
 
 argument
     : nullArg
-    | i8Arg | i16Arg | i32Arg | i64Arg
-    | fp32Arg | fp64Arg
+    | intArg
+    | floatArg
     | booleanArg
     | stringArg
     | decimalArg
@@ -68,21 +68,9 @@ floatLiteral
 
 nullArg: NullLiteral DoubleColon datatype;
 
-i8Arg: IntegerLiteral DoubleColon I8;
+intArg: IntegerLiteral DoubleColon (I8 | I16 | I32 | I64);
 
-i16Arg: IntegerLiteral DoubleColon I16;
-
-i32Arg: IntegerLiteral DoubleColon I32;
-
-i64Arg: IntegerLiteral DoubleColon I64;
-
-fp32Arg
-    : numericLiteral DoubleColon FP32
-    ;
-
-fp64Arg
-    : numericLiteral DoubleColon FP64
-    ;
+floatArg: numericLiteral DoubleColon (FP32 | FP64);
 
 decimalArg
     : numericLiteral DoubleColon decimalType

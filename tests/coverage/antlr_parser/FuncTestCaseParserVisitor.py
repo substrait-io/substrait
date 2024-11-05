@@ -65,28 +65,12 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
     def visitNullArg(self, ctx: FuncTestCaseParser.NullArgContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#i8Arg.
-    def visitI8Arg(self, ctx: FuncTestCaseParser.I8ArgContext):
+    # Visit a parse tree produced by FuncTestCaseParser#intArg.
+    def visitIntArg(self, ctx: FuncTestCaseParser.IntArgContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#i16Arg.
-    def visitI16Arg(self, ctx: FuncTestCaseParser.I16ArgContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by FuncTestCaseParser#i32Arg.
-    def visitI32Arg(self, ctx: FuncTestCaseParser.I32ArgContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by FuncTestCaseParser#i64Arg.
-    def visitI64Arg(self, ctx: FuncTestCaseParser.I64ArgContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by FuncTestCaseParser#fp32Arg.
-    def visitFp32Arg(self, ctx: FuncTestCaseParser.Fp32ArgContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by FuncTestCaseParser#fp64Arg.
-    def visitFp64Arg(self, ctx: FuncTestCaseParser.Fp64ArgContext):
+    # Visit a parse tree produced by FuncTestCaseParser#floatArg.
+    def visitFloatArg(self, ctx: FuncTestCaseParser.FloatArgContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by FuncTestCaseParser#decimalArg.

@@ -2,10 +2,27 @@
 import os
 
 from antlr4 import CommonTokenStream, FileStream
+from antlr4.error.ErrorListener import ErrorListener
 
 from tests.coverage.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
 from tests.coverage.antlr_parser.FuncTestCaseParser import FuncTestCaseParser
 from tests.coverage.visitor import TestCaseVisitor
+
+
+class ParseError(Exception):
+    def __init__(self, message="Parsing error occurred"):
+        self.message = message
+        super().__init__(self.message)
+
+
+class ParseErrorListener(ErrorListener):
+    def __init__(self):
+        super(ParseErrorListener, self).__init__()
+        self.errors = []
+
+    def syntaxError(self, recognizer, offending_symbol, line, column, msg, e):
+        error_message = f"Syntax error at line {line}, column {column}: {msg}"
+        self.errors.append(error_message)
 
 
 def parse_stream(input_stream, file_path):
@@ -14,11 +31,16 @@ def parse_stream(input_stream, file_path):
     token_stream = CommonTokenStream(lexer)
     parser = FuncTestCaseParser(token_stream)
 
+    # Add custom error listener
+    error_listener = ParseErrorListener()
+    parser.removeErrorListeners()
+    parser.addErrorListener(error_listener)
+
     tree = parser.doc()  # This is the entry point of testfile parser
     if parser.getNumberOfSyntaxErrors() > 0:
         print(tree.toStringTree(recog=parser))
         print(f"{parser.getNumberOfSyntaxErrors()} Syntax errors found, exiting")
-        return
+        raise ParseError(f"Syntax errors: {error_listener.errors}")
 
     # uncomment below line to see the parse tree for debugging
     # print(tree.toStringTree(recog=parser))

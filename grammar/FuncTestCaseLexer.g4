@@ -22,7 +22,7 @@ DescriptionLine
 
 ErrorResult: '<!ERROR>';
 UndefineResult: '<!UNDEFINED>';
-Overflow: 'OVERLFOW';
+Overflow: 'OVERFLOW';
 Rounding: 'ROUNDING';
 Error: 'ERROR';
 Saturate: 'SATURATE';

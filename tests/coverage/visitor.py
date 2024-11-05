@@ -90,18 +90,10 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return arguments
 
     def visitArgument(self, ctx: FuncTestCaseParser.ArgumentContext):
-        if ctx.i8Arg() is not None:
-            return self.visitI8Arg(ctx.i8Arg())
-        if ctx.i16Arg() is not None:
-            return self.visitI16Arg(ctx.i16Arg())
-        if ctx.i32Arg() is not None:
-            return self.visitI32Arg(ctx.i32Arg())
-        if ctx.i64Arg() is not None:
-            return self.visitI64Arg(ctx.i64Arg())
-        if ctx.fp32Arg() is not None:
-            return self.visitFp32Arg(ctx.fp32Arg())
-        if ctx.fp64Arg() is not None:
-            return self.visitFp64Arg(ctx.fp64Arg())
+        if ctx.intArg() is not None:
+            return self.visitIntArg(ctx.intArg())
+        if ctx.floatArg() is not None:
+            return self.visitFloatArg(ctx.floatArg())
         if ctx.booleanArg() is not None:
             return self.visitBooleanArg(ctx.booleanArg())
         if ctx.stringArg() is not None:
@@ -141,29 +133,23 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         datatype = ctx.datatype().getText()
         return CaseLiteral(value=None, type=datatype)
 
-    def visitI8Arg(self, ctx: FuncTestCaseParser.I8ArgContext):
-        return CaseLiteral(value=ctx.IntegerLiteral().getText(), type="i8")
+    def visitIntArg(self, ctx: FuncTestCaseParser.IntArgContext):
+        type_str = "i8"
+        if ctx.I16() is not None:
+            type_str = "i16"
+        elif ctx.I32() is not None:
+            type_str = "i32"
+        elif ctx.I64() is not None:
+            type_str = "i64"
+        return CaseLiteral(value=ctx.IntegerLiteral().getText(), type=type_str)
 
-    def visitI16Arg(self, ctx: FuncTestCaseParser.I16ArgContext):
-        return CaseLiteral(value=ctx.IntegerLiteral().getText(), type="i16")
-
-    def visitI32Arg(self, ctx: FuncTestCaseParser.I32ArgContext):
-        return CaseLiteral(value=ctx.IntegerLiteral().getText(), type="i32")
-
-    def visitI64Arg(self, ctx: FuncTestCaseParser.I64ArgContext):
-        return CaseLiteral(value=ctx.IntegerLiteral().getText(), type="i64")
-
-    def visitFp32Arg(self, ctx: FuncTestCaseParser.Fp32ArgContext):
+    def visitFloatArg(self, ctx: FuncTestCaseParser.FloatArgContext):
         # TODO add checks on number of decimal places
+        type_str = "fp32"
+        if ctx.FP64() is not None:
+            type_str = "fp64"
         return CaseLiteral(
-            value=self.visitNumericLiteral(ctx.numericLiteral()),
-            type=ctx.FP32().getText().lower(),
-        )
-
-    def visitFp64Arg(self, ctx: FuncTestCaseParser.Fp64ArgContext):
-        return CaseLiteral(
-            value=self.visitNumericLiteral(ctx.numericLiteral()),
-            type=ctx.FP64().getText().lower(),
+            value=self.visitNumericLiteral(ctx.numericLiteral()), type=type_str
         )
 
     def visitBooleanArg(self, ctx: FuncTestCaseParser.BooleanArgContext):

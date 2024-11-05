@@ -118,52 +118,20 @@ class FuncTestCaseParserListener(ParseTreeListener):
     def exitNullArg(self, ctx: FuncTestCaseParser.NullArgContext):
         pass
 
-    # Enter a parse tree produced by FuncTestCaseParser#i8Arg.
-    def enterI8Arg(self, ctx: FuncTestCaseParser.I8ArgContext):
+    # Enter a parse tree produced by FuncTestCaseParser#intArg.
+    def enterIntArg(self, ctx: FuncTestCaseParser.IntArgContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#i8Arg.
-    def exitI8Arg(self, ctx: FuncTestCaseParser.I8ArgContext):
+    # Exit a parse tree produced by FuncTestCaseParser#intArg.
+    def exitIntArg(self, ctx: FuncTestCaseParser.IntArgContext):
         pass
 
-    # Enter a parse tree produced by FuncTestCaseParser#i16Arg.
-    def enterI16Arg(self, ctx: FuncTestCaseParser.I16ArgContext):
+    # Enter a parse tree produced by FuncTestCaseParser#floatArg.
+    def enterFloatArg(self, ctx: FuncTestCaseParser.FloatArgContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#i16Arg.
-    def exitI16Arg(self, ctx: FuncTestCaseParser.I16ArgContext):
-        pass
-
-    # Enter a parse tree produced by FuncTestCaseParser#i32Arg.
-    def enterI32Arg(self, ctx: FuncTestCaseParser.I32ArgContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#i32Arg.
-    def exitI32Arg(self, ctx: FuncTestCaseParser.I32ArgContext):
-        pass
-
-    # Enter a parse tree produced by FuncTestCaseParser#i64Arg.
-    def enterI64Arg(self, ctx: FuncTestCaseParser.I64ArgContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#i64Arg.
-    def exitI64Arg(self, ctx: FuncTestCaseParser.I64ArgContext):
-        pass
-
-    # Enter a parse tree produced by FuncTestCaseParser#fp32Arg.
-    def enterFp32Arg(self, ctx: FuncTestCaseParser.Fp32ArgContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#fp32Arg.
-    def exitFp32Arg(self, ctx: FuncTestCaseParser.Fp32ArgContext):
-        pass
-
-    # Enter a parse tree produced by FuncTestCaseParser#fp64Arg.
-    def enterFp64Arg(self, ctx: FuncTestCaseParser.Fp64ArgContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#fp64Arg.
-    def exitFp64Arg(self, ctx: FuncTestCaseParser.Fp64ArgContext):
+    # Exit a parse tree produced by FuncTestCaseParser#floatArg.
+    def exitFloatArg(self, ctx: FuncTestCaseParser.FloatArgContext):
         pass
 
     # Enter a parse tree produced by FuncTestCaseParser#decimalArg.
