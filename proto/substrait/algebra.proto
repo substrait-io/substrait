@@ -631,9 +631,9 @@ message WriteRel {
   OutputMode output = 6;
   RelCommon common = 7;
 
-  // The relation that is used with UPDATE to determine the new values of the fields.
-  // The schema must match with table_schema
-  ProjectRel update = 9;
+  // update_expressions is used with UPDATE to determine the new values for the fields in the input `Rel`.
+  // The schema of update_expressions must match `table_schema`.
+  repeated Expression update_expressions = 9;
 
   enum WriteOp {
     WRITE_OP_UNSPECIFIED = 0;
