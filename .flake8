@@ -2,3 +2,4 @@
 ignore = E203, E266, E501, W503, F403, F401
 max-line-length = 88
 select = B,C,E,F,W,T4,B9
+exclude = tests/coverage/antlr_parser/*.py
