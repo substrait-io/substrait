@@ -95,8 +95,8 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
     def visitDataColumn(self, ctx: FuncTestCaseParser.DataColumnContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#literalValueList.
-    def visitLiteralValueList(self, ctx: FuncTestCaseParser.LiteralValueListContext):
+    # Visit a parse tree produced by FuncTestCaseParser#columnValues.
+    def visitColumnValues(self, ctx: FuncTestCaseParser.ColumnValuesContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by FuncTestCaseParser#literal.
@@ -177,6 +177,14 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#intervalDayArg.
     def visitIntervalDayArg(self, ctx: FuncTestCaseParser.IntervalDayArgContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#listArg.
+    def visitListArg(self, ctx: FuncTestCaseParser.ListArgContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#literalList.
+    def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by FuncTestCaseParser#intervalYearLiteral.
@@ -267,6 +275,34 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
     def visitUserDefined(self, ctx: FuncTestCaseParser.UserDefinedContext):
         return self.visitChildren(ctx)
 
+    # Visit a parse tree produced by FuncTestCaseParser#booleanType.
+    def visitBooleanType(self, ctx: FuncTestCaseParser.BooleanTypeContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#stringType.
+    def visitStringType(self, ctx: FuncTestCaseParser.StringTypeContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#binaryType.
+    def visitBinaryType(self, ctx: FuncTestCaseParser.BinaryTypeContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#timestampType.
+    def visitTimestampType(self, ctx: FuncTestCaseParser.TimestampTypeContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#timestampTZType.
+    def visitTimestampTZType(self, ctx: FuncTestCaseParser.TimestampTZTypeContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#intervalYearType.
+    def visitIntervalYearType(self, ctx: FuncTestCaseParser.IntervalYearTypeContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#intervalDayType.
+    def visitIntervalDayType(self, ctx: FuncTestCaseParser.IntervalDayTypeContext):
+        return self.visitChildren(ctx)
+
     # Visit a parse tree produced by FuncTestCaseParser#fixedChar.
     def visitFixedChar(self, ctx: FuncTestCaseParser.FixedCharContext):
         return self.visitChildren(ctx)
@@ -295,6 +331,10 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
     ):
         return self.visitChildren(ctx)
 
+    # Visit a parse tree produced by FuncTestCaseParser#list.
+    def visitList(self, ctx: FuncTestCaseParser.ListContext):
+        return self.visitChildren(ctx)
+
     # Visit a parse tree produced by FuncTestCaseParser#parameterizedType.
     def visitParameterizedType(self, ctx: FuncTestCaseParser.ParameterizedTypeContext):
         return self.visitChildren(ctx)
@@ -321,6 +361,14 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#func_options.
     def visitFunc_options(self, ctx: FuncTestCaseParser.Func_optionsContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#nonReserved.
+    def visitNonReserved(self, ctx: FuncTestCaseParser.NonReservedContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#identifier.
+    def visitIdentifier(self, ctx: FuncTestCaseParser.IdentifierContext):
         return self.visitChildren(ctx)
 
 

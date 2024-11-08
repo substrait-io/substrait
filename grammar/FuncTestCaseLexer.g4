@@ -31,6 +31,11 @@ Saturate: 'SATURATE';
 Silent: 'SILENT';
 TieToEven: 'TIE_TO_EVEN';
 NaN: 'NAN';
+AcceptNulls: 'ACCEPT_NULLS';
+IgnoreNulls: 'IGNORE_NULLS';
+NullHandling: 'NULL_HANDLING';
+SpacesOnly: 'SPACES_ONLY';
+Truncate: 'TRUNCATE';
 
 IntegerLiteral
     : [+-]? Int

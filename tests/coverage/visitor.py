@@ -76,7 +76,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.func_options() is not None:
             options = self.visitFunc_options(ctx.func_options())
         return TestCase(
-            func_name=ctx.Identifier().getText(),
+            func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
             options=options,
@@ -98,7 +98,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     ):
         arg = self.visitDataColumn(ctx.dataColumn())
         return TestCase(
-            func_name=ctx.Identifier().getText(),
+            func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
             options=dict(),
@@ -114,7 +114,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         rows = self.visitTableRows(ctx.tableRows())
         args = self.visitAggregateFuncArgs(ctx.aggregateFuncArgs())
         return TestCase(
-            func_name=ctx.Identifier().getText(),
+            func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
             options=dict(),
@@ -139,7 +139,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
                 arg.column_type = column_types[column_index]
 
         return TestCase(
-            func_name=ctx.Identifier().getText(),
+            func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
             options=dict(),
@@ -183,8 +183,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitTableRows(self, ctx: FuncTestCaseParser.TableRowsContext):
         rows = []
-        for row in ctx.literalValueList():
-            rows.append(self.visitLiteralValueList(row))
+        for row in ctx.columnValues():
+            rows.append(self.visitColumnValues(row))
         return rows
 
     def visitTableData(self, ctx: FuncTestCaseParser.TableDataContext):
@@ -196,11 +196,11 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return table_name, column_types, rows
 
     def visitDataColumn(self, ctx: FuncTestCaseParser.DataColumnContext):
-        column = self.visitLiteralValueList(ctx.literalValueList())
+        column = self.visitColumnValues(ctx.columnValues())
         column_type = ctx.dataType().getText()
         return CaseLiteral(value=column, type=column_type)
 
-    def visitLiteralValueList(self, ctx: FuncTestCaseParser.LiteralValueListContext):
+    def visitColumnValues(self, ctx: FuncTestCaseParser.ColumnValuesContext):
         values = []
         type_str = ""
         for literal in ctx.literal():

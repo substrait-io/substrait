@@ -1,6 +1,4 @@
 # SPDX-License-Identifier: Apache-2.0
-import unittest
-
 import pytest
 from antlr4 import InputStream
 from tests.coverage.case_file_parser import parse_stream, parse_one_file
@@ -331,6 +329,25 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "f10('P10Y5M'::iyear, 5::i64) = 'P15Y5M'::iyear",
         "f11('P10DT5H6M7S2000F'::interval_day, 5::i64) = 'P10DT10H6M7S2000F'::interval_day",
         "f11('P10DT6M7S2000F'::interval_day, 5::i64) = 'P10DT11M7S2000F'::interval_day",
+        "ltrim('abcabcdef'::str, 'abc'::str) [spaces_only:FALSE] = 'def'::str",
+        "concat('abcd'::str, Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
+        "concat('abcd'::str, Null::str) [null_handling:IGNORE_NULLS] = 'abcd'::str",
+        "concat(Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
+        "regexp_string_split('Hello'::str, 'Hel+?'::str) = ['', 'lo']::List<str>",
+        "regexp_replace('USD100'::str, '(?<=USD)\\d{3}'::str, '999'::str) [lookaround:TRUE] = 'USD999'::str",
+        "divide(5::i64, 0::i64) [on_division_by_zero:LIMIT] = inf::fp64",
+        "modulus(5::i8, 0::i8) [on_domain_error:Null] = Null::i8",
+        "modulus(8::i8, -3::i8) [division_type:TRUNCATE] = 2::i8",
+        "and(true::bool, false::bool) = false::bool",
+        "or(true::bool, false::boolean) = true::bool",
+        "not(true::bool) = false::bool",
+        "is_null(Null::str) = true::bool",
+        "logb(2.0::fp64, 0.0::fp64) [on_log_zero:MINUS_INFINITY] = -inf::fp64",
+        "logb(10::fp64, -inf::fp64) [on_domain_error:NONE] = Null::fp64",
+        "regexp_string_split('HHHelloooo'::str, 'Hel+'::str) = ['HH', 'oooo']::List<str>",
+        "octet_length(''::str) = 0::i64",
+        "octet_length(' '::str) = 1::i64",
+        "octet_length('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'::str) = 48::i64",
     ],
 )
 def test_parse_various_argument_types(input_func_test):

@@ -27,7 +27,7 @@ testGroupDescription
     ;
 
 testCase
-    : functionName=Identifier OParen arguments CParen ( OBracket func_options CBracket )? Eq result
+    : functionName=identifier OParen arguments CParen ( OBracket func_options CBracket )? Eq result
     ;
 
 testGroup
@@ -57,6 +57,7 @@ argument
     | timestampTzArg
     | intervalYearArg
     | intervalDayArg
+    | listArg
     ;
 
 aggFuncTestCase
@@ -64,9 +65,9 @@ aggFuncTestCase
     ;
 
 aggFuncCall
-    : tableData funcName=Identifier OParen qualifiedAggregateFuncArgs CParen            #multiArgAggregateFuncCall
-    | tableRows functName=Identifier OParen aggregateFuncArgs CParen                    #compactAggregateFuncCall
-    | functName=Identifier OParen dataColumn CParen                                     #singleArgAggregateFuncCall
+    : tableData funcName=identifier OParen qualifiedAggregateFuncArgs CParen            #multiArgAggregateFuncCall
+    | tableRows functName=identifier OParen aggregateFuncArgs CParen                    #compactAggregateFuncCall
+    | functName=identifier OParen dataColumn CParen                                     #singleArgAggregateFuncCall
     ;
 
 tableData
@@ -74,14 +75,14 @@ tableData
     ;
 
 tableRows
-    : OParen (literalValueList (Comma literalValueList)*)? CParen
+    : OParen (columnValues (Comma columnValues)*)? CParen
     ;
 
 dataColumn
-    : literalValueList DoubleColon dataType
+    : columnValues DoubleColon dataType
     ;
 
-literalValueList
+columnValues
     : OParen (literal (Comma literal)*)? CParen
     ;
 
@@ -135,11 +136,11 @@ decimalArg
     ;
 
 booleanArg
-    : BooleanLiteral DoubleColon (Bool | Boolean)
+    : BooleanLiteral DoubleColon booleanType
     ;
 
 stringArg
-    : StringLiteral DoubleColon (Str | String)
+    : StringLiteral DoubleColon stringType
     ;
 
 dateArg
@@ -151,19 +152,27 @@ timeArg
     ;
 
 timestampArg
-    : TimestampLiteral DoubleColon (Ts | Timestamp)
+    : TimestampLiteral DoubleColon timestampType
     ;
 
 timestampTzArg
-    : TimestampTzLiteral DoubleColon (TsTZ | Timestamp_TZ)
+    : TimestampTzLiteral DoubleColon timestampTZType
     ;
 
 intervalYearArg
-    : IntervalYearLiteral DoubleColon (IYear | Interval_Year)
+    : IntervalYearLiteral DoubleColon intervalYearType
     ;
 
 intervalDayArg
-    : IntervalDayLiteral DoubleColon (IDay | Interval_Day)
+    : IntervalDayLiteral DoubleColon intervalDayType
+    ;
+
+listArg
+    : literalList DoubleColon listType
+    ;
+
+literalList
+    : OBracket (literal (Comma literal)*)? CBracket
     ;
 
 intervalYearLiteral
@@ -190,24 +199,52 @@ dataType
     ;
 
 scalarType
-  : (Bool | Boolean)        #boolean
+  : booleanType             #boolean
   | I8                      #i8
   | I16                     #i16
   | I32                     #i32
   | I64                     #i64
   | FP32                    #fp32
   | FP64                    #fp64
-  | (Str | String)          #string
-  | (Binary | VBin)         #binary
-  | (Ts | Timestamp)        #timestamp
-  | (TsTZ | Timestamp_TZ)   #timestampTz
+  | stringType              #string
+  | binaryType              #binary
+  | timestampType           #timestamp
+  | timestampTZType         #timestampTz
   | Date                    #date
   | Time                    #time
-  | (IDay | Interval_Year)  #intervalDay
-  | (IYear | Interval_Day)  #intervalYear
+  | intervalDayType         #intervalDay
+  | intervalYearType        #intervalYear
   | UUID                    #uuid
   | UserDefined Identifier  #userDefined
   ;
+
+booleanType
+    : (Bool | Boolean)
+    ;
+
+stringType
+    : (Str | String)
+    ;
+
+binaryType
+    : (Binary | VBin)
+    ;
+
+timestampType
+    : (Ts | Timestamp)
+    ;
+
+timestampTZType
+    : (TsTZ | Timestamp_TZ)
+    ;
+
+intervalYearType
+    : (IYear | Interval_Year)
+    ;
+
+intervalDayType
+    : (IDay | Interval_Day)
+    ;
 
 fixedCharType
     : (FChar | FixedChar) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #fixedChar
@@ -236,6 +273,10 @@ precisionTimestampTZType
         OAngleBracket precision=numericParameter CAngleBracket #precisionTimestampTZ
     ;
 
+listType
+    : List isnull=QMark? OAngleBracket elemType=dataType CAngleBracket #list
+    ;
+
 parameterizedType
     : fixedCharType
     | varCharType
@@ -246,7 +287,6 @@ parameterizedType
 // TODO implement the rest of the parameterized types
 //  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct
-//  | List isnull='?'? Lt expr Gt #list
 //  | Map isnull='?'? Lt key=expr Comma value=expr Gt #map
   ;
 
@@ -263,14 +303,26 @@ func_option
     ;
 
 option_name
-    : Overflow | Rounding
+    : Overflow | Rounding | NullHandling | SpacesOnly
     | Identifier
     ;
 
 option_value
-    : Error | Saturate | Silent | TieToEven | NaN
+    : Error | Saturate | Silent | TieToEven | NaN | Truncate | AcceptNulls | IgnoreNulls
+    | BooleanLiteral
+    | NullLiteral
+    | Identifier
     ;
 
 func_options
     : func_option (Comma func_option)*
+    ;
+
+nonReserved //  IMPORTANT: this rule must only contain tokens
+    : And | Or | Truncate
+    ;
+
+identifier
+    : nonReserved
+    | Identifier
     ;
