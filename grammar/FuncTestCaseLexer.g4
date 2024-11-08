@@ -10,6 +10,7 @@ Whitespace    : [ \t\n\r]+ -> channel(HIDDEN) ;
 
 TripleHash: '###';
 SubstraitScalarTest: 'SUBSTRAIT_SCALAR_TEST';
+SubstraitAggregateTest: 'SUBSTRAIT_AGGREGATE_TEST';
 SubstraitInclude: 'SUBSTRAIT_INCLUDE';
 
 FormatVersion
@@ -20,6 +21,7 @@ DescriptionLine
     : '# ' ~[\r\n]* '\r'? '\n'
     ;
 
+Define: 'DEFINE';
 ErrorResult: '<!ERROR>';
 UndefineResult: '<!UNDEFINED>';
 Overflow: 'OVERFLOW';
@@ -101,4 +103,8 @@ NullLiteral: 'null';
 
 StringLiteral
     : '\'' ('\\' . | '\'\'' | ~['\\])* '\''
+    ;
+
+ColumnName
+    : 'COL' Int
     ;

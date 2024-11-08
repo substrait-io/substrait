@@ -15,7 +15,7 @@ header
     ;
 
 version
-    : TripleHash SubstraitScalarTest Colon FormatVersion
+    : TripleHash (SubstraitScalarTest | SubstraitAggregateTest) Colon FormatVersion
     ;
 
 include
@@ -31,7 +31,8 @@ testCase
     ;
 
 testGroup
-    : testGroupDescription (testCase)+
+    : testGroupDescription (testCase)+                          #scalarFuncTestGroup
+    | testGroupDescription (aggFuncTestCase)+                   #aggregateFuncTestGroup
     ;
 
 arguments
@@ -58,6 +59,63 @@ argument
     | intervalDayArg
     ;
 
+aggFuncTestCase
+    : aggFuncCall ( OBracket func_options CBracket )? Eq result
+    ;
+
+aggFuncCall
+    : tableData funcName=Identifier OParen qualifiedAggregateFuncArgs CParen            #multiArgAggregateFuncCall
+    | tableRows functName=Identifier OParen aggregateFuncArgs CParen                    #compactAggregateFuncCall
+    | functName=Identifier OParen dataColumn CParen                                     #singleArgAggregateFuncCall
+    ;
+
+tableData
+    : Define tableName=Identifier OParen dataType (Comma dataType)* CParen Eq tableRows
+    ;
+
+tableRows
+    : OParen (literalValueList (Comma literalValueList)*)? CParen
+    ;
+
+dataColumn
+    : literalValueList DoubleColon dataType
+    ;
+
+literalValueList
+    : OParen (literal (Comma literal)*)? CParen
+    ;
+
+literal
+    : NullLiteral
+    | numericLiteral
+    | BooleanLiteral
+    | StringLiteral
+    | DateLiteral
+    | TimeLiteral
+    | TimestampLiteral
+    | TimestampTzLiteral
+    | IntervalYearLiteral
+    | IntervalDayLiteral
+    ;
+
+qualifiedAggregateFuncArgs
+    : qualifiedAggregateFuncArg (Comma qualifiedAggregateFuncArg)*
+    ;
+
+aggregateFuncArgs
+    : aggregateFuncArg (Comma aggregateFuncArg)*
+    ;
+
+qualifiedAggregateFuncArg
+    : tableName=Identifier Dot ColumnName
+    | argument
+    ;
+
+aggregateFuncArg
+    : ColumnName DoubleColon dataType
+    | argument
+    ;
+
 numericLiteral
     : DecimalLiteral | IntegerLiteral | floatLiteral
     ;
@@ -66,7 +124,7 @@ floatLiteral
     : FloatLiteral | NaN
     ;
 
-nullArg: NullLiteral DoubleColon datatype;
+nullArg: NullLiteral DoubleColon dataType;
 
 intArg: IntegerLiteral DoubleColon (I8 | I16 | I32 | I64);
 
@@ -77,11 +135,11 @@ decimalArg
     ;
 
 booleanArg
-    : BooleanLiteral DoubleColon Bool
+    : BooleanLiteral DoubleColon (Bool | Boolean)
     ;
 
 stringArg
-    : StringLiteral DoubleColon Str
+    : StringLiteral DoubleColon (Str | String)
     ;
 
 dateArg
@@ -93,19 +151,19 @@ timeArg
     ;
 
 timestampArg
-    : TimestampLiteral DoubleColon Ts
+    : TimestampLiteral DoubleColon (Ts | Timestamp)
     ;
 
 timestampTzArg
-    : TimestampTzLiteral DoubleColon TsTZ
+    : TimestampTzLiteral DoubleColon (TsTZ | Timestamp_TZ)
     ;
 
 intervalYearArg
-    : IntervalYearLiteral DoubleColon IYear
+    : IntervalYearLiteral DoubleColon (IYear | Interval_Year)
     ;
 
 intervalDayArg
-    : IntervalDayLiteral DoubleColon IDay
+    : IntervalDayLiteral DoubleColon (IDay | Interval_Day)
     ;
 
 intervalYearLiteral
@@ -126,53 +184,56 @@ timeInterval
     | fractionalSeconds=IntegerLiteral FractionalSecondSuffix
     ;
 
-datatype
+dataType
     : scalarType
     | parameterizedType
     ;
 
 scalarType
-  : Bool #Boolean
-  | I8 #i8
-  | I16 #i16
-  | I32 #i32
-  | I64 #i64
-  | FP32 #fp32
-  | FP64 #fp64
-  | Str #string
-  | Binary #binary
-  | Ts #timestamp
-  | TsTZ #timestampTz
-  | Date #date
-  | Time #time
-  | IDay #intervalDay
-  | IYear #intervalYear
-  | UUID #uuid
-  | UserDefined Identifier #userDefined
+  : (Bool | Boolean)        #boolean
+  | I8                      #i8
+  | I16                     #i16
+  | I32                     #i32
+  | I64                     #i64
+  | FP32                    #fp32
+  | FP64                    #fp64
+  | (Str | String)          #string
+  | (Binary | VBin)         #binary
+  | (Ts | Timestamp)        #timestamp
+  | (TsTZ | Timestamp_TZ)   #timestampTz
+  | Date                    #date
+  | Time                    #time
+  | (IDay | Interval_Year)  #intervalDay
+  | (IYear | Interval_Day)  #intervalYear
+  | UUID                    #uuid
+  | UserDefined Identifier  #userDefined
   ;
 
 fixedCharType
-    : FChar isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #fixedChar
+    : (FChar | FixedChar) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #fixedChar
     ;
 
 varCharType
-    : VChar isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #varChar
+    : (VChar | VarChar) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #varChar
     ;
 
 fixedBinaryType
-    : FBin isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #fixedBinary
+    : (FBin | FixedBinary) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #fixedBinary
     ;
 
 decimalType
-    : Dec isnull=QMark? (OAngleBracket precision=numericParameter Comma scale=numericParameter CAngleBracket)?  #decimal
+    : (Dec | Decimal) isnull=QMark?
+        (OAngleBracket precision=numericParameter Comma scale=numericParameter CAngleBracket)?  #decimal
     ;
 
 precisionTimestampType
-    : PTs isnull=QMark? OAngleBracket precision=numericParameter CAngleBracket #precisionTimestamp
+    : (PTs | Precision_Timestamp) isnull=QMark?
+        OAngleBracket precision=numericParameter CAngleBracket #precisionTimestamp
     ;
 
 precisionTimestampTZType
-    : PTsTZ isnull=QMark? OAngleBracket precision=numericParameter CAngleBracket #precisionTimestampTZ
+    : (PTsTZ | Precision_Timestamp_TZ) isnull=QMark?
+        OAngleBracket precision=numericParameter CAngleBracket #precisionTimestampTZ
     ;
 
 parameterizedType

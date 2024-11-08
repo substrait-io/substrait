@@ -37,8 +37,16 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
     def visitTestCase(self, ctx: FuncTestCaseParser.TestCaseContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#testGroup.
-    def visitTestGroup(self, ctx: FuncTestCaseParser.TestGroupContext):
+    # Visit a parse tree produced by FuncTestCaseParser#scalarFuncTestGroup.
+    def visitScalarFuncTestGroup(
+        self, ctx: FuncTestCaseParser.ScalarFuncTestGroupContext
+    ):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#aggregateFuncTestGroup.
+    def visitAggregateFuncTestGroup(
+        self, ctx: FuncTestCaseParser.AggregateFuncTestGroupContext
+    ):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by FuncTestCaseParser#arguments.
@@ -51,6 +59,68 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#argument.
     def visitArgument(self, ctx: FuncTestCaseParser.ArgumentContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#aggFuncTestCase.
+    def visitAggFuncTestCase(self, ctx: FuncTestCaseParser.AggFuncTestCaseContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#multiArgAggregateFuncCall.
+    def visitMultiArgAggregateFuncCall(
+        self, ctx: FuncTestCaseParser.MultiArgAggregateFuncCallContext
+    ):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#compactAggregateFuncCall.
+    def visitCompactAggregateFuncCall(
+        self, ctx: FuncTestCaseParser.CompactAggregateFuncCallContext
+    ):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#singleArgAggregateFuncCall.
+    def visitSingleArgAggregateFuncCall(
+        self, ctx: FuncTestCaseParser.SingleArgAggregateFuncCallContext
+    ):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#tableData.
+    def visitTableData(self, ctx: FuncTestCaseParser.TableDataContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#tableRows.
+    def visitTableRows(self, ctx: FuncTestCaseParser.TableRowsContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#dataColumn.
+    def visitDataColumn(self, ctx: FuncTestCaseParser.DataColumnContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#literalValueList.
+    def visitLiteralValueList(self, ctx: FuncTestCaseParser.LiteralValueListContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#literal.
+    def visitLiteral(self, ctx: FuncTestCaseParser.LiteralContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#qualifiedAggregateFuncArgs.
+    def visitQualifiedAggregateFuncArgs(
+        self, ctx: FuncTestCaseParser.QualifiedAggregateFuncArgsContext
+    ):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#aggregateFuncArgs.
+    def visitAggregateFuncArgs(self, ctx: FuncTestCaseParser.AggregateFuncArgsContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#qualifiedAggregateFuncArg.
+    def visitQualifiedAggregateFuncArg(
+        self, ctx: FuncTestCaseParser.QualifiedAggregateFuncArgContext
+    ):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#aggregateFuncArg.
+    def visitAggregateFuncArg(self, ctx: FuncTestCaseParser.AggregateFuncArgContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by FuncTestCaseParser#numericLiteral.
@@ -125,11 +195,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
     def visitTimeInterval(self, ctx: FuncTestCaseParser.TimeIntervalContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#datatype.
-    def visitDatatype(self, ctx: FuncTestCaseParser.DatatypeContext):
+    # Visit a parse tree produced by FuncTestCaseParser#dataType.
+    def visitDataType(self, ctx: FuncTestCaseParser.DataTypeContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#Boolean.
+    # Visit a parse tree produced by FuncTestCaseParser#boolean.
     def visitBoolean(self, ctx: FuncTestCaseParser.BooleanContext):
         return self.visitChildren(ctx)
 
