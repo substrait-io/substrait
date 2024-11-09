@@ -62,14 +62,14 @@ class FileTestCoverage:
 class TestCoverage:
     file_coverage: dict[str, FileTestCoverage]
     test_count: int
-    num_covered_variants: int
-    total_variants: int
+    num_covered_function_variants: int
+    total_function_variants: int
 
     def __init__(self, ext_uris):
         self.file_coverage = dict()
         self.test_count = 0
-        self.num_covered_variants = 0
-        self.total_variants = 0
+        self.num_covered_function_variants = 0
+        self.total_function_variants = 0
         for ext_uri in ext_uris:
             self.file_coverage[ext_uri] = FileTestCoverage(ext_uri)
 
@@ -84,8 +84,8 @@ class TestCoverage:
             for function_coverage in file_coverage.function_coverage.values():
                 for test_count in function_coverage.function_variant_coverage.values():
                     if test_count > 0:
-                        self.num_covered_variants += 1
-                    self.total_variants += 1
+                        self.num_covered_function_variants += 1
+                    self.total_function_variants += 1
 
     def to_dict(self):
         return {
@@ -93,8 +93,8 @@ class TestCoverage:
                 file_coverage.to_dict() for file_coverage in self.file_coverage.values()
             ],
             "test_count": self.test_count,
-            "num_covered_function_variants": self.num_covered_variants,
-            "total_function_variants": self.total_variants,
+            "num_covered_function_variants": self.num_covered_function_variants,
+            "total_function_variants": self.total_function_variants,
         }
 
     def to_json(self):
@@ -113,7 +113,8 @@ def update_test_count(test_case_files: list, function_registry: FunctionRegistry
                     and not test_case.is_return_type_error()
                 ):
                     error(
-                        f"Return type mismatch in function {test_case.func_name}: {function_variant.return_type} != {test_case.get_return_type()}"
+                        f"Return type mismatch in function {test_case.func_name}: "
+                        f"{function_variant.return_type} != {test_case.get_return_type()}"
                     )
                     continue
                 function_variant.increment_test_count()
@@ -121,11 +122,16 @@ def update_test_count(test_case_files: list, function_registry: FunctionRegistry
                 error(f"Function not found: {test_case.func_name}({test_case.args})")
 
 
-if __name__ == "__main__":
-    test_files = load_all_testcases("../cases")
-    function_registry = Extension.read_substrait_extensions("../../extensions")
+def get_test_coverage(test_files, function_registry):
     coverage = TestCoverage(function_registry.get_extension_list())
     update_test_count(test_files, function_registry)
     function_registry.fill_coverage(coverage)
     coverage.compute_coverage()
-    print(coverage.to_json())
+    return coverage
+
+
+if __name__ == "__main__":
+    all_test_files = load_all_testcases("../cases")
+    default_function_registry = Extension.read_substrait_extensions("../../extensions")
+    test_coverage = get_test_coverage(all_test_files, default_function_registry)
+    print(test_coverage.to_json())

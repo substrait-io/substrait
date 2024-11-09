@@ -10,6 +10,7 @@ Whitespace    : [ \t\n\r]+ -> channel(HIDDEN) ;
 
 TripleHash: '###';
 SubstraitScalarTest: 'SUBSTRAIT_SCALAR_TEST';
+SubstraitAggregateTest: 'SUBSTRAIT_AGGREGATE_TEST';
 SubstraitInclude: 'SUBSTRAIT_INCLUDE';
 
 FormatVersion
@@ -20,6 +21,7 @@ DescriptionLine
     : '# ' ~[\r\n]* '\r'? '\n'
     ;
 
+Define: 'DEFINE';
 ErrorResult: '<!ERROR>';
 UndefineResult: '<!UNDEFINED>';
 Overflow: 'OVERFLOW';
@@ -29,6 +31,11 @@ Saturate: 'SATURATE';
 Silent: 'SILENT';
 TieToEven: 'TIE_TO_EVEN';
 NaN: 'NAN';
+AcceptNulls: 'ACCEPT_NULLS';
+IgnoreNulls: 'IGNORE_NULLS';
+NullHandling: 'NULL_HANDLING';
+SpacesOnly: 'SPACES_ONLY';
+Truncate: 'TRUNCATE';
 
 IntegerLiteral
     : [+-]? Int
@@ -101,4 +108,8 @@ NullLiteral: 'null';
 
 StringLiteral
     : '\'' ('\\' . | '\'\'' | ~['\\])* '\''
+    ;
+
+ColumnName
+    : 'COL' Int
     ;

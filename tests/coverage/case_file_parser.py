@@ -6,13 +6,7 @@ from antlr4.error.ErrorListener import ErrorListener
 
 from tests.coverage.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
 from tests.coverage.antlr_parser.FuncTestCaseParser import FuncTestCaseParser
-from tests.coverage.visitor import TestCaseVisitor
-
-
-class ParseError(Exception):
-    def __init__(self, message="Parsing error occurred"):
-        self.message = message
-        super().__init__(self.message)
+from tests.coverage.visitor import TestCaseVisitor, ParseError
 
 
 class ParseErrorListener(ErrorListener):

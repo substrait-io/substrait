@@ -1,9 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
-import unittest
-
 import pytest
 from antlr4 import InputStream
-from tests.coverage.case_file_parser import parse_stream, parse_one_file, ParseError
+from tests.coverage.case_file_parser import parse_stream, parse_one_file
+from tests.coverage.visitor import ParseError
 from tests.coverage.nodes import CaseLiteral
 
 
@@ -13,6 +12,13 @@ def parse_string(input_string):
 
 def make_header(version, include):
     return f"""### SUBSTRAIT_SCALAR_TEST: {version}
+### SUBSTRAIT_INCLUDE: '{include}'
+
+"""
+
+
+def make_aggregate_test_header(version, include):
+    return f"""### SUBSTRAIT_AGGREGATE_TEST: {version}
 ### SUBSTRAIT_INCLUDE: '{include}'
 
 """
@@ -89,10 +95,81 @@ power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
     assert test_file.testcases[0].args[1] == CaseLiteral("0.5", "dec<38,1>")
 
 
+def test_parse_aggregate_func_test():
+    header = make_aggregate_test_header("v1.0", "extensions/functions_arithmetic.yaml")
+    tests = """# basic
+avg((1,2,3)::fp32) = 2::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+
+
+def test_parse_aggregate_func_test_compact():
+    header = make_aggregate_test_header("v1.0", "extensions/functions_arithmetic.yaml")
+    tests = """# basic
+((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+
+
+def test_parse_aggregate_func_test_multiple_args():
+    header = make_aggregate_test_header("v1.0", "extensions/functions_arithmetic.yaml")
+    tests = """# basic
+DEFINE t1(fp32, fp32) = ((20, 20), (-3, -3), (1, 1), (10,10), (5,5))
+corr(t1.col0, t1.col1) = 1::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+
+
+def test_parse_aggregate_func_test_compact_mixed_args():
+    header = make_aggregate_test_header("v1.0", "extensions/functions_arithmetic.yaml")
+    tests = """# basic
+((20), (-3), (1), (10)) LIST_AGG(col0::fp32, ','::string) = 1::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+
+
+def test_parse_aggregate_func_test_compact_string_agg():
+    header = make_aggregate_test_header("v1.0", "extensions/functions_arithmetic.yaml")
+    tests = """# basic
+(('ant'), ('bat'), ('cat')) string_agg(col0::str, ','::str) = 1::fp64
+(('ant'), ('bat'), ('cat')) string_agg(col0::string, ','::string) = 1::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 2
+
+
+def test_parse_aggregate_func_max():
+    header = make_aggregate_test_header("v1.0", "extensions/functions_arithmetic.yaml")
+    tests = """# basic
+max((2.5, 0, 5.0, -2.5, -7.5)::fp32) = 5.0::fp32
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "max"
+    assert test_file.testcases[0].base_uri == "extensions/functions_arithmetic.yaml"
+    assert test_file.testcases[0].group.name == "basic"
+    assert test_file.testcases[0].result == CaseLiteral("5.0", "fp32")
+    assert test_file.testcases[0].args == [
+        CaseLiteral(value=["2.5", "0", "5.0", "-2.5", "-7.5"], type="fp32")
+    ]
+
+
 def test_parse_file_add():
     test_file = parse_one_file("../cases/arithmetic/add.test")
     assert len(test_file.testcases) == 15
     assert test_file.testcases[0].func_name == "add"
+    assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
+    assert test_file.include == "/extensions/functions_arithmetic.yaml"
+
+
+def test_parse_file_max():
+    test_file = parse_one_file("../cases/arithmetic/max.test")
+    assert len(test_file.testcases) == 12
+    assert test_file.testcases[0].func_name == "max"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
     assert test_file.include == "/extensions/functions_arithmetic.yaml"
 
@@ -186,10 +263,97 @@ def test_parse_file_power_decimal():
         ),
     ],
 )
-def test_parse_errors_with_bad_cases(input_func_test, position, expected_message):
+def test_parse_errors_with_bad_scalar_testcases(
+    input_func_test, position, expected_message
+):
     header = make_header("v1.0", "extensions/functions_arithmetic.yaml") + "# basic\n"
     with pytest.raises(ParseError) as pm:
         parse_string(header + input_func_test + "\n")
     assert f"Syntax error at line 5, column {position}: {expected_message}" in str(
         pm.value
     )
+
+
+@pytest.mark.parametrize(
+    "input_func_test, expected_message",
+    [
+        (
+            "max((-12, +5)::i8) = -7.0::i8",
+            "no viable alternative at input '-7.0::i8'",
+        ),
+        (
+            "max((-12, 'arg')::str) = -7::i8",
+            "All values in a column must have the same type",
+        ),
+        (
+            """DEFINE t1(fp32, fp32) = ((20, 20), (-3, -3), (1, 1), (10,10), (5,5))
+                corr(t1.col0, t2.col1) = 1::fp64""",
+            "Table name in argument does not match the table name in the function call",
+        ),
+        (
+            "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(my_col::fp32, col0::fp32) = 1::fp64",
+            "mismatched input 'my_col'",
+        ),
+        (
+            "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, column1::fp32) = 1::fp64",
+            "mismatched input 'column1'",
+        ),
+    ],
+)
+def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_message):
+    header = (
+        make_aggregate_test_header("v1.0", "extensions/functions_arithmetic.yaml")
+        + "# basic\n"
+    )
+    with pytest.raises(ParseError) as pm:
+        parse_string(header + input_func_test + "\n")
+    assert expected_message in str(pm.value)
+
+
+@pytest.mark.parametrize(
+    "input_func_test",
+    [
+        "f1(1::i8, 2::i16, 3::i32, 4::i64) = -7.0::fp32",
+        "f2(1.0::fp32, 2.0::fp64) = -7.0::fp32",
+        "f3('a'::str, 'b'::string) = 'c'::str",
+        "f4(false::bool, true::boolean) = false::bool",
+        "f5(1.1::dec, 2.2::decimal) = 3.3::dec",
+        "f6(1.1::dec<38,10>, 2.2::dec<38,10>) = 3.3::dec<38,10>",
+        "f7(1.1::dec<38,10>, 2.2::decimal<38,10>) = 3.3::decimal<38,10>",
+        "f8('1991-01-01'::date) = '2001-01-01'::date",
+        "f8('13:01:01.2345678'::time) = '23:59:59.999'::time",
+        "f8('1991-01-01T01:02:03.456'::ts, '1991-01-01T00:00:00'::timestamp) = '1991-01-01T22:33:44'::ts",
+        "f8('1991-01-01T01:02:03.456+05:30'::tstz, '1991-01-01T00:00:00+15:30'::timestamp_tz) = 23::i32",
+        "f9('1991-01-01'::date, 5::i64) = '1991-01-01T00:00:00+15:30'::timestamp_tz",
+        "f10('P10Y5M'::interval_year, 5::i64) = 'P15Y5M'::interval_year",
+        "f10('P10Y5M'::iyear, 5::i64) = 'P15Y5M'::iyear",
+        "f11('P10DT5H6M7S2000F'::interval_day, 5::i64) = 'P10DT10H6M7S2000F'::interval_day",
+        "f11('P10DT6M7S2000F'::interval_day, 5::i64) = 'P10DT11M7S2000F'::interval_day",
+        "ltrim('abcabcdef'::str, 'abc'::str) [spaces_only:FALSE] = 'def'::str",
+        "concat('abcd'::str, Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
+        "concat('abcd'::str, Null::str) [null_handling:IGNORE_NULLS] = 'abcd'::str",
+        "concat(Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
+        "regexp_string_split('Hello'::str, 'Hel+?'::str) = ['', 'lo']::List<str>",
+        "regexp_replace('USD100'::str, '(?<=USD)\\d{3}'::str, '999'::str) [lookaround:TRUE] = 'USD999'::str",
+        "divide(5::i64, 0::i64) [on_division_by_zero:LIMIT] = inf::fp64",
+        "modulus(5::i8, 0::i8) [on_domain_error:Null] = Null::i8",
+        "modulus(8::i8, -3::i8) [division_type:TRUNCATE] = 2::i8",
+        "and(true::bool, false::bool) = false::bool",
+        "or(true::bool, false::boolean) = true::bool",
+        "not(true::bool) = false::bool",
+        "is_null(Null::str) = true::bool",
+        "logb(2.0::fp64, 0.0::fp64) [on_log_zero:MINUS_INFINITY] = -inf::fp64",
+        "logb(10::fp64, -inf::fp64) [on_domain_error:NONE] = Null::fp64",
+        "regexp_string_split('HHHelloooo'::str, 'Hel+'::str) = ['HH', 'oooo']::List<str>",
+        "octet_length(''::str) = 0::i64",
+        "octet_length(' '::str) = 1::i64",
+        "octet_length('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'::str) = 48::i64",
+    ],
+)
+def test_parse_various_argument_types(input_func_test):
+    header = (
+        make_aggregate_test_header("v1.0", "extensions/functions_arithmetic.yaml")
+        + "# basic\n"
+    )
+    test_file = parse_string(header + input_func_test + "\n")
+    assert len(test_file.testcases) == 1

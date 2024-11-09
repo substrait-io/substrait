@@ -4,6 +4,7 @@ from tests.coverage.antlr_parser.FuncTestCaseParserVisitor import (
     FuncTestCaseParserVisitor,
 )
 from tests.coverage.nodes import (
+    AggregateArgument,
     CaseGroup,
     TestFile,
     TestCase,
@@ -20,7 +21,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         version, include = self.visitHeader(ctx.header())
         testcases = []
         for group in ctx.testGroup():
-            _, group_tests = self.visitTestGroup(group)
+            _, group_tests = self.visit(group)
             for test_case in group_tests:
                 test_case.base_uri = include
             testcases.extend(group_tests)
@@ -45,11 +46,24 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         group = ctx.DescriptionLine().getText().strip("#").strip()
         return CaseGroup(group, "")
 
-    def visitTestGroup(self, ctx: FuncTestCaseParser.TestGroupContext):
+    def visitScalarFuncTestGroup(
+        self, ctx: FuncTestCaseParser.ScalarFuncTestGroupContext
+    ):
         group = self.visitTestGroupDescription(ctx.testGroupDescription())
         test_cases = []
         for test_case in ctx.testCase():
             testcase = self.visitTestCase(test_case)
+            testcase.group = group
+            test_cases.append(testcase)
+        return group, test_cases
+
+    def visitAggregateFuncTestGroup(
+        self, ctx: FuncTestCaseParser.AggregateFuncTestGroupContext
+    ):
+        group = self.visitTestGroupDescription(ctx.testGroupDescription())
+        test_cases = []
+        for test_case in ctx.aggFuncTestCase():
+            testcase = self.visitAggFuncTestCase(test_case)
             testcase.group = group
             test_cases.append(testcase)
         return group, test_cases
@@ -62,14 +76,164 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.func_options() is not None:
             options = self.visitFunc_options(ctx.func_options())
         return TestCase(
-            func_name=ctx.Identifier().getText(),
+            func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
             options=options,
+            rows=None,
             args=args,
             result=result,
             comment="",
         )
+
+    def visitAggFuncTestCase(self, ctx: FuncTestCaseParser.AggFuncTestCaseContext):
+        testcase = self.visit(ctx.aggFuncCall())
+        testcase.result = self.visitResult(ctx.result())
+        if ctx.func_options() is not None:
+            testcase.options = self.visitFunc_options(ctx.func_options())
+        return testcase
+
+    def visitSingleArgAggregateFuncCall(
+        self, ctx: FuncTestCaseParser.SingleArgAggregateFuncCallContext
+    ):
+        arg = self.visitDataColumn(ctx.dataColumn())
+        return TestCase(
+            func_name=ctx.identifier().getText(),
+            base_uri="",
+            group=None,
+            options=dict(),
+            rows=None,
+            args=[arg],
+            result=SubstraitError("uninitialized"),
+            comment="",
+        )
+
+    def visitCompactAggregateFuncCall(
+        self, ctx: FuncTestCaseParser.CompactAggregateFuncCallContext
+    ):
+        rows = self.visitTableRows(ctx.tableRows())
+        args = self.visitAggregateFuncArgs(ctx.aggregateFuncArgs())
+        return TestCase(
+            func_name=ctx.identifier().getText(),
+            base_uri="",
+            group=None,
+            options=dict(),
+            rows=rows,
+            args=args,
+            result=SubstraitError("uninitialized"),
+            comment="",
+        )
+
+    def visitMultiArgAggregateFuncCall(
+        self, ctx: FuncTestCaseParser.MultiArgAggregateFuncCallContext
+    ):
+        table_name, column_types, rows = self.visitTableData(ctx.tableData())
+        args = self.visitQualifiedAggregateFuncArgs(ctx.qualifiedAggregateFuncArgs())
+        for arg in args:
+            if arg.scalar_value is None:
+                if arg.table_name != table_name:
+                    raise ParseError(
+                        "Table name in argument does not match the table name in the function call"
+                    )
+                column_index = int(arg.column_name[3:])
+                arg.column_type = column_types[column_index]
+
+        return TestCase(
+            func_name=ctx.identifier().getText(),
+            base_uri="",
+            group=None,
+            options=dict(),
+            rows=rows,
+            args=args,
+            result=SubstraitError("uninitialized"),
+            comment="",
+        )
+
+    def visitAggregateFuncArgs(self, ctx: FuncTestCaseParser.AggregateFuncArgsContext):
+        args = []
+        for arg in ctx.aggregateFuncArg():
+            args.append(self.visitAggregateFuncArg(arg))
+        return args
+
+    def visitAggregateFuncArg(self, ctx: FuncTestCaseParser.AggregateFuncArgContext):
+        if ctx.argument() is not None:
+            return AggregateArgument("", "", "", self.visitArgument(ctx.argument()))
+        data_type = self.visitDataType(ctx.dataType())
+        return AggregateArgument(
+            ctx.ColumnName().getText(), data_type, "", scalar_value=None
+        )
+
+    def visitQualifiedAggregateFuncArgs(
+        self, ctx: FuncTestCaseParser.QualifiedAggregateFuncArgsContext
+    ):
+        args = []
+        for arg in ctx.qualifiedAggregateFuncArg():
+            args.append(self.visitQualifiedAggregateFuncArg(arg))
+        return args
+
+    def visitQualifiedAggregateFuncArg(
+        self, ctx: FuncTestCaseParser.QualifiedAggregateFuncArgContext
+    ):
+        if ctx.argument() is not None:
+            return AggregateArgument("", "", "", self.visitArgument(ctx.argument()))
+        table_name = ctx.Identifier().getText()
+        return AggregateArgument(
+            ctx.ColumnName().getText(), "", table_name, scalar_value=None
+        )
+
+    def visitTableRows(self, ctx: FuncTestCaseParser.TableRowsContext):
+        rows = []
+        for row in ctx.columnValues():
+            rows.append(self.visitColumnValues(row))
+        return rows
+
+    def visitTableData(self, ctx: FuncTestCaseParser.TableDataContext):
+        table_name = ctx.Identifier().getText()
+        rows = self.visitTableRows(ctx.tableRows())
+        column_types = []
+        for dataType in ctx.dataType():
+            column_types.append(self.visitDataType(dataType))
+        return table_name, column_types, rows
+
+    def visitDataColumn(self, ctx: FuncTestCaseParser.DataColumnContext):
+        column = self.visitColumnValues(ctx.columnValues())
+        column_type = ctx.dataType().getText()
+        return CaseLiteral(value=column, type=column_type)
+
+    def visitColumnValues(self, ctx: FuncTestCaseParser.ColumnValuesContext):
+        values = []
+        type_str = ""
+        for literal in ctx.literal():
+            value, curr_type = self.visitLiteral(literal)
+            if curr_type != "null":
+                if type_str == "":
+                    type_str = curr_type
+                elif type_str != curr_type:
+                    raise ParseError("All values in a column must have the same type")
+            values.append(value)
+        return values
+
+    def visitLiteral(self, ctx: FuncTestCaseParser.LiteralContext):
+        if ctx.numericLiteral() is not None:
+            return self.visitNumericLiteral(ctx.numericLiteral()), "number"
+        if ctx.StringLiteral() is not None:
+            return ctx.getText(), "str"
+        if ctx.BooleanLiteral() is not None:
+            return ctx.getText(), "bool"
+        if ctx.DateLiteral() is not None:
+            return ctx.getText(), "date"
+        if ctx.TimeLiteral() is not None:
+            return ctx.getText(), "time"
+        if ctx.TimestampLiteral() is not None:
+            return ctx.getText(), "ts"
+        if ctx.TimestampTzLiteral() is not None:
+            return ctx.getText(), "tstz"
+        if ctx.IntervalDayLiteral() is not None:
+            return ctx.getText(), "iday"
+        if ctx.IntervalYearLiteral() is not None:
+            return ctx.getText(), "iyear"
+        if ctx.NullLiteral() is not None:
+            return ctx.getText(), "null"
 
     def visitFunc_options(self, ctx: FuncTestCaseParser.Func_optionsContext):
         options = {}
@@ -130,7 +294,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return ctx.NaN().getText()
 
     def visitNullArg(self, ctx: FuncTestCaseParser.NullArgContext):
-        datatype = ctx.datatype().getText()
+        datatype = ctx.dataType().getText()
         return CaseLiteral(value=None, type=datatype)
 
     def visitIntArg(self, ctx: FuncTestCaseParser.IntArgContext):
@@ -199,3 +363,9 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.UndefineResult() is not None:
             return SubstraitError("undefined")
         return SubstraitError("unknown_error")
+
+
+class ParseError(Exception):
+    def __init__(self, message="Parsing error occurred"):
+        self.message = message
+        super().__init__(self.message)

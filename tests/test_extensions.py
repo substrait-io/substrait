@@ -1,15 +1,16 @@
 # SPDX-License-Identifier: Apache-2.0
 import os
 
+from tests.coverage.case_file_parser import load_all_testcases
+from tests.coverage.coverage import get_test_coverage
 from tests.coverage.extensions import build_type_to_short_type
+from tests.coverage.extensions import Extension
 
 
 # NOTE: this test is run as part of pre-commit hook
-def test_read_substrait_extensions():
-    from tests.coverage.extensions import Extension
-
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    extensions_path = os.path.join(current_dir, "../extensions")
+def test_substrait_extension_coverage():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    extensions_path = os.path.join(script_dir, "../extensions")
     registry = Extension.read_substrait_extensions(extensions_path)
     assert len(registry.registry) >= 161
     num_overloads = sum([len(f) for f in registry.registry.values()])
@@ -18,6 +19,17 @@ def test_read_substrait_extensions():
     assert len(registry.scalar_functions) >= 162
     assert len(registry.aggregate_functions) >= 29
     assert len(registry.window_functions) >= 0
+
+    test_case_dir = os.path.join(script_dir, "./cases")
+    all_test_files = load_all_testcases(test_case_dir)
+    coverage = get_test_coverage(all_test_files, registry)
+
+    assert coverage.test_count >= 49
+    assert coverage.num_covered_function_variants >= 18
+    assert coverage.total_function_variants >= 510
+    assert (
+        coverage.total_function_variants - coverage.num_covered_function_variants
+    ) <= 492
 
 
 def test_build_type_to_short_type():
