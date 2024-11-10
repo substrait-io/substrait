@@ -1,6 +1,18 @@
 Release Notes
 ---
 
+## [0.60.0](https://github.com/substrait-io/substrait/compare/v0.59.0...v0.60.0) (2024-11-10)
+
+### Features
+
+* add antlr grammar for test file format ([#728](https://github.com/substrait-io/substrait/issues/728)) ([752aa63](https://github.com/substrait-io/substrait/commit/752aa636c01647ef15fd59edfd675533e881e692))
+* add CreateMode for CTAS in WriteRel ([#715](https://github.com/substrait-io/substrait/issues/715)) ([2e13d0b](https://github.com/substrait-io/substrait/commit/2e13d0b7b4a2b5ac8221e7f02cc8f04456c8f11c))
+* update test file format to support aggregate functions ([#736](https://github.com/substrait-io/substrait/issues/736)) ([c18c0c1](https://github.com/substrait-io/substrait/commit/c18c0c1347376efa4dfab503bb4db9f820df3cf3))
+
+### Bug Fixes
+
+* typo in site/docs/tutorial/sql_to_substrait.md ([#735](https://github.com/substrait-io/substrait/issues/735)) ([9cccb04](https://github.com/substrait-io/substrait/commit/9cccb04fba336489b70ed42b71f73a0a1e34f9f5))
+
 ## [0.59.0](https://github.com/substrait-io/substrait/compare/v0.58.0...v0.59.0) (2024-11-03)
 
 ### ⚠ BREAKING CHANGES
