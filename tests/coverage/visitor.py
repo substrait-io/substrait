@@ -278,6 +278,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitIntervalYearArg(ctx.intervalYearArg())
         if ctx.nullArg() is not None:
             return self.visitNullArg(ctx.nullArg())
+        if ctx.listArg() is not None:
+            return self.visitListArg(ctx.listArg())
 
         return CaseLiteral(value="unknown_value", type="unknown_type")
 
@@ -351,6 +353,19 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return CaseLiteral(
             value=ctx.IntervalYearLiteral().getText().strip("'"), type="iyear"
         )
+
+    def visitListArg(self, ctx: FuncTestCaseParser.ListArgContext):
+        return CaseLiteral(
+            value=self.visitLiteralList(ctx.literalList()),
+            type=ctx.listType().getText(),
+        )
+
+    def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
+        values = []
+        for literal in ctx.literal():
+            value, _ = self.visitLiteral(literal)
+            values.append(value)
+        return values
 
     def visitResult(self, ctx: FuncTestCaseParser.ResultContext):
         if ctx.argument() is not None:
