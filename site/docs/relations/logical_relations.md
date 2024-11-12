@@ -474,6 +474,32 @@ Write definition types are built by the community and added to the specification
 | Format   | Enumeration of available formats. Only current option is PARQUET. | Required |
 
 
+## Update Operator
+
+The update operator applies a set of column transformations on a named table and writes to a storage. 
+
+| Signature            | Value                                 |
+| -------------------- |---------------------------------------|
+| Inputs               | 0                                     |
+| Outputs              | 1                                     |
+| Property Maintenance | Output is number of modified records  |
+
+### Update Properties
+
+| Property               | Description                                                                          | Required                                         |
+|------------------------|--------------------------------------------------------------------------------------|--------------------------------------------------|
+| Update Type            | Definition of which object we are operating on (e.g., a fully-qualified table name). | Required                                         |
+| Table Schema           | The names and types of all the columns of the input table                            | Required                                         |
+| Update Condition       | The condition that must be met for a record to be updated.                           | Required                                         |
+| Update Transformations | The set of column updates to be applied to the table.                                | Required                                         |
+
+=== "UpdateRel Message"
+
+    ```proto
+%%% proto.algebra.UpdateRel %%%
+    ```
+
+
 ## DDL (Data Definition Language) Operator
 
 The operator that defines modifications of a database schema (CREATE/DROP/ALTER for TABLE and VIEWS).

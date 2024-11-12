@@ -531,6 +531,7 @@ message Rel {
     ReferenceRel reference = 21;
     WriteRel write = 19;
     DdlRel ddl = 20;
+    UpdateRel update = 22;
     // Physical relations
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
@@ -662,6 +663,31 @@ message WriteRel {
     // subplans in the body of the Rel input) and return those with anounter PlanRel.relations.
     OUTPUT_MODE_MODIFIED_RECORDS = 2;
   }
+}
+
+// The operator that modifies the columns of a table
+message UpdateRel {
+  oneof update_type {
+    NamedTable named_table = 1;
+  }
+
+  NamedStruct table_schema = 2; // The full schema of the named_table
+  Expression condition = 3; // condition to be met for the update to be applied on a record
+
+  // The list of transformations to apply to the columns of the named_table
+  repeated TransformExpression transformations = 4;
+
+  message TransformExpression {
+    Expression transformation = 1; // the transformation to apply
+    int32 column_target = 2; // index of the column to apply the transformation to
+  }
+}
+
+// A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
+// This assumes shared catalog between systems exchanging a message.
+message NamedTable {
+  repeated string names = 1;
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
 // Hash joins and merge joins are a specialization of the general join where the join
