@@ -7,6 +7,7 @@ import "embed"
 // Add all directories which should be exposed in below
 //
 //go:embed extensions/*
+//go:embed tests/cases/*/*
 var substraitFS embed.FS
 
 func GetSubstraitFS() embed.FS {
