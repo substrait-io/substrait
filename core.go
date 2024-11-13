@@ -4,12 +4,20 @@ package substrait
 
 import "embed"
 
-// Add all directories which should be exposed in below
-//
 //go:embed extensions/*
-//go:embed tests/cases/*/*
-var substraitFS embed.FS
+var substraitExtensionsFS embed.FS
 
 func GetSubstraitFS() embed.FS {
-	return substraitFS
+	return substraitExtensionsFS
+}
+
+func GetSubstraitExtensionsFS() embed.FS {
+	return substraitExtensionsFS
+}
+
+//go:embed tests/cases/*/*.test
+var substraitTestsFS embed.FS
+
+func GetSubstraitTestsFS() embed.FS {
+	return substraitTestsFS
 }
