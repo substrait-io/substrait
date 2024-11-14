@@ -16,7 +16,7 @@ def serializedATN():
         4,
         1,
         120,
-        565,
+        573,
         2,
         0,
         7,
@@ -961,11 +961,9 @@ def serializedATN():
         43,
         1,
         43,
-        1,
-        43,
         3,
         43,
-        455,
+        454,
         8,
         43,
         1,
@@ -996,13 +994,31 @@ def serializedATN():
         50,
         1,
         50,
+        3,
+        50,
+        470,
+        8,
+        50,
+        1,
+        50,
+        1,
+        50,
+        1,
+        50,
+        1,
+        50,
+        3,
+        50,
+        476,
+        8,
+        50,
         1,
         51,
         1,
         51,
         3,
         51,
-        473,
+        480,
         8,
         51,
         1,
@@ -1019,7 +1035,7 @@ def serializedATN():
         52,
         3,
         52,
-        481,
+        488,
         8,
         52,
         1,
@@ -1036,7 +1052,7 @@ def serializedATN():
         53,
         3,
         53,
-        489,
+        496,
         8,
         53,
         1,
@@ -1053,7 +1069,7 @@ def serializedATN():
         54,
         3,
         54,
-        497,
+        504,
         8,
         54,
         1,
@@ -1070,7 +1086,7 @@ def serializedATN():
         54,
         3,
         54,
-        505,
+        512,
         8,
         54,
         1,
@@ -1079,7 +1095,7 @@ def serializedATN():
         55,
         3,
         55,
-        509,
+        516,
         8,
         55,
         1,
@@ -1096,7 +1112,7 @@ def serializedATN():
         56,
         3,
         56,
-        517,
+        524,
         8,
         56,
         1,
@@ -1113,7 +1129,7 @@ def serializedATN():
         57,
         3,
         57,
-        525,
+        532,
         8,
         57,
         1,
@@ -1136,9 +1152,11 @@ def serializedATN():
         58,
         1,
         58,
+        1,
+        58,
         3,
         58,
-        537,
+        545,
         8,
         58,
         1,
@@ -1173,14 +1191,14 @@ def serializedATN():
         64,
         5,
         64,
-        554,
+        562,
         8,
         64,
         10,
         64,
         12,
         64,
-        557,
+        565,
         9,
         64,
         1,
@@ -1193,7 +1211,7 @@ def serializedATN():
         66,
         3,
         66,
-        563,
+        571,
         8,
         66,
         1,
@@ -1396,7 +1414,7 @@ def serializedATN():
         22,
         115,
         116,
-        581,
+        591,
         0,
         134,
         1,
@@ -1656,145 +1674,145 @@ def serializedATN():
         0,
         0,
         86,
-        454,
+        453,
         1,
         0,
         0,
         0,
         88,
-        456,
+        455,
         1,
         0,
         0,
         0,
         90,
-        458,
+        457,
         1,
         0,
         0,
         0,
         92,
-        460,
+        459,
         1,
         0,
         0,
         0,
         94,
-        462,
+        461,
         1,
         0,
         0,
         0,
         96,
-        464,
+        463,
         1,
         0,
         0,
         0,
         98,
-        466,
+        465,
         1,
         0,
         0,
         0,
         100,
-        468,
+        467,
         1,
         0,
         0,
         0,
         102,
-        470,
+        477,
         1,
         0,
         0,
         0,
         104,
-        478,
+        485,
         1,
         0,
         0,
         0,
         106,
-        486,
+        493,
         1,
         0,
         0,
         0,
         108,
-        494,
+        501,
         1,
         0,
         0,
         0,
         110,
-        506,
+        513,
         1,
         0,
         0,
         0,
         112,
-        514,
+        521,
         1,
         0,
         0,
         0,
         114,
-        522,
+        529,
         1,
         0,
         0,
         0,
         116,
-        536,
+        544,
         1,
         0,
         0,
         0,
         118,
-        538,
-        1,
-        0,
-        0,
-        0,
-        120,
-        540,
-        1,
-        0,
-        0,
-        0,
-        122,
-        542,
-        1,
-        0,
-        0,
-        0,
-        124,
         546,
         1,
         0,
         0,
         0,
-        126,
+        120,
         548,
         1,
         0,
         0,
         0,
-        128,
+        122,
         550,
         1,
         0,
         0,
         0,
-        130,
+        124,
+        554,
+        1,
+        0,
+        0,
+        0,
+        126,
+        556,
+        1,
+        0,
+        0,
+        0,
+        128,
         558,
         1,
         0,
         0,
         0,
+        130,
+        566,
+        1,
+        0,
+        0,
+        0,
         132,
-        562,
+        570,
         1,
         0,
         0,
@@ -3930,673 +3948,673 @@ def serializedATN():
         0,
         0,
         436,
-        455,
+        454,
         3,
         88,
         44,
         0,
         437,
-        455,
+        454,
         5,
         52,
         0,
         0,
         438,
-        455,
+        454,
         5,
         53,
         0,
         0,
         439,
-        455,
+        454,
         5,
         54,
         0,
         0,
         440,
-        455,
+        454,
         5,
         55,
         0,
         0,
         441,
-        455,
+        454,
         5,
         56,
         0,
         0,
         442,
-        455,
+        454,
         5,
         57,
         0,
         0,
         443,
-        455,
+        454,
         3,
         90,
         45,
         0,
         444,
-        455,
+        454,
         3,
         92,
         46,
         0,
         445,
-        455,
+        454,
         3,
         94,
         47,
         0,
         446,
-        455,
+        454,
         3,
         96,
         48,
         0,
         447,
-        455,
+        454,
         5,
         62,
         0,
         0,
         448,
-        455,
+        454,
         5,
         63,
         0,
         0,
         449,
-        455,
-        3,
-        100,
-        50,
-        0,
-        450,
-        455,
+        454,
         3,
         98,
         49,
         0,
-        451,
-        455,
+        450,
+        454,
         5,
         66,
         0,
         0,
+        451,
         452,
-        453,
         5,
         77,
         0,
         0,
-        453,
-        455,
+        452,
+        454,
         5,
         119,
         0,
         0,
-        454,
+        453,
         436,
         1,
         0,
         0,
         0,
-        454,
+        453,
         437,
         1,
         0,
         0,
         0,
-        454,
+        453,
         438,
         1,
         0,
         0,
         0,
-        454,
+        453,
         439,
         1,
         0,
         0,
         0,
-        454,
+        453,
         440,
         1,
         0,
         0,
         0,
-        454,
+        453,
         441,
         1,
         0,
         0,
         0,
-        454,
+        453,
         442,
         1,
         0,
         0,
         0,
-        454,
+        453,
         443,
         1,
         0,
         0,
         0,
-        454,
+        453,
         444,
         1,
         0,
         0,
         0,
-        454,
+        453,
         445,
         1,
         0,
         0,
         0,
-        454,
+        453,
         446,
         1,
         0,
         0,
         0,
-        454,
+        453,
         447,
         1,
         0,
         0,
         0,
-        454,
+        453,
         448,
         1,
         0,
         0,
         0,
-        454,
+        453,
         449,
         1,
         0,
         0,
         0,
-        454,
+        453,
         450,
         1,
         0,
         0,
         0,
-        454,
+        453,
         451,
         1,
         0,
         0,
         0,
         454,
-        452,
-        1,
-        0,
-        0,
-        0,
-        455,
         87,
         1,
         0,
         0,
         0,
+        455,
         456,
-        457,
         7,
         4,
         0,
         0,
-        457,
+        456,
         89,
         1,
         0,
         0,
         0,
+        457,
         458,
-        459,
         7,
         5,
         0,
         0,
-        459,
+        458,
         91,
         1,
         0,
         0,
         0,
+        459,
         460,
-        461,
         7,
         6,
         0,
         0,
-        461,
+        460,
         93,
         1,
         0,
         0,
         0,
+        461,
         462,
-        463,
         7,
         7,
         0,
         0,
-        463,
+        462,
         95,
         1,
         0,
         0,
         0,
+        463,
         464,
-        465,
         7,
         8,
         0,
         0,
-        465,
+        464,
         97,
         1,
         0,
         0,
         0,
+        465,
         466,
-        467,
         7,
         9,
         0,
         0,
-        467,
+        466,
         99,
         1,
         0,
         0,
         0,
-        468,
+        467,
         469,
         7,
         10,
         0,
         0,
+        468,
+        470,
+        5,
+        112,
+        0,
+        0,
         469,
-        101,
+        468,
+        1,
+        0,
+        0,
+        0,
+        469,
+        470,
         1,
         0,
         0,
         0,
         470,
-        472,
-        7,
-        11,
-        0,
-        0,
-        471,
-        473,
-        5,
-        112,
-        0,
-        0,
-        472,
-        471,
-        1,
-        0,
-        0,
-        0,
-        472,
-        473,
-        1,
-        0,
-        0,
-        0,
-        473,
-        474,
-        1,
-        0,
-        0,
-        0,
-        474,
         475,
+        1,
+        0,
+        0,
+        0,
+        471,
+        472,
         5,
         39,
         0,
         0,
-        475,
-        476,
+        472,
+        473,
         3,
         118,
         59,
         0,
-        476,
-        477,
+        473,
+        474,
         5,
         40,
         0,
         0,
+        474,
+        476,
+        1,
+        0,
+        0,
+        0,
+        475,
+        471,
+        1,
+        0,
+        0,
+        0,
+        475,
+        476,
+        1,
+        0,
+        0,
+        0,
+        476,
+        101,
+        1,
+        0,
+        0,
+        0,
         477,
+        479,
+        7,
+        11,
+        0,
+        0,
+        478,
+        480,
+        5,
+        112,
+        0,
+        0,
+        479,
+        478,
+        1,
+        0,
+        0,
+        0,
+        479,
+        480,
+        1,
+        0,
+        0,
+        0,
+        480,
+        481,
+        1,
+        0,
+        0,
+        0,
+        481,
+        482,
+        5,
+        39,
+        0,
+        0,
+        482,
+        483,
+        3,
+        118,
+        59,
+        0,
+        483,
+        484,
+        5,
+        40,
+        0,
+        0,
+        484,
         103,
         1,
         0,
         0,
         0,
-        478,
-        480,
+        485,
+        487,
         7,
         12,
         0,
         0,
-        479,
-        481,
+        486,
+        488,
         5,
         112,
         0,
         0,
-        480,
-        479,
+        487,
+        486,
         1,
         0,
         0,
         0,
-        480,
-        481,
+        487,
+        488,
         1,
         0,
         0,
         0,
-        481,
-        482,
+        488,
+        489,
         1,
         0,
         0,
         0,
-        482,
-        483,
+        489,
+        490,
         5,
         39,
         0,
         0,
-        483,
-        484,
+        490,
+        491,
         3,
         118,
         59,
         0,
-        484,
-        485,
+        491,
+        492,
         5,
         40,
         0,
         0,
-        485,
+        492,
         105,
         1,
         0,
         0,
         0,
-        486,
-        488,
+        493,
+        495,
         7,
         13,
         0,
         0,
-        487,
-        489,
+        494,
+        496,
         5,
         112,
         0,
         0,
-        488,
-        487,
+        495,
+        494,
         1,
         0,
         0,
         0,
-        488,
-        489,
+        495,
+        496,
         1,
         0,
         0,
         0,
-        489,
-        490,
+        496,
+        497,
         1,
         0,
         0,
         0,
-        490,
-        491,
+        497,
+        498,
         5,
         39,
         0,
         0,
-        491,
-        492,
+        498,
+        499,
         3,
         118,
         59,
         0,
-        492,
-        493,
+        499,
+        500,
         5,
         40,
         0,
         0,
-        493,
+        500,
         107,
         1,
         0,
         0,
         0,
-        494,
-        496,
+        501,
+        503,
         7,
         14,
         0,
         0,
-        495,
-        497,
+        502,
+        504,
         5,
         112,
         0,
         0,
-        496,
-        495,
+        503,
+        502,
         1,
         0,
         0,
         0,
-        496,
-        497,
-        1,
-        0,
-        0,
-        0,
-        497,
+        503,
         504,
         1,
         0,
         0,
         0,
-        498,
-        499,
+        504,
+        511,
+        1,
+        0,
+        0,
+        0,
+        505,
+        506,
         5,
         39,
         0,
         0,
-        499,
-        500,
+        506,
+        507,
         3,
         118,
         59,
         0,
-        500,
-        501,
+        507,
+        508,
         5,
         110,
         0,
         0,
-        501,
-        502,
+        508,
+        509,
         3,
         118,
         59,
         0,
-        502,
-        503,
+        509,
+        510,
         5,
         40,
         0,
         0,
-        503,
+        510,
+        512,
+        1,
+        0,
+        0,
+        0,
+        511,
         505,
         1,
         0,
         0,
         0,
-        504,
-        498,
+        511,
+        512,
         1,
         0,
         0,
         0,
-        504,
-        505,
-        1,
-        0,
-        0,
-        0,
-        505,
+        512,
         109,
         1,
         0,
         0,
         0,
-        506,
-        508,
+        513,
+        515,
         7,
         15,
         0,
         0,
-        507,
-        509,
+        514,
+        516,
         5,
         112,
         0,
         0,
-        508,
-        507,
+        515,
+        514,
         1,
         0,
         0,
         0,
-        508,
-        509,
+        515,
+        516,
         1,
         0,
         0,
         0,
-        509,
-        510,
+        516,
+        517,
         1,
         0,
         0,
         0,
-        510,
-        511,
+        517,
+        518,
         5,
         39,
         0,
         0,
-        511,
-        512,
+        518,
+        519,
         3,
         118,
         59,
         0,
-        512,
-        513,
+        519,
+        520,
         5,
         40,
         0,
         0,
-        513,
+        520,
         111,
         1,
         0,
         0,
         0,
-        514,
-        516,
+        521,
+        523,
         7,
         16,
-        0,
-        0,
-        515,
-        517,
-        5,
-        112,
-        0,
-        0,
-        516,
-        515,
-        1,
-        0,
-        0,
-        0,
-        516,
-        517,
-        1,
-        0,
-        0,
-        0,
-        517,
-        518,
-        1,
-        0,
-        0,
-        0,
-        518,
-        519,
-        5,
-        39,
-        0,
-        0,
-        519,
-        520,
-        3,
-        118,
-        59,
-        0,
-        520,
-        521,
-        5,
-        40,
-        0,
-        0,
-        521,
-        113,
-        1,
-        0,
         0,
         0,
         522,
         524,
         5,
-        75,
-        0,
-        0,
-        523,
-        525,
-        5,
         112,
         0,
         0,
-        524,
         523,
+        522,
+        1,
+        0,
+        0,
+        0,
+        523,
+        524,
         1,
         0,
         0,
@@ -4609,168 +4627,180 @@ def serializedATN():
         0,
         525,
         526,
-        1,
-        0,
-        0,
-        0,
-        526,
-        527,
         5,
         39,
         0,
         0,
+        526,
+        527,
+        3,
+        118,
+        59,
+        0,
         527,
         528,
-        3,
-        84,
-        42,
-        0,
-        528,
-        529,
         5,
         40,
         0,
         0,
+        528,
+        113,
+        1,
+        0,
+        0,
+        0,
         529,
+        531,
+        5,
+        75,
+        0,
+        0,
+        530,
+        532,
+        5,
+        112,
+        0,
+        0,
+        531,
+        530,
+        1,
+        0,
+        0,
+        0,
+        531,
+        532,
+        1,
+        0,
+        0,
+        0,
+        532,
+        533,
+        1,
+        0,
+        0,
+        0,
+        533,
+        534,
+        5,
+        39,
+        0,
+        0,
+        534,
+        535,
+        3,
+        84,
+        42,
+        0,
+        535,
+        536,
+        5,
+        40,
+        0,
+        0,
+        536,
         115,
         1,
         0,
         0,
         0,
-        530,
         537,
+        545,
         3,
         102,
         51,
         0,
-        531,
-        537,
+        538,
+        545,
         3,
         104,
         52,
         0,
-        532,
-        537,
+        539,
+        545,
         3,
         106,
         53,
         0,
-        533,
-        537,
+        540,
+        545,
         3,
         108,
         54,
         0,
-        534,
-        537,
+        541,
+        545,
+        3,
+        100,
+        50,
+        0,
+        542,
+        545,
         3,
         110,
         55,
         0,
-        535,
-        537,
+        543,
+        545,
         3,
         112,
         56,
         0,
-        536,
-        530,
-        1,
-        0,
-        0,
-        0,
-        536,
-        531,
-        1,
-        0,
-        0,
-        0,
-        536,
-        532,
-        1,
-        0,
-        0,
-        0,
-        536,
-        533,
-        1,
-        0,
-        0,
-        0,
-        536,
-        534,
-        1,
-        0,
-        0,
-        0,
-        536,
-        535,
-        1,
-        0,
-        0,
-        0,
+        544,
         537,
-        117,
         1,
         0,
         0,
         0,
+        544,
         538,
-        539,
-        5,
-        23,
-        0,
-        0,
-        539,
-        119,
         1,
         0,
         0,
         0,
+        544,
+        539,
+        1,
+        0,
+        0,
+        0,
+        544,
         540,
-        541,
-        7,
-        17,
-        0,
-        0,
-        541,
-        121,
         1,
         0,
         0,
         0,
+        544,
+        541,
+        1,
+        0,
+        0,
+        0,
+        544,
         542,
-        543,
-        3,
-        124,
-        62,
+        1,
         0,
-        543,
-        544,
-        5,
-        111,
         0,
         0,
         544,
-        545,
-        3,
-        126,
-        63,
+        543,
+        1,
+        0,
+        0,
         0,
         545,
-        123,
+        117,
         1,
         0,
         0,
         0,
         546,
         547,
-        7,
-        18,
+        5,
+        23,
         0,
         0,
         547,
-        125,
+        119,
         1,
         0,
         0,
@@ -4778,112 +4808,160 @@ def serializedATN():
         548,
         549,
         7,
-        19,
+        17,
         0,
         0,
         549,
-        127,
+        121,
         1,
         0,
         0,
         0,
         550,
-        555,
+        551,
         3,
-        122,
-        61,
+        124,
+        62,
         0,
         551,
         552,
         5,
-        110,
+        111,
         0,
         0,
         552,
-        554,
+        553,
         3,
-        122,
-        61,
+        126,
+        63,
         0,
         553,
-        551,
+        123,
         1,
         0,
         0,
         0,
         554,
-        557,
-        1,
-        0,
+        555,
+        7,
+        18,
         0,
         0,
         555,
-        553,
-        1,
-        0,
-        0,
-        0,
-        555,
-        556,
+        125,
         1,
         0,
         0,
         0,
         556,
-        129,
-        1,
-        0,
+        557,
+        7,
+        19,
         0,
         0,
         557,
-        555,
+        127,
         1,
         0,
         0,
         0,
         558,
+        563,
+        3,
+        122,
+        61,
+        0,
         559,
+        560,
+        5,
+        110,
+        0,
+        0,
+        560,
+        562,
+        3,
+        122,
+        61,
+        0,
+        561,
+        559,
+        1,
+        0,
+        0,
+        0,
+        562,
+        565,
+        1,
+        0,
+        0,
+        0,
+        563,
+        561,
+        1,
+        0,
+        0,
+        0,
+        563,
+        564,
+        1,
+        0,
+        0,
+        0,
+        564,
+        129,
+        1,
+        0,
+        0,
+        0,
+        565,
+        563,
+        1,
+        0,
+        0,
+        0,
+        566,
+        567,
         7,
         20,
         0,
         0,
-        559,
+        567,
         131,
         1,
         0,
         0,
         0,
-        560,
-        563,
+        568,
+        571,
         3,
         130,
         65,
         0,
-        561,
-        563,
+        569,
+        571,
         5,
         119,
         0,
         0,
-        562,
-        560,
+        570,
+        568,
         1,
         0,
         0,
         0,
-        562,
-        561,
+        570,
+        569,
         1,
         0,
         0,
         0,
-        563,
+        571,
         133,
         1,
         0,
         0,
         0,
-        39,
+        41,
         138,
         158,
         171,
@@ -4911,18 +4989,20 @@ def serializedATN():
         425,
         428,
         434,
-        454,
-        472,
-        480,
-        488,
-        496,
-        504,
-        508,
-        516,
-        524,
-        536,
-        555,
-        562,
+        453,
+        469,
+        475,
+        479,
+        487,
+        495,
+        503,
+        511,
+        515,
+        523,
+        531,
+        544,
+        563,
+        570,
     ]
 
 
@@ -8620,7 +8700,6 @@ class FuncTestCaseParser(Parser):
                 62,
                 63,
                 64,
-                65,
                 66,
                 77,
                 78,
@@ -8629,13 +8708,12 @@ class FuncTestCaseParser(Parser):
                 81,
                 82,
                 83,
-                84,
             ]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 432
                 self.scalarType()
                 pass
-            elif token in [67, 68, 69, 70, 71, 72, 85, 86, 87, 88, 89, 90]:
+            elif token in [65, 67, 68, 69, 70, 71, 72, 84, 85, 86, 87, 88, 89, 90]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 433
                 self.parameterizedType()
@@ -8935,32 +9013,6 @@ class FuncTestCaseParser(Parser):
             else:
                 return visitor.visitChildren(self)
 
-    class IntervalDayContext(ScalarTypeContext):
-        def __init__(
-            self, parser, ctx: ParserRuleContext
-        ):  # actually a FuncTestCaseParser.ScalarTypeContext
-            super().__init__(parser)
-            self.copyFrom(ctx)
-
-        def intervalDayType(self):
-            return self.getTypedRuleContext(
-                FuncTestCaseParser.IntervalDayTypeContext, 0
-            )
-
-        def enterRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "enterIntervalDay"):
-                listener.enterIntervalDay(self)
-
-        def exitRule(self, listener: ParseTreeListener):
-            if hasattr(listener, "exitIntervalDay"):
-                listener.exitIntervalDay(self)
-
-        def accept(self, visitor: ParseTreeVisitor):
-            if hasattr(visitor, "visitIntervalDay"):
-                return visitor.visitIntervalDay(self)
-            else:
-                return visitor.visitChildren(self)
-
     class Fp64Context(ScalarTypeContext):
         def __init__(
             self, parser, ctx: ParserRuleContext
@@ -9087,7 +9139,7 @@ class FuncTestCaseParser(Parser):
         localctx = FuncTestCaseParser.ScalarTypeContext(self, self._ctx, self.state)
         self.enterRule(localctx, 86, self.RULE_scalarType)
         try:
-            self.state = 454
+            self.state = 453
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [51, 78]:
@@ -9168,30 +9220,24 @@ class FuncTestCaseParser(Parser):
                 self.state = 448
                 self.match(FuncTestCaseParser.Time)
                 pass
-            elif token in [65, 84]:
-                localctx = FuncTestCaseParser.IntervalDayContext(self, localctx)
-                self.enterOuterAlt(localctx, 14)
-                self.state = 449
-                self.intervalDayType()
-                pass
             elif token in [64, 83]:
                 localctx = FuncTestCaseParser.IntervalYearContext(self, localctx)
-                self.enterOuterAlt(localctx, 15)
-                self.state = 450
+                self.enterOuterAlt(localctx, 14)
+                self.state = 449
                 self.intervalYearType()
                 pass
             elif token in [66]:
                 localctx = FuncTestCaseParser.UuidContext(self, localctx)
-                self.enterOuterAlt(localctx, 16)
-                self.state = 451
+                self.enterOuterAlt(localctx, 15)
+                self.state = 450
                 self.match(FuncTestCaseParser.UUID)
                 pass
             elif token in [77]:
                 localctx = FuncTestCaseParser.UserDefinedContext(self, localctx)
-                self.enterOuterAlt(localctx, 17)
-                self.state = 452
+                self.enterOuterAlt(localctx, 16)
+                self.state = 451
                 self.match(FuncTestCaseParser.UserDefined)
-                self.state = 453
+                self.state = 452
                 self.match(FuncTestCaseParser.Identifier)
                 pass
             else:
@@ -9243,7 +9289,7 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 456
+            self.state = 455
             _la = self._input.LA(1)
             if not (_la == 51 or _la == 78):
                 self._errHandler.recoverInline(self)
@@ -9296,7 +9342,7 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 458
+            self.state = 457
             _la = self._input.LA(1)
             if not (_la == 58 or _la == 79):
                 self._errHandler.recoverInline(self)
@@ -9349,7 +9395,7 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 460
+            self.state = 459
             _la = self._input.LA(1)
             if not (_la == 59 or _la == 80):
                 self._errHandler.recoverInline(self)
@@ -9402,7 +9448,7 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 462
+            self.state = 461
             _la = self._input.LA(1)
             if not (_la == 60 or _la == 81):
                 self._errHandler.recoverInline(self)
@@ -9457,7 +9503,7 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 464
+            self.state = 463
             _la = self._input.LA(1)
             if not (_la == 61 or _la == 82):
                 self._errHandler.recoverInline(self)
@@ -9512,7 +9558,7 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 466
+            self.state = 465
             _la = self._input.LA(1)
             if not (_la == 64 or _la == 83):
                 self._errHandler.recoverInline(self)
@@ -9535,12 +9581,28 @@ class FuncTestCaseParser(Parser):
         ):
             super().__init__(parent, invokingState)
             self.parser = parser
+            self.isnull = None  # Token
+            self.len_ = None  # NumericParameterContext
 
         def IDay(self):
             return self.getToken(FuncTestCaseParser.IDay, 0)
 
         def Interval_Day(self):
             return self.getToken(FuncTestCaseParser.Interval_Day, 0)
+
+        def OAngleBracket(self):
+            return self.getToken(FuncTestCaseParser.OAngleBracket, 0)
+
+        def CAngleBracket(self):
+            return self.getToken(FuncTestCaseParser.CAngleBracket, 0)
+
+        def QMark(self):
+            return self.getToken(FuncTestCaseParser.QMark, 0)
+
+        def numericParameter(self):
+            return self.getTypedRuleContext(
+                FuncTestCaseParser.NumericParameterContext, 0
+            )
 
         def getRuleIndex(self):
             return FuncTestCaseParser.RULE_intervalDayType
@@ -9567,13 +9629,31 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 468
+            self.state = 467
             _la = self._input.LA(1)
             if not (_la == 65 or _la == 84):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
+            self.state = 469
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la == 112:
+                self.state = 468
+                localctx.isnull = self.match(FuncTestCaseParser.QMark)
+
+            self.state = 475
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la == 39:
+                self.state = 471
+                self.match(FuncTestCaseParser.OAngleBracket)
+                self.state = 472
+                localctx.len_ = self.numericParameter()
+                self.state = 473
+                self.match(FuncTestCaseParser.CAngleBracket)
+
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -9636,25 +9716,25 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 470
+            self.state = 477
             _la = self._input.LA(1)
             if not (_la == 70 or _la == 88):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
-            self.state = 472
+            self.state = 479
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la == 112:
-                self.state = 471
+                self.state = 478
                 localctx.isnull = self.match(FuncTestCaseParser.QMark)
 
-            self.state = 474
+            self.state = 481
             self.match(FuncTestCaseParser.OAngleBracket)
-            self.state = 475
+            self.state = 482
             localctx.len_ = self.numericParameter()
-            self.state = 476
+            self.state = 483
             self.match(FuncTestCaseParser.CAngleBracket)
         except RecognitionException as re:
             localctx.exception = re
@@ -9718,25 +9798,25 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 478
+            self.state = 485
             _la = self._input.LA(1)
             if not (_la == 71 or _la == 89):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
-            self.state = 480
+            self.state = 487
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la == 112:
-                self.state = 479
+                self.state = 486
                 localctx.isnull = self.match(FuncTestCaseParser.QMark)
 
-            self.state = 482
+            self.state = 489
             self.match(FuncTestCaseParser.OAngleBracket)
-            self.state = 483
+            self.state = 490
             localctx.len_ = self.numericParameter()
-            self.state = 484
+            self.state = 491
             self.match(FuncTestCaseParser.CAngleBracket)
         except RecognitionException as re:
             localctx.exception = re
@@ -9802,25 +9882,25 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 486
+            self.state = 493
             _la = self._input.LA(1)
             if not (_la == 72 or _la == 90):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
-            self.state = 488
+            self.state = 495
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la == 112:
-                self.state = 487
+                self.state = 494
                 localctx.isnull = self.match(FuncTestCaseParser.QMark)
 
-            self.state = 490
+            self.state = 497
             self.match(FuncTestCaseParser.OAngleBracket)
-            self.state = 491
+            self.state = 498
             localctx.len_ = self.numericParameter()
-            self.state = 492
+            self.state = 499
             self.match(FuncTestCaseParser.CAngleBracket)
         except RecognitionException as re:
             localctx.exception = re
@@ -9893,33 +9973,33 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 494
+            self.state = 501
             _la = self._input.LA(1)
             if not (_la == 67 or _la == 85):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
-            self.state = 496
+            self.state = 503
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la == 112:
-                self.state = 495
+                self.state = 502
                 localctx.isnull = self.match(FuncTestCaseParser.QMark)
 
-            self.state = 504
+            self.state = 511
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la == 39:
-                self.state = 498
+                self.state = 505
                 self.match(FuncTestCaseParser.OAngleBracket)
-                self.state = 499
+                self.state = 506
                 localctx.precision = self.numericParameter()
-                self.state = 500
+                self.state = 507
                 self.match(FuncTestCaseParser.Comma)
-                self.state = 501
+                self.state = 508
                 localctx.scale = self.numericParameter()
-                self.state = 502
+                self.state = 509
                 self.match(FuncTestCaseParser.CAngleBracket)
 
         except RecognitionException as re:
@@ -9986,25 +10066,25 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 506
+            self.state = 513
             _la = self._input.LA(1)
             if not (_la == 68 or _la == 86):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
-            self.state = 508
+            self.state = 515
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la == 112:
-                self.state = 507
+                self.state = 514
                 localctx.isnull = self.match(FuncTestCaseParser.QMark)
 
-            self.state = 510
+            self.state = 517
             self.match(FuncTestCaseParser.OAngleBracket)
-            self.state = 511
+            self.state = 518
             localctx.precision = self.numericParameter()
-            self.state = 512
+            self.state = 519
             self.match(FuncTestCaseParser.CAngleBracket)
         except RecognitionException as re:
             localctx.exception = re
@@ -10070,25 +10150,25 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 514
+            self.state = 521
             _la = self._input.LA(1)
             if not (_la == 69 or _la == 87):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
                 self.consume()
-            self.state = 516
+            self.state = 523
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la == 112:
-                self.state = 515
+                self.state = 522
                 localctx.isnull = self.match(FuncTestCaseParser.QMark)
 
-            self.state = 518
+            self.state = 525
             self.match(FuncTestCaseParser.OAngleBracket)
-            self.state = 519
+            self.state = 526
             localctx.precision = self.numericParameter()
-            self.state = 520
+            self.state = 527
             self.match(FuncTestCaseParser.CAngleBracket)
         except RecognitionException as re:
             localctx.exception = re
@@ -10158,20 +10238,20 @@ class FuncTestCaseParser(Parser):
         try:
             localctx = FuncTestCaseParser.ListContext(self, localctx)
             self.enterOuterAlt(localctx, 1)
-            self.state = 522
+            self.state = 529
             self.match(FuncTestCaseParser.List)
-            self.state = 524
+            self.state = 531
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la == 112:
-                self.state = 523
+                self.state = 530
                 localctx.isnull = self.match(FuncTestCaseParser.QMark)
 
-            self.state = 526
+            self.state = 533
             self.match(FuncTestCaseParser.OAngleBracket)
-            self.state = 527
+            self.state = 534
             localctx.elemType = self.dataType()
-            self.state = 528
+            self.state = 535
             self.match(FuncTestCaseParser.CAngleBracket)
         except RecognitionException as re:
             localctx.exception = re
@@ -10203,6 +10283,11 @@ class FuncTestCaseParser(Parser):
 
         def decimalType(self):
             return self.getTypedRuleContext(FuncTestCaseParser.DecimalTypeContext, 0)
+
+        def intervalDayType(self):
+            return self.getTypedRuleContext(
+                FuncTestCaseParser.IntervalDayTypeContext, 0
+            )
 
         def precisionTimestampType(self):
             return self.getTypedRuleContext(
@@ -10237,37 +10322,42 @@ class FuncTestCaseParser(Parser):
         )
         self.enterRule(localctx, 116, self.RULE_parameterizedType)
         try:
-            self.state = 536
+            self.state = 544
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [70, 88]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 530
+                self.state = 537
                 self.fixedCharType()
                 pass
             elif token in [71, 89]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 531
+                self.state = 538
                 self.varCharType()
                 pass
             elif token in [72, 90]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 532
+                self.state = 539
                 self.fixedBinaryType()
                 pass
             elif token in [67, 85]:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 533
+                self.state = 540
                 self.decimalType()
                 pass
-            elif token in [68, 86]:
+            elif token in [65, 84]:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 534
+                self.state = 541
+                self.intervalDayType()
+                pass
+            elif token in [68, 86]:
+                self.enterOuterAlt(localctx, 6)
+                self.state = 542
                 self.precisionTimestampType()
                 pass
             elif token in [69, 87]:
-                self.enterOuterAlt(localctx, 6)
-                self.state = 535
+                self.enterOuterAlt(localctx, 7)
+                self.state = 543
                 self.precisionTimestampTZType()
                 pass
             else:
@@ -10328,7 +10418,7 @@ class FuncTestCaseParser(Parser):
         try:
             localctx = FuncTestCaseParser.IntegerLiteralContext(self, localctx)
             self.enterOuterAlt(localctx, 1)
-            self.state = 538
+            self.state = 546
             self.match(FuncTestCaseParser.IntegerLiteral)
         except RecognitionException as re:
             localctx.exception = re
@@ -10376,7 +10466,7 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 540
+            self.state = 548
             _la = self._input.LA(1)
             if not (_la == 9 or _la == 10):
                 self._errHandler.recoverInline(self)
@@ -10431,11 +10521,11 @@ class FuncTestCaseParser(Parser):
         self.enterRule(localctx, 122, self.RULE_funcOption)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 542
+            self.state = 550
             self.optionName()
-            self.state = 543
+            self.state = 551
             self.match(FuncTestCaseParser.Colon)
-            self.state = 544
+            self.state = 552
             self.optionValue()
         except RecognitionException as re:
             localctx.exception = re
@@ -10492,7 +10582,7 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 546
+            self.state = 554
             _la = self._input.LA(1)
             if not (
                 (((_la) & ~0x3F) == 0 and ((1 << _la) & 3151872) != 0) or _la == 119
@@ -10574,7 +10664,7 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 548
+            self.state = 556
             _la = self._input.LA(1)
             if not (
                 (((_la) & ~0x3F) == 0 and ((1 << _la) & 8796165365760) != 0)
@@ -10636,17 +10726,17 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 550
+            self.state = 558
             self.funcOption()
-            self.state = 555
+            self.state = 563
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la == 110:
-                self.state = 551
+                self.state = 559
                 self.match(FuncTestCaseParser.Comma)
-                self.state = 552
+                self.state = 560
                 self.funcOption()
-                self.state = 557
+                self.state = 565
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -10699,7 +10789,7 @@ class FuncTestCaseParser(Parser):
         self._la = 0  # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 558
+            self.state = 566
             _la = self._input.LA(1)
             if not (_la == 22 or _la == 115 or _la == 116):
                 self._errHandler.recoverInline(self)
@@ -10750,17 +10840,17 @@ class FuncTestCaseParser(Parser):
         localctx = FuncTestCaseParser.IdentifierContext(self, self._ctx, self.state)
         self.enterRule(localctx, 132, self.RULE_identifier)
         try:
-            self.state = 562
+            self.state = 570
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [22, 115, 116]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 560
+                self.state = 568
                 self.nonReserved()
                 pass
             elif token in [119]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 561
+                self.state = 569
                 self.match(FuncTestCaseParser.Identifier)
                 pass
             else:

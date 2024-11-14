@@ -522,14 +522,6 @@ class FuncTestCaseParserListener(ParseTreeListener):
     def exitTime(self, ctx: FuncTestCaseParser.TimeContext):
         pass
 
-    # Enter a parse tree produced by FuncTestCaseParser#intervalDay.
-    def enterIntervalDay(self, ctx: FuncTestCaseParser.IntervalDayContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#intervalDay.
-    def exitIntervalDay(self, ctx: FuncTestCaseParser.IntervalDayContext):
-        pass
-
     # Enter a parse tree produced by FuncTestCaseParser#intervalYear.
     def enterIntervalYear(self, ctx: FuncTestCaseParser.IntervalYearContext):
         pass

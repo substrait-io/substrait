@@ -219,7 +219,6 @@ scalarType
   | timestampTZType         #timestampTz
   | Date                    #date
   | Time                    #time
-  | intervalDayType         #intervalDay
   | intervalYearType        #intervalYear
   | UUID                    #uuid
   | UserDefined Identifier  #userDefined
@@ -250,7 +249,7 @@ intervalYearType
     ;
 
 intervalDayType
-    : (IDay | Interval_Day)
+    : (IDay | Interval_Day) isnull=QMark? (OAngleBracket len=numericParameter CAngleBracket)?
     ;
 
 fixedCharType
@@ -287,6 +286,7 @@ parameterizedType
     | varCharType
     | fixedBinaryType
     | decimalType
+    | intervalDayType
     | precisionTimestampType
     | precisionTimestampTZType
 // TODO implement the rest of the parameterized types

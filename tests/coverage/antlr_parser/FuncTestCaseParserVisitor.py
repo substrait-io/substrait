@@ -267,10 +267,6 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
     def visitTime(self, ctx: FuncTestCaseParser.TimeContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#intervalDay.
-    def visitIntervalDay(self, ctx: FuncTestCaseParser.IntervalDayContext):
-        return self.visitChildren(ctx)
-
     # Visit a parse tree produced by FuncTestCaseParser#intervalYear.
     def visitIntervalYear(self, ctx: FuncTestCaseParser.IntervalYearContext):
         return self.visitChildren(ctx)
