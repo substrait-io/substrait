@@ -373,14 +373,14 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "f6(1.1::dec<38,10>, 2.2::dec<38,10>) = 3.3::dec<38,10>",
         "f7(1.1::dec<38,10>, 2.2::decimal<38,10>) = 3.3::decimal<38,10>",
         "f8('1991-01-01'::date) = '2001-01-01'::date",
-        "f8('13:01:01.2345678'::time) = '23:59:59.999'::time",
-        "f8('1991-01-01T01:02:03.456'::ts, '1991-01-01T00:00:00'::timestamp) = '1991-01-01T22:33:44'::ts",
-        "f8('1991-01-01T01:02:03.456+05:30'::tstz, '1991-01-01T00:00:00+15:30'::timestamp_tz) = 23::i32",
-        "f9('1991-01-01'::date, 5::i64) = '1991-01-01T00:00:00+15:30'::timestamp_tz",
-        "f10('P10Y5M'::interval_year, 5::i64) = 'P15Y5M'::interval_year",
-        "f10('P10Y5M'::iyear, 5::i64) = 'P15Y5M'::iyear",
-        "f11('P10DT5H6M7S2000F'::interval_day, 5::i64) = 'P10DT10H6M7S2000F'::interval_day",
-        "f11('P10DT6M7S2000F'::interval_day, 5::i64) = 'P10DT11M7S2000F'::interval_day",
+        "f9('13:01:01.2345678'::time) = '23:59:59.999'::time",
+        "f10('1991-01-01T01:02:03.456'::ts, '1991-01-01T00:00:00'::timestamp) = '1991-01-01T22:33:44'::ts",
+        "f11('1991-01-01T01:02:03.456+05:30'::tstz, '1991-01-01T00:00:00+15:30'::timestamp_tz) = 23::i32",
+        "f12('1991-01-01'::date, 5::i64) = '1991-01-01T00:00:00+15:30'::timestamp_tz",
+        "f13('P10Y5M'::interval_year, 5::i64) = 'P15Y5M'::interval_year",
+        "f14('P10Y5M'::iyear, 5::i64) = 'P15Y5M'::iyear",
+        "f15('P10DT5H6M7S2000F'::interval_day, 5::i64) = 'P10DT10H6M7S2000F'::interval_day",
+        "f16('P10DT6M7S2000F'::interval_day, 5::i64) = 'P10DT11M7S2000F'::interval_day",
         "ltrim('abcabcdef'::str, 'abc'::str) [spaces_only:FALSE] = 'def'::str",
         "concat('abcd'::str, Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
         "concat('abcd'::str, Null::str) [null_handling:IGNORE_NULLS] = 'abcd'::str",
@@ -400,9 +400,34 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "octet_length(''::str) = 0::i64",
         "octet_length(' '::str) = 1::i64",
         "octet_length('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'::str) = 48::i64",
+        "concat('abcd'::varchar<9>, Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
+        "concat('abcd'::vchar<9>, 'ef'::varchar<9>) = Null::vchar<9>",
+        "concat('abcd'::vchar<9>, 'ef'::fixedchar<9>) = Null::fchar<9>",
+        "concat('abcd'::fbin<9>, 'ef'::fixedbinary<9>) = Null::fbin<9>",
+        "f35('1991-01-01T01:02:03.456'::pts<3>) = '1991-01-01T01:02:30.123123'::precision_timestamp<3>",
+        "f36('1991-01-01T01:02:03.456'::pts<3>, '1991-01-01T01:02:30.123123'::precision_timestamp<3>) = 123456::i64",
+        "f37('1991-01-01T01:02:03.123456'::pts<6>, '1991-01-01T04:05:06.456'::precision_timestamp<6>) = 123456::i64",
+        "f38('1991-01-01T01:02:03.456+05:30'::ptstz<3>) = '1991-01-01T00:00:00+15:30'::precision_timestamp_tz<3>",
+        "f39('1991-01-01T01:02:03.123456+05:30'::ptstz<6>) = '1991-01-01T00:00:00+15:30'::precision_timestamp_tz<6>",
     ],
 )
-def test_parse_various_argument_types(input_func_test):
+def test_parse_various_scalar_func_argument_types(input_func_test):
+    header = make_header("v1.0", "extensions/functions_arithmetic.yaml") + "# basic\n"
+    test_file = parse_string(header + input_func_test + "\n")
+    assert len(test_file.testcases) == 1
+
+
+@pytest.mark.parametrize(
+    "input_func_test",
+    [
+        "f1((1, 2, 3, 4)::i64) = -7.0::fp32",
+        "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) count_start() = 1::fp64",
+        "((20), (3), (1), (10), (5)) count_start() = 1::fp64",
+        """DEFINE t1(fp32, fp32) = ((20, 20), (-3, -3), (1, 1), (10,10), (5,5))
+            count_star() = 1::fp64""",
+    ],
+)
+def test_parse_various_aggregate_scalar_func_argument_types(input_func_test):
     header = (
         make_aggregate_test_header("v1.0", "extensions/functions_arithmetic.yaml")
         + "# basic\n"

@@ -25,6 +25,7 @@ def test_substrait_extension_coverage():
     coverage = get_test_coverage(all_test_files, registry)
 
     assert coverage.test_count >= 49
+    assert coverage.num_bad_tests == 0
     assert coverage.num_covered_function_variants >= 18
     assert coverage.total_function_variants >= 510
     assert (

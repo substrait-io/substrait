@@ -179,28 +179,36 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
     def visitIntervalDayArg(self, ctx: FuncTestCaseParser.IntervalDayArgContext):
         return self.visitChildren(ctx)
 
+    # Visit a parse tree produced by FuncTestCaseParser#fixedCharArg.
+    def visitFixedCharArg(self, ctx: FuncTestCaseParser.FixedCharArgContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#varCharArg.
+    def visitVarCharArg(self, ctx: FuncTestCaseParser.VarCharArgContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#fixedBinaryArg.
+    def visitFixedBinaryArg(self, ctx: FuncTestCaseParser.FixedBinaryArgContext):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#precisionTimestampArg.
+    def visitPrecisionTimestampArg(
+        self, ctx: FuncTestCaseParser.PrecisionTimestampArgContext
+    ):
+        return self.visitChildren(ctx)
+
+    # Visit a parse tree produced by FuncTestCaseParser#precisionTimestampTZArg.
+    def visitPrecisionTimestampTZArg(
+        self, ctx: FuncTestCaseParser.PrecisionTimestampTZArgContext
+    ):
+        return self.visitChildren(ctx)
+
     # Visit a parse tree produced by FuncTestCaseParser#listArg.
     def visitListArg(self, ctx: FuncTestCaseParser.ListArgContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by FuncTestCaseParser#literalList.
     def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by FuncTestCaseParser#intervalYearLiteral.
-    def visitIntervalYearLiteral(
-        self, ctx: FuncTestCaseParser.IntervalYearLiteralContext
-    ):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by FuncTestCaseParser#intervalDayLiteral.
-    def visitIntervalDayLiteral(
-        self, ctx: FuncTestCaseParser.IntervalDayLiteralContext
-    ):
-        return self.visitChildren(ctx)
-
-    # Visit a parse tree produced by FuncTestCaseParser#timeInterval.
-    def visitTimeInterval(self, ctx: FuncTestCaseParser.TimeIntervalContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by FuncTestCaseParser#dataType.
@@ -303,31 +311,31 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
     def visitIntervalDayType(self, ctx: FuncTestCaseParser.IntervalDayTypeContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#fixedChar.
-    def visitFixedChar(self, ctx: FuncTestCaseParser.FixedCharContext):
+    # Visit a parse tree produced by FuncTestCaseParser#fixedCharType.
+    def visitFixedCharType(self, ctx: FuncTestCaseParser.FixedCharTypeContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#varChar.
-    def visitVarChar(self, ctx: FuncTestCaseParser.VarCharContext):
+    # Visit a parse tree produced by FuncTestCaseParser#varCharType.
+    def visitVarCharType(self, ctx: FuncTestCaseParser.VarCharTypeContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#fixedBinary.
-    def visitFixedBinary(self, ctx: FuncTestCaseParser.FixedBinaryContext):
+    # Visit a parse tree produced by FuncTestCaseParser#fixedBinaryType.
+    def visitFixedBinaryType(self, ctx: FuncTestCaseParser.FixedBinaryTypeContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#decimal.
-    def visitDecimal(self, ctx: FuncTestCaseParser.DecimalContext):
+    # Visit a parse tree produced by FuncTestCaseParser#decimalType.
+    def visitDecimalType(self, ctx: FuncTestCaseParser.DecimalTypeContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#precisionTimestamp.
-    def visitPrecisionTimestamp(
-        self, ctx: FuncTestCaseParser.PrecisionTimestampContext
+    # Visit a parse tree produced by FuncTestCaseParser#precisionTimestampType.
+    def visitPrecisionTimestampType(
+        self, ctx: FuncTestCaseParser.PrecisionTimestampTypeContext
     ):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#precisionTimestampTZ.
-    def visitPrecisionTimestampTZ(
-        self, ctx: FuncTestCaseParser.PrecisionTimestampTZContext
+    # Visit a parse tree produced by FuncTestCaseParser#precisionTimestampTZType.
+    def visitPrecisionTimestampTZType(
+        self, ctx: FuncTestCaseParser.PrecisionTimestampTZTypeContext
     ):
         return self.visitChildren(ctx)
 
@@ -347,20 +355,20 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
     def visitSubstraitError(self, ctx: FuncTestCaseParser.SubstraitErrorContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#func_option.
-    def visitFunc_option(self, ctx: FuncTestCaseParser.Func_optionContext):
+    # Visit a parse tree produced by FuncTestCaseParser#funcOption.
+    def visitFuncOption(self, ctx: FuncTestCaseParser.FuncOptionContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#option_name.
-    def visitOption_name(self, ctx: FuncTestCaseParser.Option_nameContext):
+    # Visit a parse tree produced by FuncTestCaseParser#optionName.
+    def visitOptionName(self, ctx: FuncTestCaseParser.OptionNameContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#option_value.
-    def visitOption_value(self, ctx: FuncTestCaseParser.Option_valueContext):
+    # Visit a parse tree produced by FuncTestCaseParser#optionValue.
+    def visitOptionValue(self, ctx: FuncTestCaseParser.OptionValueContext):
         return self.visitChildren(ctx)
 
-    # Visit a parse tree produced by FuncTestCaseParser#func_options.
-    def visitFunc_options(self, ctx: FuncTestCaseParser.Func_optionsContext):
+    # Visit a parse tree produced by FuncTestCaseParser#funcOptions.
+    def visitFuncOptions(self, ctx: FuncTestCaseParser.FuncOptionsContext):
         return self.visitChildren(ctx)
 
     # Visit a parse tree produced by FuncTestCaseParser#nonReserved.

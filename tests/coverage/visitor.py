@@ -73,8 +73,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         args = self.visitArguments(ctx.arguments())
         result = self.visitResult(ctx.result())
         options = dict()
-        if ctx.func_options() is not None:
-            options = self.visitFunc_options(ctx.func_options())
+        if ctx.funcOptions() is not None:
+            options = self.visitFuncOptions(ctx.funcOptions())
         return TestCase(
             func_name=ctx.identifier().getText(),
             base_uri="",
@@ -89,8 +89,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitAggFuncTestCase(self, ctx: FuncTestCaseParser.AggFuncTestCaseContext):
         testcase = self.visit(ctx.aggFuncCall())
         testcase.result = self.visitResult(ctx.result())
-        if ctx.func_options() is not None:
-            testcase.options = self.visitFunc_options(ctx.func_options())
+        if ctx.funcOptions() is not None:
+            testcase.options = self.visitFuncOptions(ctx.funcOptions())
         return testcase
 
     def visitSingleArgAggregateFuncCall(
@@ -112,7 +112,9 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         self, ctx: FuncTestCaseParser.CompactAggregateFuncCallContext
     ):
         rows = self.visitTableRows(ctx.tableRows())
-        args = self.visitAggregateFuncArgs(ctx.aggregateFuncArgs())
+        args = []
+        if ctx.aggregateFuncArgs() is not None:
+            args = self.visitAggregateFuncArgs(ctx.aggregateFuncArgs())
         return TestCase(
             func_name=ctx.identifier().getText(),
             base_uri="",
@@ -128,7 +130,11 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         self, ctx: FuncTestCaseParser.MultiArgAggregateFuncCallContext
     ):
         table_name, column_types, rows = self.visitTableData(ctx.tableData())
-        args = self.visitQualifiedAggregateFuncArgs(ctx.qualifiedAggregateFuncArgs())
+        args = []
+        if ctx.qualifiedAggregateFuncArgs() is not None:
+            args = self.visitQualifiedAggregateFuncArgs(
+                ctx.qualifiedAggregateFuncArgs()
+            )
         for arg in args:
             if arg.scalar_value is None:
                 if arg.table_name != table_name:
@@ -235,16 +241,16 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.NullLiteral() is not None:
             return ctx.getText(), "null"
 
-    def visitFunc_options(self, ctx: FuncTestCaseParser.Func_optionsContext):
+    def visitFuncOptions(self, ctx: FuncTestCaseParser.FuncOptionsContext):
         options = {}
-        for option in ctx.func_option():
-            key, value = self.visitFunc_option(option)
+        for option in ctx.funcOption():
+            key, value = self.visitFuncOption(option)
             options[key] = value
         return options
 
-    def visitFunc_option(self, ctx: FuncTestCaseParser.Func_optionContext):
-        key = ctx.option_name().getText()
-        value = ctx.option_value().getText()
+    def visitFuncOption(self, ctx: FuncTestCaseParser.FuncOptionContext):
+        key = ctx.optionName().getText()
+        value = ctx.optionValue().getText()
         return key, value
 
     def visitArguments(self, ctx: FuncTestCaseParser.ArgumentsContext):
