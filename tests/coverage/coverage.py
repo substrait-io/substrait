@@ -62,14 +62,14 @@ class FileTestCoverage:
 class TestCoverage:
     file_coverage: dict[str, FileTestCoverage]
     test_count: int
-    num_bad_tests: int
+    num_tests_with_no_matching_function: int
     num_covered_function_variants: int
     total_function_variants: int
 
     def __init__(self, ext_uris):
         self.file_coverage = dict()
         self.test_count = 0
-        self.num_bad_tests = 0
+        self.num_tests_with_no_matching_function = 0
         self.num_covered_function_variants = 0
         self.total_function_variants = 0
         for ext_uri in ext_uris:
@@ -95,7 +95,7 @@ class TestCoverage:
                 file_coverage.to_dict() for file_coverage in self.file_coverage.values()
             ],
             "test_count": self.test_count,
-            "num_bad_tests": self.num_bad_tests,
+            "num_tests_with_no_matching_function": self.num_tests_with_no_matching_function,
             "num_covered_function_variants": self.num_covered_function_variants,
             "total_function_variants": self.total_function_variants,
         }
@@ -105,7 +105,7 @@ class TestCoverage:
 
 
 def update_test_count(test_case_files: list, function_registry: FunctionRegistry):
-    num_bad_tests = 0
+    num_tests_with_no_matching_function = 0
     for test_file in test_case_files:
         for test_case in test_file.testcases:
             function_variant = function_registry.get_function(
@@ -120,18 +120,20 @@ def update_test_count(test_case_files: list, function_registry: FunctionRegistry
                         f"Return type mismatch in function {test_case.func_name}: "
                         f"{function_variant.return_type} != {test_case.get_return_type()}"
                     )
-                    num_bad_tests += 1
+                    num_tests_with_no_matching_function += 1
                     continue
                 function_variant.increment_test_count()
             else:
                 error(f"Function not found: {test_case.func_name}({test_case.args})")
-                num_bad_tests += 1
-    return num_bad_tests
+                num_tests_with_no_matching_function += 1
+    return num_tests_with_no_matching_function
 
 
 def get_test_coverage(test_files, function_registry):
     coverage = TestCoverage(function_registry.get_extension_list())
-    coverage.num_bad_tests = update_test_count(test_files, function_registry)
+    coverage.num_tests_with_no_matching_function = update_test_count(
+        test_files, function_registry
+    )
     function_registry.fill_coverage(coverage)
     coverage.compute_coverage()
     return coverage
