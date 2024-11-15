@@ -27,7 +27,7 @@ testGroupDescription
     ;
 
 testCase
-    : functionName=identifier OParen arguments CParen ( OBracket func_options CBracket )? Eq result
+    : functionName=identifier OParen arguments CParen ( OBracket funcOptions CBracket )? Eq result
     ;
 
 testGroup
@@ -57,16 +57,21 @@ argument
     | timestampTzArg
     | intervalYearArg
     | intervalDayArg
+    | fixedCharArg
+    | varCharArg
+    | fixedBinaryArg
+    | precisionTimestampArg
+    | precisionTimestampTZArg
     | listArg
     ;
 
 aggFuncTestCase
-    : aggFuncCall ( OBracket func_options CBracket )? Eq result
+    : aggFuncCall ( OBracket funcOptions CBracket )? Eq result
     ;
 
 aggFuncCall
-    : tableData funcName=identifier OParen qualifiedAggregateFuncArgs CParen            #multiArgAggregateFuncCall
-    | tableRows functName=identifier OParen aggregateFuncArgs CParen                    #compactAggregateFuncCall
+    : tableData funcName=identifier OParen qualifiedAggregateFuncArgs? CParen           #multiArgAggregateFuncCall
+    | tableRows functName=identifier OParen aggregateFuncArgs? CParen                   #compactAggregateFuncCall
     | functName=identifier OParen dataColumn CParen                                     #singleArgAggregateFuncCall
     ;
 
@@ -167,30 +172,32 @@ intervalDayArg
     : IntervalDayLiteral DoubleColon intervalDayType
     ;
 
+fixedCharArg
+    : StringLiteral DoubleColon fixedCharType
+    ;
+
+varCharArg
+    : StringLiteral DoubleColon varCharType
+    ;
+
+fixedBinaryArg
+    : StringLiteral DoubleColon fixedBinaryType
+    ;
+
+precisionTimestampArg
+    : TimestampLiteral DoubleColon precisionTimestampType
+    ;
+
+precisionTimestampTZArg
+    : TimestampTzLiteral DoubleColon precisionTimestampTZType
+    ;
+
 listArg
     : literalList DoubleColon listType
     ;
 
 literalList
     : OBracket (literal (Comma literal)*)? CBracket
-    ;
-
-intervalYearLiteral
-    : PeriodPrefix (years=IntegerLiteral YearPrefix) (months=IntegerLiteral MSuffix)?
-    | PeriodPrefix (months=IntegerLiteral MSuffix)
-    ;
-
-intervalDayLiteral
-    : PeriodPrefix (days=IntegerLiteral DaySuffix) (TimePrefix timeInterval)?
-    | PeriodPrefix TimePrefix timeInterval
-    ;
-
-timeInterval
-    : hours=IntegerLiteral HourSuffix (minutes=IntegerLiteral MSuffix)? (seconds=IntegerLiteral SecondSuffix)?
-        (fractionalSeconds=IntegerLiteral FractionalSecondSuffix)?
-    | minutes=IntegerLiteral MSuffix (seconds=IntegerLiteral SecondSuffix)? (fractionalSeconds=IntegerLiteral FractionalSecondSuffix)?
-    | seconds=IntegerLiteral SecondSuffix (fractionalSeconds=IntegerLiteral FractionalSecondSuffix)?
-    | fractionalSeconds=IntegerLiteral FractionalSecondSuffix
     ;
 
 dataType
@@ -212,7 +219,6 @@ scalarType
   | timestampTZType         #timestampTz
   | Date                    #date
   | Time                    #time
-  | intervalDayType         #intervalDay
   | intervalYearType        #intervalYear
   | UUID                    #uuid
   | UserDefined Identifier  #userDefined
@@ -243,34 +249,32 @@ intervalYearType
     ;
 
 intervalDayType
-    : (IDay | Interval_Day)
+    : (IDay | Interval_Day) isnull=QMark? (OAngleBracket len=numericParameter CAngleBracket)?
     ;
 
 fixedCharType
-    : (FChar | FixedChar) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #fixedChar
+    : (FChar | FixedChar) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket
     ;
 
 varCharType
-    : (VChar | VarChar) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #varChar
+    : (VChar | VarChar) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket
     ;
 
 fixedBinaryType
-    : (FBin | FixedBinary) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket #fixedBinary
+    : (FBin | FixedBinary) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket
     ;
 
 decimalType
     : (Dec | Decimal) isnull=QMark?
-        (OAngleBracket precision=numericParameter Comma scale=numericParameter CAngleBracket)?  #decimal
+        (OAngleBracket precision=numericParameter Comma scale=numericParameter CAngleBracket)?
     ;
 
 precisionTimestampType
-    : (PTs | Precision_Timestamp) isnull=QMark?
-        OAngleBracket precision=numericParameter CAngleBracket #precisionTimestamp
+    : (PTs | Precision_Timestamp) isnull=QMark? OAngleBracket precision=numericParameter CAngleBracket
     ;
 
 precisionTimestampTZType
-    : (PTsTZ | Precision_Timestamp_TZ) isnull=QMark?
-        OAngleBracket precision=numericParameter CAngleBracket #precisionTimestampTZ
+    : (PTsTZ | Precision_Timestamp_TZ) isnull=QMark? OAngleBracket precision=numericParameter CAngleBracket
     ;
 
 listType
@@ -282,6 +286,7 @@ parameterizedType
     | varCharType
     | fixedBinaryType
     | decimalType
+    | intervalDayType
     | precisionTimestampType
     | precisionTimestampTZType
 // TODO implement the rest of the parameterized types
@@ -298,24 +303,24 @@ substraitError
     : ErrorResult | UndefineResult
     ;
 
-func_option
-    : option_name Colon option_value
+funcOption
+    : optionName Colon optionValue
     ;
 
-option_name
+optionName
     : Overflow | Rounding | NullHandling | SpacesOnly
     | Identifier
     ;
 
-option_value
+optionValue
     : Error | Saturate | Silent | TieToEven | NaN | Truncate | AcceptNulls | IgnoreNulls
     | BooleanLiteral
     | NullLiteral
     | Identifier
     ;
 
-func_options
-    : func_option (Comma func_option)*
+funcOptions
+    : funcOption (Comma funcOption)*
     ;
 
 nonReserved //  IMPORTANT: this rule must only contain tokens
