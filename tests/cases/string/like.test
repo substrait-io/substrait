@@ -4,6 +4,7 @@
 # basic: Basic examples without any special cases
 like('abcdefg'::str, 'abcdefg'::str) = true::bool
 like('abcdefg'::str, 'abc'::str) = false::bool
+like('abcdefg'::str, 'ABCDEFG'::str) = false::bool
 
 # wildcard: Examples using wildcards
 like('abcdefg'::str, 'abc%'::str) = true::bool

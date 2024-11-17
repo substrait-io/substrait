@@ -10,7 +10,7 @@ sum((2.5000007152557373046875, 7.0000007152557373046875, 0, 7.000000715255737304
 # overflow: Examples demonstrating overflow behavior
 sum((99999999999999999999999999999999999999, 1, 1, 1, 1, 99999999999999999999999999999999999999)::dec<38, 0>) [overflow:ERROR] = <!ERROR>
 
-# null_handling: Examples with null as unput or output
+# null_handling: Examples with null as input or output
 sum((Null, Null, Null)::dec<1, 0>) = Null::dec<38, 0>
 sum(()::dec<1, 0>) = Null::dec<38, 0>
 sum((200000, Null, 629000, -10000, 0, 987621)::dec<6, 0>) = 1806621::dec<38, 0>

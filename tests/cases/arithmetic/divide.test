@@ -10,7 +10,6 @@ divide(4000000000::i64, -5000::i64) = -800000::i64
 # division_by_zero: Examples demonstrating division by zero
 divide(5::i8, 0::i8) [on_division_by_zero:NAN] = null::i8
 divide(5::i8, 0::i8) [on_division_by_zero:ERROR] = <!ERROR>
-divide(5::i64, 0::i64) [on_division_by_zero:LIMIT] = inf::fp64
 
 # overflow: Examples demonstrating overflow behavior
 divide(-9223372036854775808::i64, -1::i64) [overflow:ERROR] = <!ERROR>

@@ -12,10 +12,10 @@ lt(7.25::dec<38, 2>, 7.25::dec<38, 2>) = false::bool
 lt(2.49::dec<38, 2>, 2.50::dec<38, 2>) = true::bool
 lt(1.5e+308::fp64, inf::fp64) = true::bool
 lt(-1.5e+308::fp64, -inf::fp64) = false::bool
-lt(null::dec<38, 2>, 2.50::dec<38, 2>) = null::bool
-lt(null::dec<38, 2>, null::dec<38, 2>) = null::bool
 
 # null_input: Examples with null as input
+lt(null::dec<38, 2>, 2.50::dec<38, 2>) = null::bool
+lt(null::dec<38, 2>, null::dec<38, 2>) = null::bool
 lt(null::i16, 1::i16) = null::bool
 lt(2::i16, null::i16) = null::bool
 lt(null::i16, null::i16) = null::bool

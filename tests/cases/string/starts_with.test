@@ -4,6 +4,7 @@
 # basic: Basic examples without any special cases
 starts_with('abcd'::str, 'a'::str) = true::bool
 starts_with('abcd'::str, 'z'::str) = false::bool
+starts_with('abcd'::str, 'AB'::str) = false::bool
 
 # case_insenstivity: multi byte character comparison with case insensitivity
 starts_with('abcd'::str, 'AB'::str) [case_sensitivity:CASE_INSENSITIVE] = true::bool

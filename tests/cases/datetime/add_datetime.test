@@ -12,4 +12,4 @@ add('2020-12-31'::date, 'P5Y'::iyear) = '2025-12-31T00:00:00'::ts
 add('2020-12-31'::date, 'P5M'::iyear) = '2021-05-31T00:00:00'::ts
 
 # null_input: examples with null args or return
-add(null::date, 'P5D'::iday) = null::date
+add(null::date, 'P5D'::iday) = null::ts

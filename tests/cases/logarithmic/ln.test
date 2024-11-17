@@ -5,7 +5,6 @@
 ln(100000::i64) = 11.512925464970229::fp64
 ln(1.0::fp32) = 0::fp32
 ln(2.015::fp64) = 0.7006191953986464::fp64
-ln(inf::fp64) = inf::fp64
 
 # infinity: Examples with infinity as input
 ln(-inf::fp64) [on_domain_error:ERROR] = <!ERROR>

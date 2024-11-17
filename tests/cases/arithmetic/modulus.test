@@ -12,7 +12,7 @@ modulus(null::i64, 1::i64) = null::i64
 modulus(null::i64, null::i64) = null::i64
 
 # on_domain_error: Examples demonstrating operation when the divisor is 0
-modulus(5::i8, 0::i8) [on_domain_error:null] = null::i8
+modulus(5::i8, 0::i8) [on_domain_error:NULL] = null::i8
 modulus(5::i8, 0::i8) [on_domain_error:ERROR] = <!ERROR>
 
 # division_type: Examples demonstrating truncate and floor division types

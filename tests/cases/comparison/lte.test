@@ -14,10 +14,10 @@ lte(2.59::dec<38, 2>, 2.50::dec<38, 2>) = false::bool
 lte(1.5e+308::fp64, inf::fp64) = true::bool
 lte(inf::fp64, inf::fp64) = true::bool
 lte(-1.5e+308::fp64, -inf::fp64) = false::bool
-lte(null::dec<38, 2>, 2.50::dec<38, 2>) = null::bool
-lte(null::dec<38, 2>, null::dec<38, 2>) = null::bool
 
 # null_input: Examples with null as input
+lte(null::dec<38, 2>, 2.50::dec<38, 2>) = null::bool
+lte(null::dec<38, 2>, null::dec<38, 2>) = null::bool
 lte(null::i16, 1::i16) = null::bool
 lte(2::i16, null::i16) = null::bool
 lte(null::i16, null::i16) = null::bool

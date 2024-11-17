@@ -4,6 +4,7 @@
 # basic: Basic examples without any special cases
 ends_with('abcd'::str, 'd'::str) = true::bool
 ends_with('abcd'::str, 'a'::str) = false::bool
+ends_with('abcd'::str, 'CD'::str) = false::bool
 
 # case_insenstivity: multi byte character comparison with case insensitivity
 ends_with('abcd'::str, 'CD'::str) [case_sensitivity:CASE_INSENSITIVE] = true::bool

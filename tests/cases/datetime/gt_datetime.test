@@ -12,9 +12,9 @@ gt('1999-01-08T01:05:07-08:00'::tstz, '1999-01-08T04:05:06-05:00'::tstz) = true:
 # date: examples using the date type
 gt('2020-12-30'::date, '2020-12-31'::date) = false::bool
 gt('2020-12-31'::date, '2020-12-30'::date) = true::bool
-gt('P7D'::iday, 'P6D'::iday) = true::bool
 
 # interval: examples using the interval type
+gt('P7D'::iday, 'P6D'::iday) = true::bool
 gt('P5D'::iday, 'P6D'::iday) = false::bool
 gt('P5Y'::iyear, 'P6Y'::iyear) = false::bool
 gt('P7Y'::iyear, 'P6Y'::iyear) = true::bool

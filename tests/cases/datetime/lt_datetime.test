@@ -12,9 +12,9 @@ lt('1999-01-08T01:05:06-08:00'::tstz, '1999-01-08T04:05:06-05:00'::tstz) = false
 # date: examples using the date type
 lt('2020-12-30'::date, '2020-12-31'::date) = true::bool
 lt('2020-12-31'::date, '2020-12-30'::date) = false::bool
-lt('P7D'::iday, 'P6D'::iday) = false::bool
 
 # interval: examples using the interval type
+lt('P7D'::iday, 'P6D'::iday) = false::bool
 lt('P5D'::iday, 'P6D'::iday) = true::bool
 lt('P5Y'::iyear, 'P6Y'::iyear) = true::bool
 lt('P7Y'::iyear, 'P6Y'::iyear) = false::bool

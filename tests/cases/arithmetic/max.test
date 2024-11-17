@@ -9,7 +9,7 @@ max((2000000000, -3217908979, 629000000, -100000000, 0, 987654321)::i64) = 20000
 max((2.5, 0, 5.0, -2.5, -7.5)::fp32) = 5.0::fp32
 max((1.5e+308, 1.5e+10, -1.5e+8, -1.5e+7, -1.5e+70)::fp64) = 1.5e+308::fp64
 
-# null_handling: Examples with null as unput or output
+# null_handling: Examples with null as input or output
 max((Null, Null, Null)::i16) = Null::i16
 max(()::i16) = Null::i16
 max((2000000000, Null, 629000000, -100000000, Null, 987654321)::i64) = 2000000000::i64

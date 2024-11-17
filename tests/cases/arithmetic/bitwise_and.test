@@ -12,3 +12,4 @@ bitwise_and(2147483647::i32, 1234567::i32) = 1234567::i32
 bitwise_and(9223372036854775807::i64, 127::i64) = 127::i64
 bitwise_and(-9223372036854775807::i64, 127::i64) = 1::i64
 bitwise_and(null::i64, 127::i64) = null::i64
+bitwise_and(127::i64, null::i64) = null::i64

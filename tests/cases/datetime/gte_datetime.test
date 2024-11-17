@@ -15,10 +15,10 @@ gte('1999-01-08T01:05:06-08:00'::tstz, '1999-01-08T04:05:05-05:00'::tstz) = true
 gte('2020-12-30'::date, '2020-12-31'::date) = false::bool
 gte('2020-12-31'::date, '2020-12-31'::date) = true::bool
 gte('2020-12-31'::date, '2020-12-30'::date) = true::bool
-gte('P7D'::iday, 'P7D'::iday) = true::bool
-gte('P7D'::iday, 'P6D'::iday) = true::bool
 
 # interval: examples using the interval type
+gte('P7D'::iday, 'P7D'::iday) = true::bool
+gte('P7D'::iday, 'P6D'::iday) = true::bool
 gte('P5D'::iday, 'P6D'::iday) = false::bool
 gte('P5Y'::iyear, 'P6Y'::iyear) = false::bool
 gte('P7Y'::iyear, 'P7Y'::iyear) = true::bool

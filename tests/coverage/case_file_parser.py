@@ -45,7 +45,7 @@ def parse_stream(input_stream, file_path):
 
 
 def parse_one_file(file_path):
-    return parse_stream(FileStream(file_path), file_path)
+    return parse_stream(FileStream(file_path, "UTF-8"), file_path)
 
 
 def parse_testcase_directory_recursively(dir_path):

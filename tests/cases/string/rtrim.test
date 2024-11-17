@@ -2,13 +2,13 @@
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
 
 # basic: Basic examples without any special cases
-rtrim('abc'::str) = 'abc'::str
-rtrim('   abc'::str) = '   abc'::str
-rtrim('abc   '::str) = 'abc'::str
-rtrim('   abc   '::str) = '   abc'::str
-rtrim(''::str) = ''::str
-rtrim(' '::str) = ''::str
-rtrim(null::str) = null::str
+rtrim('abc'::str, ' '::str) = 'abc'::str
+rtrim('   abc'::str, ' '::str) = '   abc'::str
+rtrim('abc   '::str, ' '::str) = 'abc'::str
+rtrim('   abc   '::str, ' '::str) = '   abc'::str
+rtrim(''::str, ' '::str) = ''::str
+rtrim(' '::str, ' '::str) = ''::str
+rtrim(null::str, ' '::str) = null::str
 
 # two_inputs: Examples with character input to trim off
 rtrim('aaaaabccccc'::str, 'c'::str) [spaces_only:FALSE] = 'aaaaab'::str
