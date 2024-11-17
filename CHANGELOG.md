@@ -1,6 +1,18 @@
 Release Notes
 ---
 
+## [0.61.0](https://github.com/substrait-io/substrait/compare/v0.60.0...v0.61.0) (2024-11-17)
+
+### Features
+
+* add substrait test files to go embedded fs ([#740](https://github.com/substrait-io/substrait/issues/740)) ([e3a7773](https://github.com/substrait-io/substrait/commit/e3a7773895f4121deb6904b79efbcd76c656c9e8))
+* handle parsing of list arguments in func testcases ([#737](https://github.com/substrait-io/substrait/issues/737)) ([1f9c710](https://github.com/substrait-io/substrait/commit/1f9c710cb45203bbabaaccd83b792b0b6739ae3a))
+* update operator to update a table ([#734](https://github.com/substrait-io/substrait/issues/734)) ([adb1079](https://github.com/substrait-io/substrait/commit/adb1079ab60480d3b7293840bcb923a0f0612211))
+
+### Bug Fixes
+
+* misc fixes and cleanup to func testcase grammar ([#742](https://github.com/substrait-io/substrait/issues/742)) ([ea994c2](https://github.com/substrait-io/substrait/commit/ea994c2ead91eececb770cca1e7f0268e0ebb2ad))
+
 ## [0.60.0](https://github.com/substrait-io/substrait/compare/v0.59.0...v0.60.0) (2024-11-10)
 
 ### Features
