@@ -1,7 +1,10 @@
 # SPDX-License-Identifier: Apache-2.0
+import os
+
 import pytest
 from antlr4 import InputStream
 from tests.coverage.case_file_parser import parse_stream, parse_one_file
+from tests.coverage.extensions import Extension
 from tests.coverage.visitor import ParseError
 from tests.coverage.nodes import CaseLiteral
 
@@ -411,6 +414,10 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "f37('1991-01-01T01:02:03.123456'::pts<6>, '1991-01-01T04:05:06.456'::precision_timestamp<6>) = 123456::i64",
         "f38('1991-01-01T01:02:03.456+05:30'::ptstz<3>) = '1991-01-01T00:00:00+15:30'::precision_timestamp_tz<3>",
         "f39('1991-01-01T01:02:03.123456+05:30'::ptstz<6>) = '1991-01-01T00:00:00+15:30'::precision_timestamp_tz<6>",
+        "logb(10::fp64, -inf::fp64) [on_domain_error:ERROR] = <!ERROR>",
+        "bitwise_and(-31766::dec<5, 0>, 900::dec<3, 0>) = 896::dec<5, 0>",
+        "or(true::bool, true::bool) = true::bool",
+        "between(5::i8, 0::i8, 127::i8) = true::bool",
     ],
 )
 def test_parse_various_scalar_func_argument_types(input_func_test):
@@ -436,3 +443,47 @@ def test_parse_various_aggregate_scalar_func_argument_types(input_func_test):
     )
     test_file = parse_string(header + input_func_test + "\n")
     assert len(test_file.testcases) == 1
+
+
+@pytest.mark.parametrize(
+    "func_name, func_args, func_ret, func_uri, expected_failure",
+    [
+        # lt for i8 with correct uri
+        ("lt", ["i8", "i8"], "bool", "/extensions/functions_comparison.yaml", False),
+        ("add", ["i8", "i8"], "i8", "/extensions/functions_arithmetic.yaml", False),
+        (
+            "add",
+            ["dec", "dec"],
+            "dec",
+            "/extensions/functions_arithmetic_decimal.yaml",
+            False,
+        ),
+        (
+            "bitwise_xor",
+            ["dec", "dec"],
+            "dec",
+            "/extensions/functions_arithmetic_decimal.yaml",
+            False,
+        ),
+        # negative case, lt for i8 with wrong uri
+        ("lt", ["i8", "i8"], "bool", "/extensions/functions_datetime.yaml", True),
+        (
+            "add",
+            ["i8", "i8"],
+            "i8",
+            "/extensions/functions_arithmetic_decimal.yaml",
+            True,
+        ),
+        ("add", ["dec", "dec"], "dec", "/extensions/functions_arithmetic.yaml", True),
+        ("max", ["dec", "dec"], "dec", "/extensions/functions_arithmetic.yaml", True),
+    ],
+)
+def test_uri_match_in_get_function(
+    func_name, func_args, func_ret, func_uri, expected_failure
+):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    extensions_path = os.path.join(script_dir, "../../extensions")
+    registry = Extension.read_substrait_extensions(extensions_path)
+
+    function = registry.get_function(func_name, func_uri, func_args, func_ret)
+    assert (function is None) == expected_failure
