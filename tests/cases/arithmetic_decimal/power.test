@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: 'extensions/functions_arithmetic_decimal.yaml'
+### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic_decimal.yaml'
 
 # basic: Basic examples without any special cases
 power(8::dec<38, 0>, 2::dec<38, 0>) = 64::fp64

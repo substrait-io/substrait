@@ -3,6 +3,7 @@ import os
 import yaml
 
 from tests.coverage.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
+from tests.coverage.nodes import SubstraitError
 
 enable_debug = False
 
@@ -122,11 +123,10 @@ class Extension:
         return overloads
 
     @staticmethod
-    def add_functions_to_map(func_list, function_map, suffix, extension):
+    def add_functions_to_map(func_list, function_map, suffix, extension, uri):
         dup_idx = 0
         for func in func_list:
             name = func["name"]
-            uri = extension[5:]  # strip the ../..
             if name in function_map:
                 debug(
                     f"Duplicate function name: {name} renaming to {name}_{suffix} extension: {extension}"
@@ -163,14 +163,19 @@ class Extension:
             suffix = suffix[
                 suffix.rfind("/") + 1 :
             ]  # strip the path and get the name of the extension
+            uri = f"/extensions/{suffix}.yaml"
             suffix = suffix[suffix.find("_") + 1 :]  # get the suffix after the last _
 
-            dependencies[suffix] = Extension.get_base_uri() + extension
+            dependencies[suffix] = Extension.get_base_uri() + uri
             with open(extension, "r") as fh:
                 data = yaml.load(fh, Loader=yaml.FullLoader)
                 if "scalar_functions" in data:
                     Extension.add_functions_to_map(
-                        data["scalar_functions"], scalar_functions, suffix, extension
+                        data["scalar_functions"],
+                        scalar_functions,
+                        suffix,
+                        extension,
+                        uri,
                     )
                 if "aggregate_functions" in data:
                     Extension.add_functions_to_map(
@@ -178,10 +183,15 @@ class Extension:
                         aggregate_functions,
                         suffix,
                         extension,
+                        uri,
                     )
                 if "window_functions" in data:
                     Extension.add_functions_to_map(
-                        data["window_functions"], scalar_functions, suffix, extension
+                        data["window_functions"],
+                        scalar_functions,
+                        suffix,
+                        extension,
+                        uri,
                     )
 
         return FunctionRegistry(
@@ -263,13 +273,45 @@ class FunctionRegistry:
                 fun_arr.append(function)
             self.registry[f_name] = fun_arr
 
-    def get_function(self, name: str, args: object) -> [FunctionVariant]:
+    @staticmethod
+    def is_type_any(func_arg_type):
+        return func_arg_type[:3] == "any"
+
+    @staticmethod
+    def is_same_type(func_arg_type, arg_type):
+        arg_type_base = arg_type.split("<")[0]
+        if func_arg_type == arg_type_base:
+            return True
+        return FunctionRegistry.is_type_any(func_arg_type)
+
+    def get_function(
+        self, name: str, uri: str, args: object, return_type
+    ) -> [FunctionVariant]:
         functions = self.registry.get(name, None)
         if functions is None:
             return None
         for function in functions:
+            if uri != function.uri:
+                continue
+            if not isinstance(return_type, SubstraitError) and not self.is_same_type(
+                function.return_type, return_type
+            ):
+                continue
             if function.args == args:
                 return function
+            if len(function.args) != len(args) and not (
+                function.variadic and len(args) >= len(function.args)
+            ):
+                continue
+            is_match = True
+            for i, arg in enumerate(args):
+                j = i if i < len(function.args) else len(function.args) - 1
+                if not self.is_same_type(function.args[j], arg):
+                    is_match = False
+                    break
+            if is_match:
+                return function
+        return None
 
     def get_extension_list(self):
         return list(self.extensions)

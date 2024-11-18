@@ -59,7 +59,7 @@ class TestCase:
         return [arg.get_base_type() for arg in self.args]
 
     def get_signature(self):
-        return f"{self.func_name}({', '.join([arg.type for arg in self.args])})"
+        return f"{self.func_name}({', '.join([arg.type for arg in self.args])}) = {self.get_return_type()}"
 
 
 @dataclass

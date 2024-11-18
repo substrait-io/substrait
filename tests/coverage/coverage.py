@@ -109,22 +109,27 @@ def update_test_count(test_case_files: list, function_registry: FunctionRegistry
     for test_file in test_case_files:
         for test_case in test_file.testcases:
             function_variant = function_registry.get_function(
-                test_case.func_name, test_case.get_arg_types()
+                test_case.func_name,
+                test_file.include,
+                test_case.get_arg_types(),
+                test_case.get_return_type(),
             )
             if function_variant:
                 if (
-                    function_variant.return_type != test_case.get_return_type()
-                    and not test_case.is_return_type_error()
+                    not test_case.is_return_type_error()
+                    and not function_registry.is_same_type(
+                        function_variant.return_type, test_case.get_return_type()
+                    )
                 ):
                     error(
-                        f"Return type mismatch in function {test_case.func_name}: "
+                        f"Return type mismatch in function {test_case.get_signature()}: "
                         f"{function_variant.return_type} != {test_case.get_return_type()}"
                     )
                     num_tests_with_no_matching_function += 1
                     continue
                 function_variant.increment_test_count()
             else:
-                error(f"Function not found: {test_case.func_name}({test_case.args})")
+                error(f"Function not found: {test_case.get_signature()}")
                 num_tests_with_no_matching_function += 1
     return num_tests_with_no_matching_function
 
