@@ -242,7 +242,7 @@ def test_parse_file_power_decimal():
     assert test_file.testcases[0].func_name == "power"
     assert (
         test_file.testcases[0].base_uri
-        == "extensions/functions_arithmetic_decimal.yaml"
+        == "/extensions/functions_arithmetic_decimal.yaml"
     )
 
 
@@ -382,9 +382,9 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "f12('1991-01-01'::date, 5::i64) = '1991-01-01T00:00:00+15:30'::timestamp_tz",
         "f13('P10Y5M'::interval_year, 5::i64) = 'P15Y5M'::interval_year",
         "f14('P10Y5M'::iyear, 5::i64) = 'P15Y5M'::iyear",
-        "f15('P10DT5H6M7S2000F'::interval_day<6>, 5::i64) = 'P10DT10H6M7S2000F'::interval_day<6>",
-        "f16('P10DT6M7S200F'::interval_day<3>, 5::i64) = 'P10DT11M7S200F'::interval_day<3>",
-        "f16('P10DT6M7S2000F'::iday<4>, 5::i64) = 'P10DT11M7S2000F'::iday<4>",
+        "f15('P10DT5H6M7.2000S'::interval_day<6>, 5::i64) = 'P10DT10H6M7.2000S'::interval_day<6>",
+        "f16('P10DT6M7.200S'::interval_day<3>, 5::i64) = 'P10DT11M7.200S'::interval_day<3>",
+        "f16('P10DT6M0.2000S'::iday<4>, 5::i64) = 'P10DT11M5.2000S'::iday<4>",
         "f16('P10DT6M7S'::interval_day, 5::i64) = 'P10DT11M7S'::interval_day",
         "ltrim('abcabcdef'::str, 'abc'::str) [spaces_only:FALSE] = 'def'::str",
         "concat('abcd'::str, Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
@@ -430,10 +430,14 @@ def test_parse_various_scalar_func_argument_types(input_func_test):
     "input_func_test",
     [
         "f1((1, 2, 3, 4)::i64) = -7.0::fp32",
-        "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) count_start() = 1::fp64",
-        "((20), (3), (1), (10), (5)) count_start() = 1::fp64",
+        "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) count_star() = 1::fp64",
+        "((20), (3), (1), (10), (5)) count_star() = 1::fp64",
         """DEFINE t1(fp32, fp32) = ((20, 20), (-3, -3), (1, 1), (10,10), (5,5))
             count_star() = 1::fp64""",
+        "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64",
+        """DEFINE t1(fp32, fp32) = ((20, -20), (-3, 3), (1, -1), (10, -10), (5, -5))
+corr(t1.col0, t1.col1) = -11::fp64"
+        """,
     ],
 )
 def test_parse_various_aggregate_scalar_func_argument_types(input_func_test):

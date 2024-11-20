@@ -97,11 +97,9 @@ IntervalDayLiteral
     ;
 
 fragment TimeInterval
-    : IntegerLiteral HourSuffix (IntegerLiteral MSuffix)? (IntegerLiteral SecondSuffix)?
-        (IntegerLiteral FractionalSecondSuffix)?
-    | IntegerLiteral MSuffix (IntegerLiteral SecondSuffix)? (IntegerLiteral FractionalSecondSuffix)?
-    | IntegerLiteral SecondSuffix (IntegerLiteral FractionalSecondSuffix)?
-    | IntegerLiteral FractionalSecondSuffix
+    : IntegerLiteral HourSuffix (IntegerLiteral MSuffix)? (DecimalLiteral SecondSuffix)?
+    | IntegerLiteral MSuffix (DecimalLiteral SecondSuffix)?
+    | DecimalLiteral SecondSuffix
     ;
 
 NullLiteral: 'null';
