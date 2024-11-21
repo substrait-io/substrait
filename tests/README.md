@@ -10,18 +10,21 @@ A test file consists of the following elements:
 ## Syntax
 
 ### Version Declaration
-The version declaration must be the first line of the file. It specifies the version of the test file format. The version declaration must be in the following format:
-```
+The version declaration must appear as the first line of the file. It defines the type of tests in the file and test file format version.
+Each test file must exclusively contain either scalar tests or aggregate tests. Mixing test types in the same file is not allowed.
+The version declaration should follow this format:
+```code
 ### SUBSTRAIT_SCALAR_TEST: V1
-
+```
 or
 
+```code
 ### SUBSTRAIT_AGGREGATE_TEST: V1
 ```
 
 ### Include Statements
 Include statements should have at least one include statement. The include statement specifies the path to substrait extension functions. The include statement must be in the following format:
-```
+```code
 ### SUBSTRAIT_INCLUDE: /extensions/functions_aggregate_approx.yaml
 ```
 
