@@ -1,0 +1,14 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+
+# basic: Basic examples without any special cases
+left('abcdef'::str, 2::i32) = 'ab'::str
+left('abcdef'::str, 6::i32) = 'abcdef'::str
+left('abcdef'::str, 10::i32) = 'abcdef'::str
+left('  abcdef  abcdef'::str, 10::i32) = '  abcdef  '::str
+left(null::str, 10::i32) = null::str
+left('abcdef'::str, null::i32) = null::str
+
+# unicode: Examples with unicode characters as input
+left('ææããa'::str, 2::i32) = 'ææ'::str
+left('😔😄😔😄'::str, 2::i32) = '😔😄'::str
