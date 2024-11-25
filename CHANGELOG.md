@@ -1,6 +1,17 @@
 Release Notes
 ---
 
+## [0.62.0](https://github.com/substrait-io/substrait/compare/v0.61.0...v0.62.0) (2024-11-24)
+
+### Features
+
+* add readme for testcase file format ([#746](https://github.com/substrait-io/substrait/issues/746)) ([708a7b8](https://github.com/substrait-io/substrait/commit/708a7b811641c3384f826f69b9e8247d973c49b9))
+* port function testcases from bft ([#738](https://github.com/substrait-io/substrait/issues/738)) ([d84ccd1](https://github.com/substrait-io/substrait/commit/d84ccd1262019fc05dbb32646cfbd71f9800d78a))
+
+### Bug Fixes
+
+* fix function lookup in coverage tool ([#744](https://github.com/substrait-io/substrait/issues/744)) ([3d2ff77](https://github.com/substrait-io/substrait/commit/3d2ff77575a7177f82a4d5b53408a059e9818922))
+
 ## [0.61.0](https://github.com/substrait-io/substrait/compare/v0.60.0...v0.61.0) (2024-11-17)
 
 ### Features
