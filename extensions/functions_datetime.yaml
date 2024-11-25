@@ -374,6 +374,9 @@ scalar_functions:
             value: interval_year
           - name: y
             value: interval_year
+        options:
+          days_in_year:
+            values: [ YEAR_366DAYS, YEAR_365DAYS, YEAR_360DAYS ]
         return: interval_year
   -
     name: "subtract"
