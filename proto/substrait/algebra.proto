@@ -273,6 +273,7 @@ message FetchRel {
     int64 offset = 3 [deprecated = true];
     // Expression evaluated into an integer specifying the number of records to
     // skip.
+    // Recommended type for offset is int64.
     Expression offset_expr = 5;
   }
   oneof count_mode {
@@ -282,6 +283,7 @@ message FetchRel {
     int64 count = 4 [deprecated = true];
     // Expression evaluated into an integer specifying the number of records to
     // return. -1 signals that all records should be returned.
+    // Recommended type for count is int64.
     Expression count_expr = 6;
   }
   substrait.extensions.AdvancedExtension advanced_extension = 10;
