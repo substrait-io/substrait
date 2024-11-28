@@ -197,6 +197,19 @@ scalar_functions:
           dotall:
             values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: "string"
+      - args:
+          - value: "string"
+            name: "input"
+          - value: "string"
+            name: "pattern"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
+        return: "string"
   -
     name: regexp_match_substring_all
     description: >-
@@ -778,6 +791,19 @@ scalar_functions:
           dotall:
             values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: i64
+      - args:
+          - value: "string"
+            name: "input"
+          - value: "string"
+            name: "pattern"
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
+        return: i64
   -
     name: replace
     description: >-
@@ -1198,6 +1224,24 @@ scalar_functions:
           dotall:
             values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+            description: The input string.
+          - value: "string"
+            name: "pattern"
+            description: The regular expression to search for within the input string.
+          - value: "string"
+            name: "replacement"
+            description: Which occurrence of the match to replace.
+        options:
+          case_sensitivity:
+            values: [ CASE_SENSITIVE, CASE_INSENSITIVE, CASE_INSENSITIVE_ASCII ]
+          multiline:
+            values: [ MULTILINE_DISABLED, MULTILINE_ENABLED ]
+          dotall:
+            values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
+        return: "string"
   -
     name: ltrim
     description: >-
