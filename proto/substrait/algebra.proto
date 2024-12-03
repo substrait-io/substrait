@@ -267,6 +267,9 @@ message CrossRel {
 message FetchRel {
   RelCommon common = 1;
   Rel input = 2;
+  // Note: A oneof field is inherently optional, whereas individual fields
+  // within a oneof cannot be marked as optional. The unset state of offset
+  // should therefore be checked at the oneof level.
   oneof offset_mode {
     // the offset expressed in number of records
     // Deprecated: use `offset_expr` instead
@@ -276,6 +279,9 @@ message FetchRel {
     // Recommended type for offset is int64.
     Expression offset_expr = 5;
   }
+  // Note: A oneof field is inherently optional, whereas individual fields
+  // within a oneof cannot be marked as optional. The unset state of count
+  // should therefore be checked at the oneof level.
   oneof count_mode {
     // the amount of records to return
     // use -1 to signal that ALL records should be returned
