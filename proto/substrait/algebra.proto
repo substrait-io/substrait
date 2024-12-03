@@ -269,26 +269,27 @@ message FetchRel {
   Rel input = 2;
   // Note: A oneof field is inherently optional, whereas individual fields
   // within a oneof cannot be marked as optional. The unset state of offset
-  // should therefore be checked at the oneof level.
+  // should therefore be checked at the oneof level. Unset is treated as 0.
   oneof offset_mode {
     // the offset expressed in number of records
     // Deprecated: use `offset_expr` instead
     int64 offset = 3 [deprecated = true];
     // Expression evaluated into an integer specifying the number of records to
-    // skip.
+    // skip. An expression evaluating to null is treated as 0.
     // Recommended type for offset is int64.
     Expression offset_expr = 5;
   }
   // Note: A oneof field is inherently optional, whereas individual fields
   // within a oneof cannot be marked as optional. The unset state of count
-  // should therefore be checked at the oneof level.
+  // should therefore be checked at the oneof level. Unset is treated as ALL.
   oneof count_mode {
     // the amount of records to return
     // use -1 to signal that ALL records should be returned
     // Deprecated: use `count_expr` instead
     int64 count = 4 [deprecated = true];
     // Expression evaluated into an integer specifying the number of records to
-    // return. -1 signals that all records should be returned.
+    // return. An expression evaluating to null signals that ALL records should
+    // be returned.
     // Recommended type for count is int64.
     Expression count_expr = 6;
   }
