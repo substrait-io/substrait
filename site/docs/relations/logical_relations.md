@@ -432,13 +432,14 @@ The write operator is an operator that consumes one input and writes it to stora
 ### Write Properties
 
 
-| Property                   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Required                                            |
-|----------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
-| Write Type                 | Definition of which object we are operating on (e.g., a fully-qualified table name).                                                                                                                                                                                                                                                                                                                                                                                               | Required                                            |
-| CTAS Schema                | The names of all the columns and their type for a CREATE TABLE AS.                                                                                                                                                                                                                                                                                                                                                                                                                 | Required only for CTAS  |
-| Write Operator             | Which type of operation we are performing (INSERT/DELETE/UPDATE/CTAS).                                                                                                                                                                                                                                                                                                                                                                                                             | Required                                            |
-| Rel Input                  | The Rel representing which records we will be operating on (e.g., VALUES for an INSERT, or which records to DELETE, or records and after-image of their values for UPDATE).                                                                                                                                                                                                                                                                                                           | Required                                            |
-| Output Mode | For views that modify a DB it is important to control which records to "return". Common default is NO_OUTPUT where we return nothing. Alternatively, we can return MODIFIED_RECORDS, that can be further manipulated by layering more rels ontop of this WriteRel (e.g., to "count how many records were updated"). This also allows to return the after-image of the change. To return before-image (or both) one can use the reference mechanisms and have multiple return values. | Required for VIEW CREATE/CREATE_OR_REPLACE/ALTER    |
+| Property       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Required                                         |
+|----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------|
+| Write Type     | Definition of which object we are operating on (e.g., a fully-qualified table name).                                                                                                                                                                                                                                                                                                                                                                                                 | Required                                         |
+| CTAS Schema    | The names of all the columns and their type for a CREATE TABLE AS.                                                                                                                                                                                                                                                                                                                                                                                                                   | Required only for CTAS                           |
+| Write Operator | Which type of operation we are performing (INSERT/DELETE/UPDATE/CTAS).                                                                                                                                                                                                                                                                                                                                                                                                               | Required                                         |
+| Rel Input      | The Rel representing which records we will be operating on (e.g., VALUES for an INSERT, or which records to DELETE, or records and after-image of their values for UPDATE).                                                                                                                                                                                                                                                                                                          | Required                                         |
+| Create Mode    | This determines what should happen if the table already exists (ERROR/REPLACE/IGNORE)                                                                                                                                                                                                                                                                                                                                                                                                | Required only for CTAS                           |
+| Output Mode    | For views that modify a DB it is important to control which records to "return". Common default is NO_OUTPUT where we return nothing. Alternatively, we can return MODIFIED_RECORDS, that can be further manipulated by layering more rels ontop of this WriteRel (e.g., to "count how many records were updated"). This also allows to return the after-image of the change. To return before-image (or both) one can use the reference mechanisms and have multiple return values. | Required for VIEW CREATE/CREATE_OR_REPLACE/ALTER |
 
 
 ### Write Definition Types
@@ -471,6 +472,32 @@ Write definition types are built by the community and added to the specification
 | -------- | ------------------------------------------------------------ | -------- |
 | Path     | A URI to write the data to. Supports the inclusion of field references that are listed as available in properties as a "rotation description field". | Required |
 | Format   | Enumeration of available formats. Only current option is PARQUET. | Required |
+
+
+## Update Operator
+
+The update operator applies a set of column transformations on a named table and writes to a storage. 
+
+| Signature            | Value                                 |
+| -------------------- |---------------------------------------|
+| Inputs               | 0                                     |
+| Outputs              | 1                                     |
+| Property Maintenance | Output is number of modified records  |
+
+### Update Properties
+
+| Property               | Description                                                                          | Required                                         |
+|------------------------|--------------------------------------------------------------------------------------|--------------------------------------------------|
+| Update Type            | Definition of which object we are operating on (e.g., a fully-qualified table name). | Required                                         |
+| Table Schema           | The names and types of all the columns of the input table                            | Required                                         |
+| Update Condition       | The condition that must be met for a record to be updated.                           | Required                                         |
+| Update Transformations | The set of column updates to be applied to the table.                                | Required                                         |
+
+=== "UpdateRel Message"
+
+    ```proto
+%%% proto.algebra.UpdateRel %%%
+    ```
 
 
 ## DDL (Data Definition Language) Operator

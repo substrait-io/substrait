@@ -21,3 +21,10 @@ repos:
   rev: 6.1.0
   hooks:
   - id: flake8
+- repo: local
+  hooks:
+  - id: check-substrait-extensions_coverage
+    name: Check Substrait extensions and test coverage
+    entry: pytest tests/test_extensions.py::test_substrait_extension_coverage
+    language: python
+    pass_filenames: false

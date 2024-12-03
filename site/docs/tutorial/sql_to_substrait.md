@@ -15,7 +15,7 @@ them.
     Substrait is currently only defined with Protobuf. The JSON provided here is the
     Protobuf JSON output, but it is *not* the official Substrait text format. Eventually,
     Substrait will define it's own human-readable text format, but for now this
-    tutorial will make due with what Protobuf provides.
+    tutorial will make do with what Protobuf provides.
 
 Substrait is designed to communicate plans (mostly logical plans). Those plans
 contain types, schemas, expressions, extensions, and relations. We'll look at 

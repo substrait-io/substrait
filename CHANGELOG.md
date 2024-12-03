@@ -1,6 +1,64 @@
 Release Notes
 ---
 
+## [0.62.0](https://github.com/substrait-io/substrait/compare/v0.61.0...v0.62.0) (2024-11-24)
+
+### Features
+
+* add readme for testcase file format ([#746](https://github.com/substrait-io/substrait/issues/746)) ([708a7b8](https://github.com/substrait-io/substrait/commit/708a7b811641c3384f826f69b9e8247d973c49b9))
+* port function testcases from bft ([#738](https://github.com/substrait-io/substrait/issues/738)) ([d84ccd1](https://github.com/substrait-io/substrait/commit/d84ccd1262019fc05dbb32646cfbd71f9800d78a))
+
+### Bug Fixes
+
+* fix function lookup in coverage tool ([#744](https://github.com/substrait-io/substrait/issues/744)) ([3d2ff77](https://github.com/substrait-io/substrait/commit/3d2ff77575a7177f82a4d5b53408a059e9818922))
+
+## [0.61.0](https://github.com/substrait-io/substrait/compare/v0.60.0...v0.61.0) (2024-11-17)
+
+### Features
+
+* add substrait test files to go embedded fs ([#740](https://github.com/substrait-io/substrait/issues/740)) ([e3a7773](https://github.com/substrait-io/substrait/commit/e3a7773895f4121deb6904b79efbcd76c656c9e8))
+* handle parsing of list arguments in func testcases ([#737](https://github.com/substrait-io/substrait/issues/737)) ([1f9c710](https://github.com/substrait-io/substrait/commit/1f9c710cb45203bbabaaccd83b792b0b6739ae3a))
+* update operator to update a table ([#734](https://github.com/substrait-io/substrait/issues/734)) ([adb1079](https://github.com/substrait-io/substrait/commit/adb1079ab60480d3b7293840bcb923a0f0612211))
+
+### Bug Fixes
+
+* misc fixes and cleanup to func testcase grammar ([#742](https://github.com/substrait-io/substrait/issues/742)) ([ea994c2](https://github.com/substrait-io/substrait/commit/ea994c2ead91eececb770cca1e7f0268e0ebb2ad))
+
+## [0.60.0](https://github.com/substrait-io/substrait/compare/v0.59.0...v0.60.0) (2024-11-10)
+
+### Features
+
+* add antlr grammar for test file format ([#728](https://github.com/substrait-io/substrait/issues/728)) ([752aa63](https://github.com/substrait-io/substrait/commit/752aa636c01647ef15fd59edfd675533e881e692))
+* add CreateMode for CTAS in WriteRel ([#715](https://github.com/substrait-io/substrait/issues/715)) ([2e13d0b](https://github.com/substrait-io/substrait/commit/2e13d0b7b4a2b5ac8221e7f02cc8f04456c8f11c))
+* update test file format to support aggregate functions ([#736](https://github.com/substrait-io/substrait/issues/736)) ([c18c0c1](https://github.com/substrait-io/substrait/commit/c18c0c1347376efa4dfab503bb4db9f820df3cf3))
+
+### Bug Fixes
+
+* typo in site/docs/tutorial/sql_to_substrait.md ([#735](https://github.com/substrait-io/substrait/issues/735)) ([9cccb04](https://github.com/substrait-io/substrait/commit/9cccb04fba336489b70ed42b71f73a0a1e34f9f5))
+
+## [0.59.0](https://github.com/substrait-io/substrait/compare/v0.58.0...v0.59.0) (2024-11-03)
+
+### ⚠ BREAKING CHANGES
+
+* changes the message type for Expressions field in
+VirtualTable
+
+### Features
+
+* add antlr grammar for types ([#730](https://github.com/substrait-io/substrait/issues/730)) ([820085f](https://github.com/substrait-io/substrait/commit/820085fc913692147d0c8fdfcbf289fb8b348835))
+
+### Bug Fixes
+
+* virtualTable expression should represent a row of expression ([#727](https://github.com/substrait-io/substrait/issues/727)) ([a2df42c](https://github.com/substrait-io/substrait/commit/a2df42c76282854d8674aa664d69dacd43630551))
+
+## [0.58.0](https://github.com/substrait-io/substrait/compare/v0.57.1...v0.58.0) (2024-10-13)
+
+### Features
+
+* define sideband optimization hints ([#705](https://github.com/substrait-io/substrait/issues/705)) ([e386a29](https://github.com/substrait-io/substrait/commit/e386a29377c4138a6a2aee87750501b35edae86d))
+* enhance VirtualTable to have expression as value ([#711](https://github.com/substrait-io/substrait/issues/711)) ([954bcbc](https://github.com/substrait-io/substrait/commit/954bcbc1a3eeabb696e7dc10721b85e1f475ecfd))
+* specify row_number start ([#722](https://github.com/substrait-io/substrait/issues/722)) ([#723](https://github.com/substrait-io/substrait/issues/723)) ([a0388ff](https://github.com/substrait-io/substrait/commit/a0388ff69a83aa4addf51236b77bf275b3647590))
+
 ## [0.57.1](https://github.com/substrait-io/substrait/compare/v0.57.0...v0.57.1) (2024-10-06)
 
 ### Bug Fixes

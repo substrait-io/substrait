@@ -1,5 +1,6 @@
 arrange:
   - basics.md
+  - common_fields.md
   - logical_relations.md
   - physical_relations.md
   - user_defined_relations.md
