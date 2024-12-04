@@ -6,7 +6,7 @@ Each language binding is intended to contain examples that are relevant to that 
 
 ## Java
 
-- [Substrait-Spark](https://github.com/substrait-io/substrait-java/tree/main/examples/substrait-spark) this demonstrates how Substrait plans can be created and consumed within Apache Spark. The examples run within a simple Spark cluster of a couple of docker containers.
+- [Substrait-Spark](https://github.com/substrait-io/substrait-java/tree/main/examples/substrait-spark) this demonstrates how Substrait plans can be created and consumed within Apache Spark. The examples run within a simple Spark cluster, composed by a couple of Docker containers.
 
 
 
