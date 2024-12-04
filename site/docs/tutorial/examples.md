@@ -2,7 +2,7 @@
 
 It's very useful to have examples of how APIs are used; both to get information on the best practices for using APIs and ideas of how they can be used. 
 
-Each language binding is intended to contain examples that are relavent to that language. Hoped that this list will grow over time, new submissions always welcome.
+Each language binding is intended to contain examples that are relevant to that language. New contributions are always welcome.
 
 ## Java
 
