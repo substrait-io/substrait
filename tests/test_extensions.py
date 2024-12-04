@@ -24,12 +24,12 @@ def test_substrait_extension_coverage():
     all_test_files = load_all_testcases(test_case_dir)
     coverage = get_test_coverage(all_test_files, registry)
 
-    assert coverage.test_count >= 1018
+    assert coverage.test_count >= 1077
     assert (
         coverage.num_tests_with_no_matching_function == 0
     ), f"{coverage.num_tests_with_no_matching_function} tests with no matching function"
-    assert coverage.num_covered_function_variants >= 223
-    assert coverage.total_function_variants >= 510
+    assert coverage.num_covered_function_variants >= 226
+    assert coverage.total_function_variants >= 513
     assert (
         coverage.total_function_variants - coverage.num_covered_function_variants
     ) <= 287, (
