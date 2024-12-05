@@ -341,8 +341,8 @@ The fetch operation eliminates records outside a desired window. Typically corre
 | Property          | Description                                                                                                                                                                                                                          | Required                   |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- |
 | Input             | A relational input, typically with a desired orderedness property.                                                                                                                                                                   | Required                   |
-| Offset Expression | An expression which evaluates to a non-negative integer or null (recommended type is `i64`). Declares the offset for retrieval of records. An expression evaluating to null is treated as 0.                                         | Optional, defaults to 0.   |
-| Count Expression  | An expression which evaluates to a non-negative integer or null (recommended type is `i64`). Declares the number of records that should be returned. An expression evaluating to null indicates that all records should be returned. | Optional, defaults to all. |
+| Offset Expression | An expression which evaluates to a non-negative integer or null (recommended type is `i64`). Declares the offset for retrieval of records. An expression evaluating to null is treated as 0.                                         | Optional, defaults to a 0 literal.   |
+| Count Expression  | An expression which evaluates to a non-negative integer or null (recommended type is `i64`). Declares the number of records that should be returned. An expression evaluating to null indicates that all records should be returned. | Optional, defaults to a null literal. |
 
 === "FetchRel Message"
 
