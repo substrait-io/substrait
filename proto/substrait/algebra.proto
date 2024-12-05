@@ -274,8 +274,9 @@ message FetchRel {
     // the offset expressed in number of records
     // Deprecated: use `offset_expr` instead
     int64 offset = 3 [deprecated = true];
-    // Expression evaluated into an integer specifying the number of records to
-    // skip. An expression evaluating to null is treated as 0.
+    // Expression evaluated into a non-negative integer specifying the number
+    // of records to skip. An expression evaluating to null is treated as 0.
+    // Evaluating to a negative integer should result in an error.
     // Recommended type for offset is int64.
     Expression offset_expr = 5;
   }
@@ -287,9 +288,10 @@ message FetchRel {
     // use -1 to signal that ALL records should be returned
     // Deprecated: use `count_expr` instead
     int64 count = 4 [deprecated = true];
-    // Expression evaluated into an integer specifying the number of records to
-    // return. An expression evaluating to null signals that ALL records should
-    // be returned.
+    // Expression evaluated into a non-negative integer specifying the number
+    // of records to return. An expression evaluating to null signals that ALL
+    // records should be returned.
+    // Evaluating to a negative integer should result in an error.
     // Recommended type for count is int64.
     Expression count_expr = 6;
   }
