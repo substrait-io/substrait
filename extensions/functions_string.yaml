@@ -1220,6 +1220,16 @@ scalar_functions:
             name: "characters"
             description: "The set of characters to remove."
         return: "string"
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+            description: "The string to remove characters from."
+        return: "string"
   -
     name: rtrim
     description: >-
@@ -1242,6 +1252,16 @@ scalar_functions:
             name: "characters"
             description: "The set of characters to remove."
         return: "string"
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+            description: "The string to remove characters from."
+        return: "string"
   -
     name: trim
     description: >-
@@ -1263,6 +1283,16 @@ scalar_functions:
           - value: "string"
             name: "characters"
             description: "The set of characters to remove."
+        return: "string"
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+            description: "The string to remove characters from."
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+            description: "The string to remove characters from."
         return: "string"
   -
     name: lpad
