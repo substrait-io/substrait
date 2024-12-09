@@ -24,7 +24,7 @@ def test_substrait_extension_coverage():
     all_test_files = load_all_testcases(test_case_dir)
     coverage = get_test_coverage(all_test_files, registry)
 
-    assert coverage.test_count >= 1128
+    assert coverage.test_count >= 1140
     assert (
         coverage.num_tests_with_no_matching_function == 0
     ), f"{coverage.num_tests_with_no_matching_function} tests with no matching function"

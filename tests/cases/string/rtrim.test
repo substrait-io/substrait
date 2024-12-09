@@ -24,7 +24,7 @@ rtrim('aaaaabccccc'::str, 'c'::str) [spaces_only:FALSE] = 'aaaaab'::str
 rtrim('abcabcdef'::str, 'def'::str) [spaces_only:FALSE] = 'abcabc'::str
 rtrim('defabccba'::str, 'abc'::str) [spaces_only:FALSE] = 'def'::str
 
-# rtrim with varchar
+# varchar
 rtrim('abc'::vchar<20>, ' '::vchar<5>) = 'abc'::vchar<20>
 rtrim('   abc'::vchar<20>, ' '::vchar<5>) = '   abc'::vchar<20>
 rtrim('abc   '::vchar<20>, ' '::vchar<5>) = 'abc'::vchar<20>
@@ -35,3 +35,7 @@ rtrim('abc   '::vchar<20>) = 'abc'::vchar<20>
 rtrim('   abc   '::vchar<20>) = '   abc'::vchar<20>
 rtrim('aaaaabccccc'::vchar<20>, 'c'::vchar<9>) [spaces_only:False] = 'aaaaab'::vchar<20>
 rtrim('abcabcdef'::vchar<20>, 'def'::vchar<9>) [spaces_only:False] = 'abcabc'::vchar<20>
+rtrim('Hello World\t\t   '::vchar<30>) = 'Hello World\t\t'::vchar<30>
+rtrim('Hello World\n\n   '::vchar<30>) = 'Hello World\n\n'::vchar<30>
+rtrim('Hello World\r\r   '::vchar<30>) = 'Hello World\r\r'::vchar<30>
+rtrim('Hello World\u2003  '::vchar<30>) = 'Hello World\u2003'::vchar<30>
