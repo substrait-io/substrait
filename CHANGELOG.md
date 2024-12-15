@@ -1,6 +1,25 @@
 Release Notes
 ---
 
+## [0.63.0](https://github.com/substrait-io/substrait/compare/v0.62.0...v0.63.0) (2024-12-15)
+
+### ⚠ BREAKING CHANGES
+
+* The encoding of FetchRel has changed in a strictly
+backwards incompatible way. The change involves transitioning offset and
+count from a standalone int64 field to a oneof structure, where the
+original int64 field is marked as deprecated, and a new field of
+Expression type is introduced. Using a oneof may cause ambiguity between
+unset and set-to-zero states in older messages. However, the fields are
+defined such that their logical meaning remains indistinguishable,
+ensuring consistency across encodings.
+
+### Features
+
+* add expression support for count and offset in the fetch operator ([#748](https://github.com/substrait-io/substrait/issues/748)) ([bd4b431](https://github.com/substrait-io/substrait/commit/bd4b431c8c900580f944807f654bc829cdb5dc8d))
+* add simple linking to the examples ([#702](https://github.com/substrait-io/substrait/issues/702)) ([4c00b1c](https://github.com/substrait-io/substrait/commit/4c00b1cd549d9deeb29f08f506810464d723cd5a))
+* support missing variants for regexp string functions ([#750](https://github.com/substrait-io/substrait/issues/750)) ([3410a3e](https://github.com/substrait-io/substrait/commit/3410a3e1a2c70b04216f8baab500b3dd217b65d2))
+
 ## [0.62.0](https://github.com/substrait-io/substrait/compare/v0.61.0...v0.62.0) (2024-11-24)
 
 ### Features
