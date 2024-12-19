@@ -114,6 +114,7 @@ message ReadRel {
     LocalFiles local_files = 6;
     NamedTable named_table = 7;
     ExtensionTable extension_table = 8;
+    IcebergTable iceberg_table = 9;
   }
 
   // A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
@@ -122,6 +123,26 @@ message ReadRel {
     repeated string names = 1;
     substrait.extensions.AdvancedExtension advanced_extension = 10;
   }
+
+  // Read an Iceberg Table
+  message IcebergTable {
+
+    oneof table_type {
+      MetadataFileRead direct = 1;
+      // future: add catalog table types (e.g. rest api, latest metadata in path, etc)
+    }
+
+    // Read an Iceberg table using a metadata file
+    message MetadataFileRead {
+      // the specific uri of a metadata file (e.g. s3://mybucket/mytable/<ver>-<uuid>.metadata.json)
+      string metadata_uri = 1;
+
+      // the snapshot id to read. if not set, uses the current snapshot listed in the metadata file
+      optional string snapshot_id = 2;
+    }
+  }
+
+
 
   // A table composed of expressions.
   message VirtualTable {
