@@ -126,7 +126,6 @@ message ReadRel {
 
   // Read an Iceberg Table
   message IcebergTable {
-
     oneof table_type {
       MetadataFileRead direct = 1;
       // future: add catalog table types (e.g. rest api, latest metadata in path, etc)
@@ -141,8 +140,6 @@ message ReadRel {
       optional string snapshot_id = 2;
     }
   }
-
-
 
   // A table composed of expressions.
   message VirtualTable {
