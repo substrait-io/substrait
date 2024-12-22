@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.63.1](https://github.com/substrait-io/substrait/compare/v0.63.0...v0.63.1) (2024-12-22)
+
+### Bug Fixes
+
+* change the type of the bool_and testcase to aggregate ([#756](https://github.com/substrait-io/substrait/issues/756)) ([50f1a2e](https://github.com/substrait-io/substrait/commit/50f1a2edb017660cc52617336ece4ce692ff546e))
+
 ## [0.63.0](https://github.com/substrait-io/substrait/compare/v0.62.0...v0.63.0) (2024-12-15)
 
 ### ⚠ BREAKING CHANGES
