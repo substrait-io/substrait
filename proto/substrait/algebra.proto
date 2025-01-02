@@ -141,8 +141,8 @@ message ReadRel {
         // the snapshot id to read.
         string snapshot_id = 2;
 
-        // the timestamp that should be used to select the snapshot
-        PrecisionTimestamp snapshot_timestamp = 3;
+        // the timestamp that should be used to select the snapshot (Time passed in microseconds since 1970-01-01 00:00:00.000000 in UTC)
+        int64 snapshot_timestamp = 3;
       }
     }
   }
