@@ -138,7 +138,7 @@ message ReadRel {
 
       // snapshot options. if none set, uses the current snapshot listed in the metadata file
       oneof snapshot {
-        // the snapshot id to read. 
+        // the snapshot id to read.
         string snapshot_id = 2;
 
         // the timestamp that should be used to select the snapshot
