@@ -153,7 +153,7 @@ The sort operator reorders a dataset based on one or more identified sort fields
 
 ## Project Operation
 
-The project operation will produce one or more additional expressions based on the inputs of the dataset.
+The project operation will produce one or more additional expressions based on the inputs of the relation.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -263,7 +263,7 @@ The set operation encompasses several set-level operations that support combinin
 
 | Property           | Description                       | Required              |
 | ------------------ | --------------------------------- | --------------------- |
-| Primary Input      | The primary input of the dataset. | Required              |
+| Primary Input      | The primary input of the relation.| Required              |
 | Secondary Inputs   | One or more relational inputs.    | At least one required |
 | Set Operation Type | From list below.                  | Required              |
 
