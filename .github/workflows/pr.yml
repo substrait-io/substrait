@@ -78,7 +78,7 @@ jobs:
           node-version: "20"
       - run: ./ci/release/dry_run.sh
   python-style:
-    name: Style-check and lint Python files
+    name: Style-check and lint Python files, and run tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
