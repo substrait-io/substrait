@@ -147,6 +147,38 @@ scalar_functions:
             name: high
             description: The value to check if less than or equal to.
         return: boolean
+  - name: "is_true"
+    description: Whether a value is true.
+    impls:
+      - args:
+          - value: boolean?
+            name: x
+        return: BOOLEAN
+        nullability: DECLARED_OUTPUT
+  - name: "is_not_true"
+    description: Whether a value is not true.
+    impls:
+      - args:
+          - value: boolean?
+            name: x
+        return: BOOLEAN
+        nullability: DECLARED_OUTPUT
+  - name: "is_false"
+    description: Whether a value is false.
+    impls:
+      - args:
+          - value: boolean?
+            name: x
+        return: BOOLEAN
+        nullability: DECLARED_OUTPUT
+  - name: "is_not_false"
+    description: Whether a value is not false.
+    impls:
+      - args:
+          - value: boolean?
+            name: x
+        return: BOOLEAN
+        nullability: DECLARED_OUTPUT
   -
     name: "is_null"
     description: Whether a value is null. NaN is not null.
