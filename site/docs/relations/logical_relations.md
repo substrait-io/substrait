@@ -95,6 +95,20 @@ possible approach is that a chunk should only be read if the midpoint of the chu
 %%% proto.algebra.ReadRel %%%
     ```
 
+#### Iceberg Table Type
+
+A Iceberg Table is a table built on [Apache Iceberg](https://iceberg.apache.org/). Iceberg tables can be read by either directly reading a [metadata file](https://iceberg.apache.org/spec/#table-metadata) or by consulting a [catalog](https://iceberg.apache.org/concepts/catalog/). 
+
+##### Metadata File Reading
+
+Points to an [Iceberg metadata file](https://iceberg.apache.org/spec/#table-metadata) and uses that as a starting point for reading an Iceberg table. This is the simplest form of Iceberg table access but should be limited to use for reads. (Writes often also need to update an external catalog.)
+
+| Property | Description                                                      | Required                |
+| -------- | ---------------------------------------------------------------- | ----------------------- |
+| metadata_uri    | A URI for an Iceberg metadata file. This current snapshot will be read from this file.  | Required |
+| snapshot_id    | The snapshot that should be read using id. If not provided, the current snapshot is read. Only one of snapshot_id or snapshot_timestamp should be set. | Optional |
+| snapshot_timestamp    | The snapshot that should be read using timestamp. If not provided, the current snapshot is read. | Optional |
+
 
 ## Filter Operation
 
