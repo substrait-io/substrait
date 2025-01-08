@@ -213,8 +213,13 @@ max((2.5, 0, 5.0, -2.5, -7.5)::fp32) = 5.0::fp32
     ]
 
 
+def get_absolute_path(relative_path):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(script_dir, relative_path)
+
+
 def test_parse_file_add():
-    test_file = parse_one_file("../cases/arithmetic/add.test")
+    test_file = parse_one_file(get_absolute_path("../cases/arithmetic/add.test"))
     assert len(test_file.testcases) == 15
     assert test_file.testcases[0].func_name == "add"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
@@ -222,7 +227,7 @@ def test_parse_file_add():
 
 
 def test_parse_file_max():
-    test_file = parse_one_file("../cases/arithmetic/max.test")
+    test_file = parse_one_file(get_absolute_path("../cases/arithmetic/max.test"))
     assert len(test_file.testcases) == 12
     assert test_file.testcases[0].func_name == "max"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
@@ -230,14 +235,16 @@ def test_parse_file_max():
 
 
 def test_parse_file_lt_datetime():
-    test_file = parse_one_file("../cases/datetime/lt_datetime.test")
+    test_file = parse_one_file(get_absolute_path("../cases/datetime/lt_datetime.test"))
     assert len(test_file.testcases) == 13
     assert test_file.testcases[0].func_name == "lt"
     assert test_file.testcases[0].base_uri == "/extensions/functions_datetime.yaml"
 
 
 def test_parse_file_power_decimal():
-    test_file = parse_one_file("../cases/arithmetic_decimal/power.test")
+    test_file = parse_one_file(
+        get_absolute_path("../cases/arithmetic_decimal/power.test")
+    )
     assert len(test_file.testcases) == 9
     assert test_file.testcases[0].func_name == "power"
     assert (
