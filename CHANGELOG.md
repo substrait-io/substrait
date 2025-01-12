@@ -1,6 +1,19 @@
 Release Notes
 ---
 
+## [0.64.0](https://github.com/substrait-io/substrait/compare/v0.63.1...v0.64.0) (2025-01-12)
+
+### Features
+
+* additional boolean comparison functions ([#764](https://github.com/substrait-io/substrait/issues/764)) ([2d8b1b6](https://github.com/substrait-io/substrait/commit/2d8b1b673718df3deb9deae73de1f53dedba75f1))
+* introduce Iceberg table type using metadata file ([#758](https://github.com/substrait-io/substrait/issues/758)) ([7434e2f](https://github.com/substrait-io/substrait/commit/7434e2fa91325c064ae418ded6329c75decb866a))
+* run pytest in pr workflow to check function test coverage ([#765](https://github.com/substrait-io/substrait/issues/765)) ([7bfc37c](https://github.com/substrait-io/substrait/commit/7bfc37ca818f7dcb6789b3ad19db41b920584b1e))
+
+### Bug Fixes
+
+* bump flake8 version to 7.0.0 ([#768](https://github.com/substrait-io/substrait/issues/768)) ([57770b6](https://github.com/substrait-io/substrait/commit/57770b6c51dc57be4537630dbd0c23c465557afd))
+* update the doc to clarify that function names are case-sensitive ([#757](https://github.com/substrait-io/substrait/issues/757)) ([203e6e4](https://github.com/substrait-io/substrait/commit/203e6e4cf05b5e9d0c08e3ce44655b763a7f00fc))
+
 ## [0.63.1](https://github.com/substrait-io/substrait/compare/v0.63.0...v0.63.1) (2024-12-22)
 
 ### Bug Fixes
