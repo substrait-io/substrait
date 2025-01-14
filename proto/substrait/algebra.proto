@@ -650,7 +650,7 @@ message DdlRel {
     DDL_OP_DROP_IF_EXIST = 5;
   }
 
-  substrait.extensions.AdvancedExtension advanced_extension = 10;
+  substrait.extensions.AdvancedExtension advanced_extension = 9;
 
   //TODO add PK/constraints/indexes/etc..?
 }
@@ -714,7 +714,7 @@ message WriteRel {
     OUTPUT_MODE_MODIFIED_RECORDS = 2;
   }
 
-  substrait.extensions.AdvancedExtension advanced_extension = 10;
+  substrait.extensions.AdvancedExtension advanced_extension = 9;
 }
 
 // The operator that modifies the columns of a table
@@ -734,7 +734,7 @@ message UpdateRel {
     int32 column_target = 2; // index of the column to apply the transformation to
   }
 
-  substrait.extensions.AdvancedExtension advanced_extension = 10;
+  substrait.extensions.AdvancedExtension advanced_extension = 5;
 }
 
 // A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
