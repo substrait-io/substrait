@@ -8,6 +8,7 @@ all: generate_testcase_parser generate_type_parser
 generate_testcase_parser:
 	@echo "\nGenerating Test Case Parser"
 	antlr  -visitor -Dlanguage=Python3 -o $(TESTCASE_OUTPUT_DIR) $(TESTCASE_GRAMMAR)
+	./prepend_license.sh $(TESTCASE_OUTPUT_DIR)
 
 generate_type_parser:
 	@echo "\nGenerating Substrait Type"
