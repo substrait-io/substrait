@@ -13,6 +13,7 @@ generate_testcase_parser:
 generate_type_parser:
 	@echo "\nGenerating Substrait Type"
 	antlr -visitor -Dlanguage=Python3 -o $(TYPE_OUTPUT_DIR) $(TYPE_GRAMMAR)
+	./prepend_license.sh $(TYPE_OUTPUT_DIR)
 
 clean:
 	rm -rf $(TYPE_OUTPUT_DIR)/*.py  $(TYPE_OUTPUT_DIR)/*.tokens $(TYPE_OUTPUT_DIR)/*.interp
