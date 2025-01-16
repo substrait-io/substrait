@@ -43,8 +43,11 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitTestGroupDescription(
         self, ctx: FuncTestCaseParser.TestGroupDescriptionContext
     ):
-        group = ctx.DescriptionLine().getText().strip("#").strip()
-        return CaseGroup(group, "")
+        if ctx:
+            group = ctx.DescriptionLine().getText().strip("#").strip()
+            return CaseGroup(group, "")
+        else:
+            return CaseGroup("", "")
 
     def visitScalarFuncTestGroup(
         self, ctx: FuncTestCaseParser.ScalarFuncTestGroupContext
