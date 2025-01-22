@@ -1046,7 +1046,7 @@ message Expression {
     }
 
     message PrecisionTimestamp {
-      // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds
+      // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, 12 is picoseconds
       int32 precision = 1;
       // Time passed since 1970-01-01 00:00:00.000000 in UTC for PrecisionTimestampTZ and unspecified timezone for PrecisionTimestamp
       int64 value = 2;
