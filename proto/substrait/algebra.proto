@@ -1612,7 +1612,7 @@ message DynamicParameter {
   Type type = 1;
 
   // The 0-based index of the dynamic parameter.
-  int index = 2;
+  int32 index = 2;
 }
 
 // The description of a field to sort on (including the direction of sorting and null semantics)
