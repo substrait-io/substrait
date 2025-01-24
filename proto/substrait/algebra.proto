@@ -950,6 +950,7 @@ message Expression {
     Cast cast = 11;
     Subquery subquery = 12;
     Nested nested = 13;
+    DynamicParameter dynamic_parameter = 14;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -1602,6 +1603,16 @@ message Expression {
       Rel right = 4;
     }
   }
+}
+
+// Expression that represents a dynamic parameter.
+// Dynamic parameters are identified by their 0-based index within a plan.
+message DynamicParameter {
+  // The inferred type of the dynamic parameter.
+  Type type = 1;
+
+  // The 0-based index of the dynamic parameter.
+  int index = 2;
 }
 
 // The description of a field to sort on (including the direction of sorting and null semantics)
