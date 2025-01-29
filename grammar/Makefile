@@ -8,11 +8,13 @@ all: generate_testcase_parser generate_type_parser
 generate_testcase_parser:
 	@echo "\nGenerating Test Case Parser"
 	antlr  -visitor -Dlanguage=Python3 -o $(TESTCASE_OUTPUT_DIR) $(TESTCASE_GRAMMAR)
+	rm -rf $(TESTCASE_OUTPUT_DIR)/*.tokens $(TESTCASE_OUTPUT_DIR)/*.interp
 	./prepend_license.sh $(TESTCASE_OUTPUT_DIR)
 
 generate_type_parser:
 	@echo "\nGenerating Substrait Type"
 	antlr -visitor -Dlanguage=Python3 -o $(TYPE_OUTPUT_DIR) $(TYPE_GRAMMAR)
+	rm -rf $(TYPE_OUTPUT_DIR)/*.tokens $(TYPE_OUTPUT_DIR)/*.interp
 	./prepend_license.sh $(TYPE_OUTPUT_DIR)
 
 clean:
