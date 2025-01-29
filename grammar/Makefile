@@ -1,14 +1,21 @@
-ANTLR_JAR=antlr-4.13.2-complete.jar
 TYPE_GRAMMAR=SubstraitLexer.g4 SubstraitType.g4
 TYPE_OUTPUT_DIR=../tests/type/antlr_parser
 TESTCASE_GRAMMAR=FuncTestCaseLexer.g4 FuncTestCaseParser.g4
 TESTCASE_OUTPUT_DIR=../tests/coverage/antlr_parser
 
+all: generate_testcase_parser generate_type_parser
+
 generate_testcase_parser:
-	java -jar $(ANTLR_JAR) -visitor -Dlanguage=Python3 -o $(TESTCASE_OUTPUT_DIR) $(TESTCASE_GRAMMAR)
+	@echo "\nGenerating Test Case Parser"
+	antlr  -visitor -Dlanguage=Python3 -o $(TESTCASE_OUTPUT_DIR) $(TESTCASE_GRAMMAR)
+	rm -rf $(TESTCASE_OUTPUT_DIR)/*.tokens $(TESTCASE_OUTPUT_DIR)/*.interp
+	./prepend_license.sh $(TESTCASE_OUTPUT_DIR)
 
 generate_type_parser:
-	java -jar $(ANTLR_JAR) -visitor -Dlanguage=Python3 -o $(TYPE_OUTPUT_DIR) $(TYPE_GRAMMAR)
+	@echo "\nGenerating Substrait Type"
+	antlr -visitor -Dlanguage=Python3 -o $(TYPE_OUTPUT_DIR) $(TYPE_GRAMMAR)
+	rm -rf $(TYPE_OUTPUT_DIR)/*.tokens $(TYPE_OUTPUT_DIR)/*.interp
+	./prepend_license.sh $(TYPE_OUTPUT_DIR)
 
 clean:
 	rm -rf $(TYPE_OUTPUT_DIR)/*.py  $(TYPE_OUTPUT_DIR)/*.tokens $(TYPE_OUTPUT_DIR)/*.interp
