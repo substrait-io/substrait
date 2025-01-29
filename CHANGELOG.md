@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.65.0](https://github.com/substrait-io/substrait/compare/v0.64.0...v0.65.0) (2025-01-26)
+
+### Features
+
+* add the test coverage baseline as a json file ([#774](https://github.com/substrait-io/substrait/issues/774)) ([dfbe734](https://github.com/substrait-io/substrait/commit/dfbe73418a9de5042ec82608e6e983d96d69e635))
+
 ## [0.64.0](https://github.com/substrait-io/substrait/compare/v0.63.1...v0.64.0) (2025-01-12)
 
 ### Features
