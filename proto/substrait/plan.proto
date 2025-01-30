@@ -46,6 +46,11 @@ message Plan {
   // unused. In many cases, a consumer may be able to work with a plan even if
   // one or more message types defined here are unknown.
   repeated string expected_type_urls = 5;
+
+  // A list of literal values corresponding to dynamic parameters referenced
+  // within this plan. These values are assigned based on the associated
+  // parameter_anchor field within DynamicParameter expressions.
+  repeated Literal parameter_bindings = 7;
 }
 
 // This message type can be used to deserialize only the version of a Substrait
