@@ -47,7 +47,7 @@ message Plan {
   // one or more message types defined here are unknown.
   repeated string expected_type_urls = 5;
 
-  // A list of bindings for dynamic parameters used in this plan.
+  // An optional list of bindings for dynamic parameters used in this plan.
   // Each binding maps a parameter_anchor to its corresponding runtime value.
   repeated ParameterBinding parameter_bindings = 7;
 }
