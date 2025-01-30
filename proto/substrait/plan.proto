@@ -50,7 +50,7 @@ message Plan {
   // A list of literal values corresponding to dynamic parameters referenced
   // within this plan. These values are assigned based on the associated
   // parameter_anchor field within DynamicParameter expressions.
-  repeated Literal parameter_bindings = 7;
+  repeated Expression.Literal parameter_bindings = 7;
 }
 
 // This message type can be used to deserialize only the version of a Substrait
