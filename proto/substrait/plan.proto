@@ -48,8 +48,9 @@ message Plan {
   repeated string expected_type_urls = 5;
 
   // An optional list of bindings for dynamic parameters used in this plan.
-  // Each binding maps a parameter_anchor to its corresponding runtime value.
-  repeated ParameterBinding parameter_bindings = 7;
+  // The index of each entry in the list corresponds to the parameter_anchor
+  // of a DynamicParameter expression, mapping it to its runtime value.
+  repeated Expression.Literal parameter_bindings = 7;
 }
 
 // This message type can be used to deserialize only the version of a Substrait
@@ -83,13 +84,4 @@ message Version {
   // producers in practice, and therefore may need to know which producer
   // created the plan.
   string producer = 5;
-}
-
-// Represents a binding for a dynamic parameter.
-message ParameterBinding {
-  // The parameter anchor that identifies the dynamic parameter reference.
-  uint32 parameter_anchor = 1;
-
-  // The literal value assigned to the parameter at runtime.
-  Expression.Literal value = 2;
 }
