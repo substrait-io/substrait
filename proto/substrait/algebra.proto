@@ -353,6 +353,31 @@ message AggregateRel {
     // A list of zero or more references to grouping expressions, i.e., indices
     // into the `grouping_expression` list.
     repeated uint32 expression_references = 2;
+
+    // An optional list of zero or more grouping id of `expression_references`
+    // at corresponding index. The expressions sharing the same non-zero values
+    // in this field formulates a composite grouping expression (i.e., those
+    // columns considered as one grouping expression).
+    // 
+    // For GROUNPING_EXPANSION_UNSPECIFIED, this field is ignored.
+    //
+    // Example:
+    // {
+    //   expression_references: [ 3, 1, 4, 5, 2 ],
+    //   composite_grouping_expressions: [ 1, 1, 0, 2, 2 ],
+    //   expansion: GROUPING_EXPANSION_CUBE
+    // },
+    //
+    // means CUBE((3, 1), 4, (5, 2)), thus expands to following grouping sets:
+    //
+    // (),
+    // (3, 1), (4), (5, 2),
+    // (3, 1, 4), (3, 1, 5, 2), (4, 5, 2),
+    // (3, 1, 4, 5, 2)
+    repeated uint32 composite_grouping_expressions = 3;
+
+    // Optional grouping expansion method. Default: no expansion.
+    GroupingExpansion expansion = 4;
   }
 
   message Measure {
@@ -363,6 +388,17 @@ message AggregateRel {
     // within the measure.
     // Helps to support SUM(<c>) FILTER(WHERE...) syntax without masking opportunities for optimization
     Expression filter = 2;
+  }
+
+  enum GroupingExpansion {
+    // No grouping expansion. Default.
+    GROUPING_EXPANSION_UNSPECIFIED = 0;
+
+    // N grouping expression groups are expanded into N+1 groupings.
+    GROUPING_EXPANSION_ROLLUP = 1;
+
+    // N grouping expression groups are expanded into 2^N grounpings.
+    GROUPING_EXPANSION_CUBE = 2;
   }
 }
 
