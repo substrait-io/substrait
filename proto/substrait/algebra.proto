@@ -358,7 +358,6 @@ message AggregateRel {
     // at corresponding index. The expressions sharing the same non-zero values
     // in this field formulates a composite grouping expression (i.e., those
     // columns considered as one grouping expression).
-    // 
     // For GROUNPING_EXPANSION_UNSPECIFIED, this field is ignored.
     //
     // Example:
