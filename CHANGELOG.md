@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.66.0](https://github.com/substrait-io/substrait/compare/v0.65.0...v0.66.0) (2025-02-02)
+
+### Features
+
+* add advanced extension field to DdlRel, WriteRel, and UpdateRel ([#766](https://github.com/substrait-io/substrait/issues/766)) ([a428f96](https://github.com/substrait-io/substrait/commit/a428f9663043178b121a0354c923ec293edad332))
+
 ## [0.65.0](https://github.com/substrait-io/substrait/compare/v0.64.0...v0.65.0) (2025-01-26)
 
 ### Features
