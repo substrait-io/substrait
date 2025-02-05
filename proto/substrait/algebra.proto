@@ -1619,7 +1619,7 @@ message DynamicParameter {
   Type type = 1;
 
   // The surrogate key used within a plan to reference a specific parameter binding.
-  uint32 parameter_anchor = 2;
+  uint32 parameter_reference = 2;
 }
 
 // The description of a field to sort on (including the direction of sorting and null semantics)

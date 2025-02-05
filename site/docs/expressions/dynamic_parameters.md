@@ -6,7 +6,7 @@ Additionally, using dynamic parameters can enable other use cases, such as shari
 
 A dynamic parameter expression includes the following properties:
 
-| Property           | Description                                                                   | Required |
-|--------------------|-------------------------------------------------------------------------------|----------|
-| `type`             | Specifies the expected data type of the dynamic parameter.                    | Yes      |
-| `parameter_anchor` | A surrogate key used within a plan to reference a specific parameter binding. | Yes      |
+| Property              | Description                                                                   | Required |
+|-----------------------|-------------------------------------------------------------------------------|----------|
+| `type`                | Specifies the expected data type of the dynamic parameter.                    | Yes      |
+| `parameter_reference` | A surrogate key used within a plan to reference a specific parameter binding. | Yes      |
