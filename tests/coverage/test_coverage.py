@@ -32,13 +32,14 @@ def test_parse_basic_example():
     tests = """# 'Basic examples without any special cases'
 add(120::i8, 5::i8) = 125::i8
 add(100::i16, 100::i16) = 200::i16
+add(1::i8?, 2::i8?) = 3::i8?
 
 # Overflow examples demonstrating overflow behavior
 add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
 """
 
     test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 3
+    assert len(test_file.testcases) == 4
 
 
 def test_parse_date_time_example():

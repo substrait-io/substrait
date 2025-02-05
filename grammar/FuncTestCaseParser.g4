@@ -132,68 +132,68 @@ floatLiteral
 
 nullArg: NullLiteral DoubleColon dataType;
 
-intArg: IntegerLiteral DoubleColon (I8 | I16 | I32 | I64);
+intArg: IntegerLiteral DoubleColon (I8 | I16 | I32 | I64) isnull=QMark?;
 
-floatArg: numericLiteral DoubleColon (FP32 | FP64);
+floatArg: numericLiteral DoubleColon (FP32 | FP64) isnull=QMark?;
 
 decimalArg
-    : numericLiteral DoubleColon decimalType
+    : numericLiteral DoubleColon decimalType isnull=QMark?
     ;
 
 booleanArg
-    : BooleanLiteral DoubleColon booleanType
+    : BooleanLiteral DoubleColon booleanType isnull=QMark?
     ;
 
 stringArg
-    : StringLiteral DoubleColon stringType
+    : StringLiteral DoubleColon stringType isnull=QMark?
     ;
 
 dateArg
-    : DateLiteral DoubleColon Date
+    : DateLiteral DoubleColon Date isnull=QMark?
     ;
 
 timeArg
-    : TimeLiteral DoubleColon Time
+    : TimeLiteral DoubleColon Time isnull=QMark?
     ;
 
 timestampArg
-    : TimestampLiteral DoubleColon timestampType
+    : TimestampLiteral DoubleColon timestampType isnull=QMark?
     ;
 
 timestampTzArg
-    : TimestampTzLiteral DoubleColon timestampTZType
+    : TimestampTzLiteral DoubleColon timestampTZType isnull=QMark?
     ;
 
 intervalYearArg
-    : IntervalYearLiteral DoubleColon intervalYearType
+    : IntervalYearLiteral DoubleColon intervalYearType isnull=QMark?
     ;
 
 intervalDayArg
-    : IntervalDayLiteral DoubleColon intervalDayType
+    : IntervalDayLiteral DoubleColon intervalDayType isnull=QMark?
     ;
 
 fixedCharArg
-    : StringLiteral DoubleColon fixedCharType
+    : StringLiteral DoubleColon fixedCharType isnull=QMark?
     ;
 
 varCharArg
-    : StringLiteral DoubleColon varCharType
+    : StringLiteral DoubleColon varCharType isnull=QMark?
     ;
 
 fixedBinaryArg
-    : StringLiteral DoubleColon fixedBinaryType
+    : StringLiteral DoubleColon fixedBinaryType isnull=QMark?
     ;
 
 precisionTimestampArg
-    : TimestampLiteral DoubleColon precisionTimestampType
+    : TimestampLiteral DoubleColon precisionTimestampType isnull=QMark?
     ;
 
 precisionTimestampTZArg
-    : TimestampTzLiteral DoubleColon precisionTimestampTZType
+    : TimestampTzLiteral DoubleColon precisionTimestampTZType isnull=QMark?
     ;
 
 listArg
-    : literalList DoubleColon listType
+    : literalList DoubleColon listType isnull=QMark?
     ;
 
 literalList
@@ -201,7 +201,7 @@ literalList
     ;
 
 dataType
-    : scalarType
+    : scalarType isnull=QMark?
     | parameterizedType
     ;
 
