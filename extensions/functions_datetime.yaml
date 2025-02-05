@@ -307,6 +307,12 @@ scalar_functions:
           - name: y
             value: interval_day<P>
         return: timestamp
+      - args:
+          - name: x
+            value: date
+          - name: y
+            value: interval_compound<P>
+        return: date
   -
     name: "multiply"
     description: Multiply an interval by an integral number.
