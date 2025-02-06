@@ -4,8 +4,8 @@
      "extension_count": 13,
      "function_count": 165,
      "num_aggregate_functions": 29,
-     "num_scalar_functions": 169,
-     "num_window_functions": 0,
+     "num_scalar_functions": 158,
+     "num_window_functions": 11,
      "num_function_overloads": 517
    },
    "coverage": {
