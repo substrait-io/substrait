@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.66.1](https://github.com/substrait-io/substrait/compare/v0.66.0...v0.66.1) (2025-02-09)
+
+### Bug Fixes
+
+* add is_null for scalar types in testcase grammar ([#779](https://github.com/substrait-io/substrait/issues/779)) ([a30b3e2](https://github.com/substrait-io/substrait/commit/a30b3e2d7ec667a6da8fee083d7823b11768bd2c))
+* test coverage miscounting window functions ([#784](https://github.com/substrait-io/substrait/issues/784)) ([5932eb9](https://github.com/substrait-io/substrait/commit/5932eb90edeee7efbdb6ced090ba81dd4b7553a8))
+
 ## [0.66.0](https://github.com/substrait-io/substrait/compare/v0.65.0...v0.66.0) (2025-02-02)
 
 ### Features
