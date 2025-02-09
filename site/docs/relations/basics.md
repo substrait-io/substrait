@@ -73,6 +73,14 @@ A guarantee that data output from this operation is provided with a sort order. 
 | Clustered                  | Ensures that all equal values are coalesced (but no ordering between values is defined). E.g. for values 1,2,3,1,2,3, output could be any of the following: 1,1,2,2,3,3 or 1,1,3,3,2,2 or 2,2,1,1,3,3 or 2,2,3,3,1,1 or 3,3,1,1,2,2 or 3,3,2,2,1,1. | N/A, may appear anywhere but will be coalesced. |
 
 
+## Dynamic Parameters
+
+Dynamic parameters act as placeholders within expressions, with their values determined at runtime.
+This is particularly useful for *parameterized queries*,  *query reuse*, and  *execution plan sharing*, where specific values are not known ahead of time or need to be replaced dynamically during execution.
+
+### Dynamic Parameter Bindings
+In a plan's relational tree, dynamic parameters are referenced in expressions without predefined values.
+Their values are supplied via parameter bindings, which can either be included in the plan's optional bindings field or supplied separately at execution time.
 
 
 
