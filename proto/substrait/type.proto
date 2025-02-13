@@ -179,14 +179,14 @@ message Type {
   }
 
   message PrecisionTimestamp {
-    // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds
+    // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, 12 is picoseconds
     int32 precision = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
   }
 
   message PrecisionTimestampTZ {
-    // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds
+    // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, 12 is picoseconds
     int32 precision = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
