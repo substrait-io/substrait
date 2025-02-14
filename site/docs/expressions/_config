@@ -7,3 +7,4 @@ arrange:
   - table_functions.md
   - user_defined_functions.md
   - embedded_functions.md
+  - dynamic_parameters.md
