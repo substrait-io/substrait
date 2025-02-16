@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.67.0](https://github.com/substrait-io/substrait/compare/v0.66.1...v0.67.0) (2025-02-16)
+
+### Features
+
+* add dynamic parameter expression ([#780](https://github.com/substrait-io/substrait/issues/780)) ([fdf1b38](https://github.com/substrait-io/substrait/commit/fdf1b38050e8683f52a115b7f14953956e84b972))
+* support picoseconds in precisionTimestamp and precistionTimestampTZ ([#777](https://github.com/substrait-io/substrait/issues/777)) ([dbce0bd](https://github.com/substrait-io/substrait/commit/dbce0bd9c08acfe9dff11304037b2f57909b8e27))
+
 ## [0.66.1](https://github.com/substrait-io/substrait/compare/v0.66.0...v0.66.1) (2025-02-09)
 
 ### Bug Fixes
