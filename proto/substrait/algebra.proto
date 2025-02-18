@@ -147,13 +147,23 @@ message ReadRel {
     }
   }
 
+  // Wrapper for repeated literal struct records
+  message LiteralRecords {
+    repeated Expression.Literal.Struct values = 1;
+  }
+
+  // Wrapper for repeated nested struct expressions
+  message NestedRecords {
+    repeated Expression.Nested.Struct expressions = 1;
+  }
+
   // A table composed of expressions.
   message VirtualTable {
     oneof records_type {
-      repeated Expression.Literal.Struct values = 1 [deprecated = true];
+      LiteralRecords values = 1 [deprecated = true];
       // Represents table data as a list of nested struct expressions.
       // Each struct corresponds to a record, with expressions defining column values.
-      repeated Expression.Nested.Struct expressions = 2;
+      NestedRecords expressions = 2;
       // Represents table data as an expression that should evaluate to a list of structs,
       // i.e., its type is LIST<STRUCT<T1,...,Tn>>.
       // This approach provides flexibility, allowing the use of a dynamic parameter
