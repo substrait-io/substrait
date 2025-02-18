@@ -149,10 +149,17 @@ message ReadRel {
 
   // A table composed of expressions.
   message VirtualTable {
-    repeated Expression.Literal.Struct values = 1 [deprecated = true];
-    repeated Expression.Nested.Struct expressions = 2 [deprecated = true];
-    // This expression should evaluate to a list of structs, i.e., its type is LIST<STRUCT<T1,...,Tn>>.
-    Expression records = 3;
+    oneof records_type {
+      repeated Expression.Literal.Struct values = 1 [deprecated = true];
+      // Represents table data as a list of nested struct expressions.
+      // Each struct corresponds to a record, with expressions defining column values.
+      repeated Expression.Nested.Struct expressions = 2;
+      // Represents table data as an expression that should evaluate to a list of structs,
+      // i.e., its type is LIST<STRUCT<T1,...,Tn>>.
+      // This approach provides flexibility, allowing the use of a dynamic parameter
+      // to define the virtual table's content.
+      Expression record_list_expression = 3;
+    }
   }
 
   // A stub type that can be used to extend/introduce new table types outside
