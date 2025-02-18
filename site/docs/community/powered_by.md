@@ -31,9 +31,9 @@ list of other open source projects have adopted Substrait.
   [DataFusion Python bindings](https://github.com/apache/arrow-datafusion-python#substrait-support).
 
 [DuckDB](https://duckdb.org)
-: DuckDB is an in-process SQL OLAP database management system. DuckDB provides
-  a [Substrait extension](https://duckdb.org/docs/extensions/substrait)
-  that allows users to produce and consume Substrait plans through DuckDB's
+: DuckDB is an in-process SQL OLAP database management system. The [Substrait
+  Community Extension](https://duckdb.org/community_extensions/extensions/substrait)
+  allows users to produce and consume Substrait plans through DuckDB's
   SQL, Python, and R APIs.
 
 [Gluten](https://github.com/oap-project/gluten)
