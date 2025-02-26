@@ -20,7 +20,8 @@ message PlanRel {
     RelRoot root = 2;
   }
 
-  // provides a non-ordinal anchor for ReferenceRel
+  // provides a non-ordinal anchor for ReferenceRel.
+  // A default value (0) should be considered unset.
   uint32 subtree_anchor = 3;
 }
 
