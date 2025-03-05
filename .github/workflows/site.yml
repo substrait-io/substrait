@@ -14,26 +14,12 @@ jobs:
     if: ${{ github.repository == 'substrait-io/substrait' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.8"
-      - name: Upgrade pip
-        run: |
-          # install pip=>20.1 to use "pip cache dir"
-          python3 -m pip install --upgrade pip
-      - name: Get pip cache dir
-        id: pip-cache
-        run: echo "::set-output name=dir::$(pip cache dir)"
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-pip-${{ hashFiles('site/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - name: Install dependencies
-        run: python3 -m pip install -r ./site/requirements.txt
+          python-version: '3.13'
+          cache: 'pip'
+          cache-dependency-path: ./site/requirements.txt
+      - run: pip install -r ./site/requirements.txt
       - name: Generate Static Site
         run: mkdocs build
         working-directory: ./site
