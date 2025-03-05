@@ -18,15 +18,15 @@ them.
     tutorial will make do with what Protobuf provides.
 
 Substrait is designed to communicate plans (mostly logical plans). Those plans
-contain types, schemas, expressions, extensions, and relations. We'll look at 
+contain types, schemas, expressions, extensions, and relations. We'll look at
 them in that order, going from simplest to most complex until we can construct
 full plans.
 
 ![](substrait_components.svg)
 
 This tutorial won't cover all the details of each piece, but it will give you an
-idea of how they connect together. For a detailed reference of each individual 
-field, the best place to look is reading the 
+idea of how they connect together. For a detailed reference of each individual
+field, the best place to look is reading the
 [protobuf definitions](https://github.com/substrait-io/substrait/tree/main/proto/substrait).
 They represent the source-of-truth of the spec and are well-commented to address
 ambiguities.
@@ -96,7 +96,7 @@ So to be less ambiguous, the plan we are aiming for looks like:
 ## Types and Schemas
 
 As part of the Substrait plan, we'll need to embed the data types of the input
-tables. In Substrait, each type is a distinct message, which at a minimum 
+tables. In Substrait, each type is a distinct message, which at a minimum
 contains a field for nullability. For example, a string field looks like:
 
 ```json
@@ -107,7 +107,7 @@ contains a field for nullability. For example, a string field looks like:
 }
 ```
 
-Nullability is an enum not a boolean, since Substrait allows 
+Nullability is an enum not a boolean, since Substrait allows
 `NULLABILITY_UNSPECIFIED` as an option, in addition to `NULLABILITY_NULLABLE`
 (nullable) and `NULLABILITY_REQUIRED` (not nullable).
 
@@ -124,7 +124,7 @@ our `orders.price` column will be represented as:
 }
 ```
 
-Finally, there are nested compound types such as structs and list types that 
+Finally, there are nested compound types such as structs and list types that
 have other types as parameters. For example, the `products.categories` column
 is a list of strings, so can be represented as:
 
@@ -187,7 +187,7 @@ names. For the `orders` table, this will look like:
 ```
 
 Here, `names` is the names of all fields. In nested schemas, this includes the
-names of subfields in depth-first order. So for the `products` table, the 
+names of subfields in depth-first order. So for the `products` table, the
 `details` struct field will be included as well as the two subfields (`manufacturer`
 and `year_created`) right after. And because it's depth first, these subfields
 appear before `product_name`. The full schema looks like:
@@ -260,7 +260,7 @@ Since some expressions such as functions can contain other expressions,
 expressions can be represented as a tree. Literal values and field references
 typically are the leaf nodes.
 
-For the expression `INDEX_IN(categories, "Computers") IS NULL`, we have a 
+For the expression `INDEX_IN(categories, "Computers") IS NULL`, we have a
 field reference `categories`, a literal string `"Computers"`, and two functions---
 `INDEX_IN` and `IS NULL`.
 
@@ -281,15 +281,15 @@ The field reference for `categories` is represented by:
 }
 ```
 
-Whereas SQL references field by names, Substrait always references fields 
+Whereas SQL references field by names, Substrait always references fields
 numerically. This means that a Substrait expression only makes sense relative
 to a certain schema. As we'll see later when we discuss relations, for a filter
-relation this will be relative to the input schema, so the `1` here is referring 
+relation this will be relative to the input schema, so the `1` here is referring
 to the second field of `products`.
 
 !!! note
     Protobuf may not serialize fields with integer type and value 0, since 0 is the default.
-    So if you instead saw `"structField": {}`, know that is is equivalent to 
+    So if you instead saw `"structField": {}`, know that is is equivalent to
     `"structField": { "field": 0 }`.
 
 `"Computers"` will be translated to a literal expression:
@@ -302,11 +302,11 @@ to the second field of `products`.
 }
 ```
 
-Both `IS NULL` and `INDEX_IN` will be scalar function expressions. Available 
-functions in Substrait are defined in extension YAML files contained in 
+Both `IS NULL` and `INDEX_IN` will be scalar function expressions. Available
+functions in Substrait are defined in extension YAML files contained in
 https://github.com/substrait-io/substrait/tree/main/extensions. Additional
 extensions may be created elsewhere. `IS NULL` is defined as a `is_null` function
-in 
+in
 [functions_comparison.yaml](https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml#:~:text=%2D-,name%3A%20%22is_null%22,-description%3A%20Whether)
 and `INDEX_IN` is defined as `index_in` function in
 [functions_set.yaml](https://github.com/substrait-io/substrait/blob/main/extensions/functions_set.yaml#:~:text=%2D-,name%3A%20%22index_in%22,-description%3A%20%3E).
@@ -355,7 +355,7 @@ definitions that we will create later.
 `i64` type since that is what the function definition declares in the YAML file.
 
 `arguments` defines the arguments being passed into the function, which are all
-done positionally based on the function definition in the YAML file. The two 
+done positionally based on the function definition in the YAML file. The two
 arguments will be familiar as the literal and the field reference we
 constructed earlier.
 
@@ -411,13 +411,13 @@ function expression for `IS NULL`.
 ```
 
 To see what other types of expressions are available and what fields they take,
-see the `Expression` proto definition in 
+see the `Expression` proto definition in
 [algebra.proto](https://github.com/substrait-io/substrait/blob/main/proto/substrait/algebra.proto#:~:text=message-,Expression,-%7B).
 
 ## Relations
 
-In most SQL engines, a logical or physical plan is represented as a tree of 
-nodes, such as filter, project, scan, or join. The left diagram below may be a 
+In most SQL engines, a logical or physical plan is represented as a tree of
+nodes, such as filter, project, scan, or join. The left diagram below may be a
 familiar representation of our plan, where nodes feed data into each other
 moving from left to right. In Substrait, each of these nodes is a **Relation**.
 
@@ -426,7 +426,7 @@ moving from left to right. In Substrait, each of these nodes is a **Relation**.
 A relation that takes another relation as input will contain (or refer to) that
 relation. This is usually a field called `input`, but sometimes different names
 are used in relations that take multiple inputs. For example, join relations
-take two inputs, with field names `left` and `right`. In JSON, the rough 
+take two inputs, with field names `left` and `right`. In JSON, the rough
 layout for the relations in our plan will look like:
 
 ```json
@@ -457,16 +457,16 @@ layout for the relations in our plan will look like:
 }
 ```
 
-For our plan, we need to define the read relations for each table, a filter 
+For our plan, we need to define the read relations for each table, a filter
 relation to exclude the `"Computer"` category from the `products` table, a
 join relation to perform the inner join, and finally an aggregate relation
 to compute the total sales.
 
 The read relations are composed of a `baseSchema` and a `namedTable` field.
-The type of read is a named table, so the `namedTable` field is present with 
+The type of read is a named table, so the `namedTable` field is present with
 `names` containing the list of name segments (`my_database.my_table`). Other types
 of reads include virtual tables (a table of literal values embedded in the plan)
-and a list of files. See [Read Definition Types](/relations/logical_relations/#read-definition-types) for more details.
+and a list of files. See [Read Definition Types](../relations/logical_relations.md#read-definition-types) for more details.
 The `baseSchema` is the schemas we defined earlier and `namedTable` are just
 the names of the tables. So for reading the `orders` table, the relation looks
 like:
@@ -646,13 +646,13 @@ For `measures`, we'll need to define `sum(quantity * price) as sales`. Substrait
 is stricter about data types, and quantity is an integer while price is a
 decimal. So we'll first need to cast `quantity` to a decimal, making the
 Substrait expression more like `sum(multiply(cast(decimal(10, 2), quantity), price))`.
-Both `sum()` and `multiply()` are functions, defined in 
+Both `sum()` and `multiply()` are functions, defined in
 [functions_arithmetic_demical.yaml](https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic_decimal.yaml).
 However `cast()` is a special expression type in Substrait, rather than a
 function.
 
 Finally, the naming with `as sales` will be handled at the end as part of the
-plan, so that's not part of the relation. Since we are always using field 
+plan, so that's not part of the relation. Since we are always using field
 indices to refer to fields, Substrait doesn't record any intermediate field
 names.
 
@@ -769,7 +769,7 @@ of the relations, it will be a bit easier to explain them.
 Throughout the plan, data always has some implicit schema, which is modified
 by each relation. Often, the schema can change *within* a relation--we'll discuss
 an example in the next section. Each relation has it's own rules in how schemas
-are modified, called the output order or emit order. For the purposes of our 
+are modified, called the output order or emit order. For the purposes of our
 query, the relevant rules are:
 
 * For Read relations, their output schema is the schema of the table.
@@ -805,7 +805,7 @@ reorder those columns?
 
 <!-- TODO: Make this example less artificial -->
 
-You might be tempted to add a [Project relation](/relations/logical_relations/#project-operation) 
+You might be tempted to add a [Project relation](../relations/logical_relations.md#project-operation)
 at the end. However, the project relation only adds columns; it is not
 responsible for subsetting or reordering columns.
 
@@ -867,14 +867,14 @@ The overall layout for a plan is
 }
 ```
 
-The `relations` field is a list of Root relations. Most queries only have one 
+The `relations` field is a list of Root relations. Most queries only have one
 root relation, but the spec allows for multiple so a common plan could be
 referenced by other plans, sort of like a CTE (Common Table Expression) from SQL.
 The root relation provides the final column names for our query. The input to
 this relation is our aggregate relation (which contains all the other relations
 as children).
 
-For extensions, we need to provide `extensionUris` with the locations of the 
+For extensions, we need to provide `extensionUris` with the locations of the
 YAML files we used and `extensions` with the list of functions we used and which
 extension they come from.
 
@@ -953,7 +953,7 @@ full is: [final_plan.json](./final_plan.json).
 
 ## Next steps
 
-**Validate and introspect plans using 
+**Validate and introspect plans using
 [substrait-validator](https://github.com/substrait-io/substrait-validator)**.
 Amongst other things, this tool can show what the current schema and column
 indices are at each point in the plan. Try downloading the final plan JSON above

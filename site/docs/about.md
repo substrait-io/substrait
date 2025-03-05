@@ -7,7 +7,7 @@ title: About Substrait
 
 ## Project Vision
 
-The Substrait project aims to create a well-defined, cross-language [specification](spec/specification) for data compute operations. The specification declares a set of common operations, defines their semantics, and describes their behavior unambiguously. The project also defines extension points and serialized representations of the specification.
+The Substrait project aims to create a well-defined, cross-language [specification](spec/specification.md) for data compute operations. The specification declares a set of common operations, defines their semantics, and describes their behavior unambiguously. The project also defines extension points and serialized representations of the specification.
 
 In many ways, the goal of this project is similar to that of the Apache Arrow project. Arrow is focused on a standardized memory representation of columnar data. Substrait is focused on what should be done to data.
 
