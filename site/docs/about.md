@@ -1,8 +1,6 @@
 ---
 title: About Substrait
 ---
-# Substrait: Cross-Language Serialization for Relational Algebra
-
 
 
 ## Project Vision

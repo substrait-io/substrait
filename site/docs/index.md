@@ -1,8 +1,6 @@
 ---
 title: Home
 ---
-# Substrait: Cross-Language Serialization for Relational Algebra
-
 
 
 ## What is Substrait?
