@@ -255,6 +255,8 @@ message Type {
 //
 // * Only struct fields are contained in this field's elements,
 // * Map keys should be traversed first, then values when producing/consuming
+// * When used to represent a relation schema, the outermost struct's
+//   nullability should be NULLABILITY_REQUIRED.
 message NamedStruct {
   // list of names in dfs order
   repeated string names = 1;
