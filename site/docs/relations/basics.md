@@ -86,6 +86,6 @@ Their values are supplied via parameter bindings, which can either be included i
 
 ???+ question "Discussion Points"
 
-    * Should [read definition types](/relations/logical_relations/#read-definition-types) be more extensible in the same way that function signatures are? Are extensible read definition types necessary if we have custom relational operators?
+    * Should [read definition types](logical_relations.md#read-definition-types) be more extensible in the same way that function signatures are? Are extensible read definition types necessary if we have custom relational operators?
     * How are decomposed reads expressed? For example, the Iceberg type above is for early logical planning. Once we do some operations, it may produce a list of Iceberg file reads. This is likely a secondary type of object.
 
