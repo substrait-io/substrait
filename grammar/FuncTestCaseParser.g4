@@ -60,6 +60,7 @@ argument
     | fixedCharArg
     | varCharArg
     | fixedBinaryArg
+    | precisionTimeArg
     | precisionTimestampArg
     | precisionTimestampTZArg
     | listArg
@@ -184,6 +185,10 @@ fixedBinaryArg
     : StringLiteral DoubleColon fixedBinaryType isnull=QMark?
     ;
 
+precisionTimeArg
+    : TimeLiteral DoubleColon precisionTimeType isnull=QMark?
+    ;
+
 precisionTimestampArg
     : TimestampLiteral DoubleColon precisionTimestampType isnull=QMark?
     ;
@@ -269,6 +274,10 @@ decimalType
         (OAngleBracket precision=numericParameter Comma scale=numericParameter CAngleBracket)?
     ;
 
+precisionTimeType
+    : (PT | Precision_Time) isnull=QMark? OAngleBracket precision=numericParameter CAngleBracket
+    ;
+
 precisionTimestampType
     : (PTs | Precision_Timestamp) isnull=QMark? OAngleBracket precision=numericParameter CAngleBracket
     ;
@@ -287,6 +296,7 @@ parameterizedType
     | fixedBinaryType
     | decimalType
     | intervalDayType
+    | precisionTimeType
     | precisionTimestampType
     | precisionTimestampTZType
 // TODO implement the rest of the parameterized types

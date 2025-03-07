@@ -120,6 +120,11 @@ class SubstraitTypeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by SubstraitTypeParser#precisionTime.
+    def visitPrecisionTime(self, ctx:SubstraitTypeParser.PrecisionTimeContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by SubstraitTypeParser#precisionTimestamp.
     def visitPrecisionTimestamp(self, ctx:SubstraitTypeParser.PrecisionTimestampContext):
         return self.visitChildren(ctx)

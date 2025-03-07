@@ -24,7 +24,8 @@ message ParameterizedType {
     // Deprecated in favor of `ParameterizedPrecisionTimestamp precision_timestamp`
     Type.Timestamp timestamp = 14 [deprecated = true];
     Type.Date date = 16;
-    Type.Time time = 17;
+    // Deprecated in favor of `ParameterizedPrecisionTime precision_time`
+    Type.Time time = 17 [deprecated = true];
     Type.IntervalYear interval_year = 19;
     ParameterizedIntervalDay interval_day = 20;
     ParameterizedIntervalCompound interval_compound = 36;
@@ -36,6 +37,7 @@ message ParameterizedType {
     ParameterizedVarChar varchar = 22;
     ParameterizedFixedBinary fixed_binary = 23;
     ParameterizedDecimal decimal = 24;
+    ParameterizedPrecisionTime precision_time = 37;
     ParameterizedPrecisionTimestamp precision_timestamp = 34;
     ParameterizedPrecisionTimestampTZ precision_timestamp_tz = 35;
 
@@ -100,6 +102,12 @@ message ParameterizedType {
   }
 
   message ParameterizedIntervalCompound {
+    IntegerOption precision = 1;
+    uint32 variation_pointer = 2;
+    Type.Nullability nullability = 3;
+  }
+
+  message ParameterizedPrecisionTime {
     IntegerOption precision = 1;
     uint32 variation_pointer = 2;
     Type.Nullability nullability = 3;

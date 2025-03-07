@@ -34,6 +34,7 @@ parameterizedType
   | FixedBinary isnull=QMark? Lt length=numericParameter Gt                                 #fixedBinary
   | Decimal isnull=QMark? Lt precision=numericParameter Comma scale=numericParameter Gt     #decimal
   | Interval_Day isnull=QMark? Lt precision=numericParameter Gt                             #precisionIntervalDay
+  | Precision_Time isnull=QMark? Lt precision=numericParameter Gt                           #precisionTime
   | Precision_Timestamp isnull=QMark? Lt precision=numericParameter Gt                      #precisionTimestamp
   | Precision_Timestamp_TZ isnull=QMark? Lt precision=numericParameter Gt                   #precisionTimestampTZ
   | Struct isnull=QMark? Lt expr (Comma expr)* Gt                                           #struct
