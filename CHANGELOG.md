@@ -1,6 +1,17 @@
 Release Notes
 ---
 
+## [0.68.0](https://github.com/substrait-io/substrait/compare/v0.67.0...v0.68.0) (2025-03-09)
+
+### Features
+
+* add max:pts variant to functions_datetime ([#763](https://github.com/substrait-io/substrait/issues/763)) ([d387335](https://github.com/substrait-io/substrait/commit/d387335a412a1539867f488ecae07f0433ccb4ca))
+
+### Bug Fixes
+
+* minor docs build issues and warnings ([#792](https://github.com/substrait-io/substrait/issues/792)) ([10d53ca](https://github.com/substrait-io/substrait/commit/10d53ca376cde9342a74d3480fcd2e77109d65cd))
+* update github actions workflows for building website ([#791](https://github.com/substrait-io/substrait/issues/791)) ([996144c](https://github.com/substrait-io/substrait/commit/996144cfde3c2c9f88678a573c6739d8eeb84607))
+
 ## [0.67.0](https://github.com/substrait-io/substrait/compare/v0.66.1...v0.67.0) (2025-02-16)
 
 ### Features
