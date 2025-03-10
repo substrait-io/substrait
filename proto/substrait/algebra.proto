@@ -990,11 +990,12 @@ message Expression {
       string string = 12;
       bytes binary = 13;
       // Timestamp in units of microseconds since the UNIX epoch.
-      // Deprecated in favor of `precision_timestamp`
+      // Deprecated in favor of `precision_timestamp`.
       int64 timestamp = 14 [deprecated = true];
       // Date in units of days since the UNIX epoch.
       int32 date = 16;
-      // Time in units of microseconds past midnight
+      // Time in units of microseconds past midnight.
+      // Deprecated in favor of `precision_time`.
       int64 time = 17;
       IntervalYearToMonth interval_year_to_month = 19;
       IntervalDayToSecond interval_day_to_second = 20;
@@ -1003,6 +1004,8 @@ message Expression {
       VarChar var_char = 22;
       bytes fixed_binary = 23;
       Decimal decimal = 24;
+      // Time in precision units past midnight.
+      PrecisionTime precision_time = 37;
       PrecisionTimestamp precision_timestamp = 34;
       PrecisionTimestamp precision_timestamp_tz = 35;
       Struct struct = 25;
@@ -1044,6 +1047,13 @@ message Expression {
       int32 precision = 2;
       // declared scale of decimal literal
       int32 scale = 3;
+    }
+
+    message PrecisionTime {
+      // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, 12 is picoseconds
+      int32 precision = 1;
+      // Time passed since midnight in precision units.
+      int64 value = 2;
     }
 
     message PrecisionTimestamp {
