@@ -378,6 +378,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#precisionTimeArg.
+    def enterPrecisionTimeArg(self, ctx:FuncTestCaseParser.PrecisionTimeArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#precisionTimeArg.
+    def exitPrecisionTimeArg(self, ctx:FuncTestCaseParser.PrecisionTimeArgContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#precisionTimestampArg.
     def enterPrecisionTimestampArg(self, ctx:FuncTestCaseParser.PrecisionTimestampArgContext):
         pass
@@ -663,6 +672,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#decimalType.
     def exitDecimalType(self, ctx:FuncTestCaseParser.DecimalTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#precisionTimeType.
+    def enterPrecisionTimeType(self, ctx:FuncTestCaseParser.PrecisionTimeTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#precisionTimeType.
+    def exitPrecisionTimeType(self, ctx:FuncTestCaseParser.PrecisionTimeTypeContext):
         pass
 
 

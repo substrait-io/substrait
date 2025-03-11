@@ -82,6 +82,7 @@ Rather than using a full data type representation, the input argument types (`sh
 | varchar&lt;N&gt;                | vchar          |
 | fixedbinary&lt;N&gt;            | fbin           |
 | decimal&lt;P,S&gt;              | dec            |
+| precision_time&lt;P&gt;         | pt             |
 | precision_timestamp&lt;P&gt;    | pts            |
 | precision_timestamp_tz&lt;P&gt; | ptstz          |
 | struct&lt;T1,T2,...,TN&gt;      | struct         |

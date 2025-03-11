@@ -24,6 +24,7 @@ message Type {
     // Deprecated in favor of `PrecisionTimestamp precision_timestamp`
     Timestamp timestamp = 14 [deprecated = true];
     Date date = 16;
+    // Deprecated in favor of `PrecisionTime precision_time`
     Time time = 17;
     IntervalYear interval_year = 19;
     IntervalDay interval_day = 20;
@@ -36,6 +37,7 @@ message Type {
     VarChar varchar = 22;
     FixedBinary fixed_binary = 23;
     Decimal decimal = 24;
+    PrecisionTime precision_time = 36;
     PrecisionTimestamp precision_timestamp = 33;
     PrecisionTimestampTZ precision_timestamp_tz = 34; // value is since UNIX epoch in UTC
 
@@ -176,6 +178,13 @@ message Type {
     int32 precision = 2;
     uint32 type_variation_reference = 3;
     Nullability nullability = 4;
+  }
+
+  message PrecisionTime {
+    // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, 12 is picoseconds
+    int32 precision = 1;
+    uint32 type_variation_reference = 2;
+    Nullability nullability = 3;
   }
 
   message PrecisionTimestamp {
