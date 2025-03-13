@@ -381,9 +381,13 @@ Grouping sets can be used for finer-grained control over which records are folde
 
 It is possible to specify multiple grouping sets in a single aggregate operation. The grouping sets behave more or less independently, with each returned record belonging to one of the grouping sets. The values for the grouping expression columns that are not part of the grouping set for a particular record will be set to null. The columns for grouping expressions that do *not* appear in *all* grouping sets will be nullable (regardless of the nullability of the type returned by the grouping expression) to accomodate the null insertion.
 
-To further disambiguate which record belongs to which grouping set, an aggregate relation with more than one grouping set receives an extra `i32` column on the right-hand side. The value of this field will be the zero-based index of the grouping set that yielded the record.
+To further disambiguate which record belongs to which grouping set, an aggregate relation with more than one grouping set receives an extra `i32` indicator column on the right-hand side. The value of this field will be the zero-based index of the grouping set that yielded the record.
 
 If at least one grouping expression is present, the aggregation is allowed to not have any aggregate expressions. An aggregate relation is invalid if it would yield zero columns.
+
+Optionally, a grouping set can be specified with rollup or cube expansions rather than fully spelling out the grouping sets. When either rollup or cube is specified for a grouping set, permutations of grouping expressions will be generated accordingly. Given `n` grouping expressions for a grouping set, ROLLUP expands to n + 1 grouping sets. CUBE expands to 2^`n` grouping sets (i.e., all subsets of the `n` grouping expressions). Given `i`th grouping set with ROLLUP expansion, the indicator values are assigned from `i` (i.e., an empty grouping) to `i + n + 1` (i.e., the grouping as if no expansion was done). For CUBE, the indicator values are assigned from `i` (i.e., an empty grouping) to `i + 2^n` (i.e., the grouping as if no expanson was done) where the values are assigned as `n`-bit integer where the bit is set when a grouping expression at corresponding position is being grouped.
+
+With ROLLUP and CUBE, the grouping expressions can form a group and treated as a unit of expansion. To represent such grouping of expressions within grouping set, an optional list of grouping information can be specified. For example, given grouping expressions `[3, 1, 2, 4, 5]` with the list `[1, 1, 0, 1, 1]` represents that there are actually 3 grouping expressions: `(3, 1), 2, (4, 5)`. That is, grouping expressions `3, 1` together formulate one composite grouping expression, and so does `4, 5`. `2`, specified with value `0` do not forumate such composite grouping.
 
 ### Aggregate Properties
 
