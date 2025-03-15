@@ -45,7 +45,7 @@ message ExtendedExpression {
   NamedStruct base_schema = 4;
 
   // one or more relation trees that are associated with this extended expression.
-  repeated ExtendedExpressionRel relations = 7;
+  repeated ExtendedExpressionRel relations = 8;
 
   // additional extensions associated with this expression.
   substrait.extensions.AdvancedExtension advanced_extensions = 5;
