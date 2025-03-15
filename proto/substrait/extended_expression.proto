@@ -13,6 +13,10 @@ option go_package = "github.com/substrait-io/substrait-go/proto";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
 
+message ExtendedExpressionRel {
+  Rel rel = 1;
+}
+
 message ExpressionReference {
   oneof expr_type {
     Expression expression = 1;
@@ -39,6 +43,10 @@ message ExtendedExpression {
   repeated ExpressionReference referred_expr = 3;
 
   NamedStruct base_schema = 4;
+
+  // one or more relation trees that are associated with this extended expression.
+  repeated ExtendedExpressionRel relations = 7;
+
   // additional extensions associated with this expression.
   substrait.extensions.AdvancedExtension advanced_extensions = 5;
 
