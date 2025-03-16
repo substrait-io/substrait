@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.69.0](https://github.com/substrait-io/substrait/compare/v0.68.0...v0.69.0) (2025-03-16)
+
+### Features
+
+* add decimal argument support to round function ([#713](https://github.com/substrait-io/substrait/issues/713)) ([eb696b5](https://github.com/substrait-io/substrait/commit/eb696b5f4aebeef9cf9a98fc828f0cd67143aa16))
+* implement PrecisionTime ([#788](https://github.com/substrait-io/substrait/issues/788)) ([1f67065](https://github.com/substrait-io/substrait/commit/1f670654189565565a649ff6249089ae4750ab92))
+
 ## [0.68.0](https://github.com/substrait-io/substrait/compare/v0.67.0...v0.68.0) (2025-03-09)
 
 ### Features
