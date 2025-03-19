@@ -259,23 +259,23 @@ message JoinRel {
 
   JoinType type = 6;
 
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_LEFT_SEMI = 5;
-    JOIN_TYPE_LEFT_ANTI = 6;
-    JOIN_TYPE_LEFT_SINGLE = 7;
-    JOIN_TYPE_RIGHT_SEMI = 8;
-    JOIN_TYPE_RIGHT_ANTI = 9;
-    JOIN_TYPE_RIGHT_SINGLE = 10;
-    JOIN_TYPE_LEFT_MARK = 11;
-    JOIN_TYPE_RIGHT_MARK = 12;
-  }
-
   substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
+enum JoinType {
+  JOIN_TYPE_UNSPECIFIED = 0;
+  JOIN_TYPE_INNER = 1;
+  JOIN_TYPE_OUTER = 2;
+  JOIN_TYPE_LEFT = 3;
+  JOIN_TYPE_RIGHT = 4;
+  JOIN_TYPE_LEFT_SEMI = 5;
+  JOIN_TYPE_RIGHT_SEMI = 6;
+  JOIN_TYPE_LEFT_ANTI = 7;
+  JOIN_TYPE_RIGHT_ANTI = 8;
+  JOIN_TYPE_LEFT_SINGLE = 9;
+  JOIN_TYPE_RIGHT_SINGLE = 10;
+  JOIN_TYPE_LEFT_MARK = 11;
+  JOIN_TYPE_RIGHT_MARK = 12;
 }
 
 // Cartesian product relational operator of two tables (left and right)
@@ -819,22 +819,6 @@ message HashJoinRel {
 
   JoinType type = 7;
 
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_LEFT_SEMI = 5;
-    JOIN_TYPE_RIGHT_SEMI = 6;
-    JOIN_TYPE_LEFT_ANTI = 7;
-    JOIN_TYPE_RIGHT_ANTI = 8;
-    JOIN_TYPE_LEFT_SINGLE = 9;
-    JOIN_TYPE_RIGHT_SINGLE = 10;
-    JOIN_TYPE_LEFT_MARK = 11;
-    JOIN_TYPE_RIGHT_MARK = 12;
-  }
-
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
@@ -869,22 +853,6 @@ message MergeJoinRel {
 
   JoinType type = 7;
 
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_LEFT_SEMI = 5;
-    JOIN_TYPE_RIGHT_SEMI = 6;
-    JOIN_TYPE_LEFT_ANTI = 7;
-    JOIN_TYPE_RIGHT_ANTI = 8;
-    JOIN_TYPE_LEFT_SINGLE = 9;
-    JOIN_TYPE_RIGHT_SINGLE = 10;
-    JOIN_TYPE_LEFT_MARK = 11;
-    JOIN_TYPE_RIGHT_MARK = 12;
-  }
-
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
@@ -898,22 +866,6 @@ message NestedLoopJoinRel {
   Expression expression = 4;
 
   JoinType type = 5;
-
-  enum JoinType {
-    JOIN_TYPE_UNSPECIFIED = 0;
-    JOIN_TYPE_INNER = 1;
-    JOIN_TYPE_OUTER = 2;
-    JOIN_TYPE_LEFT = 3;
-    JOIN_TYPE_RIGHT = 4;
-    JOIN_TYPE_LEFT_SEMI = 5;
-    JOIN_TYPE_RIGHT_SEMI = 6;
-    JOIN_TYPE_LEFT_ANTI = 7;
-    JOIN_TYPE_RIGHT_ANTI = 8;
-    JOIN_TYPE_LEFT_SINGLE = 9;
-    JOIN_TYPE_RIGHT_SINGLE = 10;
-    JOIN_TYPE_LEFT_MARK = 11;
-    JOIN_TYPE_RIGHT_MARK = 12;
-  }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
