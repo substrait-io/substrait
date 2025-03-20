@@ -957,6 +957,7 @@ message Expression {
     Cast cast = 11;
     Subquery subquery = 12;
     Nested nested = 13;
+    DynamicParameter dynamic_parameter = 14;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -989,11 +990,12 @@ message Expression {
       string string = 12;
       bytes binary = 13;
       // Timestamp in units of microseconds since the UNIX epoch.
-      // Deprecated in favor of `precision_timestamp`
+      // Deprecated in favor of `precision_timestamp`.
       int64 timestamp = 14 [deprecated = true];
       // Date in units of days since the UNIX epoch.
       int32 date = 16;
-      // Time in units of microseconds past midnight
+      // Time in units of microseconds past midnight.
+      // Deprecated in favor of `precision_time`.
       int64 time = 17;
       IntervalYearToMonth interval_year_to_month = 19;
       IntervalDayToSecond interval_day_to_second = 20;
@@ -1002,6 +1004,8 @@ message Expression {
       VarChar var_char = 22;
       bytes fixed_binary = 23;
       Decimal decimal = 24;
+      // Time in precision units past midnight.
+      PrecisionTime precision_time = 37;
       PrecisionTimestamp precision_timestamp = 34;
       PrecisionTimestamp precision_timestamp_tz = 35;
       Struct struct = 25;
@@ -1045,8 +1049,15 @@ message Expression {
       int32 scale = 3;
     }
 
+    message PrecisionTime {
+      // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, 12 is picoseconds
+      int32 precision = 1;
+      // Time passed since midnight in precision units.
+      int64 value = 2;
+    }
+
     message PrecisionTimestamp {
-      // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds
+      // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, 12 is picoseconds
       int32 precision = 1;
       // Time passed since 1970-01-01 00:00:00.000000 in UTC for PrecisionTimestampTZ and unspecified timezone for PrecisionTimestamp
       int64 value = 2;
@@ -1609,6 +1620,16 @@ message Expression {
       Rel right = 4;
     }
   }
+}
+
+// Expression that represents a dynamic parameter.
+// Dynamic parameters are identified by a surrogate key within a plan.
+message DynamicParameter {
+  // The type of the dynamic parameter.
+  Type type = 1;
+
+  // The surrogate key used within a plan to reference a specific parameter binding.
+  uint32 parameter_reference = 2;
 }
 
 // The description of a field to sort on (including the direction of sorting and null semantics)

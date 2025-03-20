@@ -46,6 +46,10 @@ message Plan {
   // unused. In many cases, a consumer may be able to work with a plan even if
   // one or more message types defined here are unknown.
   repeated string expected_type_urls = 5;
+
+  // An optional list of bindings for dynamic parameters used in this plan.
+  // Each binding maps a parameter_anchor to its corresponding runtime value.
+  repeated DynamicParameterBinding parameter_bindings = 7;
 }
 
 // This message type can be used to deserialize only the version of a Substrait
@@ -79,4 +83,15 @@ message Version {
   // producers in practice, and therefore may need to know which producer
   // created the plan.
   string producer = 5;
+}
+
+// Represents a binding for a dynamic parameter.
+message DynamicParameterBinding {
+  // The parameter anchor that identifies the dynamic parameter reference.
+  uint32 parameter_anchor = 1;
+
+  // The literal value assigned to the parameter at runtime.
+  // The type of the literal needs to match the type of the corresponding
+  // DynamicParameter expression in the plan.
+  Expression.Literal value = 2;
 }

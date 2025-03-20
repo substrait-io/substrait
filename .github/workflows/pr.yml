@@ -8,12 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: ./.github/actions/dev-tool-python
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.8"
-      - name: Install dependencies
-        run: python3 -m pip install -r ./site/requirements.txt
+          python-version: '3.13'
+          cache: 'pip'
+          cache-dependency-path: ./site/requirements.txt
+      - run: pip install -r ./site/requirements.txt
       - name: Generate Static Site
         run: mkdocs build
         working-directory: ./site
@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: bufbuild/buf-setup-action@v1.49.0
+      - uses: bufbuild/buf-setup-action@v1.50.0
         with:
           github_token: ${{ github.token }}
       - run: buf format --diff --exit-code
@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: bufbuild/buf-setup-action@v1.49.0
+      - uses: bufbuild/buf-setup-action@v1.50.0
         with:
           github_token: ${{ github.token }}
       - uses: bufbuild/buf-lint-action@v1
@@ -72,7 +72,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: bufbuild/buf-setup-action@v1.49.0
+      - uses: bufbuild/buf-setup-action@v1.50.0
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -96,7 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: bufbuild/buf-setup-action@v1.49.0
+      - uses: bufbuild/buf-setup-action@v1.50.0
       - name: Run proto-prefix.py
         run: tools/proto_prefix.py output test proto go_package=github.com/test/proto
       - name: Modify buf config to build rewritten proto files

@@ -15,6 +15,7 @@ The hash equijoin join operator will build a hash table out of the right input b
 | Property Maintenance | Distribution is maintained. Orderedness is eliminated. |
 | Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
 
+
 ### Hash Equijoin Properties
 
 | Property            | Description                                                                                                                                                                                                            | Required                 |
@@ -36,7 +37,7 @@ The nested loop join operator does a join by holding the entire right input and 
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
-| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operation) operator. |
 
 ### NLJ Properties
 
@@ -58,7 +59,7 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
-| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operation) operator. |
 
 ### Merge Join Properties
 

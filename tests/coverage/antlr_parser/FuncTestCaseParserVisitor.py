@@ -215,6 +215,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#precisionTimeArg.
+    def visitPrecisionTimeArg(self, ctx:FuncTestCaseParser.PrecisionTimeArgContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#precisionTimestampArg.
     def visitPrecisionTimestampArg(self, ctx:FuncTestCaseParser.PrecisionTimestampArgContext):
         return self.visitChildren(ctx)
@@ -372,6 +377,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#decimalType.
     def visitDecimalType(self, ctx:FuncTestCaseParser.DecimalTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#precisionTimeType.
+    def visitPrecisionTimeType(self, ctx:FuncTestCaseParser.PrecisionTimeTypeContext):
         return self.visitChildren(ctx)
 
 

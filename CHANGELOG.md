@@ -1,6 +1,44 @@
 Release Notes
 ---
 
+## [0.69.0](https://github.com/substrait-io/substrait/compare/v0.68.0...v0.69.0) (2025-03-16)
+
+### Features
+
+* add decimal argument support to round function ([#713](https://github.com/substrait-io/substrait/issues/713)) ([eb696b5](https://github.com/substrait-io/substrait/commit/eb696b5f4aebeef9cf9a98fc828f0cd67143aa16))
+* implement PrecisionTime ([#788](https://github.com/substrait-io/substrait/issues/788)) ([1f67065](https://github.com/substrait-io/substrait/commit/1f670654189565565a649ff6249089ae4750ab92))
+
+## [0.68.0](https://github.com/substrait-io/substrait/compare/v0.67.0...v0.68.0) (2025-03-09)
+
+### Features
+
+* add max:pts variant to functions_datetime ([#763](https://github.com/substrait-io/substrait/issues/763)) ([d387335](https://github.com/substrait-io/substrait/commit/d387335a412a1539867f488ecae07f0433ccb4ca))
+
+### Bug Fixes
+
+* minor docs build issues and warnings ([#792](https://github.com/substrait-io/substrait/issues/792)) ([10d53ca](https://github.com/substrait-io/substrait/commit/10d53ca376cde9342a74d3480fcd2e77109d65cd))
+* update github actions workflows for building website ([#791](https://github.com/substrait-io/substrait/issues/791)) ([996144c](https://github.com/substrait-io/substrait/commit/996144cfde3c2c9f88678a573c6739d8eeb84607))
+
+## [0.67.0](https://github.com/substrait-io/substrait/compare/v0.66.1...v0.67.0) (2025-02-16)
+
+### Features
+
+* add dynamic parameter expression ([#780](https://github.com/substrait-io/substrait/issues/780)) ([fdf1b38](https://github.com/substrait-io/substrait/commit/fdf1b38050e8683f52a115b7f14953956e84b972))
+* support picoseconds in precisionTimestamp and precistionTimestampTZ ([#777](https://github.com/substrait-io/substrait/issues/777)) ([dbce0bd](https://github.com/substrait-io/substrait/commit/dbce0bd9c08acfe9dff11304037b2f57909b8e27))
+
+## [0.66.1](https://github.com/substrait-io/substrait/compare/v0.66.0...v0.66.1) (2025-02-09)
+
+### Bug Fixes
+
+* add is_null for scalar types in testcase grammar ([#779](https://github.com/substrait-io/substrait/issues/779)) ([a30b3e2](https://github.com/substrait-io/substrait/commit/a30b3e2d7ec667a6da8fee083d7823b11768bd2c))
+* test coverage miscounting window functions ([#784](https://github.com/substrait-io/substrait/issues/784)) ([5932eb9](https://github.com/substrait-io/substrait/commit/5932eb90edeee7efbdb6ced090ba81dd4b7553a8))
+
+## [0.66.0](https://github.com/substrait-io/substrait/compare/v0.65.0...v0.66.0) (2025-02-02)
+
+### Features
+
+* add advanced extension field to DdlRel, WriteRel, and UpdateRel ([#766](https://github.com/substrait-io/substrait/issues/766)) ([a428f96](https://github.com/substrait-io/substrait/commit/a428f9663043178b121a0354c923ec293edad332))
+
 ## [0.65.0](https://github.com/substrait-io/substrait/compare/v0.64.0...v0.65.0) (2025-01-26)
 
 ### Features

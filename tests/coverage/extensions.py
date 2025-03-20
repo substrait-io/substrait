@@ -188,7 +188,7 @@ class Extension:
                 if "window_functions" in data:
                     Extension.add_functions_to_map(
                         data["window_functions"],
-                        scalar_functions,
+                        window_functions,
                         suffix,
                         extension,
                         uri,

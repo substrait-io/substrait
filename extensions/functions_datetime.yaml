@@ -33,6 +33,7 @@ scalar_functions:
       * MILLISECOND Return number of milliseconds since the last full second.
       * MICROSECOND Return number of microseconds since the last full millisecond.
       * NANOSECOND Return number of nanoseconds since the last full microsecond.
+      * PICOSECOND Return number of picoseconds since the last full nanosecond.
       * SUBSECOND Return number of microseconds since the last full second of the given timestamp.
       * UNIX_TIME Return number of seconds that have elapsed since 1970-01-01 00:00:00 UTC, ignoring leap seconds.
       * TIMEZONE_OFFSET Return number of seconds of timezone offset to UTC.
@@ -69,7 +70,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
-                       MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
+                       MILLISECOND, MICROSECOND, SUBSECOND, PICOSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
             description: The part of the value to extract.
           - name: x
             value: timestamp_tz
@@ -80,7 +81,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
-                       MILLISECOND, MICROSECOND, NANOSECOND, SUBSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
+                       MILLISECOND, MICROSECOND, NANOSECOND, PICOSECOND, SUBSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
             description: The part of the value to extract.
           - name: x
             value: precision_timestamp_tz<P>
@@ -1080,6 +1081,13 @@ aggregate_functions:
         decomposable: MANY
         intermediate: timestamp?
         return: timestamp?
+      - args:
+          - name: x
+            value: precision_timestamp<P>
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: precision_timestamp?<P>
+        return: precision_timestamp?<P>
       - args:
           - name: x
             value: timestamp_tz
