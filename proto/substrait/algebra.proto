@@ -319,6 +319,17 @@ message FetchRel {
     // Recommended type for count is int64.
     Expression count_expr = 6;
   }
+
+  // If specified, returns extra rows if they have the same sort column values
+  // as the last row specified by `count_mode`.
+  // The result of the Rel is guaranteed to be in the order of `WithTies.sorts`.
+  WithTies with_ties = 7;
+
+  message WithTies {
+    // The sort order to consider to evaluate tie.
+    repeated SortField sorts = 1;
+  }
+
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
