@@ -12,8 +12,9 @@ The hash equijoin join operator will build a hash table out of the right input b
 | -------------------- | ------------------------------------------------------------ |
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
-| Property Maintenance | Distribution is maintained. Orderedness of the left set is maintained in INNER join cases, otherwise it is eliminated. |
-| Direct Output Order  | Same as the [Join](logical_relations.md#join-operation) operator. |
+| Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
+
 
 ### Hash Equijoin Properties
 
