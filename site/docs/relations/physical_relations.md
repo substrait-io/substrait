@@ -12,7 +12,7 @@ The hash equijoin join operator will build a hash table out of the right input b
 | -------------------- | ------------------------------------------------------------ |
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
-| Property Maintenance | Distribution is maintained. Orderedness is eliminated. |
+| Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
 | Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
 
 
