@@ -129,6 +129,8 @@ scalar_functions:
 ```
 The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
 
+`any` may not be used as the return type for a function. An `any[\d]` type _may_ be used as a return type as long as it is also used for at least one function argument.
+
 
 ## Advanced Extensions
 
