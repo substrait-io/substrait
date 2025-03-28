@@ -341,22 +341,24 @@ The output type is as follows for the various operations
 
 ## Fetch Operation
 
-The fetch operation eliminates records outside a desired window. Typically corresponds to a fetch/offset SQL clause. Will only returns records between the start offset and the end offset.
+The fetch operation eliminates records outside a desired window. Typically corresponds to an fetch/offset SQL clause. Will only returns records between the start offset and the end offset.
 
 | Signature            | Value                                   |
 | -------------------- | --------------------------------------- |
 | Inputs               | 1                                       |
 | Outputs              | 1                                       |
-| Property Maintenance | Maintains distribution and orderedness. |
+| Property Maintenance | Maintains input distribution. Orderedness is `Sort Fields` if specified. Otherwise, input orderedness. |
 | Direct Output Order  | Unchanged from input.                   |
 
 ### Fetch Properties
 
 | Property          | Description                                                                                                                                                                                                                          | Required                   |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- |
-| Input             | A relational input, typically with a desired orderedness property.                                                                                                                                                                   | Required                   |
+| Input             | A relational input.                                                                                                                                                                                                                  | Required                   |
 | Offset Expression | An expression which evaluates to a non-negative integer or null (recommended type is `i64`). Declares the offset for retrieval of records. An expression evaluating to null is treated as 0.                                         | Optional, defaults to a 0 literal.   |
 | Count Expression  | An expression which evaluates to a non-negative integer or null (recommended type is `i64`). Declares the number of records that should be returned. An expression evaluating to null indicates that all records should be returned. | Optional, defaults to a null literal. |
+| Sort Fields       | List of one or more sort fields to define a desired window. Requires at least one sort field if 'With Ties' is true.                                                                                                                 | Optional, defaults to empty sort fields. |
+| With Ties         | Whether to return tie rows of the last row specified by 'Count Expression'. If false, at most 'Count Expression' records are returned. If true, it may yield more recrods than 'Count Expression'.                                   | Optional, defaults to false. |
 
 === "FetchRel Message"
 

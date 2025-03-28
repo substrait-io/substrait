@@ -320,15 +320,17 @@ message FetchRel {
     Expression count_expr = 6;
   }
 
-  // If specified, returns extra rows if they have the same sort column values
-  // as the last row specified by `count_mode`.
-  // The result of the Rel is guaranteed to be in the order of `WithTies.sorts`.
-  WithTies with_ties = 7;
+  // List of fields to sort by to retrieve the number of records specified by `count_mode`.
+  // At least one filed MUST be specified when `with_ties` is true.
+  //
+  // Note: the output records are in the order of `sorts` if at least one sort field is specified.
+  // Otherwise, the input orderedness is assumed.
+  repeated SortField sorts = 7;
 
-  message WithTies {
-    // The sort order to consider to evaluate tie.
-    repeated SortField sorts = 1;
-  }
+  // Whether to yields 'tie' records of the last record specified by `count_mode`.
+  // Tie is determined by the `sorts` order (i.e., `sorts` field values are the same if records are 'tie').
+  // If set to true, `sorts` MUST specify at least one sort field.
+  bool with_ties = 8;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
