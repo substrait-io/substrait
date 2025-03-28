@@ -321,15 +321,17 @@ message FetchRel {
   }
 
   // List of fields to sort by to retrieve the number of records specified by `count_mode`.
-  // At least one filed MUST be specified when `with_ties` is true.
+  // At least one field MUST be specified when `with_ties` is true.
   //
   // Note: the output records are in the order of `sorts` if at least one sort field is specified.
-  // Otherwise, the input orderedness is assumed.
+  // Otherwise, the input orderedness is preserved.
   repeated SortField sorts = 7;
 
   // Whether to yields 'tie' records of the last record specified by `count_mode`.
   // Tie is determined by the `sorts` order (i.e., `sorts` field values are the same if records are 'tie').
-  // If set to true, `sorts` MUST specify at least one sort field.
+  // If this is true, `sorts` MUST specify at least one sort field or else the plan is invalid.
+  // If this is true and there are more input records specified by the limit `N`, defined by `count_mode`,
+  // then more than `N` records may be returned if there are ties of the `N`th record.
   bool with_ties = 8;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
