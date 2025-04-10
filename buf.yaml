@@ -4,10 +4,7 @@ modules:
     name: buf.build/substrait/substrait
 lint:
   use:
-    - DEFAULT
-  except:
-    - FIELD_NOT_REQUIRED
-    - PACKAGE_NO_IMPORT_CYCLE
+    - STANDARD
   ignore_only:
     PACKAGE_VERSION_SUFFIX:
       - proto/substrait
@@ -15,6 +12,3 @@ lint:
 breaking:
   use:
     - FILE
-  except:
-    - EXTENSION_NO_DELETE
-    - FIELD_SAME_DEFAULT
