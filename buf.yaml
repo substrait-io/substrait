@@ -1,0 +1,20 @@
+version: v2
+modules:
+  - path: proto
+    name: buf.build/substrait/substrait
+lint:
+  use:
+    - DEFAULT
+  except:
+    - FIELD_NOT_REQUIRED
+    - PACKAGE_NO_IMPORT_CYCLE
+  ignore_only:
+    PACKAGE_VERSION_SUFFIX:
+      - proto/substrait
+  disallow_comment_ignores: true
+breaking:
+  use:
+    - FILE
+  except:
+    - EXTENSION_NO_DELETE
+    - FIELD_SAME_DEFAULT
