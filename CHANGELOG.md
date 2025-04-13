@@ -1,6 +1,39 @@
 Release Notes
 ---
 
+## [0.70.0](https://github.com/substrait-io/substrait/compare/v0.69.0...v0.70.0) (2025-04-13)
+
+### ⚠ BREAKING CHANGES
+
+* Hash Equijoin no longer preserves ordering for inner
+joins
+
+The original `Property Maintenance` of hash join operator is following.
+
+> Orderedness of the left set is maintained in INNER join cases,
+otherwise it is eliminated.
+
+This holds ONLY very specific implementation of a hash join, for
+instance, when build side input completely fits in memory, and probe
+side input is streamed in single thread. It is also strange why INNER
+JOIN is specifically called out because other joins can preserve order
+of probe (LEFT) when build (RIGHT) fits in memory.
+
+Nonetheless, if you throw some kicks and chops, this order preserving
+claim quickly falls apart unless implementation does some non-trivial
+work under following scenarios.
+
+* build does not fit in memory (i.e., spill to storage)
+* parallel probe
+
+So in general, we should not say hash join preserves order of probe. It
+*may* assuming a specific implementation under particular conditions,
+which is more of optimization or hint territory.
+
+### Features
+
+* remove ordering guarantees from Hash Equijoin operator ([#796](https://github.com/substrait-io/substrait/issues/796)) ([7408bbd](https://github.com/substrait-io/substrait/commit/7408bbdd51f2e52bedd323a0e44184986fe7f519))
+
 ## [0.69.0](https://github.com/substrait-io/substrait/compare/v0.68.0...v0.69.0) (2025-03-16)
 
 ### Features
