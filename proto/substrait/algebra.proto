@@ -102,7 +102,7 @@ message RelCommon {
 // The scan operator of base data (physical or virtual), including filtering and projection.
 message ReadRel {
   RelCommon common = 1;
-  NamedStruct base_schema = 2;
+  Type.Struct base_schema = 2;
   Expression filter = 3;
   Expression best_effort_filter = 11;
   Expression.MaskExpression projection = 4;
@@ -1100,6 +1100,7 @@ message Expression {
     message Struct {
       // A possibly heterogeneously typed list of literals
       repeated Literal fields = 1;
+      repeated string names = 4; // Optionally names for the fields in this struct. If provided, must match the length of "fields".
     }
 
     message List {
