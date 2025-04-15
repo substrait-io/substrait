@@ -226,7 +226,7 @@ The join operation will combine two separate inputs into a single output, based 
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is empty post operation. Physical relations may provide better property maintenance. |
-| Input Order          | The input order is the left input followed by the emit order of the right input. All field references of [Join Properties](#join-properties) are over this order. |
+| Input Order          | The input order is the left input followed by the right input. All field references of [Join Properties](#join-properties) are over this order. |
 | Direct Output Order  | For semi joins and anti joins, the emit order is either left or right only. For mark joins, the emit order is either left or right with a "mark" column appended at the end. See [Join Types](#join-types) for detail. Otherwise, the same as `Input Order`. |
 
 ### Join Properties
