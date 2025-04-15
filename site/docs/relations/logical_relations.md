@@ -199,7 +199,7 @@ The cross product operation will combine two separate inputs into a single outpu
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is empty post operation. |
-| Input Order          | The input order is the left input followed by the emit order of the right input. All field references of [Cross Product Properties](#cross-product-properties) are over this order. |
+| Input Order          | The input order is the left input followed by the the right input. All field references of [Cross Product Properties](#cross-product-properties) are over this order. |
 | Direct Output Order  | Same as the `Input Order`. |
 
 ### Cross Product Properties
