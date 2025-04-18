@@ -199,7 +199,8 @@ The cross product operation will combine two separate inputs into a single outpu
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is empty post operation. |
-| Direct Output Order  | The emit order of the left input followed by the emit order of the right input. |
+| Input Order          | The input order is the left input followed by the the right input. All field references of [Cross Product Properties](#cross-product-properties) are over this order. |
+| Direct Output Order  | Same as the `Input Order`. |
 
 ### Cross Product Properties
 
@@ -225,7 +226,8 @@ The join operation will combine two separate inputs into a single output, based 
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is empty post operation. Physical relations may provide better property maintenance. |
-| Direct Output Order  | The emit order of the left input followed by the emit order of the right input. |
+| Input Order          | The input order is the left input followed by the right input. All field references of [Join Properties](#join-properties) are over this order. |
+| Direct Output Order  | For semi joins and anti joins, the emit order is either left or right only. For mark joins, the emit order is either left or right with a "mark" column appended at the end. See [Join Types](#join-types) for detail. Otherwise, the same as `Input Order`. |
 
 ### Join Properties
 
@@ -233,7 +235,7 @@ The join operation will combine two separate inputs into a single output, based 
 | ---------------- | ------------------------------------------------------------ | ---------------------------------- |
 | Left Input       | A relational input.                                          | Required                           |
 | Right Input      | A relational input.                                          | Required                           |
-| Join Expression  | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the direct output order of the data. | Required. Can be the literal True. |
+| Join Expression  | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the input order of the data. | Required. Can be the literal True. |
 | Post-Join Filter | A boolean condition to be applied to each result record after the inputs have been joined, yielding only the records that satisfied the condition. | Optional                           |
 | Join Type        | One of the join types defined below.                         | Required                           |
 
@@ -244,15 +246,15 @@ The join operation will combine two separate inputs into a single output, based 
 | Inner | Return records from the left side only if they match the right side. Return records from the right side only when they match the left side. For each cross input match, return a record including the data from both sides. Non-matching records are ignored. |
 | Outer | Return all records from both the left and right inputs. For each cross input match, return a record including the data from both sides. For any remaining non-match records, return the record from the corresponding input along with nulls for the opposite input. |
 | Left  | Return all records from the left input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the left input, return the left record along with nulls for the right input. |
-| Right | Return all records from the right input. For each cross input match, return a record including the data from both sides. For any remaining non-matching records from the right input, return the right record along with nulls for the left input. |
+| Right | Same as *Left* except that the right and left inputs are switched. |
 | Left Semi | Returns records from the left input. These are returned only if the records have a join partner on the right side. |
-| Right Semi | Returns records from the right input. These are returned only if the records have a join partner on the left side. |
+| Right Semi | Same as *Left Semi* except that the right and left inputs are switched. |
 | Left Anti  | Return records from the left input. These are returned only if the records do not have a join partner on the right side. |
-| Right Anti  | Return records from the right input. These are returned only if the records do not have a join partner on the left side. |
-| Left Single | Return all records from the left input with no join expansion. If at least one record from the right input matches the left, return one arbitrary matching record from the right input. For any left records without matching right records, return the left record along with nulls for the right input. Similar to a left outer join but only returns one right match at most. Useful for nested sub-queries where we need exactly one record in output (or throw exception).  See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf for more information. |
-| Right Single | Same as left single except that the right and left inputs are switched. |
-| Left Mark | Returns one record for each record from the left input.  Appends one additional "mark" column to the output of the join. The new column will be listed after all columns from both sides and will be of type nullable boolean.  If there is at least one join partner in the right input where the join condition evaluates to true then the mark column will be set to true.  Otherwise, if there is at least one join partner in the right input where the join condition evaluates to NULL then the mark column will be set to NULL.  Otherwise the mark column will be set to false. |
-| Right Mark | Returns records from the right input.  Appends one additional "mark" column to the output of the join. The new column will be listed after all columns from both sides and will be of type nullable boolean.  If there is at least one join partner in the left input where the join condition evaluates to true then the mark column will be set to true.  Otherwise, if there is at least one join partner in the left input where the join condition evaluates to NULL then the mark column will be set to NULL.  Otherwise the mark column will be set to false. |
+| Right Anti | Same as *Left Anti* except that the right and left inputs are switched. |
+| Left Single | Return all records from the left input with no join expansion.  If there exactly one record from the right input matches the left, return the matching record from the right input. For any left records without matching right records, return the left record along with nulls for the right input. If any left records match multiple right records, it is a runtime error. Similar to a left outer join but only returns one right match at most. Useful for nested sub-queries where we need exactly one record in output (or return an error).  See Section 3.2 of https://15721.courses.cs.cmu.edu/spring2018/papers/16-optimizer2/hyperjoins-btw2017.pdf for more information. |
+| Right Single | Same as *Left Single* except that the right and left inputs are switched. |
+| Left Mark | Returns one record for each record from the left input.  Appends one additional "mark" column to the output of the join. The new column will be listed after all columns from left side and will be of type nullable boolean.  If there is at least one join partner in the right input where the join condition evaluates to true then the mark column will be set to true.  Otherwise, if there is at least one join partner in the right input where the join condition evaluates to NULL then the mark column will be set to NULL.  Otherwise the mark column will be set to false. |
+| Right Mark | Same as *Left Mark* except that the right and left inputs are switched. |
 
 
 === "JoinRel Message"
