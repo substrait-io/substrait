@@ -1,6 +1,16 @@
 Release Notes
 ---
 
+## [0.71.0](https://github.com/substrait-io/substrait/compare/v0.70.0...v0.71.0) (2025-04-20)
+
+### ⚠ BREAKING CHANGES
+
+* go_package now points to substrait-protobuf
+
+### Build System
+
+* update go_package of .proto files to substrait-protobuf ([#804](https://github.com/substrait-io/substrait/issues/804)) ([f081cb4](https://github.com/substrait-io/substrait/commit/f081cb4115d84c9516abafe2c84caa2957142f18))
+
 ## [0.70.0](https://github.com/substrait-io/substrait/compare/v0.69.0...v0.70.0) (2025-04-13)
 
 ### ⚠ BREAKING CHANGES
