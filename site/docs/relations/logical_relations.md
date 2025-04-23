@@ -234,7 +234,9 @@ The join operation will combine two separate inputs into a single output, based 
 | Left Input       | A relational input.                                          | Required                           |
 | Right Input      | A relational input.                                          | Required                           |
 | Join Expression  | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the direct output order of the data. | Required. Can be the literal True. |
-| Post-Join Filter | A boolean condition to be applied to each result record after the inputs have been joined, yielding only the records that satisfied the condition. | Optional                           |
+| Post-Join Filter | A boolean condition to be applied to each potential match between the left and right
+inputs.  If it evaluates to false then the potential match is not considered a match.  A join relation with
+Join Expression X and Post-Join Filter Y is equivalent to a join relation with Join Expression X AND Y. | Optional                           |
 | Join Type        | One of the join types defined below.                         | Required                           |
 
 ### Join Types

@@ -255,6 +255,13 @@ message JoinRel {
   Rel left = 2;
   Rel right = 3;
   Expression expression = 4;
+  // The post-join filter is a filter that is applied to the result of the join before an output
+  // record is produced.  If the filter evaluates to false then the record is not considered a
+  // match.
+  //
+  // For purely logical plans, this field is redundant, as the post_join_filter could be included in
+  // `expression`.  However, for backwards compatibility, and potentially to support engines that do
+  // not support highly logical plans, this field is provided.
   Expression post_join_filter = 5;
 
   JoinType type = 6;
@@ -815,6 +822,9 @@ message HashJoinRel {
   // hash function for a given comparsion function or to reject the plan if it cannot
   // do so.
   repeated ComparisonJoinKey keys = 8;
+  // A boolean condition to be applied to each potential match between the left and right
+  // inputs. If it evaluates to false then the potential match is not considered a match.
+  // This allows the HashJoinRel to express more complex join conditions than just equality.
   Expression post_join_filter = 6;
 
   JoinType type = 7;
@@ -865,6 +875,9 @@ message MergeJoinRel {
   // is free to do so as well).  If possible, the consumer should verify the sort
   // order and reject invalid plans.
   repeated ComparisonJoinKey keys = 8;
+  // A boolean condition to be applied to each potential match between the left and right
+  // inputs. If it evaluates to false then the potential match is not considered a match.
+  // This allows the MergeJoinRel to express more complex join conditions than just equality.
   Expression post_join_filter = 6;
 
   JoinType type = 7;
