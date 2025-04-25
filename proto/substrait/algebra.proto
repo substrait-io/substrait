@@ -788,8 +788,8 @@ message ComparisonJoinKey {
   }
 }
 
-// The hash equijoin join operator will build a hash table out of the right input based on a set of join keys.
-// It will then probe that hash table for incoming inputs, finding matches.
+// The hash equijoin operator will build a hash table out of one input (defualt `right`) based on a set of join keys.
+// It will then probe that hash table for the other input (default `left`), finding matches.
 //
 // Two rows are a match if the comparison function returns true for all keys
 message HashJoinRel {
@@ -834,6 +834,10 @@ message HashJoinRel {
     JOIN_TYPE_LEFT_MARK = 11;
     JOIN_TYPE_RIGHT_MARK = 12;
   }
+
+  // When true, build hash table out of the `left` input. Otherwise, build hash table out the `right` input.
+  // Default is building hash table from the `right` input.
+  bool build_left = 9;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }

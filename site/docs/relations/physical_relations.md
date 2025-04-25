@@ -6,7 +6,7 @@ There is no true distinction between logical and physical operations in Substrai
 
 ## Hash Equijoin Operator
 
-The hash equijoin join operator will build a hash table out of the right input based on a set of join keys. It will then probe that hash table for incoming inputs, finding matches. 
+The hash equijoin join operator will build a hash table out of one input (default `right`) based on a set of join keys. It will then probe that hash table for the other input (default `left`), finding matches. 
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
