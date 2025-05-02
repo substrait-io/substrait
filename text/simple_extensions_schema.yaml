@@ -24,6 +24,8 @@ properties:
       properties:
         name:
           type: string
+        description:
+          type: string
         structure:
           $ref: "#/$defs/type"
         parameters: # parameter list for compound types
