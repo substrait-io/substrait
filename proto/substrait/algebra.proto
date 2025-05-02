@@ -1018,6 +1018,7 @@ message Expression {
       string fixed_char = 21;
       VarChar var_char = 22;
       bytes fixed_binary = 23;
+      bytes var_binary = 38;
       Decimal decimal = 24;
       // Time in precision units past midnight.
       PrecisionTime precision_time = 37;
