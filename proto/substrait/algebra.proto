@@ -819,6 +819,9 @@ message HashJoinRel {
 
   JoinType type = 7;
 
+  // Specifies which side of input to build the hash table for this hash join. Default is `BUILD_INPUT_RIGHT`.
+  BuildInput build_input = 9;
+
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;
     JOIN_TYPE_INNER = 1;
@@ -835,9 +838,11 @@ message HashJoinRel {
     JOIN_TYPE_RIGHT_MARK = 12;
   }
 
-  // When true, build hash table out of the `left` input. Otherwise, build hash table out the `right` input.
-  // Default is building hash table from the `right` input.
-  bool build_left = 9;
+  enum BuildInput {
+    BUILD_INPUT_UNSPECIFIED = 0;
+    BUILD_INPUT_LEFT = 1;
+    BUILD_INPUT_RIGHT = 2;
+  }
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
