@@ -1,6 +1,42 @@
 Release Notes
 ---
 
+## [0.72.0](https://github.com/substrait-io/substrait/compare/v0.71.0...v0.72.0) (2025-05-04)
+
+### ⚠ BREAKING CHANGES
+
+* direct output order of semi/anti/mark joins no longer
+includes invalid side (i.e., right of lefty joins, and left of righty
+joins).
+* single join raises runtime error if there more than one
+matching rows to adhere to the original proposed usage (unnesting scalar
+subqueries).
+
+# Problems
+
+1. Semi-joins and anti-joins are one-sided and fields from the other
+side of joins are not valid. The `Direct Output Order` in the document
+is okay for other types of joins but not in one-side joins.
+2. Single joins are proposed to be used unnesting scalar subqueries
+where exactly 1 row is expected. The current documentation citing the
+paper and behavior although relaxed the behavior so that the
+implementation can silently produce wrong result.
+
+# What this PR do?
+
+1. Clarify the direct output order by explicitly stating the semi, anti,
+and mark joins. Introducing `Input Order` (the previous `Direct Output
+Order`) so that all the properties referencing `Input Order` to reduce
+ambiguity.
+2. Single joins expecting at most one row for each join key. Otherwise,
+runtime error. This behavior can be extended in the future if such
+generalization is justified with correct use cases.
+
+### Features
+
+* add description field to types definition in schema ([#811](https://github.com/substrait-io/substrait/issues/811)) ([a4e3a82](https://github.com/substrait-io/substrait/commit/a4e3a82c54a153100ac6c3c9f88add78dc8cd3a8))
+* clarify behavior and direct output order of joins ([#803](https://github.com/substrait-io/substrait/issues/803)) ([fe3f1c6](https://github.com/substrait-io/substrait/commit/fe3f1c673ebdb54107dd384073de5a5816d94a44))
+
 ## [0.71.0](https://github.com/substrait-io/substrait/compare/v0.70.0...v0.71.0) (2025-04-20)
 
 ### ⚠ BREAKING CHANGES
