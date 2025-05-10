@@ -1,0 +1,120 @@
+// SPDX-License-Identifier: Apache-2.0
+syntax = "proto3";
+
+package substrait;
+
+import "substrait/function.proto";
+import "substrait/type.proto";
+
+option csharp_namespace = "Substrait.Protobuf";
+option go_package = "github.com/substrait-io/substrait-go/proto";
+option java_multiple_files = true;
+option java_package = "io.substrait.proto";
+
+
+// Dialect defines a specific implementation of the Substrait specification,
+// documenting which features (functions, types, relations, expressions) are supported.
+message Dialect {
+  // The version of the Substrait specification this dialect was defined against.
+  string substrait_version = 1;
+
+  // The features supported by this dialect.
+  Features features = 2;
+
+  // Tests for various dialect capabilities.
+  TestDefinitions test_definitions = 3;
+}
+
+message Features {
+  // Functions supported by this dialect.
+  FunctionDefinitions function_definitions = 1;
+
+  // Types supported by this dialect.
+  TypeDefinitions type_definitions = 2;
+
+  // Relations supported by this dialect.
+  RelationDefinitions relation_definitions = 3;
+
+  // Expression types supported by this dialect.
+  ExpressionDefinitions expression_definitions = 4;
+}
+
+// FunctionDefinitions contains all function definitions supported by the dialect.
+message FunctionDefinitions {
+  // Embedded function definitions.
+  repeated FunctionSignature function = 1;
+
+  // References to YAML files containing function definitions (can be either a
+  // file or directory).
+  repeated FileReferences yaml_file_references = 2;
+}
+
+// TypeDefinitions contains all type definitions supported by the dialect.
+message TypeDefinitions {
+  // A list of types that are supported.  A given type may appear multiple
+  // times in this list if it has a different variation.  For parameterized types
+  // all possible values of the parameter must be supported (so all combinations of
+  // precision and scale for a Decimal type).  For compound types, all combinations
+  // of available types are obviously restricted by the available basic types
+  // provided here.  Nullability is always supported so nullability should not be
+  // included on the provided types.
+  repeated Type types = 1;
+}
+
+// RelationDefinitions contains all relation types supported by the dialect.
+message RelationDefinitions {
+  message RelationType {
+    // Only relation types specified here are supported in this dialect.  As
+    // there is no way to tell one user-defined relation from another here it
+    // is not recommended to include those types within a dialect.  If a
+    // relation is listed here all features of that relation must be supported
+    // for the dialect's requested version of Substrait (in other words if
+    // there is a deprecated feature at that Substrait version it does not need
+    // to be supported).
+    repeated int32 rel_type = 1;
+  }
+}
+
+// ExpressionDefinitions describes which kinds of expressions are supported
+// in this dialect.
+message ExpressionDefinitions {
+  message ExpressionType {
+    int32 rex_type = 1;
+
+    // sub_type is typically the primary oneof in any given expression type.  For
+    // example, in ReferenceSegment it is the field numbers inside reference_type and
+    // in Nested it is the nested_type.  If there is no oneof in an expression sub_type
+    // should be empty.  Outside of the sub_type all of an expression type needs to be
+    // supported for it to be included in a dialect.
+    repeated int32 sub_type = 2;
+  }
+
+  // Only expressions specified here are supported in this dialect.  For instance, if
+  // Literal (expression type #1) is not included then literals are not allowed.
+  repeated ExpressionType expression_type = 1;
+}
+
+// TestDefinitions contains all test definitions for the dialect
+message TestDefinitions {
+  // Function tests
+  FunctionTests function_tests = 1;
+
+  // TODO: Add tests for collation and ordering once they are implemented.
+
+  // Function test definitions
+  message FunctionTests {
+    // References to test files
+    repeated FileReferences test_file_references = 1;
+  }
+}
+
+// FileReferences holds references to external files.
+message FileReferences {
+  // List of file paths or URIs.
+  repeated string file_paths = 1;
+
+  // URI specifying the top level of a hierarchy of files.  It is recommended that
+  // the referenced files be static -- if files are added or removed outside of the
+  // dialect's versioning the dialect's will not be consistent.
+  string base_path = 2;
+}
