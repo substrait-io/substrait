@@ -98,16 +98,17 @@ message ExpressionDefinitions {
   repeated ExpressionType expression_type = 1;
 }
 
-// TestDefinitions contains all test definitions for the dialect
+// TestDefinitions contains all test definitions for the dialect.
 message TestDefinitions {
-  // Function tests
+  // References to function test cases such as those found here:
+  // https://github.com/substrait-io/substrait/blob/main/tests/cases
   FunctionTests function_tests = 1;
 
   // TODO: Add tests for collation and ordering once they are implemented.
 
-  // Function test definitions
+  // Function test definitions.
   message FunctionTests {
-    // References to test files
+    // References to test files.
     repeated FileReferences test_file_references = 1;
   }
 }
