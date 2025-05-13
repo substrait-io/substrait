@@ -26,7 +26,9 @@ message Dialect {
 }
 
 message Features {
-  // Functions supported by this dialect.
+  // Functions supported by this dialect.  All functionality is supported by
+  // default.  However options are only supported in a dialect if they have
+  // corresponding test coverage.
   FunctionDefinitions function_definitions = 1;
 
   // Types supported by this dialect.
@@ -87,7 +89,7 @@ message ExpressionDefinitions {
     // For example, in ReferenceSegment it is the field numbers inside
     // reference_type and in Nested it is the nested_type.  If there is no oneof
     // in an expression sub_type should be empty.  Outside of the sub_type all
-    // of an expression type needs to be  supported for it to be included in a
+    // of an expression type needs to be supported for it to be included in a
     // dialect.
     repeated int32 sub_type = 2;
   }
