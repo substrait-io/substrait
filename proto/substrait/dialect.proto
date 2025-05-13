@@ -11,9 +11,9 @@ option go_package = "github.com/substrait-io/substrait-protobuf/go/substraitpb";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
 
-
 // Dialect defines a specific implementation of the Substrait specification,
-// documenting which features (functions, types, relations, expressions) are supported.
+// documenting which features (functions, types, relations, expressions) are
+// supported.
 message Dialect {
   // The version of the Substrait specification this dialect was defined against.
   string substrait_version = 1;
@@ -81,16 +81,18 @@ message ExpressionDefinitions {
   message ExpressionType {
     int32 rex_type = 1;
 
-    // sub_type is typically the primary oneof in any given expression type.  For
-    // example, in ReferenceSegment it is the field numbers inside reference_type and
-    // in Nested it is the nested_type.  If there is no oneof in an expression sub_type
-    // should be empty.  Outside of the sub_type all of an expression type needs to be
-    // supported for it to be included in a dialect.
+    // sub_type is typically the primary oneof in any given expression type.
+    // For example, in ReferenceSegment it is the field numbers inside
+    // reference_type and in Nested it is the nested_type.  If there is no oneof
+    // in an expression sub_type should be empty.  Outside of the sub_type all
+    // of an expression type needs to be  supported for it to be included in a
+    // dialect.
     repeated int32 sub_type = 2;
   }
 
-  // Only expressions specified here are supported in this dialect.  For instance, if
-  // Literal (expression type #1) is not included then literals are not allowed.
+  // Only expressions specified here are supported in this dialect.  For
+  // instance, if Literal (expression type #1) is not included then literals
+  // are not allowed.
   repeated ExpressionType expression_type = 1;
 }
 
