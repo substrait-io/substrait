@@ -75,6 +75,10 @@ message RelationDefinitions {
     // there is a deprecated feature at that Substrait version it does not need
     // to be supported).
     repeated int32 rel_type = 1;
+
+    // If rel_type is 1 (ReadRel), then this is a list of read types utilizing
+    // the field numbers from the read_type oneof.
+    repeated int32 sub_type = 2;
   }
 }
 
