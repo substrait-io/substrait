@@ -28,7 +28,7 @@ message Plan {
   // versions.
   Version version = 6;
 
-  // An URN pointing to a  specific dialect that this plan conforms to.  The
+  // An URN pointing to a specific dialect that this plan conforms to.  The
   // plan's producer is responsible for ensuring conformity.  Dialect URNs
   // may include a version in the anchor.  If it does, the consumer should
   // exactly match the URN (there are no semantics defined for at least this
