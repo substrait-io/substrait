@@ -64,10 +64,11 @@ message TypeDefinitions {
 // RelationDefinitions contains all relation types supported by the dialect.
 message RelationDefinitions {
   message RelationType {
+    // rel_type corresponds to the Rel rel_type oneof field numbers.
     // Only relation types specified here are supported in this dialect.  As
-    // there is no way to tell one user-defined relation from another here it
+    // there is no way to tell one user-defined relation from another here, it
     // is not recommended to include those types within a dialect.  If a
-    // relation is listed here all features of that relation must be supported
+    // relation is listed here, all features of that relation must be supported
     // for the dialect's requested version of Substrait (in other words if
     // there is a deprecated feature at that Substrait version it does not need
     // to be supported).
@@ -79,6 +80,7 @@ message RelationDefinitions {
 // in this dialect.
 message ExpressionDefinitions {
   message ExpressionType {
+    // rex_type corresponds to the Expression rex_type oneof field numbers.
     int32 rex_type = 1;
 
     // sub_type is typically the primary oneof in any given expression type.
@@ -117,6 +119,6 @@ message FileReferences {
 
   // URI specifying the top level of a hierarchy of files.  It is recommended that
   // the referenced files be static -- if files are added or removed outside of the
-  // dialect's versioning the dialect's will not be consistent.
+  // dialect's versioning, the dialect's will not be consistent.
   string base_path = 2;
 }
