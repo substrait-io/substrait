@@ -76,8 +76,11 @@ message RelationDefinitions {
     // to be supported).
     repeated int32 rel_type = 1;
 
-    // If rel_type is 1 (ReadRel), then this is a list of read types utilizing
-    // the field numbers from the read_type oneof.
+    // sub_type is typically the primary oneof in any given relation type.
+    // For example, in ReadRel it is the field numbers inside read_type and
+    // in JoinRel it is the join_type.  If there is no oneof in a relation
+    // sub_type should be empty.  Outside of the sub_type all of a relation
+    // type needs to be supported for it to be included in a dialect.
     repeated int32 sub_type = 2;
   }
 }
@@ -125,7 +128,7 @@ message FileReferences {
   repeated string file_paths = 1;
 
   // URI specifying the top level of a hierarchy of files.  It is recommended that
-  // the referenced files be static -- if files are added or removed outside of the
-  // dialect's versioning, the dialect's will not be consistent.
+  // the URI refers to a precise version of the fileset -- otherwise, the dialect
+  // may inadvertently change when files are changed.
   string base_path = 2;
 }
