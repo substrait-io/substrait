@@ -1,0 +1,35 @@
+name: testdb
+dependencies:
+  arithmetic:
+    https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml
+  comparison:
+    https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml
+supported_types:
+  i32:
+    local_name: INT
+    supported_as_column: true
+  i64:
+    local_name: BIGINT
+    supported_as_column: true
+scalar_functions:
+- name: comparison.is_null
+  local_name: IS NULL
+  notation: POSTFIX
+  supported_impls:
+  - any1
+aggregate_functions:
+- name: arithmetic.max
+  supported_impls:
+  - i32
+  - i64
+- name: arithmetic.min
+  supported_impls:
+  - i32
+  - i64
+window_functions:
+- name: arithmetic.ntile
+  supported_impls:
+  - i32
+- name: arithmetic.rank
+  supported_impls:
+  - ""
