@@ -1,0 +1,6 @@
+type: sql
+dependencies:
+supported_types:
+  i32:
+   sql_type_name: TINYINT,
+   supported_as_column: true

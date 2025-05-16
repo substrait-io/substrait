@@ -71,14 +71,14 @@ jobs:
           do
             ajv validate -s ../text/dialect_schema.yaml --strict=true --spec=draft2020 -d "$i"
           done
-        working-directory: ./dialects/tests
+        working-directory: ../dialects/tests
       - run: |
           set -euo pipefail
           for i in $(ls);
           do
             ajv validate -s ../text/dialect_schema.yaml --strict=true --spec=draft2020 -d "$i"
           done
-        working-directory: ./dialects
+        working-directory: ../dialects
   dry_run_release:
     name: Dry-run release
     runs-on: ubuntu-latest
