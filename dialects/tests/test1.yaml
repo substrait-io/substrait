@@ -7,10 +7,10 @@ dependencies:
     https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml
 supported_types:
   i32:
-    sql_type_name: TINYINT,
+    sql_type_name: TINYINT
     supported_as_column: true
   i64:
-    sql_type_name: TINYINT,
+    sql_type_name: TINYINT
     supported_as_column: true
 scalar_functions:
 - name: comparison.is_null
