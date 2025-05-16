@@ -1,7 +1,0 @@
-type: sql
-dependencies:
-supported_types:
-window_functions:
-- name: arithmetic.ntile
-  supported_kernels:
-  - i32
