@@ -1,0 +1,112 @@
+# Substrait Dialect Schema Definition
+# This schema defines the structure for Substrait dialect files, which specify how
+# functions and types are supported in different execution environments.
+
+$id: http://substrait.io/schemas/dialect
+$schema: https://json-schema.org/draft/2020-12/schema
+title: Dialect
+additionalProperties: false
+type: object
+
+# A valid dialect must have at least one defined function (of any time).
+anyOf:
+  - properties:
+      scalar_functions:
+        type: array
+        minItems: 1
+    required:
+      - scalar_functions
+  - properties:
+      aggregate_functions:
+        type: array
+        minItems: 1
+    required:
+      - aggregate_functions
+  - properties:
+      window_functions:
+        type: array
+        minItems: 1
+    required:
+      - window_functions
+properties:
+  # The name of the dialect (e.g., "MySQL", "PostgreSQL", "Spark")
+  name:
+    type: string
+  # The type or category of the dialect (e.g., "SQL", "Compute Engine")
+  type:
+    type: string
+  # External dependencies required by this dialect
+  # Each key is a dependency name and value is the version string
+  dependencies:
+    type: object
+    additionalProperties:
+      type: string
+    minProperties: 1
+  # Types supported by this dialect
+  # Maps type identifiers to their properties
+  supported_types:
+    type: object
+    additionalProperties:
+      type: object
+      properties:
+        # The SQL name for this type in the dialect
+        sql_type_name:
+          type: string
+        # Whether this type can be used as a column type
+        supported_as_column:
+          type: boolean
+      minProperties: 1
+    minProperties: 1
+  # Regular functions that operate on scalar values
+  scalar_functions:
+    type: array
+    items:
+      $ref: "#/definitions/dialect_function"
+  # Functions that aggregate multiple rows into a single result
+  aggregate_functions:
+    type: array
+    items:
+      $ref: "#/definitions/dialect_function"
+  # Functions that operate over a window of rows
+  window_functions:
+    type: array
+    items:
+      $ref: "#/definitions/dialect_function"
+
+definitions:
+  # Function definition used for all function types
+  dialect_function:
+    type: object
+    additionalProperties: false
+    required: [name, supported_kernels]
+    properties:
+      # The canonical name of the function in Substrait
+      name:
+        type: string
+        # The name used in the specific dialect implementation
+        # (e.g., "+" might be the local_name for "add")
+      local_name:
+        type: string
+      # Whether the function uses infix notation (e.g., "a + b")
+      infix:
+        type: boolean
+      # Whether the function uses postfix notation
+      postfix:
+        type: boolean
+      # Function-specific options that must be specified
+      required_options:
+        type: object
+      # Indicates if this is an aggregation function
+      aggregate:
+        type: boolean
+        # List of kernel identifiers supported by this function
+      supported_kernels:
+        type: array
+        minItems: 1
+        items:
+          type: string
+      # If present, indicates the function accepts a variable number of arguments
+      # The value specifies the minimum number of arguments required (must be ≥ 1)
+      variadic:
+        type: integer
+        minimum: 1

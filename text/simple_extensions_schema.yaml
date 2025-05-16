@@ -26,6 +26,11 @@ properties:
           type: string
         description:
           type: string
+        tests:
+          type: array
+          minItems: 1
+          items:
+            type: string
         structure:
           $ref: "#/$defs/type"
         parameters: # parameter list for compound types

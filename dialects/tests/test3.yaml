@@ -1,0 +1,33 @@
+name: test
+type: sql
+dependencies:
+  arithmetic: 
+    https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml
+supported_types:
+  i8:
+    sql_type_name: INTEGER
+    supported_as_column: true
+  i16:
+    sql_type_name: BIGINT
+    supported_as_column: true
+  fp32:
+    sql_type_name: REAL
+    supported_as_column: true
+  fp64:
+    sql_type_name: DOUBLE
+    supported_as_column: true
+aggregate_functions:
+- name: arithmetic.min
+  aggregate: true
+  supported_kernels:
+  - i8
+  - i16
+  - fp32
+  - fp64
+- name: arithmetic.max
+  aggregate: true
+  supported_kernels:
+  - i8
+  - i16
+  - fp32
+  - fp64

@@ -1,0 +1,67 @@
+name: test
+type: sql
+dependencies:
+  arithmetic: 
+    https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml
+  boolean: 
+    https://github.com/substrait-io/substrait/blob/main/extensions/functions_boolean.yaml
+  comparison: 
+    https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml
+  string: 
+    https://github.com/substrait-io/substrait/blob/main/extensions/functions_string.yaml
+supported_types:
+  i32:
+    sql_type_name: INTEGER
+    supported_as_column: true
+  i64:
+    sql_type_name: BIGINT
+    supported_as_column: true
+  fp32:
+    sql_type_name: REAL
+    supported_as_column: true
+  fp64:
+    sql_type_name: DOUBLE
+    supported_as_column: true
+  bool:
+    sql_type_name: BOOLEAN
+    supported_as_column: true
+scalar_functions:
+- name: arithmetic.add
+  local_name: +
+  infix: true
+  required_options:
+    overflow: ERROR
+    rounding: TIE_TO_EVEN
+  supported_kernels:
+  - i32_i32
+  - i64_i64
+  - fp32_fp32
+  - fp64_fp64
+- name: arithmetic.subtract
+  local_name: '-'
+  infix: true
+  required_options:
+    overflow: ERROR
+    rounding: TIE_TO_EVEN
+  supported_kernels:
+  - fp32_fp32
+  - fp64_fp64
+- name: boolean.and
+  local_name: and
+  infix: true
+  supported_kernels:
+  - bool
+- name: comparison.is_null
+  local_name: IS NULL
+  postfix: true
+  supported_kernels:
+  - any1
+- name: string.concat
+  local_name: '||'
+  required_options:
+    null_handling: ACCEPT_NULLS
+  infix: true
+  supported_kernels:
+  - vchar
+  - str
+  variadic: 1
