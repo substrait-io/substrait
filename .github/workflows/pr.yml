@@ -60,14 +60,14 @@ jobs:
       - run: npm install -g ajv-cli
       - run: |
           set -euo pipefail
-          for i in $(ls);
+          for i in $(ls *.yaml);
           do
             ajv validate -s ../text/simple_extensions_schema.yaml --strict=true --spec=draft2020 -d "$i"
           done
         working-directory: ./extensions
       - run: |
           set -euo pipefail
-          for i in $(ls);
+          for i in $(ls *.yaml);
           do
             ajv validate -s ../../text/dialect_schema.yaml --strict=true --spec=draft2020 -d "$i"
           done
