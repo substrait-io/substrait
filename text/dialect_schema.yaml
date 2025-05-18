@@ -72,9 +72,21 @@ properties:
     type: array
     items:
       $ref: "#/definitions/dialect_function"
+  # Relations that are supported by this dialect.  If not present or empty,
+  # all relations are supported.
+  supported_relations:
+    type: array
+    items:
+      $ref: "#/definitions/dialect_relation"
+  # Expressions that are supported by this dialect.  If not present or empty,
+  # all expressions are supported.
+  supported_expressions:
+    type: array
+    items:
+      $ref: "#/definitions/dialect_expression"
 
 definitions:
-  # Function definition used for all function types.
+  # Definition used for all function types.
   dialect_function:
     type: object
     additionalProperties: false
@@ -116,3 +128,78 @@ definitions:
       variadic:
         type: integer
         minimum: 1
+  dialect_relation:
+    type: object
+    additionalProperties: false
+    required: [rel_type]
+    properties:
+      # rel_type corresponds to the Rel rel_type oneof field names (in uppercase).
+      # Only relation types specified here are supported in this dialect.  As
+      # there is no way to tell one user-defined relation from another here, it
+      # is not recommended to include those types within a dialect.  If a
+      # relation is listed here, all features of that relation must be supported
+      # for the dialect's requested version of Substrait (in other words if
+      # there is a deprecated feature at that Substrait version it does not need
+      # to be supported).
+      rel_type:
+        type: string
+        enum:
+          - READ
+          - FILTER
+          - FETCH
+          - AGGREGATE
+          - SORT
+          - JOIN
+          - PROJECT
+          - SET
+          - EXTENSION_SINGLE
+          - EXTENSION_MULTI
+          - EXTENSION_LEAD
+          - CROSS
+          - REFERENCE
+          - WRITE
+          - DDL
+          - UPDATE
+          - HASH_JOIN
+          - MERGE_JOIN
+          - NESTED_LOOP_JOIN
+          - WINDOW
+          - EXCHANGE
+          - EXPAND
+      # sub_type corresponds to the primary oneof in any given relation type.
+      # For example, in ReadRel it is the field name inside read_type and
+      # in JoinRel it is the join_type.  If there is no oneof in a relation
+      # sub_type should be empty.  Functionality not controlled by the
+      # sub_type needs to be supported for the relation to be included in the
+      # dialect.
+      sub_type:
+        type: string
+  dialect_expression:
+    type: object
+    additionalProperties: false
+    required: [rex_type]
+    properties:
+      # rex_type corresponds to the Expression rex_type oneof field names.
+      rex_type:
+        type: string
+        enum:
+          - LITERAL
+          - SELECTION
+          - SCALAR_FUNCTION
+          - WINDOW_FUNCTION
+          - IF_THEN
+          - SWITCH_EXPRESSION
+          - SINGULAR_OR_LIST
+          - MULTI_OR_LIST
+          - CAST
+          - SUBQUERY
+          - NESTED
+          - DYNAMIC_PARAMETER
+      # sub_type corresponds to the primary oneof in any given expression type.
+      # For example, in ReferenceSegment it is the field numbers inside
+      # reference_type and in Nested it is the nested_type.  If there is no
+      # oneof in an expression sub_type should be empty.  Functionality not
+      # controlled by the sub_type needs to be supported for the expression to
+      # be included in the dialect.
+      sub_type:
+        type: string
