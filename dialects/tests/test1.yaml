@@ -1,5 +1,4 @@
 name: testdb
-type: sql
 dependencies:
   arithmetic: 
     https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml
@@ -15,17 +14,15 @@ supported_types:
 scalar_functions:
 - name: comparison.is_null
   local_name: IS NULL
-  postfix: true
+  notation: POSTFIX
   supported_kernels:
   - any1
 aggregate_functions:
 - name: arithmetic.max
-  aggregate: true
   supported_kernels:
   - i32
   - i64
 - name: arithmetic.min
-  aggregate: true
   supported_kernels:
   - i32
   - i64

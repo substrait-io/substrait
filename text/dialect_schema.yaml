@@ -32,8 +32,8 @@ properties:
   # Optional name of the dialect (e.g., "MySQL", "PostgreSQL", "Spark").
   name:
     type: string
-  # Optional type or category of the dialect (e.g., "SQL", "Compute Engine").
-  type:
+  # The version of Substrait that this dialect applies for.  Optional.
+  substrait_version:
     type: string
   # A map of function YAML files depended on by this dialect.
   # Each key is an alias used by functions with the value being a URI.
@@ -89,18 +89,20 @@ definitions:
       # (e.g., "+" might be the local_name for "add").
       local_name:
         type: string
-      # Whether the function uses infix notation (e.g., "a + b").
-      infix:
-        type: boolean
-      # Whether the function uses postfix notation (e.g., "a b + ").
-      postfix:
-        type: boolean
+      notation:
+        type: string
+        enum:
+          - INFIX
+          - POSTFIX
+          - PREFIX
+          - FUNCTION
+        default: FUNCTION
+        description: >
+          Infix notation (e.g., "a + b"), postfix notation (e.g., "a b + "),
+          prefix notation (e.g., "+ a b"), or function notation (func(a, b)).
       # Function-specific options that must be supported by the dialect.
       required_options:
         type: object
-      # Indicates if this is an aggregation function.
-      aggregate:
-        type: boolean
       # List of kernels (parameter type lists) supported by this function.
       # For example, i32 or str_str.  Variadic arguments are not included in
       # the kernel's list of parameters.
