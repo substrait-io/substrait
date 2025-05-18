@@ -173,7 +173,9 @@ definitions:
       # sub_type needs to be supported for the relation to be included in the
       # dialect.
       sub_type:
-        type: string
+        type: array
+        items:
+          type: string
   dialect_expression:
     type: object
     additionalProperties: false
@@ -202,4 +204,6 @@ definitions:
       # controlled by the sub_type needs to be supported for the expression to
       # be included in the dialect.
       sub_type:
-        type: string
+        type: array
+        items:
+          type: string
