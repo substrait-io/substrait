@@ -11,7 +11,7 @@ supported_types:
     supported_as_column: true
 supported_relations:
   - rel_type: READ
-    sub_type: [ICEBERG]
+    sub_type: [ICEBERG_TABLE]
   - rel_type: FILTER
   - rel_type: FETCH
   - rel_type: AGGREGATE
