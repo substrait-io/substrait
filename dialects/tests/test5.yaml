@@ -17,10 +17,10 @@ supported_relations:
   - rel_type: AGGREGATE
   - rel_type: SORT
   - rel_type: JOIN
-  - rel_type: PROJECT
     sub_type:
       - LEFT
       - RIGHT
+  - rel_type: PROJECT
 supported_expressions:
   - rex_type: LITERAL
   - rex_type: SELECTION

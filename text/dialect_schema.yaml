@@ -145,9 +145,7 @@ definitions:
         type: string
         description: >
           rel_type corresponds to the Rel rel_type oneof field names (in uppercase).
-          Only relation types specified here are supported in this dialect.  As
-          there is no way to tell one user-defined relation from another here, it
-          is not recommended to include those types within a dialect.  If a
+          Only relation types specified here are supported in this dialect.  If a
           relation is listed here, all features of that relation must be supported
           for the dialect's requested version of Substrait (in other words if
           there is a deprecated feature at that Substrait version it does not need
@@ -183,7 +181,8 @@ definitions:
           in JoinRel it is the join_type.  If there is no oneof in a relation
           sub_type should be empty.  Functionality not controlled by the
           sub_type needs to be supported for the relation to be included in the
-          dialect.
+          dialect.  For user-defined types, use the URL that describes the type
+          of the message (for example type.googleapis.com/google.profile.Person).
         items:
           type: string
   dialect_expression:
