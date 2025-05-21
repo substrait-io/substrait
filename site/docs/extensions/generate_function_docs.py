@@ -20,6 +20,11 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
             for key, value in type.items():
                 mdFile.new_line(f"{key}: {value}")
 
+    if "tests" in file_obj:
+        tests = file_obj.pop("tests")
+        mdFile.new_header(level=2, title="Tests")
+        mdFile.new_list(tests)
+
     for function_classification, value in file_obj.items():
         function_classification_str = function_classification.replace("_", " ").title()
         mdFile.new_header(level=2, title=f"{function_classification_str}")
