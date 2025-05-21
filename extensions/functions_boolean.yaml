@@ -1,5 +1,8 @@
 %YAML 1.2
 ---
+tests:
+  - "https://github.com/substrait-io/substrait/tree/main/tests/cases/boolean/"
+
 scalar_functions:
   -
     name: or
