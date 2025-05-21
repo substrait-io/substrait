@@ -26,13 +26,6 @@ properties:
           type: string
         description:
           type: string
-        # An optional list of test files and/or directories associated with
-        # these function definitions.
-        tests:
-          type: array
-          minItems: 1
-          items:
-            type: string
         structure:
           $ref: "#/$defs/type"
         parameters: # parameter list for compound types
