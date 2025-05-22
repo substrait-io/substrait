@@ -1,13 +1,13 @@
 name: test
 dependencies:
-  arithmetic: 
+  arithmetic:
     https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml
 supported_types:
   i32:
-    sql_type_name: INTEGER
+    local_name: INTEGER
     supported_as_column: true
   i64:
-    sql_type_name: BIGINT
+    local_name: BIGINT
     supported_as_column: true
 supported_relations:
   - rel_type: READ
@@ -28,9 +28,9 @@ supported_expressions:
   - rex_type: CAST
 window_functions:
 - name: arithmetic.ntile
-  supported_kernels:
+  supported_impls:
   - i32
   - i64
 - name: arithmetic.rank
-  supported_kernels:
+  supported_impls:
   - ""

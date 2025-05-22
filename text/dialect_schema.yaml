@@ -8,26 +8,6 @@ title: Dialect
 additionalProperties: false
 type: object
 
-# A valid dialect must have at least one defined function (of any type).
-anyOf:
-  - properties:
-      scalar_functions:
-        type: array
-        minItems: 1
-    required:
-      - scalar_functions
-  - properties:
-      aggregate_functions:
-        type: array
-        minItems: 1
-    required:
-      - aggregate_functions
-  - properties:
-      window_functions:
-        type: array
-        minItems: 1
-    required:
-      - window_functions
 properties:
   name:
     type: string
@@ -51,7 +31,7 @@ properties:
     additionalProperties:
       type: object
       properties:
-        sql_type_name:
+        local_name:
           type: string
           description: The SQL name for this type in the dialect.
         supported_as_column:
@@ -59,6 +39,20 @@ properties:
           description: Whether this type can be used as a column type.
       minProperties: 1
     minProperties: 1
+  supported_relations:
+    type: array
+    description: >
+      Relations that are supported by this dialect.  If not present or empty,
+      all relations are supported.
+    items:
+      $ref: "#/definitions/dialect_relation"
+  supported_expressions:
+    type: array
+    description: >
+      Expressions that are supported by this dialect.  If not present or empty,
+      all expressions are supported.
+    items:
+      $ref: "#/definitions/dialect_expression"
   scalar_functions:
     type: array
     description: Regular functions that operate on scalar values.
@@ -74,20 +68,6 @@ properties:
     description: Functions that operate over a window of rows.
     items:
       $ref: "#/definitions/dialect_function"
-  supported_relations:
-    type: array
-    description: >
-      Relations that are supported by this dialect.  If not present or empty,
-      all relations are supported.
-    items:
-      $ref: "#/definitions/dialect_relation"
-  supported_expressions:
-    type: array
-    description: >
-      Expressions that are supported by this dialect.  If not present or empty,
-      all expressions are supported.
-    items:
-      $ref: "#/definitions/dialect_expression"
 
 definitions:
   # Definition used for all function types.
@@ -120,7 +100,10 @@ definitions:
           prefix notation (e.g., "+ a b"), or function notation (func(a, b)).
       required_options:
         type: object
-        description: Function-specific options that must be supported by the dialect.
+        description: >
+          Function-specific options that must be supported by the dialect.  These
+          are the exact list of options that must be used.  If no options are
+          listed here, no options must be present.
       supported_kernels:
         type: array
         description: >
