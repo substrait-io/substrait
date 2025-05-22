@@ -74,7 +74,7 @@ definitions:
   dialect_function:
     type: object
     additionalProperties: false
-    required: [name, supported_kernels]
+    required: [name, supported_impls]
     properties:
       name:
         type: string
@@ -104,12 +104,12 @@ definitions:
           Function-specific options that must be supported by the dialect.  These
           are the exact list of options that must be used.  If no options are
           listed here, no options must be present.
-      supported_kernels:
+      supported_impls:
         type: array
         description: >
-          List of kernels (parameter type lists) supported by this function.
+          List of implementations (parameter type lists) supported by this function.
           For example, i32 or str_str.  Variadic arguments are not included in
-          the kernel's list of parameters.
+          the impl's list of parameters.
         minItems: 1
         items:
           type: string
