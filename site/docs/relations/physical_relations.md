@@ -6,7 +6,7 @@ There is no true distinction between logical and physical operations in Substrai
 
 ## Hash Equijoin Operator
 
-The hash equijoin join operator will build a hash table out of the right input based on a set of join keys. It will then probe that hash table for incoming inputs, finding matches. 
+The hash equijoin join operator will build a hash table out of one input (default `right`) based on a set of join keys. It will then probe that hash table for the other input (default `left`), finding matches. 
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -21,8 +21,9 @@ The hash equijoin join operator will build a hash table out of the right input b
 
 | Property            | Description                                                                                                                                                                                                            | Required                 |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
-| Left Input          | A relational input.(Probe-side)                                                                                                                                                                                        | Required                 |
-| Right Input         | A relational input.(Build-side)                                                                                                                                                                                        | Required                 |
+| Left Input          | A relational input.                                                                                                                                                                                                    | Required                 |
+| Right Input         | A relational input.                                                                                                                                                                                                    | Required                 |
+| Build Input         | Specifies which input is the `Build`.                                                                                                                                                                                  | Optional, defaults to build `Right`, probe `Left`. |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                 | Required                 |
 | Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                | Required                 |
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true. |
