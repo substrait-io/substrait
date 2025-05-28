@@ -1,7 +1,9 @@
 %YAML 1.2
 ---
 tests:
-  - "https://github.com/substrait-io/substrait/tree/main/tests/cases/comparison/"
+  - repository_url: https://github.com/substrait-io/substrait.git
+    directories:
+      -  tests/cases/comparison/
 
 scalar_functions:
   -
