@@ -1,0 +1,203 @@
+# Substrait Dialect Schema Definition
+# This schema defines the structure for Substrait dialect files, which specify how
+# functions and types are supported in different execution environments.
+
+$id: http://substrait.io/schemas/dialect
+$schema: https://json-schema.org/draft/2020-12/schema
+title: Dialect
+additionalProperties: false
+type: object
+
+properties:
+  name:
+    type: string
+    description: Optional name of the dialect (e.g., "MySQL", "PostgreSQL", "Spark").
+  substrait_version:
+    type: string
+    description: The version of Substrait that this dialect applies for.  Optional.
+  dependencies:
+    type: object
+    description: >
+      A map of function YAML files depended on by this dialect.
+      Each key is an alias used by functions with the value being a URI.
+    additionalProperties:
+      type: string
+    minProperties: 1
+  supported_types:
+    type: object
+    description: >
+      A map of types supported by this dialect.
+      The key is the Substrait name for the type.
+    additionalProperties:
+      type: object
+      properties:
+        local_name:
+          type: string
+          description: The SQL name for this type in the dialect.
+        supported_as_column:
+          type: boolean
+          description: Whether this type can be used as a column type.
+      minProperties: 1
+    minProperties: 1
+  supported_relations:
+    type: array
+    description: >
+      Relations that are supported by this dialect.  If not present or empty,
+      all relations are supported.
+    items:
+      $ref: "#/definitions/dialect_relation"
+  supported_expressions:
+    type: array
+    description: >
+      Expressions that are supported by this dialect.  If not present or empty,
+      all expressions are supported.
+    items:
+      $ref: "#/definitions/dialect_expression"
+  scalar_functions:
+    type: array
+    description: Regular functions that operate on scalar values.
+    items:
+      $ref: "#/definitions/dialect_function"
+  aggregate_functions:
+    type: array
+    description: Functions that aggregate multiple rows into a single result.
+    items:
+      $ref: "#/definitions/dialect_function"
+  window_functions:
+    type: array
+    description: Functions that operate over a window of rows.
+    items:
+      $ref: "#/definitions/dialect_function"
+
+definitions:
+  # Definition used for all function types.
+  dialect_function:
+    type: object
+    additionalProperties: false
+    required: [name, supported_impls]
+    properties:
+      name:
+        type: string
+        description: >
+          The canonical name of the function in Substrait.  This typically takes the
+          form of a dependency alias followed by a period and then the function name
+          from the YAML file.
+      local_name:
+        type: string
+        description: >
+          The name used in the specific dialect implementation
+          (e.g., "+" might be the local_name for "add").
+      notation:
+        type: string
+        enum:
+          - INFIX
+          - POSTFIX
+          - PREFIX
+          - FUNCTION
+        default: FUNCTION
+        description: >
+          Infix notation (e.g., "a + b"), postfix notation (e.g., "a b + "),
+          prefix notation (e.g., "+ a b"), or function notation (func(a, b)).
+      required_options:
+        type: object
+        description: >
+          Function-specific options that must be supported by the dialect.  These
+          are the exact list of options that must be used.  If no options are
+          listed here, no options must be present.
+      supported_impls:
+        type: array
+        description: >
+          List of implementations (parameter type lists) supported by this function.
+          For example, i32 or str_str.  Variadic arguments are not included in
+          the impl's list of parameters.
+        minItems: 1
+        items:
+          type: string
+      variadic:
+        type: integer
+        description: >
+          If present, indicates the function accepts a variable number of arguments
+          The value specifies the minimum number of arguments required (must be ≥ 1).
+        minimum: 1
+  dialect_relation:
+    type: object
+    additionalProperties: false
+    required: [rel_type]
+    properties:
+      rel_type:
+        type: string
+        description: >
+          rel_type corresponds to the Rel rel_type oneof field names (in uppercase).
+          Only relation types specified here are supported in this dialect.  If a
+          relation is listed here, all features of that relation must be supported
+          for the dialect's requested version of Substrait (in other words if
+          there is a deprecated feature at that Substrait version it does not need
+          to be supported).
+        enum:
+          - READ
+          - FILTER
+          - FETCH
+          - AGGREGATE
+          - SORT
+          - JOIN
+          - PROJECT
+          - SET
+          - EXTENSION_SINGLE
+          - EXTENSION_MULTI
+          - EXTENSION_LEAD
+          - CROSS
+          - REFERENCE
+          - WRITE
+          - DDL
+          - UPDATE
+          - HASH_JOIN
+          - MERGE_JOIN
+          - NESTED_LOOP_JOIN
+          - WINDOW
+          - EXCHANGE
+          - EXPAND
+      sub_type:
+        type: array
+        description: >
+          sub_type corresponds to the primary oneof in any given relation type.
+          For example, in ReadRel it is the field name inside read_type and
+          in JoinRel it is the join_type.  If there is no oneof in a relation
+          sub_type should be empty.  Functionality not controlled by the
+          sub_type needs to be supported for the relation to be included in the
+          dialect.  For user-defined types, use the URL that describes the type
+          of the message (for example type.googleapis.com/google.profile.Person).
+        items:
+          type: string
+  dialect_expression:
+    type: object
+    additionalProperties: false
+    required: [rex_type]
+    properties:
+      rex_type:
+        type: string
+        description: rex_type corresponds to the Expression rex_type oneof field names.
+        enum:
+          - LITERAL
+          - SELECTION
+          - SCALAR_FUNCTION
+          - WINDOW_FUNCTION
+          - IF_THEN
+          - SWITCH_EXPRESSION
+          - SINGULAR_OR_LIST
+          - MULTI_OR_LIST
+          - CAST
+          - SUBQUERY
+          - NESTED
+          - DYNAMIC_PARAMETER
+      sub_type:
+        type: array
+        description: >
+          sub_type corresponds to the primary oneof in any given expression type.
+          For example, in ReferenceSegment it is the field numbers inside
+          reference_type and in Nested it is the nested_type.  If there is no
+          oneof in an expression sub_type should be empty.  Functionality not
+          controlled by the sub_type needs to be supported for the expression to
+          be included in the dialect.
+        items:
+          type: string
+
