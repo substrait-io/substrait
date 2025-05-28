@@ -23,7 +23,12 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
     if "tests" in file_obj:
         tests = file_obj.pop("tests")
         mdFile.new_header(level=2, title="Tests")
-        mdFile.new_list(tests)
+        for repo in tests:
+            repository_url = repo["repository_url"]
+            directories = repo["directories"]
+            mdFile.new_header(level=3, title=f"Repository: {repository_url}")
+            mdFile.new_header(level=4, title="Directories")
+            mdFile.new_list(directories)
 
     for function_classification, value in file_obj.items():
         function_classification_str = function_classification.replace("_", " ").title()

@@ -3,7 +3,7 @@
 tests:
   - repository_url: https://github.com/substrait-io/substrait.git
     directories:
-      -  tests/cases/arithmetic/
+      -  tests/cases/arithmetic
 
 scalar_functions:
   -
