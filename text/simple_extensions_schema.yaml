@@ -330,4 +330,4 @@ $defs:
         minItems: 1
         items:
           type: string
-          descriptions: File path of test file. Relative to repository root.
+          description: File path of test file. Relative to repository root.
