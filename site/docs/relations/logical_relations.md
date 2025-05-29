@@ -50,15 +50,20 @@ Read definition types (like the rest of the features in Substrait) are built by 
 
 #### Virtual Table
 
-A virtual table is a table whose contents are embedded in the plan itself.  The table data
-is encoded as records consisting of literal values or expressions that can be resolved without referencing any input data.
-For example, a literal, a function call involving literals, or any other expression that does
-not require input.
+A virtual table is a table whose contents are embedded within the plan itself.
+The table data can be represented in one of two ways:
 
-| Property | Description | Required |
-| -------- | ----------- | -------- |
-| Data     | Required    | Required |
+* As explicit records - a list of struct-based expressions defining each record directly.
+* As a single expression - an expression that evaluates into a list of records, with the type `LIST&lt;STRUCT&lt;T1,...,Tn&gt;&gt;`.
 
+The records should consist of literal values or expressions that can be resolved without referencing any input data.
+For example, a literal, a function call involving literals, or any other expression that does not require input.
+Encoding the data as an expression using nested types provides flexibility, allowing the use of a dynamic parameter
+expression as a single expression for the virtual table.
+
+| Property | Description       | Required |
+| ---------| ----------------- | -------- |
+| Data     | A list of records | Required |
 
 #### Named Table
 
