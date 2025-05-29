@@ -1,5 +1,10 @@
 %YAML 1.2
 ---
+tests:
+  - repository_url: https://github.com/substrait-io/substrait.git
+    directories:
+      -  tests/cases/boolean
+
 scalar_functions:
   -
     name: or
