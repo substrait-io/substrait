@@ -20,7 +20,7 @@ properties:
     type: array
     minItems: 1
     items:
-      $ref: "#/$defs/git_repo"
+      $ref: "#/$defs/test_location"
   types:
     type: array
     minItems: 1
@@ -312,22 +312,21 @@ $defs:
               type: string
               enum: [STREAMING, PARTITION]
 
-  git_repo:
+  test_location:
     type: object
-    required: [repository_url]
     properties:
       repository_url:
         type: string
-        description: URL to clone the repository. For example https://github.com/substrait-io/substrait.git
+        description: URL to clone a repository. For example https://github.com/substrait-io/substrait.git
       directories:
         type: array
         minItems: 1
         items:
           type: string
-          description: Directory in which to search for test files. Relative to repository root.
+          description: Directory in which to search for test files. Relative to repository root if repository_url is specified, or to the directory containing the extension otherwise.
       files:
         type: array
         minItems: 1
         items:
           type: string
-          description: File path of test file. Relative to repository root.
+          description: File path of test file. Relative to repository root if repository_url is specified, or to the directory containing the extension otherwise.
