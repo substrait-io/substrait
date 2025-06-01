@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.73.0](https://github.com/substrait-io/substrait/compare/v0.72.0...v0.73.0) (2025-06-01)
+
+### Features
+
+* specify build input of hash join operator ([#810](https://github.com/substrait-io/substrait/issues/810)) ([0c4b658](https://github.com/substrait-io/substrait/commit/0c4b658c0ff474dfdab345ed751b94080a0cc715))
+
 ## [0.72.0](https://github.com/substrait-io/substrait/compare/v0.71.0...v0.72.0) (2025-05-04)
 
 ### ⚠ BREAKING CHANGES
