@@ -324,11 +324,13 @@ $defs:
         items:
           type: string
           description: Directory in which to search for test files.
-            Relative to repository root if repository_url is specified, or to the directory containing the extension otherwise.
+            Relative to repository root if repository_url is specified, or to the
+            directory containing the extension otherwise.
       files:
         type: array
         minItems: 1
         items:
           type: string
           description: File path of test file.
-            Relative to repository root if repository_url is specified, or to the directory containing the extension otherwise.
+            Relative to repository root if repository_url is specified, or to the
+            directory containing the extension otherwise.
