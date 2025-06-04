@@ -10,22 +10,25 @@ supported_types:
     local_name: BIGINT
     supported_as_column: true
 supported_relations:
-  - rel_type: READ
-    sub_type: [ICEBERG_TABLE]
-  - rel_type: FILTER
-  - rel_type: FETCH
-  - rel_type: AGGREGATE
-  - rel_type: SORT
-  - rel_type: JOIN
-    sub_type:
+  - relation: READ
+    read_type: [ICEBERG_TABLE]
+  - relation: FILTER
+  - relation: FETCH
+  - relation: AGGREGATE
+  - relation: SORT
+  - relation: JOIN
+    join_type:
       - LEFT
       - RIGHT
-  - rel_type: PROJECT
+  - relation: PROJECT
 supported_expressions:
-  - rex_type: LITERAL
-  - rex_type: SELECTION
-  - rex_type: SCALAR_FUNCTION
-  - rex_type: CAST
+  - expression: LITERAL
+  - expression: SELECTION
+  - expression: SCALAR_FUNCTION
+  - expression: CAST
+  - expression: NESTED
+    nested_type:
+      - LIST
 window_functions:
 - name: arithmetic.ntile
   supported_impls:

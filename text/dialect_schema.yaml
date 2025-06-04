@@ -41,18 +41,54 @@ properties:
     minProperties: 1
   supported_relations:
     type: array
+    uniqueItems: true
     description: >
       Relations that are supported by this dialect.  If not present or empty,
       all relations are supported.
     items:
-      $ref: "#/definitions/dialect_relation"
+      oneOf:
+        - $ref: "#/definitions/read_relation"
+        - $ref: "#/definitions/filter_relation"
+        - $ref: "#/definitions/fetch_relation"
+        - $ref: "#/definitions/aggregate_relation"
+        - $ref: "#/definitions/sort_relation"
+        - $ref: "#/definitions/join_relation"
+        - $ref: "#/definitions/project_relation"
+        - $ref: "#/definitions/set_relation"
+        - $ref: "#/definitions/extension_single_relation"
+        - $ref: "#/definitions/extension_multi_relation"
+        - $ref: "#/definitions/extension_leaf_relation"
+        - $ref: "#/definitions/cross_relation"
+        - $ref: "#/definitions/reference_relation"
+        - $ref: "#/definitions/write_relation"
+        - $ref: "#/definitions/ddl_relation"
+        - $ref: "#/definitions/update_relation"
+        - $ref: "#/definitions/hash_join_relation"
+        - $ref: "#/definitions/merge_join_relation"
+        - $ref: "#/definitions/nested_loop_join_relation"
+        - $ref: "#/definitions/consistent_partition_window_relation"
+        - $ref: "#/definitions/exchange_relation"
+        - $ref: "#/definitions/expand_relation"
   supported_expressions:
     type: array
+    uniqueItems: true
     description: >
       Expressions that are supported by this dialect.  If not present or empty,
       all expressions are supported.
     items:
-      $ref: "#/definitions/dialect_expression"
+      oneOf:
+        - $ref: "#/definitions/literal_expression"
+        - $ref: "#/definitions/selection_expression"
+        - $ref: "#/definitions/scalar_function_expression"
+        - $ref: "#/definitions/window_function_expression"
+        - $ref: "#/definitions/if_then_expression"
+        - $ref: "#/definitions/switch_expression"
+        - $ref: "#/definitions/singular_or_list_expression"
+        - $ref: "#/definitions/multi_or_list_expression"
+        - $ref: "#/definitions/cast_expression"
+        - $ref: "#/definitions/subquery_expression"
+        - $ref: "#/definitions/nested_expression"
+        - $ref: "#/definitions/dynamic_parameter_expression"
   scalar_functions:
     type: array
     description: Regular functions that operate on scalar values.
@@ -119,85 +155,355 @@ definitions:
           If present, indicates the function accepts a variable number of arguments
           The value specifies the minimum number of arguments required (must be ≥ 1).
         minimum: 1
-  dialect_relation:
+  join_types:
+    type: array
+    description: The list of possible join types used by join relations.
+    items:
+      enum:
+        - INNER
+        - OUTER
+        - LEFT
+        - RIGHT
+        - LEFT_SEMI
+        - RIGHT_SEMI
+        - LEFT_ANTI
+        - RIGHT_ANTI
+        - LEFT_SINGLE
+        - RIGHT_SINGLE
+        - LEFT_MARK
+        - RIGHT_MARK
+  read_relation:
     type: object
     additionalProperties: false
-    required: [rel_type]
     properties:
-      rel_type:
-        type: string
-        description: >
-          rel_type corresponds to the Rel rel_type oneof field names (in uppercase).
-          Only relation types specified here are supported in this dialect.  If a
-          relation is listed here, all features of that relation must be supported
-          for the dialect's requested version of Substrait (in other words if
-          there is a deprecated feature at that Substrait version it does not need
-          to be supported).
-        enum:
-          - READ
-          - FILTER
-          - FETCH
-          - AGGREGATE
-          - SORT
-          - JOIN
-          - PROJECT
-          - SET
-          - EXTENSION_SINGLE
-          - EXTENSION_MULTI
-          - EXTENSION_LEAD
-          - CROSS
-          - REFERENCE
-          - WRITE
-          - DDL
-          - UPDATE
-          - HASH_JOIN
-          - MERGE_JOIN
-          - NESTED_LOOP_JOIN
-          - WINDOW
-          - EXCHANGE
-          - EXPAND
-      sub_type:
+      relation:
+        const: READ
+      read_type:
         type: array
-        description: >
-          sub_type corresponds to the primary oneof in any given relation type.
-          For example, in ReadRel it is the field name inside read_type and
-          in JoinRel it is the join_type.  If there is no oneof in a relation
-          sub_type should be empty.  Functionality not controlled by the
-          sub_type needs to be supported for the relation to be included in the
-          dialect.  For user-defined types, use the URL that describes the type
-          of the message (for example type.googleapis.com/google.profile.Person).
+        description: The list of possible read types used by the read relation.
         items:
-          type: string
-  dialect_expression:
+          enum:
+            - VIRTUAL_TABLE
+            - LOCAL_FILES
+            - NAMED_TABLE
+            - EXTENSION_TABLE
+            - ICEBERG_TABLE
+    required: [relation]
+  filter_relation:
     type: object
     additionalProperties: false
-    required: [rex_type]
     properties:
-      rex_type:
-        type: string
-        description: rex_type corresponds to the Expression rex_type oneof field names.
-        enum:
-          - LITERAL
-          - SELECTION
-          - SCALAR_FUNCTION
-          - WINDOW_FUNCTION
-          - IF_THEN
-          - SWITCH_EXPRESSION
-          - SINGULAR_OR_LIST
-          - MULTI_OR_LIST
-          - CAST
-          - SUBQUERY
-          - NESTED
-          - DYNAMIC_PARAMETER
-      sub_type:
+      relation:
+        const: FILTER
+    required: [relation]
+  fetch_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: FETCH
+    required: [relation]
+  aggregate_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: AGGREGATE
+    required: [relation]
+  sort_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: SORT
+    required: [relation]
+  join_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: JOIN
+      join_type:
+        $ref: "#/definitions/join_types"
+    required: [relation]
+  project_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: PROJECT
+    required: [relation]
+  set_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: SET
+      operation:
+        type: array
+        description: The list of valid set operations used by a set relation.
+        items:
+          enum:
+            - MINUS_PRIMARY
+            - MINUS_PRIMARY_ALL
+            - MINUS_MULTISET
+            - INTERSECTION_PRIMARY
+            - INTERSECTION_MULTISET
+            - INTERSECTION_MULTISET_ALL
+            - UNION_DISTINCT
+            - UNION_ALL
+    required: [relation]
+  extension_single_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: EXTENSION_SINGLE
+      message_type:
         type: array
         description: >
-          sub_type corresponds to the primary oneof in any given expression type.
-          For example, in ReferenceSegment it is the field numbers inside
-          reference_type and in Nested it is the nested_type.  If there is no
-          oneof in an expression sub_type should be empty.  Functionality not
-          controlled by the sub_type needs to be supported for the expression to
-          be included in the dialect.
+          The list of supported message types.  Use the URI (e.g.
+          type.googleapis.com/google.profile.Person) that is related to the
+          detail field.
         items:
           type: string
+    required: [relation]
+  extension_multi_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: EXTENSION_MULTI
+      message_type:
+        type: array
+        description: >
+          The list of supported message types.  Use the URI (e.g.
+          type.googleapis.com/google.profile.Person) that is related to the
+          detail field.
+        items:
+          type: string
+    required: [relation]
+  extension_leaf_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: EXTENSION_LEAF
+      message_type:
+        type: array
+        description: >
+          The list of supported message types.  Use the URI (e.g.
+          type.googleapis.com/google.profile.Person) that is related to the
+          detail field.
+        items:
+          type: string
+    required: [relation]
+  cross_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: CROSS
+    required: [relation]
+  reference_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: REFERENCE
+    required: [relation]
+  write_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: WRITE
+      write_type:
+        type: array
+        description: The list of valid write types a write relation can perform.
+        items:
+          enum:
+            - NAMED_TABLE
+            - EXTENSION_TABLE
+    required: [ relation ]
+  ddl_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: DDL
+      write_type:
+        type: array
+        description: The list of valid types a ddl relation can operate on.
+        items:
+          enum:
+            - NAMED_OBJECT
+            - EXTENSION_OBJECT
+    required: [relation]
+  update_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: UPDATE
+    required: [ relation ]
+  hash_join_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: HASH_JOIN
+      join_type:
+        $ref: "#/definitions/join_types"
+    required: [relation]
+  merge_join_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: MERGE_JOIN
+      join_type:
+        $ref: "#/definitions/join_types"
+    required: [relation]
+  nested_loop_join_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: NESTED_LOOP_JOIN
+      join_type:
+        $ref: "#/definitions/join_types"
+    required: [relation]
+  consistent_partition_window_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: CONSISTENT_PARTITION_WINDOW
+    required: [relation]
+  exchange_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: EXCHANGE
+      kind:
+        type: array
+        description: The list of valid exchange an exchange relation can perform.
+        items:
+          enum:
+            - SCATTER_BY_FIELDS
+            - SINGLE_TARGET
+            - MULTI_TARGET
+            - ROUND_ROBIN
+            - BROADCAST
+    required: [relation]
+  expand_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: EXPAND
+      field_type:
+        type: array
+        description: The valid methods that control how an expand relation behaves.
+        items:
+          enum:
+            - SWITCHING_FIELD
+            - CONSTANT_FIELD
+    required: [relation]
+  literal_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: LITERAL
+      # Type restriction not needed as types are restricted explicitly by supported_types.
+    required: [expression]
+  selection_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: SELECTION
+    required: [expression]
+  scalar_function_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: SCALAR_FUNCTION
+    required: [expression]
+  window_function_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: WINDOW_FUNCTION
+    required: [expression]
+  if_then_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: IF_THEN
+    required: [expression]
+  switch_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: SWITCH
+    required: [expression]
+  singular_or_list_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: SINGULAR_OR_LIST
+    required: [expression]
+  multi_or_list_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: MULTI_OR_LIST
+    required: [expression]
+  # embedded_function_expression not included due to insufficient proto support.
+  cast_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: CAST
+    required: [expression]
+  subquery_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: SUBQUERY
+    required: [expression]
+  nested_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: NESTED
+      nested_type:
+        type: array
+        description: The valid nested types.
+        items:
+          enum:
+            - STRUCT
+            - LIST
+            - MAP
+    required: [expression]
+  dynamic_parameter_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: DYNAMIC_PARAMETER
+    required: [expression]
 
