@@ -150,11 +150,20 @@ definitions:
         items:
           type: string
       variadic:
-        type: integer
+        type: object
         description: >
-          If present, indicates the function accepts a variable number of arguments
-          The value specifies the minimum number of arguments required (must be ≥ 1).
-        minimum: 1
+          If present, indicates the function accepts a variable number of arguments.
+          Specifies the minimum and/or maximum number of arguments allowed.
+        properties:
+          min:
+            type: integer
+            description: "Minimum number of arguments required"
+            minimum: 1
+          max:
+            type: integer
+            description: "Maximum number of arguments allowed"
+            minimum: 1
+        additionalProperties: false
   join_types:
     type: array
     description: The list of possible join types used by join relations.

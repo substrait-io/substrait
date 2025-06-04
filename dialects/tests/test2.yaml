@@ -63,4 +63,6 @@ scalar_functions:
   supported_impls:
   - vchar
   - str
-  variadic: 1
+  variadic:
+    min: 1
+    max: 5
