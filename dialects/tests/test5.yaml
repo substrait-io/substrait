@@ -11,13 +11,13 @@ supported_types:
     supported_as_column: true
 supported_relations:
   - relation: READ
-    read_type: [ICEBERG_TABLE]
+    read_types: [ICEBERG_TABLE]
   - relation: FILTER
   - relation: FETCH
   - relation: AGGREGATE
   - relation: SORT
   - relation: JOIN
-    join_type:
+    join_types:
       - LEFT
       - RIGHT
   - relation: PROJECT
@@ -27,7 +27,7 @@ supported_expressions:
   - expression: SCALAR_FUNCTION
   - expression: CAST
   - expression: NESTED
-    nested_type:
+    nested_types:
       - LIST
 window_functions:
 - name: arithmetic.ntile

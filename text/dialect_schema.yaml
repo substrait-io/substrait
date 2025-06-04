@@ -37,6 +37,14 @@ properties:
         supported_as_column:
           type: boolean
           description: Whether this type can be used as a column type.
+        message_types:
+          type: array
+          description: >
+            The list of supported message types.  Use the URI (e.g.
+            type.googleapis.com/google.profile.Person) that is related to the
+            detail field.  Only valid for user defined types.
+          items:
+            type: string
       minProperties: 1
     minProperties: 1
   supported_relations:
@@ -187,7 +195,7 @@ definitions:
     properties:
       relation:
         const: READ
-      read_type:
+      read_types:
         type: array
         description: The list of possible read types used by the read relation.
         items:
@@ -232,7 +240,7 @@ definitions:
     properties:
       relation:
         const: JOIN
-      join_type:
+      join_types:
         $ref: "#/definitions/join_types"
     required: [relation]
   project_relation:
@@ -248,7 +256,7 @@ definitions:
     properties:
       relation:
         const: SET
-      operation:
+      operations:
         type: array
         description: The list of valid set operations used by a set relation.
         items:
@@ -268,7 +276,7 @@ definitions:
     properties:
       relation:
         const: EXTENSION_SINGLE
-      message_type:
+      message_types:
         type: array
         description: >
           The list of supported message types.  Use the URI (e.g.
@@ -283,7 +291,7 @@ definitions:
     properties:
       relation:
         const: EXTENSION_MULTI
-      message_type:
+      message_types:
         type: array
         description: >
           The list of supported message types.  Use the URI (e.g.
@@ -298,7 +306,7 @@ definitions:
     properties:
       relation:
         const: EXTENSION_LEAF
-      message_type:
+      message_types:
         type: array
         description: >
           The list of supported message types.  Use the URI (e.g.
@@ -327,7 +335,7 @@ definitions:
     properties:
       relation:
         const: WRITE
-      write_type:
+      write_types:
         type: array
         description: The list of valid write types a write relation can perform.
         items:
@@ -341,7 +349,7 @@ definitions:
     properties:
       relation:
         const: DDL
-      write_type:
+      write_types:
         type: array
         description: The list of valid types a ddl relation can operate on.
         items:
@@ -362,7 +370,7 @@ definitions:
     properties:
       relation:
         const: HASH_JOIN
-      join_type:
+      join_types:
         $ref: "#/definitions/join_types"
     required: [relation]
   merge_join_relation:
@@ -371,7 +379,7 @@ definitions:
     properties:
       relation:
         const: MERGE_JOIN
-      join_type:
+      join_types:
         $ref: "#/definitions/join_types"
     required: [relation]
   nested_loop_join_relation:
@@ -380,7 +388,7 @@ definitions:
     properties:
       relation:
         const: NESTED_LOOP_JOIN
-      join_type:
+      join_types:
         $ref: "#/definitions/join_types"
     required: [relation]
   consistent_partition_window_relation:
@@ -396,7 +404,7 @@ definitions:
     properties:
       relation:
         const: EXCHANGE
-      kind:
+      kinds:
         type: array
         description: The list of valid exchange an exchange relation can perform.
         items:
@@ -413,7 +421,7 @@ definitions:
     properties:
       relation:
         const: EXPAND
-      field_type:
+      field_types:
         type: array
         description: The valid methods that control how an expand relation behaves.
         items:
@@ -492,6 +500,15 @@ definitions:
     properties:
       expression:
         const: SUBQUERY
+      subquery_types:
+        type: array
+        description: The possible subquery types for a subquery relation.
+        items:
+          enum:
+            - SCALAR
+            - IN_PREDICATE
+            - SET_PREDICATE
+            - SET_COMPARISON
     required: [expression]
   nested_expression:
     type: object
@@ -499,7 +516,7 @@ definitions:
     properties:
       expression:
         const: NESTED
-      nested_type:
+      nested_types:
         type: array
         description: The valid nested types.
         items:
