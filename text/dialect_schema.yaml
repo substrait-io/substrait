@@ -36,7 +36,9 @@ properties:
           description: The SQL name for this type in the dialect.
         supported_as_column:
           type: boolean
-          description: Whether this type can be used as a column type.
+          description: >
+            Whether this type can be used as a column in a table.  Types listed
+            here are always supported as literals.
         message_types:
           type: array
           description: >
@@ -532,4 +534,3 @@ definitions:
       expression:
         const: DYNAMIC_PARAMETER
     required: [expression]
-
