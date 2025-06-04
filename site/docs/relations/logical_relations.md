@@ -157,6 +157,7 @@ The sort operator reorders a dataset based on one or more identified sort fields
 | ----------- | ------------------------------------------------------------ | ----------------------- |
 | Input       | The relational input.                                        | Required                |
 | Sort Fields | List of one or more fields to sort by. Uses the same properties as the [orderedness](basics.md#orderedness) property. | One sort field required |
+| Preserve Partitioning      | False means global sorting apply for entire data set, True means sorting only apply within the partition. | Optional                |
 
 === "SortRel Message"
 

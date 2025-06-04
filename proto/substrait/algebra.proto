@@ -407,6 +407,7 @@ message SortRel {
   RelCommon common = 1;
   Rel input = 2;
   repeated SortField sorts = 3;
+  bool preserve_partitioning = 4;
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
