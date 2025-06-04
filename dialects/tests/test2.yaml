@@ -30,10 +30,16 @@ scalar_functions:
   notation: INFIX
   required_options:
     overflow: ERROR
+  supported_impls:
+    - i32_i32
+    - i64_i64
+- name: arithmetic.add
+  local_name: +
+  notation: INFIX
+  required_options:
+    overflow: ERROR
     rounding: TIE_TO_EVEN
   supported_impls:
-  - i32_i32
-  - i64_i64
   - fp32_fp32
   - fp64_fp64
 - name: arithmetic.subtract
