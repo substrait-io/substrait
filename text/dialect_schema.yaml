@@ -408,7 +408,7 @@ definitions:
         const: EXCHANGE
       kinds:
         type: array
-        description: The list of valid exchange an exchange relation can perform.
+        description: The list of valid exchanges an exchange relation can perform.
         items:
           enum:
             - SCATTER_BY_FIELDS
@@ -495,6 +495,11 @@ definitions:
     properties:
       expression:
         const: CAST
+      failure_option:
+        type: string
+        enum:
+          - RETURN_NULL
+          - THROW_EXCEPTION
     required: [expression]
   subquery_expression:
     type: object
