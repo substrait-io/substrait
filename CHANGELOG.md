@@ -1,6 +1,91 @@
 Release Notes
 ---
 
+## [0.73.0](https://github.com/substrait-io/substrait/compare/v0.72.0...v0.73.0) (2025-06-01)
+
+### Features
+
+* specify build input of hash join operator ([#810](https://github.com/substrait-io/substrait/issues/810)) ([0c4b658](https://github.com/substrait-io/substrait/commit/0c4b658c0ff474dfdab345ed751b94080a0cc715))
+
+## [0.72.0](https://github.com/substrait-io/substrait/compare/v0.71.0...v0.72.0) (2025-05-04)
+
+### ⚠ BREAKING CHANGES
+
+* direct output order of semi/anti/mark joins no longer
+includes invalid side (i.e., right of lefty joins, and left of righty
+joins).
+* single join raises runtime error if there more than one
+matching rows to adhere to the original proposed usage (unnesting scalar
+subqueries).
+
+# Problems
+
+1. Semi-joins and anti-joins are one-sided and fields from the other
+side of joins are not valid. The `Direct Output Order` in the document
+is okay for other types of joins but not in one-side joins.
+2. Single joins are proposed to be used unnesting scalar subqueries
+where exactly 1 row is expected. The current documentation citing the
+paper and behavior although relaxed the behavior so that the
+implementation can silently produce wrong result.
+
+# What this PR do?
+
+1. Clarify the direct output order by explicitly stating the semi, anti,
+and mark joins. Introducing `Input Order` (the previous `Direct Output
+Order`) so that all the properties referencing `Input Order` to reduce
+ambiguity.
+2. Single joins expecting at most one row for each join key. Otherwise,
+runtime error. This behavior can be extended in the future if such
+generalization is justified with correct use cases.
+
+### Features
+
+* add description field to types definition in schema ([#811](https://github.com/substrait-io/substrait/issues/811)) ([a4e3a82](https://github.com/substrait-io/substrait/commit/a4e3a82c54a153100ac6c3c9f88add78dc8cd3a8))
+* clarify behavior and direct output order of joins ([#803](https://github.com/substrait-io/substrait/issues/803)) ([fe3f1c6](https://github.com/substrait-io/substrait/commit/fe3f1c673ebdb54107dd384073de5a5816d94a44))
+
+## [0.71.0](https://github.com/substrait-io/substrait/compare/v0.70.0...v0.71.0) (2025-04-20)
+
+### ⚠ BREAKING CHANGES
+
+* go_package now points to substrait-protobuf
+
+### Build System
+
+* update go_package of .proto files to substrait-protobuf ([#804](https://github.com/substrait-io/substrait/issues/804)) ([f081cb4](https://github.com/substrait-io/substrait/commit/f081cb4115d84c9516abafe2c84caa2957142f18))
+
+## [0.70.0](https://github.com/substrait-io/substrait/compare/v0.69.0...v0.70.0) (2025-04-13)
+
+### ⚠ BREAKING CHANGES
+
+* Hash Equijoin no longer preserves ordering for inner
+joins
+
+The original `Property Maintenance` of hash join operator is following.
+
+> Orderedness of the left set is maintained in INNER join cases,
+otherwise it is eliminated.
+
+This holds ONLY very specific implementation of a hash join, for
+instance, when build side input completely fits in memory, and probe
+side input is streamed in single thread. It is also strange why INNER
+JOIN is specifically called out because other joins can preserve order
+of probe (LEFT) when build (RIGHT) fits in memory.
+
+Nonetheless, if you throw some kicks and chops, this order preserving
+claim quickly falls apart unless implementation does some non-trivial
+work under following scenarios.
+
+* build does not fit in memory (i.e., spill to storage)
+* parallel probe
+
+So in general, we should not say hash join preserves order of probe. It
+*may* assuming a specific implementation under particular conditions,
+which is more of optimization or hint territory.
+
+### Features
+
+* remove ordering guarantees from Hash Equijoin operator ([#796](https://github.com/substrait-io/substrait/issues/796)) ([7408bbd](https://github.com/substrait-io/substrait/commit/7408bbdd51f2e52bedd323a0e44184986fe7f519))
+
 ## [0.69.0](https://github.com/substrait-io/substrait/compare/v0.68.0...v0.69.0) (2025-03-16)
 
 ### Features
