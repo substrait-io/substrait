@@ -1,0 +1,30 @@
+name: test
+dependencies:
+  arithmetic:
+    https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml
+supported_types:
+  i8:
+    local_name: INTEGER
+    supported_as_column: true
+  i16:
+    local_name: BIGINT
+    supported_as_column: true
+  fp32:
+    local_name: REAL
+    supported_as_column: true
+  fp64:
+    local_name: DOUBLE
+    supported_as_column: true
+aggregate_functions:
+- name: arithmetic.min
+  supported_impls:
+  - i8
+  - i16
+  - fp32
+  - fp64
+- name: arithmetic.max
+  supported_impls:
+  - i8
+  - i16
+  - fp32
+  - fp64
