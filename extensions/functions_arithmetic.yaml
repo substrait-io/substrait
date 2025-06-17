@@ -975,6 +975,72 @@ scalar_functions:
           - name: y
             value: i64
         return: i64
+  -
+    name: shift_left
+    description: >-
+      Bitwise shift left.
+      The vacant (least-significant) bits are filled with zeros.
+      Params:
+        base – the base number to shift.
+        shift – number of bits to left shift.
+    impls:
+      - args:
+          - name: base
+            value: i32
+          - name: shift
+            value: i32
+        return: i32
+      - args:
+          - name: base
+            value: i64
+          - name: shift
+            value: i32
+        return: i64
+  -
+    name: shift_right
+    description: >-
+      Bitwise (signed) shift right.
+      The vacant (most-significant) bits are filled with
+      zeros if the base number is positive or with
+      ones if the base number is negative, thus preserving
+      the sign of the resulting number.
+      Params:
+        base – the base number to shift.
+        shift – number of bits to right shift.
+    impls:
+      - args:
+          - name: base
+            value: i32
+          - name: shift
+            value: i32
+        return: i32
+      - args:
+          - name: base
+            value: i64
+          - name: shift
+            value: i32
+        return: i64
+  -
+    name: shift_right_unsigned
+    description: >-
+      Bitwise unsigned shift right.
+      The vacant (most-significant) bits are filled with zeros.
+      Params:
+        base – the base number to shift.
+        shift – number of bits to right shift.
+    impls:
+      - args:
+          - name: base
+            value: i32
+          - name: shift
+            value: i32
+        return: i32
+      - args:
+          - name: base
+            value: i64
+          - name: shift
+            value: i32
+        return: i64
 
 aggregate_functions:
   - name: "sum"
