@@ -39,14 +39,12 @@ properties:
           description: >
             Whether this type can be used as a column in a table.  Types listed
             here are always supported as literals.
-        message_types:
-          type: array
+        type_definition:
+          type: string
           description: >
-            The list of supported message types.  Use the URI (e.g.
-            type.googleapis.com/google.profile.Person) that is related to the
-            detail field.  Only valid for user defined types.
-          items:
-            type: string
+            The canonical name of the type in Substrait.  This typically takes
+            the form of a dependency alias followed by a period and then the
+            type name from the YAML file.  Useful for user defined types.
       minProperties: 1
     minProperties: 1
   supported_relations:
