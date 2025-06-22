@@ -55,6 +55,29 @@ properties:
       all relations are supported.
     items:
       oneOf:
+        - enum:
+          - READ
+          - FILTER
+          - FETCH
+          - AGGREGATE
+          - SORT
+          - JOIN
+          - PROJECT
+          - SET
+          - EXTENSION_SINGLE
+          - EXTENSION_MULTI
+          - EXTENSION_LEAF
+          - CROSS
+          - REFERENCE
+          - WRITE
+          - DDL
+          - UPDATE
+          - HASH_JOIN
+          - MERGE_JOIN
+          - NESTED_LOOP_JOIN
+          - CONSISTENT_PARTITION_WINDOW
+          - EXCHANGE
+          - EXPAND
         - $ref: "#/definitions/read_relation"
         - $ref: "#/definitions/filter_relation"
         - $ref: "#/definitions/fetch_relation"
@@ -85,6 +108,19 @@ properties:
       all expressions are supported.
     items:
       oneOf:
+        - enum:
+          - LITERAL
+          - SELECTION
+          - SCALAR_FUNCTION
+          - WINDOW_FUNCTION
+          - IF_THEN
+          - SWITCH
+          - SINGULAR_OR_LIST
+          - MULTI_OR_LIST
+          - CAST
+          - SUBQUERY
+          - NESTED
+          - DYNAMIC_PARAMETER
         - $ref: "#/definitions/literal_expression"
         - $ref: "#/definitions/selection_expression"
         - $ref: "#/definitions/scalar_function_expression"
