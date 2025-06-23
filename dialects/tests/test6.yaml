@@ -21,8 +21,7 @@ supported_relations:
       - LEFT
       - RIGHT
   - PROJECT
-supported_expressions:
-  - [LITERAL, SELECTION, SCALAR_FUNCTION, CAST]
+supported_expressions: [LITERAL, SELECTION, SCALAR_FUNCTION, CAST]
 window_functions:
 - name: arithmetic.ntile
   supported_impls:
