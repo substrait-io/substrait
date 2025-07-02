@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.74.0](https://github.com/substrait-io/substrait/compare/v0.73.0...v0.74.0) (2025-06-22)
+
+### Features
+
+* bitwise shift functions ([#799](https://github.com/substrait-io/substrait/issues/799)) ([fa53460](https://github.com/substrait-io/substrait/commit/fa534605c49a74ac82dcda7a5cdb11a3ec15dab8))
+
 ## [0.73.0](https://github.com/substrait-io/substrait/compare/v0.72.0...v0.73.0) (2025-06-01)
 
 ### Features
