@@ -10,7 +10,7 @@
    },
    "coverage": {
      "total_test_count": 1086,
-     "num_function_variants": 517,
+     "num_function_variants": 528,
      "num_covered_function_variants": 229
    }
 }
