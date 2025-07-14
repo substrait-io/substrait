@@ -13,7 +13,7 @@ Window function signatures contain all the properties defined for [aggregate fun
 
 
 
-When binding an aggregate function, the binding must include the following additional properties beyond the standard scalar binding properties:
+When binding a window function, the binding must include the following additional properties beyond the standard aggregate binding properties:
 
 | Property    | Description                                                  | Required                                                     |
 | ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
