@@ -1,16 +1,16 @@
 {
-   "registry": {
-     "dependency_count": 13,
-     "extension_count": 13,
-     "function_count": 165,
-     "num_aggregate_functions": 29,
-     "num_scalar_functions": 158,
-     "num_window_functions": 11,
-     "num_function_overloads": 517
-   },
-   "coverage": {
-     "total_test_count": 1086,
-     "num_function_variants": 517,
-     "num_covered_function_variants": 229
-   }
+  "registry": {
+    "dependency_count": 13,
+    "extension_count": 13,
+    "function_count": 165,
+    "num_aggregate_functions": 29,
+    "num_scalar_functions": 158,
+    "num_window_functions": 11,
+    "num_function_overloads": 517
+  },
+  "coverage": {
+    "total_test_count": 1164,
+    "num_function_variants": 532,
+    "num_covered_function_variants": 242
+  }
 }

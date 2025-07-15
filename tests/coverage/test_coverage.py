@@ -426,6 +426,15 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "bitwise_and(-31766::dec<5, 0>, 900::dec<3, 0>) = 896::dec<5, 0>",
         "or(true::bool, true::bool) = true::bool",
         "between(5::i8, 0::i8, 127::i8) = true::bool",
+        "split_part('a,b,c'::str, ','::str, 2::i32) = 'b'::str",
+        "split_part('hello world'::varchar<20>, ' '::varchar<5>, 1::i32) = 'hello'::varchar<20>",
+        "split_part('one|two|three'::string, '|'::string, 3::i32) = 'three'::string",
+        "chr(65::i64) = 'A'::string",
+        "chr(8364::i64) = '€'::string",
+        "chr(128512::i64) = '😀'::string",
+        "translate('hello'::str, 'el'::str, 'XY'::str) = 'hXYYo'::str",
+        "translate('abcdef'::varchar<10>, 'ace'::varchar<5>, 'XYZ'::varchar<5>) = 'XbYdZf'::varchar<10>",
+        "translate('test'::string, 'ts'::string, 'XY'::string) = 'XeYX'::string",
     ],
 )
 def test_parse_various_scalar_func_argument_types(input_func_test):

@@ -1558,6 +1558,60 @@ scalar_functions:
           dotall:
             values: [ DOTALL_DISABLED, DOTALL_ENABLED ]
         return: "List<string>"
+  - 
+    name: split_part
+    description: >-
+      Split a string using a delimiter and return the `field`-th substring (starting at 1). If `field`
+      is larger than the number of substrings, an empty string is returned.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+          - value: "varchar<L2>"
+            name: "delimiter"
+          - value: i32
+            name: "field"
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+          - value: "string"
+            name: "delimiter"
+          - value: i32
+            name: "field"
+        return: "string"
+  - 
+    name: chr
+    description: >-
+      Return a single character whose codepoint is the specified integer. Behaviour is undefined if
+      the `codepoint` does not correspond to a valid Unicode scalar value.
+    impls:
+      - args:
+          - value: i64
+            name: "codepoint"
+        return: "string"
+  - 
+    name: translate
+    description: >-
+      Replace each occurrence of characters from `from` with the corresponding character in `to`.
+      If `to` is shorter than `from`, extra characters are removed from the result. Similar to the Unix `tr` command.
+    impls:
+      - args:
+          - value: "varchar<L1>"
+            name: "input"
+          - value: "varchar<L2>"
+            name: "from"
+          - value: "varchar<L3>"
+            name: "to"
+        return: "varchar<L1>"
+      - args:
+          - value: "string"
+            name: "input"
+          - value: "string"
+            name: "from"
+          - value: "string"
+            name: "to"
+        return: "string"
 
 aggregate_functions:
 
