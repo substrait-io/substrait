@@ -387,7 +387,7 @@ It is possible to specify multiple grouping sets in a single aggregate operation
 
 To further disambiguate which record belongs to which grouping set, an aggregate relation with more than one grouping set receives an extra `i32` column on the right-hand side. The value of this field will be the zero-based index of the grouping set that yielded the record.
 
-If at least one grouping expression is present, the aggregation is allowed to not have any aggregate expressions. An aggregate relation is invalid if it would yield zero columns.
+If at least one grouping expression is present, the aggregation is allowed to not have any aggregate expressions. This pattern is commonly used to implement `SELECT DISTINCT` operations, where the grouping expressions represent the fields to deduplicate and no measures are needed. An aggregate relation is invalid if it would yield zero columns.
 
 ### Aggregate Properties
 
