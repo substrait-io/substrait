@@ -159,7 +159,8 @@ message AdvancedExtension {
 
 !!! note "Enhancements vs Optimizations"
 
-Use **optimizations** for performance hints that don't change semantics and can be safely ignored. Use **enhancements** for semantic changes that must be understood by consumers or the plan cannot be executed correctly.
+    * Use **optimizations** for performance hints that don't change semantics and can be safely ignored.
+    * Use **enhancements** for semantic changes that must be understood by consumers or the plan cannot be executed correctly.
 
 #### Optimizations
 
@@ -177,9 +178,9 @@ Use **optimizations** for performance hints that don't change semantics and can 
 
 !!! note "Enhancement Constraints"
 
-Semantic-changing extensions shouldn't change the core characteristics of the underlying relation. For example, they should *not* change the default direct output field ordering, change the number of fields output or change the behavior of physical property characteristics. If one needs to change one of these behaviors, one should define a new relation as described below.
+    Semantic-changing extensions shouldn't change the core characteristics of the underlying relation. For example, they should *not* change the default direct output field ordering, change the number of fields output or change the behavior of physical property characteristics. If one needs to change one of these behaviors, one should define a new relation as described below.
 
-#### Where AdvancedExtension Messages Can Be Used
+#### Where `AdvancedExtension` Messages Can Be Used
 
 The `AdvancedExtension` message can be attached to various parts of a Substrait plan:
 
@@ -214,9 +215,12 @@ These extension relations are first-class relation types in Substrait and can be
 
 The third form of advanced extensions allows you to define extension data sources and destinations:
 
-| Extension Type                 | Description                                   | Examples                     |
-| ------------------------------ | --------------------------------------------- | ---------------------------- |
-| **`ReadRel.ExtensionTable`**   | Define entirely new table source types        | APIs, specialized formats    |
-| **`WriteRel.ExtensionObject`** | Define entirely new write destination types   | APIs, specialized formats    |
-| **`DdlRel.ExtensionObject`**   | Define entirely new DDL destination types     | Catalogs, schema registries  |
+| Extension Type                 | Description                          | Examples                     |
+| ------------------------------ | ------------------------------------ | ---------------------------- |
+| **`ReadRel.ExtensionTable`**   | Define new table source types        | APIs, specialized formats    |
+| **`WriteRel.ExtensionObject`** | Define new write destination types   | APIs, specialized formats    |
+| **`DdlRel.ExtensionObject`**   | Define new DDL destination types     | Catalogs, schema registries  |
 
+!!! note "Consider Core Specification First"
+
+    Before implementing custom read/write types as extensions, consider checking with the Substrait community. If your scenario turns out to be common enough, it may be more appropriate to add it directly to the specification rather than as an extension.
