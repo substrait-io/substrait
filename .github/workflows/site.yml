@@ -6,6 +6,7 @@ on:
     paths:
       - "site/**"
       - "extensions/**"
+      - "text/**"
 
 jobs:
   site:
@@ -20,6 +21,10 @@ jobs:
           cache: 'pip'
           cache-dependency-path: ./site/requirements.txt
       - run: pip install -r ./site/requirements.txt
+      - name: Copy schema file for website
+        run: |
+          mkdir -p ./site/docs/schemas
+          cp ./text/simple_extensions_schema.yaml ./site/docs/schemas/simple_extensions
       - name: Generate Static Site
         run: mkdocs build
         working-directory: ./site
