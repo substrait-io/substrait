@@ -1,0 +1,39 @@
+name: test
+dependencies:
+  arithmetic:
+    https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml
+supported_types:
+  i32:
+    local_name: INTEGER
+    supported_as_column: true
+  i64:
+    local_name: BIGINT
+    supported_as_column: true
+supported_relations:
+  - relation: READ
+    read_types: [ICEBERG_TABLE]
+  - relation: FILTER
+  - relation: FETCH
+  - relation: AGGREGATE
+  - relation: SORT
+  - relation: JOIN
+    join_types:
+      - LEFT
+      - RIGHT
+  - relation: PROJECT
+supported_expressions:
+  - expression: LITERAL
+  - expression: SELECTION
+  - expression: SCALAR_FUNCTION
+  - expression: CAST
+  - expression: NESTED
+    nested_types:
+      - LIST
+window_functions:
+- name: arithmetic.ntile
+  supported_impls:
+  - i32
+  - i64
+- name: arithmetic.rank
+  supported_impls:
+  - ""
