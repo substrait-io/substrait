@@ -892,15 +892,15 @@ So first we can create the three extension uris:
 [
   {
     "extensionUriAnchor": 1,
-    "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_set.yaml"
+    "uri": "urn:substrait:functions_set"
   },
   {
     "extensionUriAnchor": 2,
-    "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml"
+    "uri": "urn:substrait:functions_comparison"
   },
   {
     "extensionUriAnchor": 3,
-    "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic_decimal.yaml"
+    "uri": "urn:substrait:functions_arithmetic_decimal"
   }
 ]
 ```

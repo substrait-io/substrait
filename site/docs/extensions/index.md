@@ -15,7 +15,7 @@ Some kinds of primitives are so frequently extended that Substrait defines a sta
 
 To extend these items, developers can create one or more YAML files at a defined URI that describes the properties of each of these extensions. The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
-A Substrait plan can reference one or more YAML files via URI for extension. In the places where these entities are referenced, they will be referenced using a URI + name reference. The name scheme per type works as follows:
+A Substrait plan can reference one or more YAML files via URI for extension. In the places where these entities are referenced, they will be referenced using a URI + name reference. The URI serves solely as an identifier to provide a namespace and enable references. It is not used as a locator to fetch or retrieve the YAML file. The name scheme per type works as follows:
 
 | Category           | Naming scheme                                                |
 | ------------------ | ------------------------------------------------------------ |
@@ -25,11 +25,10 @@ A Substrait plan can reference one or more YAML files via URI for extension. In 
 
 A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the YAML file it depends on using a key-value pair in the `dependencies` key, where the value is the URI to the YAML file, and the key is a valid identifier that can then be used as an identifier-safe alias for the URI. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected.
 
-For example, if the YAML file at `file:///extension_types.yaml` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
-
+For example, if a YAML file needs to reference a type from Substrait's default extensions (which use URNs as their preferred URI format, see [Canonical URIs](#canonical-uris-for-default-extensions) below), it would look like this. If the YAML file `extension_types.yaml` with URI `urn:substrait:extension_types` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
 ```yaml
 dependencies:
-  ext: file:///extension_types.yaml
+  ext: urn:substrait:extension_types
 scalar_functions:
 - name: distance
   description: The distance between two points.
@@ -43,6 +42,18 @@ scalar_functions:
 ```
 
 Here, the choice for the name `ext` is arbitrary, as long as it does not conflict with anything else in the YAML file.
+
+### Canonical URIs for Default Extensions
+
+Substrait provides a set of default simple extensions included in the repository. These extensions use URNs (Uniform Resource Names) as their canonical URIs following the pattern `urn:substrait:<filename_without_extension>`. While downstream users can use any URI they prefer to identify these extensions, library authors **must** use the canonical URIs to ensure compatibility between Substrait plans produced and consumed across different libraries.
+
+All default extension files in the repository follow this naming convention. For example:
+- `functions_boolean.yaml` -> `urn:substrait:functions_boolean`
+- `functions_arithmetic.yaml` -> `urn:substrait:functions_arithmetic`
+- `functions_string.yaml` -> `urn:substrait:functions_string`
+- `extension_types.yaml` -> `urn:substrait:extension_types`
+
+This pattern applies to all extension files in the Substrait repository, including function extensions (for arithmetic, comparison, datetime, etc.) and type extensions.
 
 ### Function Signature Compound Names
 
