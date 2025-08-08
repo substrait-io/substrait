@@ -53,7 +53,7 @@ All default extension files in the repository follow this naming convention. For
 - `functions_string.yaml` -> `urn:substrait:functions_string`
 - `extension_types.yaml` -> `urn:substrait:extension_types`
 
-This pattern applies to all extension files in the Substrait repository, including function extensions (for arithmetic, comparison, datetime, etc.) and type extensions.
+This pattern applies to all extension files in the Substrait repository, including function extensions and type extensions.
 
 ### Function Signature Compound Names
 
