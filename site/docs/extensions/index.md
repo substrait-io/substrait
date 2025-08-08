@@ -13,7 +13,7 @@ Some kinds of primitives are so frequently extended that Substrait defines a sta
 * Window Functions
 * Table Functions
 
-To extend these items, developers can create one or more YAML files at a defined URI that describes the properties of each of these extensions. The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
+To extend these items, developers can create one or more YAML files at a defined [URI](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) that describes the properties of each of these extensions. The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
 A Substrait plan can reference one or more YAML files via URI for extension. In the places where these entities are referenced, they will be referenced using a URI + name reference. The URI serves solely as an identifier to provide a namespace and enable references. It is not used as a locator to fetch or retrieve the YAML file. The name scheme per type works as follows:
 
@@ -45,7 +45,7 @@ Here, the choice for the name `ext` is arbitrary, as long as it does not conflic
 
 ### Canonical URIs for Default Extensions
 
-Substrait provides a set of default simple extensions included in the repository. These extensions use URNs (Uniform Resource Names) as their canonical URIs following the pattern `urn:substrait:<filename_without_extension>`. While downstream users can use any URI they prefer to identify these extensions, library authors **must** use the canonical URIs to ensure compatibility between Substrait plans produced and consumed across different libraries.
+Substrait provides a set of default simple extensions included in the repository. These extensions use [URN](https://en.wikipedia.org/wiki/Uniform_Resource_Name)s as their canonical URIs following the pattern `urn:substrait:<filename_without_extension>`. While downstream users can use any URI they prefer to identify these extensions, library authors **must** use the canonical URIs to ensure compatibility between Substrait plans produced and consumed across different libraries.
 
 All default extension files in the repository follow this naming convention. For example:
 - `functions_boolean.yaml` -> `urn:substrait:functions_boolean`
