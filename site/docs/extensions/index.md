@@ -25,7 +25,7 @@ A Substrait plan can reference one or more YAML files via URI for extension. In 
 
 A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the YAML file it depends on using a key-value pair in the `dependencies` key, where the value is the URI to the YAML file, and the key is a valid identifier that can then be used as an identifier-safe alias for the URI. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected.
 
-For example, if a YAML file needs to reference a type from Substrait's default extensions (which use URNs as their preferred URI format, see [Canonical URIs](#canonical-uris-for-default-extensions) below), it would look like this. If the YAML file `extension_types.yaml` with URI `urn:substrait:extension_types` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
+For example, consider a YAML file that needs to reference a type from Substrait's default extensions (which use URNs as their preferred URI format, see [Canonical URIs](#canonical-uris-for-default-extensions) below). If the YAML file `extension_types.yaml` with URI `urn:substrait:extension_types` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
 ```yaml
 dependencies:
   ext: urn:substrait:extension_types
