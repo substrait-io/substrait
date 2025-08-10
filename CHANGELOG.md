@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.74.1](https://github.com/substrait-io/substrait/compare/v0.74.0...v0.74.1) (2025-08-10)
+
+### Bug Fixes
+
+* make simple extensions schema accessible at specified URL ([#848](https://github.com/substrait-io/substrait/issues/848)) ([c0c74ea](https://github.com/substrait-io/substrait/commit/c0c74ea7f17c2d8f5d96e24d2c0dbb664f8126f9))
+* typo on window functions site page ([#825](https://github.com/substrait-io/substrait/issues/825)) ([36c1fd8](https://github.com/substrait-io/substrait/commit/36c1fd86e8c2dbfef879e58d42e91f303e429314))
+
 ## [0.74.0](https://github.com/substrait-io/substrait/compare/v0.73.0...v0.74.0) (2025-06-22)
 
 ### Features
