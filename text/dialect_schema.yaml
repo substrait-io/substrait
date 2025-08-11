@@ -12,9 +12,6 @@ properties:
   name:
     type: string
     description: Optional name of the dialect (e.g., "MySQL", "PostgreSQL", "Spark").
-  substrait_version:
-    type: string
-    description: The version of Substrait that this dialect applies for.  Optional.
   dependencies:
     type: object
     description: >
