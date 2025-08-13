@@ -1,0 +1,19 @@
+name: test
+dependencies:
+  arithmetic:
+    https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml
+supported_types:
+  i32:
+    local_name: INTEGER
+    supported_as_column: true
+  i64:
+    local_name: BIGINT
+    supported_as_column: true
+window_functions:
+- name: arithmetic.ntile
+  supported_impls:
+  - i32
+  - i64
+- name: arithmetic.rank
+  supported_impls:
+  - ""
