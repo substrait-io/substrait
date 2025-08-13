@@ -7,7 +7,7 @@ jobs:
     name: Build Website
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-python@v5
         with:
           python-version: '3.13'
@@ -26,7 +26,7 @@ jobs:
     name: Check Protobuf Style
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: bufbuild/buf-setup-action@v1.50.0
         with:
           github_token: ${{ github.token }}
@@ -35,7 +35,7 @@ jobs:
     name: Check Protobuf
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: bufbuild/buf-setup-action@v1.50.0
         with:
           github_token: ${{ github.token }}
@@ -46,14 +46,14 @@ jobs:
     name: Lint YAML extensions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Run yamllint
         run: yamllint .
   yamlvalidate:
     name: Validate YAML extensions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -69,7 +69,7 @@ jobs:
     name: Dry-run release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: bufbuild/buf-setup-action@v1.50.0
@@ -81,7 +81,7 @@ jobs:
     name: Style-check and lint Python files, and run tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install dependencies
         run: python3 -m pip install -r requirements.txt
       - name: Black
@@ -95,7 +95,7 @@ jobs:
     name: Check proto-prefix.py
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: bufbuild/buf-setup-action@v1.50.0
       - name: Run proto-prefix.py
         run: tools/proto_prefix.py output test proto go_package=github.com/test/proto
