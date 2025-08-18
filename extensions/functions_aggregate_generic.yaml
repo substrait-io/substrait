@@ -40,3 +40,25 @@ aggregate_functions:
         decomposable: MANY
         intermediate: any1?
         return: any1?
+  - name: grouping
+    description: >
+      Indicates whether the column(s) in a GROUP BY list are aggregated or
+      not. This function can be used to distinguish between a NULL value in
+      the raw data vs the total across all values that are returned by ROLLUP,
+      CUBE or GROUPING SETS for a specific column.
+      
+      Returns an integer value which is unique for each combination of
+      grouping values. The return value can be interpreted as a bit vector
+      where bits in the binary representation of the integer correspond to each
+      grouping value.
+      
+      For a single grouping value, the result is 1 if the data is aggregated
+      across the specified column or 0 for not aggregated in the result set.
+    impls:
+      - args:
+          - value: any?
+        ordered: true
+        variadic:
+          min: 1
+        nullability: DECLARED_OUTPUT
+        return: i64
