@@ -5,6 +5,7 @@ package substrait;
 
 import "substrait/algebra.proto";
 import "substrait/extensions/extensions.proto";
+import "substrait/type.proto";
 
 option csharp_namespace = "Substrait.Protobuf";
 option go_package = "github.com/substrait-io/substrait-protobuf/go/substraitpb";
@@ -54,6 +55,11 @@ message Plan {
   // An optional list of bindings for dynamic parameters used in this plan.
   // Each binding maps a parameter_anchor to its corresponding runtime value.
   repeated DynamicParameterBinding parameter_bindings = 7;
+
+  // An optional list of concrete types (i.e., no alias!). Parameterized types
+  // can be concretely spelled out with specific parameter values and referenced
+  // anywhere in the plan using `Type.alias` where a concrete type is expected.
+  repeated TypeAlias type_aliases = 8;
 }
 
 // This message type can be used to deserialize only the version of a Substrait
