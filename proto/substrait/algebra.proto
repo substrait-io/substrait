@@ -83,6 +83,7 @@ message RelCommon {
       // matches the same unknown type at a different plan and ignore the optimization if they
       // are mismatched.
       ComputationType type = 2;
+      substrait.extensions.AdvancedExtension advanced_extension = 10;
     }
 
     message LoadedComputation {
@@ -95,6 +96,7 @@ message RelCommon {
       // matches the same unknown type at a different plan and ignore the optimization if they
       // are mismatched.
       ComputationType type = 2;
+      substrait.extensions.AdvancedExtension advanced_extension = 10;
     }
   }
 }
