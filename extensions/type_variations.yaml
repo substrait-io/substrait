@@ -1,5 +1,6 @@
 %YAML 1.2
 ---
+urn: extension:io.substrait:type_variations
 type_variations:
   - parent: string
     name: dict4
