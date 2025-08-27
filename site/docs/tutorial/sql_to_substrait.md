@@ -850,7 +850,7 @@ The overall layout for a plan is
 
 ```json
 {
-  "extensionUris": [ ... ],
+  "extensionUrns": [ ... ],
   "extensions": [ ... ],
   "relations": [
     {
@@ -874,7 +874,7 @@ The root relation provides the final column names for our query. The input to
 this relation is our aggregate relation (which contains all the other relations
 as children).
 
-For extensions, we need to provide `extensionUris` with the locations of the
+For extensions, we need to provide `extensionUrns` with the URN identifiers of the
 YAML files we used and `extensions` with the list of functions we used and which
 extension they come from.
 
@@ -886,21 +886,21 @@ In our query, we used:
  * `sum` (4), from `functions_arithmetic_decimal.yaml`,
  * `multiply` (5), from `functions_arithmetic_decimal.yaml`.
 
-So first we can create the three extension uris:
+So first we can create the three extension URNs:
 
 ```json
 [
   {
-    "extensionUriAnchor": 1,
-    "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_set.yaml"
+    "extensionUrnAnchor": 1,
+    "urn": "extension:io.substrait:functions_set"
   },
   {
-    "extensionUriAnchor": 2,
-    "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml"
+    "extensionUrnAnchor": 2,
+    "urn": "extension:io.substrait:functions_comparison"
   },
   {
-    "extensionUriAnchor": 3,
-    "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic_decimal.yaml"
+    "extensionUrnAnchor": 3,
+    "urn": "extension:io.substrait:functions_arithmetic_decimal"
   }
 ]
 ```
@@ -911,35 +911,35 @@ Then we can create the extensions:
 [
   {
     "extensionFunction": {
-      "extensionUriReference": 1,
+      "extensionUrnReference": 1,
       "functionAnchor": 1,
       "name": "index_in"
     }
   },
   {
     "extensionFunction": {
-      "extensionUriReference": 2,
+      "extensionUrnReference": 2,
       "functionAnchor": 2,
       "name": "is_null"
     }
   },
   {
     "extensionFunction": {
-      "extensionUriReference": 2,
+      "extensionUrnReference": 2,
       "functionAnchor": 3,
       "name": "equal"
     }
   },
   {
     "extensionFunction": {
-      "extensionUriReference": 3,
+      "extensionUrnReference": 3,
       "functionAnchor": 4,
       "name": "sum"
     }
   },
   {
     "extensionFunction": {
-      "extensionUriReference": 3,
+      "extensionUrnReference": 3,
       "functionAnchor": 5,
       "name": "multiply"
     }
