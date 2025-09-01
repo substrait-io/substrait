@@ -53,6 +53,7 @@ message Type {
     // variation.
     uint32 user_defined_type_reference = 31 [deprecated = true];
 
+    // Reference an aliased type in `Plan.type_aliases`.
     TypeAliasReference alias = 37;
   }
 
