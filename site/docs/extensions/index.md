@@ -13,9 +13,8 @@ Some kinds of primitives are so frequently extended that Substrait defines a sta
 * Window Functions
 * Table Functions
 
-To extend these items, developers can create one or more YAML files that describe the properties of each of these extensions. Each YAML file must include a required `urn` field that uniquely identifies the extension. This URN ([Uniform Resource Name](https://en.wikipedia.org/wiki/Uniform_Resource_Name)) uses the format `<KIND>:<OWNER>:<ID>`, where:
+To extend these items, developers can create one or more YAML files that describe the properties of each of these extensions. Each YAML file must include a required `urn` field that uniquely identifies the extension. This URN ([Uniform Resource Name](https://en.wikipedia.org/wiki/Uniform_Resource_Name)) uses the format `extension:<OWNER>:<ID>`, where:
 
-- `KIND` is currently only `extension` (additional kinds may be introduced in the future)
 - `OWNER` represents the organization or entity providing the extension and should follow [reverse domain name convention](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) (e.g., `io.substrait`, `com.example`, `org.apache.arrow`) to prevent name collisions
 - `ID` is the specific identifier for the extension (e.g., `functions_arithmetic`, `custom_types`)
 

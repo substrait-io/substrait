@@ -27,7 +27,7 @@ message SimpleExtensionURN {
   uint32 extension_urn_anchor = 1;
 
   // The extension URN that uniquely identifies this extension. This must follow the
-  // format <KIND>:<OWNER>:<ID> and serves as the "namespace" of this extension.
+  // format extension:<OWNER>:<ID> and serves as the "namespace" of this extension.
   string urn = 2;
 }
 
