@@ -13,10 +13,12 @@ Some kinds of primitives are so frequently extended that Substrait defines a sta
 * Window Functions
 * Table Functions
 
-To extend these items, developers can create one or more YAML files that describe the properties of each of these extensions. Each YAML file must include a required `urn` field that uniquely identifies the extension. This URN ([Uniform Resource Name](https://en.wikipedia.org/wiki/Uniform_Resource_Name)) uses the format `extension:<OWNER>:<ID>`, where:
+To extend these items, developers can create one or more YAML files that describe the properties of each of these extensions. Each YAML file must include a required `urn` field that uniquely identifies the extension. While these identifiers are URN-like but not technically URNs (they lack the `urn:` prefix), they will be referred to as `extension URNs` for clarity.
+
+This extension URN uses the format `extension:<OWNER>:<ID>`, where:
 
 - `OWNER` represents the organization or entity providing the extension and should follow [reverse domain name convention](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) (e.g., `io.substrait`, `com.example`, `org.apache.arrow`) to prevent name collisions
-- `ID` is the specific identifier for the extension (e.g., `functions_arithmetic`, `custom_types`)
+- `ID` is the specific identifier for the extension (e.g., `functions_arithmetic`, `custom_types`) 
 
 The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
@@ -30,7 +32,7 @@ A Substrait plan can reference one or more YAML files via their extension URN. I
 
 A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the extension it depends on using a key-value pair in the `dependencies` key, where the value is the extension URN, and the key is a valid identifier that can then be used as an identifier-safe alias for the extension URN. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected.
 
-For example, if the extension with URN `extension:io.substrait:extension_types` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
+For example, if the extension with extension URN `extension:io.substrait:extension_types` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
 
 ```yaml
 urn: extension:example:distance_functions
