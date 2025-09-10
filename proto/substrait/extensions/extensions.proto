@@ -10,6 +10,8 @@ option go_package = "github.com/substrait-io/substrait-protobuf/go/substraitpb/e
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
 
+
+// This message is deprecated, use SimpleExtensionURN moving forwards
 message SimpleExtensionURI {
   option deprecated = true;
   // A surrogate key used in the context of a single plan used to reference the
@@ -47,6 +49,8 @@ message SimpleExtensionDeclaration {
     uint32 extension_uri_reference = 1 [deprecated = true];
 
     // references the extension_urn_anchor defined for a specific extension URN.
+    // If both extension_urn_reference and extension_uri_reference are present,
+    // extension_urn_reference takes precedence.
     uint32 extension_urn_reference = 4;
 
     // A surrogate key used in the context of a single plan to reference a
@@ -63,6 +67,8 @@ message SimpleExtensionDeclaration {
     uint32 extension_uri_reference = 1 [deprecated = true];
 
     // references the extension_urn_anchor defined for a specific extension URN.
+    // If both extension_urn_reference and extension_uri_reference are present,
+    // extension_urn_reference takes precedence.
     uint32 extension_urn_reference = 4;
 
     // A surrogate key used in the context of a single plan to reference a
@@ -79,6 +85,8 @@ message SimpleExtensionDeclaration {
     uint32 extension_uri_reference = 1 [deprecated = true];
 
     // references the extension_urn_anchor defined for a specific extension URN.
+    // If both extension_urn_reference and extension_uri_reference are present,
+    // extension_urn_reference takes precedence.
     uint32 extension_urn_reference = 4;
 
     // A surrogate key used in the context of a single plan to reference a
