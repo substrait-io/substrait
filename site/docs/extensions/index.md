@@ -28,7 +28,7 @@ A Substrait plan can reference one or more YAML files via their extension URN. I
 | ------------------ | ------------------------------------------------------------ |
 | Type               | The name as defined on the type object.                      |
 | Type Variation     | The name as defined on the type variation object.            |
-| Function Signature | A function signature compound name as described below.       |
+| Function Signature | A function signature as described below.       |
 
 A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the extension it depends on using a key-value pair in the `dependencies` key, where the value is the extension URN, and the key is a valid identifier that can then be used as an identifier-safe alias for the extension URN. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected.
 
@@ -52,19 +52,28 @@ scalar_functions:
 
 Here, the choice for the name `ext` is arbitrary, as long as it does not conflict with anything else in the YAML file.
 
-### Function Signature Compound Names
+### Function Signature
 
-A YAML file may contain one or more functions by the same name. The key used in the function extension declaration to reference a function is a combination of the name of the function along with a list of the required input argument types. The format is as follows:
+A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature derived using
+* The name of the function
+* The defined arguments for the implementation
 
+which are combined as follows:
 ```
 <function name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>
 ```
 
-Rather than using a full data type representation, the input argument types (`short_arg_type`) are mapped to single-level short name. The mappings are listed in the table below.
+Argument types (`short_arg_type`) are encoded using the Type Short Names given below.
 
-!!! note
+#### Variadic Functions
 
-    Every compound function signature must be unique.  If two function implementations in a YAML file would generate the same compound function signature, then the YAML file is invalid and behavior is undefined.
+For variadic functions, the variadic argument is included *once* in the function signature.
+
+#### Uniqueness Constraint
+
+A function signature uniquely identifies a function implementation within a single YAML file. As such, every function implementation within a YAML **must** have a distinct function signature in order for references to the implementation to remain unambiguous. A YAML file in which this is not the case is invalid.
+
+#### Type Short Names
 
 | Argument Type                   | Signature Name |
 |---------------------------------|----------------|
@@ -103,10 +112,11 @@ Rather than using a full data type representation, the input argument types (`sh
 
 | Function Signature                                | Function Name    |
 | ------------------------------------------------- | ---------------- |
-| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`  |
+| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`      |
 | `avg(fp32) => fp32`                               | `avg:fp32`       |
 | `extract(required enumeration, timestamp) => i64` | `extract:req_ts` |
 | `sum(any1) => any1`                               | `sum:any`        |
+| `concat(str...) => str`                           | `concat:str`    |
 
 ### Any Types
 
