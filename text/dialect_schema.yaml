@@ -184,9 +184,8 @@ definitions:
       supported_impls:
         type: array
         description: >
-          List of implementations (parameter type lists) supported by this function.
-          For example, i32 or str_str.  Variadic arguments are not included in
-          the impl's list of parameters.
+          List of one or more implementations supported by this function. Use
+          argument signatures to identify the implementations.
         minItems: 1
         items:
           type: string
