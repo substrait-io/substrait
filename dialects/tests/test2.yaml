@@ -1,13 +1,9 @@
 name: test
 dependencies:
-  arithmetic:
-    https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml
-  boolean:
-    https://github.com/substrait-io/substrait/blob/main/extensions/functions_boolean.yaml
-  comparison:
-    https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml
-  string:
-    https://github.com/substrait-io/substrait/blob/main/extensions/functions_string.yaml
+  arithmetic: extension:io.substrait:functions_arithmetic
+  boolean: extension:io.substrait:functions_boolean
+  comparison: extension:io.substrait:functions_comparison
+  string: extension:io.substrait:functions_string
 supported_types:
   i32:
     local_name: INTEGER

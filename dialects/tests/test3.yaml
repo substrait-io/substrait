@@ -1,7 +1,6 @@
 name: test
 dependencies:
-  arithmetic:
-    https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml
+  arithmetic: extension:io.substrait:functions_arithmetic
 supported_types:
   i8:
     local_name: INTEGER
