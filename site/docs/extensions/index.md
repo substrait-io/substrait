@@ -18,7 +18,7 @@ To extend these items, developers can create one or more YAML files that describ
 This extension URN uses the format `extension:<OWNER>:<ID>`, where:
 
 - `OWNER` represents the organization or entity providing the extension and should follow [reverse domain name convention](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) (e.g., `io.substrait`, `com.example`, `org.apache.arrow`) to prevent name collisions
-- `ID` is the specific identifier for the extension (e.g., `functions_arithmetic`, `custom_types`) 
+- `ID` is the specific identifier for the extension (e.g., `functions_arithmetic`, `custom_types`)
 
 The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
@@ -54,20 +54,24 @@ Here, the choice for the name `ext` is arbitrary, as long as it does not conflic
 
 ### Function Signature
 
-A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature derived using
-* The name of the function
-* The defined arguments for the implementation
+A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components
+* Function Name: the name of the function
+* Argument Signature: a signature based on the defined arguments of the function
 
-which are combined as follows:
+These component are defined as follows
 ```
-<function name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>
+<function_signature> ::= <function_name>:<argument_signature>
+<argument_signature> ::= <short_arg_type> { _ <short_arg_type> }*
 ```
+
+and the resulting function signatures look like:
+`<function name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>`
 
 Argument types (`short_arg_type`) are encoded using the Type Short Names given below.
 
 #### Variadic Functions
 
-For variadic functions, the variadic argument is included *once* in the function signature.
+For variadic functions, the variadic argument is included *once* in the argument signature.
 
 #### Uniqueness Constraint
 
@@ -116,7 +120,7 @@ A function signature uniquely identifies a function implementation within a sing
 | `avg(fp32) => fp32`                               | `avg:fp32`       |
 | `extract(required enumeration, timestamp) => i64` | `extract:req_ts` |
 | `sum(any1) => any1`                               | `sum:any`        |
-| `concat(str...) => str`                           | `concat:str`    |
+| `concat(str...) => str`                           | `concat:str`     |
 
 ### Any Types
 
