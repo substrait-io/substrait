@@ -3,7 +3,10 @@ $schema: https://json-schema.org/draft/2020-12/schema
 title: Simple Extensions
 additionalProperties: false
 type: object
+required: [urn]
 properties:
+  urn:
+    type: string
   dependencies:
     # For reusing type classes and type variations from other extension files.
     # The keys are namespace identifiers that you can then use as dot-separated
