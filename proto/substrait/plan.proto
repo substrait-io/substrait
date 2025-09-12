@@ -33,7 +33,7 @@ message Plan {
   // may include a version in the anchor.  If it does, the consumer should
   // exactly match the URN (there are no semantics defined for at least
   // this version).
-  optional string dialect = 8;
+  optional string dialect = 9;
 
   // a list of yaml specifications this plan may depend on
   repeated substrait.extensions.SimpleExtensionURI extension_uris = 1;
