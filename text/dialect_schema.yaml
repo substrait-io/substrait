@@ -16,7 +16,7 @@ properties:
     type: object
     description: >
       A map of function YAML files depended on by this dialect.
-      Each key is an alias used by functions with the value being a URI.
+      Each key is an alias used by functions with the value being a URN.
     additionalProperties:
       type: string
     minProperties: 1
