@@ -3,10 +3,10 @@ dependencies:
   arithmetic: extension:io.substrait:functions_arithmetic
 supported_types:
   i32:
-    local_name: INTEGER
+    system_name: INTEGER
     supported_as_column: true
   i64:
-    local_name: BIGINT
+    system_name: BIGINT
     supported_as_column: true
 supported_relations:
   - relation: READ

@@ -28,9 +28,10 @@ properties:
     additionalProperties:
       type: object
       properties:
-        local_name:
+        system_name:
           type: string
-          description: The SQL name for this type in the dialect.
+          description: >
+            The name for this type in the system modelled by the dialect.
         supported_as_column:
           type: boolean
           description: >
@@ -159,12 +160,12 @@ definitions:
           The canonical name of the function in Substrait.  This typically takes the
           form of a dependency alias followed by a period and then the function name
           from the YAML file.
-      local_name:
+      system_name:
         type: string
         description: >
-          The name used in the specific dialect implementation
-          (e.g., "+" might be the local_name for "add").
-      notation:
+          The name for this function in the system modelled by the dialect.
+          For example, "+" might be the system name for "add".
+      system_notation:
         type: string
         enum:
           - INFIX
@@ -173,8 +174,13 @@ definitions:
           - FUNCTION
         default: FUNCTION
         description: >
-          Infix notation (e.g., "a + b"), postfix notation (e.g., "a b + "),
-          prefix notation (e.g., "+ a b"), or function notation (func(a, b)).
+          The notation used to invoke this function in the system modelled by
+          the dialect. For example, a function with system_name "+" could be
+          invoked as follow:
+          * INFIX:    "a + b"
+          * POSTFIX:  "a b +",
+          * PREFIX:   "+ a b"
+          * FUNCTION: "func(a, b)"
       required_options:
         type: object
         description: >

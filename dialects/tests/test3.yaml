@@ -3,16 +3,16 @@ dependencies:
   arithmetic: extension:io.substrait:functions_arithmetic
 supported_types:
   i8:
-    local_name: INTEGER
+    system_name: INTEGER
     supported_as_column: true
   i16:
-    local_name: BIGINT
+    system_name: BIGINT
     supported_as_column: true
   fp32:
-    local_name: REAL
+    system_name: REAL
     supported_as_column: true
   fp64:
-    local_name: DOUBLE
+    system_name: DOUBLE
     supported_as_column: true
 aggregate_functions:
 - name: arithmetic.min

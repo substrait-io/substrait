@@ -4,15 +4,15 @@ dependencies:
   comparison: extension:io.substrait:functions_comparison
 supported_types:
   i32:
-    local_name: INT
+    system_name: INT
     supported_as_column: true
   i64:
-    local_name: BIGINT
+    system_name: BIGINT
     supported_as_column: true
 scalar_functions:
 - name: comparison.is_null
-  local_name: IS NULL
-  notation: POSTFIX
+  system_name: IS NULL
+  system_notation: POSTFIX
   supported_impls:
   - any1
 aggregate_functions:
