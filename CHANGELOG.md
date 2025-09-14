@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.75.0](https://github.com/substrait-io/substrait/compare/v0.74.1...v0.75.0) (2025-09-14)
+
+### Features
+
+* add AdvancedExtension to SavedComputation and LoadedComputation ([#858](https://github.com/substrait-io/substrait/issues/858)) ([9ea478a](https://github.com/substrait-io/substrait/commit/9ea478af81a6971e378afb1ba28c1151ba276bc4))
+* canonicalize extension URNs ([#859](https://github.com/substrait-io/substrait/issues/859)) ([06cadc8](https://github.com/substrait-io/substrait/commit/06cadc8bc6dc5d031083b6094b0ece479219966e))
+
 ## [0.74.1](https://github.com/substrait-io/substrait/compare/v0.74.0...v0.74.1) (2025-08-10)
 
 ### Bug Fixes
