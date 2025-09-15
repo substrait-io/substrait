@@ -249,7 +249,7 @@ message Type {
 
   message TypeAliasReference {
     uint32 type_alias_reference = 1;
-    // If not NULLABILITY_UNSPECIFIED, overrides the nullability of the referenced type.
+    // Nullability of the referenced type alias. Must be specified.
     Nullability nullability = 2;
   }
 }
@@ -259,8 +259,14 @@ message TypeAlias {
   // specific type alias.
   uint32 type_alias_anchor = 1;
 
-  // A concrete type (no alias!) to be aliased. All type parameters must be specified.
-  // Nullability of the type may be overridden per reference.
+  // A concrete type to be aliased.
+  //
+  // * Can not be another type alias.
+  // * All type parameters must be specified. Type parameters can refer other type
+  //   aliases as long as there are no circular dependencies among type aliases.
+  // * Nullability of TypeAlias.type is ignored. When an aliased type is referenced,
+  //   its nullability is determined by the value of TypeAliasReference.nullability.
+  // * TypeAlias.type.type_variation_reference can be specified.
   Type type = 2;
 }
 
