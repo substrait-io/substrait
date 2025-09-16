@@ -62,9 +62,6 @@ properties:
           - JOIN
           - PROJECT
           - SET
-          - EXTENSION_SINGLE
-          - EXTENSION_MULTI
-          - EXTENSION_LEAF
           - CROSS
           - REFERENCE
           - WRITE
