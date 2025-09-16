@@ -20,31 +20,68 @@ properties:
     additionalProperties:
       type: string
     minProperties: 1
+
   supported_types:
-    type: object
+    type: array
+    uniqueItems: true
     description: >
-      A map of types supported by this dialect.
-      The key is the Substrait name for the type.
-    additionalProperties:
-      type: object
-      properties:
-        system_name:
-          type: string
-          description: >
-            The name for this type in the system modelled by the dialect.
-        supported_as_column:
-          type: boolean
-          description: >
-            Whether this type can be used as a column in a table.  Types listed
-            here are always supported as literals.
-        type_definition:
-          type: string
-          description: >
-            The canonical name of the type in Substrait.  This typically takes
-            the form of a dependency alias followed by a period and then the
-            type name from the YAML file.  Useful for user defined types.
-      minProperties: 1
-    minProperties: 1
+      Types that are supported by this dialect. If not present or empty, all
+      standard types are supported.
+    items:
+      oneOf:
+        - enum:
+          - BOOL
+          - I8
+          - I16
+          - I32
+          - I64
+          - FP32
+          - FP64
+          - BINARY
+          - FIXED_BINARY
+          - STRING
+          - VARCHAR
+          - FIXED_CHAR
+          - PRECISION_TIME
+          - PRECISION_TIMESTAMP
+          - PRECISION_TIMESTAMP_TZ
+          - DATE
+          - TIME
+          - INTERVAL_COMPOUND
+          - INTERVAL_DAY
+          - INTERVAL_YEAR
+          - UUID
+          - DECIMAL
+          - STRUCT
+          - LIST
+          - MAP
+        - $ref: "#/definitions/type_bool"
+        - $ref: "#/definitions/type_i8"
+        - $ref: "#/definitions/type_i16"
+        - $ref: "#/definitions/type_i32"
+        - $ref: "#/definitions/type_i64"
+        - $ref: "#/definitions/type_fp32"
+        - $ref: "#/definitions/type_fp64"
+        - $ref: "#/definitions/type_binary"
+        - $ref: "#/definitions/type_fixed_binary"
+        - $ref: "#/definitions/type_string"
+        - $ref: "#/definitions/type_varchar"
+        - $ref: "#/definitions/type_fixed_char"
+        - $ref: "#/definitions/type_precision_time"
+        - $ref: "#/definitions/type_precision_timestamp"
+        - $ref: "#/definitions/type_precision_timestamp_tz"
+        - $ref: "#/definitions/type_date"
+        - $ref: "#/definitions/type_time"
+        - $ref: "#/definitions/type_interval_compound"
+        - $ref: "#/definitions/type_interval_day"
+        - $ref: "#/definitions/type_interval_year"
+        - $ref: "#/definitions/type_uuid"
+        - $ref: "#/definitions/type_decimal"
+        - $ref: "#/definitions/type_struct"
+        - $ref: "#/definitions/type_list"
+        - $ref: "#/definitions/type_map"
+        - $ref: "#/definitions/type_user_defined"
+
   supported_relations:
     type: array
     uniqueItems: true
@@ -95,6 +132,7 @@ properties:
         - $ref: "#/definitions/consistent_partition_window_relation"
         - $ref: "#/definitions/exchange_relation"
         - $ref: "#/definitions/expand_relation"
+
   supported_expressions:
     type: array
     uniqueItems: true
@@ -128,6 +166,7 @@ properties:
         - $ref: "#/definitions/subquery_expression"
         - $ref: "#/definitions/nested_expression"
         - $ref: "#/definitions/dynamic_parameter_expression"
+
   scalar_functions:
     type: array
     description: Regular functions that operate on scalar values.
@@ -145,7 +184,7 @@ properties:
       $ref: "#/definitions/dialect_function"
 
 definitions:
-  # Definition used for all function types.
+  # Definitions used for functions
   dialect_function:
     type: object
     additionalProperties: false
@@ -207,6 +246,260 @@ definitions:
             description: "Maximum number of arguments allowed"
             minimum: 1
         additionalProperties: false
+
+  # Definitions used for types
+  type_base:
+    type: object
+    description: Dialect properties shared by all types
+    properties:
+      system_name:
+        type: string
+        description: >
+          The name for this type in the system modelled by the dialect.
+      supported_as_column:
+        type: boolean
+        description: >
+          Whether this type can be used as a column in a table.  Types listed
+          here are always supported as literals.
+  type_bool:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: BOOL
+  type_i8:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: I8
+  type_i16:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: I16
+  type_i32:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: I32
+  type_i64:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: I64
+  type_fp32:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: FP32
+  type_fp64:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: FP64
+  type_binary:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: BINARY
+  type_fixed_binary:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: FIXED_BINARY
+  type_string:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: STRING
+  type_varchar:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: VARCHAR
+  type_fixed_char:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: FIXED_CHAR
+  type_precision_time:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: PRECISION_TIME
+  type_precision_timestamp:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: PRECISION_TIMESTAMP
+  type_precision_timestamp_tz:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: PRECISION_TIMESTAMP_TZ
+  type_date:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: DATE
+  type_time:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: TIME
+  type_interval_compound:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: INTERVAL_COMPOUND
+  type_interval_day:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: INTERVAL_DAY
+  type_interval_year:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: INTERVAL_YEAR
+  type_uuid:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: UUID
+  type_decimal:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: DECIMAL
+  type_struct:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: STRUCT
+  type_list:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: LIST
+  type_map:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type]
+        properties:
+          type:
+            const: MAP
+  type_user_defined:
+    type: object
+    allOf:
+      - $ref: "#/definitions/type_base"
+      - type: object
+        required: [type, source]
+        properties:
+          type:
+            const: USER_DEFINED
+          source:
+            type: string
+            description: "Dependency where this type is defined"
+
+  # Definitions used for relations
   join_types:
     type: array
     description: The list of possible join types used by join relations.
@@ -377,7 +670,7 @@ definitions:
           enum:
             - NAMED_TABLE
             - EXTENSION_TABLE
-    required: [ relation ]
+    required: [relation]
   ddl_relation:
     type: object
     additionalProperties: false
@@ -398,7 +691,7 @@ definitions:
     properties:
       relation:
         const: UPDATE
-    required: [ relation ]
+    required: [relation]
   hash_join_relation:
     type: object
     additionalProperties: false
@@ -464,6 +757,8 @@ definitions:
             - SWITCHING_FIELD
             - CONSTANT_FIELD
     required: [relation]
+
+  # Definitions used for expressions
   literal_expression:
     type: object
     additionalProperties: false
@@ -534,8 +829,8 @@ definitions:
         description: The permissible failure options for cast operations.
         items:
           enum:
-          - RETURN_NULL
-          - THROW_EXCEPTION
+            - RETURN_NULL
+            - THROW_EXCEPTION
     required: [expression]
   subquery_expression:
     type: object
