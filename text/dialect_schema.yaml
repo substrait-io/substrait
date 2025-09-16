@@ -502,6 +502,7 @@ definitions:
   # Definitions used for relations
   join_types:
     type: array
+    uniqueItems: true
     description: The list of possible join types used by join relations.
     items:
       enum:
@@ -525,6 +526,7 @@ definitions:
         const: READ
       read_types:
         type: array
+        uniqueItems: true
         description: The list of possible read types used by the read relation.
         items:
           enum:
@@ -586,6 +588,7 @@ definitions:
         const: SET
       operations:
         type: array
+        uniqueItems: true
         description: The list of valid set operations used by a set relation.
         items:
           enum:
@@ -606,6 +609,7 @@ definitions:
         const: EXTENSION_SINGLE
       message_types:
         type: array
+        uniqueItems: true
         description: >
           The list of supported message types.  Use the URI (e.g.
           type.googleapis.com/google.profile.Person) that is related to the
@@ -621,6 +625,7 @@ definitions:
         const: EXTENSION_MULTI
       message_types:
         type: array
+        uniqueItems: true
         description: >
           The list of supported message types.  Use the URI (e.g.
           type.googleapis.com/google.profile.Person) that is related to the
@@ -636,6 +641,7 @@ definitions:
         const: EXTENSION_LEAF
       message_types:
         type: array
+        uniqueItems: true
         description: >
           The list of supported message types.  Use the URI (e.g.
           type.googleapis.com/google.profile.Person) that is related to the
@@ -665,6 +671,7 @@ definitions:
         const: WRITE
       write_types:
         type: array
+        uniqueItems: true
         description: The list of valid write types a write relation can perform.
         items:
           enum:
@@ -679,6 +686,7 @@ definitions:
         const: DDL
       write_types:
         type: array
+        uniqueItems: true
         description: The list of valid types a ddl relation can operate on.
         items:
           enum:
@@ -734,6 +742,7 @@ definitions:
         const: EXCHANGE
       kinds:
         type: array
+        uniqueItems: true
         description: The list of valid exchanges an exchange relation can perform.
         items:
           enum:
@@ -751,6 +760,7 @@ definitions:
         const: EXPAND
       field_types:
         type: array
+        uniqueItems: true
         description: The valid methods that control how an expand relation behaves.
         items:
           enum:
