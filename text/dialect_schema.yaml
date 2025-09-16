@@ -528,9 +528,12 @@ definitions:
     properties:
       expression:
         const: CAST
-      failure_option:
-        type: string
-        enum:
+      failure_options:
+        type: array
+        uniqueItems: true
+        description: The permissible failure options for cast operations.
+        items:
+          enum:
           - RETURN_NULL
           - THROW_EXCEPTION
     required: [expression]
