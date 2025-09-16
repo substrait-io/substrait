@@ -1,0 +1,12 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+
+# basic: Basic examples without any special cases
+chr(65::i64) = 'A'::str
+chr(97::i64) = 'a'::str
+chr(48::i64) = '0'::str
+chr(8364::i64) = '€'::str
+chr(128512::i64) = '😀'::str
+
+# null_input: Examples with null as input
+chr(null::i64) = null::str
