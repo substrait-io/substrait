@@ -1,27 +1,14 @@
-name: test
+name: "dialect test file for functions"
+
 dependencies:
   arithmetic: extension:io.substrait:functions_arithmetic
   boolean: extension:io.substrait:functions_boolean
   comparison: extension:io.substrait:functions_comparison
   string: extension:io.substrait:functions_string
-supported_types:
-  i32:
-    system_name: INTEGER
-    supported_as_column: true
-  i64:
-    system_name: BIGINT
-    supported_as_column: true
-  fp32:
-    system_name: REAL
-    supported_as_column: true
-  fp64:
-    system_name: DOUBLE
-    supported_as_column: true
-  bool:
-    system_name: BOOLEAN
-    supported_as_column: true
+
 scalar_functions:
-- name: arithmetic.add
+- source: arithmetic
+  name: add
   system_name: +
   system_notation: INFIX
   required_options:
@@ -29,7 +16,8 @@ scalar_functions:
   supported_impls:
     - i32_i32
     - i64_i64
-- name: arithmetic.add
+- source: arithmetic
+  name: add
   system_name: +
   system_notation: INFIX
   required_options:
@@ -38,26 +26,20 @@ scalar_functions:
   supported_impls:
   - fp32_fp32
   - fp64_fp64
-- name: arithmetic.subtract
-  system_name: '-'
-  system_notation: INFIX
-  required_options:
-    overflow: ERROR
-    rounding: TIE_TO_EVEN
-  supported_impls:
-  - fp32_fp32
-  - fp64_fp64
-- name: boolean.and
+- source: boolean
+  name: and
   system_name: and
   system_notation: INFIX
   supported_impls:
   - bool
-- name: comparison.is_null
+- source: comparison
+  name: is_null
   system_name: IS NULL
   system_notation: POSTFIX
   supported_impls:
-  - any1
-- name: string.concat
+  - any
+- source: string
+  name: concat
   system_name: '||'
   required_options:
     null_handling: ACCEPT_NULLS
@@ -68,3 +50,25 @@ scalar_functions:
   variadic:
     min: 1
     max: 5
+
+aggregate_functions:
+- source: arithmetic
+  name: max
+  supported_impls:
+    - i32
+    - i64
+- source: arithmetic
+  name: min
+  supported_impls:
+    - i32
+    - i64
+
+window_functions:
+- source: arithmetic
+  name: ntile
+  supported_impls:
+    - i32
+- source: arithmetic
+  name: rank
+  supported_impls:
+    - ""
