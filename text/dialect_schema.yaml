@@ -15,8 +15,9 @@ properties:
   dependencies:
     type: object
     description: >
-      A map of function YAML files depended on by this dialect.
-      Each key is an alias used by functions with the value being a URN.
+      A map of extension files depended on by this dialect.
+      Keys are aliases for extensions, which are used within the dialect.
+      Values are URNs.
     additionalProperties:
       type: string
     minProperties: 1
@@ -188,14 +189,15 @@ definitions:
   dialect_function:
     type: object
     additionalProperties: false
-    required: [name, supported_impls]
+    required: [source, name, supported_impls]
     properties:
+      source:
+        type: string
+        description: Dependency (alias) in which the function is declared.
       name:
         type: string
         description: >
-          The canonical name of the function in Substrait.  This typically takes the
-          form of a dependency alias followed by a period and then the function name
-          from the YAML file.
+          The name of the function as declared in the extension it is defined in.
       system_name:
         type: string
         description: >
@@ -497,7 +499,7 @@ definitions:
             const: USER_DEFINED
           source:
             type: string
-            description: "Dependency where this type is defined"
+            description: "Dependency (alias) where this type is declared"
 
   # Definitions used for relations
   join_types:
