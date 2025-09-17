@@ -493,13 +493,17 @@ definitions:
     allOf:
       - $ref: "#/definitions/type_base"
       - type: object
-        required: [type, source]
+        required: [type, source, name]
         properties:
           type:
             const: USER_DEFINED
           source:
             type: string
             description: "Dependency (alias) where this type is declared"
+          name:
+            type: string
+            description: >
+              The name of the type as declared in the extension it is defined in.
 
   # Definitions used for relations
   join_types:
