@@ -168,17 +168,17 @@ properties:
         - $ref: "#/definitions/nested_expression"
         - $ref: "#/definitions/dynamic_parameter_expression"
 
-  scalar_functions:
+  supported_scalar_functions:
     type: array
     description: Regular functions that operate on scalar values.
     items:
       $ref: "#/definitions/dialect_function"
-  aggregate_functions:
+  supported_aggregate_functions:
     type: array
     description: Functions that aggregate multiple rows into a single result.
     items:
       $ref: "#/definitions/dialect_function"
-  window_functions:
+  supported_window_functions:
     type: array
     description: Functions that operate over a window of rows.
     items:

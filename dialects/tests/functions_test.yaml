@@ -6,7 +6,7 @@ dependencies:
   comparison: extension:io.substrait:functions_comparison
   string: extension:io.substrait:functions_string
 
-scalar_functions:
+supported_scalar_functions:
 - source: arithmetic
   name: add
   system_name: +
@@ -51,7 +51,7 @@ scalar_functions:
     min: 1
     max: 5
 
-aggregate_functions:
+supported_aggregate_functions:
 - source: arithmetic
   name: max
   supported_impls:
@@ -63,7 +63,7 @@ aggregate_functions:
     - i32
     - i64
 
-window_functions:
+supported_window_functions:
 - source: arithmetic
   name: ntile
   supported_impls:
