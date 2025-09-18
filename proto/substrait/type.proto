@@ -261,12 +261,11 @@ message TypeAlias {
 
   // A concrete type to be aliased.
   //
-  // * Can not be another type alias.
-  // * All type parameters must be specified. Type parameters can refer other type
-  //   aliases as long as there are no circular dependencies among type aliases.
-  // * Nullability of TypeAlias.type is ignored. When an aliased type is referenced,
-  //   its nullability is determined by the value of TypeAliasReference.nullability.
-  // * TypeAlias.type.type_variation_reference can be specified.
+  // * All type parameters must be specified.
+  // * Cannot directly be another alias.
+  // * Type parameters can reference other aliased types as long as no circular dependcies are introduced.
+  // * Nullability of aliased type is **ignored**. Nullability must be specified when the aliased type is referenced.
+  // * Type variation may be specified in the aliased type.
   Type type = 2;
 }
 
