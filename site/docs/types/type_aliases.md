@@ -2,17 +2,17 @@
 
 In a Substrait plan, types are spelled out whenever and wherever they are needed. For parameterized types, all type parameters are spelled out per type reference. For a parameterized type with a large number of parameters, complex nested type parameters, or string parameters, this can significantly bloat the size of the plan proportional to the number of such type references in the plan as such type parameters are repeatedly spelled out.
 
-To alleviate the problem, Substrait offers type alias mechanism.
+To alleviate the problem, Substrait offers a type alias mechanism.
 
-Type alias allows a plan can declare a type once and reference it multiple times within a plan like extensions; you can reference an aliased type where a type is expected.
+Type aliases allow a plan to declare a type once and reference it multiple times within a plan. A type alias can be used wherever a type is expected.
 
 ## Type Alias
 
-A type alias is simply a mapping from anchor to a concrete Substrait type. A valid type alias is described below.
+A type alias is a mapping from an anchor to a concrete Substrait type. A valid type alias is described below.
 
-* All type parameters must be spelled out.
-* Can not alias another alias.
-* Type parameters can reference other aliased types as long as there are no circular dependencies among involved type aliases.
+* All type parameters must be specified.
+* Cannot directly be another alias.
+* Type parameters can reference other aliased types as long as no circular dependcies are introduced.
 * Nullability of aliased type is **ignored**. Nullability must be specified when the aliased type is referenced.
 * Type variation may be specified in the aliased type.
 
