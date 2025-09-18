@@ -165,7 +165,7 @@ parameters:
 
 This specifies a vector that can be either 2- or 3-dimensional. Note however that it's not currently possible to put constraints on data type, string, or (technically) boolean parameters.
 
-Similar to function arguments, the last parameter may be specified to be variadic, allowing it to be specified one or more times instead of only once. For example:
+Similar to function arguments, the last parameter may be specified to be variadic, allowing it to be specified zero or more times instead of only once. For example:
 
 ```yaml
 name: union
@@ -175,15 +175,4 @@ parameters:
 variadic: true
 ```
 
-This defines a type that can be parameterized with one or more other data types, for example `union<i32, i64>` but also `union<bool>`. Zero or more is also possible, by making the last argument optional:
-
-```yaml
-name: tuple
-parameters:
-  - name: T
-    type: dataType
-    optional: true
-variadic: true
-```
-
-This would also allow for `tuple<>`, to define a zero-tuple.
+This defines a type that can be parameterized with zero or more other data types, for example `union<i32, i64>` but also `union<>`.
