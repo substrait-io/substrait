@@ -233,6 +233,7 @@ definitions:
         additionalProperties: false
   system_function_metadata:
     type: object
+    additionalProperties: false
     description: >
       System specific metadata for use in mapping Substrait to and from
       Common metadata fields are defined for use across dialects.
@@ -259,6 +260,10 @@ definitions:
           * POSTFIX:  "a b +",
           * PREFIX:   "+ a b"
           * FUNCTION: "func(a, b)"
+      extra:
+        type: object
+        description: >
+          Additional system specific metadata not shared across dialects
 
   # Definitions used for types
   type_base:
