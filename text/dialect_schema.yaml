@@ -260,10 +260,6 @@ definitions:
           * POSTFIX:  "a b +",
           * PREFIX:   "+ a b"
           * FUNCTION: "func(a, b)"
-      extra:
-        type: object
-        description: >
-          Additional system specific metadata not shared across dialects
 
   # Definitions used for types
   type_base:
@@ -291,10 +287,6 @@ definitions:
         description: >
           Whether this type can be used as a column in a table.  Types listed
           here are always supported as literals.
-      extra:
-        type: object
-        description: >
-          Additional system specific metadata not shared across dialects
   type_bool:
     type: object
     additionalProperties: false

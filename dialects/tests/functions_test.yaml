@@ -12,9 +12,6 @@ supported_scalar_functions:
   system_metadata:
     name: +
     notation: INFIX
-    # System specific metadata
-    extra:
-      SqlStdOperatorTable: CHECKED_PLUS
   required_options:
     overflow: ERROR
   supported_impls:
