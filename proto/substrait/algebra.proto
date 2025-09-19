@@ -1030,6 +1030,7 @@ message Expression {
       Type.List empty_list = 31;
       Type.Map empty_map = 32;
       UserDefined user_defined = 33;
+      UserDefinedWithTypeAlias user_defined_with_type_alias = 38;
     }
 
     // Whether the literal_type above should be treated as a nullable type.
@@ -1132,6 +1133,19 @@ message Expression {
         google.protobuf.Any value = 2;
         // the value of the literal, serialized using the structure definition in its declaration
         Literal.Struct struct = 4;
+      }
+    }
+
+    message UserDefinedWithTypeAlias {
+      // points to a type_alias_anchor defined in this plan.
+      uint32 type_alias_reference = 1;
+
+      // a user-defined literal can be encoded in one of two ways
+      oneof val {
+        // the value of the literal, serialized using some type-specific protobuf message
+        google.protobuf.Any value = 2;
+        // the value of the literal, serialized using the structure definition in its declaration
+        Literal.Struct struct = 3;
       }
     }
   }
