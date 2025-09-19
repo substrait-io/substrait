@@ -276,6 +276,7 @@ definitions:
         $ref: "#/definitions/system_type_metadata"
   system_type_metadata:
     type: object
+    additionalProperties: false
     description: >
       System specific metadata for use in mapping Substrait to and from the system representation.
       Common metadata fields are defined for use across dialects.
@@ -290,6 +291,10 @@ definitions:
         description: >
           Whether this type can be used as a column in a table.  Types listed
           here are always supported as literals.
+      extra:
+        type: object
+        description: >
+          Additional system specific metadata not shared across dialects
   type_bool:
     type: object
     additionalProperties: false
