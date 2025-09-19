@@ -198,27 +198,10 @@ definitions:
         type: string
         description: >
           The name of the function as declared in the extension it is defined in.
-      system_name:
-        type: string
-        description: >
-          The name for this function in the system modelled by the dialect.
-          For example, "+" might be the system name for "add".
-      system_notation:
-        type: string
-        enum:
-          - INFIX
-          - POSTFIX
-          - PREFIX
-          - FUNCTION
-        default: FUNCTION
-        description: >
-          The notation used to invoke this function in the system modelled by
-          the dialect. For example, a function with system_name "+" could be
-          invoked as follow:
-          * INFIX:    "a + b"
-          * POSTFIX:  "a b +",
-          * PREFIX:   "+ a b"
-          * FUNCTION: "func(a, b)"
+      system_metadata:
+        type: object
+        description: system specific metadata for the function
+        $ref: "#/definitions/system_function_metadata"
       required_options:
         type: object
         description: >
@@ -248,13 +231,52 @@ definitions:
             description: "Maximum number of arguments allowed"
             minimum: 1
         additionalProperties: false
+  system_function_metadata:
+    type: object
+    description: >
+      System specific metadata for use in mapping Substrait to and from
+      Common metadata fields are defined for use across dialects.
+      Individual dialects may include additional metadata to serve their purposes.
+    properties:
+      name:
+        type: string
+        description: >
+          The name for this function in the system modelled by the dialect.
+          For example, "+" might be the system name for "add".
+      notation:
+        type: string
+        enum:
+          - INFIX
+          - POSTFIX
+          - PREFIX
+          - FUNCTION
+        default: FUNCTION
+        description: >
+          The notation used to invoke this function in the system modelled by
+          the dialect. For example, a function with system_name "+" could be
+          invoked as follow:
+          * INFIX:    "a + b"
+          * POSTFIX:  "a b +",
+          * PREFIX:   "+ a b"
+          * FUNCTION: "func(a, b)"
 
   # Definitions used for types
   type_base:
     type: object
     description: Dialect properties shared by all types
     properties:
-      system_name:
+      system_metadata:
+        type: object
+        description: system specific metadata for the type
+        $ref: "#/definitions/system_type_metadata"
+  system_type_metadata:
+    type: object
+    description: >
+      System specific metadata for use in mapping Substrait to and from the system representation.
+      Common metadata fields are defined for use across dialects.
+      Individual dialects may include additional metadata to serve their purposes.
+    properties:
+      name:
         type: string
         description: >
           The name for this type in the system modelled by the dialect.
@@ -265,245 +287,245 @@ definitions:
           here are always supported as literals.
   type_bool:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: BOOL
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: BOOL
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_i8:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: I8
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: I8
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_i16:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: I16
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: I16
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_i32:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: I32
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: I32
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_i64:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: I64
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: I64
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_fp32:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: FP32
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: FP32
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_fp64:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: FP64
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: FP64
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_binary:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: BINARY
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: BINARY
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_fixed_binary:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: FIXED_BINARY
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: FIXED_BINARY
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_string:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: STRING
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: STRING
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_varchar:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: VARCHAR
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: VARCHAR
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_fixed_char:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: FIXED_CHAR
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: FIXED_CHAR
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_precision_time:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: PRECISION_TIME
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: PRECISION_TIME
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_precision_timestamp:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: PRECISION_TIMESTAMP
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: PRECISION_TIMESTAMP
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_precision_timestamp_tz:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: PRECISION_TIMESTAMP_TZ
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: PRECISION_TIMESTAMP_TZ
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_date:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: DATE
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: DATE
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_time:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: TIME
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: TIME
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_interval_compound:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: INTERVAL_COMPOUND
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: INTERVAL_COMPOUND
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_interval_day:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: INTERVAL_DAY
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: INTERVAL_DAY
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_interval_year:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: INTERVAL_YEAR
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: INTERVAL_YEAR
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_uuid:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: UUID
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: UUID
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_decimal:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: DECIMAL
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: DECIMAL
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_struct:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: STRUCT
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: STRUCT
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_list:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: LIST
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: LIST
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_map:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type]
-        properties:
-          type:
-            const: MAP
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: MAP
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_user_defined:
     type: object
-    allOf:
-      - $ref: "#/definitions/type_base"
-      - type: object
-        required: [type, source, name]
-        properties:
-          type:
-            const: USER_DEFINED
-          source:
-            type: string
-            description: "Dependency (alias) where this type is declared"
-          name:
-            type: string
-            description: >
-              The name of the type as declared in the extension it is defined in.
+    additionalProperties: false
+    required: [type, source, name]
+    properties:
+      type:
+        const: USER_DEFINED
+      source:
+        type: string
+        description: "Dependency (alias) where this type is declared"
+      name:
+        type: string
+        description: >
+          The name of the type as declared in the extension it is defined in.
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
 
   # Definitions used for relations
   join_types:

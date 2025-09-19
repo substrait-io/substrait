@@ -9,8 +9,11 @@ dependencies:
 supported_scalar_functions:
 - source: arithmetic
   name: add
-  system_name: +
-  system_notation: INFIX
+  system_metadata:
+    name: +
+    notation: INFIX
+    # System specific metadata
+    extra_magic: fireball
   required_options:
     overflow: ERROR
   supported_impls:
@@ -18,8 +21,9 @@ supported_scalar_functions:
     - i64_i64
 - source: arithmetic
   name: add
-  system_name: +
-  system_notation: INFIX
+  system_metadata:
+    name: +
+    notation: INFIX
   required_options:
     overflow: ERROR
     rounding: TIE_TO_EVEN
@@ -28,22 +32,25 @@ supported_scalar_functions:
   - fp64_fp64
 - source: boolean
   name: and
-  system_name: and
-  system_notation: INFIX
+  system_metadata:
+    name: and
+    notation: INFIX
   supported_impls:
   - bool
 - source: comparison
   name: is_null
-  system_name: IS NULL
-  system_notation: POSTFIX
+  system_metadata:
+    name: IS NULL
+    notation: POSTFIX
   supported_impls:
   - any
 - source: string
   name: concat
-  system_name: '||'
+  system_metadata:
+    name: '||'
   required_options:
     null_handling: ACCEPT_NULLS
-  system_notation: INFIX
+    notation: INFIX
   supported_impls:
   - vchar
   - str
