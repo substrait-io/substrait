@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.76.0](https://github.com/substrait-io/substrait/compare/v0.75.0...v0.76.0) (2025-09-21)
+
+### Features
+
+* codify Substrait dialects ([#816](https://github.com/substrait-io/substrait/issues/816)) ([b8090b2](https://github.com/substrait-io/substrait/commit/b8090b247eb8f9f05dcf46048f5e8145ac719318))
+
 ## [0.75.0](https://github.com/substrait-io/substrait/compare/v0.74.1...v0.75.0) (2025-09-14)
 
 ### Features
