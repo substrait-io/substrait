@@ -19,6 +19,10 @@ message PlanRel {
     // The root of a relation tree
     RelRoot root = 2;
   }
+
+  // Provides an anchor for ReferenceRel to point to.
+  // A default value (0) should be considered unset.
+  uint32 reference_anchor = 3;
 }
 
 // Describe a set of operations to complete.
