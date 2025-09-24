@@ -18,12 +18,12 @@ Protobuf supports both [simple](../extensions/index.md#simple-extensions) and [a
 
 ### Simple Extensions
 
-For simple extensions, a plan references the extension URNs associated with the simple extensions to provide additional plan capabilities. These URNs will identify additional relevant information for the plan. 
+For simple extensions, a plan references the extension URNs associated with the simple extensions to provide additional plan capabilities. These URNs will identify additional relevant information for the plan.
 
 Simple extensions within a plan are split into three components: an extension URN, an extension declaration and a number of references.
 
 * **Extension URN**: A unique identifier for the extension following the format `extension:<OWNER>:<ID>` that identifies a YAML document specifying one or more specific extensions. Declares an anchor that can be used in extension declarations.
-* **Extension Declaration**: A specific extension within a single YAML document. The declaration combines a reference to the associated extension URN along with a unique key identifying the specific item within that YAML document (see [Function Signature Compound Names](../extensions/index.md#function-signature-compound-names)). It also defines a declaration anchor. The anchor is a plan-specific unique value that the producer creates as a key to be referenced elsewhere.
+* **Extension Declaration**: A specific extension within a single YAML document. The declaration combines a reference to the associated extension URN along with a unique key identifying the specific item within that YAML document (see [Function Signature](../extensions/index.md#function-signature)). It also defines a declaration anchor. The anchor is a plan-specific unique value that the producer creates as a key to be referenced elsewhere.
 * **Extension Reference**: A specific instance or use of an extension declaration within the plan body.
 
 Extension URNs and declarations are encapsulated in the top level of the plan. Extension declarations are then referenced throughout the body of the plan itself. The exact structure of these references will depend on the extension point being used, but they will always include the extension's anchor (or key). For example, all scalar function expressions contain references to an extension declaration which defines the semantics of the function.
@@ -54,7 +54,7 @@ Once the YAML file extension URN anchor is defined, the anchor will be reference
 
 ### Advanced Extensions
 
-Substrait protobuf exposes a special object in multiple places in the representation to expose extension capabilities. Extensions are done via this object. Extensions are separated into main concepts: 
+Substrait protobuf exposes a special object in multiple places in the representation to expose extension capabilities. Extensions are done via this object. Extensions are separated into main concepts:
 
 | Advanced Extension Type | Description                                                  |
 | ----------------------- | ------------------------------------------------------------ |
@@ -85,11 +85,6 @@ There are several binary IDLs that exist today. The key requirements for Substra
 * High-quality well-supported and idiomatic bindings/compilers for key languages (Python, Javascript, C++, Go, Rust, Java)
 * Compact serial representation
 
-The primary formats that exist that roughly qualify under these requirements include: Protobuf, Thrift, Flatbuf, Avro, Cap'N'Proto. Protobuf was chosen due to its clean typing system and large number of high quality language bindings. 
+The primary formats that exist that roughly qualify under these requirements include: Protobuf, Thrift, Flatbuf, Avro, Cap'N'Proto. Protobuf was chosen due to its clean typing system and large number of high quality language bindings.
 
 The binary serialization IDLs can be found on [GitHub](https://github.com/substrait-io/substrait/tree/main/proto/substrait) and are sampled throughout the documentation.
-
-
-
-
-
