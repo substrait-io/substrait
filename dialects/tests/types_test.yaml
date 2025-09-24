@@ -1,0 +1,20 @@
+name: "dialect test file for types"
+
+dependencies:
+  geo: extension:io.substrait:functions_geometry
+
+supported_types:
+  - I8
+  - I16
+  - type: I32
+    system_metadata:
+      name: INTEGER
+      supported_as_column: true
+  - type: I64
+    system_metadata:
+      name: BIGINT
+      supported_as_column: true
+  - type: USER_DEFINED
+    source: geo
+    name: geometry
+
