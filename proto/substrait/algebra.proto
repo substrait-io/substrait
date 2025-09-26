@@ -1030,7 +1030,7 @@ message Expression {
       Type.List empty_list = 31;
       Type.Map empty_map = 32;
       UserDefined user_defined = 33;
-      UserDefinedWithTypeAlias user_defined_with_type_alias = 38;
+      TypeAliasDefined type_alias_defined = 38;
     }
 
     // Whether the literal_type above should be treated as a nullable type.
@@ -1136,7 +1136,7 @@ message Expression {
       }
     }
 
-    message UserDefinedWithTypeAlias {
+    message TypeAliasDefined {
       // points to a type_alias_anchor defined in this plan.
       uint32 type_alias_reference = 1;
 
