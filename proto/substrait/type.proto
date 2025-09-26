@@ -263,7 +263,7 @@ message TypeAlias {
   //
   // * All type parameters must be specified.
   // * Cannot directly be another alias.
-  // * Type parameters can reference other aliased types as long as no circular dependcies are introduced.
+  // * Type parameters can reference other aliased types as long as no circular dependencies are introduced.
   // * Nullability of aliased type is **ignored**. Nullability must be specified when the aliased type is referenced.
   // * Type variation may be specified in the aliased type.
   Type type = 2;
