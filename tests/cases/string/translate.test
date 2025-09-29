@@ -1,0 +1,18 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+
+# basic: Basic examples without any special cases
+translate('banana'::str, 'an'::str, 'oy'::str) = 'boyoyo'::str
+translate('Hello World!'::str, ' !'::str, 'x'::str) = 'HelloxWorld'::str
+
+# removal: Examples where replacement string shorter than source, resulting in removal
+translate('hello'::str, 'aeiou'::str, ''::str) = 'hll'::str
+translate('aabbcc'::str, 'abc'::str, 'a'::str) = 'aaaaaa'::str
+
+# null_input: Examples with null as input
+translate(null::str, 'a'::str, 'b'::str) = null::str
+translate('hello'::str, null::str, 'b'::str) = null::str
+translate('hello'::str, 'l'::str, null::str) = null::str
+
+# unicode: Examples with unicode characters
+translate('àéà'::str, 'à'::str, 'a'::str) = 'aéa'::str
