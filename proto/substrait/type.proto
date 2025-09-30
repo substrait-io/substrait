@@ -203,6 +203,7 @@ message Type {
 
   message Struct {
     repeated Type types = 1;
+    repeated string names = 4; // Optionally names for the fields in this struct. If provided, must match the length of "types".
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
   }
