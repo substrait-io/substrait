@@ -92,7 +92,7 @@ message SimpleExtensionDeclaration {
     // specific function
     uint32 function_anchor = 2;
 
-    // A function signature compound name
+    // A function signature
     string name = 3;
   }
 }
