@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.77.0](https://github.com/substrait-io/substrait/compare/v0.76.0...v0.77.0) (2025-10-05)
+
+### Features
+
+* per plan type aliases ([#857](https://github.com/substrait-io/substrait/issues/857)) ([dfd04c1](https://github.com/substrait-io/substrait/commit/dfd04c15caa12845f77db50688fdc16f59fdc9d0))
+
 ## [0.76.0](https://github.com/substrait-io/substrait/compare/v0.75.0...v0.76.0) (2025-09-21)
 
 ### Features
