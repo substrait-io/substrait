@@ -1,0 +1,31 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+
+# basic: Basic examples, no special cases
+split_part('abc,def,ghi'::str, ','::str, 1::i32) = 'abc'::str
+split_part('abc,def,ghi'::str, ','::str, 2::i32) = 'def'::str
+split_part('abc,def,ghi'::str, ','::str, 3::i32) = 'ghi'::str
+split_part('abc,def,ghi'::str, ','::str, 4::i32) = ''::str
+split_part('a|b|c|d'::str, '|'::str, 1::i32) = 'a'::str
+split_part('a|b|c|d'::str, '|'::str, 2::i32) = 'b'::str
+split_part('a|b|c|d'::str, '|'::str, 3::i32) = 'c'::str
+split_part('a|b|c|d'::str, '|'::str, 4::i32) = 'd'::str
+split_part('a|b|c|d'::str, '|'::str, 5::i32) = ''::str
+split_part('hello world test'::str, ' '::str, 1::i32) = 'hello'::str
+split_part('hello world test'::str, ' '::str, 2::i32) = 'world'::str
+split_part('hello world test'::str, ' '::str, 3::i32) = 'test'::str
+
+# basic_delimiters: Basic examples without any special cases, multi-delimiters
+split_part('abc~@~def~@~ghi'::str, '~@~'::str, 1::i32) = 'abc'::str
+split_part('abc~@~def~@~ghi'::str, '~@~'::str, 2::i32) = 'def'::str
+split_part('abc~@~def~@~ghi'::str, '~@~'::str, 3::i32) = 'ghi'::str
+split_part('abc~@~def~@~ghi'::str, '~@~'::str, 4::i32) = ''::str
+
+# missing_delimiter: Examples where delimiter not present
+split_part('abc'::str, ','::str, 1::i32) = 'abc'::str
+split_part('abc'::str, ','::str, 2::i32) = ''::str
+
+# null_input: Examples with null as input
+split_part(null::str, ','::str, 1::i32) = null::str
+split_part('abc,def'::str, null::str, 1::i32) = null::str
+split_part('abc,def'::str, ','::str, null::i32) = null::str
