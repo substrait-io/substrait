@@ -64,6 +64,10 @@ properties:
     type: array
     items:
       $ref: "#/$defs/windowFunction"
+  table_functions:
+    type: array
+    items:
+      $ref: "#/$defs/tableFunction"
 
 $defs:
   type:
@@ -307,3 +311,33 @@ $defs:
             window_type:
               type: string
               enum: [STREAMING, PARTITION]
+
+  tableFunction:
+    type: object
+    additionalProperties: false
+    required: [name, impls]
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      impls:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            args:
+              $ref: "#/$defs/arguments"
+            sessionDependent:
+              $ref: "#/$defs/sessionDependent"
+            deterministic:
+              $ref: "#/$defs/deterministic"
+            schema:
+              # The output schema.
+              # Omit this field only if the schema depends on runtime data content
+              # (not determinable from function signature).
+              $ref: "#/$defs/type"
+            implementation:
+              $ref: "#/$defs/implementation"

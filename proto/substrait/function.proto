@@ -106,6 +106,19 @@ message FunctionSignature {
     }
   }
 
+  message Table {
+    repeated Argument arguments = 2;
+    repeated string name = 3;
+    Description description = 4;
+
+    bool deterministic = 7;
+    bool session_dependent = 8;
+
+    NamedStruct schema = 9;
+
+    repeated Implementation implementations = 10;
+  }
+
   message Description {
     string language = 1;
     string body = 2;

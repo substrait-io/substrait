@@ -1,0 +1,102 @@
+%YAML 1.2
+---
+# Table functions: Functions that produce relations (zero or more records).
+# Currently, only 0-input functions are supported - these take constant arguments
+# and generate data as leaf operators.
+urn: extension:io.substrait:functions_table
+table_functions:
+  - name: "generate_series"
+    description: >-
+      Generates a series of integer values from start to stop, incrementing by step.
+
+      Takes constant arguments and produces zero or more records containing a single
+      integer value. The series includes both the start and stop values if they fall
+      on a step boundary. If step is positive, stops when the value exceeds stop.
+      If step is negative, stops when the value is less than stop. Returns empty if
+      step is zero or if the step direction doesn't allow reaching stop from start.
+    impls:
+      - args:
+          - name: start
+            value: i64
+            description: The starting value of the series
+          - name: stop
+            value: i64
+            description: The ending value of the series (inclusive)
+          - name: step
+            value: i64
+            description: The increment between values
+            constant: true
+        deterministic: true
+        sessionDependent: false
+        schema:
+          names:
+            - value
+          struct:
+            types:
+              - i64
+      - args:
+          - name: start
+            value: i32
+            description: The starting value of the series
+          - name: stop
+            value: i32
+            description: The ending value of the series (inclusive)
+          - name: step
+            value: i32
+            description: The increment between values
+            constant: true
+        deterministic: true
+        sessionDependent: false
+        schema:
+          names:
+            - value
+          struct:
+            types:
+              - i32
+      - args:
+          - name: start
+            value: i64
+            description: The starting value of the series
+          - name: stop
+            value: i64
+            description: The ending value of the series (inclusive)
+        deterministic: true
+        sessionDependent: false
+        schema:
+          names:
+            - value
+          struct:
+            types:
+              - i64
+      - args:
+          - name: start
+            value: i32
+            description: The starting value of the series
+          - name: stop
+            value: i32
+            description: The ending value of the series (inclusive)
+        deterministic: true
+        sessionDependent: false
+        schema:
+          names:
+            - value
+          struct:
+            types:
+              - i32
+  - name: "unnest"
+    description: Expands a list literal into a set of rows, one row per element.
+    impls:
+      - args:
+          - name: input
+            value: "list<T>"
+            description: The list to unnest
+        deterministic: true
+        sessionDependent: false
+        # Schema references type parameter T from list<T>
+        # The field type is derived from the list element type
+        schema:
+          names:
+            - element
+          struct:
+            types:
+              - T

@@ -552,6 +552,51 @@ message ExpandRel {
   }
 }
 
+// Invokes a table-valued function that produces a relation (zero or more records).
+//
+//
+// Table functions produce a table with either:
+//   - A schema that can be derived based on argument types (type-parameterized functions)
+//   - A schema that depends on runtime data (use derived: false)
+//
+// Future extensions may add an optional input field to support transformation
+// table functions that operate on input relations.
+message TableFunctionRel {
+  RelCommon common = 1;
+
+  // Points to a function_anchor defined in this plan, which must refer
+  // to a table function in the associated YAML file. Avoid using
+  // anchor/reference zero.
+  uint32 function_reference = 2;
+
+  // The arguments to be bound to the function. This must have exactly the
+  // number of arguments specified in the function definition from the YAML file,
+  // and the argument types must also match exactly:
+  //
+  //  - Value arguments must be bound using FunctionArgument.value.
+  //    Currently (0-input functions only), expressions must be constants
+  //    (literals or expressions evaluable without input data).
+  //  - Type arguments must be bound using FunctionArgument.type.
+  //  - Enum arguments must be bound using FunctionArgument.enum with a
+  //    string that case-insensitively matches one of the allowed options.
+  repeated FunctionArgument arguments = 3;
+
+  // The derived fields indicates whether or not the YAML file produced the schema:
+  // - If true, the table_schema was produced purely from the type expressions in the
+  //   YAML file + the types of the provided arguments
+  // - If false, the table_schema was produced by the plan producer
+  //
+  // This value is required to be true if and only if a schema is provided in the YAML
+  // definition of this function.
+  bool derived = 4;
+
+  // The schema of the output relation. This schema is required to match the implied schema
+  // by the YAML definition, if a schema is present in the definition.
+  NamedStruct table_schema = 5;
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
 // A relation with output field names.
 //
 // This is for use at the root of a `Rel` tree.
@@ -581,6 +626,7 @@ message Rel {
     WriteRel write = 19;
     DdlRel ddl = 20;
     UpdateRel update = 22;
+    TableFunctionRel table_function = 23;
     // Physical relations
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
