@@ -4,7 +4,7 @@ In a Substrait plan, types are spelled out whenever and wherever they are needed
 
 To alleviate the problem, Substrait offers a type alias mechanism.
 
-Type aliases allow a plan to declare a type once and reference it multiple times within a plan. A type alias can be used wherever a type is expected.
+Type aliases allow a plan to declare a type once and reference it multiple times within a plan. A type alias can be used wherever a type is expected. Type aliases are scoped to a single plan and are defined in the `Plan.type_aliases` field.
 
 ## Type Alias
 
@@ -33,3 +33,71 @@ type alias 6 --> STRUCT<type alias ref (6, REQUIRED) // NOT OK to reference itse
 type alias 7 --> STRUCT<i8, type alias ref (8, REQUIRED)>
 type alias 8 --> STRUCT<type alias ref (7, REQUIRED)> // NOT OK because type alias 7 and 8 have a circular dependency.
 ```
+
+## Using Type Aliases in Plans
+
+Type aliases are defined at the plan level using the `type_aliases` field in the `Plan` message. Each type alias has:
+
+* **Anchor**: A surrogate key (uint32) used to reference the alias within the plan
+* **Type**: The concrete Substrait type being aliased
+
+### Example Plan with Type Aliases
+
+```protobuf
+Plan {
+  type_aliases: [
+    TypeAlias {
+      type_alias_anchor: 1
+      type: VarChar { length: 100, nullability: REQUIRED }
+    },
+    TypeAlias {
+      type_alias_anchor: 2
+      type: Struct {
+        types: [
+          Type { i32: { nullability: REQUIRED } },
+          Type { alias: { type_alias_reference: 1, nullability: NULLABLE } }
+        ]
+        nullability: REQUIRED
+      }
+    }
+  ]
+  relations: [
+    // Relations can now reference type aliases using TypeAliasReference
+  ]
+}
+```
+
+In this example:
+- Type alias 1 defines `VARCHAR<100>` that can be reused throughout the plan
+- Type alias 2 defines a struct that itself references type alias 1
+- Both aliases can be referenced using `TypeAliasReference` wherever a type is expected
+
+### Referencing Type Aliases
+
+To reference a type alias, use a `TypeAliasReference` type:
+
+```protobuf
+Type {
+  alias: TypeAliasReference {
+    type_alias_reference: 1  // References the alias with anchor 1
+    nullability: NULLABLE     // Nullability must be specified
+  }
+}
+```
+
+The nullability in the `TypeAliasReference` determines the nullability of the referenced type at the point of use, overriding any nullability specified in the type alias definition itself.
+
+## Benefits
+
+Type aliases provide several benefits:
+
+1. **Reduced Plan Size**: Complex types are defined once and referenced multiple times
+2. **Improved Readability**: Named types make plans easier to understand
+3. **Consistency**: Ensures the same type definition is used throughout the plan
+4. **Maintainability**: Changes to a type only need to be made in one place
+
+Type aliases are particularly useful for:
+- User-defined types with many parameters
+- Deeply nested struct types
+- Types with string parameters (e.g., long VARCHAR lengths)
+- Frequently reused complex types

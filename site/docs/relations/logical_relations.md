@@ -457,6 +457,17 @@ The write operator is an operator that consumes one input and writes it to stora
 | Create Mode    | This determines what should happen if the table already exists (ERROR/REPLACE/IGNORE)                                                                                                                                                                                                                                                                                                                                                                                                | Required only for CTAS                           |
 | Output Mode    | For views that modify a DB it is important to control which records to "return". Common default is NO_OUTPUT where we return nothing. Alternatively, we can return MODIFIED_RECORDS, that can be further manipulated by layering more rels ontop of this WriteRel (e.g., to "count how many records were updated"). This also allows to return the after-image of the change. To return before-image (or both) one can use the reference mechanisms and have multiple return values. | Required for VIEW CREATE/CREATE_OR_REPLACE/ALTER |
 
+### CreateMode Values
+
+When using CTAS (CREATE TABLE AS), the CreateMode determines what happens if the table already exists:
+
+| Mode                      | Value | Description                                                                  |
+|---------------------------|-------|------------------------------------------------------------------------------|
+| CREATE_MODE_UNSPECIFIED   | 0     | Behavior is unspecified and should not be used                               |
+| CREATE_MODE_APPEND_IF_EXISTS | 1  | If the table exists, append the new data to it                               |
+| CREATE_MODE_REPLACE_IF_EXISTS | 2 | If the table exists, replace it entirely (equivalent to DROP + CREATE)      |
+| CREATE_MODE_IGNORE_IF_EXISTS | 3  | If the table exists, do nothing (equivalent to "IF NOT EXISTS")              |
+| CREATE_MODE_ERROR_IF_EXISTS | 4   | If the table exists, throw an error (default behavior)                       |
 
 ### Write Definition Types
 
