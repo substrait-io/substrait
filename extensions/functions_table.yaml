@@ -28,7 +28,7 @@ table_functions:
             constant: true
         deterministic: true
         sessionDependent: false
-        schema:
+        return:
           names:
             - value
           struct:
@@ -47,7 +47,7 @@ table_functions:
             constant: true
         deterministic: true
         sessionDependent: false
-        schema:
+        return:
           names:
             - value
           struct:
@@ -62,7 +62,7 @@ table_functions:
             description: The ending value of the series (inclusive)
         deterministic: true
         sessionDependent: false
-        schema:
+        return:
           names:
             - value
           struct:
@@ -77,7 +77,7 @@ table_functions:
             description: The ending value of the series (inclusive)
         deterministic: true
         sessionDependent: false
-        schema:
+        return:
           names:
             - value
           struct:
@@ -94,7 +94,7 @@ table_functions:
         sessionDependent: false
         # Schema references type parameter T from list<T>
         # The field type is derived from the list element type
-        schema:
+        return:
           names:
             - element
           struct:

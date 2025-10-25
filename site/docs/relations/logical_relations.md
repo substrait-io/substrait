@@ -127,7 +127,7 @@ Like scalar function return types, table function schemas can be concrete types 
 | ------------------ | ------------------------------------------------------------ | -------- |
 | Function Reference | Points to a function_anchor defined in the plan, referencing a table function in the extension YAML files | Required |
 | Arguments          | Constant expressions to pass as arguments to the function. Must match the function signature exactly. Must be literals or expressions that can be evaluated without input data. | Required |
-| Derived            | Boolean flag indicating schema source:<br>• `true` - Schema determinable from function signature (concrete or type-parameterized). **Must be true if YAML defines a schema.**<br>• `false` - Schema depends on runtime data content. **Only allowed if YAML omits schema.** | Required |
+| Derived            | Boolean flag indicating schema source:<br>• `true` - Schema determinable from function signature (concrete or type-parameterized). **Must be true if YAML defines a `return` field.**<br>• `false` - Schema depends on runtime data content. **Only allowed if YAML omits `return` field.** | Required |
 | Table Schema       | The output schema (NamedStruct). Always present. **Must match YAML definition (with type parameters resolved) when derived is true.** | Required |
 
 ### Use Cases

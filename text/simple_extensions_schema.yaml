@@ -334,8 +334,8 @@ $defs:
               $ref: "#/$defs/sessionDependent"
             deterministic:
               $ref: "#/$defs/deterministic"
-            schema:
-              # The output schema.
+            return:
+              # The output schema (NamedStruct).
               # Omit this field only if the schema depends on runtime data content
               # (not determinable from function signature).
               $ref: "#/$defs/type"

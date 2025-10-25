@@ -30,7 +30,7 @@ Table functions are defined in YAML extension files, similar to scalar, aggregat
 Like scalar functions' return types, table function schemas follow a clear pattern:
 
 !!! note "Required Constraint"
-    **If a table function's YAML definition includes an output schema, the `derived` field MUST be set to `true` in the plan, and the `table_schema` field MUST match the YAML definition (with any type parameters resolved based on the bound argument types).**
+    **If a table function's YAML definition includes a `return` field, the `derived` field MUST be set to `true` in the plan, and the `table_schema` field MUST match the YAML definition (with any type parameters resolved based on the bound argument types).**
 
 **Derived schemas (`derived: true`)** - The schema can be **deterministically derived from the function signature**, including:
 - **Static schemas**: Fixed output regardless of argument values (e.g., `generate_series` always produces `{value: i64}`)
@@ -113,12 +113,12 @@ Table functions are represented as their own relation type, `TableFunctionRel`.
 - **function_reference**: Points to a function anchor referencing the table function definition
 - **arguments**: Must be constant expressions (currently; literals or expressions evaluable without input data)
 - **derived**: Boolean flag indicating schema source:
-  - `true` - Schema determinable from function signature (concrete types or type parameters). **Required when the YAML definition includes a schema.**
-  - `false` - Schema depends on runtime data content. **Only allowed when the YAML definition omits the schema field.**
+  - `true` - Schema determinable from function signature (concrete types or type parameters). **Required when the YAML definition includes a `return` field.**
+  - `false` - Schema depends on runtime data content. **Only allowed when the YAML definition omits the `return` field.**
 - **table_schema**: The output schema (always present). Must match the YAML definition if derived is true (with type parameters resolved). Contains the actual schema whether derived from YAML or provided by the producer.
 - **common**: Standard relation properties (emit, hints, etc.)
 
-**The key distinction:** Set `derived: true` if the schema can be determined by looking at the function signature and argument types in the YAML definition. Set `derived: false` only if the YAML definition omits the schema field because it requires inspecting runtime data content.
+**The key distinction:** Set `derived: true` if the schema can be determined by looking at the function signature and argument types in the YAML definition. Set `derived: false` only if the YAML definition omits the `return` field because it requires inspecting runtime data content.
 
 Table functions can be used anywhere a relation is expected - as a leaf node, or as input to other relational operators like `FilterRel`, `ProjectRel`, etc.
 
