@@ -618,7 +618,7 @@ message DdlRel {
   // E.g., in case of an ALTER TABLE that changes some of the column default values, we expect
   // the table_defaults Struct to report a full list of default values reflecting the result of applying
   // the ALTER TABLE operator successfully
-  Expression.Literal.Struct table_defaults = 4;
+  Expression.Nested.Struct table_defaults = 4;
 
   // Which type of object we operate on
   DdlObject object = 5;
