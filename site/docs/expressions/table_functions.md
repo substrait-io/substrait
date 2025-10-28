@@ -12,7 +12,9 @@ Table functions (0-input, currently supported) are **leaf operators** in the que
 - Take a **fixed number of constant arguments** (literals or expressions that can be evaluated without input data)
 - Produce **zero or more records** as output (a relation/table)
 - Do **not consume an input relation** - they generate data from constants
-- Have either a **derived schema** (determinable from function signature) or an **explicit schema** (depends on runtime data)
+- Have either a **derived schema** (determinable from the YAML `return` field and argument types) or an **explicit schema** (determined at runtime when YAML omits the `return` field)
+
+See [Schema Determination](#schema-determination) for details on how schemas are specified.
 
 Future extensions may add support for transformation table functions that consume and transform input relations by adding an optional input field to `TableFunctionRel`.
 
@@ -21,76 +23,126 @@ Future extensions may add support for transformation table functions that consum
 Table functions are defined in YAML extension files, similar to scalar, aggregate, and window functions. A table function signature specifies:
 
 - **Arguments**: The parameters the function accepts (must be constant expressions)
-- **Schema**: The output schema of the generated relation
+- **Schema**: The output schema of the generated relation (may or may not be specified in YAML)
 - **Determinism**: Whether the function produces the same output for the same inputs
 - **Session Dependency**: Whether the function depends on session state
 
 ## Schema Determination
 
-Like scalar functions' return types, table function schemas follow a clear pattern:
+Table function schemas can be specified in two ways, depending on whether the YAML definition includes a `return` field:
+
+### Derived Schemas (`derived: true`)
+
+When a table function's YAML definition **includes a `return` field**, the schema can be deterministically derived from the function signature and the types of the bound arguments.
+
+- In the plan: Set `derived: true` and include the schema from YAML in `table_schema` with any type parameters resolved
+- The schema is fully determinable from type information alone
+
+This includes both:
+- **Concrete types**: Schema is fixed (e.g., `generate_series` always produces `{value: i64}`)
+- **Type-parameterized**: Schema depends on argument types (e.g., `unnest(list<T>)` produces `{element: T}` where `T` is resolved from the argument)
+
+**Example YAML definitions** (from `functions_table.yaml`):
+
+```yaml
+# Concrete type example - schema is always {value: i64}
+- name: "generate_series"
+  impls:
+    - args:
+        - name: start
+          value: i64
+        - name: stop
+          value: i64
+        - name: step
+          value: i64
+      return:
+        names:
+          - value
+        struct:
+          types:
+            - i64
+
+# Type-parameterized example - schema is {element: T} where T comes from list<T>
+- name: "unnest"
+  impls:
+    - args:
+        - name: input
+          value: "list<T>"
+      return:
+        names:
+          - element
+        struct:
+          types:
+            - T
+```
+
+### Explicit Schemas (`derived: false`)
+
+When a table function's YAML definition **omits the `return` field**, the schema depends on runtime data content and cannot be determined from type information alone.
+
+- In the plan: Set `derived: false` and provide the schema in `table_schema`
+- The plan producer determines the schema (e.g., by inspecting file contents, database metadata, etc.)
+
+**Example scenario**: A function like `read_parquet(path)` where the schema depends on the actual Parquet file's structure.
 
 !!! note "Required Constraint"
     **If a table function's YAML definition includes a `return` field, the `derived` field MUST be set to `true` in the plan, and the `table_schema` field MUST match the YAML definition (with any type parameters resolved based on the bound argument types).**
 
-**Derived schemas (`derived: true`)** - The schema can be **deterministically derived from the function signature**, including:
-- **Static schemas**: Fixed output regardless of argument values (e.g., `generate_series` always produces `{value: i64}`)
-- **Type-parameterized schemas**: Schema depends on argument types (e.g., `unnest(list<T>)` produces `{element: T}`)
+### Plan Examples
 
-Both cases use `derived: true` because the schema is fully determinable from the function signature and bound argument types.
+Now let's see how these two cases appear in actual Substrait plans:
 
-**Explicit schemas (`derived: false`)** - The schema **depends on runtime data content** and cannot be determined from the function signature alone.
+#### Derived Schema Examples
 
-### Derived Schema Examples
+For functions where the YAML includes a `return` field, set `derived: true`. The schema is derived from the YAML definition, with any type parameters resolved based on argument types.
 
-For functions where the schema is determinable from the function signature (either concrete or type-parameterized), set `derived: true`. The `table_schema` field contains the schema derived from the YAML definition:
-
-**Static schema example:**
+**Concrete type example** (`generate_series`):
 ```
 TableFunctionRel {
   function_reference: <generate_series>
   arguments: [
     { value: { literal: { i64: 1 } } },
-    { value: { literal: { i64: 100 } } }
+    { value: { literal: { i64: 100 } } },
+    { value: { literal: { i64: 1 } } }
   ]
-  derived: true  // Schema came from YAML definition
+  derived: true  // Schema from YAML return field
   table_schema: {
     names: ["value"]
     struct: {
-      types: [{ i64: {} }]
+      types: [{ i64: {} }]  // Matches YAML definition exactly
     }
   }
 }
 ```
 
-**Type-parameterized schema example:**
+**Type-parameterized example** (`unnest`):
 ```
 TableFunctionRel {
   function_reference: <unnest>
   arguments: [
     { value: { literal: { list: [...] } } }  // list<string>
   ]
-  derived: true  // Schema from YAML with T resolved to string
+  derived: true  // Schema from YAML with T resolved
   table_schema: {
     names: ["element"]
     struct: {
-      types: [{ string: {} }]  // T resolved to string from list<string>
+      types: [{ string: {} }]  // T resolved to string from list<string> argument
     }
   }
 }
 ```
 
-### Explicit Schema Examples
+#### Explicit Schema Example
 
-For functions where the schema depends on runtime data content, set `derived: false` and provide the schema in `table_schema`:
+For functions where the YAML omits the `return` field, set `derived: false` and provide the schema determined by the plan producer:
 
 ```
 TableFunctionRel {
-  common: { ... }
-  function_reference: <some_function>
+  function_reference: <read_parquet>
   arguments: [
-    // Function arguments
+    { value: { literal: { string: "data.parquet" } } }
   ]
-  derived: false  // Schema was determined by the plan producer
+  derived: false  // No return field in YAML - schema from runtime inspection
   table_schema: {
     names: ["id", "name", "age"]
     struct: {
@@ -113,18 +165,20 @@ Table functions are represented as their own relation type, `TableFunctionRel`.
 - **function_reference**: Points to a function anchor referencing the table function definition
 - **arguments**: Must be constant expressions (currently; literals or expressions evaluable without input data)
 - **derived**: Boolean flag indicating schema source:
-  - `true` - Schema determinable from function signature (concrete types or type parameters). **Required when the YAML definition includes a `return` field.**
-  - `false` - Schema depends on runtime data content. **Only allowed when the YAML definition omits the `return` field.**
-- **table_schema**: The output schema (always present). Must match the YAML definition if derived is true (with type parameters resolved). Contains the actual schema whether derived from YAML or provided by the producer.
+  - `true` - Schema is determinable from the YAML `return` field and argument types (includes both concrete and type-parameterized schemas)
+  - `false` - Schema depends on runtime data content (no `return` field in YAML)
+- **table_schema**: The output schema (always present). For `derived: true`, must match the YAML `return` field (with type parameters resolved). For `derived: false`, provided by the plan producer.
 - **common**: Standard relation properties (emit, hints, etc.)
 
-**The key distinction:** Set `derived: true` if the schema can be determined by looking at the function signature and argument types in the YAML definition. Set `derived: false` only if the YAML definition omits the `return` field because it requires inspecting runtime data content.
+**Quick reference for setting `derived`:**
+- YAML has `return` field → `derived: true`
+- YAML omits `return` field → `derived: false`
 
 Table functions can be used anywhere a relation is expected - as a leaf node, or as input to other relational operators like `FilterRel`, `ProjectRel`, etc.
 
 ## Examples
 
-### Example 1: Generating a Sequence
+### Example 1: Generating a Sequence (Derived Schema - Concrete Types)
 
 Generate integers from 1 to 100:
 
@@ -158,7 +212,7 @@ value
 100
 ```
 
-### Example 2: Unnest a Literal Array
+### Example 2: Unnest a Literal Array (Derived Schema - Type-Parameterized)
 
 Unnest a literal list into rows:
 
