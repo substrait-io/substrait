@@ -240,6 +240,56 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaArg.
+    def visitLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaParameters.
+    def visitLambdaParameters(self, ctx:FuncTestCaseParser.LambdaParametersContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaParameter.
+    def visitLambdaParameter(self, ctx:FuncTestCaseParser.LambdaParameterContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaBody.
+    def visitLambdaBody(self, ctx:FuncTestCaseParser.LambdaBodyContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaLiteral.
+    def visitLambdaLiteral(self, ctx:FuncTestCaseParser.LambdaLiteralContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaFunctionCall.
+    def visitLambdaFunctionCall(self, ctx:FuncTestCaseParser.LambdaFunctionCallContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaParenExpr.
+    def visitLambdaParenExpr(self, ctx:FuncTestCaseParser.LambdaParenExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaIdentifier.
+    def visitLambdaIdentifier(self, ctx:FuncTestCaseParser.LambdaIdentifierContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaBinaryOp.
+    def visitLambdaBinaryOp(self, ctx:FuncTestCaseParser.LambdaBinaryOpContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaComparison.
+    def visitLambdaComparison(self, ctx:FuncTestCaseParser.LambdaComparisonContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#dataType.
     def visitDataType(self, ctx:FuncTestCaseParser.DataTypeContext):
         return self.visitChildren(ctx)

@@ -270,6 +270,15 @@ class SubstraitTypeListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SubstraitTypeParser#lambda.
+    def enterLambda(self, ctx:SubstraitTypeParser.LambdaContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#lambda.
+    def exitLambda(self, ctx:SubstraitTypeParser.LambdaContext):
+        pass
+
+
     # Enter a parse tree produced by SubstraitTypeParser#userDefined.
     def enterUserDefined(self, ctx:SubstraitTypeParser.UserDefinedContext):
         pass

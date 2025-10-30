@@ -1,0 +1,45 @@
+parameter_types: [
+  {
+    i32: {
+      nullability: NULLABILITY_REQUIRED
+    }
+  }
+]
+
+return_type: {
+  i32: {
+    nullability: NULLABILITY_REQUIRED
+  }
+}
+
+body: {
+  scalar_function: {
+    function_reference: 1  # Reference to multiply function
+    arguments: [
+      {
+        # First argument: lambda parameter x
+        value: {
+          selection: {
+            lambda_reference: {
+              lambda_depth: 0        # 0 = current lambda
+              parameter_index: 0     # 0 = first parameter (x)
+            }
+          }
+        }
+      },
+      {
+        value: {
+          literal: {
+            i32: 2
+          }
+        }
+      }
+    ]
+
+    output_type: {
+      i32: {
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+  }
+}

@@ -44,6 +44,7 @@ message Type {
     Struct struct = 25;
     List list = 27;
     Map map = 28;
+    Lambda lambda = 50;
 
     UserDefined user_defined = 30;
 
@@ -219,6 +220,18 @@ message Type {
   message Map {
     Type key = 1;
     Type value = 2;
+    uint32 type_variation_reference = 3;
+    Nullability nullability = 4;
+  }
+
+  // A lambda type for higher-order functions.
+  // Represents a function that takes parameters of specified types and
+  // returns a value of a specified type.
+  message Lambda {
+    // Types of parameters this lambda accepts.
+    repeated Type parameter_types = 1;
+    // Return type of the lambda.
+    Type return_type = 2;
     uint32 type_variation_reference = 3;
     Nullability nullability = 4;
   }

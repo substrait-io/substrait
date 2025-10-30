@@ -1,0 +1,119 @@
+# Nested lambda: array_transform(matrix, lambda(row: list<i32>) ->
+#   array_transform(row, lambda(cell: i32) -> cell + 1))
+# Demonstrates nested lambdas where inner lambda increments each cell
+
+parameter_types: [
+  {
+    # Outer lambda parameter: row (type list<i32>)
+    list: {
+      type: {
+        i32: {
+          nullability: NULLABILITY_REQUIRED
+        }
+      }
+      nullability: NULLABILITY_REQUIRED
+    }
+  }
+]
+
+return_type: {
+  # Return type: list<i32>
+  list: {
+    type: {
+      i32: {
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+    nullability: NULLABILITY_REQUIRED
+  }
+}
+
+body: {
+  # Outer body: array_transform function on row
+  scalar_function: {
+    function_reference: 3  # Reference to array_transform function
+
+    arguments: [
+      {
+        # First argument: reference to outer lambda's row parameter
+        value: {
+          selection: {
+            lambda_reference: {
+              lambda_depth: 0        # 0 = current (outer) lambda
+              parameter_index: 0     # 0 = first parameter (row)
+            }
+          }
+        }
+      },
+      {
+        # Second argument: inner lambda expression
+        value: {
+          lambda: {
+            parameter_types: [
+              {
+                # Inner lambda parameter: cell (type i32)
+                i32: {
+                  nullability: NULLABILITY_REQUIRED
+                }
+              }
+            ]
+
+            return_type: {
+              # Inner lambda return type: i32
+              i32: {
+                nullability: NULLABILITY_REQUIRED
+              }
+            }
+
+            body: {
+              # Inner lambda body: cell + 1
+              scalar_function: {
+                function_reference: 2  # Reference to add function
+
+                arguments: [
+                  {
+                    # First argument: reference to inner lambda's cell parameter
+                    value: {
+                      selection: {
+                        lambda_reference: {
+                          lambda_depth: 0        # 0 = current (inner) lambda
+                          parameter_index: 0     # 0 = first parameter (cell)
+                        }
+                      }
+                    }
+                  },
+                  {
+                    # Second argument: literal 1
+                    value: {
+                      literal: {
+                        i32: 1
+                      }
+                    }
+                  }
+                ]
+
+                output_type: {
+                  i32: {
+                    nullability: NULLABILITY_REQUIRED
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+
+    output_type: {
+      # Outer function output type: list<i32>
+      list: {
+        type: {
+          i32: {
+            nullability: NULLABILITY_REQUIRED
+          }
+        }
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+parameter_types: [
+  {
+    # Lambda parameter: x (type i32)
+    i32: {
+      nullability: NULLABILITY_REQUIRED
+    }
+  }
+]
+
+return_type: {
+  i32: {
+    nullability: NULLABILITY_REQUIRED
+  }
+}
+
+body: {
+  scalar_function: {
+    function_reference: 2  # Reference to add function
+
+    arguments: [
+      {
+        # First argument: lambda parameter x
+        value: {
+          selection: {
+            lambda_reference: {
+              lambda_depth: 0        # 0 = current lambda
+              parameter_index: 0     # 0 = first parameter (x)
+            }
+          }
+        }
+      },
+      {
+        # Second argument: field from input record (closure)
+        value: {
+          selection: {
+            # RootReference accesses the input record from outer scope
+            root_reference: {}
+            direct_reference: {
+              struct_field: {
+                field: 3  # Access field at index 3 (e.g., offset column)
+              }
+            }
+          }
+        }
+      }
+    ]
+
+    output_type: {
+      i32: {
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+  }
+}

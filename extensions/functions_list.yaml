@@ -1,0 +1,190 @@
+%YAML 1.2
+---
+urn: extension:io.substrait:functions_list
+scalar_functions:
+  - name: "array_transform"
+    description: >-
+      Transform each element of an array using a lambda function.
+
+      Returns a new array where each element is the result of applying
+      the transform function to the corresponding element in the input array.
+
+      The lambda receives one parameter (the current element) and must return
+      the transformed value.
+
+      If the input array is NULL, returns NULL.
+      The nullability of elements in the output array depends on the lambda's
+      return type.
+    impls:
+      - args:
+          - name: input
+            value: list<T>
+          - name: transform
+            value: lambda<T -> U>
+        nullability: MIRROR
+        return: list<U>
+
+  - name: "list_filter"
+    description: >-
+      Filter array elements based on a predicate function.
+
+      Returns a new array containing only elements for which the predicate
+      function returns true.
+
+      The lambda receives one parameter (the current element) and must return
+      a boolean value. Elements for which the lambda returns true are included
+      in the result.
+
+      If the input array is NULL, returns NULL.
+      If the predicate returns NULL for an element, that element is excluded
+      from the result (treated as false).
+    impls:
+      - args:
+          - name: input
+            value: list<T>
+          - name: predicate
+            value: lambda<T -> boolean>
+        nullability: MIRROR
+        return: list<T>
+
+  - name: "array_sort"
+    description: >-
+      Sort array using a custom comparison function.
+
+      The comparator lambda receives two parameters (elements to compare) and
+      must return an integer:
+        - negative value if first < second
+        - zero if first == second
+        - positive value if first > second
+
+      The sort is stable: elements that compare as equal retain their relative
+      order from the input array.
+
+      If the input array is NULL, returns NULL.
+    impls:
+      - args:
+          - name: input
+            value: list<T>
+          - name: comparator
+            value: lambda<struct<T, T> -> i32>
+        nullability: MIRROR
+        return: list<T>
+
+  - name: "reduce"
+    description: >-
+      Reduce array to a single value using an accumulator function.
+
+      Processes elements left-to-right, passing the accumulator and current
+      element to the function, using the result as the new accumulator value.
+
+      The lambda receives two parameters:
+        1. The accumulator (initially the initial_value)
+        2. The current element
+
+      The lambda must return the new accumulator value.
+
+      If the input array is NULL, returns the initial_value.
+      If the input array is empty, returns the initial_value.
+    impls:
+      - args:
+          - name: input
+            value: list<T>
+          - name: initial_value
+            value: U
+          - name: accumulator
+            value: lambda<struct<U, T> -> U>
+        nullability: DECLARED_OUTPUT
+        return: U
+
+  - name: "array_exists"
+    description: >-
+      Check if any element satisfies the predicate.
+
+      Returns true if the predicate function returns true for at least one
+      element in the array. Short-circuits and returns true as soon as a
+      matching element is found.
+
+      The lambda receives one parameter (the current element) and must return
+      a boolean value.
+
+      If the input array is NULL, returns NULL.
+      If the input array is empty, returns false.
+      If the predicate returns NULL for all elements, returns false.
+    impls:
+      - args:
+          - name: input
+            value: list<T>
+          - name: predicate
+            value: lambda<T -> boolean>
+        nullability: DECLARED_OUTPUT
+        return: boolean?
+
+  - name: "array_all"
+    description: >-
+      Check if all elements satisfy the predicate.
+
+      Returns true if the predicate function returns true for all elements
+      in the array. Short-circuits and returns false as soon as a non-matching
+      element is found.
+
+      The lambda receives one parameter (the current element) and must return
+      a boolean value.
+
+      If the input array is NULL, returns NULL.
+      If the input array is empty, returns true (vacuous truth).
+      If the predicate returns NULL for any element, returns false.
+    impls:
+      - args:
+          - name: input
+            value: list<T>
+          - name: predicate
+            value: lambda<T -> boolean>
+        nullability: DECLARED_OUTPUT
+        return: boolean?
+
+  - name: "array_find_first"
+    description: >-
+      Find the first element that satisfies the predicate.
+
+      Returns the first element for which the predicate function returns true,
+      or NULL if no such element exists.
+
+      The lambda receives one parameter (the current element) and must return
+      a boolean value. Short-circuits and returns the element as soon as a
+      match is found.
+
+      If the input array is NULL, returns NULL.
+      If the input array is empty, returns NULL.
+      If the predicate returns NULL for an element, that element is not
+      considered a match.
+    impls:
+      - args:
+          - name: input
+            value: list<T>
+          - name: predicate
+            value: lambda<T -> boolean>
+        nullability: DECLARED_OUTPUT
+        return: T?
+
+  - name: "zip_with"
+    description: >-
+      Combine two arrays element-wise using a lambda function.
+
+      Applies the lambda to corresponding elements from both arrays, producing
+      a new array of results. The lambda receives two parameters (one from each
+      array) and returns the combined result.
+
+      The length of the result array is the minimum of the two input array
+      lengths. Extra elements from the longer array are ignored.
+
+      If either input array is NULL, returns NULL.
+    impls:
+      - args:
+          - name: left
+            value: list<T>
+          - name: right
+            value: list<U>
+          - name: combiner
+            value: lambda<struct<T, U> -> V>
+        nullability: MIRROR
+        return: list<V>

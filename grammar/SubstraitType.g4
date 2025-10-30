@@ -41,6 +41,7 @@ parameterizedType
   | NStruct isnull=QMark? Lt Identifier expr (Comma Identifier expr)* Gt                    #nStruct
   | List isnull=QMark? Lt expr Gt                                                           #list
   | Map isnull=QMark? Lt key=expr Comma value=expr Gt                                       #map
+  | Lambda isnull=QMark? Lt expr Arrow expr Gt                                              #lambda
   | UserDefined Identifier isnull=QMark? (Lt expr (Comma expr)* Gt)?                        #userDefined
   ;
 

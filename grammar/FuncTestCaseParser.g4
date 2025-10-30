@@ -64,6 +64,7 @@ argument
     | precisionTimestampArg
     | precisionTimestampTZArg
     | listArg
+    | lambdaArg
     ;
 
 aggFuncTestCase
@@ -203,6 +204,32 @@ listArg
 
 literalList
     : OBracket (literal (Comma literal)*)? CBracket
+    ;
+
+lambdaArg
+    : Lambda OParen lambdaParameters? CParen Arrow lambdaBody
+    ;
+
+lambdaParameters
+    : lambdaParameter (Comma lambdaParameter)*
+    ;
+
+lambdaParameter
+    : paramName=Identifier DoubleColon paramType=dataType
+    ;
+
+lambdaBody
+    : lambdaExpression
+    ;
+
+lambdaExpression
+    : functionName=identifier OParen arguments? CParen (DoubleColon dataType)?  #lambdaFunctionCall
+    | lambdaExpression op=(Asterisk | ForwardSlash | Percent) lambdaExpression #lambdaBinaryOp
+    | lambdaExpression op=(Plus | Minus) lambdaExpression                       #lambdaBinaryOp
+    | lambdaExpression op=(Gt | Lt | Gte | Lte | Eq | Ne) lambdaExpression     #lambdaComparison
+    | Identifier (Dot Identifier)?                                               #lambdaIdentifier
+    | literal                                                                    #lambdaLiteral
+    | OParen lambdaExpression CParen                                             #lambdaParenExpr
     ;
 
 dataType

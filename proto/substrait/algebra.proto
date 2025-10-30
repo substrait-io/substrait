@@ -973,6 +973,7 @@ message Expression {
     Subquery subquery = 12;
     Nested nested = 13;
     DynamicParameter dynamic_parameter = 14;
+    Lambda lambda = 15;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -1179,6 +1180,27 @@ message Expression {
       // (otherwise type information would be missing).
       repeated Expression values = 1;
     }
+  }
+
+  // A lambda expression for use in higher-order functions.
+  // Lambda expressions have parameters and a body expression that can reference
+  // those parameters via LambdaReference in FieldReference.
+  message Lambda {
+    // Types of parameters this lambda accepts.
+    // The body expression can reference these via LambdaReference with
+    // parameter_index corresponding to the position in this list.
+    repeated Type parameter_types = 1;
+
+    // Return type of the lambda. Must match the type produced by evaluating
+    // the body expression.
+    Type return_type = 2;
+
+    // The lambda body expression. Can reference:
+    //  - Lambda parameters via LambdaReference
+    //  - Fields from the input record via RootReference (closure)
+    //  - Fields from outer queries via OuterReference (closure)
+    //  - Results from other expressions via Expression
+    Expression body = 3;
   }
 
   // A scalar function call.
@@ -1543,6 +1565,7 @@ message Expression {
       Expression expression = 3;
       RootReference root_reference = 4;
       OuterReference outer_reference = 5;
+      LambdaReference lambda_reference = 6;
     }
 
     // Singleton that expresses this FieldReference is rooted off the root
@@ -1555,6 +1578,23 @@ message Expression {
       //
       // This value must be >= 1
       uint32 steps_out = 1;
+    }
+
+    // A reference to a lambda parameter for use within lambda body expressions.
+    // Similar to OuterReference, but for referencing lambda parameters instead
+    // of outer query records.
+    message LambdaReference {
+      // Number of lambda boundaries to traverse up for this reference.
+      // For nested lambdas:
+      //   0 = innermost lambda (current lambda's parameters)
+      //   1 = one lambda level out
+      //   2 = two lambda levels out, etc.
+      // This value must be >= 0
+      uint32 lambda_depth = 1;
+
+      // Zero-based index into the lambda's parameter list.
+      // Must be < length of the target lambda's parameter_types list.
+      uint32 parameter_index = 2;
     }
   }
 

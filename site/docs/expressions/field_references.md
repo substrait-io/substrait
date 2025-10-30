@@ -88,6 +88,80 @@ selection {
 
 References must validate against the schema of the record being referenced. If not, an error is expected.
 
+### Reference Root Types
+
+Field references can originate from different data sources depending on the evaluation context. The root type specifies where the referenced data comes from:
+
+| Root Type          | Description                                                                                      | Use Case                                    |
+|--------------------|--------------------------------------------------------------------------------------------------|---------------------------------------------|
+| RootReference      | References fields from the current input record being processed by the expression               | Standard field access in most operations    |
+| OuterReference     | References fields from an outer query's record in subquery contexts                             | Correlated subqueries                        |
+| LambdaReference    | References parameters passed to a lambda function                                                | Lambda function bodies                       |
+| Expression         | References the output of another expression as the root                                          | Accessing fields from computed values        |
+
+#### RootReference
+
+The most common reference type. Refers to fields in the current input record.
+
+**Example**: In `SELECT col1 + col2 FROM table`, both `col1` and `col2` use RootReference to access the current row.
+
+```protobuf
+selection {
+  direct_reference { struct_field { field: 0 } }
+  root_reference { }
+}
+```
+
+#### OuterReference
+
+Used in subqueries to reference fields from the outer query's record. The `steps_out` field indicates how many subquery boundaries to traverse (minimum value: 1).
+
+**Example**: In `SELECT (SELECT COUNT(*) FROM orders WHERE orders.user_id = users.id) FROM users`, the `users.id` reference within the subquery uses OuterReference with `steps_out: 1`.
+
+```protobuf
+selection {
+  direct_reference { struct_field { field: 0 } }
+  outer_reference { steps_out: 1 }
+}
+```
+
+#### LambdaReference
+
+Used within lambda function bodies to reference the lambda's parameters. This enables higher-order functions like `array_transform`, `list_filter`, and `reduce`.
+
+**Fields**:
+- `lambda_depth`: Number of lambda boundaries to traverse (0 = current lambda, 1 = outer lambda, etc.)
+- `parameter_index`: Zero-based index into the lambda's parameter list
+
+**Example**: In `array_transform([1, 2, 3], lambda(x) -> x * 2)`, the `x` in the body uses LambdaReference:
+
+```protobuf
+selection {
+  direct_reference { struct_field { field: 0 } }
+  lambda_reference {
+    lambda_depth: 0      // Current lambda
+    parameter_index: 0   // First parameter
+  }
+}
+```
+
+**Nested Lambda Example**: In nested lambdas, `lambda_depth` allows inner lambdas to reference outer lambda parameters:
+
+```
+array_transform(matrix, lambda(row) ->
+  array_transform(row, lambda(cell) ->
+    cell + row.length  // 'cell' uses depth 0, 'row' uses depth 1
+  )
+)
+```
+
+**Closures**: Lambda bodies can reference data from multiple sources simultaneously:
+- Lambda parameters via LambdaReference
+- Input record fields via RootReference (closure over input)
+- Outer query fields via OuterReference (closure over outer queries)
+
+See [Lambda Functions](lambda_functions.md) for more details and examples.
+
 ### Masked Complex Expression 
 
 A masked complex expression is used to do a subselection of a portion of a complex record. It allows a user to specify the portion of the complex object to consume. Imagine you have a schema of (note that structs are lists of fields here, as they are in general in Substrait as field names are not used internally in Substrait):
