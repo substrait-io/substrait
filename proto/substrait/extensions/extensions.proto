@@ -29,7 +29,7 @@ message SimpleExtensionURN {
 
   // The extension URN that uniquely identifies this extension. This must follow the
   // format extension:<OWNER>:<ID> and serves as the "namespace" of this extension.
-  // Otherwise, the urn is a RFC 8141 valid URN with the "urn:" prefix taken off.
+  // The URN must be valid RFC 8141 format without the urn: prefix.
   string urn = 2;
 }
 
