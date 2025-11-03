@@ -13,7 +13,7 @@ Some kinds of primitives are so frequently extended that Substrait defines a sta
 * Window Functions
 * Table Functions
 
-To extend these items, developers can create one or more YAML files that describe the properties of each of these extensions. Each YAML file must include a required `urn` field that uniquely identifies the extension. While these identifiers are URN-like but not technically URNs (they lack the `urn:` prefix), they will be referred to as `extension URNs` for clarity.
+To extend these items, developers can create one or more YAML files that describe the properties of each of these extensions. Each YAML file must include a required `urn` field that uniquely identifies the extension. While these identifiers are URN-like but not technically URNs (they lack the `urn:` prefix), they will be referred to as `extension URNs` for clarity. (These URNs are otherwise valid [RFC 8141](https://www.rfc-editor.org/rfc/rfc8141.html) with the `"urn:` prefix removed from the front.)
 
 This extension URN uses the format `extension:<OWNER>:<ID>`, where:
 

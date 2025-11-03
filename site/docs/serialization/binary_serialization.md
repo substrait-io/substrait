@@ -22,7 +22,7 @@ For simple extensions, a plan references the extension URNs associated with the 
 
 Simple extensions within a plan are split into three components: an extension URN, an extension declaration and a number of references.
 
-* **Extension URN**: A unique identifier for the extension following the format `extension:<OWNER>:<ID>` that identifies a YAML document specifying one or more specific extensions. Declares an anchor that can be used in extension declarations.
+* **Extension URN**: A unique identifier for the extension following the format `extension:<OWNER>:<ID>` that identifies a YAML document specifying one or more specific extensions. Declares an anchor that can be used in extension declarations. The URN is neccessarily a valid [RFC 8141](https://www.rfc-editor.org/rfc/rfc8141.html) but with the `"urn:"` prefix cutoff. 
 * **Extension Declaration**: A specific extension within a single YAML document. The declaration combines a reference to the associated extension URN along with a unique key identifying the specific item within that YAML document (see [Function Signature](../extensions/index.md#function-signature)). It also defines a declaration anchor. The anchor is a plan-specific unique value that the producer creates as a key to be referenced elsewhere.
 * **Extension Reference**: A specific instance or use of an extension declaration within the plan body.
 
