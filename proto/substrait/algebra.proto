@@ -197,7 +197,13 @@ message ReadRel {
       // The length in byte to read from this item
       uint64 length = 8;
 
-      message ParquetReadOptions {}
+      message ParquetReadOptions {
+        // Enable the use of row group min/max index for data filtering.
+        // When enabled, the reader can use min/max statistics from Parquet
+        // row groups to skip row groups that do not contain data matching
+        // the filter predicates, improving query performance.
+        bool enable_row_group_maxmin_index = 1;
+      }
       message ArrowReadOptions {}
       message OrcReadOptions {}
       message DwrfReadOptions {}
