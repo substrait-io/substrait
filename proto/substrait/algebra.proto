@@ -558,6 +558,7 @@ message RelRoot {
   Rel input = 1;
   // Field names in depth-first order
   repeated string names = 2;
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
 // A relation (used internally in a plan)
