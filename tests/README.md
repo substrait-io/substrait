@@ -173,6 +173,9 @@ Use short names listed in https://substrait.io/extensions/#function-signature-co
 - **tstz**: Timestamp with timezone
 - **iyear**: Interval year
 - **iday**: Interval days
+- **pt**: Precision Time
+- **pts**: Precision Timestamp
+- **ptstz**: Precision Timestamp with timezone
 
 
 ### Options

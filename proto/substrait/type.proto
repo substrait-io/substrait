@@ -6,7 +6,7 @@ package substrait;
 import "google/protobuf/empty.proto";
 
 option csharp_namespace = "Substrait.Protobuf";
-option go_package = "github.com/substrait-io/substrait-go/proto";
+option go_package = "github.com/substrait-io/substrait-protobuf/go/substraitpb";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
 
@@ -24,6 +24,7 @@ message Type {
     // Deprecated in favor of `PrecisionTimestamp precision_timestamp`
     Timestamp timestamp = 14 [deprecated = true];
     Date date = 16;
+    // Deprecated in favor of `PrecisionTime precision_time`
     Time time = 17;
     IntervalYear interval_year = 19;
     IntervalDay interval_day = 20;
@@ -36,6 +37,7 @@ message Type {
     VarChar varchar = 22;
     FixedBinary fixed_binary = 23;
     Decimal decimal = 24;
+    PrecisionTime precision_time = 36;
     PrecisionTimestamp precision_timestamp = 33;
     PrecisionTimestampTZ precision_timestamp_tz = 34; // value is since UNIX epoch in UTC
 
@@ -50,6 +52,9 @@ message Type {
     // encountered, treat it as being non-nullable and having the default
     // variation.
     uint32 user_defined_type_reference = 31 [deprecated = true];
+
+    // Reference an aliased type in `Plan.type_aliases`.
+    TypeAliasReference alias = 37;
   }
 
   enum Nullability {
@@ -178,6 +183,13 @@ message Type {
     Nullability nullability = 4;
   }
 
+  message PrecisionTime {
+    // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, 12 is picoseconds
+    int32 precision = 1;
+    uint32 type_variation_reference = 2;
+    Nullability nullability = 3;
+  }
+
   message PrecisionTimestamp {
     // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds, 12 is picoseconds
     int32 precision = 1;
@@ -234,6 +246,27 @@ message Type {
       string string = 6;
     }
   }
+
+  message TypeAliasReference {
+    uint32 type_alias_reference = 1;
+    // Nullability of the referenced type alias. Must be specified.
+    Nullability nullability = 2;
+  }
+}
+
+message TypeAlias {
+  // A surrogate key used in the context of a single plan to reference a
+  // specific type alias.
+  uint32 type_alias_anchor = 1;
+
+  // A concrete type to be aliased.
+  //
+  // * All type parameters must be specified.
+  // * Cannot directly be another alias.
+  // * Type parameters can reference other aliased types as long as no circular dependencies are introduced.
+  // * Nullability of aliased type is **ignored**. Nullability must be specified when the aliased type is referenced.
+  // * Type variation may be specified in the aliased type.
+  Type type = 2;
 }
 
 // A message for modeling name/type pairs.
@@ -255,6 +288,8 @@ message Type {
 //
 // * Only struct fields are contained in this field's elements,
 // * Map keys should be traversed first, then values when producing/consuming
+// * When used to represent a relation schema, the outermost struct's
+//   nullability should be NULLABILITY_REQUIRED.
 message NamedStruct {
   // list of names in dfs order
   repeated string names = 1;

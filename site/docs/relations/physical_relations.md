@@ -6,21 +6,24 @@ There is no true distinction between logical and physical operations in Substrai
 
 ## Hash Equijoin Operator
 
-The hash equijoin join operator will build a hash table out of the right input based on a set of join keys. It will then probe that hash table for incoming inputs, finding matches. 
+The hash equijoin join operator will build a hash table out of one input (default `right`) based on a set of join keys. It will then probe that hash table for the other input (default `left`), finding matches. 
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
-| Property Maintenance | Distribution is maintained. Orderedness of the left set is maintained in INNER join cases, otherwise it is eliminated. |
+| Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
+| Input Order   | Same as the [Join](logical_relations.md#join-operator) operator. |
 | Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
+
 
 ### Hash Equijoin Properties
 
 | Property            | Description                                                                                                                                                                                                            | Required                 |
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
-| Left Input          | A relational input.(Probe-side)                                                                                                                                                                                        | Required                 |
-| Right Input         | A relational input.(Build-side)                                                                                                                                                                                        | Required                 |
+| Left Input          | A relational input.                                                                                                                                                                                                    | Required                 |
+| Right Input         | A relational input.                                                                                                                                                                                                    | Required                 |
+| Build Input         | Specifies which input is the `Build`.                                                                                                                                                                                  | Optional, defaults to build `Right`, probe `Left`. |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                 | Required                 |
 | Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                | Required                 |
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true. |
@@ -36,7 +39,8 @@ The nested loop join operator does a join by holding the entire right input and 
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
-| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
+| Input Order   | Same as the [Join](logical_relations.md#join-operator) operator. |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operation) operator. |
 
 ### NLJ Properties
 
@@ -58,7 +62,8 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is eliminated.       |
-| Direct Output Order  | Same as the [Join](logical_relations.md#join-operator) operator. |
+| Input Order   | Same as the [Join](logical_relations.md#join-operator) operator. |
+| Direct Output Order  | Same as the [Join](logical_relations.md#join-operation) operator. |
 
 ### Merge Join Properties
 

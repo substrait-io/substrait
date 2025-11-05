@@ -1,0 +1,79 @@
+name: "dialect test file for functions"
+
+dependencies:
+  arithmetic: extension:io.substrait:functions_arithmetic
+  boolean: extension:io.substrait:functions_boolean
+  comparison: extension:io.substrait:functions_comparison
+  string: extension:io.substrait:functions_string
+
+supported_scalar_functions:
+- source: arithmetic
+  name: add
+  system_metadata:
+    name: +
+    notation: INFIX
+  required_options:
+    overflow: ERROR
+  supported_impls:
+    - i32_i32
+    - i64_i64
+- source: arithmetic
+  name: add
+  system_metadata:
+    name: +
+    notation: INFIX
+  required_options:
+    overflow: ERROR
+    rounding: TIE_TO_EVEN
+  supported_impls:
+  - fp32_fp32
+  - fp64_fp64
+- source: boolean
+  name: and
+  system_metadata:
+    name: and
+    notation: INFIX
+  supported_impls:
+  - bool
+- source: comparison
+  name: is_null
+  system_metadata:
+    name: IS NULL
+    notation: POSTFIX
+  supported_impls:
+  - any
+- source: string
+  name: concat
+  system_metadata:
+    name: '||'
+  required_options:
+    null_handling: ACCEPT_NULLS
+    notation: INFIX
+  supported_impls:
+  - vchar
+  - str
+  variadic:
+    min: 1
+    max: 5
+
+supported_aggregate_functions:
+- source: arithmetic
+  name: max
+  supported_impls:
+    - i32
+    - i64
+- source: arithmetic
+  name: min
+  supported_impls:
+    - i32
+    - i64
+
+supported_window_functions:
+- source: arithmetic
+  name: ntile
+  supported_impls:
+    - i32
+- source: arithmetic
+  name: rank
+  supported_impls:
+    - ""

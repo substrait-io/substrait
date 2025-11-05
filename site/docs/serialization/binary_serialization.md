@@ -5,7 +5,7 @@ Substrait can be serialized into a [protobuf](https://developers.google.com/prot
 
 ## Plan
 
-The main top-level object used to communicate a Substrait plan using protobuf is a Plan message (see the [ExtendedExpression](/expressions/extended_expression/) for an alternative other top-level object). The plan message is composed of a set of data structures that minimize repetition in the serialization along with one (or more) Relation trees. 
+The main top-level object used to communicate a Substrait plan using protobuf is a Plan message (see the [ExtendedExpression](../expressions/extended_expression.md) for an alternative other top-level object). The plan message is composed of a set of data structures that minimize repetition in the serialization along with one (or more) Relation trees.
 
 === "Plan Message"
 
@@ -14,27 +14,27 @@ The main top-level object used to communicate a Substrait plan using protobuf is
     ```
 
 ## Extensions
-Protobuf supports both [simple](/extensions/#simple-extensions) and [advanced](/extensions/#advanced-extensions) extensions. Simple extensions are declared at the plan level and advanced extensions are declared at multiple levels of messages within the plan.
+Protobuf supports both [simple](../extensions/index.md#simple-extensions) and [advanced](../extensions/index.md#advanced-extensions) extensions. Simple extensions are declared at the plan level and advanced extensions are declared at multiple levels of messages within the plan.
 
 ### Simple Extensions
 
-For simple extensions, a plan references the URIs associated with the simple extensions to provide additional plan capabilities. These URIs will list additional relevant information for the plan. 
+For simple extensions, a plan references the extension URNs associated with the simple extensions to provide additional plan capabilities. These URNs will identify additional relevant information for the plan.
 
-Simple extensions within a plan are split into three components: an extension URI, an extension declaration and a number of references.
+Simple extensions within a plan are split into three components: an extension URN, an extension declaration and a number of references.
 
-* **Extension URI**: A unique identifier for the extension pointing to a YAML document specifying one or more specific extensions. Declares an anchor that can be used in extension declarations.  
-* **Extension Declaration**: A specific extension within a single YAML document. The declaration combines a reference to the associated Extension URI along with a unique key identifying the specific item within that YAML document (see [Function Signature Compound Names](/extensions/#function-signature-compound-names)). It also defines a declaration anchor. The anchor is a plan-specific unique value that the producer creates as a key to be referenced elsewhere.
+* **Extension URN**: A unique identifier for the extension following the format `extension:<OWNER>:<ID>` that identifies a YAML document specifying one or more specific extensions. Declares an anchor that can be used in extension declarations.
+* **Extension Declaration**: A specific extension within a single YAML document. The declaration combines a reference to the associated extension URN along with a unique key identifying the specific item within that YAML document (see [Function Signature](../extensions/index.md#function-signature)). It also defines a declaration anchor. The anchor is a plan-specific unique value that the producer creates as a key to be referenced elsewhere.
 * **Extension Reference**: A specific instance or use of an extension declaration within the plan body.
 
-Extension URIs and declarations are encapsulated in the top level of the plan. Extension declarations are then referenced throughout the body of the plan itself. The exact structure of these references will depend on the extension point being used, but they will always include the extension's anchor (or key). For example, all scalar function expressions contain references to an extension declaration which defines the semantics of the function.
+Extension URNs and declarations are encapsulated in the top level of the plan. Extension declarations are then referenced throughout the body of the plan itself. The exact structure of these references will depend on the extension point being used, but they will always include the extension's anchor (or key). For example, all scalar function expressions contain references to an extension declaration which defines the semantics of the function.
 
-=== "Simple Extension URI"
+=== "Simple Extension URN"
 
     ```proto
-%%% proto.message.SimpleExtensionURI %%%
+%%% proto.message.SimpleExtensionURN %%%
     ```
 
-Once the YAML file URI anchor is defined, the anchor will be referenced by zero or more `SimpleExtensionDefinition`s. For each simple extension definition, an anchor is defined for that specific extension entity. This anchor is then referenced to within lower-level primitives (functions, etc.) to reference that specific extension. Message properties are named `*_anchor` where the anchor is defined and `*_reference` when referencing the anchor. For example `function_anchor` and `function_reference`.
+Once the YAML file extension URN anchor is defined, the anchor will be referenced by zero or more `SimpleExtensionDefinition`s. For each simple extension definition, an anchor is defined for that specific extension entity. This anchor is then referenced to within lower-level primitives (functions, etc.) to reference that specific extension. Message properties are named `*_anchor` where the anchor is defined and `*_reference` when referencing the anchor. For example `function_anchor` and `function_reference`.
 
 === "Simple Extension Declaration"
 
@@ -48,13 +48,13 @@ Once the YAML file URI anchor is defined, the anchor will be referenced by zero 
 
 !!! note
 
-    It is valid for a plan to include `SimpleExtensionURI`s and/or `SimpleExtensionDeclaration`s that are not referenced directly.
+    It is valid for a plan to include `SimpleExtensionURN`s and/or `SimpleExtensionDeclaration`s that are not referenced directly.
 
 
 
 ### Advanced Extensions
 
-Substrait protobuf exposes a special object in multiple places in the representation to expose extension capabilities. Extensions are done via this object. Extensions are separated into main concepts: 
+Substrait protobuf exposes a special object in multiple places in the representation to expose extension capabilities. Extensions are done via this object. Extensions are separated into main concepts:
 
 | Advanced Extension Type | Description                                                  |
 | ----------------------- | ------------------------------------------------------------ |
@@ -85,11 +85,6 @@ There are several binary IDLs that exist today. The key requirements for Substra
 * High-quality well-supported and idiomatic bindings/compilers for key languages (Python, Javascript, C++, Go, Rust, Java)
 * Compact serial representation
 
-The primary formats that exist that roughly qualify under these requirements include: Protobuf, Thrift, Flatbuf, Avro, Cap'N'Proto. Protobuf was chosen due to its clean typing system and large number of high quality language bindings. 
+The primary formats that exist that roughly qualify under these requirements include: Protobuf, Thrift, Flatbuf, Avro, Cap'N'Proto. Protobuf was chosen due to its clean typing system and large number of high quality language bindings.
 
 The binary serialization IDLs can be found on [GitHub](https://github.com/substrait-io/substrait/tree/main/proto/substrait) and are sampled throughout the documentation.
-
-
-
-
-

@@ -6,11 +6,13 @@ package substrait.extensions;
 import "google/protobuf/any.proto";
 
 option csharp_namespace = "Substrait.Protobuf";
-option go_package = "github.com/substrait-io/substrait-go/proto/extensions";
+option go_package = "github.com/substrait-io/substrait-protobuf/go/substraitpb/extensions";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
 
+// This message is deprecated, use SimpleExtensionURN moving forwards
 message SimpleExtensionURI {
+  option deprecated = true;
   // A surrogate key used in the context of a single plan used to reference the
   // URI associated with an extension.
   uint32 extension_uri_anchor = 1;
@@ -20,7 +22,17 @@ message SimpleExtensionURI {
   string uri = 2;
 }
 
-// Describes a mapping between a specific extension entity and the uri where
+message SimpleExtensionURN {
+  // A surrogate key used in the context of a single plan used to reference the
+  // URN associated with an extension.
+  uint32 extension_urn_anchor = 1;
+
+  // The extension URN that uniquely identifies this extension. This must follow the
+  // format extension:<OWNER>:<ID> and serves as the "namespace" of this extension.
+  string urn = 2;
+}
+
+// Describes a mapping between a specific extension entity and the uri/urn where
 // that extension can be found.
 message SimpleExtensionDeclaration {
   oneof mapping_type {
@@ -32,7 +44,13 @@ message SimpleExtensionDeclaration {
   // Describes a Type
   message ExtensionType {
     // references the extension_uri_anchor defined for a specific extension URI.
-    uint32 extension_uri_reference = 1;
+    // this is now deprecated and extension_urn_reference should be used instead.
+    uint32 extension_uri_reference = 1 [deprecated = true];
+
+    // references the extension_urn_anchor defined for a specific extension URN.
+    // If both extension_urn_reference and extension_uri_reference are present,
+    // extension_urn_reference takes precedence.
+    uint32 extension_urn_reference = 4;
 
     // A surrogate key used in the context of a single plan to reference a
     // specific extension type
@@ -44,7 +62,13 @@ message SimpleExtensionDeclaration {
 
   message ExtensionTypeVariation {
     // references the extension_uri_anchor defined for a specific extension URI.
-    uint32 extension_uri_reference = 1;
+    // this is now deprecated and extension_urn_reference should be used instead.
+    uint32 extension_uri_reference = 1 [deprecated = true];
+
+    // references the extension_urn_anchor defined for a specific extension URN.
+    // If both extension_urn_reference and extension_uri_reference are present,
+    // extension_urn_reference takes precedence.
+    uint32 extension_urn_reference = 4;
 
     // A surrogate key used in the context of a single plan to reference a
     // specific type variation
@@ -56,13 +80,19 @@ message SimpleExtensionDeclaration {
 
   message ExtensionFunction {
     // references the extension_uri_anchor defined for a specific extension URI.
-    uint32 extension_uri_reference = 1;
+    // this is now deprecated and extension_urn_reference should be used instead.
+    uint32 extension_uri_reference = 1 [deprecated = true];
+
+    // references the extension_urn_anchor defined for a specific extension URN.
+    // If both extension_urn_reference and extension_uri_reference are present,
+    // extension_urn_reference takes precedence.
+    uint32 extension_urn_reference = 4;
 
     // A surrogate key used in the context of a single plan to reference a
     // specific function
     uint32 function_anchor = 2;
 
-    // A function signature compound name
+    // A function signature
     string name = 3;
   }
 }

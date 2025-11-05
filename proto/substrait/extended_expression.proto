@@ -9,7 +9,7 @@ import "substrait/plan.proto";
 import "substrait/type.proto";
 
 option csharp_namespace = "Substrait.Protobuf";
-option go_package = "github.com/substrait-io/substrait-go/proto";
+option go_package = "github.com/substrait-io/substrait-protobuf/go/substraitpb";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
 
@@ -30,7 +30,12 @@ message ExtendedExpression {
   Version version = 7;
 
   // a list of yaml specifications this expression may depend on
-  repeated substrait.extensions.SimpleExtensionURI extension_uris = 1;
+  // this is now deprecated and extension_urns should be used instead.
+  repeated substrait.extensions.SimpleExtensionURI extension_uris = 1 [deprecated = true];
+
+  // a list of extension specifications this expression may depend on,
+  // referenced by Extension URN
+  repeated substrait.extensions.SimpleExtensionURN extension_urns = 8;
 
   // a list of extensions this expression may depend on
   repeated substrait.extensions.SimpleExtensionDeclaration extensions = 2;

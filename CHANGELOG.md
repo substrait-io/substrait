@@ -1,6 +1,141 @@
 Release Notes
 ---
 
+## [0.77.0](https://github.com/substrait-io/substrait/compare/v0.76.0...v0.77.0) (2025-10-05)
+
+### Features
+
+* per plan type aliases ([#857](https://github.com/substrait-io/substrait/issues/857)) ([dfd04c1](https://github.com/substrait-io/substrait/commit/dfd04c15caa12845f77db50688fdc16f59fdc9d0))
+
+## [0.76.0](https://github.com/substrait-io/substrait/compare/v0.75.0...v0.76.0) (2025-09-21)
+
+### Features
+
+* codify Substrait dialects ([#816](https://github.com/substrait-io/substrait/issues/816)) ([b8090b2](https://github.com/substrait-io/substrait/commit/b8090b247eb8f9f05dcf46048f5e8145ac719318))
+
+## [0.75.0](https://github.com/substrait-io/substrait/compare/v0.74.1...v0.75.0) (2025-09-14)
+
+### Features
+
+* add AdvancedExtension to SavedComputation and LoadedComputation ([#858](https://github.com/substrait-io/substrait/issues/858)) ([9ea478a](https://github.com/substrait-io/substrait/commit/9ea478af81a6971e378afb1ba28c1151ba276bc4))
+* canonicalize extension URNs ([#859](https://github.com/substrait-io/substrait/issues/859)) ([06cadc8](https://github.com/substrait-io/substrait/commit/06cadc8bc6dc5d031083b6094b0ece479219966e))
+
+## [0.74.1](https://github.com/substrait-io/substrait/compare/v0.74.0...v0.74.1) (2025-08-10)
+
+### Bug Fixes
+
+* make simple extensions schema accessible at specified URL ([#848](https://github.com/substrait-io/substrait/issues/848)) ([c0c74ea](https://github.com/substrait-io/substrait/commit/c0c74ea7f17c2d8f5d96e24d2c0dbb664f8126f9))
+* typo on window functions site page ([#825](https://github.com/substrait-io/substrait/issues/825)) ([36c1fd8](https://github.com/substrait-io/substrait/commit/36c1fd86e8c2dbfef879e58d42e91f303e429314))
+
+## [0.74.0](https://github.com/substrait-io/substrait/compare/v0.73.0...v0.74.0) (2025-06-22)
+
+### Features
+
+* bitwise shift functions ([#799](https://github.com/substrait-io/substrait/issues/799)) ([fa53460](https://github.com/substrait-io/substrait/commit/fa534605c49a74ac82dcda7a5cdb11a3ec15dab8))
+
+## [0.73.0](https://github.com/substrait-io/substrait/compare/v0.72.0...v0.73.0) (2025-06-01)
+
+### Features
+
+* specify build input of hash join operator ([#810](https://github.com/substrait-io/substrait/issues/810)) ([0c4b658](https://github.com/substrait-io/substrait/commit/0c4b658c0ff474dfdab345ed751b94080a0cc715))
+
+## [0.72.0](https://github.com/substrait-io/substrait/compare/v0.71.0...v0.72.0) (2025-05-04)
+
+### ⚠ BREAKING CHANGES
+
+* direct output order of semi/anti/mark joins no longer
+includes invalid side (i.e., right of lefty joins, and left of righty
+joins).
+* single join raises runtime error if there more than one
+matching rows to adhere to the original proposed usage (unnesting scalar
+subqueries).
+
+# Problems
+
+1. Semi-joins and anti-joins are one-sided and fields from the other
+side of joins are not valid. The `Direct Output Order` in the document
+is okay for other types of joins but not in one-side joins.
+2. Single joins are proposed to be used unnesting scalar subqueries
+where exactly 1 row is expected. The current documentation citing the
+paper and behavior although relaxed the behavior so that the
+implementation can silently produce wrong result.
+
+# What this PR do?
+
+1. Clarify the direct output order by explicitly stating the semi, anti,
+and mark joins. Introducing `Input Order` (the previous `Direct Output
+Order`) so that all the properties referencing `Input Order` to reduce
+ambiguity.
+2. Single joins expecting at most one row for each join key. Otherwise,
+runtime error. This behavior can be extended in the future if such
+generalization is justified with correct use cases.
+
+### Features
+
+* add description field to types definition in schema ([#811](https://github.com/substrait-io/substrait/issues/811)) ([a4e3a82](https://github.com/substrait-io/substrait/commit/a4e3a82c54a153100ac6c3c9f88add78dc8cd3a8))
+* clarify behavior and direct output order of joins ([#803](https://github.com/substrait-io/substrait/issues/803)) ([fe3f1c6](https://github.com/substrait-io/substrait/commit/fe3f1c673ebdb54107dd384073de5a5816d94a44))
+
+## [0.71.0](https://github.com/substrait-io/substrait/compare/v0.70.0...v0.71.0) (2025-04-20)
+
+### ⚠ BREAKING CHANGES
+
+* go_package now points to substrait-protobuf
+
+### Build System
+
+* update go_package of .proto files to substrait-protobuf ([#804](https://github.com/substrait-io/substrait/issues/804)) ([f081cb4](https://github.com/substrait-io/substrait/commit/f081cb4115d84c9516abafe2c84caa2957142f18))
+
+## [0.70.0](https://github.com/substrait-io/substrait/compare/v0.69.0...v0.70.0) (2025-04-13)
+
+### ⚠ BREAKING CHANGES
+
+* Hash Equijoin no longer preserves ordering for inner
+joins
+
+The original `Property Maintenance` of hash join operator is following.
+
+> Orderedness of the left set is maintained in INNER join cases,
+otherwise it is eliminated.
+
+This holds ONLY very specific implementation of a hash join, for
+instance, when build side input completely fits in memory, and probe
+side input is streamed in single thread. It is also strange why INNER
+JOIN is specifically called out because other joins can preserve order
+of probe (LEFT) when build (RIGHT) fits in memory.
+
+Nonetheless, if you throw some kicks and chops, this order preserving
+claim quickly falls apart unless implementation does some non-trivial
+work under following scenarios.
+
+* build does not fit in memory (i.e., spill to storage)
+* parallel probe
+
+So in general, we should not say hash join preserves order of probe. It
+*may* assuming a specific implementation under particular conditions,
+which is more of optimization or hint territory.
+
+### Features
+
+* remove ordering guarantees from Hash Equijoin operator ([#796](https://github.com/substrait-io/substrait/issues/796)) ([7408bbd](https://github.com/substrait-io/substrait/commit/7408bbdd51f2e52bedd323a0e44184986fe7f519))
+
+## [0.69.0](https://github.com/substrait-io/substrait/compare/v0.68.0...v0.69.0) (2025-03-16)
+
+### Features
+
+* add decimal argument support to round function ([#713](https://github.com/substrait-io/substrait/issues/713)) ([eb696b5](https://github.com/substrait-io/substrait/commit/eb696b5f4aebeef9cf9a98fc828f0cd67143aa16))
+* implement PrecisionTime ([#788](https://github.com/substrait-io/substrait/issues/788)) ([1f67065](https://github.com/substrait-io/substrait/commit/1f670654189565565a649ff6249089ae4750ab92))
+
+## [0.68.0](https://github.com/substrait-io/substrait/compare/v0.67.0...v0.68.0) (2025-03-09)
+
+### Features
+
+* add max:pts variant to functions_datetime ([#763](https://github.com/substrait-io/substrait/issues/763)) ([d387335](https://github.com/substrait-io/substrait/commit/d387335a412a1539867f488ecae07f0433ccb4ca))
+
+### Bug Fixes
+
+* minor docs build issues and warnings ([#792](https://github.com/substrait-io/substrait/issues/792)) ([10d53ca](https://github.com/substrait-io/substrait/commit/10d53ca376cde9342a74d3480fcd2e77109d65cd))
+* update github actions workflows for building website ([#791](https://github.com/substrait-io/substrait/issues/791)) ([996144c](https://github.com/substrait-io/substrait/commit/996144cfde3c2c9f88678a573c6739d8eeb84607))
+
 ## [0.67.0](https://github.com/substrait-io/substrait/compare/v0.66.1...v0.67.0) (2025-02-16)
 
 ### Features

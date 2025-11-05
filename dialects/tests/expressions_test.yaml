@@ -1,0 +1,13 @@
+name: "dialect test file for expressions"
+
+supported_expressions:
+  - LITERAL
+  - SELECTION
+  - SCALAR_FUNCTION
+  - expression: CAST
+    failure_options: [RETURN_NULL]
+  - expression: SUBQUERY
+    subquery_types: [SCALAR]
+  - expression: NESTED
+    nested_types:
+      - LIST

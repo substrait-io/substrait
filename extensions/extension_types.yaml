@@ -1,4 +1,5 @@
 ---
+urn: extension:io.substrait:extension_types
 types:
   - name: point
     structure:
