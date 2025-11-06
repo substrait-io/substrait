@@ -53,22 +53,7 @@ User-defined type classes are defined as part of [simple extensions](../extensio
 For example, the following declares a type named `point` (namespaced to the associated YAML file) and two scalar functions that operate on it.
 
 ```yaml
-types:
-  - name: "point"
-
-scalar_functions:
-  - name: "lat"
-    impls:
-      - args:
-        - name: p
-        - value: u!point
-    return: fp64
-  - name: "lon"
-    impls:
-      - args:
-        - name: p
-        - value: u!point
-    return: fp64
+--8<-- "examples/types/user_defined_point.yaml"
 ```
 
 ### Handling User-Defined Types
@@ -85,18 +70,13 @@ Specifiers of user-defined types may provide additional structure information fo
 For example, the following declares a `point` type with two `i32` values named longitude and latitude:
 
 ```yaml
-types:
-  - name: point
-    structure:
-      longitude: i32
-      latitude: i32
+--8<-- "examples/types/point_with_structure.yaml"
 ```
 
 The name-type object notation used above is syntactic sugar for `NSTRUCT<longitude: i32, latitude: i32>`. The following means the same thing:
 
 ```yaml
-name: point
-structure: "NSTRUCT<longitude: i32, latitude: i32>"
+--8<-- "examples/types/point_with_nstruct.yaml"
 ```
 
 The structure field of a type is only intended to inform systems that don't have built-in support for the type about how they can create and transfer values of that type to systems that do support the type.
@@ -116,36 +96,19 @@ Literals for user-defined types can be represented in one of two ways:
 User-defined types may be turned into compound types by requiring parameters to be passed to them. The supported "meta-types" for parameters are data types (like those used in `LIST`, `MAP`, and `STRUCT`), booleans, integers, enumerations, and strings. Using parameters, we could redefine "point" with different types of coordinates. For example:
 
 ```yaml
-name: point
-parameters:
-  - name: T
-    description: |
-      The type used for the longitude and latitude
-      components of the point.
-    type: dataType
+--8<-- "examples/types/point_with_datatype_param.yaml"
 ```
 
 or:
 
 ```yaml
-name: point
-parameters:
-  - name: coordinate_type
-    type: enumeration
-    options:
-      - integer
-      - double
+--8<-- "examples/types/point_with_enum_param.yaml"
 ```
 
 or:
 
 ```yaml
-name: point
-parameters:
-  - name: LONG
-    type: dataType
-  - name: LAT
-    type: dataType
+--8<-- "examples/types/point_with_two_params.yaml"
 ```
 
 We can't specify the internal structure in this case, because there is currently no support for derived types in the structure.
@@ -153,14 +116,7 @@ We can't specify the internal structure in this case, because there is currently
 The allowed range can be limited for integer parameters. For example:
 
 ```yaml
-name: vector
-parameters:
-  - name: T
-    type: dataType
-  - name: dimensions
-    type: integer
-    min: 2
-    max: 3
+--8<-- "examples/types/vector_with_constraints.yaml"
 ```
 
 This specifies a vector that can be either 2- or 3-dimensional. Note however that it's not currently possible to put constraints on data type, string, or (technically) boolean parameters.
@@ -168,22 +124,13 @@ This specifies a vector that can be either 2- or 3-dimensional. Note however tha
 Similar to function arguments, the last parameter may be specified to be variadic, allowing it to be specified one or more times instead of only once. For example:
 
 ```yaml
-name: union
-parameters:
-  - name: T
-    type: dataType
-variadic: true
+--8<-- "examples/types/union_variadic.yaml"
 ```
 
 This defines a type that can be parameterized with one or more other data types, for example `union<i32, i64>` but also `union<bool>`. Zero or more is also possible, by making the last argument optional:
 
 ```yaml
-name: tuple
-parameters:
-  - name: T
-    type: dataType
-    optional: true
-variadic: true
+--8<-- "examples/types/tuple_optional_variadic.yaml"
 ```
 
 This would also allow for `tuple<>`, to define a zero-tuple.

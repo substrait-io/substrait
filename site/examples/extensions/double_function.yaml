@@ -1,0 +1,22 @@
+%YAML 1.2
+---
+urn: extension:example:double_function
+scalar_functions:
+  -
+    name: "double"
+    description: "Double the value"
+    impls:
+      - args:
+          - name: x
+            value: fp32
+        options:
+          on_domain_error:
+            values: [ NAN, ERROR ]
+        return: fp32
+      - args:
+          - name: x
+            value: i32
+        options:
+          on_domain_error:
+            values: [ NAN, ERROR ]
+        return: i32

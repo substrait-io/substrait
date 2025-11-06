@@ -54,31 +54,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-python@v6
         with:
-          node-version: "20"
-      - run: npm install -g ajv-cli
-      - run: |
-          set -euo pipefail
-          for i in $(ls *.yaml);
-          do
-            ajv validate -s ../text/simple_extensions_schema.yaml --strict=true --spec=draft2020 -d "$i"
-          done
-        working-directory: ./extensions
-      - run: |
-          set -euo pipefail
-          for i in $(ls *.yaml);
-          do
-            ajv validate -s ../../text/dialect_schema.yaml --strict=true --spec=draft2020 -d "$i"
-          done
-        working-directory: ./dialects/tests
-      - run: |
-          set -euo pipefail
-          for i in $(ls *.yaml);
-          do
-            ajv validate -s ../text/dialect_schema.yaml --strict=true --spec=draft2020 -d "$i"
-          done
-        working-directory: ./dialects
+          python-version: '3.13'
+      - run: pip install check-jsonschema
+      - run: check-jsonschema --schemafile text/simple_extensions_schema.yaml 'extensions/*.yaml' 'site/examples/**/*.yaml'
+      - run: check-jsonschema --schemafile text/dialect_schema.yaml 'dialects/*.yaml' 'dialects/tests/*.yaml'
   dry_run_release:
     name: Dry-run release
     runs-on: ubuntu-latest

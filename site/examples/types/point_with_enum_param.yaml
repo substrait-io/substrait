@@ -1,0 +1,10 @@
+# Compound user-defined type with an enumeration parameter
+urn: extension:example:point_enum_param
+types:
+  - name: point
+    parameters:
+      - name: coordinate_type
+        type: enumeration
+        options:
+          - integer
+          - double
