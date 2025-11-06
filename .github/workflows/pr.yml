@@ -58,9 +58,9 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install check-jsonschema
-      - run: check-jsonschema --schemafile text/simple_extensions_schema.yaml 'extensions/*.yaml'
-      - run: check-jsonschema --schemafile text/simple_extensions_schema.yaml 'site/examples/**/*.yaml'
-      - run: check-jsonschema --schemafile text/dialect_schema.yaml 'dialects/*.yaml' 'dialects/tests/*.yaml'
+      - run: check-jsonschema --schemafile text/simple_extensions_schema.yaml extensions/*.yaml
+      - run: check-jsonschema --schemafile text/simple_extensions_schema.yaml site/examples/**/*.yaml
+      - run: check-jsonschema --schemafile text/dialect_schema.yaml dialects/*.yaml dialects/tests/*.yaml
   dry_run_release:
     name: Dry-run release
     runs-on: ubuntu-latest
