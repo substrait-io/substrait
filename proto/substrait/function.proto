@@ -114,7 +114,12 @@ message FunctionSignature {
     bool deterministic = 7;
     bool session_dependent = 8;
 
-    NamedStruct schema = 9;
+    // The schema expression that defines the output relation structure.
+    // This must be an ExpressionNamedStruct since table functions always
+    // produce relations with named fields. The struct can be:
+    // - Static (concrete field types)
+    // - Type-parameterized (field types derived from argument types)
+    DerivationExpression.ExpressionNamedStruct schema = 9;
 
     repeated Implementation implementations = 10;
   }

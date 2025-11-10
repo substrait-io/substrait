@@ -84,11 +84,11 @@ table_functions:
             types:
               - i32
   - name: "unnest"
-    description: Expands a list literal into a set of rows, one row per element.
+    description: Expands a list expression into a set of rows, one row per element.
     impls:
       - args:
           - name: input
-            value: "list<T>"
+            value: list<T>
             description: The list to unnest
         deterministic: true
         sessionDependent: false

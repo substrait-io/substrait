@@ -335,7 +335,9 @@ $defs:
             deterministic:
               $ref: "#/$defs/deterministic"
             return:
-              # The output schema (NamedStruct).
+              # The output schema (DerivationExpression, typically ExpressionNamedStruct).
+              # This can be a static struct definition or a dynamic derivation based on
+              # argument types (e.g., type-parameterized functions).
               # Omit this field only if the schema depends on runtime data content
               # (not determinable from function signature).
               $ref: "#/$defs/type"

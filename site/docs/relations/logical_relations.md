@@ -114,7 +114,7 @@ Points to an [Iceberg metadata file](https://iceberg.apache.org/spec/#table-meta
 
 The table function operator invokes a function that produces a relation (zero or more records).  These are leaf operators that take constant (non-relational) arguments and generate data.
 
-Like scalar function return types, table function schemas can be concrete types or reference type parameters from arguments. The schema is either derived from the function signature or must be explicitly provided when it depends on runtime data content. It is preferred to explicitly provide a schema derivation in the YAML file when possible.
+Like scalar function return types, table function schemas can be concrete types or reference type parameters from arguments. The schema is expressed as an `ExpressionNamedStruct` and is either derived from the function signature or must be explicitly provided when it depends on runtime data content. It is preferred to explicitly provide a schema derivation in the YAML file when possible.
 
 | Signature            | Value                                       |
 | -------------------- | ------------------------------------------- |

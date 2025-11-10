@@ -23,7 +23,7 @@ Future extensions may add support for transformation table functions that consum
 Table functions are defined in YAML extension files, similar to scalar, aggregate, and window functions. A table function signature specifies:
 
 - **Arguments**: The parameters the function accepts (must be constant expressions)
-- **Schema**: The output schema of the generated relation (may or may not be specified in YAML)
+- **Schema**: The output schema of the generated relation, expressed as an `ExpressionNamedStruct` that can be static or type-parameterized (may or may not be specified in the YAML definition)
 - **Determinism**: Whether the function produces the same output for the same inputs
 - **Session Dependency**: Whether the function depends on session state
 
