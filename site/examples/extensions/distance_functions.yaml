@@ -1,0 +1,13 @@
+urn: extension:example:distance_functions
+dependencies:
+  ext: extension:io.substrait:extension_types
+scalar_functions:
+- name: distance
+  description: The distance between two points.
+  impls:
+  - args:
+    - name: a
+      value: ext.point
+    - name: b
+      value: ext.point
+    return: f64

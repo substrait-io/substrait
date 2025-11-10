@@ -1,0 +1,11 @@
+# Example showing the 'any1' type - arguments must be of the same type
+urn: extension:example:any1_type
+scalar_functions:
+- name: bar
+  impls:
+  - args:
+    - name: a
+      value: any1
+    - name: b
+      value: any1
+    return: int64

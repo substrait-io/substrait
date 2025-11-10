@@ -35,19 +35,7 @@ A YAML file can also reference types and type variations defined in another YAML
 For example, if the extension with extension URN `extension:io.substrait:extension_types` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
 
 ```yaml
-urn: extension:example:distance_functions
-dependencies:
-  ext: extension:io.substrait:extension_types
-scalar_functions:
-- name: distance
-  description: The distance between two points.
-  impls:
-  - args:
-    - name: a
-      value: ext.point
-    - name: b
-      value: ext.point
-    return: f64
+--8<-- "examples/extensions/distance_functions.yaml"
 ```
 
 Here, the choice for the name `ext` is arbitrary, as long as it does not conflict with anything else in the YAML file.
@@ -125,29 +113,13 @@ A function signature uniquely identifies a function implementation within a sing
 ### Any Types
 
 ```yaml
-scalar_functions:
-- name: foo
-  impls:
-  - args:
-    - name: a
-      value: any
-    - name: b
-      value: any
-    return: int64
+--8<-- "examples/extensions/any_type_function.yaml"
 ```
 
 The `any` type indicates that the argument can take any possible type. In the `foo` function above, arguments `a` and `b` can be of any type, even different ones in the same function invocation.
 
 ```yaml
-scalar_functions:
-- name: bar
-  impls:
-  - args:
-    - name: a
-      value: any1
-    - name: b
-      value: any1
-    return: int64
+--8<-- "examples/extensions/any1_type_function.yaml"
 ```
 The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
 

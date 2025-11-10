@@ -1,0 +1,8 @@
+# Union type with variadic parameter (one or more types)
+urn: extension:example:union_variadic
+types:
+  - name: union
+    parameters:
+      - name: T
+        type: dataType
+    variadic: true
