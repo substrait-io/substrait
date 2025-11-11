@@ -26,8 +26,6 @@ table_functions:
             value: i64
             description: The increment between values
             constant: true
-        deterministic: true
-        sessionDependent: false
         return:
           names:
             - value
@@ -45,8 +43,6 @@ table_functions:
             value: i32
             description: The increment between values
             constant: true
-        deterministic: true
-        sessionDependent: false
         return:
           names:
             - value
@@ -60,8 +56,6 @@ table_functions:
           - name: stop
             value: i64
             description: The ending value of the series (inclusive)
-        deterministic: true
-        sessionDependent: false
         return:
           names:
             - value
@@ -75,8 +69,6 @@ table_functions:
           - name: stop
             value: i32
             description: The ending value of the series (inclusive)
-        deterministic: true
-        sessionDependent: false
         return:
           names:
             - value
@@ -90,8 +82,6 @@ table_functions:
           - name: input
             value: list<T>
             description: The list to unnest
-        deterministic: true
-        sessionDependent: false
         # Schema references type parameter T from list<T>
         # The field type is derived from the list element type
         return:

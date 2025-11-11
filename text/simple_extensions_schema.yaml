@@ -330,10 +330,6 @@ $defs:
           properties:
             args:
               $ref: "#/$defs/arguments"
-            sessionDependent:
-              $ref: "#/$defs/sessionDependent"
-            deterministic:
-              $ref: "#/$defs/deterministic"
             return:
               # The output schema (DerivationExpression, typically ExpressionNamedStruct).
               # This can be a static struct definition or a dynamic derivation based on

@@ -111,17 +111,14 @@ message FunctionSignature {
     repeated string name = 3;
     Description description = 4;
 
-    bool deterministic = 7;
-    bool session_dependent = 8;
-
     // The schema expression that defines the output relation structure.
     // This must be an ExpressionNamedStruct since table functions always
     // produce relations with named fields. The struct can be:
     // - Static (concrete field types)
     // - Type-parameterized (field types derived from argument types)
-    DerivationExpression.ExpressionNamedStruct schema = 9;
+    DerivationExpression.ExpressionNamedStruct schema = 5;
 
-    repeated Implementation implementations = 10;
+    repeated Implementation implementations = 6;
   }
 
   message Description {

@@ -24,8 +24,6 @@ Table functions are defined in YAML extension files, similar to scalar, aggregat
 
 - **Arguments**: The parameters the function accepts (must be constant expressions)
 - **Schema**: The output schema of the generated relation, expressed as an `ExpressionNamedStruct` that can be static or type-parameterized (may or may not be specified in the YAML definition)
-- **Determinism**: Whether the function produces the same output for the same inputs
-- **Session Dependency**: Whether the function depends on session state
 
 ## Schema Determination
 
