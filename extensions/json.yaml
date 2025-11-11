@@ -1,0 +1,61 @@
+%YAML 1.2
+---
+urn: extension:io.substrait:json
+types:
+  - name: json
+    structure:
+      content: string
+    description: >-
+      A JSON type representing arbitrary JSON values (objects, arrays,
+      strings, numbers, booleans, or null).
+
+scalar_functions:
+  - name: "parse_json"
+    description: >-
+      Parse a JSON string into a JSON value.
+    impls:
+      - args:
+          - name: json_string
+            value: string
+        options:
+          on_error:
+            description: Controls behavior when input is not valid JSON
+            values: [ ERROR, "NULL" ]
+        return: u!json?
+
+  - name: "to_string"
+    description: "Convert a JSON value to its string representation"
+    impls:
+      - args:
+          - name: json_value
+            value: u!json
+        return: string
+
+  - name: "json_extract"
+    description: >-
+      Extract a value from JSON using a JSONPath expression.
+      JSONPath expressions should follow RFC 9535 (https://datatracker.ietf.org/doc/html/rfc9535).
+    impls:
+      - args:
+          - name: json_value
+            value: u!json
+          - name: path
+            value: string
+        options:
+          on_invalid_path:
+            description: Controls behavior when the JSONPath expression is syntactically invalid
+            values: [ ERROR, "NULL", UNDEFINED ]
+          on_path_not_found:
+            description: Controls behavior when the path does not exist in the JSON document
+            values: [ ERROR, "NULL" ]
+        return: u!json?
+
+  - name: "is_json_valid"
+    description: >-
+      Returns true if the input string is valid JSON, false otherwise.
+      This function does not parse the JSON, only validates syntax.
+    impls:
+      - args:
+          - name: json_string
+            value: string
+        return: boolean
