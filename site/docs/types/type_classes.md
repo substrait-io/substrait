@@ -88,8 +88,28 @@ As such, it's currently not possible to "unpack" a user-defined type into its st
 ### Literals
 
 Literals for user-defined types can be represented in one of two ways:
+
 * Using protobuf [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) messages.
 * Using the structure representation of the type.
+
+When using the structure representation, the literal value is encoded using `Literal.Struct`, which contains an ordered list of field values (themselves `Literal` messages). `Literal.Struct` is position-based and contains only values, not field names. For more information about how field names work with struct types, see [`NamedStruct`](named_structs.md).
+
+For example, given the `point` type defined above with `structure: {longitude: i32, latitude: i32}`, a literal value representing the coordinates `{longitude=5, latitude=10}` would be encoded as:
+
+```json
+{
+  "userDefined": {
+    "typeReference": 1,
+    "struct": {
+      "fields": [
+        { "i32": 5 },
+        { "i32": 10 }
+      ]
+    }
+  }
+}
+```
+
 
 ### Compound User-Defined Types
 
