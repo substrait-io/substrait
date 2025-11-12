@@ -59,6 +59,7 @@ For example, the following declares a type named `point` (namespaced to the asso
 ### Handling User-Defined Types
 
 Systems without support for a specific user-defined type:
+
 * Cannot generate values of the type.
 * Cannot implement functions operating on the type.
 * _May_ support consuming and emitting values of the type _without_ modifying them.
