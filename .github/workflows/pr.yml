@@ -61,6 +61,23 @@ jobs:
       - run: check-jsonschema --schemafile text/simple_extensions_schema.yaml extensions/*.yaml
       - run: check-jsonschema --schemafile text/simple_extensions_schema.yaml site/examples/**/*.yaml
       - run: check-jsonschema --schemafile text/dialect_schema.yaml dialects/tests/*.yaml
+  protovalidate:
+    name: Validate Protobuf examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: bufbuild/buf-setup-action@v1.50.0
+        with:
+          github_token: ${{ github.token }}
+      - name: Validate Lambda Examples
+        run: |
+          for file in site/examples/proto-textformat/lambdas/*.textproto; do
+            echo "Validating $file..."
+            buf convert proto/substrait/algebra.proto \
+              --type substrait.Expression.Lambda \
+              --from "$file#format=txtpb" \
+              --to /dev/null
+          done
   dry_run_release:
     name: Dry-run release
     runs-on: ubuntu-latest
