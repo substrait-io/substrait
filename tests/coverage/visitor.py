@@ -11,6 +11,19 @@ from tests.coverage.nodes import (
     CaseLiteral,
     SubstraitError,
 )
+from tests.coverage.extensions import (
+    TypeVariable,
+    SimpleType,
+    ListType,
+    StructType,
+    ParameterizedType,
+    LambdaType,
+    Type,
+    build_type_from_context,
+    build_lambda_type,
+    build_struct_type,
+    build_parameterized_type,
+)
 
 
 class TestCaseVisitor(FuncTestCaseParserVisitor):
@@ -167,9 +180,12 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitAggregateFuncArg(self, ctx: FuncTestCaseParser.AggregateFuncArgContext):
         if ctx.argument() is not None:
             return AggregateArgument("", "", "", self.visitArgument(ctx.argument()))
-        data_type = self.visitDataType(ctx.dataType())
+        data_type = build_type_from_context(ctx.dataType())
+        # Convert to string for backward compatibility with AggregateArgument
+        from tests.coverage.extensions import type_to_string
+        data_type_str = type_to_string(data_type)
         return AggregateArgument(
-            ctx.ColumnName().getText(), data_type, "", scalar_value=None
+            ctx.ColumnName().getText(), data_type_str, "", scalar_value=None
         )
 
     def visitQualifiedAggregateFuncArgs(
@@ -206,7 +222,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitDataColumn(self, ctx: FuncTestCaseParser.DataColumnContext):
         column = self.visitColumnValues(ctx.columnValues())
-        column_type = ctx.dataType().getText()
+        column_type = build_type_from_context(ctx.dataType())
         return CaseLiteral(value=column, type=column_type)
 
     def visitColumnValues(self, ctx: FuncTestCaseParser.ColumnValuesContext):
@@ -307,68 +323,111 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return ctx.NaN().getText()
 
     def visitNullArg(self, ctx: FuncTestCaseParser.NullArgContext):
-        datatype = ctx.dataType().getText()
+        datatype = build_type_from_context(ctx.dataType())
         return CaseLiteral(value=None, type=datatype)
 
     def visitIntArg(self, ctx: FuncTestCaseParser.IntArgContext):
-        type_str = "i8"
+        # Build type from the scalar type context
+        type_name = "i8"
         if ctx.I16() is not None:
-            type_str = "i16"
+            type_name = "i16"
         elif ctx.I32() is not None:
-            type_str = "i32"
+            type_name = "i32"
         elif ctx.I64() is not None:
-            type_str = "i64"
-        return CaseLiteral(value=ctx.IntegerLiteral().getText(), type=type_str)
+            type_name = "i64"
+
+        # Check for nullable (?)
+        nullable = ctx.isnull is not None
+
+        return CaseLiteral(
+            value=ctx.IntegerLiteral().getText(),
+            type=SimpleType(type_name, nullable=nullable)
+        )
 
     def visitFloatArg(self, ctx: FuncTestCaseParser.FloatArgContext):
-        # TODO add checks on number of decimal places
-        type_str = "fp32"
+        # Build type from the scalar type context
+        type_name = "fp32"
         if ctx.FP64() is not None:
-            type_str = "fp64"
+            type_name = "fp64"
+
+        # Check for nullable (?)
+        nullable = ctx.isnull is not None
+
         return CaseLiteral(
-            value=self.visitNumericLiteral(ctx.numericLiteral()), type=type_str
+            value=self.visitNumericLiteral(ctx.numericLiteral()),
+            type=SimpleType(type_name, nullable=nullable)
         )
 
     def visitBooleanArg(self, ctx: FuncTestCaseParser.BooleanArgContext):
-        return CaseLiteral(value=ctx.BooleanLiteral().getText(), type="bool")
+        nullable = ctx.isnull is not None
+        return CaseLiteral(
+            value=ctx.BooleanLiteral().getText(),
+            type=SimpleType("bool", nullable=nullable)
+        )
 
     def visitStringArg(self, ctx: FuncTestCaseParser.StringArgContext):
-        return CaseLiteral(value=ctx.StringLiteral().getText(), type="str")
+        nullable = ctx.isnull is not None
+        return CaseLiteral(
+            value=ctx.StringLiteral().getText(),
+            type=SimpleType("str", nullable=nullable)
+        )
 
     def visitDecimalArg(self, ctx: FuncTestCaseParser.DecimalArgContext):
+        # Decimal can be parameterized like decimal<10,2>
+        # Use build_type_from_context for proper parsing
+        decimal_type = build_type_from_context(ctx.decimalType())
         return CaseLiteral(
             value=self.visitNumericLiteral(ctx.numericLiteral()),
-            type=ctx.decimalType().getText().lower(),
+            type=decimal_type,
         )
 
     def visitDateArg(self, ctx: FuncTestCaseParser.DateArgContext):
-        return CaseLiteral(value=ctx.DateLiteral().getText().strip("'"), type="date")
+        nullable = ctx.isnull is not None
+        return CaseLiteral(
+            value=ctx.DateLiteral().getText().strip("'"),
+            type=SimpleType("date", nullable=nullable)
+        )
 
     def visitTimeArg(self, ctx: FuncTestCaseParser.TimeArgContext):
-        return CaseLiteral(value=ctx.TimeLiteral().getText().strip("'"), type="time")
+        nullable = ctx.isnull is not None
+        return CaseLiteral(
+            value=ctx.TimeLiteral().getText().strip("'"),
+            type=SimpleType("time", nullable=nullable)
+        )
 
     def visitTimestampArg(self, ctx: FuncTestCaseParser.TimestampArgContext):
-        return CaseLiteral(value=ctx.TimestampLiteral().getText().strip("'"), type="ts")
+        nullable = ctx.isnull is not None
+        return CaseLiteral(
+            value=ctx.TimestampLiteral().getText().strip("'"),
+            type=SimpleType("ts", nullable=nullable)
+        )
 
     def visitTimestampTzArg(self, ctx: FuncTestCaseParser.TimestampTzArgContext):
+        nullable = ctx.isnull is not None
         return CaseLiteral(
-            value=ctx.TimestampTzLiteral().getText().strip("'"), type="tstz"
+            value=ctx.TimestampTzLiteral().getText().strip("'"),
+            type=SimpleType("tstz", nullable=nullable)
         )
 
     def visitIntervalDayArg(self, ctx: FuncTestCaseParser.IntervalDayArgContext):
+        # IntervalDay can be parameterized
+        interval_type = build_type_from_context(ctx.intervalDayType())
         return CaseLiteral(
-            value=ctx.IntervalDayLiteral().getText().strip("'"), type="iday"
+            value=ctx.IntervalDayLiteral().getText().strip("'"),
+            type=interval_type
         )
 
     def visitIntervalYearArg(self, ctx: FuncTestCaseParser.IntervalYearArgContext):
+        nullable = ctx.isnull is not None
         return CaseLiteral(
-            value=ctx.IntervalYearLiteral().getText().strip("'"), type="iyear"
+            value=ctx.IntervalYearLiteral().getText().strip("'"),
+            type=SimpleType("iyear", nullable=nullable)
         )
 
     def visitListArg(self, ctx: FuncTestCaseParser.ListArgContext):
         return CaseLiteral(
             value=self.visitLiteralList(ctx.literalList()),
-            type=ctx.listType().getText(),
+            type=build_type_from_context(ctx.listType()),
         )
 
     def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
@@ -379,8 +438,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return values
 
     def visitLambdaArg(self, ctx: FuncTestCaseParser.LambdaArgContext):
-        lambda_type = ctx.lambdaType().getText()
-        return CaseLiteral(value="<lambda>", type=lambda_type)
+        lambda_type_structured = build_type_from_context(ctx.lambdaType())
+        return CaseLiteral(value="<lambda>", type=lambda_type_structured)
 
     def visitResult(self, ctx: FuncTestCaseParser.ResultContext):
         if ctx.argument() is not None:

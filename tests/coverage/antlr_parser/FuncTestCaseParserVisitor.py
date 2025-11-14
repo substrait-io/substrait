@@ -390,6 +390,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#typeVariable.
+    def visitTypeVariable(self, ctx:FuncTestCaseParser.TypeVariableContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#booleanType.
     def visitBooleanType(self, ctx:FuncTestCaseParser.BooleanTypeContext):
         return self.visitChildren(ctx)

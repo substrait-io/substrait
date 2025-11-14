@@ -8,6 +8,16 @@ from tests.coverage.case_file_parser import load_all_testcases
 from tests.coverage.coverage import get_test_coverage
 from tests.coverage.extensions import build_type_to_short_type
 from tests.coverage.extensions import Extension, FunctionRegistry
+from tests.coverage.extensions import (
+    parse_type_string,
+    TypeVariable,
+    SimpleType,
+    LambdaType,
+    ListType,
+    StructType,
+    ParameterizedType,
+    types_match,
+)
 
 
 # NOTE: this test is run as part of pre-commit hook
@@ -86,24 +96,275 @@ def test_type_variables_recognized_by_get_short_type():
 
 def test_type_variables_match_concrete_types():
     """Test that type variables (single uppercase letters) match any concrete type"""
-    assert FunctionRegistry.is_same_type("T", "i32")
-    assert FunctionRegistry.is_same_type("U", "str")
-    assert FunctionRegistry.is_same_type("V", "fp64")
-    assert FunctionRegistry.is_same_type("T", "list<i32>")
-    assert FunctionRegistry.is_same_type("U", "lambda<i32->boolean>")
-
-    assert FunctionRegistry.is_same_type("i32", "i32")
-    assert FunctionRegistry.is_same_type("str", "str")
-
-    assert not FunctionRegistry.is_same_type("i32", "str")
-    assert not FunctionRegistry.is_same_type("fp32", "fp64")
-
-
-def test_lambda_types_match_regardless_of_parameters():
-    """Test that lambda types match other lambda types"""
-    assert FunctionRegistry.is_same_type("lambda<i32->i32>", "lambda<i32->i32>")
-    assert FunctionRegistry.is_same_type("lambda<T->U>", "lambda<i32->boolean>")
     assert FunctionRegistry.is_same_type(
-        "lambda<struct<i32,i32>->i32>",
-        "lambda<struct<i32,i32>->i32>"
+        TypeVariable("T"), SimpleType("i32")
     )
+    assert FunctionRegistry.is_same_type(
+        TypeVariable("U"), SimpleType("str")
+    )
+    assert FunctionRegistry.is_same_type(
+        TypeVariable("V"), SimpleType("fp64")
+    )
+    assert FunctionRegistry.is_same_type(
+        TypeVariable("T"), ListType(SimpleType("i32"))
+    )
+    assert FunctionRegistry.is_same_type(
+        TypeVariable("U"),
+        LambdaType(SimpleType("i32"), SimpleType("bool"))
+    )
+
+    assert FunctionRegistry.is_same_type(
+        SimpleType("i32"), SimpleType("i32")
+    )
+    assert FunctionRegistry.is_same_type(
+        SimpleType("str"), SimpleType("str")
+    )
+
+    assert not FunctionRegistry.is_same_type(
+        SimpleType("i32"), SimpleType("str")
+    )
+    assert not FunctionRegistry.is_same_type(
+        SimpleType("fp32"), SimpleType("fp64")
+    )
+
+
+def test_lambda_type_variable_matching():
+    """Test proper type variable matching in lambda signatures"""
+    # Different type variables (T -> U) should match different concrete types
+    assert FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("U")),
+        LambdaType(SimpleType("i32"), SimpleType("str"))
+    )
+    assert FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("U")),
+        LambdaType(SimpleType("i32"), SimpleType("bool"))
+    )
+    assert FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("U")),
+        LambdaType(SimpleType("str"), SimpleType("fp64"))
+    )
+
+    # Same type variable (T -> T) should match when input and output are same
+    assert FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("T")),
+        LambdaType(SimpleType("i32"), SimpleType("i32"))
+    )
+    assert FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("T")),
+        LambdaType(SimpleType("str"), SimpleType("str"))
+    )
+    assert FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("T")),
+        LambdaType(SimpleType("fp64"), SimpleType("fp64"))
+    )
+
+    # Same type variable should NOT match when input and output differ
+    assert not FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("T")),
+        LambdaType(SimpleType("i32"), SimpleType("str"))
+    )
+    assert not FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("T")),
+        LambdaType(SimpleType("i32"), SimpleType("bool"))
+    )
+    assert not FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("T")),
+        LambdaType(SimpleType("str"), SimpleType("i32"))
+    )
+
+
+def test_lambda_struct_type_variable_matching():
+    """Test type variable matching with struct parameters"""
+    # struct<T, T> means both elements must be same type
+    assert FunctionRegistry.is_same_type(
+        LambdaType(
+            StructType([TypeVariable("T"), TypeVariable("T")]),
+            SimpleType("i32")
+        ),
+        LambdaType(
+            StructType([SimpleType("i32"), SimpleType("i32")]),
+            SimpleType("i32")
+        )
+    )
+    assert FunctionRegistry.is_same_type(
+        LambdaType(
+            StructType([TypeVariable("T"), TypeVariable("T")]),
+            SimpleType("i32")
+        ),
+        LambdaType(
+            StructType([SimpleType("str"), SimpleType("str")]),
+            SimpleType("i32")
+        )
+    )
+
+    # struct<T, T> should NOT match when struct elements differ
+    assert not FunctionRegistry.is_same_type(
+        LambdaType(
+            StructType([TypeVariable("T"), TypeVariable("T")]),
+            SimpleType("i32")
+        ),
+        LambdaType(
+            StructType([SimpleType("i32"), SimpleType("str")]),
+            SimpleType("i32")
+        )
+    )
+    assert not FunctionRegistry.is_same_type(
+        LambdaType(
+            StructType([TypeVariable("T"), TypeVariable("T")]),
+            SimpleType("i32")
+        ),
+        LambdaType(
+            StructType([SimpleType("i32"), SimpleType("fp64")]),
+            SimpleType("i32")
+        )
+    )
+
+    # struct<T, U> means elements can be different types
+    assert FunctionRegistry.is_same_type(
+        LambdaType(
+            StructType([TypeVariable("T"), TypeVariable("U")]),
+            SimpleType("i32")
+        ),
+        LambdaType(
+            StructType([SimpleType("i32"), SimpleType("str")]),
+            SimpleType("i32")
+        )
+    )
+    assert FunctionRegistry.is_same_type(
+        LambdaType(
+            StructType([TypeVariable("T"), TypeVariable("U")]),
+            SimpleType("i32")
+        ),
+        LambdaType(
+            StructType([SimpleType("i32"), SimpleType("i32")]),
+            SimpleType("i32")
+        )
+    )
+    assert FunctionRegistry.is_same_type(
+        LambdaType(
+            StructType([TypeVariable("T"), TypeVariable("U")]),
+            SimpleType("i32")
+        ),
+        LambdaType(
+            StructType([SimpleType("str"), SimpleType("fp64")]),
+            SimpleType("i32")
+        )
+    )
+
+
+def test_lambda_return_type_variable_matching():
+    """Test type variable matching in return types"""
+    # Return type with type variable from input
+    assert FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("T")),
+        LambdaType(SimpleType("i32"), SimpleType("i32"))
+    )
+    assert FunctionRegistry.is_same_type(
+        LambdaType(
+            ListType(TypeVariable("T")),
+            TypeVariable("T")
+        ),
+        LambdaType(
+            ListType(SimpleType("i32")),
+            SimpleType("i32")
+        )
+    )
+
+    # Return type should match when type variable is consistent
+    assert FunctionRegistry.is_same_type(
+        LambdaType(
+            StructType([TypeVariable("T"), TypeVariable("T")]),
+            TypeVariable("T")
+        ),
+        LambdaType(
+            StructType([SimpleType("i32"), SimpleType("i32")]),
+            SimpleType("i32")
+        )
+    )
+
+    # Return type should NOT match when type variable is inconsistent
+    assert not FunctionRegistry.is_same_type(
+        LambdaType(
+            StructType([TypeVariable("T"), TypeVariable("T")]),
+            TypeVariable("T")
+        ),
+        LambdaType(
+            StructType([SimpleType("i32"), SimpleType("i32")]),
+            SimpleType("str")
+        )
+    )
+    assert not FunctionRegistry.is_same_type(
+        LambdaType(TypeVariable("T"), TypeVariable("T")),
+        LambdaType(SimpleType("i32"), SimpleType("str"))
+    )
+
+
+def test_parse_type_variable():
+    """Test parsing type variables"""
+    assert parse_type_string("T") == TypeVariable("T")
+
+
+def test_parse_simple_type():
+    """Test parsing simple types"""
+    assert parse_type_string("i32") == SimpleType("i32")
+    # Note: ANTLR parser normalizes "boolean" to "bool"
+    assert parse_type_string("boolean") == SimpleType("bool")
+
+
+def test_parse_parameterized_type():
+    """Test parsing parameterized types like list<i32>"""
+    result = parse_type_string("list<i32>")
+    # ANTLR parser should give us ListType, not ParameterizedType
+    from tests.coverage.extensions import ListType
+    assert result == ListType(SimpleType("i32"))
+
+
+def test_parse_struct_type():
+    """Test parsing struct types with multiple parameters"""
+    result = parse_type_string("struct<i32,str>")
+    # ANTLR parser should give us StructType, not ParameterizedType
+    from tests.coverage.extensions import StructType
+    assert result == StructType([SimpleType("i32"), SimpleType("str")])
+
+
+def test_parse_lambda_type():
+    """Test parsing lambda types"""
+    assert parse_type_string("lambda<i32->str>") == LambdaType(
+        SimpleType("i32"),
+        SimpleType("str")
+    )
+
+
+def test_parse_lambda_with_type_variables():
+    """Test parsing lambda with type variables"""
+    assert parse_type_string("lambda<T->U>") == LambdaType(
+        TypeVariable("T"),
+        TypeVariable("U")
+    )
+
+
+def test_parse_nested_lambda_type():
+    """Test parsing lambda with struct parameter"""
+    from tests.coverage.extensions import StructType
+    assert parse_type_string("lambda<struct<i32,i32>->i32>") == LambdaType(
+        StructType([SimpleType("i32"), SimpleType("i32")]),
+        SimpleType("i32")
+    )
+
+
+def test_types_match_with_bindings():
+    """Test type matching with variable bindings"""
+    # T should bind to i32
+    pattern = parse_type_string("T")
+    concrete = parse_type_string("i32")
+    bindings = {}
+    assert types_match(pattern, concrete, bindings)
+    assert bindings["T"] == concrete
+
+    # Second T should match the same binding
+    pattern2 = parse_type_string("T")
+    assert types_match(pattern2, concrete, bindings)
+
+    # T should NOT match str if already bound to i32
+    concrete2 = parse_type_string("str")
+    assert not types_match(pattern2, concrete2, bindings)

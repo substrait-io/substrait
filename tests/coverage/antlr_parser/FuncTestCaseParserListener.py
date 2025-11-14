@@ -693,6 +693,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#typeVariable.
+    def enterTypeVariable(self, ctx:FuncTestCaseParser.TypeVariableContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#typeVariable.
+    def exitTypeVariable(self, ctx:FuncTestCaseParser.TypeVariableContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#booleanType.
     def enterBooleanType(self, ctx:FuncTestCaseParser.BooleanTypeContext):
         pass
