@@ -432,6 +432,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#lambdaShortForm.
+    def enterLambdaShortForm(self, ctx:FuncTestCaseParser.LambdaShortFormContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#lambdaShortForm.
+    def exitLambdaShortForm(self, ctx:FuncTestCaseParser.LambdaShortFormContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#lambdaParameters.
     def enterLambdaParameters(self, ctx:FuncTestCaseParser.LambdaParametersContext):
         pass
@@ -441,21 +450,21 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaParameter.
-    def enterLambdaParameter(self, ctx:FuncTestCaseParser.LambdaParameterContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaParameter.
-    def exitLambdaParameter(self, ctx:FuncTestCaseParser.LambdaParameterContext):
-        pass
-
-
     # Enter a parse tree produced by FuncTestCaseParser#lambdaBody.
     def enterLambdaBody(self, ctx:FuncTestCaseParser.LambdaBodyContext):
         pass
 
     # Exit a parse tree produced by FuncTestCaseParser#lambdaBody.
     def exitLambdaBody(self, ctx:FuncTestCaseParser.LambdaBodyContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#lambdaTypedLiteral.
+    def enterLambdaTypedLiteral(self, ctx:FuncTestCaseParser.LambdaTypedLiteralContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#lambdaTypedLiteral.
+    def exitLambdaTypedLiteral(self, ctx:FuncTestCaseParser.LambdaTypedLiteralContext):
         pass
 
 
@@ -510,6 +519,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#lambdaComparison.
     def exitLambdaComparison(self, ctx:FuncTestCaseParser.LambdaComparisonContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#lambdaArguments.
+    def enterLambdaArguments(self, ctx:FuncTestCaseParser.LambdaArgumentsContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#lambdaArguments.
+    def exitLambdaArguments(self, ctx:FuncTestCaseParser.LambdaArgumentsContext):
         pass
 
 
@@ -798,6 +816,24 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#list.
     def exitList(self, ctx:FuncTestCaseParser.ListContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#lambdaType.
+    def enterLambdaType(self, ctx:FuncTestCaseParser.LambdaTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#lambdaType.
+    def exitLambdaType(self, ctx:FuncTestCaseParser.LambdaTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#dataTypeList.
+    def enterDataTypeList(self, ctx:FuncTestCaseParser.DataTypeListContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#dataTypeList.
+    def exitDataTypeList(self, ctx:FuncTestCaseParser.DataTypeListContext):
         pass
 
 

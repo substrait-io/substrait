@@ -207,15 +207,15 @@ literalList
     ;
 
 lambdaArg
-    : Lambda OParen lambdaParameters? CParen Arrow lambdaBody
+    : OParen lambdaShortForm CParen DoubleColon lambdaType
+    ;
+
+lambdaShortForm
+    : lambdaParameters? Arrow lambdaBody
     ;
 
 lambdaParameters
-    : lambdaParameter (Comma lambdaParameter)*
-    ;
-
-lambdaParameter
-    : paramName=Identifier DoubleColon paramType=dataType
+    : Identifier (Comma Identifier)*
     ;
 
 lambdaBody
@@ -223,13 +223,18 @@ lambdaBody
     ;
 
 lambdaExpression
-    : functionName=identifier OParen arguments? CParen (DoubleColon dataType)?  #lambdaFunctionCall
+    : functionName=identifier OParen lambdaArguments? CParen (DoubleColon dataType)?  #lambdaFunctionCall
     | lambdaExpression op=(Asterisk | ForwardSlash | Percent) lambdaExpression #lambdaBinaryOp
     | lambdaExpression op=(Plus | Minus) lambdaExpression                       #lambdaBinaryOp
     | lambdaExpression op=(Gt | Lt | Gte | Lte | Eq | Ne) lambdaExpression     #lambdaComparison
     | Identifier (Dot Identifier)?                                               #lambdaIdentifier
+    | literal DoubleColon dataType                                               #lambdaTypedLiteral
     | literal                                                                    #lambdaLiteral
     | OParen lambdaExpression CParen                                             #lambdaParenExpr
+    ;
+
+lambdaArguments
+    : lambdaExpression (Comma lambdaExpression)*
     ;
 
 dataType
@@ -317,6 +322,14 @@ listType
     : List isnull=QMark? OAngleBracket elemType=dataType CAngleBracket #list
     ;
 
+lambdaType
+    : Lambda isnull=QMark? OAngleBracket paramTypes=dataTypeList Arrow returnType=dataType CAngleBracket
+    ;
+
+dataTypeList
+    : dataType (Comma dataType)*
+    ;
+
 parameterizedType
     : fixedCharType
     | varCharType
@@ -326,6 +339,7 @@ parameterizedType
     | precisionTimeType
     | precisionTimestampType
     | precisionTimestampTZType
+    | lambdaType
 // TODO implement the rest of the parameterized types
 //  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct

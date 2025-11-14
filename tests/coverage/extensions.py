@@ -48,6 +48,7 @@ def build_type_to_short_type():
         FuncTestCaseLexer.Struct: FuncTestCaseLexer.Struct,
         FuncTestCaseLexer.List: FuncTestCaseLexer.List,
         FuncTestCaseLexer.Map: FuncTestCaseLexer.Map,
+        FuncTestCaseLexer.Lambda: FuncTestCaseLexer.Lambda,
         FuncTestCaseLexer.Any: FuncTestCaseLexer.Any,
     }
     to_short_type = {

@@ -1,0 +1,7 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
+
+# basic: Basic filtering examples
+list_filter([1, 2, 3, 4, 5]::List<i32>, (x -> gt(x, 2::i32)::boolean)::lambda<i32 -> boolean>) = [3, 4, 5]::List<i32>
+list_filter([1, 2, 3, 4, 5]::List<i32>, (x -> lt(x, 3::i32)::boolean)::lambda<i32 -> boolean>) = [1, 2]::List<i32>
+list_filter([]::List<i32>, (x -> gt(x, 0::i32)::boolean)::lambda<i32 -> boolean>) = []::List<i32>
