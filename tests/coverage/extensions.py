@@ -57,6 +57,8 @@ def build_type_to_short_type():
     any_type = substrait_type_str(FuncTestCaseLexer.Any)
     for i in range(1, 3):
         to_short_type[f"{any_type}{i}"] = f"{any_type}{i}"
+    # Note: Type variables (single uppercase letters like T, U, V) are preserved
+    # and handled dynamically in get_short_type() and is_same_type()
     return to_short_type
 
 
@@ -70,8 +72,20 @@ class Extension:
         return "https://github.com/substrait-io/substrait/blob/main/extensions/"
 
     @staticmethod
+    def is_type_variable(type_str):
+        """Check if a type string is a type variable (single uppercase letter)"""
+        return len(type_str) == 1 and type_str.isupper()
+
+    @staticmethod
     def get_short_type(long_type):
-        long_type = long_type.lower().rstrip("?")
+        long_type = long_type.rstrip("?")
+
+        # Preserve single uppercase letters as type variables (T, U, V, etc.)
+        # Don't lowercase them like other types
+        if Extension.is_type_variable(long_type):
+            return long_type
+
+        long_type = long_type.lower()
         short_type = type_to_short_type.get(long_type, None)
 
         if short_type is None:
@@ -91,6 +105,10 @@ class Extension:
 
     @staticmethod
     def get_long_type(short_type):
+        # Type variables map to themselves
+        if Extension.is_type_variable(short_type):
+            return short_type
+
         if short_type.endswith("?"):
             short_type = short_type[:-1]
         long_type = short_type_to_type.get(short_type, None)
@@ -281,6 +299,19 @@ class FunctionRegistry:
     @staticmethod
     def is_same_type(func_arg_type, arg_type):
         arg_type_base = arg_type.split("<")[0]
+        func_arg_type_base = func_arg_type.split("<")[0]
+
+        # Type variables can match any concrete type
+        if Extension.is_type_variable(func_arg_type):
+            return True
+
+        # Check if both are lambda types
+        if func_arg_type_base == "lambda" and arg_type_base == "lambda":
+            # For lambda types, just check that both are lambdas
+            # Type variables inside can match any concrete type
+            # TODO: this is clearly not the correct resolution strategy.
+            return True
+
         if func_arg_type == arg_type_base:
             return True
         return FunctionRegistry.is_type_any(func_arg_type)

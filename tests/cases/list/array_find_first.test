@@ -2,6 +2,6 @@
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
 
 # basic: Find first element matching predicate
-array_find_first([1, 2, 3, 4, 5]::List<i32>, (x -> gt(x, 2::i32)::boolean)::lambda<i32 -> boolean>) = 3::i32
-array_find_first([5, 10, 15]::List<i32>, (x -> gte(x, 10::i32)::boolean)::lambda<i32 -> boolean>) = 10::i32
-array_find_first([1, 2, 3]::List<i32>, (x -> gt(x, 10::i32)::boolean)::lambda<i32 -> boolean>) = Null::i32
+array_find_first([1, 2, 3, 4, 5]::list<i32>, (x -> gt(x, 2::i32)::boolean)::lambda<i32 -> boolean>) = 3::i32
+array_find_first([5, 10, 15]::list<i32>, (x -> gte(x, 10::i32)::boolean)::lambda<i32 -> boolean>) = 10::i32
+array_find_first([1, 2, 3]::list<i32>, (x -> gt(x, 10::i32)::boolean)::lambda<i32 -> boolean>) = Null::i32

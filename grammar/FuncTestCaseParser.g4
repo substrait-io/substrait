@@ -215,7 +215,8 @@ lambdaShortForm
     ;
 
 lambdaParameters
-    : Identifier (Comma Identifier)*
+    : Identifier                                    # singleParam
+    | OParen Identifier (Comma Identifier)+ CParen  # tupleParams
     ;
 
 lambdaBody
@@ -340,8 +341,8 @@ parameterizedType
     | precisionTimestampType
     | precisionTimestampTZType
     | lambdaType
+    | Struct isnull=QMark? OAngleBracket dataTypeList CAngleBracket
 // TODO implement the rest of the parameterized types
-//  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct
 //  | Map isnull='?'? Lt key=expr Comma value=expr Gt #map
   ;

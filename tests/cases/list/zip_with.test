@@ -2,6 +2,6 @@
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
 
 # basic: Combine two arrays with a lambda using expressions
-zip_with([1, 2, 3]::List<i32>, [4, 5, 6]::List<i32>, (a, b -> a + b)::lambda<i32, i32 -> i32>) = [5, 7, 9]::List<i32>
-zip_with([10, 20]::List<i32>, [5, 10]::List<i32>, (a, b -> a - b)::lambda<i32, i32 -> i32>) = [5, 10]::List<i32>
-zip_with([]::List<i32>, []::List<i32>, (a, b -> a + b)::lambda<i32, i32 -> i32>) = []::List<i32>
+zip_with([1, 2, 3]::list<i32>, [4, 5, 6]::list<i32>, ((a, b) -> a + b)::lambda<struct<i32, i32> -> i32>) = [5, 7, 9]::list<i32>
+zip_with([10, 20]::list<i32>, [5, 10]::list<i32>, ((a, b) -> a - b)::lambda<struct<i32, i32> -> i32>) = [5, 10]::list<i32>
+zip_with([]::list<i32>, []::list<i32>, ((a, b) -> a + b)::lambda<struct<i32, i32> -> i32>) = []::list<i32>

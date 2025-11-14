@@ -7,7 +7,7 @@ from tests.baseline import read_baseline_file, generate_baseline
 from tests.coverage.case_file_parser import load_all_testcases
 from tests.coverage.coverage import get_test_coverage
 from tests.coverage.extensions import build_type_to_short_type
-from tests.coverage.extensions import Extension
+from tests.coverage.extensions import Extension, FunctionRegistry
 
 
 # NOTE: this test is run as part of pre-commit hook
@@ -59,3 +59,51 @@ def test_build_type_to_short_type():
     assert long_to_short["list"] == "list"
     assert long_to_short["map"] == "map"
     assert long_to_short["struct"] == "struct"
+
+
+def test_is_type_variable():
+    """Test the is_type_variable helper method"""
+    assert Extension.is_type_variable("T")
+    assert Extension.is_type_variable("U")
+    assert Extension.is_type_variable("V")
+    assert Extension.is_type_variable("W")
+    assert Extension.is_type_variable("X")
+
+    assert not Extension.is_type_variable("t")  # lowercase
+    assert not Extension.is_type_variable("i32")  # multi-char
+    assert not Extension.is_type_variable("str")  # multi-char
+    assert not Extension.is_type_variable("TT")  # multi-char
+
+
+def test_type_variables_recognized_by_get_short_type():
+    """Test that single uppercase letters are preserved as type variables"""
+    assert Extension.get_short_type("T") == "T"
+    assert Extension.get_short_type("U") == "U"
+    assert Extension.get_short_type("V") == "V"
+    assert Extension.get_short_type("W") == "W"
+    assert Extension.get_short_type("X") == "X"
+
+
+def test_type_variables_match_concrete_types():
+    """Test that type variables (single uppercase letters) match any concrete type"""
+    assert FunctionRegistry.is_same_type("T", "i32")
+    assert FunctionRegistry.is_same_type("U", "str")
+    assert FunctionRegistry.is_same_type("V", "fp64")
+    assert FunctionRegistry.is_same_type("T", "list<i32>")
+    assert FunctionRegistry.is_same_type("U", "lambda<i32->boolean>")
+
+    assert FunctionRegistry.is_same_type("i32", "i32")
+    assert FunctionRegistry.is_same_type("str", "str")
+
+    assert not FunctionRegistry.is_same_type("i32", "str")
+    assert not FunctionRegistry.is_same_type("fp32", "fp64")
+
+
+def test_lambda_types_match_regardless_of_parameters():
+    """Test that lambda types match other lambda types"""
+    assert FunctionRegistry.is_same_type("lambda<i32->i32>", "lambda<i32->i32>")
+    assert FunctionRegistry.is_same_type("lambda<T->U>", "lambda<i32->boolean>")
+    assert FunctionRegistry.is_same_type(
+        "lambda<struct<i32,i32>->i32>",
+        "lambda<struct<i32,i32>->i32>"
+    )

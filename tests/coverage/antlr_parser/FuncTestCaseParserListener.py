@@ -441,12 +441,21 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaParameters.
-    def enterLambdaParameters(self, ctx:FuncTestCaseParser.LambdaParametersContext):
+    # Enter a parse tree produced by FuncTestCaseParser#singleParam.
+    def enterSingleParam(self, ctx:FuncTestCaseParser.SingleParamContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaParameters.
-    def exitLambdaParameters(self, ctx:FuncTestCaseParser.LambdaParametersContext):
+    # Exit a parse tree produced by FuncTestCaseParser#singleParam.
+    def exitSingleParam(self, ctx:FuncTestCaseParser.SingleParamContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#tupleParams.
+    def enterTupleParams(self, ctx:FuncTestCaseParser.TupleParamsContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#tupleParams.
+    def exitTupleParams(self, ctx:FuncTestCaseParser.TupleParamsContext):
         pass
 
 

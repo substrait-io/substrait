@@ -2,6 +2,6 @@
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
 
 # basic: Basic reduction examples with expressions
-reduce([1, 2, 3, 4]::List<i32>, 0::i32, (acc, x -> acc + x)::lambda<i32, i32 -> i32>) = 10::i32
-reduce([2, 3, 4]::List<i32>, 1::i32, (acc, x -> acc * x)::lambda<i32, i32 -> i32>) = 24::i32
-reduce([]::List<i32>, 5::i32, (acc, x -> acc + x)::lambda<i32, i32 -> i32>) = 5::i32
+reduce([1, 2, 3, 4]::list<i32>, 0::i32, ((acc, x) -> acc + x)::lambda<struct<i32, i32> -> i32>) = 10::i32
+reduce([2, 3, 4]::list<i32>, 1::i32, ((acc, x) -> acc * x)::lambda<struct<i32, i32> -> i32>) = 24::i32
+reduce([]::list<i32>, 5::i32, ((acc, x) -> acc + x)::lambda<struct<i32, i32> -> i32>) = 5::i32
