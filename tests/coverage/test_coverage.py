@@ -4,14 +4,7 @@ import os
 import pytest
 from antlr4 import InputStream
 from tests.coverage.case_file_parser import parse_stream, parse_one_file
-from tests.coverage.extensions import (
-    Extension,
-    SimpleType,
-    ListType,
-    StructType,
-    ParameterizedType,
-    LambdaType,
-)
+from tests.coverage.extensions import Extension
 from tests.coverage.visitor import ParseError
 from tests.coverage.nodes import CaseLiteral
 
@@ -63,15 +56,9 @@ lt('2016-12-31T13:30:15'::ts, '2017-12-31T13:30:15'::ts) = true::bool
         test_file.testcases[0].group.name
         == "timestamp examples using the timestamp type"
     )
-    assert test_file.testcases[0].result == CaseLiteral(
-        "true", SimpleType("bool")
-    )
-    assert test_file.testcases[0].args[0] == CaseLiteral(
-        "2016-12-31T13:30:15", SimpleType("ts")
-    )
-    assert test_file.testcases[0].args[1] == CaseLiteral(
-        "2017-12-31T13:30:15", SimpleType("ts")
-    )
+    assert test_file.testcases[0].result == CaseLiteral("true", "bool")
+    assert test_file.testcases[0].args[0] == CaseLiteral("2016-12-31T13:30:15", "ts")
+    assert test_file.testcases[0].args[1] == CaseLiteral("2017-12-31T13:30:15", "ts")
 
 
 def test_parse_decimal_example():
@@ -89,10 +76,9 @@ power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
         == "extensions/functions_arithmetic_decimal.yaml"
     )
     assert test_file.testcases[0].group.name == "basic"
-    assert test_file.testcases[0].result == CaseLiteral("64", SimpleType("fp64"))
-    # Note: dec<38,0> would be parsed as ParameterizedType, but we need to
-    # verify the exact structure first
-    # For now, accept the structured type representation
+    assert test_file.testcases[0].result == CaseLiteral("64", "fp64")
+    assert test_file.testcases[0].args[0] == CaseLiteral("8", "dec<38,0>")
+    assert test_file.testcases[0].args[1] == CaseLiteral("2", "dec<38,0>")
 
 
 def test_parse_decimal_example_with_nan():
@@ -108,14 +94,16 @@ power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
         == "extensions/functions_arithmetic_decimal.yaml"
     )
     assert test_file.testcases[0].group.name == "basic"
-    assert test_file.testcases[0].result == CaseLiteral("nan", SimpleType("fp64"))
+    assert test_file.testcases[0].result == CaseLiteral("nan", "fp64")
+    assert test_file.testcases[0].args[0] == CaseLiteral("-1", "dec")
+    assert test_file.testcases[0].args[1] == CaseLiteral("0.5", "dec<38,1>")
 
 
 def test_parse_string_example():
     header = make_header("v1.0", "extensions/functions_string.yaml")
     tests = """# basic
 concat('abc'::str, 'def'::str) = 'abcdef'::str
-regexp_string_split('HHHelloooo'::str, 'Hel+'::str) = ['HH', 'oooo']::list<str>
+regexp_string_split('HHHelloooo'::str, 'Hel+'::str) = ['HH', 'oooo']::List<str>
 octet_length('à'::str) = 2::i64
 octet_length('😄'::str) = 4::i64
 """
@@ -124,41 +112,32 @@ octet_length('😄'::str) = 4::i64
     assert test_file.testcases[0].func_name == "concat"
     assert test_file.testcases[0].base_uri == "extensions/functions_string.yaml"
     assert test_file.testcases[0].group.name == "basic"
-    assert test_file.testcases[0].result == CaseLiteral(
-        "'abcdef'", SimpleType("str")
-    )
+    assert test_file.testcases[0].result == CaseLiteral("'abcdef'", "str")
 
     assert test_file.testcases[1].func_name == "regexp_string_split"
     assert test_file.testcases[1].base_uri == "extensions/functions_string.yaml"
     assert test_file.testcases[1].group.name == "basic"
-    assert test_file.testcases[1].result == CaseLiteral(
-        ["'HH'", "'oooo'"],
-        ListType(SimpleType("str"))
-    )
-    assert test_file.testcases[1].args[0] == CaseLiteral(
-        "'HHHelloooo'", SimpleType("str")
-    )
-    assert test_file.testcases[1].args[1] == CaseLiteral(
-        "'Hel+'", SimpleType("str")
-    )
+    assert test_file.testcases[1].result == CaseLiteral(["'HH'", "'oooo'"], "List<str>")
+    assert test_file.testcases[1].args[0] == CaseLiteral("'HHHelloooo'", "str")
+    assert test_file.testcases[1].args[1] == CaseLiteral("'Hel+'", "str")
 
     assert test_file.testcases[2].func_name == "octet_length"
     assert test_file.testcases[2].base_uri == "extensions/functions_string.yaml"
     assert test_file.testcases[2].group.name == "basic"
-    assert test_file.testcases[2].result == CaseLiteral("2", SimpleType("i64"))
-    assert test_file.testcases[2].args[0] == CaseLiteral("'à'", SimpleType("str"))
+    assert test_file.testcases[2].result == CaseLiteral("2", "i64")
+    assert test_file.testcases[2].args[0] == CaseLiteral("'à'", "str")
 
     assert test_file.testcases[3].func_name == "octet_length"
     assert test_file.testcases[3].base_uri == "extensions/functions_string.yaml"
     assert test_file.testcases[3].group.name == "basic"
-    assert test_file.testcases[3].result == CaseLiteral("4", SimpleType("i64"))
-    assert test_file.testcases[3].args[0] == CaseLiteral("'😄'", SimpleType("str"))
+    assert test_file.testcases[3].result == CaseLiteral("4", "i64")
+    assert test_file.testcases[3].args[0] == CaseLiteral("'😄'", "str")
 
 
 def test_parse_string_list_example():
     header = make_header("v1.0", "extensions/functions_string.yaml")
     tests = """# basic
-some_func('abc'::str, 'def'::str) = [1, 2, 3, 4, 5, 6]::list<i8>
+some_func('abc'::str, 'def'::str) = [1, 2, 3, 4, 5, 6]::List<i8>
 """
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 1
@@ -166,11 +145,10 @@ some_func('abc'::str, 'def'::str) = [1, 2, 3, 4, 5, 6]::list<i8>
     assert test_file.testcases[0].base_uri == "extensions/functions_string.yaml"
     assert test_file.testcases[0].group.name == "basic"
     assert test_file.testcases[0].result == CaseLiteral(
-        ["1", "2", "3", "4", "5", "6"],
-        ListType(SimpleType("i8"))
+        ["1", "2", "3", "4", "5", "6"], "List<i8>"
     )
-    assert test_file.testcases[0].args[0] == CaseLiteral("'abc'", SimpleType("str"))
-    assert test_file.testcases[0].args[1] == CaseLiteral("'def'", SimpleType("str"))
+    assert test_file.testcases[0].args[0] == CaseLiteral("'abc'", "str")
+    assert test_file.testcases[0].args[1] == CaseLiteral("'def'", "str")
 
 
 def test_parse_aggregate_func_test():
@@ -230,12 +208,9 @@ max((2.5, 0, 5.0, -2.5, -7.5)::fp32) = 5.0::fp32
     assert test_file.testcases[0].func_name == "max"
     assert test_file.testcases[0].base_uri == "extensions/functions_arithmetic.yaml"
     assert test_file.testcases[0].group.name == "basic"
-    assert test_file.testcases[0].result == CaseLiteral("5.0", SimpleType("fp32"))
+    assert test_file.testcases[0].result == CaseLiteral("5.0", "fp32")
     assert test_file.testcases[0].args == [
-        CaseLiteral(
-            value=["2.5", "0", "5.0", "-2.5", "-7.5"],
-            type=SimpleType("fp32")
-        )
+        CaseLiteral(value=["2.5", "0", "5.0", "-2.5", "-7.5"], type="fp32")
     ]
 
 
@@ -423,7 +398,7 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "concat('abcd'::str, Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
         "concat('abcd'::str, Null::str) [null_handling:IGNORE_NULLS] = 'abcd'::str",
         "concat(Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
-        "regexp_string_split('Hello'::str, 'Hel+?'::str) = ['', 'lo']::list<str>",
+        "regexp_string_split('Hello'::str, 'Hel+?'::str) = ['', 'lo']::List<str>",
         "regexp_replace('USD100'::str, '(?<=USD)\\d{3}'::str, '999'::str) [lookaround:TRUE] = 'USD999'::str",
         "divide(5::i64, 0::i64) [on_division_by_zero:LIMIT] = inf::fp64",
         "modulus(5::i8, 0::i8) [on_domain_error:Null] = Null::i8",
@@ -434,7 +409,7 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "is_null(Null::str) = true::bool",
         "logb(2.0::fp64, 0.0::fp64) [on_log_zero:MINUS_INFINITY] = -inf::fp64",
         "logb(10::fp64, -inf::fp64) [on_domain_error:NONE] = Null::fp64",
-        "regexp_string_split('HHHelloooo'::str, 'Hel+'::str) = ['HH', 'oooo']::list<str>",
+        "regexp_string_split('HHHelloooo'::str, 'Hel+'::str) = ['HH', 'oooo']::List<str>",
         "octet_length(''::str) = 0::i64",
         "octet_length(' '::str) = 1::i64",
         "octet_length('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'::str) = 48::i64",
@@ -524,125 +499,3 @@ def test_uri_match_in_get_function(
 
     function = registry.get_function(func_name, func_uri, func_args, func_ret)
     assert (function is None) == expected_failure
-
-
-def test_parse_lambda_single_parameter():
-    """Test parsing a lambda with a single parameter"""
-    header = make_header("v1.0", "/extensions/functions_list.yaml")
-    tests = """# basic
-array_transform([1, 2, 3]::list<i32>, (x -> x * 2)::lambda<i32 -> i32>) = [2, 4, 6]::list<i32>
-list_filter([1, 2, 3, 4, 5]::list<i32>, (x -> gt(x, 2::i32)::boolean)::lambda<i32 -> boolean>) = [3, 4, 5]::list<i32>
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 2
-
-    # Test array_transform with single-param lambda
-    assert test_file.testcases[0].func_name == "array_transform"
-    assert test_file.testcases[0].base_uri == "/extensions/functions_list.yaml"
-    assert len(test_file.testcases[0].args) == 2
-    assert test_file.testcases[0].args[0] == CaseLiteral(
-        ["1", "2", "3"],
-        ListType(SimpleType("i32"))
-    )
-    assert test_file.testcases[0].args[1] == CaseLiteral(
-        "<lambda>",
-        LambdaType(SimpleType("i32"), SimpleType("i32"))
-    )
-    assert test_file.testcases[0].result == CaseLiteral(
-        ["2", "4", "6"],
-        ListType(SimpleType("i32"))
-    )
-
-    # Test list_filter with single-param lambda
-    assert test_file.testcases[1].func_name == "list_filter"
-    assert test_file.testcases[1].args[1] == CaseLiteral(
-        "<lambda>",
-        LambdaType(SimpleType("i32"), SimpleType("boolean"))
-    )
-
-
-def test_parse_lambda_multiple_parameters():
-    """Test parsing a lambda with multiple parameters using tuple syntax"""
-    header = make_header("v1.0", "/extensions/functions_list.yaml")
-    tests = """# basic
-array_sort([3, 1, 4]::list<i32>, ((a, b) -> a - b)::lambda<struct<i32, i32> -> i32>) = [1, 3, 4]::list<i32>
-zip_with([1, 2]::list<i32>, [3, 4]::list<i32>, ((a, b) -> a + b)::lambda<struct<i32, i32> -> i32>) = [4, 6]::list<i32>
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 2
-
-    # Test array_sort with two-param lambda using explicit struct syntax
-    assert test_file.testcases[0].func_name == "array_sort"
-    assert len(test_file.testcases[0].args) == 2
-    assert test_file.testcases[0].args[1] == CaseLiteral(
-        "<lambda>",
-        LambdaType(
-            StructType([SimpleType("i32"), SimpleType("i32")]),
-            SimpleType("i32")
-        )
-    )
-
-    # Test zip_with with two-param lambda
-    assert test_file.testcases[1].func_name == "zip_with"
-    assert len(test_file.testcases[1].args) == 3
-    assert test_file.testcases[1].args[2] == CaseLiteral(
-        "<lambda>",
-        LambdaType(
-            StructType([SimpleType("i32"), SimpleType("i32")]),
-            SimpleType("i32")
-        )
-    )
-
-
-def test_parse_lambda_with_nullable_types():
-    """Test parsing lambdas with nullable types"""
-    header = make_header("v1.0", "/extensions/functions_list.yaml")
-    tests = """# nullable
-array_transform([1, Null, 3]::list<i32?>, (x -> multiply(x, 2::i32)::i32?)::lambda<i32? -> i32?>) = [2, Null, 6]::list<i32?>
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 1
-
-    assert test_file.testcases[0].func_name == "array_transform"
-    assert test_file.testcases[0].args[0] == CaseLiteral(
-        ["1", "Null", "3"],
-        ListType(SimpleType("i32", nullable=True))
-    )
-    assert test_file.testcases[0].args[1] == CaseLiteral(
-        "<lambda>",
-        LambdaType(
-            SimpleType("i32", nullable=True),
-            SimpleType("i32", nullable=True)
-        )
-    )
-    assert test_file.testcases[0].result == CaseLiteral(
-        ["2", "Null", "6"],
-        ListType(SimpleType("i32", nullable=True))
-    )
-
-
-def test_parse_lambda_reduce():
-    """Test parsing reduce with a two-parameter accumulator lambda"""
-    header = make_header("v1.0", "/extensions/functions_list.yaml")
-    tests = """# basic
-reduce([1, 2, 3, 4]::list<i32>, 0::i32, ((acc, x) -> acc + x)::lambda<struct<i32, i32> -> i32>) = 10::i32
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 1
-
-    assert test_file.testcases[0].func_name == "reduce"
-    assert len(test_file.testcases[0].args) == 3
-    assert test_file.testcases[0].args[0] == CaseLiteral(
-        ["1", "2", "3", "4"],
-        ListType(SimpleType("i32"))
-    )
-    assert test_file.testcases[0].args[1] == CaseLiteral("0", SimpleType("i32"))
-    # Multi-param lambda uses explicit struct syntax
-    assert test_file.testcases[0].args[2] == CaseLiteral(
-        "<lambda>",
-        LambdaType(
-            StructType([SimpleType("i32"), SimpleType("i32")]),
-            SimpleType("i32")
-        )
-    )
-    assert test_file.testcases[0].result == CaseLiteral("10", SimpleType("i32"))

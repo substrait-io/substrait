@@ -1,11 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
-from __future__ import annotations
-
 from dataclasses import dataclass
-from typing import List, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from tests.coverage.extensions import Type
+from typing import List
 
 
 @dataclass
@@ -22,14 +17,10 @@ class SubstraitError:
 @dataclass
 class CaseLiteral:
     value: str | int | float | list | None
-    type: Type  # Structured type from ANTLR parsing
-
-    def get_type_string(self) -> str:
-        """Get string representation of type"""
-        return self.type.to_string()
+    type: str
 
     def get_base_type(self):
-        type_str = self.get_type_string()
+        type_str = self.type
         if "<" in type_str:
             type_str = type_str[: type_str.find("<")]
         if type_str.endswith("?"):
@@ -68,8 +59,7 @@ class TestCase:
         return [arg.get_base_type() for arg in self.args]
 
     def get_signature(self):
-        arg_types = ', '.join([arg.get_type_string() for arg in self.args])
-        return f"{self.func_name}({arg_types}) = {self.get_return_type()}"
+        return f"{self.func_name}({', '.join([arg.type for arg in self.args])}) = {self.get_return_type()}"
 
 
 @dataclass

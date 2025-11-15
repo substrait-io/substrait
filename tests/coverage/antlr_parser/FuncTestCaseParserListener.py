@@ -423,123 +423,6 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaArg.
-    def enterLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaArg.
-    def exitLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaShortForm.
-    def enterLambdaShortForm(self, ctx:FuncTestCaseParser.LambdaShortFormContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaShortForm.
-    def exitLambdaShortForm(self, ctx:FuncTestCaseParser.LambdaShortFormContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#singleParam.
-    def enterSingleParam(self, ctx:FuncTestCaseParser.SingleParamContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#singleParam.
-    def exitSingleParam(self, ctx:FuncTestCaseParser.SingleParamContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#tupleParams.
-    def enterTupleParams(self, ctx:FuncTestCaseParser.TupleParamsContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#tupleParams.
-    def exitTupleParams(self, ctx:FuncTestCaseParser.TupleParamsContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaBody.
-    def enterLambdaBody(self, ctx:FuncTestCaseParser.LambdaBodyContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaBody.
-    def exitLambdaBody(self, ctx:FuncTestCaseParser.LambdaBodyContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaTypedLiteral.
-    def enterLambdaTypedLiteral(self, ctx:FuncTestCaseParser.LambdaTypedLiteralContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaTypedLiteral.
-    def exitLambdaTypedLiteral(self, ctx:FuncTestCaseParser.LambdaTypedLiteralContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaLiteral.
-    def enterLambdaLiteral(self, ctx:FuncTestCaseParser.LambdaLiteralContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaLiteral.
-    def exitLambdaLiteral(self, ctx:FuncTestCaseParser.LambdaLiteralContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaFunctionCall.
-    def enterLambdaFunctionCall(self, ctx:FuncTestCaseParser.LambdaFunctionCallContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaFunctionCall.
-    def exitLambdaFunctionCall(self, ctx:FuncTestCaseParser.LambdaFunctionCallContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaParenExpr.
-    def enterLambdaParenExpr(self, ctx:FuncTestCaseParser.LambdaParenExprContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaParenExpr.
-    def exitLambdaParenExpr(self, ctx:FuncTestCaseParser.LambdaParenExprContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaIdentifier.
-    def enterLambdaIdentifier(self, ctx:FuncTestCaseParser.LambdaIdentifierContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaIdentifier.
-    def exitLambdaIdentifier(self, ctx:FuncTestCaseParser.LambdaIdentifierContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaBinaryOp.
-    def enterLambdaBinaryOp(self, ctx:FuncTestCaseParser.LambdaBinaryOpContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaBinaryOp.
-    def exitLambdaBinaryOp(self, ctx:FuncTestCaseParser.LambdaBinaryOpContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaComparison.
-    def enterLambdaComparison(self, ctx:FuncTestCaseParser.LambdaComparisonContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaComparison.
-    def exitLambdaComparison(self, ctx:FuncTestCaseParser.LambdaComparisonContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaArguments.
-    def enterLambdaArguments(self, ctx:FuncTestCaseParser.LambdaArgumentsContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaArguments.
-    def exitLambdaArguments(self, ctx:FuncTestCaseParser.LambdaArgumentsContext):
-        pass
-
-
     # Enter a parse tree produced by FuncTestCaseParser#dataType.
     def enterDataType(self, ctx:FuncTestCaseParser.DataTypeContext):
         pass
@@ -693,15 +576,6 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#typeVariable.
-    def enterTypeVariable(self, ctx:FuncTestCaseParser.TypeVariableContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#typeVariable.
-    def exitTypeVariable(self, ctx:FuncTestCaseParser.TypeVariableContext):
-        pass
-
-
     # Enter a parse tree produced by FuncTestCaseParser#booleanType.
     def enterBooleanType(self, ctx:FuncTestCaseParser.BooleanTypeContext):
         pass
@@ -834,24 +708,6 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#list.
     def exitList(self, ctx:FuncTestCaseParser.ListContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaType.
-    def enterLambdaType(self, ctx:FuncTestCaseParser.LambdaTypeContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaType.
-    def exitLambdaType(self, ctx:FuncTestCaseParser.LambdaTypeContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#dataTypeList.
-    def enterDataTypeList(self, ctx:FuncTestCaseParser.DataTypeListContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#dataTypeList.
-    def exitDataTypeList(self, ctx:FuncTestCaseParser.DataTypeListContext):
         pass
 
 

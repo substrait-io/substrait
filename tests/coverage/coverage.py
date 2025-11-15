@@ -3,12 +3,7 @@ import json
 from collections import defaultdict
 
 from tests.coverage.case_file_parser import load_all_testcases
-from tests.coverage.extensions import (
-    Extension,
-    error,
-    FunctionRegistry,
-    parse_type_string,
-)
+from tests.coverage.extensions import Extension, error, FunctionRegistry
 
 
 class FunctionTestCoverage:
