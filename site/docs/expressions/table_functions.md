@@ -81,75 +81,10 @@ When a table function's YAML definition **omits the `return` field**, the schema
 - In the plan: Provide the schema in `table_schema`
 - The plan producer determines the schema (e.g., by inspecting file contents, database metadata, etc.)
 
-**Example scenario**: A function like `read_parquet(path)` where the schema depends on the actual Parquet file's structure.
+**Example:** A function like `read_parquet(path)` where the schema depends on the actual Parquet file's structure - the YAML would omit the `return` field, and the plan producer would provide the concrete schema in `table_schema`.
 
 !!! note "Required Constraint"
     **If a table function's YAML definition includes a `return` field, the `table_schema` field in the plan MUST match the YAML definition (with any type parameters resolved based on the bound argument types).**
-
-### Plan Examples
-
-Now let's see how these two cases appear in actual Substrait plans:
-
-#### Schema Derivable from YAML
-
-For functions where the YAML includes a `return` field, the schema is derived from the YAML definition, with any type parameters resolved based on argument types.
-
-**Concrete type example** (`generate_series`):
-```
-TableFunctionRel {
-  function_reference: <generate_series>
-  arguments: [
-    { value: { literal: { i64: 1 } } },
-    { value: { literal: { i64: 100 } } },
-    { value: { literal: { i64: 1 } } }
-  ]
-  table_schema: {
-    names: ["value"]
-    struct: {
-      types: [{ i64: {} }]  // Matches YAML definition exactly
-    }
-  }
-}
-```
-
-**Type-parameterized example** (`unnest`):
-```
-TableFunctionRel {
-  function_reference: <unnest>
-  arguments: [
-    { value: { literal: { list: [...] } } }  // list<string>
-  ]
-  table_schema: {
-    names: ["element"]
-    struct: {
-      types: [{ string: {} }]  // T resolved to string from list<string> argument
-    }
-  }
-}
-```
-
-#### Schema Determined by Plan Producer
-
-For functions where the YAML omits the `return` field, provide the schema determined by the plan producer:
-
-```
-TableFunctionRel {
-  function_reference: <read_parquet>
-  arguments: [
-    { value: { literal: { string: "data.parquet" } } }
-  ]
-  table_schema: {
-    names: ["id", "name", "age"]
-    struct: {
-      types: [
-        { i32: {} },
-        { string: {} },
-        { i32: {} }
-      ]
-    }
-  }
-}
-```
 
 ## Usage in Plans
 
