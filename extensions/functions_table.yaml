@@ -1,19 +1,17 @@
 %YAML 1.2
 ---
 # Table functions: Functions that produce relations (zero or more records).
-# Currently, only 0-input functions are supported - these take constant arguments
-# and generate data as leaf operators.
 urn: extension:io.substrait:functions_table
 table_functions:
   - name: "generate_series"
     description: >-
       Generates a series of integer values from start to stop, incrementing by step.
 
-      Takes constant arguments and produces zero or more records containing a single
-      integer value. The series includes both the start and stop values if they fall
-      on a step boundary. If step is positive, stops when the value exceeds stop.
-      If step is negative, stops when the value is less than stop. Returns empty if
-      step is zero or if the step direction doesn't allow reaching stop from start.
+      Produces zero or more records containing a single integer value. The series
+      includes both the start and stop values if they fall on a step boundary.
+      If step is positive, stops when the value exceeds stop. If step is negative,
+      stops when the value is less than stop. Returns empty if step is zero or if
+      the step direction doesn't allow reaching stop from start.
     impls:
       - args:
           - name: start
@@ -25,7 +23,6 @@ table_functions:
           - name: step
             value: i64
             description: The increment between values
-            constant: true
         return:
           names:
             - value
@@ -42,7 +39,6 @@ table_functions:
           - name: step
             value: i32
             description: The increment between values
-            constant: true
         return:
           names:
             - value

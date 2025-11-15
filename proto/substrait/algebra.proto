@@ -558,7 +558,6 @@ message ExpandRel {
 // Table functions produce a table with a schema that can be:
 //   - Statically defined (concrete types in YAML)
 //   - Type-parameterized (derived from argument types, e.g., unnest(list<T>) -> {element: T})
-//   - Runtime-dependent (determined by inspecting data content, use derived: false)
 //
 // Future extensions may add an optional input field to support transformation
 // table functions that operate on input relations.
@@ -574,8 +573,6 @@ message TableFunctionRel {
   // number of arguments specified in the function definition from the YAML file,
   // and the argument types must also match exactly:
   //  - Value arguments must be bound using FunctionArgument.value.
-  //    Currently (0-input functions only), expressions must be constants
-  //    (literals or expressions evaluable without input data).
   //  - Type arguments must be bound using FunctionArgument.type.
   //  - Enum arguments must be bound using FunctionArgument.enum with a
   //    string that case-insensitively matches one of the allowed options.
@@ -586,25 +583,12 @@ message TableFunctionRel {
   // cases.
   repeated FunctionOption options = 5;
 
-  // Indicates whether the schema was derived from the YAML function definition:
-  // - If true: the table_schema was computed from the ExpressionNamedStruct in the
-  //   YAML file by evaluating it with the bound argument types. This includes:
-  //   * Static schemas (concrete field types)
-  //   * Type-parameterized schemas (e.g., T from list<T>)
-  // - If false: the table_schema was determined by the plan producer based on runtime
-  //   data inspection (YAML omits the return field)
-  //
-  // This value must be true if and only if a return field is provided in the YAML
-  // definition of this function.
-  bool derived = 6;
+  // The concrete output schema of the relation. For schemas which can be derived
+  // from their YAML specification this must match the schema computed by evaluating the
+  // YAML ExpressionNamedStruct with the bound argument types.
+  NamedStruct table_schema = 6;
 
-  // The concrete output schema of the relation. For derived schemas (derived=true),
-  // this must match the schema computed by evaluating the YAML ExpressionNamedStruct
-  // with the bound argument types. For runtime-dependent schemas (derived=false),
-  // this is provided by the plan producer.
-  NamedStruct table_schema = 7;
-
-  substrait.extensions.AdvancedExtension advanced_extension = 8;
+  substrait.extensions.AdvancedExtension advanced_extension = 7;
 }
 
 // A relation with output field names.
