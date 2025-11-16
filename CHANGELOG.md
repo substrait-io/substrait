@@ -1,6 +1,19 @@
 Release Notes
 ---
 
+## [0.78.0](https://github.com/substrait-io/substrait/compare/v0.77.0...v0.78.0) (2025-11-16)
+
+### ⚠ BREAKING CHANGES
+
+* `type_reference` with value **0** is encoded
+differently on wire. However, the usage of `type_reference` in generated
+consumer code does not break in practice. **New consumer should consider
+`type_reference` is set to zero when no oneof is set.** See [Wire
+
+### Features
+
+* support type alias in user defined literal ([#868](https://github.com/substrait-io/substrait/issues/868)) ([cd99f03](https://github.com/substrait-io/substrait/commit/cd99f033ec3cf8170d5e76affe31f3262f60d4e7)), closes [#Wire-Encoding-Change](https://github.com/substrait-io/substrait/issues/Wire-Encoding-Change) [#857](https://github.com/substrait-io/substrait/issues/857)
+
 ## [0.77.0](https://github.com/substrait-io/substrait/compare/v0.76.0...v0.77.0) (2025-10-05)
 
 ### Features
