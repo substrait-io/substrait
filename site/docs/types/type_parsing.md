@@ -66,28 +66,20 @@ Similar to structs, maps and lists can also have a type as one of their paramete
     map<i32?, list<map<i32, string?>>>
     ```
 
-### Lambda Types
+### Function Types
 
-Lambda types represent anonymous functions with typed parameters and return values. They are used in higher-order functions that operate on collections.
+Function types represent anonymous functions with typed parameters and return values. They are used in higher-order functions that operate on collections.
 
-=== "YAML"
+In YAML extension definitions, function types use the `func` keyword:
 
-    ```
-    # Single parameter lambda
-    lambda<paramType -> returnType>
+```
+# Single parameter - both forms are equivalent
+func<T -> U>
+func<(T) -> U>
 
-    # Multi-parameter lambda (uses struct as tuple)
-    lambda<struct<type0, type1, ...> -> returnType>
-    ```
+# Multiple parameters - parentheses required
+func<(T, U) -> V>
+func<(T, U, V) -> W>
+```
 
-=== "Text Format Examples"
-
-    ```
-    lambda<i32 -> i32>
-    lambda<string -> boolean>
-    lambda<list<T> -> T>
-    lambda<struct<i32, i32> -> i32>
-    lambda<struct<string, i32> -> boolean>
-    ```
-
-Lambda types use the arrow syntax (`->`) to separate parameter types from the return type. For functions with multiple parameters, a struct type is used to represent the parameter tuple. See [Lambda Expressions](../expressions/lambda_functions.md) for more details on lambda expressions and their usage.
+Function types use the arrow syntax (`->`) to separate parameter types from the return type. For multiple parameters, use parentheses to group the parameter types. See [Lambda Expressions](../expressions/lambda_functions.md) for more details on lambda expressions and their usage.

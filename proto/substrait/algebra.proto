@@ -1184,10 +1184,10 @@ message Expression {
 
   // A lambda expression for use in higher-order functions.
   // Lambda expressions have parameters and a body expression that can reference
-  // those parameters via LambdaReference in FieldReference.
+  // those parameters via LambdaParameterReference in FieldReference.
   message Lambda {
     // Types of parameters this lambda accepts.
-    // The body expression can reference these via LambdaReference with
+    // The body expression can reference these via LambdaParameterReference with
     // parameter_index corresponding to the position in this list.
     repeated Type parameter_types = 1;
 
@@ -1196,7 +1196,7 @@ message Expression {
     Type return_type = 2;
 
     // The lambda body expression. Can reference:
-    //  - Lambda parameters via LambdaReference
+    //  - Lambda parameters via LambdaParameterReference
     //  - Fields from the input record via RootReference (closure)
     //  - Fields from outer queries via OuterReference (closure)
     //  - Results from other expressions via Expression
@@ -1565,7 +1565,7 @@ message Expression {
       Expression expression = 3;
       RootReference root_reference = 4;
       OuterReference outer_reference = 5;
-      LambdaReference lambda_reference = 6;
+      LambdaParameterReference lambda_parameter_reference = 6;
     }
 
     // Singleton that expresses this FieldReference is rooted off the root
@@ -1583,7 +1583,7 @@ message Expression {
     // A reference to a lambda parameter for use within lambda body expressions.
     // Similar to OuterReference, but for referencing lambda parameters instead
     // of outer query records.
-    message LambdaReference {
+    message LambdaParameterReference {
       // Number of lambda boundaries to traverse up for this reference.
       // For nested lambdas:
       //   0 = innermost lambda (current lambda's parameters)

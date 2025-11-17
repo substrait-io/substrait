@@ -44,7 +44,7 @@ message Type {
     Struct struct = 25;
     List list = 27;
     Map map = 28;
-    Lambda lambda = 50;
+    Func func = 50;
 
     UserDefined user_defined = 30;
 
@@ -224,13 +224,13 @@ message Type {
     Nullability nullability = 4;
   }
 
-  // A lambda type for higher-order functions.
+  // A function type for higher-order functions.
   // Represents a function that takes parameters of specified types and
   // returns a value of a specified type.
-  message Lambda {
-    // Types of parameters this lambda accepts.
+  message Func {
+    // Types of parameters this function type accepts.
     repeated Type parameter_types = 1;
-    // Return type of the lambda.
+    // Return type of the function.
     Type return_type = 2;
     uint32 type_variation_reference = 3;
     Nullability nullability = 4;

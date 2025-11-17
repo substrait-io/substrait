@@ -38,7 +38,7 @@ body: {
         # First argument: reference to outer lambda's row parameter
         value: {
           selection: {
-            lambda_reference: {
+            lambda_parameter_reference: {
               lambda_depth: 0        # 0 = current (outer) lambda
               parameter_index: 0     # 0 = first parameter (row)
             }
@@ -75,7 +75,7 @@ body: {
                     # First argument: reference to inner lambda's cell parameter
                     value: {
                       selection: {
-                        lambda_reference: {
+                        lambda_parameter_reference: {
                           lambda_depth: 0        # 0 = current (inner) lambda
                           parameter_index: 0     # 0 = first parameter (cell)
                         }

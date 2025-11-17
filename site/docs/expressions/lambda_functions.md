@@ -4,50 +4,52 @@ Lambda expressions enable higher-order functions that operate on collections, al
 
 ## Overview
 
-Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions. They enable powerful functional programming patterns such as `map`, `filter`, and `reduce` operations on arrays.
+Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions. They enable powerful functional programming patterns such as `transform`, `filter`, and `reduce` operations on arrays.
 
 !!! note "Documentation Syntax"
-    This documentation uses the syntax `lambda(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. This is not an official Substrait syntax. Actual lambda expressions in Substrait are represented using the protobuf `Expression.Lambda` message format, as shown in the examples throughout this document.
+    This documentation uses the syntax `lambda(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. This is not an official Substrait syntax.
 
 ## Lambda Expression Structure
 
 A lambda expression consists of:
 
-| Component          | Description                                                                 | Required |
-|--------------------|-----------------------------------------------------------------------------|----------|
-| Parameter Types    | List of types for the lambda's parameters                                  | Yes      |
-| Return Type        | Type of the value returned by the lambda                                   | Yes      |
-| Body Expression    | The expression to evaluate (can reference parameters via LambdaReference) | Yes      |
+| Component          | Description                                                                 | Protobuf Field        | Required |
+|--------------------|-----------------------------------------------------------------------------|-----------------------|----------|
+| Parameter Types    | List of types for the lambda's parameters                                  | `parameter_types`     | Yes      |
+| Return Type        | Type of the value returned by the lambda                                   | `return_type`         | Yes      |
+| Body Expression    | The expression to evaluate (can reference parameters via LambdaReference) | `body`                | Yes      |
 
-## Lambda Type Syntax
+=== "Lambda Message"
+    ```proto
+%%% proto.message.Expression.Lambda %%%
+    ```
 
-In YAML function signatures (such as in `functions_list.yaml`), lambda types are expressed using the syntax:
+## Function Type Syntax
 
-```
-lambda<paramType -> returnType>
-```
+In YAML extension definitions, function types are specified using the `func` keyword with generic type parameters:
 
-For single-parameter lambdas:
+**Single parameter** (represents a lambda with 1 entry in `parameter_types`):
 ```yaml
-lambda<i32 -> i32>           # Takes i32, returns i32
-lambda<string -> boolean>    # Takes string, returns boolean
-lambda<list<T> -> T>         # Takes list of T, returns T
+func<T -> U>           # Single parameter without parentheses
+func<(T) -> U>         # Single parameter with parentheses (equivalent)
 ```
 
-For multi-parameter lambdas, use a struct to represent the parameter tuple:
+**Multiple parameters** (represents a lambda with 2+ entries in `parameter_types`):
 ```yaml
-lambda<struct<T, T> -> i32>        # Takes two T values, returns i32
-lambda<struct<U, T> -> U>          # Takes U and T, returns U
-lambda<struct<i32, string> -> T>   # Takes i32 and string, returns T
+func<(T, U) -> V>      # Multiple parameters (parentheses required)
+func<(T, U, V) -> W>   # Three parameters
 ```
 
-See [Type Syntax Parsing](../types/type_parsing.md) for more details on type syntax.
+Example function definition with multi-parameter lambda:
+```yaml
+--8<-- "examples/extensions/lambda_function_example.yaml"
+```
 
 ## Parameter References
 
-Lambda parameters are referenced within the lambda body using `LambdaReference` in field references. This mechanism is similar to how [`OuterReference`](field_references.md#outerreference) works for subqueries.
+Lambda parameters are referenced within the lambda body using `LambdaParameterReference` in field references. This mechanism is similar to how [`OuterReference`](field_references.md#outerreference) works for subqueries.
 
-### LambdaReference Fields
+### LambdaParameterReference Fields
 
 | Field             | Description                                                          | Values   |
 |-------------------|----------------------------------------------------------------------|----------|
@@ -58,6 +60,7 @@ Lambda parameters are referenced within the lambda body using `LambdaReference` 
 
 For a lambda `lambda(x: i32) -> x * 2`:
 
+Example of an Expression.Lambda message:
 ```protobuf
 --8<-- "examples/proto-textformat/lambdas/simple_multiply.textproto"
 ```
@@ -71,8 +74,8 @@ Lambdas can be nested, and inner lambdas can reference parameters from outer lam
 Transform a 2D array by incrementing each element:
 
 ```
-array_transform(matrix, lambda(row: list<i32>) ->
-  array_transform(row, lambda(cell: i32) ->
+transform(matrix, lambda(row: list<i32>) ->
+  transform(row, lambda(cell: i32) ->
     cell + 1
   )
 )
@@ -83,7 +86,7 @@ In this example:
 - The inner lambda parameter `cell` is referenced with `lambda_depth: 0` (within the inner lambda's body)
 - Each lambda uses `lambda_depth: 0` to reference its own parameters
 
-In protobuf representation:
+Example of an Expression.Lambda message:
 ```protobuf
 --8<-- "examples/proto-textformat/lambdas/nested_array_transform.textproto"
 ```
@@ -112,12 +115,12 @@ Consider an input record with this schema:
 The lambda can access the `offset` field (index 3) from the input record:
 
 ```
-array_transform(numbers, lambda(x: i32) ->
+transform(numbers, lambda(x: i32) ->
   x + offset  // 'offset' is field 3 from the input record
 )
 ```
 
-In protobuf representation:
+Example of an Expression.Lambda message:
 ```protobuf
 --8<-- "examples/proto-textformat/lambdas/closure_root_reference.textproto"
 ```
@@ -130,10 +133,10 @@ In correlated subquery contexts, lambdas can also reference outer query records 
 
 Lambdas are primarily used with higher-order functions that operate on collections. Common functions include:
 
-- `array_transform` - Transform each element of an array
+- `transform` - Transform each element of an array
 - `list_filter` - Filter elements based on a predicate
 - `reduce` - Reduce an array to a single value
-- `array_sort` - Sort with a custom comparator
+- `sort` - Sort with a custom comparator
 - `zip_with` - Combine arrays element-wise
 
 See the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml) for the complete list of lambda-accepting functions and their signatures.

@@ -92,12 +92,12 @@ References must validate against the schema of the record being referenced. If n
 
 Field references can originate from different data sources depending on the evaluation context. The root type specifies where the referenced data comes from:
 
-| Root Type          | Description                                                                                      | Use Case                                    |
-|--------------------|--------------------------------------------------------------------------------------------------|---------------------------------------------|
-| RootReference      | References fields from the current input record being processed by the expression               | Standard field access in most operations    |
-| OuterReference     | References fields from an outer query's record in subquery contexts                             | Correlated subqueries                        |
-| LambdaReference    | References parameters passed to a lambda function                                                | Lambda function bodies                       |
-| Expression         | References the output of another expression as the root                                          | Accessing fields from computed values        |
+| Root Type                   | Description                                                                                      | Use Case                                    |
+|-----------------------------|--------------------------------------------------------------------------------------------------|---------------------------------------------|
+| RootReference               | References fields from the current input record being processed by the expression               | Standard field access in most operations    |
+| OuterReference              | References fields from an outer query's record in subquery contexts                             | Correlated subqueries                        |
+| LambdaParameterReference    | References parameters passed to a lambda function                                                | Lambda function bodies                       |
+| Expression                  | References the output of another expression as the root                                          | Accessing fields from computed values        |
 
 #### RootReference
 
@@ -125,7 +125,7 @@ selection {
 }
 ```
 
-#### LambdaReference
+#### LambdaParameterReference
 
 Used within lambda function bodies to reference the lambda's parameters. This enables higher-order functions like `array_transform`, `list_filter`, and `reduce`.
 

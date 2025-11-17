@@ -20,7 +20,7 @@ body: {
         # First argument: lambda parameter x
         value: {
           selection: {
-            lambda_reference: {
+            lambda_parameter_reference: {
               lambda_depth: 0        # 0 = current lambda
               parameter_index: 0     # 0 = first parameter (x)
             }
