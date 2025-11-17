@@ -326,7 +326,12 @@ listType
     ;
 
 lambdaType
-    : Lambda isnull=QMark? OAngleBracket paramTypes=dataTypeList Arrow returnType=dataType CAngleBracket
+    : Lambda isnull=QMark? OAngleBracket params=lambdaParams Arrow returnType=dataType CAngleBracket
+    ;
+
+lambdaParams
+    : dataType                                  #singleLambdaParam
+    | OParen dataType (Comma dataType)+ CParen  #multiLambdaParam
     ;
 
 dataTypeList

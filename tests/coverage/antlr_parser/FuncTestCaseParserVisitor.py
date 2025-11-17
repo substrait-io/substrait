@@ -470,6 +470,16 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#singleLambdaParam.
+    def visitSingleLambdaParam(self, ctx:FuncTestCaseParser.SingleLambdaParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#multiLambdaParam.
+    def visitMultiLambdaParam(self, ctx:FuncTestCaseParser.MultiLambdaParamContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#dataTypeList.
     def visitDataTypeList(self, ctx:FuncTestCaseParser.DataTypeListContext):
         return self.visitChildren(ctx)

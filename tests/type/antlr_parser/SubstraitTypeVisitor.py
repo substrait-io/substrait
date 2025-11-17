@@ -170,6 +170,16 @@ class SubstraitTypeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by SubstraitTypeParser#singleFuncParam.
+    def visitSingleFuncParam(self, ctx:SubstraitTypeParser.SingleFuncParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by SubstraitTypeParser#multiFuncParam.
+    def visitMultiFuncParam(self, ctx:SubstraitTypeParser.MultiFuncParamContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by SubstraitTypeParser#numericLiteral.
     def visitNumericLiteral(self, ctx:SubstraitTypeParser.NumericLiteralContext):
         return self.visitChildren(ctx)

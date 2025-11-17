@@ -41,9 +41,14 @@ parameterizedType
   | NStruct isnull=QMark? Lt Identifier expr (Comma Identifier expr)* Gt                    #nStruct
   | List isnull=QMark? Lt expr Gt                                                           #list
   | Map isnull=QMark? Lt key=expr Comma value=expr Gt                                       #map
-  | Lambda isnull=QMark? Lt expr Arrow expr Gt                                              #lambda
-  | Func isnull=QMark? Lt expr Arrow expr Gt                                                #func
+  | Lambda isnull=QMark? Lt params=funcParams Arrow returnType=expr Gt                      #lambda
+  | Func isnull=QMark? Lt params=funcParams Arrow returnType=expr Gt                        #func
   | UserDefined Identifier isnull=QMark? (Lt expr (Comma expr)* Gt)?                        #userDefined
+  ;
+
+funcParams
+  : expr                                        #singleFuncParam
+  | OParen expr (Comma expr)+ CParen            #multiFuncParam
   ;
 
 numericParameter

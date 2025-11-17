@@ -297,6 +297,24 @@ class SubstraitTypeListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SubstraitTypeParser#singleFuncParam.
+    def enterSingleFuncParam(self, ctx:SubstraitTypeParser.SingleFuncParamContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#singleFuncParam.
+    def exitSingleFuncParam(self, ctx:SubstraitTypeParser.SingleFuncParamContext):
+        pass
+
+
+    # Enter a parse tree produced by SubstraitTypeParser#multiFuncParam.
+    def enterMultiFuncParam(self, ctx:SubstraitTypeParser.MultiFuncParamContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#multiFuncParam.
+    def exitMultiFuncParam(self, ctx:SubstraitTypeParser.MultiFuncParamContext):
+        pass
+
+
     # Enter a parse tree produced by SubstraitTypeParser#numericLiteral.
     def enterNumericLiteral(self, ctx:SubstraitTypeParser.NumericLiteralContext):
         pass

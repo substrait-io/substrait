@@ -66,7 +66,7 @@ scalar_functions:
           - name: input
             value: list<T>
           - name: comparator
-            value: func<struct<T, T> -> i32>
+            value: func<(T, T) -> i32>
         nullability: MIRROR
         return: list<T>
 
@@ -92,7 +92,7 @@ scalar_functions:
           - name: initial_value
             value: U
           - name: accumulator
-            value: func<struct<U, T> -> U>
+            value: func<(U, T) -> U>
         nullability: DECLARED_OUTPUT
         return: U
 
@@ -185,6 +185,6 @@ scalar_functions:
           - name: right
             value: list<U>
           - name: combiner
-            value: func<struct<T, U> -> V>
+            value: func<(T, U) -> V>
         nullability: MIRROR
         return: list<V>
