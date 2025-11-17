@@ -42,6 +42,7 @@ parameterizedType
   | List isnull=QMark? Lt expr Gt                                                           #list
   | Map isnull=QMark? Lt key=expr Comma value=expr Gt                                       #map
   | Lambda isnull=QMark? Lt expr Arrow expr Gt                                              #lambda
+  | Func isnull=QMark? Lt expr Arrow expr Gt                                                #func
   | UserDefined Identifier isnull=QMark? (Lt expr (Comma expr)* Gt)?                        #userDefined
   ;
 

@@ -20,7 +20,7 @@ scalar_functions:
           - name: input
             value: list<T>
           - name: transform
-            value: lambda<T -> U>
+            value: func<T -> U>
         nullability: MIRROR
         return: list<U>
 
@@ -43,7 +43,7 @@ scalar_functions:
           - name: input
             value: list<T>
           - name: predicate
-            value: lambda<T -> boolean>
+            value: func<T -> boolean>
         nullability: MIRROR
         return: list<T>
 
@@ -66,7 +66,7 @@ scalar_functions:
           - name: input
             value: list<T>
           - name: comparator
-            value: lambda<struct<T, T> -> i32>
+            value: func<struct<T, T> -> i32>
         nullability: MIRROR
         return: list<T>
 
@@ -92,7 +92,7 @@ scalar_functions:
           - name: initial_value
             value: U
           - name: accumulator
-            value: lambda<struct<U, T> -> U>
+            value: func<struct<U, T> -> U>
         nullability: DECLARED_OUTPUT
         return: U
 
@@ -115,7 +115,7 @@ scalar_functions:
           - name: input
             value: list<T>
           - name: predicate
-            value: lambda<T -> boolean>
+            value: func<T -> boolean>
         nullability: DECLARED_OUTPUT
         return: boolean?
 
@@ -138,7 +138,7 @@ scalar_functions:
           - name: input
             value: list<T>
           - name: predicate
-            value: lambda<T -> boolean>
+            value: func<T -> boolean>
         nullability: DECLARED_OUTPUT
         return: boolean?
 
@@ -162,7 +162,7 @@ scalar_functions:
           - name: input
             value: list<T>
           - name: predicate
-            value: lambda<T -> boolean>
+            value: func<T -> boolean>
         nullability: DECLARED_OUTPUT
         return: T?
 
@@ -185,6 +185,6 @@ scalar_functions:
           - name: right
             value: list<U>
           - name: combiner
-            value: lambda<struct<T, U> -> V>
+            value: func<struct<T, U> -> V>
         nullability: MIRROR
         return: list<V>

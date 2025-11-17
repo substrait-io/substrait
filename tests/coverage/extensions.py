@@ -50,6 +50,7 @@ def build_type_to_short_type():
         FuncTestCaseLexer.Map: FuncTestCaseLexer.Map,
         FuncTestCaseLexer.Any: FuncTestCaseLexer.Any,
         FuncTestCaseLexer.Lambda: FuncTestCaseLexer.Lambda,
+        FuncTestCaseLexer.Func: FuncTestCaseLexer.Func,
     }
     to_short_type = {
         substrait_type_str(k): substrait_type_str(v) for k, v in rule_map.items()
@@ -291,7 +292,8 @@ class FunctionRegistry:
 
     @staticmethod
     def is_same_type(func_arg_type, arg_type):
-        # TODO: this really needs to have more sophisticated type-matching logic
+        # TODO: this really needs to have more sophisticated type-matching
+        # logic
         # Strip nullability markers for comparison
         func_type_clean = func_arg_type.rstrip("?")
         arg_type_clean = arg_type.rstrip("?")
@@ -302,6 +304,11 @@ class FunctionRegistry:
 
         arg_type_base = arg_type_clean.split("<")[0]
         func_type_base = func_type_clean.split("<")[0]
+
+        # func and lambda are compatible (func is generic, lambda is concrete)
+        if {func_type_base, arg_type_base} == {"func", "lambda"}:
+            return True
+
         if func_type_base == arg_type_base:
             return True
         return FunctionRegistry.is_type_any(func_arg_type)

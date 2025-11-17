@@ -16,6 +16,7 @@ If       : 'IF';
 Then     : 'THEN';
 Else     : 'ELSE';
 Lambda   : 'LAMBDA';
+Func     : 'FUNC';
 
 // TYPES
 Boolean  : 'BOOLEAN';

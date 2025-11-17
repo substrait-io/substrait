@@ -11,7 +11,7 @@ else:
 
 def serializedATN():
     return [
-        4,1,80,276,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
+        4,1,83,296,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
         6,2,7,7,7,1,0,1,0,1,0,1,1,1,1,1,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,
         2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,38,8,2,1,3,1,3,3,3,42,8,3,1,3,
         1,3,1,3,1,3,1,3,1,3,3,3,50,8,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,58,8,
@@ -21,100 +21,108 @@ def serializedATN():
         1,3,1,3,1,3,1,3,3,3,108,8,3,1,3,1,3,1,3,1,3,5,3,114,8,3,10,3,12,
         3,117,9,3,1,3,1,3,1,3,1,3,3,3,123,8,3,1,3,1,3,1,3,1,3,1,3,1,3,5,
         3,131,8,3,10,3,12,3,134,9,3,1,3,1,3,1,3,1,3,3,3,140,8,3,1,3,1,3,
-        1,3,1,3,1,3,1,3,3,3,148,8,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,
-        3,3,159,8,3,1,3,1,3,1,3,1,3,5,3,165,8,3,10,3,12,3,168,9,3,1,3,1,
-        3,3,3,172,8,3,3,3,174,8,3,1,4,1,4,1,4,3,4,179,8,4,1,5,1,5,3,5,183,
-        8,5,1,5,1,5,3,5,187,8,5,3,5,189,8,5,1,6,1,6,3,6,193,8,6,1,6,1,6,
-        3,6,197,8,6,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,4,7,208,8,7,11,7,
-        12,7,209,1,7,1,7,1,7,1,7,4,7,216,8,7,11,7,12,7,217,5,7,220,8,7,10,
-        7,12,7,223,9,7,1,7,1,7,5,7,227,8,7,10,7,12,7,230,9,7,1,7,1,7,1,7,
-        1,7,3,7,236,8,7,1,7,1,7,1,7,1,7,1,7,5,7,243,8,7,10,7,12,7,246,9,
-        7,3,7,248,8,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,3,7,260,8,
-        7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,5,7,271,8,7,10,7,12,7,274,
-        9,7,1,7,0,1,14,8,0,2,4,6,8,10,12,14,0,1,3,0,52,55,57,62,75,76,334,
-        0,16,1,0,0,0,2,19,1,0,0,0,4,37,1,0,0,0,6,173,1,0,0,0,8,178,1,0,0,
-        0,10,188,1,0,0,0,12,196,1,0,0,0,14,259,1,0,0,0,16,17,3,14,7,0,17,
-        18,5,0,0,1,18,1,1,0,0,0,19,20,3,12,6,0,20,21,5,0,0,1,21,3,1,0,0,
-        0,22,38,5,7,0,0,23,38,5,8,0,0,24,38,5,9,0,0,25,38,5,10,0,0,26,38,
-        5,11,0,0,27,38,5,12,0,0,28,38,5,13,0,0,29,38,5,14,0,0,30,38,5,15,
-        0,0,31,38,5,16,0,0,32,38,5,17,0,0,33,38,5,18,0,0,34,38,5,19,0,0,
-        35,38,5,20,0,0,36,38,5,22,0,0,37,22,1,0,0,0,37,23,1,0,0,0,37,24,
-        1,0,0,0,37,25,1,0,0,0,37,26,1,0,0,0,37,27,1,0,0,0,37,28,1,0,0,0,
-        37,29,1,0,0,0,37,30,1,0,0,0,37,31,1,0,0,0,37,32,1,0,0,0,37,33,1,
-        0,0,0,37,34,1,0,0,0,37,35,1,0,0,0,37,36,1,0,0,0,38,5,1,0,0,0,39,
-        41,5,27,0,0,40,42,5,72,0,0,41,40,1,0,0,0,41,42,1,0,0,0,42,43,1,0,
-        0,0,43,44,5,62,0,0,44,45,3,8,4,0,45,46,5,61,0,0,46,174,1,0,0,0,47,
-        49,5,28,0,0,48,50,5,72,0,0,49,48,1,0,0,0,49,50,1,0,0,0,50,51,1,0,
-        0,0,51,52,5,62,0,0,52,53,3,8,4,0,53,54,5,61,0,0,54,174,1,0,0,0,55,
-        57,5,29,0,0,56,58,5,72,0,0,57,56,1,0,0,0,57,58,1,0,0,0,58,59,1,0,
-        0,0,59,60,5,62,0,0,60,61,3,8,4,0,61,62,5,61,0,0,62,174,1,0,0,0,63,
-        65,5,23,0,0,64,66,5,72,0,0,65,64,1,0,0,0,65,66,1,0,0,0,66,67,1,0,
-        0,0,67,68,5,62,0,0,68,69,3,8,4,0,69,70,5,70,0,0,70,71,3,8,4,0,71,
-        72,5,61,0,0,72,174,1,0,0,0,73,75,5,21,0,0,74,76,5,72,0,0,75,74,1,
-        0,0,0,75,76,1,0,0,0,76,77,1,0,0,0,77,78,5,62,0,0,78,79,3,8,4,0,79,
-        80,5,61,0,0,80,174,1,0,0,0,81,83,5,24,0,0,82,84,5,72,0,0,83,82,1,
-        0,0,0,83,84,1,0,0,0,84,85,1,0,0,0,85,86,5,62,0,0,86,87,3,8,4,0,87,
-        88,5,61,0,0,88,174,1,0,0,0,89,91,5,25,0,0,90,92,5,72,0,0,91,90,1,
-        0,0,0,91,92,1,0,0,0,92,93,1,0,0,0,93,94,5,62,0,0,94,95,3,8,4,0,95,
-        96,5,61,0,0,96,174,1,0,0,0,97,99,5,26,0,0,98,100,5,72,0,0,99,98,
-        1,0,0,0,99,100,1,0,0,0,100,101,1,0,0,0,101,102,5,62,0,0,102,103,
-        3,8,4,0,103,104,5,61,0,0,104,174,1,0,0,0,105,107,5,30,0,0,106,108,
-        5,72,0,0,107,106,1,0,0,0,107,108,1,0,0,0,108,109,1,0,0,0,109,110,
-        5,62,0,0,110,115,3,14,7,0,111,112,5,70,0,0,112,114,3,14,7,0,113,
-        111,1,0,0,0,114,117,1,0,0,0,115,113,1,0,0,0,115,116,1,0,0,0,116,
-        118,1,0,0,0,117,115,1,0,0,0,118,119,5,61,0,0,119,174,1,0,0,0,120,
-        122,5,31,0,0,121,123,5,72,0,0,122,121,1,0,0,0,122,123,1,0,0,0,123,
-        124,1,0,0,0,124,125,5,62,0,0,125,126,5,79,0,0,126,132,3,14,7,0,127,
-        128,5,70,0,0,128,129,5,79,0,0,129,131,3,14,7,0,130,127,1,0,0,0,131,
-        134,1,0,0,0,132,130,1,0,0,0,132,133,1,0,0,0,133,135,1,0,0,0,134,
-        132,1,0,0,0,135,136,5,61,0,0,136,174,1,0,0,0,137,139,5,32,0,0,138,
-        140,5,72,0,0,139,138,1,0,0,0,139,140,1,0,0,0,140,141,1,0,0,0,141,
-        142,5,62,0,0,142,143,3,14,7,0,143,144,5,61,0,0,144,174,1,0,0,0,145,
-        147,5,33,0,0,146,148,5,72,0,0,147,146,1,0,0,0,147,148,1,0,0,0,148,
-        149,1,0,0,0,149,150,5,62,0,0,150,151,3,14,7,0,151,152,5,70,0,0,152,
-        153,3,14,7,0,153,154,5,61,0,0,154,174,1,0,0,0,155,156,5,34,0,0,156,
-        158,5,79,0,0,157,159,5,72,0,0,158,157,1,0,0,0,158,159,1,0,0,0,159,
-        171,1,0,0,0,160,161,5,62,0,0,161,166,3,14,7,0,162,163,5,70,0,0,163,
-        165,3,14,7,0,164,162,1,0,0,0,165,168,1,0,0,0,166,164,1,0,0,0,166,
-        167,1,0,0,0,167,169,1,0,0,0,168,166,1,0,0,0,169,170,5,61,0,0,170,
-        172,1,0,0,0,171,160,1,0,0,0,171,172,1,0,0,0,172,174,1,0,0,0,173,
-        39,1,0,0,0,173,47,1,0,0,0,173,55,1,0,0,0,173,63,1,0,0,0,173,73,1,
-        0,0,0,173,81,1,0,0,0,173,89,1,0,0,0,173,97,1,0,0,0,173,105,1,0,0,
-        0,173,120,1,0,0,0,173,137,1,0,0,0,173,145,1,0,0,0,173,155,1,0,0,
-        0,174,7,1,0,0,0,175,179,5,78,0,0,176,179,5,79,0,0,177,179,3,14,7,
-        0,178,175,1,0,0,0,178,176,1,0,0,0,178,177,1,0,0,0,179,9,1,0,0,0,
-        180,182,5,49,0,0,181,183,5,72,0,0,182,181,1,0,0,0,182,183,1,0,0,
-        0,183,189,1,0,0,0,184,186,5,50,0,0,185,187,5,72,0,0,186,185,1,0,
-        0,0,186,187,1,0,0,0,187,189,1,0,0,0,188,180,1,0,0,0,188,184,1,0,
-        0,0,189,11,1,0,0,0,190,192,3,4,2,0,191,193,5,72,0,0,192,191,1,0,
-        0,0,192,193,1,0,0,0,193,197,1,0,0,0,194,197,3,6,3,0,195,197,3,10,
-        5,0,196,190,1,0,0,0,196,194,1,0,0,0,196,195,1,0,0,0,197,13,1,0,0,
-        0,198,199,6,7,-1,0,199,200,5,66,0,0,200,201,3,14,7,0,201,202,5,67,
-        0,0,202,260,1,0,0,0,203,204,5,79,0,0,204,205,5,57,0,0,205,207,3,
-        14,7,0,206,208,5,80,0,0,207,206,1,0,0,0,208,209,1,0,0,0,209,207,
-        1,0,0,0,209,210,1,0,0,0,210,221,1,0,0,0,211,212,5,79,0,0,212,213,
-        5,57,0,0,213,215,3,14,7,0,214,216,5,80,0,0,215,214,1,0,0,0,216,217,
-        1,0,0,0,217,215,1,0,0,0,217,218,1,0,0,0,218,220,1,0,0,0,219,211,
-        1,0,0,0,220,223,1,0,0,0,221,219,1,0,0,0,221,222,1,0,0,0,222,224,
-        1,0,0,0,223,221,1,0,0,0,224,228,3,12,6,0,225,227,5,80,0,0,226,225,
-        1,0,0,0,227,230,1,0,0,0,228,226,1,0,0,0,228,229,1,0,0,0,229,260,
-        1,0,0,0,230,228,1,0,0,0,231,260,3,12,6,0,232,260,5,78,0,0,233,235,
-        5,79,0,0,234,236,5,72,0,0,235,234,1,0,0,0,235,236,1,0,0,0,236,260,
-        1,0,0,0,237,238,5,79,0,0,238,247,5,66,0,0,239,244,3,14,7,0,240,241,
-        5,70,0,0,241,243,3,14,7,0,242,240,1,0,0,0,243,246,1,0,0,0,244,242,
-        1,0,0,0,244,245,1,0,0,0,245,248,1,0,0,0,246,244,1,0,0,0,247,239,
-        1,0,0,0,247,248,1,0,0,0,248,249,1,0,0,0,249,260,5,67,0,0,250,251,
-        5,4,0,0,251,252,3,14,7,0,252,253,5,5,0,0,253,254,3,14,7,0,254,255,
-        5,6,0,0,255,256,3,14,7,3,256,260,1,0,0,0,257,258,5,63,0,0,258,260,
-        3,14,7,2,259,198,1,0,0,0,259,203,1,0,0,0,259,231,1,0,0,0,259,232,
-        1,0,0,0,259,233,1,0,0,0,259,237,1,0,0,0,259,250,1,0,0,0,259,257,
-        1,0,0,0,260,272,1,0,0,0,261,262,10,4,0,0,262,263,7,0,0,0,263,271,
-        3,14,7,5,264,265,10,1,0,0,265,266,5,72,0,0,266,267,3,14,7,0,267,
-        268,5,71,0,0,268,269,3,14,7,2,269,271,1,0,0,0,270,261,1,0,0,0,270,
-        264,1,0,0,0,271,274,1,0,0,0,272,270,1,0,0,0,272,273,1,0,0,0,273,
-        15,1,0,0,0,274,272,1,0,0,0,35,37,41,49,57,65,75,83,91,99,107,115,
-        122,132,139,147,158,166,171,173,178,182,186,188,192,196,209,217,
-        221,228,235,244,247,259,270,272
+        1,3,1,3,1,3,1,3,3,3,148,8,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,
+        158,8,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,168,8,3,1,3,1,3,1,3,
+        1,3,1,3,1,3,1,3,1,3,1,3,3,3,179,8,3,1,3,1,3,1,3,1,3,5,3,185,8,3,
+        10,3,12,3,188,9,3,1,3,1,3,3,3,192,8,3,3,3,194,8,3,1,4,1,4,1,4,3,
+        4,199,8,4,1,5,1,5,3,5,203,8,5,1,5,1,5,3,5,207,8,5,3,5,209,8,5,1,
+        6,1,6,3,6,213,8,6,1,6,1,6,3,6,217,8,6,1,7,1,7,1,7,1,7,1,7,1,7,1,
+        7,1,7,1,7,4,7,228,8,7,11,7,12,7,229,1,7,1,7,1,7,1,7,4,7,236,8,7,
+        11,7,12,7,237,5,7,240,8,7,10,7,12,7,243,9,7,1,7,1,7,5,7,247,8,7,
+        10,7,12,7,250,9,7,1,7,1,7,1,7,1,7,3,7,256,8,7,1,7,1,7,1,7,1,7,1,
+        7,5,7,263,8,7,10,7,12,7,266,9,7,3,7,268,8,7,1,7,1,7,1,7,1,7,1,7,
+        1,7,1,7,1,7,1,7,1,7,3,7,280,8,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,
+        1,7,5,7,291,8,7,10,7,12,7,294,9,7,1,7,0,1,14,8,0,2,4,6,8,10,12,14,
+        0,1,3,0,54,57,59,64,77,78,358,0,16,1,0,0,0,2,19,1,0,0,0,4,37,1,0,
+        0,0,6,193,1,0,0,0,8,198,1,0,0,0,10,208,1,0,0,0,12,216,1,0,0,0,14,
+        279,1,0,0,0,16,17,3,14,7,0,17,18,5,0,0,1,18,1,1,0,0,0,19,20,3,12,
+        6,0,20,21,5,0,0,1,21,3,1,0,0,0,22,38,5,9,0,0,23,38,5,10,0,0,24,38,
+        5,11,0,0,25,38,5,12,0,0,26,38,5,13,0,0,27,38,5,14,0,0,28,38,5,15,
+        0,0,29,38,5,16,0,0,30,38,5,17,0,0,31,38,5,18,0,0,32,38,5,19,0,0,
+        33,38,5,20,0,0,34,38,5,21,0,0,35,38,5,22,0,0,36,38,5,24,0,0,37,22,
+        1,0,0,0,37,23,1,0,0,0,37,24,1,0,0,0,37,25,1,0,0,0,37,26,1,0,0,0,
+        37,27,1,0,0,0,37,28,1,0,0,0,37,29,1,0,0,0,37,30,1,0,0,0,37,31,1,
+        0,0,0,37,32,1,0,0,0,37,33,1,0,0,0,37,34,1,0,0,0,37,35,1,0,0,0,37,
+        36,1,0,0,0,38,5,1,0,0,0,39,41,5,29,0,0,40,42,5,74,0,0,41,40,1,0,
+        0,0,41,42,1,0,0,0,42,43,1,0,0,0,43,44,5,64,0,0,44,45,3,8,4,0,45,
+        46,5,63,0,0,46,194,1,0,0,0,47,49,5,30,0,0,48,50,5,74,0,0,49,48,1,
+        0,0,0,49,50,1,0,0,0,50,51,1,0,0,0,51,52,5,64,0,0,52,53,3,8,4,0,53,
+        54,5,63,0,0,54,194,1,0,0,0,55,57,5,31,0,0,56,58,5,74,0,0,57,56,1,
+        0,0,0,57,58,1,0,0,0,58,59,1,0,0,0,59,60,5,64,0,0,60,61,3,8,4,0,61,
+        62,5,63,0,0,62,194,1,0,0,0,63,65,5,25,0,0,64,66,5,74,0,0,65,64,1,
+        0,0,0,65,66,1,0,0,0,66,67,1,0,0,0,67,68,5,64,0,0,68,69,3,8,4,0,69,
+        70,5,72,0,0,70,71,3,8,4,0,71,72,5,63,0,0,72,194,1,0,0,0,73,75,5,
+        23,0,0,74,76,5,74,0,0,75,74,1,0,0,0,75,76,1,0,0,0,76,77,1,0,0,0,
+        77,78,5,64,0,0,78,79,3,8,4,0,79,80,5,63,0,0,80,194,1,0,0,0,81,83,
+        5,26,0,0,82,84,5,74,0,0,83,82,1,0,0,0,83,84,1,0,0,0,84,85,1,0,0,
+        0,85,86,5,64,0,0,86,87,3,8,4,0,87,88,5,63,0,0,88,194,1,0,0,0,89,
+        91,5,27,0,0,90,92,5,74,0,0,91,90,1,0,0,0,91,92,1,0,0,0,92,93,1,0,
+        0,0,93,94,5,64,0,0,94,95,3,8,4,0,95,96,5,63,0,0,96,194,1,0,0,0,97,
+        99,5,28,0,0,98,100,5,74,0,0,99,98,1,0,0,0,99,100,1,0,0,0,100,101,
+        1,0,0,0,101,102,5,64,0,0,102,103,3,8,4,0,103,104,5,63,0,0,104,194,
+        1,0,0,0,105,107,5,32,0,0,106,108,5,74,0,0,107,106,1,0,0,0,107,108,
+        1,0,0,0,108,109,1,0,0,0,109,110,5,64,0,0,110,115,3,14,7,0,111,112,
+        5,72,0,0,112,114,3,14,7,0,113,111,1,0,0,0,114,117,1,0,0,0,115,113,
+        1,0,0,0,115,116,1,0,0,0,116,118,1,0,0,0,117,115,1,0,0,0,118,119,
+        5,63,0,0,119,194,1,0,0,0,120,122,5,33,0,0,121,123,5,74,0,0,122,121,
+        1,0,0,0,122,123,1,0,0,0,123,124,1,0,0,0,124,125,5,64,0,0,125,126,
+        5,82,0,0,126,132,3,14,7,0,127,128,5,72,0,0,128,129,5,82,0,0,129,
+        131,3,14,7,0,130,127,1,0,0,0,131,134,1,0,0,0,132,130,1,0,0,0,132,
+        133,1,0,0,0,133,135,1,0,0,0,134,132,1,0,0,0,135,136,5,63,0,0,136,
+        194,1,0,0,0,137,139,5,34,0,0,138,140,5,74,0,0,139,138,1,0,0,0,139,
+        140,1,0,0,0,140,141,1,0,0,0,141,142,5,64,0,0,142,143,3,14,7,0,143,
+        144,5,63,0,0,144,194,1,0,0,0,145,147,5,35,0,0,146,148,5,74,0,0,147,
+        146,1,0,0,0,147,148,1,0,0,0,148,149,1,0,0,0,149,150,5,64,0,0,150,
+        151,3,14,7,0,151,152,5,72,0,0,152,153,3,14,7,0,153,154,5,63,0,0,
+        154,194,1,0,0,0,155,157,5,7,0,0,156,158,5,74,0,0,157,156,1,0,0,0,
+        157,158,1,0,0,0,158,159,1,0,0,0,159,160,5,64,0,0,160,161,3,14,7,
+        0,161,162,5,80,0,0,162,163,3,14,7,0,163,164,5,63,0,0,164,194,1,0,
+        0,0,165,167,5,8,0,0,166,168,5,74,0,0,167,166,1,0,0,0,167,168,1,0,
+        0,0,168,169,1,0,0,0,169,170,5,64,0,0,170,171,3,14,7,0,171,172,5,
+        80,0,0,172,173,3,14,7,0,173,174,5,63,0,0,174,194,1,0,0,0,175,176,
+        5,36,0,0,176,178,5,82,0,0,177,179,5,74,0,0,178,177,1,0,0,0,178,179,
+        1,0,0,0,179,191,1,0,0,0,180,181,5,64,0,0,181,186,3,14,7,0,182,183,
+        5,72,0,0,183,185,3,14,7,0,184,182,1,0,0,0,185,188,1,0,0,0,186,184,
+        1,0,0,0,186,187,1,0,0,0,187,189,1,0,0,0,188,186,1,0,0,0,189,190,
+        5,63,0,0,190,192,1,0,0,0,191,180,1,0,0,0,191,192,1,0,0,0,192,194,
+        1,0,0,0,193,39,1,0,0,0,193,47,1,0,0,0,193,55,1,0,0,0,193,63,1,0,
+        0,0,193,73,1,0,0,0,193,81,1,0,0,0,193,89,1,0,0,0,193,97,1,0,0,0,
+        193,105,1,0,0,0,193,120,1,0,0,0,193,137,1,0,0,0,193,145,1,0,0,0,
+        193,155,1,0,0,0,193,165,1,0,0,0,193,175,1,0,0,0,194,7,1,0,0,0,195,
+        199,5,81,0,0,196,199,5,82,0,0,197,199,3,14,7,0,198,195,1,0,0,0,198,
+        196,1,0,0,0,198,197,1,0,0,0,199,9,1,0,0,0,200,202,5,51,0,0,201,203,
+        5,74,0,0,202,201,1,0,0,0,202,203,1,0,0,0,203,209,1,0,0,0,204,206,
+        5,52,0,0,205,207,5,74,0,0,206,205,1,0,0,0,206,207,1,0,0,0,207,209,
+        1,0,0,0,208,200,1,0,0,0,208,204,1,0,0,0,209,11,1,0,0,0,210,212,3,
+        4,2,0,211,213,5,74,0,0,212,211,1,0,0,0,212,213,1,0,0,0,213,217,1,
+        0,0,0,214,217,3,6,3,0,215,217,3,10,5,0,216,210,1,0,0,0,216,214,1,
+        0,0,0,216,215,1,0,0,0,217,13,1,0,0,0,218,219,6,7,-1,0,219,220,5,
+        68,0,0,220,221,3,14,7,0,221,222,5,69,0,0,222,280,1,0,0,0,223,224,
+        5,82,0,0,224,225,5,59,0,0,225,227,3,14,7,0,226,228,5,83,0,0,227,
+        226,1,0,0,0,228,229,1,0,0,0,229,227,1,0,0,0,229,230,1,0,0,0,230,
+        241,1,0,0,0,231,232,5,82,0,0,232,233,5,59,0,0,233,235,3,14,7,0,234,
+        236,5,83,0,0,235,234,1,0,0,0,236,237,1,0,0,0,237,235,1,0,0,0,237,
+        238,1,0,0,0,238,240,1,0,0,0,239,231,1,0,0,0,240,243,1,0,0,0,241,
+        239,1,0,0,0,241,242,1,0,0,0,242,244,1,0,0,0,243,241,1,0,0,0,244,
+        248,3,12,6,0,245,247,5,83,0,0,246,245,1,0,0,0,247,250,1,0,0,0,248,
+        246,1,0,0,0,248,249,1,0,0,0,249,280,1,0,0,0,250,248,1,0,0,0,251,
+        280,3,12,6,0,252,280,5,81,0,0,253,255,5,82,0,0,254,256,5,74,0,0,
+        255,254,1,0,0,0,255,256,1,0,0,0,256,280,1,0,0,0,257,258,5,82,0,0,
+        258,267,5,68,0,0,259,264,3,14,7,0,260,261,5,72,0,0,261,263,3,14,
+        7,0,262,260,1,0,0,0,263,266,1,0,0,0,264,262,1,0,0,0,264,265,1,0,
+        0,0,265,268,1,0,0,0,266,264,1,0,0,0,267,259,1,0,0,0,267,268,1,0,
+        0,0,268,269,1,0,0,0,269,280,5,69,0,0,270,271,5,4,0,0,271,272,3,14,
+        7,0,272,273,5,5,0,0,273,274,3,14,7,0,274,275,5,6,0,0,275,276,3,14,
+        7,3,276,280,1,0,0,0,277,278,5,65,0,0,278,280,3,14,7,2,279,218,1,
+        0,0,0,279,223,1,0,0,0,279,251,1,0,0,0,279,252,1,0,0,0,279,253,1,
+        0,0,0,279,257,1,0,0,0,279,270,1,0,0,0,279,277,1,0,0,0,280,292,1,
+        0,0,0,281,282,10,4,0,0,282,283,7,0,0,0,283,291,3,14,7,5,284,285,
+        10,1,0,0,285,286,5,74,0,0,286,287,3,14,7,0,287,288,5,73,0,0,288,
+        289,3,14,7,2,289,291,1,0,0,0,290,281,1,0,0,0,290,284,1,0,0,0,291,
+        294,1,0,0,0,292,290,1,0,0,0,292,293,1,0,0,0,293,15,1,0,0,0,294,292,
+        1,0,0,0,37,37,41,49,57,65,75,83,91,99,107,115,122,132,139,147,157,
+        167,178,186,191,193,198,202,206,208,212,216,229,237,241,248,255,
+        264,267,279,290,292
     ]
 
 class SubstraitTypeParser ( Parser ):
@@ -128,36 +136,38 @@ class SubstraitTypeParser ( Parser ):
     sharedContextCache = PredictionContextCache()
 
     literalNames = [ "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                     "'IF'", "'THEN'", "'ELSE'", "'BOOLEAN'", "'I8'", "'I16'", 
-                     "'I32'", "'I64'", "'FP32'", "'FP64'", "'STRING'", "'BINARY'", 
-                     "'TIMESTAMP'", "'TIMESTAMP_TZ'", "'DATE'", "'TIME'", 
-                     "'INTERVAL_YEAR'", "'INTERVAL_DAY'", "'UUID'", "'DECIMAL'", 
-                     "'PRECISION_TIME'", "'PRECISION_TIMESTAMP'", "'PRECISION_TIMESTAMP_TZ'", 
-                     "'FIXEDCHAR'", "'VARCHAR'", "'FIXEDBINARY'", "'STRUCT'", 
-                     "'NSTRUCT'", "'LIST'", "'MAP'", "'U!'", "'BOOL'", "'STR'", 
-                     "'VBIN'", "'TS'", "'TSTZ'", "'IYEAR'", "'IDAY'", "'DEC'", 
-                     "'PT'", "'PTS'", "'PTSTZ'", "'FCHAR'", "'VCHAR'", "'FBIN'", 
-                     "'ANY'", "<INVALID>", "'::'", "'+'", "'-'", "'*'", 
-                     "'/'", "'%'", "'='", "'!='", "'>='", "'<='", "'>'", 
-                     "'<'", "'!'", "<INVALID>", "<INVALID>", "'('", "')'", 
-                     "'['", "']'", "','", "':'", "'?'", "'#'", "'.'", "'AND'", 
-                     "'OR'", "':='" ]
+                     "'IF'", "'THEN'", "'ELSE'", "'LAMBDA'", "'FUNC'", "'BOOLEAN'", 
+                     "'I8'", "'I16'", "'I32'", "'I64'", "'FP32'", "'FP64'", 
+                     "'STRING'", "'BINARY'", "'TIMESTAMP'", "'TIMESTAMP_TZ'", 
+                     "'DATE'", "'TIME'", "'INTERVAL_YEAR'", "'INTERVAL_DAY'", 
+                     "'UUID'", "'DECIMAL'", "'PRECISION_TIME'", "'PRECISION_TIMESTAMP'", 
+                     "'PRECISION_TIMESTAMP_TZ'", "'FIXEDCHAR'", "'VARCHAR'", 
+                     "'FIXEDBINARY'", "'STRUCT'", "'NSTRUCT'", "'LIST'", 
+                     "'MAP'", "'U!'", "'BOOL'", "'STR'", "'VBIN'", "'TS'", 
+                     "'TSTZ'", "'IYEAR'", "'IDAY'", "'DEC'", "'PT'", "'PTS'", 
+                     "'PTSTZ'", "'FCHAR'", "'VCHAR'", "'FBIN'", "'ANY'", 
+                     "<INVALID>", "'::'", "'+'", "'-'", "'*'", "'/'", "'%'", 
+                     "'='", "'!='", "'>='", "'<='", "'>'", "'<'", "'!'", 
+                     "<INVALID>", "<INVALID>", "'('", "')'", "'['", "']'", 
+                     "','", "':'", "'?'", "'#'", "'.'", "'AND'", "'OR'", 
+                     "':='", "'->'" ]
 
     symbolicNames = [ "<INVALID>", "LineComment", "BlockComment", "Whitespace", 
-                      "If", "Then", "Else", "Boolean", "I8", "I16", "I32", 
-                      "I64", "FP32", "FP64", "String", "Binary", "Timestamp", 
-                      "Timestamp_TZ", "Date", "Time", "Interval_Year", "Interval_Day", 
-                      "UUID", "Decimal", "Precision_Time", "Precision_Timestamp", 
-                      "Precision_Timestamp_TZ", "FixedChar", "VarChar", 
-                      "FixedBinary", "Struct", "NStruct", "List", "Map", 
-                      "UserDefined", "Bool", "Str", "VBin", "Ts", "TsTZ", 
-                      "IYear", "IDay", "Dec", "PT", "PTs", "PTsTZ", "FChar", 
-                      "VChar", "FBin", "Any", "AnyVar", "DoubleColon", "Plus", 
-                      "Minus", "Asterisk", "ForwardSlash", "Percent", "Eq", 
-                      "Ne", "Gte", "Lte", "Gt", "Lt", "Bang", "OAngleBracket", 
-                      "CAngleBracket", "OParen", "CParen", "OBracket", "CBracket", 
-                      "Comma", "Colon", "QMark", "Hash", "Dot", "And", "Or", 
-                      "Assign", "Number", "Identifier", "Newline" ]
+                      "If", "Then", "Else", "Lambda", "Func", "Boolean", 
+                      "I8", "I16", "I32", "I64", "FP32", "FP64", "String", 
+                      "Binary", "Timestamp", "Timestamp_TZ", "Date", "Time", 
+                      "Interval_Year", "Interval_Day", "UUID", "Decimal", 
+                      "Precision_Time", "Precision_Timestamp", "Precision_Timestamp_TZ", 
+                      "FixedChar", "VarChar", "FixedBinary", "Struct", "NStruct", 
+                      "List", "Map", "UserDefined", "Bool", "Str", "VBin", 
+                      "Ts", "TsTZ", "IYear", "IDay", "Dec", "PT", "PTs", 
+                      "PTsTZ", "FChar", "VChar", "FBin", "Any", "AnyVar", 
+                      "DoubleColon", "Plus", "Minus", "Asterisk", "ForwardSlash", 
+                      "Percent", "Eq", "Ne", "Gte", "Lte", "Gt", "Lt", "Bang", 
+                      "OAngleBracket", "CAngleBracket", "OParen", "CParen", 
+                      "OBracket", "CBracket", "Comma", "Colon", "QMark", 
+                      "Hash", "Dot", "And", "Or", "Assign", "Arrow", "Number", 
+                      "Identifier", "Newline" ]
 
     RULE_startRule = 0
     RULE_typeStatement = 1
@@ -178,80 +188,83 @@ class SubstraitTypeParser ( Parser ):
     If=4
     Then=5
     Else=6
-    Boolean=7
-    I8=8
-    I16=9
-    I32=10
-    I64=11
-    FP32=12
-    FP64=13
-    String=14
-    Binary=15
-    Timestamp=16
-    Timestamp_TZ=17
-    Date=18
-    Time=19
-    Interval_Year=20
-    Interval_Day=21
-    UUID=22
-    Decimal=23
-    Precision_Time=24
-    Precision_Timestamp=25
-    Precision_Timestamp_TZ=26
-    FixedChar=27
-    VarChar=28
-    FixedBinary=29
-    Struct=30
-    NStruct=31
-    List=32
-    Map=33
-    UserDefined=34
-    Bool=35
-    Str=36
-    VBin=37
-    Ts=38
-    TsTZ=39
-    IYear=40
-    IDay=41
-    Dec=42
-    PT=43
-    PTs=44
-    PTsTZ=45
-    FChar=46
-    VChar=47
-    FBin=48
-    Any=49
-    AnyVar=50
-    DoubleColon=51
-    Plus=52
-    Minus=53
-    Asterisk=54
-    ForwardSlash=55
-    Percent=56
-    Eq=57
-    Ne=58
-    Gte=59
-    Lte=60
-    Gt=61
-    Lt=62
-    Bang=63
-    OAngleBracket=64
-    CAngleBracket=65
-    OParen=66
-    CParen=67
-    OBracket=68
-    CBracket=69
-    Comma=70
-    Colon=71
-    QMark=72
-    Hash=73
-    Dot=74
-    And=75
-    Or=76
-    Assign=77
-    Number=78
-    Identifier=79
-    Newline=80
+    Lambda=7
+    Func=8
+    Boolean=9
+    I8=10
+    I16=11
+    I32=12
+    I64=13
+    FP32=14
+    FP64=15
+    String=16
+    Binary=17
+    Timestamp=18
+    Timestamp_TZ=19
+    Date=20
+    Time=21
+    Interval_Year=22
+    Interval_Day=23
+    UUID=24
+    Decimal=25
+    Precision_Time=26
+    Precision_Timestamp=27
+    Precision_Timestamp_TZ=28
+    FixedChar=29
+    VarChar=30
+    FixedBinary=31
+    Struct=32
+    NStruct=33
+    List=34
+    Map=35
+    UserDefined=36
+    Bool=37
+    Str=38
+    VBin=39
+    Ts=40
+    TsTZ=41
+    IYear=42
+    IDay=43
+    Dec=44
+    PT=45
+    PTs=46
+    PTsTZ=47
+    FChar=48
+    VChar=49
+    FBin=50
+    Any=51
+    AnyVar=52
+    DoubleColon=53
+    Plus=54
+    Minus=55
+    Asterisk=56
+    ForwardSlash=57
+    Percent=58
+    Eq=59
+    Ne=60
+    Gte=61
+    Lte=62
+    Gt=63
+    Lt=64
+    Bang=65
+    OAngleBracket=66
+    CAngleBracket=67
+    OParen=68
+    CParen=69
+    OBracket=70
+    CBracket=71
+    Comma=72
+    Colon=73
+    QMark=74
+    Hash=75
+    Dot=76
+    And=77
+    Or=78
+    Assign=79
+    Arrow=80
+    Number=81
+    Identifier=82
+    Newline=83
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
@@ -754,91 +767,91 @@ class SubstraitTypeParser ( Parser ):
             self.state = 37
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [7]:
+            if token in [9]:
                 localctx = SubstraitTypeParser.BooleanContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
                 self.state = 22
                 self.match(SubstraitTypeParser.Boolean)
                 pass
-            elif token in [8]:
+            elif token in [10]:
                 localctx = SubstraitTypeParser.I8Context(self, localctx)
                 self.enterOuterAlt(localctx, 2)
                 self.state = 23
                 self.match(SubstraitTypeParser.I8)
                 pass
-            elif token in [9]:
+            elif token in [11]:
                 localctx = SubstraitTypeParser.I16Context(self, localctx)
                 self.enterOuterAlt(localctx, 3)
                 self.state = 24
                 self.match(SubstraitTypeParser.I16)
                 pass
-            elif token in [10]:
+            elif token in [12]:
                 localctx = SubstraitTypeParser.I32Context(self, localctx)
                 self.enterOuterAlt(localctx, 4)
                 self.state = 25
                 self.match(SubstraitTypeParser.I32)
                 pass
-            elif token in [11]:
+            elif token in [13]:
                 localctx = SubstraitTypeParser.I64Context(self, localctx)
                 self.enterOuterAlt(localctx, 5)
                 self.state = 26
                 self.match(SubstraitTypeParser.I64)
                 pass
-            elif token in [12]:
+            elif token in [14]:
                 localctx = SubstraitTypeParser.Fp32Context(self, localctx)
                 self.enterOuterAlt(localctx, 6)
                 self.state = 27
                 self.match(SubstraitTypeParser.FP32)
                 pass
-            elif token in [13]:
+            elif token in [15]:
                 localctx = SubstraitTypeParser.Fp64Context(self, localctx)
                 self.enterOuterAlt(localctx, 7)
                 self.state = 28
                 self.match(SubstraitTypeParser.FP64)
                 pass
-            elif token in [14]:
+            elif token in [16]:
                 localctx = SubstraitTypeParser.StringContext(self, localctx)
                 self.enterOuterAlt(localctx, 8)
                 self.state = 29
                 self.match(SubstraitTypeParser.String)
                 pass
-            elif token in [15]:
+            elif token in [17]:
                 localctx = SubstraitTypeParser.BinaryContext(self, localctx)
                 self.enterOuterAlt(localctx, 9)
                 self.state = 30
                 self.match(SubstraitTypeParser.Binary)
                 pass
-            elif token in [16]:
+            elif token in [18]:
                 localctx = SubstraitTypeParser.TimestampContext(self, localctx)
                 self.enterOuterAlt(localctx, 10)
                 self.state = 31
                 self.match(SubstraitTypeParser.Timestamp)
                 pass
-            elif token in [17]:
+            elif token in [19]:
                 localctx = SubstraitTypeParser.TimestampTzContext(self, localctx)
                 self.enterOuterAlt(localctx, 11)
                 self.state = 32
                 self.match(SubstraitTypeParser.Timestamp_TZ)
                 pass
-            elif token in [18]:
+            elif token in [20]:
                 localctx = SubstraitTypeParser.DateContext(self, localctx)
                 self.enterOuterAlt(localctx, 12)
                 self.state = 33
                 self.match(SubstraitTypeParser.Date)
                 pass
-            elif token in [19]:
+            elif token in [21]:
                 localctx = SubstraitTypeParser.TimeContext(self, localctx)
                 self.enterOuterAlt(localctx, 13)
                 self.state = 34
                 self.match(SubstraitTypeParser.Time)
                 pass
-            elif token in [20]:
+            elif token in [22]:
                 localctx = SubstraitTypeParser.IntervalYearContext(self, localctx)
                 self.enterOuterAlt(localctx, 14)
                 self.state = 35
                 self.match(SubstraitTypeParser.Interval_Year)
                 pass
-            elif token in [22]:
+            elif token in [24]:
                 localctx = SubstraitTypeParser.UuidContext(self, localctx)
                 self.enterOuterAlt(localctx, 15)
                 self.state = 36
@@ -1180,6 +1193,84 @@ class SubstraitTypeParser ( Parser ):
                 return visitor.visitChildren(self)
 
 
+    class LambdaContext(ParameterizedTypeContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ParameterizedTypeContext
+            super().__init__(parser)
+            self.isnull = None # Token
+            self.copyFrom(ctx)
+
+        def Lambda(self):
+            return self.getToken(SubstraitTypeParser.Lambda, 0)
+        def Lt(self):
+            return self.getToken(SubstraitTypeParser.Lt, 0)
+        def expr(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(SubstraitTypeParser.ExprContext)
+            else:
+                return self.getTypedRuleContext(SubstraitTypeParser.ExprContext,i)
+
+        def Arrow(self):
+            return self.getToken(SubstraitTypeParser.Arrow, 0)
+        def Gt(self):
+            return self.getToken(SubstraitTypeParser.Gt, 0)
+        def QMark(self):
+            return self.getToken(SubstraitTypeParser.QMark, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterLambda" ):
+                listener.enterLambda(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitLambda" ):
+                listener.exitLambda(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitLambda" ):
+                return visitor.visitLambda(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class FuncContext(ParameterizedTypeContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ParameterizedTypeContext
+            super().__init__(parser)
+            self.isnull = None # Token
+            self.copyFrom(ctx)
+
+        def Func(self):
+            return self.getToken(SubstraitTypeParser.Func, 0)
+        def Lt(self):
+            return self.getToken(SubstraitTypeParser.Lt, 0)
+        def expr(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(SubstraitTypeParser.ExprContext)
+            else:
+                return self.getTypedRuleContext(SubstraitTypeParser.ExprContext,i)
+
+        def Arrow(self):
+            return self.getToken(SubstraitTypeParser.Arrow, 0)
+        def Gt(self):
+            return self.getToken(SubstraitTypeParser.Gt, 0)
+        def QMark(self):
+            return self.getToken(SubstraitTypeParser.QMark, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterFunc" ):
+                listener.enterFunc(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitFunc" ):
+                listener.exitFunc(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitFunc" ):
+                return visitor.visitFunc(self)
+            else:
+                return visitor.visitChildren(self)
+
+
     class VarCharContext(ParameterizedTypeContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ParameterizedTypeContext
@@ -1374,10 +1465,10 @@ class SubstraitTypeParser ( Parser ):
         self.enterRule(localctx, 6, self.RULE_parameterizedType)
         self._la = 0 # Token type
         try:
-            self.state = 173
+            self.state = 193
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [27]:
+            if token in [29]:
                 localctx = SubstraitTypeParser.FixedCharContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
                 self.state = 39
@@ -1385,7 +1476,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 41
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 40
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1397,7 +1488,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 45
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [28]:
+            elif token in [30]:
                 localctx = SubstraitTypeParser.VarCharContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
                 self.state = 47
@@ -1405,7 +1496,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 49
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 48
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1417,7 +1508,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 53
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [29]:
+            elif token in [31]:
                 localctx = SubstraitTypeParser.FixedBinaryContext(self, localctx)
                 self.enterOuterAlt(localctx, 3)
                 self.state = 55
@@ -1425,7 +1516,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 57
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 56
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1437,7 +1528,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 61
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [23]:
+            elif token in [25]:
                 localctx = SubstraitTypeParser.DecimalContext(self, localctx)
                 self.enterOuterAlt(localctx, 4)
                 self.state = 63
@@ -1445,7 +1536,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 65
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 64
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1461,7 +1552,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 71
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [21]:
+            elif token in [23]:
                 localctx = SubstraitTypeParser.PrecisionIntervalDayContext(self, localctx)
                 self.enterOuterAlt(localctx, 5)
                 self.state = 73
@@ -1469,7 +1560,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 75
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 74
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1481,7 +1572,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 79
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [24]:
+            elif token in [26]:
                 localctx = SubstraitTypeParser.PrecisionTimeContext(self, localctx)
                 self.enterOuterAlt(localctx, 6)
                 self.state = 81
@@ -1489,7 +1580,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 83
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 82
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1501,7 +1592,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 87
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [25]:
+            elif token in [27]:
                 localctx = SubstraitTypeParser.PrecisionTimestampContext(self, localctx)
                 self.enterOuterAlt(localctx, 7)
                 self.state = 89
@@ -1509,7 +1600,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 91
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 90
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1521,7 +1612,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 95
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [26]:
+            elif token in [28]:
                 localctx = SubstraitTypeParser.PrecisionTimestampTZContext(self, localctx)
                 self.enterOuterAlt(localctx, 8)
                 self.state = 97
@@ -1529,7 +1620,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 99
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 98
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1541,7 +1632,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 103
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [30]:
+            elif token in [32]:
                 localctx = SubstraitTypeParser.StructContext(self, localctx)
                 self.enterOuterAlt(localctx, 9)
                 self.state = 105
@@ -1549,7 +1640,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 107
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 106
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1561,7 +1652,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 115
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                while _la==70:
+                while _la==72:
                     self.state = 111
                     self.match(SubstraitTypeParser.Comma)
                     self.state = 112
@@ -1573,7 +1664,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 118
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [31]:
+            elif token in [33]:
                 localctx = SubstraitTypeParser.NStructContext(self, localctx)
                 self.enterOuterAlt(localctx, 10)
                 self.state = 120
@@ -1581,7 +1672,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 122
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 121
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1595,7 +1686,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 132
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                while _la==70:
+                while _la==72:
                     self.state = 127
                     self.match(SubstraitTypeParser.Comma)
                     self.state = 128
@@ -1609,7 +1700,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 135
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [32]:
+            elif token in [34]:
                 localctx = SubstraitTypeParser.ListContext(self, localctx)
                 self.enterOuterAlt(localctx, 11)
                 self.state = 137
@@ -1617,7 +1708,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 139
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 138
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1629,7 +1720,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 143
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [33]:
+            elif token in [35]:
                 localctx = SubstraitTypeParser.MapContext(self, localctx)
                 self.enterOuterAlt(localctx, 12)
                 self.state = 145
@@ -1637,7 +1728,7 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 147
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if _la==72:
+                if _la==74:
                     self.state = 146
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
@@ -1653,42 +1744,90 @@ class SubstraitTypeParser ( Parser ):
                 self.state = 153
                 self.match(SubstraitTypeParser.Gt)
                 pass
-            elif token in [34]:
-                localctx = SubstraitTypeParser.UserDefinedContext(self, localctx)
+            elif token in [7]:
+                localctx = SubstraitTypeParser.LambdaContext(self, localctx)
                 self.enterOuterAlt(localctx, 13)
                 self.state = 155
-                self.match(SubstraitTypeParser.UserDefined)
-                self.state = 156
-                self.match(SubstraitTypeParser.Identifier)
-                self.state = 158
+                self.match(SubstraitTypeParser.Lambda)
+                self.state = 157
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,15,self._ctx)
-                if la_ == 1:
-                    self.state = 157
+                _la = self._input.LA(1)
+                if _la==74:
+                    self.state = 156
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
 
+                self.state = 159
+                self.match(SubstraitTypeParser.Lt)
+                self.state = 160
+                self.expr(0)
+                self.state = 161
+                self.match(SubstraitTypeParser.Arrow)
+                self.state = 162
+                self.expr(0)
+                self.state = 163
+                self.match(SubstraitTypeParser.Gt)
+                pass
+            elif token in [8]:
+                localctx = SubstraitTypeParser.FuncContext(self, localctx)
+                self.enterOuterAlt(localctx, 14)
+                self.state = 165
+                self.match(SubstraitTypeParser.Func)
+                self.state = 167
+                self._errHandler.sync(self)
+                _la = self._input.LA(1)
+                if _la==74:
+                    self.state = 166
+                    localctx.isnull = self.match(SubstraitTypeParser.QMark)
+
+
+                self.state = 169
+                self.match(SubstraitTypeParser.Lt)
+                self.state = 170
+                self.expr(0)
                 self.state = 171
+                self.match(SubstraitTypeParser.Arrow)
+                self.state = 172
+                self.expr(0)
+                self.state = 173
+                self.match(SubstraitTypeParser.Gt)
+                pass
+            elif token in [36]:
+                localctx = SubstraitTypeParser.UserDefinedContext(self, localctx)
+                self.enterOuterAlt(localctx, 15)
+                self.state = 175
+                self.match(SubstraitTypeParser.UserDefined)
+                self.state = 176
+                self.match(SubstraitTypeParser.Identifier)
+                self.state = 178
                 self._errHandler.sync(self)
                 la_ = self._interp.adaptivePredict(self._input,17,self._ctx)
                 if la_ == 1:
-                    self.state = 160
+                    self.state = 177
+                    localctx.isnull = self.match(SubstraitTypeParser.QMark)
+
+
+                self.state = 191
+                self._errHandler.sync(self)
+                la_ = self._interp.adaptivePredict(self._input,19,self._ctx)
+                if la_ == 1:
+                    self.state = 180
                     self.match(SubstraitTypeParser.Lt)
-                    self.state = 161
+                    self.state = 181
                     self.expr(0)
-                    self.state = 166
+                    self.state = 186
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    while _la==70:
-                        self.state = 162
+                    while _la==72:
+                        self.state = 182
                         self.match(SubstraitTypeParser.Comma)
-                        self.state = 163
+                        self.state = 183
                         self.expr(0)
-                        self.state = 168
+                        self.state = 188
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
 
-                    self.state = 169
+                    self.state = 189
                     self.match(SubstraitTypeParser.Gt)
 
 
@@ -1801,27 +1940,27 @@ class SubstraitTypeParser ( Parser ):
         localctx = SubstraitTypeParser.NumericParameterContext(self, self._ctx, self.state)
         self.enterRule(localctx, 8, self.RULE_numericParameter)
         try:
-            self.state = 178
+            self.state = 198
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,19,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,21,self._ctx)
             if la_ == 1:
                 localctx = SubstraitTypeParser.NumericLiteralContext(self, localctx)
                 self.enterOuterAlt(localctx, 1)
-                self.state = 175
+                self.state = 195
                 self.match(SubstraitTypeParser.Number)
                 pass
 
             elif la_ == 2:
                 localctx = SubstraitTypeParser.NumericParameterNameContext(self, localctx)
                 self.enterOuterAlt(localctx, 2)
-                self.state = 176
+                self.state = 196
                 self.match(SubstraitTypeParser.Identifier)
                 pass
 
             elif la_ == 3:
                 localctx = SubstraitTypeParser.NumericExpressionContext(self, localctx)
                 self.enterOuterAlt(localctx, 3)
-                self.state = 177
+                self.state = 197
                 self.expr(0)
                 pass
 
@@ -1877,31 +2016,31 @@ class SubstraitTypeParser ( Parser ):
         localctx = SubstraitTypeParser.AnyTypeContext(self, self._ctx, self.state)
         self.enterRule(localctx, 10, self.RULE_anyType)
         try:
-            self.state = 188
+            self.state = 208
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [49]:
+            if token in [51]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 180
+                self.state = 200
                 self.match(SubstraitTypeParser.Any)
-                self.state = 182
+                self.state = 202
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,20,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,22,self._ctx)
                 if la_ == 1:
-                    self.state = 181
+                    self.state = 201
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
 
                 pass
-            elif token in [50]:
+            elif token in [52]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 184
+                self.state = 204
                 self.match(SubstraitTypeParser.AnyVar)
-                self.state = 186
+                self.state = 206
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,21,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,23,self._ctx)
                 if la_ == 1:
-                    self.state = 185
+                    self.state = 205
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
 
@@ -1966,30 +2105,30 @@ class SubstraitTypeParser ( Parser ):
         localctx = SubstraitTypeParser.TypeDefContext(self, self._ctx, self.state)
         self.enterRule(localctx, 12, self.RULE_typeDef)
         try:
-            self.state = 196
+            self.state = 216
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22]:
+            if token in [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 190
+                self.state = 210
                 self.scalarType()
-                self.state = 192
+                self.state = 212
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,23,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,25,self._ctx)
                 if la_ == 1:
-                    self.state = 191
+                    self.state = 211
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
 
                 pass
-            elif token in [21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]:
+            elif token in [7, 8, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 194
+                self.state = 214
                 self.parameterizedType()
                 pass
-            elif token in [49, 50]:
+            elif token in [51, 52]:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 195
+                self.state = 215
                 self.anyType()
                 pass
             else:
@@ -2376,19 +2515,19 @@ class SubstraitTypeParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 259
+            self.state = 279
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,32,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,34,self._ctx)
             if la_ == 1:
                 localctx = SubstraitTypeParser.ParenExpressionContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
 
-                self.state = 199
+                self.state = 219
                 self.match(SubstraitTypeParser.OParen)
-                self.state = 200
+                self.state = 220
                 self.expr(0)
-                self.state = 201
+                self.state = 221
                 self.match(SubstraitTypeParser.CParen)
                 pass
 
@@ -2396,62 +2535,62 @@ class SubstraitTypeParser ( Parser ):
                 localctx = SubstraitTypeParser.MultilineDefinitionContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 203
+                self.state = 223
                 self.match(SubstraitTypeParser.Identifier)
-                self.state = 204
+                self.state = 224
                 self.match(SubstraitTypeParser.Eq)
-                self.state = 205
+                self.state = 225
                 self.expr(0)
-                self.state = 207 
+                self.state = 227 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while True:
-                    self.state = 206
+                    self.state = 226
                     self.match(SubstraitTypeParser.Newline)
-                    self.state = 209 
+                    self.state = 229 
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    if not (_la==80):
+                    if not (_la==83):
                         break
 
-                self.state = 221
+                self.state = 241
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                while _la==79:
-                    self.state = 211
+                while _la==82:
+                    self.state = 231
                     self.match(SubstraitTypeParser.Identifier)
-                    self.state = 212
+                    self.state = 232
                     self.match(SubstraitTypeParser.Eq)
-                    self.state = 213
+                    self.state = 233
                     self.expr(0)
-                    self.state = 215 
+                    self.state = 235 
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     while True:
-                        self.state = 214
+                        self.state = 234
                         self.match(SubstraitTypeParser.Newline)
-                        self.state = 217 
+                        self.state = 237 
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
-                        if not (_la==80):
+                        if not (_la==83):
                             break
 
-                    self.state = 223
+                    self.state = 243
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
 
-                self.state = 224
+                self.state = 244
                 localctx.finalType = self.typeDef()
-                self.state = 228
+                self.state = 248
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,28,self._ctx)
+                _alt = self._interp.adaptivePredict(self._input,30,self._ctx)
                 while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                     if _alt==1:
-                        self.state = 225
+                        self.state = 245
                         self.match(SubstraitTypeParser.Newline) 
-                    self.state = 230
+                    self.state = 250
                     self._errHandler.sync(self)
-                    _alt = self._interp.adaptivePredict(self._input,28,self._ctx)
+                    _alt = self._interp.adaptivePredict(self._input,30,self._ctx)
 
                 pass
 
@@ -2459,7 +2598,7 @@ class SubstraitTypeParser ( Parser ):
                 localctx = SubstraitTypeParser.TypeLiteralContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 231
+                self.state = 251
                 self.typeDef()
                 pass
 
@@ -2467,7 +2606,7 @@ class SubstraitTypeParser ( Parser ):
                 localctx = SubstraitTypeParser.LiteralNumberContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 232
+                self.state = 252
                 self.match(SubstraitTypeParser.Number)
                 pass
 
@@ -2475,13 +2614,13 @@ class SubstraitTypeParser ( Parser ):
                 localctx = SubstraitTypeParser.ParameterNameContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 233
+                self.state = 253
                 self.match(SubstraitTypeParser.Identifier)
-                self.state = 235
+                self.state = 255
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,29,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,31,self._ctx)
                 if la_ == 1:
-                    self.state = 234
+                    self.state = 254
                     localctx.isnull = self.match(SubstraitTypeParser.QMark)
 
 
@@ -2491,31 +2630,31 @@ class SubstraitTypeParser ( Parser ):
                 localctx = SubstraitTypeParser.FunctionCallContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 237
+                self.state = 257
                 self.match(SubstraitTypeParser.Identifier)
-                self.state = 238
+                self.state = 258
                 self.match(SubstraitTypeParser.OParen)
-                self.state = 247
+                self.state = 267
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if (((_la) & ~0x3f) == 0 and ((1 << _la) & -9221683152634773616) != 0) or ((((_la - 66)) & ~0x3f) == 0 and ((1 << (_la - 66)) & 12289) != 0):
-                    self.state = 239
+                if (((_la) & ~0x3f) == 0 and ((1 << _la) & 6755536880009104) != 0) or ((((_la - 65)) & ~0x3f) == 0 and ((1 << (_la - 65)) & 196617) != 0):
+                    self.state = 259
                     self.expr(0)
-                    self.state = 244
+                    self.state = 264
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    while _la==70:
-                        self.state = 240
+                    while _la==72:
+                        self.state = 260
                         self.match(SubstraitTypeParser.Comma)
-                        self.state = 241
+                        self.state = 261
                         self.expr(0)
-                        self.state = 246
+                        self.state = 266
                         self._errHandler.sync(self)
                         _la = self._input.LA(1)
 
 
 
-                self.state = 249
+                self.state = 269
                 self.match(SubstraitTypeParser.CParen)
                 pass
 
@@ -2523,17 +2662,17 @@ class SubstraitTypeParser ( Parser ):
                 localctx = SubstraitTypeParser.IfExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
-                self.state = 250
+                self.state = 270
                 self.match(SubstraitTypeParser.If)
-                self.state = 251
+                self.state = 271
                 localctx.ifExpr = self.expr(0)
-                self.state = 252
+                self.state = 272
                 self.match(SubstraitTypeParser.Then)
-                self.state = 253
+                self.state = 273
                 localctx.thenExpr = self.expr(0)
-                self.state = 254
+                self.state = 274
                 self.match(SubstraitTypeParser.Else)
-                self.state = 255
+                self.state = 275
                 localctx.elseExpr = self.expr(3)
                 pass
 
@@ -2542,42 +2681,42 @@ class SubstraitTypeParser ( Parser ):
                 self._ctx = localctx
                 _prevctx = localctx
 
-                self.state = 257
+                self.state = 277
                 self.match(SubstraitTypeParser.Bang)
-                self.state = 258
+                self.state = 278
                 self.expr(2)
                 pass
 
 
             self._ctx.stop = self._input.LT(-1)
-            self.state = 272
+            self.state = 292
             self._errHandler.sync(self)
-            _alt = self._interp.adaptivePredict(self._input,34,self._ctx)
+            _alt = self._interp.adaptivePredict(self._input,36,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    self.state = 270
+                    self.state = 290
                     self._errHandler.sync(self)
-                    la_ = self._interp.adaptivePredict(self._input,33,self._ctx)
+                    la_ = self._interp.adaptivePredict(self._input,35,self._ctx)
                     if la_ == 1:
                         localctx = SubstraitTypeParser.BinaryExprContext(self, SubstraitTypeParser.ExprContext(self, _parentctx, _parentState))
                         localctx.left = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 261
+                        self.state = 281
                         if not self.precpred(self._ctx, 4):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 4)")
-                        self.state = 262
+                        self.state = 282
                         localctx.op = self._input.LT(1)
                         _la = self._input.LA(1)
-                        if not(((((_la - 52)) & ~0x3f) == 0 and ((1 << (_la - 52)) & 25167855) != 0)):
+                        if not(((((_la - 54)) & ~0x3f) == 0 and ((1 << (_la - 54)) & 25167855) != 0)):
                             localctx.op = self._errHandler.recoverInline(self)
                         else:
                             self._errHandler.reportMatch(self)
                             self.consume()
-                        self.state = 263
+                        self.state = 283
                         localctx.right = self.expr(5)
                         pass
 
@@ -2585,24 +2724,24 @@ class SubstraitTypeParser ( Parser ):
                         localctx = SubstraitTypeParser.TernaryContext(self, SubstraitTypeParser.ExprContext(self, _parentctx, _parentState))
                         localctx.ifExpr = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 264
+                        self.state = 284
                         if not self.precpred(self._ctx, 1):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 1)")
-                        self.state = 265
+                        self.state = 285
                         self.match(SubstraitTypeParser.QMark)
-                        self.state = 266
+                        self.state = 286
                         localctx.thenExpr = self.expr(0)
-                        self.state = 267
+                        self.state = 287
                         self.match(SubstraitTypeParser.Colon)
-                        self.state = 268
+                        self.state = 288
                         localctx.elseExpr = self.expr(2)
                         pass
 
              
-                self.state = 274
+                self.state = 294
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,34,self._ctx)
+                _alt = self._interp.adaptivePredict(self._input,36,self._ctx)
 
         except RecognitionException as re:
             localctx.exception = re
