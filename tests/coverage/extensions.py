@@ -75,9 +75,7 @@ class Extension:
         original_type = long_type
         # Check if this is a generic type parameter (single uppercase letter)
         # e.g., T, U, V, T?, U?
-        if original_type.rstrip("?").isupper() and len(
-            original_type.rstrip("?")
-        ) == 1:
+        if original_type.rstrip("?").isupper() and len(original_type.rstrip("?")) == 1:
             return original_type.lower()
 
         long_type = long_type.lower().rstrip("?")
