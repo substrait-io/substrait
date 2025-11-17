@@ -1,0 +1,18 @@
+# User-defined type example: a point type with two scalar functions
+urn: extension:example:point_type
+types:
+  - name: "point"
+
+scalar_functions:
+  - name: "lat"
+    impls:
+      - args:
+        - name: p
+          value: u!point
+        return: fp64
+  - name: "lon"
+    impls:
+      - args:
+        - name: p
+          value: u!point
+        return: fp64

@@ -161,7 +161,7 @@ message ReadRel {
     google.protobuf.Any detail = 1;
   }
 
-  // Represents a list of files in input of a scan operation
+  // Represents a list of locally-accessible files in input of a scan operation
   message LocalFiles {
     repeated FileOrFiles items = 1;
     substrait.extensions.AdvancedExtension advanced_extension = 10;
@@ -172,6 +172,10 @@ message ReadRel {
     // include the chunk in (e.g. include it in the slice that contains
     // the midpoint of the chunk)
     message FileOrFiles {
+      // URIs specify the location of files that are locally-accessible to the consumer.
+      // "Locally-accessible" means the consumer can access the files directly, which may
+      // include blob storage (e.g., S3, GCS, Azure Blob Storage) in addition to local
+      // filesystem paths. The protocol portion of the URI determines the storage type.
       oneof path_type {
         // A URI that can refer to either a single folder or a single file
         string uri_path = 1;
@@ -1129,8 +1133,13 @@ message Expression {
     }
 
     message UserDefined {
-      // points to a type_anchor defined in this plan
-      uint32 type_reference = 1;
+      oneof type_anchor_type {
+        // points to a type_anchor defined in this plan
+        uint32 type_reference = 1;
+
+        // points to a type_alias_anchor defined in this plan.
+        uint32 type_alias_reference = 5;
+      }
 
       // The parameters to be bound to the type class, if the type class is
       // parameterizable.

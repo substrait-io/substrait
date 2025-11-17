@@ -18,7 +18,7 @@ To extend these items, developers can create one or more YAML files that describ
 This extension URN uses the format `extension:<OWNER>:<ID>`, where:
 
 - `OWNER` represents the organization or entity providing the extension and should follow [reverse domain name convention](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) (e.g., `io.substrait`, `com.example`, `org.apache.arrow`) to prevent name collisions
-- `ID` is the specific identifier for the extension (e.g., `functions_arithmetic`, `custom_types`) 
+- `ID` is the specific identifier for the extension (e.g., `functions_arithmetic`, `custom_types`)
 
 The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
@@ -28,43 +28,44 @@ A Substrait plan can reference one or more YAML files via their extension URN. I
 | ------------------ | ------------------------------------------------------------ |
 | Type               | The name as defined on the type object.                      |
 | Type Variation     | The name as defined on the type variation object.            |
-| Function Signature | A function signature compound name as described below.       |
+| Function Signature | A function signature as described below.       |
 
 A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the extension it depends on using a key-value pair in the `dependencies` key, where the value is the extension URN, and the key is a valid identifier that can then be used as an identifier-safe alias for the extension URN. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected.
 
 For example, if the extension with extension URN `extension:io.substrait:extension_types` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
 
 ```yaml
-urn: extension:example:distance_functions
-dependencies:
-  ext: extension:io.substrait:extension_types
-scalar_functions:
-- name: distance
-  description: The distance between two points.
-  impls:
-  - args:
-    - name: a
-      value: ext.point
-    - name: b
-      value: ext.point
-    return: f64
+--8<-- "examples/extensions/distance_functions.yaml"
 ```
 
 Here, the choice for the name `ext` is arbitrary, as long as it does not conflict with anything else in the YAML file.
 
-### Function Signature Compound Names
+### Function Signature
 
-A YAML file may contain one or more functions by the same name. The key used in the function extension declaration to reference a function is a combination of the name of the function along with a list of the required input argument types. The format is as follows:
+A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components
+* Function Name: the name of the function
+* Argument Signature: a signature based on the defined arguments of the function
 
+These component are defined as follows
 ```
-<function name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>
+<function_signature> ::= <function_name>:<argument_signature>
+<argument_signature> ::= <short_arg_type> { _ <short_arg_type> }*
 ```
 
-Rather than using a full data type representation, the input argument types (`short_arg_type`) are mapped to single-level short name. The mappings are listed in the table below.
+and the resulting function signatures look like:
+`<function name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>`
 
-!!! note
+Argument types (`short_arg_type`) are encoded using the Type Short Names given below.
 
-    Every compound function signature must be unique.  If two function implementations in a YAML file would generate the same compound function signature, then the YAML file is invalid and behavior is undefined.
+#### Variadic Functions
+
+For variadic functions, the variadic argument is included *once* in the argument signature.
+
+#### Uniqueness Constraint
+
+A function signature uniquely identifies a function implementation within a single YAML file. As such, every function implementation within a YAML **must** have a distinct function signature in order for references to the implementation to remain unambiguous. A YAML file in which this is not the case is invalid.
+
+#### Type Short Names
 
 | Argument Type                   | Signature Name |
 |---------------------------------|----------------|
@@ -103,37 +104,22 @@ Rather than using a full data type representation, the input argument types (`sh
 
 | Function Signature                                | Function Name    |
 | ------------------------------------------------- | ---------------- |
-| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`  |
+| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`      |
 | `avg(fp32) => fp32`                               | `avg:fp32`       |
 | `extract(required enumeration, timestamp) => i64` | `extract:req_ts` |
 | `sum(any1) => any1`                               | `sum:any`        |
+| `concat(str...) => str`                           | `concat:str`     |
 
 ### Any Types
 
 ```yaml
-scalar_functions:
-- name: foo
-  impls:
-  - args:
-    - name: a
-      value: any
-    - name: b
-      value: any
-    return: int64
+--8<-- "examples/extensions/any_type_function.yaml"
 ```
 
 The `any` type indicates that the argument can take any possible type. In the `foo` function above, arguments `a` and `b` can be of any type, even different ones in the same function invocation.
 
 ```yaml
-scalar_functions:
-- name: bar
-  impls:
-  - args:
-    - name: a
-      value: any1
-    - name: b
-      value: any1
-    return: int64
+--8<-- "examples/extensions/any1_type_function.yaml"
 ```
 The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
 
