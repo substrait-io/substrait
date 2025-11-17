@@ -1,5 +1,6 @@
 %YAML 1.2
 ---
+urn: extension:io.substrait:functions_arithmetic
 scalar_functions:
   -
     name: "add"

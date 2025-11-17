@@ -5,6 +5,7 @@ package substrait;
 
 import "substrait/algebra.proto";
 import "substrait/extensions/extensions.proto";
+import "substrait/type.proto";
 
 option csharp_namespace = "Substrait.Protobuf";
 option go_package = "github.com/substrait-io/substrait-protobuf/go/substraitpb";
@@ -29,7 +30,11 @@ message Plan {
   Version version = 6;
 
   // a list of yaml specifications this plan may depend on
-  repeated substrait.extensions.SimpleExtensionURI extension_uris = 1;
+  // this is now deprecated and extension_urns should be used instead.
+  repeated substrait.extensions.SimpleExtensionURI extension_uris = 1 [deprecated = true];
+
+  // a list of extension URNs this plan may depend on
+  repeated substrait.extensions.SimpleExtensionURN extension_urns = 8;
 
   // a list of extensions this plan may depend on
   repeated substrait.extensions.SimpleExtensionDeclaration extensions = 2;
@@ -50,6 +55,15 @@ message Plan {
   // An optional list of bindings for dynamic parameters used in this plan.
   // Each binding maps a parameter_anchor to its corresponding runtime value.
   repeated DynamicParameterBinding parameter_bindings = 7;
+
+  // An optional list of type aliases. Types can be specified here once, and
+  // then referenced within the plan using the TypeAliasReference type. This
+  // feature is intended to assist with the usability of parameterized types,
+  // which require that all parameters be specified when they are declared.
+  // This can bloat plans with redundant redeclarations, especially if the
+  // parameterized types being declared have many parameters (e.g., struct with
+  // many fields, nested parameterized types, string as a type parameter).
+  repeated TypeAlias type_aliases = 9;
 }
 
 // This message type can be used to deserialize only the version of a Substrait
