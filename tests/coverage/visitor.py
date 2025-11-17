@@ -289,6 +289,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitNullArg(ctx.nullArg())
         if ctx.listArg() is not None:
             return self.visitListArg(ctx.listArg())
+        if ctx.lambdaArg() is not None:
+            return self.visitLambdaArg(ctx.lambdaArg())
 
         return CaseLiteral(value="unknown_value", type="unknown_type")
 
@@ -375,6 +377,10 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             value, _ = self.visitLiteral(literal)
             values.append(value)
         return values
+
+    def visitLambdaArg(self, ctx: FuncTestCaseParser.LambdaArgContext):
+        lambda_type = ctx.lambdaType().getText()
+        return CaseLiteral(value="lambda", type=lambda_type)
 
     def visitResult(self, ctx: FuncTestCaseParser.ResultContext):
         if ctx.argument() is not None:

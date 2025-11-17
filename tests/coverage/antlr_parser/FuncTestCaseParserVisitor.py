@@ -240,6 +240,71 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaArg.
+    def visitLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaShortForm.
+    def visitLambdaShortForm(self, ctx:FuncTestCaseParser.LambdaShortFormContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#singleParam.
+    def visitSingleParam(self, ctx:FuncTestCaseParser.SingleParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#tupleParams.
+    def visitTupleParams(self, ctx:FuncTestCaseParser.TupleParamsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaBody.
+    def visitLambdaBody(self, ctx:FuncTestCaseParser.LambdaBodyContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaTypedLiteral.
+    def visitLambdaTypedLiteral(self, ctx:FuncTestCaseParser.LambdaTypedLiteralContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaLiteral.
+    def visitLambdaLiteral(self, ctx:FuncTestCaseParser.LambdaLiteralContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaFunctionCall.
+    def visitLambdaFunctionCall(self, ctx:FuncTestCaseParser.LambdaFunctionCallContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaParenExpr.
+    def visitLambdaParenExpr(self, ctx:FuncTestCaseParser.LambdaParenExprContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaIdentifier.
+    def visitLambdaIdentifier(self, ctx:FuncTestCaseParser.LambdaIdentifierContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaBinaryOp.
+    def visitLambdaBinaryOp(self, ctx:FuncTestCaseParser.LambdaBinaryOpContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaComparison.
+    def visitLambdaComparison(self, ctx:FuncTestCaseParser.LambdaComparisonContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaArguments.
+    def visitLambdaArguments(self, ctx:FuncTestCaseParser.LambdaArgumentsContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#dataType.
     def visitDataType(self, ctx:FuncTestCaseParser.DataTypeContext):
         return self.visitChildren(ctx)
@@ -325,6 +390,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#typeVariable.
+    def visitTypeVariable(self, ctx:FuncTestCaseParser.TypeVariableContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#booleanType.
     def visitBooleanType(self, ctx:FuncTestCaseParser.BooleanTypeContext):
         return self.visitChildren(ctx)
@@ -397,6 +467,16 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#list.
     def visitList(self, ctx:FuncTestCaseParser.ListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaType.
+    def visitLambdaType(self, ctx:FuncTestCaseParser.LambdaTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#dataTypeList.
+    def visitDataTypeList(self, ctx:FuncTestCaseParser.DataTypeListContext):
         return self.visitChildren(ctx)
 
 
