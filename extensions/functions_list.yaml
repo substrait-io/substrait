@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_list
 scalar_functions:
-  - name: "array_transform"
+  - name: "transform"
     description: >-
       Transform each element of an array using a lambda function.
 
@@ -47,7 +47,7 @@ scalar_functions:
         nullability: MIRROR
         return: list<T>
 
-  - name: "array_sort"
+  - name: "sort"
     description: >-
       Sort array using a custom comparison function.
 
