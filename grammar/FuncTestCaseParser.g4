@@ -225,17 +225,18 @@ lambdaBody
 
 lambdaExpression
     : functionName=identifier OParen lambdaArguments? CParen (DoubleColon dataType)?  #lambdaFunctionCall
-    | lambdaExpression op=(Asterisk | ForwardSlash | Percent) lambdaExpression #lambdaBinaryOp
-    | lambdaExpression op=(Plus | Minus) lambdaExpression                       #lambdaBinaryOp
-    | lambdaExpression op=(Gt | Lt | Gte | Lte | Eq | Ne) lambdaExpression     #lambdaComparison
-    | Identifier (Dot Identifier)?                                               #lambdaIdentifier
-    | literal DoubleColon dataType                                               #lambdaTypedLiteral
-    | literal                                                                    #lambdaLiteral
-    | OParen lambdaExpression CParen                                             #lambdaParenExpr
+    | OParen lambdaExpression CParen                                                   #lambdaParenExpr
     ;
 
 lambdaArguments
-    : lambdaExpression (Comma lambdaExpression)*
+    : lambdaArgument (Comma lambdaArgument)*
+    ;
+
+lambdaArgument
+    : lambdaExpression                       #lambdaNestedCall
+    | Identifier (Dot Identifier)?           #lambdaParameter
+    | literal DoubleColon dataType           #lambdaTypedLiteral
+    | literal                                #lambdaLiteral
     ;
 
 dataType
