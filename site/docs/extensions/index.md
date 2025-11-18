@@ -13,14 +13,14 @@ Some kinds of primitives are so frequently extended that Substrait defines a sta
 * Window Functions
 * Table Functions
 
-To extend these items, developers can create one or more YAML files that describe the properties of each of these extensions. Each YAML file must include a required `urn` field that uniquely identifies the extension. While these identifiers are URN-like but not technically URNs (they lack the `urn:` prefix), they will be referred to as `extension URNs` for clarity. These URNs must be valid [RFC 8141](https://www.rfc-editor.org/rfc/rfc8141.html) format without the `urn:` prefix.
+To extend these items, developers can create one or more YAML files that describe the properties of each of these extensions. Each YAML file must include a required `urn` field that uniquely identifies the extension. While these identifiers are URN-like but not technically URNs (they lack the `urn:` prefix), and they will be referred to as `extension URNs` for clarity.
 
 This extension URN uses the format `extension:<OWNER>:<ID>`, where:
 
 - `OWNER` represents the organization or entity providing the extension and should follow [reverse domain name convention](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) (e.g., `io.substrait`, `com.example`, `org.apache.arrow`) to prevent name collisions
 - `ID` is the specific identifier for the extension (e.g., `functions_arithmetic`, `custom_types`)
 
-Thus, if `extension:<OWNER>:<ID>` is our URN, then `urn:extension:<OWNER>:<ID>` must be a valid [RFC 8141 URN](https://www.rfc-editor.org/rfc/rfc8141.html).
+These URNs must match the regex `^extension:[^:]+:[^:]+$`.
 
 The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
