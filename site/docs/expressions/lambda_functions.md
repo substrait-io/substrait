@@ -54,7 +54,7 @@ Lambda parameters are referenced within the lambda body using `LambdaParameterRe
 | Field             | Description                                                          | Values   |
 |-------------------|----------------------------------------------------------------------|----------|
 | `lambda_depth`    | Number of lambda boundaries to traverse (0 = current lambda)        | 0, 1, 2... |
-| `parameter_index` | Zero-based index into the lambda's parameter list                   | 0, 1, 2... |
+| `reference`       | Zero-based index into the lambda's parameter list                   | 0, 1, 2... |
 
 ### Simple Example
 

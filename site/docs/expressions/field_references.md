@@ -131,7 +131,7 @@ Used within lambda function bodies to reference the lambda's parameters. This en
 
 **Fields**:
 - `lambda_depth`: Number of lambda boundaries to traverse (0 = current lambda, 1 = outer lambda, etc.)
-- `parameter_index`: Zero-based index into the lambda's parameter list
+- `reference`: Zero-based index into the lambda's parameter list
 
 **Example**: In `array_transform([1, 2, 3], lambda(x) -> x * 2)`, the `x` in the body uses LambdaReference:
 
@@ -140,7 +140,7 @@ selection {
   direct_reference { struct_field { field: 0 } }
   lambda_reference {
     lambda_depth: 0      // Current lambda
-    parameter_index: 0   // First parameter
+    reference: 0         // First parameter
   }
 }
 ```

@@ -24,7 +24,7 @@ body: {
           selection: {
             lambda_parameter_reference: {
               lambda_depth: 0        # 0 = current lambda
-              parameter_index: 0     # 0 = first parameter (x)
+              reference: 0           # 0 = first parameter (x)
             }
           }
         }

@@ -1188,7 +1188,7 @@ message Expression {
   message Lambda {
     // Types of parameters this lambda accepts.
     // The body expression can reference these via LambdaParameterReference with
-    // parameter_index corresponding to the position in this list.
+    // reference corresponding to the position in this list.
     repeated Type parameter_types = 1;
 
     // Return type of the lambda. Must match the type produced by evaluating
@@ -1589,12 +1589,11 @@ message Expression {
       //   0 = innermost lambda (current lambda's parameters)
       //   1 = one lambda level out
       //   2 = two lambda levels out, etc.
-      // This value must be >= 0
       uint32 lambda_depth = 1;
 
       // Zero-based index into the lambda's parameter list.
       // Must be < length of the target lambda's parameter_types list.
-      uint32 parameter_index = 2;
+      uint32 reference = 2;
     }
   }
 

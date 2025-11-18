@@ -40,7 +40,7 @@ body: {
           selection: {
             lambda_parameter_reference: {
               lambda_depth: 0        # 0 = current (outer) lambda
-              parameter_index: 0     # 0 = first parameter (row)
+              reference: 0           # 0 = first parameter (row)
             }
           }
         }
@@ -77,7 +77,7 @@ body: {
                       selection: {
                         lambda_parameter_reference: {
                           lambda_depth: 0        # 0 = current (inner) lambda
-                          parameter_index: 0     # 0 = first parameter (cell)
+                          reference: 0           # 0 = first parameter (cell)
                         }
                       }
                     }

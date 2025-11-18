@@ -4,7 +4,7 @@ urn: extension:io.substrait:functions_list
 scalar_functions:
   - name: "transform"
     description: >-
-      Transform each element of an array using a lambda function.
+      Transforms each element of an array using a lambda function.
 
       Returns a new array where each element is the result of applying
       the transform function to the corresponding element in the input array.
@@ -26,7 +26,7 @@ scalar_functions:
 
   - name: "list_filter"
     description: >-
-      Filter array elements based on a predicate function.
+      Filters array elements based on a predicate function.
 
       Returns a new array containing only elements for which the predicate
       function returns true.
@@ -49,7 +49,7 @@ scalar_functions:
 
   - name: "sort"
     description: >-
-      Sort array using a custom comparison function.
+      Sorts array using a custom comparison function.
 
       The comparator lambda receives two parameters (elements to compare) and
       must return an integer:
@@ -72,9 +72,9 @@ scalar_functions:
 
   - name: "reduce"
     description: >-
-      Reduce array to a single value using an accumulator function.
+      Reduces array to a single value using an accumulator function.
 
-      Processes elements left-to-right, passing the accumulator and current
+      Processes elements in index order, passing the accumulator and current
       element to the function, using the result as the new accumulator value.
 
       The lambda receives two parameters:
@@ -98,7 +98,7 @@ scalar_functions:
 
   - name: "array_exists"
     description: >-
-      Check if any element satisfies the predicate.
+      Checks if any element satisfies the predicate.
 
       Returns true if the predicate function returns true for at least one
       element in the array. Short-circuits and returns true as soon as a
@@ -121,7 +121,7 @@ scalar_functions:
 
   - name: "array_all"
     description: >-
-      Check if all elements satisfy the predicate.
+      Checks if all elements satisfy the predicate.
 
       Returns true if the predicate function returns true for all elements
       in the array. Short-circuits and returns false as soon as a non-matching
@@ -144,7 +144,7 @@ scalar_functions:
 
   - name: "array_find_first"
     description: >-
-      Find the first element that satisfies the predicate.
+      Finds the first element that satisfies the predicate.
 
       Returns the first element for which the predicate function returns true,
       or NULL if no such element exists.
@@ -168,7 +168,7 @@ scalar_functions:
 
   - name: "zip_with"
     description: >-
-      Combine two arrays element-wise using a lambda function.
+      Combines two arrays element-wise using a lambda function.
 
       Applies the lambda to corresponding elements from both arrays, producing
       a new array of results. The lambda receives two parameters (one from each
