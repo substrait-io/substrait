@@ -1,7 +1,0 @@
-### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
-
-# basic: Check if all elements match predicate
-all([2, 4, 6, 8]::list<i32>, (x -> gte(x, 2::i32))::func<i32 -> boolean>) = true::boolean
-all([1, 2, 3]::list<i32>, (x -> gt(x, 2::i32))::func<i32 -> boolean>) = false::boolean
-all([]::list<i32>, (x -> gt(x, 0::i32))::func<i32 -> boolean>) = true::boolean

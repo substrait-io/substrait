@@ -1,0 +1,132 @@
+# Nested lambda with closure over outer lambda parameter
+# Conceptual: transform(matrix, (row: list<i32>) ->
+#   transform(row, (cell: i32) -> cell + row[0]))
+#
+# The inner lambda references the outer lambda's 'row' parameter
+# using lambda_depth: 1 to access the first element of the row
+
+parameter_types: [
+  {
+    # Outer lambda parameter: row (type list<i32>)
+    list: {
+      type: {
+        i32: {
+          nullability: NULLABILITY_REQUIRED
+        }
+      }
+      nullability: NULLABILITY_REQUIRED
+    }
+  }
+]
+
+return_type: {
+  # Return type: list<i32>
+  list: {
+    type: {
+      i32: {
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+    nullability: NULLABILITY_REQUIRED
+  }
+}
+
+body: {
+  # Outer body: transform function on row
+  scalar_function: {
+    function_reference: 3  # Reference to transform function
+
+    arguments: [
+      {
+        # First argument: reference to outer lambda's row parameter
+        value: {
+          selection: {
+            lambda_parameter_reference: {
+              lambda_depth: 0        # 0 = current (outer) lambda
+              reference: 0           # 0 = first parameter (row)
+            }
+          }
+        }
+      },
+      {
+        # Second argument: inner lambda expression
+        value: {
+          lambda: {
+            parameter_types: [
+              {
+                # Inner lambda parameter: cell (type i32)
+                i32: {
+                  nullability: NULLABILITY_REQUIRED
+                }
+              }
+            ]
+
+            return_type: {
+              # Inner lambda return type: i32
+              i32: {
+                nullability: NULLABILITY_REQUIRED
+              }
+            }
+
+            body: {
+              # Inner lambda body: cell + row[0]
+              # This demonstrates closure - inner lambda references outer lambda's parameter
+              scalar_function: {
+                function_reference: 2  # Reference to add function
+
+                arguments: [
+                  {
+                    # First argument: reference to inner lambda's cell parameter
+                    value: {
+                      selection: {
+                        lambda_parameter_reference: {
+                          lambda_depth: 0        # 0 = current (inner) lambda
+                          reference: 0           # 0 = first parameter (cell)
+                        }
+                      }
+                    }
+                  },
+                  {
+                    # Second argument: reference to outer lambda's row[0]
+                    # THIS IS THE KEY: lambda_depth: 1 references outer lambda
+                    value: {
+                      selection: {
+                        lambda_parameter_reference: {
+                          lambda_depth: 1        # 1 = traverse up to outer lambda
+                          reference: 0           # 0 = first parameter of outer lambda (row)
+                        }
+                        direct_reference: {
+                          list_element: {
+                            offset: 0  # access first element [0]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+
+                output_type: {
+                  i32: {
+                    nullability: NULLABILITY_REQUIRED
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+
+    output_type: {
+      # Outer function output type: list<i32>
+      list: {
+        type: {
+          i32: {
+            nullability: NULLABILITY_REQUIRED
+          }
+        }
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+  }
+}

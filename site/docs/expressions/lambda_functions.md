@@ -4,7 +4,7 @@ Lambda expressions enable higher-order functions that operate on collections, al
 
 ## Overview
 
-Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions. They enable powerful functional programming patterns such as `transform`, `filter`, and `reduce` operations on arrays.
+Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions. They enable powerful functional programming patterns such as `transform` and `filter` operations on arrays.
 
 !!! note "Documentation Syntax"
     This documentation uses the syntax `(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. The type annotations shown here are for clarity only; actual Substrait syntax uses type declarations in the protobuf message or YAML definitions.
@@ -17,12 +17,32 @@ A lambda expression consists of:
 |--------------------|-----------------------------------------------------------------------------|-----------------------|----------|
 | Parameter Types    | List of types for the lambda's parameters                                  | `parameter_types`     | Yes      |
 | Return Type        | Type of the value returned by the lambda                                   | `return_type`         | Yes      |
-| Body Expression    | The expression to evaluate (can reference parameters via LambdaReference) | `body`                | Yes      |
+| Body Expression    | The expression to evaluate (can reference parameters via LambdaParameterReference) | `body`                | Yes      |
 
 === "Lambda Message"
     ```proto
 %%% proto.message.Expression.Lambda %%%
     ```
+
+## Parameter References
+
+Lambda parameters are referenced within the lambda body using `LambdaParameterReference` in field references. This mechanism is similar to how [`OuterReference`](field_references.md#outerreference) works for subqueries.
+
+### LambdaParameterReference Fields
+
+| Field             | Description                                                          | Values   |
+|-------------------|----------------------------------------------------------------------|----------|
+| `lambda_depth`    | Number of lambda boundaries to traverse (0 = current lambda)        | 0, 1, 2... |
+| `reference`       | Zero-based index into the lambda's parameter list                   | 0, 1, 2... |
+
+### Simple Example
+
+For a lambda `(x: i32) -> x * 2`:
+
+Example of an Expression.Lambda message:
+```protobuf
+--8<-- "examples/proto-textformat/lambdas/simple_multiply.textproto"
+```
 
 ## Function Type Syntax
 
@@ -45,33 +65,15 @@ Example function definition with multi-parameter lambda:
 --8<-- "examples/extensions/lambda_function_example.yaml"
 ```
 
-## Parameter References
+## Closures
 
-Lambda parameters are referenced within the lambda body using `LambdaParameterReference` in field references. This mechanism is similar to how [`OuterReference`](field_references.md#outerreference) works for subqueries.
+Lambda expressions naturally support closures - they can reference variables from the enclosing scope beyond their own parameters. There are three ways lambdas can capture external values:
 
-### LambdaParameterReference Fields
-
-| Field             | Description                                                          | Values   |
-|-------------------|----------------------------------------------------------------------|----------|
-| `lambda_depth`    | Number of lambda boundaries to traverse (0 = current lambda)        | 0, 1, 2... |
-| `reference`       | Zero-based index into the lambda's parameter list                   | 0, 1, 2... |
-
-### Simple Example
-
-For a lambda `(x: i32) -> x * 2`:
-
-Example of an Expression.Lambda message:
-```protobuf
---8<-- "examples/proto-textformat/lambdas/simple_multiply.textproto"
-```
-
-## Nested Lambdas
+### Capturing from Outer Lambda Parameters
 
 Lambdas can be nested, and inner lambdas can reference parameters from outer lambdas using `lambda_depth`.
 
-### Example: Nested Array Transform
-
-Transform a 2D array by incrementing each element:
+When an inner lambda only references its own parameters (using `lambda_depth: 0`), it's simply nested without capturing from the outer scope:
 
 ```
 transform(matrix, (row: list<i32>) ->
@@ -81,25 +83,25 @@ transform(matrix, (row: list<i32>) ->
 )
 ```
 
-In this example:
-- The outer lambda parameter `row` is referenced with `lambda_depth: 0` (within the outer lambda's body)
-- The inner lambda parameter `cell` is referenced with `lambda_depth: 0` (within the inner lambda's body)
-- Each lambda uses `lambda_depth: 0` to reference its own parameters
-
 Example of an Expression.Lambda message:
 ```protobuf
 --8<-- "examples/proto-textformat/lambdas/nested_transform.textproto"
 ```
 
-## Closures
+To capture variables from the outer lambda, use `lambda_depth` greater than 0. This example adds the first element of each row to all cells in that row:
 
-Lambda expressions naturally support closures - they can reference variables from the enclosing scope beyond their own parameters. There are three ways lambdas can capture external values:
+```
+transform(matrix, (row: list<i32>) ->
+  transform(row, (cell: i32) ->
+    cell + row[0]  // 'row' is from the outer lambda (lambda_depth: 1)
+  )
+)
+```
 
-### Capturing from Outer Lambda Parameters
-
-Inner lambdas can access outer lambda parameters by using `lambda_depth` greater than 0 to traverse outward through lambda boundaries. For example, an inner lambda processing array elements could reference the outer lambda's parameter to access surrounding context.
-
-This is demonstrated when `lambda_depth: 1` is used within an inner lambda to reference the first parameter of the immediately enclosing outer lambda.
+Example of an Expression.Lambda message demonstrating `lambda_depth: 1`:
+```protobuf
+--8<-- "examples/proto-textformat/lambdas/closure_outer_lambda_simple.textproto"
+```
 
 ### Capturing from Input Record
 
@@ -131,13 +133,10 @@ In correlated subquery contexts, lambdas can also reference outer query records 
 
 ## Higher-Order Functions
 
-Lambdas are primarily used with higher-order functions that operate on collections. Common functions include:
+Lambdas are primarily used with higher-order functions that operate on collections. Current functions include:
 
 - `transform` - Transform each element of an array
 - `filter` - Filter elements based on a predicate
-- `reduce` - Reduce an array to a single value
-- `sort` - Sort with a custom comparator
-- `zip` - Combine arrays element-wise
 
 See the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml) for the complete list of lambda-accepting functions and their signatures.
 
@@ -149,7 +148,7 @@ A lambda invocation consists of:
 - **Lambda**: The inline lambda expression to invoke
 - **Arguments**: The values to pass as parameters to the lambda
 
-The return type is derived from the lambda's `return_type` field - no separate output type declaration is needed. Lambda invocation is currently limited to inline lambdas only.
+The return type is derived from the lambda's `return_type` field - no separate output type declaration is needed.
 
 === "LambdaInvocation Message"
     ```proto

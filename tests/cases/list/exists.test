@@ -1,7 +1,0 @@
-### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
-
-# basic: Check if any element matches predicate
-exists([1, 2, 3, 4, 5]::list<i32>, (x -> gt(x, 3::i32))::func<i32 -> boolean>) = true::boolean
-exists([1, 2, 3]::list<i32>, (x -> gt(x, 10::i32))::func<i32 -> boolean>) = false::boolean
-exists([]::list<i32>, (x -> gt(x, 0::i32))::func<i32 -> boolean>) = false::boolean
