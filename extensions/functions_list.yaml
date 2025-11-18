@@ -11,10 +11,6 @@ scalar_functions:
 
       The lambda receives one parameter (the current element) and must return
       the transformed value.
-
-      If the input array is NULL, returns NULL.
-      The nullability of elements in the output array depends on the lambda's
-      return type.
     impls:
       - args:
           - name: input
@@ -35,7 +31,6 @@ scalar_functions:
       a boolean value. Elements for which the lambda returns true are included
       in the result.
 
-      If the input array is NULL, returns NULL.
       If the predicate returns NULL for an element, that element is excluded
       from the result (treated as false).
     impls:
@@ -59,8 +54,6 @@ scalar_functions:
 
       The sort is stable: elements that compare as equal retain their relative
       order from the input array.
-
-      If the input array is NULL, returns NULL.
     impls:
       - args:
           - name: input
@@ -83,7 +76,6 @@ scalar_functions:
 
       The lambda must return the new accumulator value.
 
-      If the input array is NULL, returns the initial_value.
       If the input array is empty, returns the initial_value.
     impls:
       - args:
@@ -107,7 +99,6 @@ scalar_functions:
       The lambda receives one parameter (the current element) and must return
       a boolean value.
 
-      If the input array is NULL, returns NULL.
       If the input array is empty, returns false.
       If the predicate returns NULL for all elements, returns false.
     impls:
@@ -130,7 +121,6 @@ scalar_functions:
       The lambda receives one parameter (the current element) and must return
       a boolean value.
 
-      If the input array is NULL, returns NULL.
       If the input array is empty, returns true (vacuous truth).
       If the predicate returns NULL for any element, returns false.
     impls:
@@ -153,7 +143,6 @@ scalar_functions:
       a boolean value. Short-circuits and returns the element as soon as a
       match is found.
 
-      If the input array is NULL, returns NULL.
       If the input array is empty, returns NULL.
       If the predicate returns NULL for an element, that element is not
       considered a match.
@@ -176,8 +165,6 @@ scalar_functions:
 
       The length of the result array is the minimum of the two input array
       lengths. Extra elements from the longer array are ignored.
-
-      If either input array is NULL, returns NULL.
     impls:
       - args:
           - name: left
