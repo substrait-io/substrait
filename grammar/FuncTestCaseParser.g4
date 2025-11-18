@@ -348,9 +348,9 @@ parameterizedType
     | precisionTimestampType
     | precisionTimestampTZType
     | lambdaType
-    | Struct isnull=QMark? OAngleBracket dataTypeList CAngleBracket
 // TODO implement the rest of the parameterized types
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct
+//  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct
 //  | Map isnull='?'? Lt key=expr Comma value=expr Gt #map
   ;
 
