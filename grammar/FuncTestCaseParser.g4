@@ -65,6 +65,7 @@ argument
     | precisionTimestampTZArg
     | listArg
     | lambdaArg
+    | Identifier  // Bare identifiers (for lambda parameters)
     ;
 
 aggFuncTestCase
@@ -211,32 +212,12 @@ lambdaArg
     ;
 
 lambdaShortForm
-    : lambdaParameters? Arrow lambdaBody
+    : lambdaParameters? Arrow identifier OParen arguments? CParen (DoubleColon dataType)?
     ;
 
 lambdaParameters
     : Identifier                                    # singleParam
     | OParen Identifier (Comma Identifier)+ CParen  # tupleParams
-    ;
-
-lambdaBody
-    : lambdaExpression
-    ;
-
-lambdaExpression
-    : functionName=identifier OParen lambdaArguments? CParen (DoubleColon dataType)?  #lambdaFunctionCall
-    | OParen lambdaExpression CParen                                                  #lambdaParenExpr
-    ;
-
-lambdaArguments
-    : lambdaArgument (Comma lambdaArgument)*
-    ;
-
-lambdaArgument
-    : lambdaExpression                       #lambdaNestedCall
-    | Identifier (Dot Identifier)?           #lambdaParameter
-    | literal DoubleColon dataType           #lambdaTypedLiteral
-    | literal                                #lambdaLiteral
     ;
 
 dataType
