@@ -225,7 +225,7 @@ lambdaBody
 
 lambdaExpression
     : functionName=identifier OParen lambdaArguments? CParen (DoubleColon dataType)?  #lambdaFunctionCall
-    | OParen lambdaExpression CParen                                                   #lambdaParenExpr
+    | OParen lambdaExpression CParen                                                  #lambdaParenExpr
     ;
 
 lambdaArguments
