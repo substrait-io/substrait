@@ -88,7 +88,7 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
         return: U
 
-  - name: "array_exists"
+  - name: "exists"
     description: >-
       Checks if any element satisfies the predicate.
 
@@ -110,7 +110,7 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
         return: boolean?
 
-  - name: "array_all"
+  - name: "all"
     description: >-
       Checks if all elements satisfy the predicate.
 
@@ -132,7 +132,7 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
         return: boolean?
 
-  - name: "array_find_first"
+  - name: "find_first"
     description: >-
       Finds the first element that satisfies the predicate.
 
@@ -155,7 +155,7 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
         return: T?
 
-  - name: "zip_with"
+  - name: "zip"
     description: >-
       Combines two arrays element-wise using a lambda function.
 

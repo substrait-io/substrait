@@ -137,7 +137,7 @@ Lambdas are primarily used with higher-order functions that operate on collectio
 - `filter` - Filter elements based on a predicate
 - `reduce` - Reduce an array to a single value
 - `sort` - Sort with a custom comparator
-- `zip_with` - Combine arrays element-wise
+- `zip` - Combine arrays element-wise
 
 See the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml) for the complete list of lambda-accepting functions and their signatures.
 
