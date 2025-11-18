@@ -1,0 +1,65 @@
+# Lambda Invocation: ((x: i32) -> x * 2)(5)
+# This example demonstrates immediate invocation of an inline lambda.
+# The lambda takes one i32 parameter and multiplies it by 2.
+# When invoked with argument 5, it returns 10.
+
+lambda: {
+  # Lambda parameter: x (type i32)
+  parameter_types: [
+    {
+      i32: {
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+  ]
+
+  # Return type: i32
+  return_type: {
+    i32: {
+      nullability: NULLABILITY_REQUIRED
+    }
+  }
+
+  # Lambda body: x * 2
+  body: {
+    scalar_function: {
+      function_reference: 1  # Reference to multiply function
+      arguments: [
+        {
+          # First argument: lambda parameter x
+          value: {
+            selection: {
+              lambda_parameter_reference: {
+                lambda_depth: 0        # 0 = current lambda
+                reference: 0           # 0 = first parameter (x)
+              }
+            }
+          }
+        },
+        {
+          # Second argument: literal 2
+          value: {
+            literal: {
+              i32: 2
+            }
+          }
+        }
+      ]
+
+      output_type: {
+        i32: {
+          nullability: NULLABILITY_REQUIRED
+        }
+      }
+    }
+  }
+}
+
+# Invocation arguments: [5]
+arguments: [
+  {
+    literal: {
+      i32: 5
+    }
+  }
+]

@@ -141,6 +141,36 @@ Lambdas are primarily used with higher-order functions that operate on collectio
 
 See the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml) for the complete list of lambda-accepting functions and their signatures.
 
+## Lambda Invocation
+
+Lambda expressions can be invoked directly using the `LambdaInvocation` expression type. This enables immediate invocation patterns where a lambda is defined and invoked in a single expression.
+
+A lambda invocation consists of:
+- **Lambda**: The inline lambda expression to invoke
+- **Arguments**: The values to pass as parameters to the lambda
+
+The return type is derived from the lambda's `return_type` field - no separate output type declaration is needed. Lambda invocation is currently limited to inline lambdas only.
+
+=== "LambdaInvocation Message"
+    ```proto
+%%% proto.message.Expression.LambdaInvocation %%%
+    ```
+
+### Example
+
+Invoking `((x: i32) -> x * 2)(5)` to compute 10:
+
+```protobuf
+--8<-- "examples/proto-textformat/lambdas/inline_invocation.textproto"
+```
+
+### Validation
+
+When validating a lambda invocation:
+1. The number of arguments must match the lambda's `parameter_types` count exactly
+2. Each argument's type must match the corresponding parameter type
+3. The invocation's effective return type is `lambda.return_type`
+
 ## See Also
 
 - [Field References](field_references.md) - How to reference data in expressions

@@ -974,6 +974,7 @@ message Expression {
     Nested nested = 13;
     DynamicParameter dynamic_parameter = 14;
     Lambda lambda = 15;
+    LambdaInvocation lambda_invocation = 16;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -1201,6 +1202,20 @@ message Expression {
     //  - Fields from outer queries via OuterReference (closure)
     //  - Results from other expressions via Expression
     Expression body = 3;
+  }
+
+  // Invokes an inline lambda expression with provided arguments.
+  // Enables immediate invocation patterns like: ((x) -> x * 2)(5)
+  //
+  // The return type is derived from lambda.return_type.
+  // Arguments must match lambda.parameter_types in count and type.
+  message LambdaInvocation {
+    // The lambda expression to invoke.
+    Lambda lambda = 1;
+
+    // Arguments to pass to the lambda. The number and types of arguments
+    // must match the lambda's parameter_types exactly.
+    repeated Expression arguments = 2;
   }
 
   // A scalar function call.
