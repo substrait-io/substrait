@@ -390,7 +390,7 @@ class FuncTestCaseParser ( Parser ):
     RULE_listArg = 41
     RULE_literalList = 42
     RULE_lambdaArg = 43
-    RULE_lambdaShortForm = 44
+    RULE_lambda = 44
     RULE_lambdaParameters = 45
     RULE_dataType = 46
     RULE_scalarType = 47
@@ -433,7 +433,7 @@ class FuncTestCaseParser ( Parser ):
                    "intervalYearArg", "intervalDayArg", "fixedCharArg", 
                    "varCharArg", "fixedBinaryArg", "precisionTimeArg", "precisionTimestampArg", 
                    "precisionTimestampTZArg", "listArg", "literalList", 
-                   "lambdaArg", "lambdaShortForm", "lambdaParameters", "dataType", 
+                   "lambdaArg", "lambda", "lambdaParameters", "dataType", 
                    "scalarType", "booleanType", "stringType", "binaryType", 
                    "timestampType", "timestampTZType", "intervalYearType", 
                    "intervalDayType", "fixedCharType", "varCharType", "fixedBinaryType", 
@@ -4159,8 +4159,8 @@ class FuncTestCaseParser ( Parser ):
         def OParen(self):
             return self.getToken(FuncTestCaseParser.OParen, 0)
 
-        def lambdaShortForm(self):
-            return self.getTypedRuleContext(FuncTestCaseParser.LambdaShortFormContext,0)
+        def lambda_(self):
+            return self.getTypedRuleContext(FuncTestCaseParser.LambdaContext,0)
 
 
         def CParen(self):
@@ -4202,7 +4202,7 @@ class FuncTestCaseParser ( Parser ):
             self.state = 495
             self.match(FuncTestCaseParser.OParen)
             self.state = 496
-            self.lambdaShortForm()
+            self.lambda_()
             self.state = 497
             self.match(FuncTestCaseParser.CParen)
             self.state = 498
@@ -4218,7 +4218,7 @@ class FuncTestCaseParser ( Parser ):
         return localctx
 
 
-    class LambdaShortFormContext(ParserRuleContext):
+    class LambdaContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -4254,29 +4254,29 @@ class FuncTestCaseParser ( Parser ):
 
 
         def getRuleIndex(self):
-            return FuncTestCaseParser.RULE_lambdaShortForm
+            return FuncTestCaseParser.RULE_lambda
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterLambdaShortForm" ):
-                listener.enterLambdaShortForm(self)
+            if hasattr( listener, "enterLambda" ):
+                listener.enterLambda(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitLambdaShortForm" ):
-                listener.exitLambdaShortForm(self)
+            if hasattr( listener, "exitLambda" ):
+                listener.exitLambda(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitLambdaShortForm" ):
-                return visitor.visitLambdaShortForm(self)
+            if hasattr( visitor, "visitLambda" ):
+                return visitor.visitLambda(self)
             else:
                 return visitor.visitChildren(self)
 
 
 
 
-    def lambdaShortForm(self):
+    def lambda_(self):
 
-        localctx = FuncTestCaseParser.LambdaShortFormContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 88, self.RULE_lambdaShortForm)
+        localctx = FuncTestCaseParser.LambdaContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 88, self.RULE_lambda)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)

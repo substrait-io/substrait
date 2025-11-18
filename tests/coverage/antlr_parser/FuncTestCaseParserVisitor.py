@@ -245,8 +245,8 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#lambdaShortForm.
-    def visitLambdaShortForm(self, ctx:FuncTestCaseParser.LambdaShortFormContext):
+    # Visit a parse tree produced by FuncTestCaseParser#lambda.
+    def visitLambda(self, ctx:FuncTestCaseParser.LambdaContext):
         return self.visitChildren(ctx)
 
 

@@ -432,12 +432,12 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaShortForm.
-    def enterLambdaShortForm(self, ctx:FuncTestCaseParser.LambdaShortFormContext):
+    # Enter a parse tree produced by FuncTestCaseParser#lambda.
+    def enterLambda(self, ctx:FuncTestCaseParser.LambdaContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaShortForm.
-    def exitLambdaShortForm(self, ctx:FuncTestCaseParser.LambdaShortFormContext):
+    # Exit a parse tree produced by FuncTestCaseParser#lambda.
+    def exitLambda(self, ctx:FuncTestCaseParser.LambdaContext):
         pass
 
 

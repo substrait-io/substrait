@@ -208,10 +208,10 @@ literalList
     ;
 
 lambdaArg
-    : OParen lambdaShortForm CParen DoubleColon funcType
+    : OParen lambda CParen DoubleColon funcType
     ;
 
-lambdaShortForm
+lambda
     : lambdaParameters? Arrow identifier OParen arguments? CParen (DoubleColon dataType)?
     ;
 
