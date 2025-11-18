@@ -203,22 +203,26 @@ listArg
     : literalList DoubleColon listType isnull=QMark?
     ;
 
+lambdaArg
+    : literalLambda DoubleColon funcType isnull=QMark?
+    ;
+
 literalList
     : OBracket (literal (Comma literal)*)? CBracket
     ;
 
-lambdaArg
-    : OParen lambda CParen DoubleColon funcType
-    ;
-
-lambda
-    : lambdaParameters? Arrow identifier OParen arguments? CParen (DoubleColon dataType)?
+literalLambda
+    : OParen lambdaParameters Arrow lambdaBody CParen
     ;
 
 lambdaParameters
     : Identifier                                    # singleParam
     | OParen Identifier (Comma Identifier)+ CParen  # tupleParams
     ;
+
+lambdaBody
+    : identifier OParen arguments CParen
+    ; // For now, we only allow lambda bodies of the form <func_name>(<arg1>,<arg2>,...)
 
 dataType
     : scalarType isnull=QMark?

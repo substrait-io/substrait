@@ -432,12 +432,12 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#lambda.
-    def enterLambda(self, ctx:FuncTestCaseParser.LambdaContext):
+    # Enter a parse tree produced by FuncTestCaseParser#literalLambda.
+    def enterLiteralLambda(self, ctx:FuncTestCaseParser.LiteralLambdaContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#lambda.
-    def exitLambda(self, ctx:FuncTestCaseParser.LambdaContext):
+    # Exit a parse tree produced by FuncTestCaseParser#literalLambda.
+    def exitLiteralLambda(self, ctx:FuncTestCaseParser.LiteralLambdaContext):
         pass
 
 
@@ -456,6 +456,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#tupleParams.
     def exitTupleParams(self, ctx:FuncTestCaseParser.TupleParamsContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#lambdaBody.
+    def enterLambdaBody(self, ctx:FuncTestCaseParser.LambdaBodyContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#lambdaBody.
+    def exitLambdaBody(self, ctx:FuncTestCaseParser.LambdaBodyContext):
         pass
 
 
