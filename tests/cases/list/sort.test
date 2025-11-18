@@ -2,6 +2,6 @@
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
 
 # basic: Basic sorting with comparator using expressions
-sort([3, 1, 4, 1, 5]::list<i32>, ((a, b) -> subtract(a, b))::lambda<(i32, i32) -> i32>) = [1, 1, 3, 4, 5]::list<i32>
-sort([5, 2, 8, 1]::list<i32>, ((a, b) -> subtract(b, a))::lambda<(i32, i32) -> i32>) = [8, 5, 2, 1]::list<i32>
-sort([]::list<i32>, ((a, b) -> subtract(a, b))::lambda<(i32, i32) -> i32>) = []::list<i32>
+sort([3, 1, 4, 1, 5]::list<i32>, ((a, b) -> subtract(a, b))::func<(i32, i32) -> i32>) = [1, 1, 3, 4, 5]::list<i32>
+sort([5, 2, 8, 1]::list<i32>, ((a, b) -> subtract(b, a))::func<(i32, i32) -> i32>) = [8, 5, 2, 1]::list<i32>
+sort([]::list<i32>, ((a, b) -> subtract(a, b))::func<(i32, i32) -> i32>) = []::list<i32>

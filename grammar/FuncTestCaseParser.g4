@@ -207,7 +207,7 @@ literalList
     ;
 
 lambdaArg
-    : OParen lambdaShortForm CParen DoubleColon lambdaType
+    : OParen lambdaShortForm CParen DoubleColon funcType
     ;
 
 lambdaShortForm
@@ -325,13 +325,13 @@ listType
     : List isnull=QMark? OAngleBracket elemType=dataType CAngleBracket #list
     ;
 
-lambdaType
-    : Lambda isnull=QMark? OAngleBracket params=lambdaParams Arrow returnType=dataType CAngleBracket
+funcType
+    : Func isnull=QMark? OAngleBracket params=funcParameters Arrow returnType=dataType CAngleBracket
     ;
 
-lambdaParams
-    : dataType                                  #singleLambdaParam
-    | OParen dataType (Comma dataType)+ CParen  #multiLambdaParam
+funcParameters
+    : dataType                                  #singleFuncParam
+    | OParen dataType (Comma dataType)* CParen  #funcParamsWithParens
     ;
 
 dataTypeList
@@ -347,7 +347,7 @@ parameterizedType
     | precisionTimeType
     | precisionTimestampType
     | precisionTimestampTZType
-    | lambdaType
+    | funcType
 // TODO implement the rest of the parameterized types
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct
 //  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct

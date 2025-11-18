@@ -133,7 +133,7 @@ Used within lambda function bodies to reference the lambda's parameters. This en
 - `lambda_depth`: Number of lambda boundaries to traverse (0 = current lambda, 1 = outer lambda, etc.)
 - `reference`: Zero-based index into the lambda's parameter list
 
-**Example**: In `transform([1, 2, 3], lambda(x) -> x * 2)`, the `x` in the body uses LambdaReference:
+**Example**: In `transform([1, 2, 3], (x) -> x * 2)`, the `x` in the body uses LambdaReference:
 
 ```protobuf
 selection {
@@ -148,8 +148,8 @@ selection {
 **Nested Lambda Example**: In nested lambdas, `lambda_depth` allows inner lambdas to reference outer lambda parameters:
 
 ```
-transform(matrix, lambda(row) ->
-  transform(row, lambda(cell) ->
+transform(matrix, (row) ->
+  transform(row, (cell) ->
     cell + row.length  // 'cell' uses depth 0, 'row' uses depth 1
   )
 )

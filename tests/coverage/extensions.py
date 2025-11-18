@@ -303,10 +303,6 @@ class FunctionRegistry:
         arg_type_base = arg_type_clean.split("<")[0]
         func_type_base = func_type_clean.split("<")[0]
 
-        # func and lambda are compatible (func is generic, lambda is concrete)
-        if {func_type_base, arg_type_base} == {"func", "lambda"}:
-            return True
-
         if func_type_base == arg_type_base:
             return True
         return FunctionRegistry.is_type_any(func_arg_type)

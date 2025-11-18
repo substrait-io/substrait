@@ -379,7 +379,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return values
 
     def visitLambdaArg(self, ctx: FuncTestCaseParser.LambdaArgContext):
-        lambda_type = ctx.lambdaType().getText()
+        lambda_type = ctx.funcType().getText()
         return CaseLiteral(value="lambda", type=lambda_type)
 
     def visitResult(self, ctx: FuncTestCaseParser.ResultContext):

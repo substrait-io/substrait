@@ -7,7 +7,7 @@ Lambda expressions enable higher-order functions that operate on collections, al
 Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions. They enable powerful functional programming patterns such as `transform`, `filter`, and `reduce` operations on arrays.
 
 !!! note "Documentation Syntax"
-    This documentation uses the syntax `lambda(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. This is not an official Substrait syntax.
+    This documentation uses the syntax `(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. The type annotations shown here are for clarity only; actual Substrait syntax uses type declarations in the protobuf message or YAML definitions.
 
 ## Lambda Expression Structure
 
@@ -58,7 +58,7 @@ Lambda parameters are referenced within the lambda body using `LambdaParameterRe
 
 ### Simple Example
 
-For a lambda `lambda(x: i32) -> x * 2`:
+For a lambda `(x: i32) -> x * 2`:
 
 Example of an Expression.Lambda message:
 ```protobuf
@@ -74,8 +74,8 @@ Lambdas can be nested, and inner lambdas can reference parameters from outer lam
 Transform a 2D array by incrementing each element:
 
 ```
-transform(matrix, lambda(row: list<i32>) ->
-  transform(row, lambda(cell: i32) ->
+transform(matrix, (row: list<i32>) ->
+  transform(row, (cell: i32) ->
     cell + 1
   )
 )
@@ -115,7 +115,7 @@ Consider an input record with this schema:
 The lambda can access the `offset` field (index 3) from the input record:
 
 ```
-transform(numbers, lambda(x: i32) ->
+transform(numbers, (x: i32) ->
   x + offset  // 'offset' is field 3 from the input record
 )
 ```

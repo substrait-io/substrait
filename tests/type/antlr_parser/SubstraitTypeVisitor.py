@@ -155,11 +155,6 @@ class SubstraitTypeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by SubstraitTypeParser#lambda.
-    def visitLambda(self, ctx:SubstraitTypeParser.LambdaContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by SubstraitTypeParser#func.
     def visitFunc(self, ctx:SubstraitTypeParser.FuncContext):
         return self.visitChildren(ctx)
@@ -175,8 +170,8 @@ class SubstraitTypeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by SubstraitTypeParser#multiFuncParam.
-    def visitMultiFuncParam(self, ctx:SubstraitTypeParser.MultiFuncParamContext):
+    # Visit a parse tree produced by SubstraitTypeParser#funcParamsWithParens.
+    def visitFuncParamsWithParens(self, ctx:SubstraitTypeParser.FuncParamsWithParensContext):
         return self.visitChildren(ctx)
 
 

@@ -828,30 +828,30 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#lambdaType.
-    def enterLambdaType(self, ctx:FuncTestCaseParser.LambdaTypeContext):
+    # Enter a parse tree produced by FuncTestCaseParser#funcType.
+    def enterFuncType(self, ctx:FuncTestCaseParser.FuncTypeContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#lambdaType.
-    def exitLambdaType(self, ctx:FuncTestCaseParser.LambdaTypeContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#singleLambdaParam.
-    def enterSingleLambdaParam(self, ctx:FuncTestCaseParser.SingleLambdaParamContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#singleLambdaParam.
-    def exitSingleLambdaParam(self, ctx:FuncTestCaseParser.SingleLambdaParamContext):
+    # Exit a parse tree produced by FuncTestCaseParser#funcType.
+    def exitFuncType(self, ctx:FuncTestCaseParser.FuncTypeContext):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#multiLambdaParam.
-    def enterMultiLambdaParam(self, ctx:FuncTestCaseParser.MultiLambdaParamContext):
+    # Enter a parse tree produced by FuncTestCaseParser#singleFuncParam.
+    def enterSingleFuncParam(self, ctx:FuncTestCaseParser.SingleFuncParamContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#multiLambdaParam.
-    def exitMultiLambdaParam(self, ctx:FuncTestCaseParser.MultiLambdaParamContext):
+    # Exit a parse tree produced by FuncTestCaseParser#singleFuncParam.
+    def exitSingleFuncParam(self, ctx:FuncTestCaseParser.SingleFuncParamContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#funcParamsWithParens.
+    def enterFuncParamsWithParens(self, ctx:FuncTestCaseParser.FuncParamsWithParensContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#funcParamsWithParens.
+    def exitFuncParamsWithParens(self, ctx:FuncTestCaseParser.FuncParamsWithParensContext):
         pass
 
 
