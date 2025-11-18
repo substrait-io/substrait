@@ -2,6 +2,6 @@
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
 
 # basic: Basic filtering examples
-list_filter([1, 2, 3, 4, 5]::list<i32>, (x -> gt(x, 2::i32)::boolean)::lambda<i32 -> boolean>) = [3, 4, 5]::list<i32>
-list_filter([1, 2, 3, 4, 5]::list<i32>, (x -> lt(x, 3::i32)::boolean)::lambda<i32 -> boolean>) = [1, 2]::list<i32>
-list_filter([]::list<i32>, (x -> gt(x, 0::i32)::boolean)::lambda<i32 -> boolean>) = []::list<i32>
+filter([1, 2, 3, 4, 5]::list<i32>, (x -> gt(x, 2::i32)::boolean)::lambda<i32 -> boolean>) = [3, 4, 5]::list<i32>
+filter([1, 2, 3, 4, 5]::list<i32>, (x -> lt(x, 3::i32)::boolean)::lambda<i32 -> boolean>) = [1, 2]::list<i32>
+filter([]::list<i32>, (x -> gt(x, 0::i32)::boolean)::lambda<i32 -> boolean>) = []::list<i32>

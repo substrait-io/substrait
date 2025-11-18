@@ -6,7 +6,7 @@ This directory contains validated examples of `Expression.Lambda` messages in pr
 
 - `simple_multiply.textproto` - Basic lambda that multiplies parameter by 2
 - `closure_root_reference.textproto` - Lambda with closure over input record field using RootReference
-- `nested_array_transform.textproto` - Nested lambdas transforming a 2D array
+- `nested_transform.textproto` - Nested lambdas transforming a 2D array
 
 ## Validation
 

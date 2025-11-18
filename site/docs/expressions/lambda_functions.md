@@ -88,7 +88,7 @@ In this example:
 
 Example of an Expression.Lambda message:
 ```protobuf
---8<-- "examples/proto-textformat/lambdas/nested_array_transform.textproto"
+--8<-- "examples/proto-textformat/lambdas/nested_transform.textproto"
 ```
 
 ## Closures
@@ -134,7 +134,7 @@ In correlated subquery contexts, lambdas can also reference outer query records 
 Lambdas are primarily used with higher-order functions that operate on collections. Common functions include:
 
 - `transform` - Transform each element of an array
-- `list_filter` - Filter elements based on a predicate
+- `filter` - Filter elements based on a predicate
 - `reduce` - Reduce an array to a single value
 - `sort` - Sort with a custom comparator
 - `zip_with` - Combine arrays element-wise

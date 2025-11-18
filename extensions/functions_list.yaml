@@ -20,7 +20,7 @@ scalar_functions:
         nullability: MIRROR
         return: list<U>
 
-  - name: "list_filter"
+  - name: "filter"
     description: >-
       Filters array elements based on a predicate function.
 
