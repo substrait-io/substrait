@@ -414,21 +414,21 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#literalList.
-    def enterLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#literalList.
-    def exitLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
-        pass
-
-
     # Enter a parse tree produced by FuncTestCaseParser#lambdaArg.
     def enterLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
         pass
 
     # Exit a parse tree produced by FuncTestCaseParser#lambdaArg.
     def exitLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#literalList.
+    def enterLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#literalList.
+    def exitLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
         pass
 
 
@@ -789,15 +789,6 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#funcParamsWithParens.
     def exitFuncParamsWithParens(self, ctx:FuncTestCaseParser.FuncParamsWithParensContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#dataTypeList.
-    def enterDataTypeList(self, ctx:FuncTestCaseParser.DataTypeListContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#dataTypeList.
-    def exitDataTypeList(self, ctx:FuncTestCaseParser.DataTypeListContext):
         pass
 
 

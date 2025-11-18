@@ -235,13 +235,13 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#literalList.
-    def visitLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaArg.
+    def visitLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#lambdaArg.
-    def visitLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
+    # Visit a parse tree produced by FuncTestCaseParser#literalList.
+    def visitLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
         return self.visitChildren(ctx)
 
 
@@ -442,11 +442,6 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#funcParamsWithParens.
     def visitFuncParamsWithParens(self, ctx:FuncTestCaseParser.FuncParamsWithParensContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#dataTypeList.
-    def visitDataTypeList(self, ctx:FuncTestCaseParser.DataTypeListContext):
         return self.visitChildren(ctx)
 
 

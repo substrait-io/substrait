@@ -319,10 +319,6 @@ funcParameters
     | OParen dataType (Comma dataType)* CParen  #funcParamsWithParens
     ;
 
-dataTypeList
-    : dataType (Comma dataType)*
-    ;
-
 parameterizedType
     : fixedCharType
     | varCharType
