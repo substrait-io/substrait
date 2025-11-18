@@ -246,7 +246,6 @@ scalarType
   | intervalYearType        #intervalYear
   | UUID                    #uuid
   | UserDefined Identifier  #userDefined
-  | Identifier              #typeVariable
   ;
 
 booleanType
