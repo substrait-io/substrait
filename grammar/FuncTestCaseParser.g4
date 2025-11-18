@@ -363,7 +363,7 @@ funcOptions
     ;
 
 nonReserved //  IMPORTANT: this rule must only contain tokens
-    : And | Or | Truncate
+    : And | Or | Truncate | Map
     ;
 
 identifier

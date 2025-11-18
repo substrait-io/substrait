@@ -1,5 +1,5 @@
-# Nested lambda: transform(matrix, (row: list<i32>) ->
-#   transform(row, (cell: i32) -> cell + 1))
+# Nested lambda: map(matrix, (row: list<i32>) ->
+#   map(row, (cell: i32) -> cell + 1))
 # Demonstrates nested lambdas where inner lambda increments each cell
 
 parameter_types: [
@@ -29,9 +29,9 @@ return_type: {
 }
 
 body: {
-  # Outer body: transform function on row
+  # Outer body: map function on row
   scalar_function: {
-    function_reference: 3  # Reference to transform function
+    function_reference: 3  # Reference to map function
 
     arguments: [
       {

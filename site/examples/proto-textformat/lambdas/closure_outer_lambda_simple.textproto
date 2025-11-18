@@ -1,6 +1,6 @@
 # Nested lambda with closure over outer lambda parameter
-# Conceptual: transform(matrix, (row: list<i32>) ->
-#   transform(row, (cell: i32) -> cell + row[0]))
+# Conceptual: map(matrix, (row: list<i32>) ->
+#   map(row, (cell: i32) -> cell + row[0]))
 #
 # The inner lambda references the outer lambda's 'row' parameter
 # using lambda_depth: 1 to access the first element of the row
@@ -32,9 +32,9 @@ return_type: {
 }
 
 body: {
-  # Outer body: transform function on row
+  # Outer body: map function on row
   scalar_function: {
-    function_reference: 3  # Reference to transform function
+    function_reference: 3  # Reference to map function
 
     arguments: [
       {

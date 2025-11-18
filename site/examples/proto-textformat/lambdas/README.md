@@ -5,7 +5,7 @@ This directory contains validated examples of `Expression.Lambda` messages in pr
 ## Files
 
 - `simple_multiply.textproto` - Basic lambda that multiplies parameter by 2
-- `nested_transform.textproto` - Nested lambdas transforming a 2D array (each lambda references its own parameters)
+- `nested_map.textproto` - Nested lambdas mapping a 2D array (each lambda references its own parameters)
 - `closure_outer_lambda_simple.textproto` - Nested lambdas where inner lambda references outer lambda parameter using `lambda_depth: 1`
 - `closure_root_reference.textproto` - Lambda with closure over input record field using RootReference
 - `inline_invocation.textproto` - Direct lambda invocation using LambdaInvocation expression

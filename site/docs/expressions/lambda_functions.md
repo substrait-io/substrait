@@ -4,7 +4,7 @@ Lambda expressions enable higher-order functions that operate on collections, al
 
 ## Overview
 
-Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions. They enable powerful functional programming patterns such as `transform` and `filter` operations on arrays.
+Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions. They enable powerful functional programming patterns such as `map` and `filter` operations on arrays.
 
 !!! note "Documentation Syntax"
     This documentation uses the syntax `(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. The type annotations shown here are for clarity only; actual Substrait syntax uses type declarations in the protobuf message or YAML definitions.
@@ -76,8 +76,8 @@ Lambdas can be nested, and inner lambdas can reference parameters from outer lam
 When an inner lambda only references its own parameters (using `lambda_depth: 0`), it's simply nested without capturing from the outer scope:
 
 ```
-transform(matrix, (row: list<i32>) ->
-  transform(row, (cell: i32) ->
+map(matrix, (row: list<i32>) ->
+  map(row, (cell: i32) ->
     cell + 1
   )
 )
@@ -85,14 +85,14 @@ transform(matrix, (row: list<i32>) ->
 
 Example of an Expression.Lambda message:
 ```protobuf
---8<-- "examples/proto-textformat/lambdas/nested_transform.textproto"
+--8<-- "examples/proto-textformat/lambdas/nested_map.textproto"
 ```
 
 To capture variables from the outer lambda, use `lambda_depth` greater than 0. This example adds the first element of each row to all cells in that row:
 
 ```
-transform(matrix, (row: list<i32>) ->
-  transform(row, (cell: i32) ->
+map(matrix, (row: list<i32>) ->
+  map(row, (cell: i32) ->
     cell + row[0]  // 'row' is from the outer lambda (lambda_depth: 1)
   )
 )
@@ -117,7 +117,7 @@ Consider an input record with this schema:
 The lambda can access the `offset` field (index 3) from the input record:
 
 ```
-transform(numbers, (x: i32) ->
+map(numbers, (x: i32) ->
   x + offset  // 'offset' is field 3 from the input record
 )
 ```
@@ -135,7 +135,7 @@ In correlated subquery contexts, lambdas can also reference outer query records 
 
 Lambdas are primarily used with higher-order functions that operate on collections. Current functions include:
 
-- `transform` - Transform each element of an array
+- `map` - Map each element of an array to a new value
 - `filter` - Filter elements based on a predicate
 
 See the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml) for the complete list of lambda-accepting functions and their signatures.
