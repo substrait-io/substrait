@@ -1,21 +1,21 @@
-# Example showing function types with multi-parameter lambdas
-# The func<(T, T) -> i32> type represents a lambda with two parameters
-urn: extension:example:lambda_functions
+%YAML 1.2
+---
+urn: extension:io.substrait:functions_list
 scalar_functions:
-- name: sort
+- name: "map"
   description: >-
-    Sort array using a custom comparison function.
+    Maps each element of an array using a lambda function.
 
-    The comparator lambda receives two parameters (elements to compare) and
-    must return an integer:
-      - negative value if first < second
-      - zero if first == second
-      - positive value if first > second
+    Returns a new array where each element is the result of applying
+    the map function to the corresponding element in the input array.
+
+    The lambda receives one parameter (the current element) and must return
+    the mapped value.
   impls:
-  - args:
-    - name: input
-      value: list<T>
-    - name: comparator
-      value: func<(T, T) -> i32>
-    nullability: MIRROR
-    return: list<T>
+    - args:
+        - name: input
+          value: list<T>
+        - name: mapper
+          value: func<T -> U>
+      nullability: MIRROR
+      return: list<U>

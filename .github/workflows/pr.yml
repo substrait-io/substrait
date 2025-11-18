@@ -78,6 +78,15 @@ jobs:
               --from "$file#format=txtpb" \
               --to /dev/null
           done
+      - name: Validate Field Reference Examples
+        run: |
+          for file in site/examples/proto-textformat/field_references/*.textproto; do
+            echo "Validating $file..."
+            buf convert proto/substrait/algebra.proto \
+              --type substrait.Expression.FieldReference \
+              --from "$file#format=txtpb" \
+              --to /dev/null
+          done
   dry_run_release:
     name: Dry-run release
     runs-on: ubuntu-latest

@@ -1,10 +1,10 @@
 # Lambda Expressions
 
-Lambda expressions enable higher-order functions that operate on collections, allowing for flexible and composable data transformations. A lambda is an anonymous function with explicit parameter types and a body expression that can reference those parameters.
+Lambda expressions represent inline, anonymous functions within query plans, enabling operations that require nested computation over data. They are primarily used to express array operations (such as `map` or `filter`) and support higher-order functions that apply computations element-wise over collections. A lambda consists of explicit parameter types and a body expression that references those parameters.
 
 ## Overview
 
-Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions. They enable powerful functional programming patterns such as `map` and `filter` operations on arrays.
+Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions or [invoked directly](#lambda-invocation).
 
 !!! note "Documentation Syntax"
     This documentation uses the syntax `(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. The type annotations shown here are for clarity only; actual Substrait syntax uses type declarations in the protobuf message or YAML definitions.
@@ -60,10 +60,27 @@ func<(T, U) -> V>      # Multiple parameters (parentheses required)
 func<(T, U, V) -> W>   # Three parameters
 ```
 
-Example function definition with multi-parameter lambda:
+### Example: The `map` Function
+
+The `map` function transforms each element of a list using a lambda. Here's how it's defined in the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml):
+
 ```yaml
---8<-- "examples/extensions/lambda_function_example.yaml"
+- name: "map"
+  description: >-
+    Maps each element of an array using a lambda function.
+    Returns a new array where each element is the result of applying
+    the map function to the corresponding element in the input array.
+  impls:
+    - args:
+        - name: input
+          value: list<T>
+        - name: mapper
+          value: func<T -> U>
+      nullability: MIRROR
+      return: list<U>
 ```
+
+The `func<T -> U>` type indicates the lambda accepts one parameter of type `T` and returns type `U`, allowing the list element type to be transformed.
 
 ## Closures
 
@@ -71,60 +88,14 @@ Lambda expressions naturally support closures - they can reference variables fro
 
 ### Capturing from Outer Lambda Parameters
 
-Lambdas can be nested, and inner lambdas can reference parameters from outer lambdas using `lambda_depth`.
-
-When an inner lambda only references its own parameters (using `lambda_depth: 0`), it's simply nested without capturing from the outer scope:
-
-```
-map(matrix, (row: list<i32>) ->
-  map(row, (cell: i32) ->
-    cell + 1
-  )
-)
-```
-
-Example of an Expression.Lambda message:
-```protobuf
---8<-- "examples/proto-textformat/lambdas/nested_map.textproto"
-```
-
-To capture variables from the outer lambda, use `lambda_depth` greater than 0. This example adds the first element of each row to all cells in that row:
-
-```
-map(matrix, (row: list<i32>) ->
-  map(row, (cell: i32) ->
-    cell + row[0]  // 'row' is from the outer lambda (lambda_depth: 1)
-  )
-)
-```
-
-Example of an Expression.Lambda message demonstrating `lambda_depth: 1`:
-```protobuf
---8<-- "examples/proto-textformat/lambdas/closure_outer_lambda_simple.textproto"
-```
+Lambdas can be nested, and inner lambdas can reference parameters from outer lambdas using `lambda_depth`. When `lambda_depth` is 0, the reference points to the current lambda's parameters. When `lambda_depth` is greater than 0, it references parameters from an enclosing lambda (1 = immediate parent, 2 = grandparent, etc.).
 
 ### Capturing from Input Record
 
-A lambda can reference fields from the input record using [`RootReference`](field_references.md#rootreference).
+A lambda body can reference fields from the input record using [`RootReference`](field_references.md#rootreference). For example, to access field 3 from the input record, use a `FieldReference` in the lambda body:
 
-Consider an input record with this schema:
-
-|             | id  | name   | numbers      | offset |
-|-------------|-----|--------|--------------|--------|
-| Field Index | 0   | 1      | 2            | 3      |
-| Type        | i32 | string | list<i32\>  | i32    |
-
-The lambda can access the `offset` field (index 3) from the input record:
-
-```
-map(numbers, (x: i32) ->
-  x + offset  // 'offset' is field 3 from the input record
-)
-```
-
-Example of an Expression.Lambda message:
 ```protobuf
---8<-- "examples/proto-textformat/lambdas/closure_root_reference.textproto"
+--8<-- "examples/proto-textformat/field_references/root_reference.textproto"
 ```
 
 ### Capturing from Outer Queries
@@ -135,14 +106,16 @@ In correlated subquery contexts, lambdas can also reference outer query records 
 
 Lambdas are primarily used with higher-order functions that operate on collections. Current functions include:
 
-- `map` - Map each element of an array to a new value
-- `filter` - Filter elements based on a predicate
+| Function | Description |
+|----------|-------------|
+| `map` | Apply an expression to each element of an array |
+| `filter` | Select elements matching a predicate |
 
 See the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml) for the complete list of lambda-accepting functions and their signatures.
 
 ## Lambda Invocation
 
-Lambda expressions can be invoked directly using the `LambdaInvocation` expression type. This enables immediate invocation patterns where a lambda is defined and invoked in a single expression.
+Lambda expressions can be invoked directly using the `LambdaInvocation` expression type, allowing a lambda to be defined and called in a single expression.
 
 A lambda invocation consists of:
 - **Lambda**: The inline lambda expression to invoke
@@ -166,6 +139,7 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 ### Validation
 
 When validating a lambda invocation:
+
 1. The number of arguments must match the lambda's `parameter_types` count exactly
 2. Each argument's type must match the corresponding parameter type
 3. The invocation's effective return type is `lambda.return_type`

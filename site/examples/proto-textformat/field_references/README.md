@@ -1,12 +1,10 @@
-# Lambda Expression Protobuf Examples
+# Field Reference Protobuf Examples
 
-This directory contains validated examples of `Expression.Lambda` messages in protobuf text format (textproto).
+This directory contains validated examples of `Expression.FieldReference` messages in protobuf text format (textproto).
 
 ## Files
 
-- `simple_multiply.textproto` - Basic lambda that multiplies parameter by 2
-- `closure_root_reference.textproto` - Lambda with closure over input record field using RootReference
-- `inline_invocation.textproto` - Direct lambda invocation using LambdaInvocation expression
+- `root_reference.textproto` - FieldReference using RootReference to access input record fields
 
 ## Validation
 
@@ -15,14 +13,14 @@ To validate these examples:
 ```bash
 # Validate a single example
 buf convert proto/substrait/algebra.proto \
-  --type substrait.Expression.Lambda \
-  --from site/examples/proto-textformat/lambdas/simple_multiply.textproto#format=txtpb \
+  --type substrait.Expression.FieldReference \
+  --from site/examples/proto-textformat/field_references/root_reference.textproto#format=txtpb \
   --to /dev/null
 
 # Validate all examples
-for file in site/examples/proto-textformat/lambdas/*.textproto; do
+for file in site/examples/proto-textformat/field_references/*.textproto; do
   buf convert proto/substrait/algebra.proto \
-    --type substrait.Expression.Lambda \
+    --type substrait.Expression.FieldReference \
     --from "$file#format=txtpb" \
     --to /dev/null
 done
@@ -30,14 +28,15 @@ done
 
 ## Usage in Documentation
 
-These examples are referenced in the lambda functions documentation:
+These examples are referenced in documentation files such as:
 - `site/docs/expressions/lambda_functions.md`
+- `site/docs/expressions/field_references.md`
 
 The textproto files can be directly embedded in documentation using:
 
 ```markdown
 \`\`\`protobuf
---8<-- "examples/proto-textformat/lambdas/simple_multiply.textproto"
+--8<-- "examples/proto-textformat/field_references/root_reference.textproto"
 \`\`\`
 ```
 
