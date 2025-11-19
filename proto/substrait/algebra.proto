@@ -975,6 +975,7 @@ message Expression {
     DynamicParameter dynamic_parameter = 14;
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
+    LambdaParameterReference lambda_parameter_reference = 17;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -1185,22 +1186,22 @@ message Expression {
 
   // A lambda expression representing an inline, anonymous function.
   // Lambda expressions have parameters and a body expression that can reference
-  // those parameters via LambdaParameterReference in FieldReference.
+  // those parameters via LambdaParameterReference expressions.
   message Lambda {
     // Types of parameters this lambda accepts. The number of entries in this list
     // defines the arity (number of parameters) of the lambda.
-    // The body expression can reference these via LambdaParameterReference with
-    // reference corresponding to the position in this list.
+    // The body expression can reference these via LambdaParameterReference
+    // expressions with reference corresponding to the position in this list.
     repeated Type parameter_types = 1;
 
     // Return type of the lambda. Must match the type produced by evaluating
     // the body expression.
     Type return_type = 2;
 
-    // The lambda body expression. Lambda parameters and closures can be referenced
-    // within the body using FieldReference with the appropriate root_type
-    // (LambdaParameterReference for parameters, RootReference or OuterReference
-    // for closures). The evaluated expression must match return_type.
+    // The lambda body expression. Lambda parameters can be accessed directly via
+    // LambdaParameterReference expressions. Closures can be referenced using
+    // FieldReference with RootReference or OuterReference. The evaluated
+    // expression must match return_type.
     Expression body = 3;
   }
 
@@ -1216,6 +1217,23 @@ message Expression {
     // Arguments to pass to the lambda. The number and types of arguments
     // must match the lambda's parameter_types exactly.
     repeated Expression arguments = 2;
+  }
+
+  // A reference to a lambda parameter within a lambda body expression.
+  // Unlike FieldReference, this directly accesses the parameter value without
+  // drilling into it. To access fields within a struct parameter, wrap this
+  // in a FieldReference using the expression root_type.
+  message LambdaParameterReference {
+    // Number of lambda boundaries to traverse up for this reference.
+    // For nested lambdas:
+    //   0 = innermost lambda (current lambda's parameters)
+    //   1 = one lambda level out
+    //   2 = two lambda levels out, etc.
+    uint32 lambda_depth = 1;
+
+    // Zero-based index into the lambda's parameter list.
+    // Must be < length of the target lambda's parameter_types list.
+    uint32 reference = 2;
   }
 
   // A scalar function call.
@@ -1563,7 +1581,7 @@ message Expression {
     }
   }
 
-  // A reference to an inner part of a complex object. Can reference reference a
+  // A reference to an inner part of a complex object. Can reference a
   // single element or a masked version of elements
   message FieldReference {
     // Whether this is composed of a single element reference or a masked
@@ -1573,14 +1591,13 @@ message Expression {
       MaskExpression masked_reference = 2;
     }
 
-    // Whether this reference has an origin of a root struct or is based on the
-    // ouput of an expression. When this is a RootReference and direct_reference
-    // above is used, the direct_reference must be of a type StructField.
+    // The origin of the data being referenced. When this is a RootReference and
+    // direct_reference above is used, the direct_reference must be of a type
+    // StructField.
     oneof root_type {
       Expression expression = 3;
       RootReference root_reference = 4;
       OuterReference outer_reference = 5;
-      LambdaParameterReference lambda_parameter_reference = 6;
     }
 
     // Singleton that expresses this FieldReference is rooted off the root
@@ -1593,22 +1610,6 @@ message Expression {
       //
       // This value must be >= 1
       uint32 steps_out = 1;
-    }
-
-    // A reference to a lambda parameter for use within lambda body expressions.
-    // Similar to OuterReference, but for referencing lambda parameters instead
-    // of outer query records.
-    message LambdaParameterReference {
-      // Number of lambda boundaries to traverse up for this reference.
-      // For nested lambdas:
-      //   0 = innermost lambda (current lambda's parameters)
-      //   1 = one lambda level out
-      //   2 = two lambda levels out, etc.
-      uint32 lambda_depth = 1;
-
-      // Zero-based index into the lambda's parameter list.
-      // Must be < length of the target lambda's parameter_types list.
-      uint32 reference = 2;
     }
   }
 

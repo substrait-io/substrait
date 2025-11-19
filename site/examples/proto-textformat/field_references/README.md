@@ -5,6 +5,7 @@ This directory contains validated examples of `Expression.FieldReference` messag
 ## Files
 
 - `root_reference.textproto` - FieldReference using RootReference to access input record fields
+- `lambda_param_struct_field.textproto` - FieldReference using Expression root_type to access a field within a struct lambda parameter
 
 ## Validation
 

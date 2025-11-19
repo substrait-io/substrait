@@ -1,0 +1,12 @@
+# Example of accessing field 2 from a struct lambda parameter
+# Used within a lambda body when the parameter is a struct type
+
+expression: {
+  lambda_parameter_reference: {
+    lambda_depth: 0
+    reference: 0
+  }
+}
+direct_reference: {
+  struct_field: { field: 2 }
+}

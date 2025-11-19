@@ -96,8 +96,10 @@ Field references can originate from different data sources depending on the eval
 |-----------------------------|--------------------------------------------------------------------------------------------------|---------------------------------------------|
 | RootReference               | References fields from the current input record being processed by the expression               | Standard field access in most operations    |
 | OuterReference              | References fields from an outer query's record in subquery contexts                             | Correlated subqueries                        |
-| LambdaParameterReference    | References parameters passed to a lambda function                                                | Lambda function bodies                       |
 | Expression                  | References the output of another expression as the root                                          | Accessing fields from computed values        |
+
+!!! note "Lambda Parameters"
+    Lambda parameters are not accessed through FieldReference. Instead, use `LambdaParameterReference` as a direct expression type. See [Lambda Expressions](lambda_functions.md#parameter-references) for details.
 
 #### RootReference
 
@@ -125,42 +127,25 @@ selection {
 }
 ```
 
-#### LambdaParameterReference
+#### Expression
 
-Used within lambda function bodies to reference the lambda's parameters. This enables higher-order functions like `transform`, `filter`, and `reduce`.
+Used when the field reference is rooted in the output of another expression rather than a static data source. This enables accessing fields from computed values.
 
-**Fields**:
-- `lambda_depth`: Number of lambda boundaries to traverse (0 = current lambda, 1 = outer lambda, etc.)
-- `reference`: Zero-based index into the lambda's parameter list
-
-**Example**: In `transform([1, 2, 3], (x) -> x * 2)`, the `x` in the body uses LambdaReference:
+**Example**: Accessing field 2 from a struct returned by a function:
 
 ```protobuf
 selection {
-  direct_reference { struct_field { field: 0 } }
-  lambda_reference {
-    lambda_depth: 0      // Current lambda
-    reference: 0         // First parameter
+  expression {
+    scalar_function {
+      # Function that returns a struct
+      ...
+    }
   }
+  direct_reference { struct_field { field: 2 } }
 }
 ```
 
-**Nested Lambda Example**: In nested lambdas, `lambda_depth` allows inner lambdas to reference outer lambda parameters:
-
-```
-transform(matrix, (row) ->
-  transform(row, (cell) ->
-    cell + row.length  // 'cell' uses depth 0, 'row' uses depth 1
-  )
-)
-```
-
-**Closures**: Lambda bodies can reference data from multiple sources simultaneously:
-- Lambda parameters via LambdaReference
-- Input record fields via RootReference (closure over input)
-- Outer query fields via OuterReference (closure over outer queries)
-
-See [Lambda Functions](lambda_functions.md) for more details and examples.
+This is also used to access fields within struct lambda parameters by wrapping a `LambdaParameterReference` expression. See [Lambda Functions](lambda_functions.md#accessing-struct-parameters) for details.
 
 ### Masked Complex Expression 
 
