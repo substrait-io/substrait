@@ -1,8 +1,3 @@
-# Lambda Invocation: ((x: i32) -> x * 2)(5)
-# This example demonstrates immediate invocation of an inline lambda.
-# The lambda takes one i32 parameter and multiplies it by 2.
-# When invoked with argument 5, it returns 10.
-
 lambda: {
   # Lambda parameter: x (type i32)
   parameter_types: [

@@ -1,6 +1,3 @@
-# Example of a FieldReference using RootReference to access input record
-# This would be used within a lambda body to capture values from the input record
-
 root_reference: {}
 direct_reference: {
   struct_field: {
