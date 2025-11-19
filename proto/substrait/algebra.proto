@@ -1183,11 +1183,12 @@ message Expression {
     }
   }
 
-  // A lambda expression for use in higher-order functions.
+  // A lambda expression representing an inline, anonymous function.
   // Lambda expressions have parameters and a body expression that can reference
   // those parameters via LambdaParameterReference in FieldReference.
   message Lambda {
-    // Types of parameters this lambda accepts.
+    // Types of parameters this lambda accepts. The number of entries in this list
+    // defines the arity (number of parameters) of the lambda.
     // The body expression can reference these via LambdaParameterReference with
     // reference corresponding to the position in this list.
     repeated Type parameter_types = 1;
@@ -1196,11 +1197,10 @@ message Expression {
     // the body expression.
     Type return_type = 2;
 
-    // The lambda body expression. Can reference:
-    //  - Lambda parameters via LambdaParameterReference
-    //  - Fields from the input record via RootReference (closure)
-    //  - Fields from outer queries via OuterReference (closure)
-    //  - Results from other expressions via Expression
+    // The lambda body expression. Lambda parameters and closures can be referenced
+    // within the body using FieldReference with the appropriate root_type
+    // (LambdaParameterReference for parameters, RootReference or OuterReference
+    // for closures). The evaluated expression must match return_type.
     Expression body = 3;
   }
 
