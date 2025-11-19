@@ -88,65 +88,6 @@ selection {
 
 References must validate against the schema of the record being referenced. If not, an error is expected.
 
-### Reference Root Types
-
-Field references can originate from different data sources depending on the evaluation context. The root type specifies where the referenced data comes from:
-
-| Root Type                   | Description                                                                                      | Use Case                                    |
-|-----------------------------|--------------------------------------------------------------------------------------------------|---------------------------------------------|
-| RootReference               | References fields from the current input record being processed by the expression               | Standard field access in most operations    |
-| OuterReference              | References fields from an outer query's record in subquery contexts                             | Correlated subqueries                        |
-| Expression                  | References the output of another expression as the root                                          | Accessing fields from computed values        |
-
-!!! note "Lambda Parameters"
-    Lambda parameters are not accessed through FieldReference. Instead, use `LambdaParameterReference` as a direct expression type. See [Lambda Expressions](lambda_functions.md#parameter-references) for details.
-
-#### RootReference
-
-The most common reference type. Refers to fields in the current input record.
-
-**Example**: In `SELECT col1 + col2 FROM table`, both `col1` and `col2` use RootReference to access the current row.
-
-```protobuf
-selection {
-  direct_reference { struct_field { field: 0 } }
-  root_reference { }
-}
-```
-
-#### OuterReference
-
-Used in subqueries to reference fields from the outer query's record. The `steps_out` field indicates how many subquery boundaries to traverse (minimum value: 1).
-
-**Example**: In `SELECT (SELECT COUNT(*) FROM orders WHERE orders.user_id = users.id) FROM users`, the `users.id` reference within the subquery uses OuterReference with `steps_out: 1`.
-
-```protobuf
-selection {
-  direct_reference { struct_field { field: 0 } }
-  outer_reference { steps_out: 1 }
-}
-```
-
-#### Expression
-
-Used when the field reference is rooted in the output of another expression rather than a static data source. This enables accessing fields from computed values.
-
-**Example**: Accessing field 2 from a struct returned by a function:
-
-```protobuf
-selection {
-  expression {
-    scalar_function {
-      # Function that returns a struct
-      ...
-    }
-  }
-  direct_reference { struct_field { field: 2 } }
-}
-```
-
-This is also used to access fields within struct lambda parameters by wrapping a `LambdaParameterReference` expression. See [Lambda Functions](lambda_functions.md#accessing-struct-parameters) for details.
-
 ### Masked Complex Expression 
 
 A masked complex expression is used to do a subselection of a portion of a complex record. It allows a user to specify the portion of the complex object to consume. Imagine you have a schema of (note that structs are lists of fields here, as they are in general in Substrait as field names are not used internally in Substrait):
