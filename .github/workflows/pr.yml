@@ -61,32 +61,6 @@ jobs:
       - run: check-jsonschema --schemafile text/simple_extensions_schema.yaml extensions/*.yaml
       - run: check-jsonschema --schemafile text/simple_extensions_schema.yaml site/examples/**/*.yaml
       - run: check-jsonschema --schemafile text/dialect_schema.yaml dialects/tests/*.yaml
-  protovalidate:
-    name: Validate Protobuf examples
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: bufbuild/buf-setup-action@v1.50.0
-        with:
-          github_token: ${{ github.token }}
-      - name: Validate Lambda Examples
-        run: |
-          for file in site/examples/proto-textformat/lambdas/*.textproto; do
-            echo "Validating $file..."
-            buf convert proto/substrait/algebra.proto \
-              --type substrait.Expression.Lambda \
-              --from "$file#format=txtpb" \
-              --to /dev/null
-          done
-      - name: Validate Field Reference Examples
-        run: |
-          for file in site/examples/proto-textformat/field_references/*.textproto; do
-            echo "Validating $file..."
-            buf convert proto/substrait/algebra.proto \
-              --type substrait.Expression.FieldReference \
-              --from "$file#format=txtpb" \
-              --to /dev/null
-          done
   dry_run_release:
     name: Dry-run release
     runs-on: ubuntu-latest
@@ -104,15 +78,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Install protoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
       - name: Install dependencies
         run: python3 -m pip install -r requirements.txt
+      - name: Generate Python protobuf bindings
+        run: ./scripts/generate_python_protos.sh
       - name: Black
         run: python3 -m black --diff --check .
       - name: Flake8
         run: python3 -m flake8 .
-      - name: Run tests including test_substrait_extension_coverage
-        run: |
-          pytest
+      - name: Run tests
+        run: pytest
   check-proto-prefix:
     name: Check proto-prefix.py
     runs-on: ubuntu-latest

@@ -125,7 +125,7 @@ The number of arguments must match the lambda's `parameter_types` count exactly,
 Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 
 ```protobuf
---8<-- "examples/proto-textformat/lambdas/inline_invocation.textproto"
+--8<-- "examples/proto-textformat/lambda_invocations/inline_invocation.textproto"
 ```
 
 ## See Also

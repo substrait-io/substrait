@@ -1,4 +1,14 @@
-# Substrait Test Format
+# Substrait Tests
+
+## Proto Example Validator
+
+The proto example validator validates protobuf textformat examples in `site/examples/proto-textformat/`.
+
+To run: `./scripts/generate_python_protos.sh && pytest`
+
+Tests are automatically skipped if protobuf bindings aren't generated.
+
+## Substrait Test Format
 
 This document describes the format for Substrait scalar test files.
 A test file consists of the following elements:
