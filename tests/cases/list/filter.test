@@ -1,5 +1,6 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
+### SUBSTRAIT_INCLUDE: '/extensions/functions_comparison.yaml'
 
 # basic: Basic filtering examples
 filter([1, 2, 3, 4, 5]::list<i32>, (x -> gt(x, 2::i32))::func<i32 -> boolean>) = [3, 4, 5]::list<i32>

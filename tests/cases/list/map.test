@@ -1,5 +1,6 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
+### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic.yaml'
 
 # basic: Basic array mapping examples with expressions
 map([1, 2, 3]::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = [2, 4, 6]::list<i32>
