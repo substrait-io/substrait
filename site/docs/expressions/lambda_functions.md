@@ -45,7 +45,7 @@ For a lambda `(x: i32) -> x * 2`:
 
 ### Accessing Fields within Parameters
 
-For scalar parameters, use `LambdaParameterReference` directly (as shown above). For struct or complex type parameters, wrap the `LambdaParameterReference` in a [`FieldReference`](field_references.md#expression) using the `expression` root_type to drill into specific fields:
+For scalar parameters, use `LambdaParameterReference` directly (as shown above). For struct or complex type parameters, wrap the `LambdaParameterReference` in a [`FieldReference`](field_references.md) using the `expression` root_type to drill into specific fields:
 
 ```protobuf
 --8<-- "examples/proto-textformat/field_references/lambda_param_struct_field.textproto"
@@ -83,13 +83,13 @@ Lambda bodies can reference data from outside their parameter list, enabling clo
 
 **Outer Lambda Parameters**: In nested lambdas, use `lambda_depth > 0` in `LambdaParameterReference` to reference an enclosing lambda's parameters (1 = immediate parent, 2 = grandparent, etc.).
 
-**Input Record**: Use [`FieldReference`](field_references.md#rootreference) with `RootReference` to capture fields from the input record being processed:
+**Input Record**: Use [`FieldReference`](field_references.md) with `RootReference` to capture fields from the input record being processed:
 
 ```protobuf
 --8<-- "examples/proto-textformat/field_references/root_reference.textproto"
 ```
 
-**Outer Queries**: Use [`FieldReference`](field_references.md#outerreference) with `OuterReference` to reference outer query records in correlated subquery contexts.
+**Outer Queries**: Use [`FieldReference`](field_references.md) with `OuterReference` to reference outer query records in correlated subquery contexts.
 
 ## Higher-Order Functions
 
