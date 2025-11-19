@@ -2,7 +2,6 @@
 ---
 urn: extension:io.substrait:functions_list
 scalar_functions:
-# --8<-- [start:map-function]
 - name: "map"
   description: >-
     Maps each element of an array using a lambda function.
@@ -20,4 +19,3 @@ scalar_functions:
           value: func<T -> U>
       nullability: MIRROR
       return: list<U>
-# --8<-- [end:map-function]

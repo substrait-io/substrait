@@ -72,7 +72,7 @@ func<(T, U, V) -> W>   # Three parameters
 The `map` function transforms each element of a list using a lambda. Here's how it's defined in the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml):
 
 ```yaml
---8<-- "examples/extensions/lambda_function_example.yaml:map-function"
+--8<-- "examples/extensions/lambda_function_example.yaml"
 ```
 
 The `func<T -> U>` type indicates the lambda accepts one parameter of type `T` and returns type `U`, allowing the list element type to be transformed.
