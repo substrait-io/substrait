@@ -52,11 +52,15 @@ def test_validate_lambda_invocations():
     """Validate lambda invocation examples."""
     examples_dir = Path("site/examples/proto-textformat/lambda_invocations")
     for textproto_file in examples_dir.glob("*.textproto"):
-        validate_example(textproto_file.read_text(), algebra_pb2.Expression.LambdaInvocation)
+        validate_example(
+            textproto_file.read_text(), algebra_pb2.Expression.LambdaInvocation
+        )
 
 
 def test_validate_field_references():
     """Validate field reference examples."""
     examples_dir = Path("site/examples/proto-textformat/field_references")
     for textproto_file in examples_dir.glob("*.textproto"):
-        validate_example(textproto_file.read_text(), algebra_pb2.Expression.FieldReference)
+        validate_example(
+            textproto_file.read_text(), algebra_pb2.Expression.FieldReference
+        )

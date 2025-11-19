@@ -7,7 +7,7 @@ Lambda expressions represent inline, anonymous functions within query plans, ena
 Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions or [invoked directly](#lambda-invocation).
 
 !!! note "Documentation Syntax"
-    This documentation uses the syntax `(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. The type annotations shown here are for clarity only; actual Substrait syntax uses type declarations in the protobuf message or YAML definitions.
+    This documentation uses the syntax `(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. There is no formal syntax specified in the substrait spec for compactly representing lambdas.
 
 ## Lambda Expression Structure
 
@@ -15,7 +15,7 @@ A lambda expression consists of:
 
 | Component          | Description                                                                 | Protobuf Field        | Required |
 |--------------------|-----------------------------------------------------------------------------|-----------------------|----------|
-| Parameter Types    | List of types for the lambda's parameters                                  | `parameter_types`     | Yes      |
+| Parameter Types    | List of types for the lambda's parameters. The length of this list defines the lambda's arity (number of parameters). | `parameter_types`     | Yes      |
 | Return Type        | Type of the value returned by the lambda                                   | `return_type`         | Yes      |
 | Body Expression    | The expression to evaluate (can reference parameters via LambdaParameterReference) | `body`                | Yes      |
 
@@ -34,6 +34,11 @@ Lambda parameters are referenced within the lambda body using `LambdaParameterRe
 |-------------------|----------------------------------------------------------------------|----------|
 | `lambda_depth`    | Number of lambda boundaries to traverse (0 = current lambda)        | 0, 1, 2... |
 | `reference`       | Zero-based index into the lambda's parameter list                   | 0, 1, 2... |
+
+=== "LambdaParameterReference Message"
+    ```proto
+%%% proto.message.Expression.LambdaParameterReference %%%
+    ```
 
 ### Simple Example
 
@@ -84,10 +89,6 @@ Lambda bodies can reference data from outside their parameter list, enabling clo
 **Outer Lambda Parameters**: In nested lambdas, use `lambda_depth > 0` in `LambdaParameterReference` to reference an enclosing lambda's parameters (1 = immediate parent, 2 = grandparent, etc.).
 
 **Input Record**: Use [`FieldReference`](field_references.md) with `RootReference` to capture fields from the input record being processed:
-
-```protobuf
---8<-- "examples/proto-textformat/field_references/root_reference.textproto"
-```
 
 **Outer Queries**: Use [`FieldReference`](field_references.md) with `OuterReference` to reference outer query records in correlated subquery contexts.
 
