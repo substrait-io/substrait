@@ -3,7 +3,7 @@
 exclude = '''
 (
   .*/antlr_parser/.*\.py
-  | .*/proto_gen/.*\.py
+  | gen/.*
 )
 '''
 # pre-commit passes files into Black, rather than letting it discover files
@@ -11,9 +11,9 @@ exclude = '''
 force-exclude = '''
 (
   .*/antlr_parser/.*\.py
-  | .*/proto_gen/.*\.py
+  | gen/.*
 )
 '''
 
 [tool.pytest.ini_options]
-pythonpath = ["proto_gen"]
+pythonpath = ["gen/proto/python"]

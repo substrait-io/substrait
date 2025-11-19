@@ -78,20 +78,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Install protoc
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y protobuf-compiler
+      - uses: bufbuild/buf-setup-action@v1.50.0
+        with:
+          github_token: ${{ github.token }}
       - name: Install dependencies
         run: python3 -m pip install -r requirements.txt
-      - name: Generate Python protobuf bindings
-        run: ./scripts/generate_python_protos.sh
+      - name: Generate protobuf bindings
+        run: buf generate
       - name: Black
         run: python3 -m black --diff --check .
       - name: Flake8
         run: python3 -m flake8 .
-      - name: Run tests
-        run: pytest
+      - name: Run tests including test_substrait_extension_coverage
+        run: |
+          pytest
   check-proto-prefix:
     name: Check proto-prefix.py
     runs-on: ubuntu-latest

@@ -7,5 +7,5 @@ exclude =
     tests/coverage/antlr_parser/*.py,
     # exclude generated type parser
     tests/type/antlr_parser/*.py,
-    # exclude generated protobuf bindings
-    proto_gen/*.py
+    # exclude generated files
+    gen/

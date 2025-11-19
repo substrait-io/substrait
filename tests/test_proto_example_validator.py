@@ -2,29 +2,18 @@
 """Proto Example Validator: Validates protobuf textformat examples.
 
 Ensures examples are valid and use no unknown fields.
-Tests are skipped if protobuf bindings aren't available.
-To generate bindings: ./scripts/generate_python_protos.sh
 """
 from pathlib import Path
 from google.protobuf import text_format
 from google.protobuf.message import Message
 import pytest
-import warnings
 
-# Try to import algebra_pb2, but warn if it's not available
 try:
     from substrait import algebra_pb2
 except ImportError:
-    warnings.warn(
-        "Protobuf bindings not generated. Proto example validator tests will be skipped. "
-        "Run './scripts/generate_python_protos.sh' to generate them.",
-        UserWarning,
+    raise ImportError(
+        "Protobuf bindings not found. Run 'buf generate' to generate them."
     )
-    algebra_pb2 = None
-
-pytestmark = pytest.mark.skipif(
-    algebra_pb2 is None, reason="Protobuf bindings not available"
-)
 
 
 def validate_example(textproto: str, message_class: type[Message]) -> None:
@@ -52,19 +41,22 @@ def test_validation_rejects_empty_messages():
         validate_example("", algebra_pb2.Expression.Lambda)
 
 
-def test_validate_examples():
-    """Validate all protobuf textformat examples."""
-    examples = [
-        ("lambdas", algebra_pb2.Expression.Lambda),
-        ("lambda_invocations", algebra_pb2.Expression.LambdaInvocation),
-        ("field_references", algebra_pb2.Expression.FieldReference),
-    ]
+def test_validate_lambdas():
+    """Validate lambda expression examples."""
+    examples_dir = Path("site/examples/proto-textformat/lambdas")
+    for textproto_file in examples_dir.glob("*.textproto"):
+        validate_example(textproto_file.read_text(), algebra_pb2.Expression.Lambda)
 
-    for directory, message_class in examples:
-        examples_dir = Path("site/examples/proto-textformat") / directory
 
-        if not examples_dir.exists():
-            continue
+def test_validate_lambda_invocations():
+    """Validate lambda invocation examples."""
+    examples_dir = Path("site/examples/proto-textformat/lambda_invocations")
+    for textproto_file in examples_dir.glob("*.textproto"):
+        validate_example(textproto_file.read_text(), algebra_pb2.Expression.LambdaInvocation)
 
-        for textproto_file in examples_dir.glob("*.textproto"):
-            validate_example(textproto_file.read_text(), message_class)
+
+def test_validate_field_references():
+    """Validate field reference examples."""
+    examples_dir = Path("site/examples/proto-textformat/field_references")
+    for textproto_file in examples_dir.glob("*.textproto"):
+        validate_example(textproto_file.read_text(), algebra_pb2.Expression.FieldReference)
