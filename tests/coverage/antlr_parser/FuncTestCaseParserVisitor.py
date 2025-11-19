@@ -30,6 +30,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#dependency.
+    def visitDependency(self, ctx:FuncTestCaseParser.DependencyContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#testGroupDescription.
     def visitTestGroupDescription(self, ctx:FuncTestCaseParser.TestGroupDescriptionContext):
         return self.visitChildren(ctx)

@@ -12,6 +12,7 @@ TripleHash: '###';
 SubstraitScalarTest: 'SUBSTRAIT_SCALAR_TEST';
 SubstraitAggregateTest: 'SUBSTRAIT_AGGREGATE_TEST';
 SubstraitInclude: 'SUBSTRAIT_INCLUDE';
+SubstraitDependency: 'SUBSTRAIT_DEPENDENCY';
 
 FormatVersion
     : 'v' DIGIT+ ('.' DIGIT+)?

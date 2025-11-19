@@ -18,27 +18,40 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         self.file_path = file_path
 
     def visitDoc(self, ctx: FuncTestCaseParser.DocContext):
-        version, include = self.visitHeader(ctx.header())
+        version, primary_include, dependencies = self.visitHeader(ctx.header())
         testcases = []
         for group in ctx.testGroup():
             _, group_tests = self.visit(group)
             for test_case in group_tests:
-                test_case.base_uri = include
+                test_case.base_uri = primary_include
             testcases.extend(group_tests)
 
-        return TestFile(self.file_path, version, include, testcases)
+        return TestFile(
+            self.file_path, version, primary_include, dependencies, testcases
+        )
 
     def visitHeader(self, ctx: FuncTestCaseParser.HeaderContext):
         version = self.visitVersion(ctx.version())
-        include = self.visitInclude(ctx.include())
-        return version, include
+        primary_include = self.visitInclude(ctx.include())
+        dependencies = []
+        for dependency_ctx in ctx.dependency():
+            dependencies.extend(self.visitDependency(dependency_ctx))
+        return version, primary_include, dependencies
 
     def visitVersion(self, ctx: FuncTestCaseParser.VersionContext):
         return ctx.FormatVersion().getText()
 
     def visitInclude(self, ctx: FuncTestCaseParser.IncludeContext):
-        # TODO handle multiple includes
-        return ctx.StringLiteral(0).getText().strip("'")
+        # SUBSTRAIT_INCLUDE has exactly one StringLiteral
+        return ctx.StringLiteral().getText().strip("'")
+
+    def visitDependency(self, ctx: FuncTestCaseParser.DependencyContext):
+        # SUBSTRAIT_DEPENDENCY can have multiple comma-separated StringLiterals
+        # Always return a list for consistency
+        return [
+            ctx.StringLiteral(i).getText().strip("'")
+            for i in range(len(ctx.StringLiteral()))
+        ]
 
     def visitTestGroupDescription(
         self, ctx: FuncTestCaseParser.TestGroupDescriptionContext

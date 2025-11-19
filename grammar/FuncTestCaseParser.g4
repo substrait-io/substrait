@@ -11,7 +11,7 @@ doc
     ;
 
 header
-    : version include
+    : version include dependency*
     ;
 
 version
@@ -19,7 +19,11 @@ version
     ;
 
 include
-    : TripleHash SubstraitInclude Colon StringLiteral (Comma StringLiteral)*
+    : TripleHash SubstraitInclude Colon StringLiteral
+    ;
+
+dependency
+    : TripleHash SubstraitDependency Colon StringLiteral (Comma StringLiteral)*
     ;
 
 testGroupDescription

@@ -4,8 +4,9 @@ This document describes the format for Substrait scalar test files.
 A test file consists of the following elements:
 
 1. Version declaration
-2. Optional include statements
-3. One or more test groups, each containing one or more test cases
+2. Include statement (extension being tested)
+3. Optional dependency statements (helper extensions)
+4. One or more test groups, each containing one or more test cases
 
 ## Syntax
 
@@ -22,10 +23,20 @@ or
 ### SUBSTRAIT_AGGREGATE_TEST: V1
 ```
 
-### Include Statements
-Include statements should have at least one include statement. The include statement specifies the path to substrait extension functions. The include statement must be in the following format:
+### Include Statement
+The include statement specifies the extension file being tested. Each test file must have exactly one include statement. This identifies which extension's functions are being tested and counted for coverage purposes.
+
 ```code
-### SUBSTRAIT_INCLUDE: /extensions/functions_aggregate_approx.yaml
+### SUBSTRAIT_INCLUDE: /extensions/functions_list.yaml
+```
+
+### Dependency Statements (Optional)
+Dependency statements specify additional extension files needed to run the tests, but which are not themselves being tested. These are typically used when test cases need helper functions from other extensions (e.g., lambda expressions that call arithmetic functions while testing list functions).
+
+A single dependency statement can include multiple extensions separated by commas:
+```code
+### SUBSTRAIT_DEPENDENCY: /extensions/functions_arithmetic.yaml
+### SUBSTRAIT_DEPENDENCY: /extensions/functions_comparison.yaml, /extensions/functions_string.yaml
 ```
 
 ### Test Groups
@@ -82,10 +93,12 @@ A testcase with mixed arguments
 
 ```
 doc         := <version>
-               (<include>)+
+               <include>
+               (<dependency>)*
                ((<test_group>)?(<test_case>)+\n)+
 version     := ### SUBSTRAIT_SCALAR_TEST: <test_library_version>
 include     := ### SUBSTRAIT_INCLUDE: <uri>
+dependency  := ### SUBSTRAIT_DEPENDENCY: <uri>(, <uri>)*
 test_group  := # <description>
 test_case   := <function>(<arguments>) ([<options>])? = <result> (#<description>)?
 description := string
@@ -211,3 +224,20 @@ The above test file has two test groups "Common Maths" and "Arithmetic Overflow 
 DEFINE t1(fp32, fp32) = ((20, -20), (-3, 3), (1, -1), (10, -10), (5, -5))
 corr(t1.col0, t1.col1) = -11::fp64
 ```
+
+### Example of a test file with dependencies
+
+```code
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
+### SUBSTRAIT_DEPENDENCY: '/extensions/functions_arithmetic.yaml'
+
+# basic: Basic array mapping examples
+map([1, 2, 3]::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = [2, 4, 6]::list<i32>
+map([5, 10, 15]::list<i32>, (x -> add(x, 1::i32))::func<i32 -> i32>) = [6, 11, 16]::list<i32>
+```
+
+In this example:
+- We are testing `functions_list.yaml` (specifically the `map` function)
+- We need `functions_arithmetic.yaml` as a dependency because the lambda expressions use `multiply` and `add` from that extension
+- Test coverage counts towards `functions_list.yaml`, not `functions_arithmetic.yaml`

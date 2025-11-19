@@ -45,6 +45,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#dependency.
+    def enterDependency(self, ctx:FuncTestCaseParser.DependencyContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#dependency.
+    def exitDependency(self, ctx:FuncTestCaseParser.DependencyContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#testGroupDescription.
     def enterTestGroupDescription(self, ctx:FuncTestCaseParser.TestGroupDescriptionContext):
         pass

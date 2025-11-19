@@ -66,5 +66,6 @@ class TestCase:
 class TestFile:
     path: str
     version: str
-    include: str
+    include: str  # Primary extension being tested
+    dependencies: List[str]  # Additional extensions needed for tests
     testcases: List[TestCase]

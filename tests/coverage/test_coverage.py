@@ -225,6 +225,7 @@ def test_parse_file_add():
     assert test_file.testcases[0].func_name == "add"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
     assert test_file.include == "/extensions/functions_arithmetic.yaml"
+    assert test_file.dependencies == []
 
 
 def test_parse_file_max():
@@ -233,6 +234,7 @@ def test_parse_file_max():
     assert test_file.testcases[0].func_name == "max"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
     assert test_file.include == "/extensions/functions_arithmetic.yaml"
+    assert test_file.dependencies == []
 
 
 def test_parse_file_lt_datetime():
