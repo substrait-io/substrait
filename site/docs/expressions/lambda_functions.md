@@ -86,11 +86,17 @@ The `func<T -> U>` type indicates the lambda accepts one parameter of type `T` a
 
 Lambda bodies can reference data from outside their parameter list, enabling closures. This is accomplished through normal expression mechanisms:
 
-**Outer Lambda Parameters**: In nested lambdas, use `lambda_depth > 0` in `LambdaParameterReference` to reference an enclosing lambda's parameters (1 = immediate parent, 2 = grandparent, etc.).
+### Outer Lambda Parameters
 
-**Input Record**: Use [`FieldReference`](field_references.md) with `RootReference` to capture fields from the input record being processed:
+In nested lambdas, use `lambda_depth > 0` in `LambdaParameterReference` to reference an enclosing lambda's parameters (1 = immediate parent, 2 = grandparent, etc.).
 
-**Outer Queries**: Use [`FieldReference`](field_references.md) with `OuterReference` to reference outer query records in correlated subquery contexts.
+### Input Record References
+
+Use [`FieldReference`](field_references.md) with `RootReference` to capture fields from the input record being processed.
+
+### Outer Query References
+
+Use [`FieldReference`](field_references.md) with `OuterReference` to reference outer query records in correlated subquery contexts.
 
 ## Higher-Order Functions
 
