@@ -1,0 +1,912 @@
+# Substrait Dialect Schema Definition
+# This schema defines the structure for Substrait dialect files, which specify how
+# functions and types are supported in different execution environments.
+
+$id: http://substrait.io/schemas/dialect
+$schema: https://json-schema.org/draft/2020-12/schema
+title: Dialect
+additionalProperties: false
+type: object
+
+properties:
+  name:
+    type: string
+    description: Optional name of the dialect (e.g., "MySQL", "PostgreSQL", "Spark").
+  dependencies:
+    type: object
+    description: >
+      A map of extension files depended on by this dialect.
+      Keys are aliases for extensions, which are used within the dialect.
+      Values are URNs.
+    additionalProperties:
+      type: string
+    minProperties: 1
+
+  supported_types:
+    type: array
+    uniqueItems: true
+    description: >
+      Types that are supported by this dialect. If not present or empty, all
+      standard types are supported.
+    items:
+      oneOf:
+        - enum:
+          - BOOL
+          - I8
+          - I16
+          - I32
+          - I64
+          - FP32
+          - FP64
+          - BINARY
+          - FIXED_BINARY
+          - STRING
+          - VARCHAR
+          - FIXED_CHAR
+          - PRECISION_TIME
+          - PRECISION_TIMESTAMP
+          - PRECISION_TIMESTAMP_TZ
+          - DATE
+          - TIME
+          - INTERVAL_COMPOUND
+          - INTERVAL_DAY
+          - INTERVAL_YEAR
+          - UUID
+          - DECIMAL
+          - STRUCT
+          - LIST
+          - MAP
+        - $ref: "#/definitions/type_bool"
+        - $ref: "#/definitions/type_i8"
+        - $ref: "#/definitions/type_i16"
+        - $ref: "#/definitions/type_i32"
+        - $ref: "#/definitions/type_i64"
+        - $ref: "#/definitions/type_fp32"
+        - $ref: "#/definitions/type_fp64"
+        - $ref: "#/definitions/type_binary"
+        - $ref: "#/definitions/type_fixed_binary"
+        - $ref: "#/definitions/type_string"
+        - $ref: "#/definitions/type_varchar"
+        - $ref: "#/definitions/type_fixed_char"
+        - $ref: "#/definitions/type_precision_time"
+        - $ref: "#/definitions/type_precision_timestamp"
+        - $ref: "#/definitions/type_precision_timestamp_tz"
+        - $ref: "#/definitions/type_date"
+        - $ref: "#/definitions/type_time"
+        - $ref: "#/definitions/type_interval_compound"
+        - $ref: "#/definitions/type_interval_day"
+        - $ref: "#/definitions/type_interval_year"
+        - $ref: "#/definitions/type_uuid"
+        - $ref: "#/definitions/type_decimal"
+        - $ref: "#/definitions/type_struct"
+        - $ref: "#/definitions/type_list"
+        - $ref: "#/definitions/type_map"
+        - $ref: "#/definitions/type_user_defined"
+
+  supported_relations:
+    type: array
+    uniqueItems: true
+    description: >
+      Relations that are supported by this dialect.  If not present or empty,
+      all relations are supported.
+    items:
+      oneOf:
+        - enum:
+          - READ
+          - FILTER
+          - FETCH
+          - AGGREGATE
+          - SORT
+          - JOIN
+          - PROJECT
+          - SET
+          - CROSS
+          - REFERENCE
+          - WRITE
+          - DDL
+          - UPDATE
+          - HASH_JOIN
+          - MERGE_JOIN
+          - NESTED_LOOP_JOIN
+          - CONSISTENT_PARTITION_WINDOW
+          - EXCHANGE
+          - EXPAND
+        - $ref: "#/definitions/read_relation"
+        - $ref: "#/definitions/filter_relation"
+        - $ref: "#/definitions/fetch_relation"
+        - $ref: "#/definitions/aggregate_relation"
+        - $ref: "#/definitions/sort_relation"
+        - $ref: "#/definitions/join_relation"
+        - $ref: "#/definitions/project_relation"
+        - $ref: "#/definitions/set_relation"
+        - $ref: "#/definitions/extension_single_relation"
+        - $ref: "#/definitions/extension_multi_relation"
+        - $ref: "#/definitions/extension_leaf_relation"
+        - $ref: "#/definitions/cross_relation"
+        - $ref: "#/definitions/reference_relation"
+        - $ref: "#/definitions/write_relation"
+        - $ref: "#/definitions/ddl_relation"
+        - $ref: "#/definitions/update_relation"
+        - $ref: "#/definitions/hash_join_relation"
+        - $ref: "#/definitions/merge_join_relation"
+        - $ref: "#/definitions/nested_loop_join_relation"
+        - $ref: "#/definitions/consistent_partition_window_relation"
+        - $ref: "#/definitions/exchange_relation"
+        - $ref: "#/definitions/expand_relation"
+
+  supported_expressions:
+    type: array
+    uniqueItems: true
+    description: >
+      Expressions that are supported by this dialect.  If not present or empty,
+      all expressions are supported.
+    items:
+      oneOf:
+        - enum:
+          - LITERAL
+          - SELECTION
+          - SCALAR_FUNCTION
+          - WINDOW_FUNCTION
+          - IF_THEN
+          - SWITCH
+          - SINGULAR_OR_LIST
+          - MULTI_OR_LIST
+          - CAST
+          - SUBQUERY
+          - NESTED
+          - DYNAMIC_PARAMETER
+        - $ref: "#/definitions/literal_expression"
+        - $ref: "#/definitions/selection_expression"
+        - $ref: "#/definitions/scalar_function_expression"
+        - $ref: "#/definitions/window_function_expression"
+        - $ref: "#/definitions/if_then_expression"
+        - $ref: "#/definitions/switch_expression"
+        - $ref: "#/definitions/singular_or_list_expression"
+        - $ref: "#/definitions/multi_or_list_expression"
+        - $ref: "#/definitions/cast_expression"
+        - $ref: "#/definitions/subquery_expression"
+        - $ref: "#/definitions/nested_expression"
+        - $ref: "#/definitions/dynamic_parameter_expression"
+
+  supported_scalar_functions:
+    type: array
+    description: Regular functions that operate on scalar values.
+    items:
+      $ref: "#/definitions/dialect_function"
+  supported_aggregate_functions:
+    type: array
+    description: Functions that aggregate multiple rows into a single result.
+    items:
+      $ref: "#/definitions/dialect_function"
+  supported_window_functions:
+    type: array
+    description: Functions that operate over a window of rows.
+    items:
+      $ref: "#/definitions/dialect_function"
+
+definitions:
+  # Definitions used for functions
+  dialect_function:
+    type: object
+    additionalProperties: false
+    required: [source, name, supported_impls]
+    properties:
+      source:
+        type: string
+        description: Dependency (alias) in which the function is declared.
+      name:
+        type: string
+        description: >
+          The name of the function as declared in the extension it is defined in.
+      system_metadata:
+        type: object
+        description: system specific metadata for the function
+        $ref: "#/definitions/system_function_metadata"
+      required_options:
+        type: object
+        description: >
+          Function-specific options that must be supported by the dialect.  These
+          are the exact list of options that must be used.  If no options are
+          listed here, no options must be present.
+      supported_impls:
+        type: array
+        description: >
+          List of one or more implementations supported by this function. Use
+          argument signatures to identify the implementations.
+        minItems: 1
+        items:
+          type: string
+      variadic:
+        type: object
+        description: >
+          If present, indicates the function accepts a variable number of arguments.
+          Specifies the minimum and/or maximum number of arguments allowed.
+        properties:
+          min:
+            type: integer
+            description: "Minimum number of arguments required"
+            minimum: 1
+          max:
+            type: integer
+            description: "Maximum number of arguments allowed"
+            minimum: 1
+        additionalProperties: false
+  system_function_metadata:
+    type: object
+    additionalProperties: false
+    description: >
+      System specific metadata for use in mapping Substrait to and from
+      Common metadata fields are defined for use across dialects.
+      Individual dialects may include additional metadata to serve their purposes.
+    properties:
+      name:
+        type: string
+        description: >
+          The name for this function in the system modelled by the dialect.
+          For example, "+" might be the system name for "add".
+      notation:
+        type: string
+        enum:
+          - INFIX
+          - POSTFIX
+          - PREFIX
+          - FUNCTION
+        default: FUNCTION
+        description: >
+          The notation used to invoke this function in the system modelled by
+          the dialect. For example, a function with system_name "+" could be
+          invoked as follow:
+          * INFIX:    "a + b"
+          * POSTFIX:  "a b +",
+          * PREFIX:   "+ a b"
+          * FUNCTION: "func(a, b)"
+
+  # Definitions used for types
+  type_base:
+    type: object
+    description: Dialect properties shared by all types
+    properties:
+      system_metadata:
+        type: object
+        description: system specific metadata for the type
+        $ref: "#/definitions/system_type_metadata"
+  system_type_metadata:
+    type: object
+    additionalProperties: false
+    description: >
+      System specific metadata for use in mapping Substrait to and from the system representation.
+      Common metadata fields are defined for use across dialects.
+      Individual dialects may include additional metadata to serve their purposes.
+    properties:
+      name:
+        type: string
+        description: >
+          The name for this type in the system modelled by the dialect.
+      supported_as_column:
+        type: boolean
+        description: >
+          Whether this type can be used as a column in a table.  Types listed
+          here are always supported as literals.
+  type_bool:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: BOOL
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_i8:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: I8
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_i16:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: I16
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_i32:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: I32
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_i64:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: I64
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_fp32:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: FP32
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_fp64:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: FP64
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_binary:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: BINARY
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_fixed_binary:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: FIXED_BINARY
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_string:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: STRING
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_varchar:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: VARCHAR
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_fixed_char:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: FIXED_CHAR
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_precision_time:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: PRECISION_TIME
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_precision_timestamp:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: PRECISION_TIMESTAMP
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_precision_timestamp_tz:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: PRECISION_TIMESTAMP_TZ
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_date:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: DATE
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_time:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: TIME
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_interval_compound:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: INTERVAL_COMPOUND
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_interval_day:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: INTERVAL_DAY
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_interval_year:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: INTERVAL_YEAR
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_uuid:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: UUID
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_decimal:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: DECIMAL
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_struct:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: STRUCT
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_list:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: LIST
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_map:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: MAP
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_user_defined:
+    type: object
+    additionalProperties: false
+    required: [type, source, name]
+    properties:
+      type:
+        const: USER_DEFINED
+      source:
+        type: string
+        description: "Dependency (alias) where this type is declared"
+      name:
+        type: string
+        description: >
+          The name of the type as declared in the extension it is defined in.
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+
+  # Definitions used for relations
+  join_types:
+    type: array
+    uniqueItems: true
+    description: The list of possible join types used by join relations.
+    items:
+      enum:
+        - INNER
+        - OUTER
+        - LEFT
+        - RIGHT
+        - LEFT_SEMI
+        - RIGHT_SEMI
+        - LEFT_ANTI
+        - RIGHT_ANTI
+        - LEFT_SINGLE
+        - RIGHT_SINGLE
+        - LEFT_MARK
+        - RIGHT_MARK
+  read_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: READ
+      read_types:
+        type: array
+        uniqueItems: true
+        description: The list of possible read types used by the read relation.
+        items:
+          enum:
+            - VIRTUAL_TABLE
+            - LOCAL_FILES
+            - NAMED_TABLE
+            - EXTENSION_TABLE
+            - ICEBERG_TABLE
+    required: [relation]
+  filter_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: FILTER
+    required: [relation]
+  fetch_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: FETCH
+    required: [relation]
+  aggregate_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: AGGREGATE
+    required: [relation]
+  sort_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: SORT
+    required: [relation]
+  join_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: JOIN
+      join_types:
+        $ref: "#/definitions/join_types"
+    required: [relation]
+  project_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: PROJECT
+    required: [relation]
+  set_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: SET
+      operations:
+        type: array
+        uniqueItems: true
+        description: The list of valid set operations used by a set relation.
+        items:
+          enum:
+            - MINUS_PRIMARY
+            - MINUS_PRIMARY_ALL
+            - MINUS_MULTISET
+            - INTERSECTION_PRIMARY
+            - INTERSECTION_MULTISET
+            - INTERSECTION_MULTISET_ALL
+            - UNION_DISTINCT
+            - UNION_ALL
+    required: [relation]
+  extension_single_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: EXTENSION_SINGLE
+      message_types:
+        type: array
+        uniqueItems: true
+        description: >
+          The list of supported message types.  Use the URI (e.g.
+          type.googleapis.com/google.profile.Person) that is related to the
+          detail field.
+        items:
+          type: string
+    required: [relation]
+  extension_multi_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: EXTENSION_MULTI
+      message_types:
+        type: array
+        uniqueItems: true
+        description: >
+          The list of supported message types.  Use the URI (e.g.
+          type.googleapis.com/google.profile.Person) that is related to the
+          detail field.
+        items:
+          type: string
+    required: [relation]
+  extension_leaf_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: EXTENSION_LEAF
+      message_types:
+        type: array
+        uniqueItems: true
+        description: >
+          The list of supported message types.  Use the URI (e.g.
+          type.googleapis.com/google.profile.Person) that is related to the
+          detail field.
+        items:
+          type: string
+    required: [relation]
+  cross_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: CROSS
+    required: [relation]
+  reference_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: REFERENCE
+    required: [relation]
+  write_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: WRITE
+      write_types:
+        type: array
+        uniqueItems: true
+        description: The list of valid write types a write relation can perform.
+        items:
+          enum:
+            - NAMED_TABLE
+            - EXTENSION_TABLE
+    required: [relation]
+  ddl_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: DDL
+      write_types:
+        type: array
+        uniqueItems: true
+        description: The list of valid types a ddl relation can operate on.
+        items:
+          enum:
+            - NAMED_OBJECT
+            - EXTENSION_OBJECT
+    required: [relation]
+  update_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: UPDATE
+    required: [relation]
+  hash_join_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: HASH_JOIN
+      join_types:
+        $ref: "#/definitions/join_types"
+    required: [relation]
+  merge_join_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: MERGE_JOIN
+      join_types:
+        $ref: "#/definitions/join_types"
+    required: [relation]
+  nested_loop_join_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: NESTED_LOOP_JOIN
+      join_types:
+        $ref: "#/definitions/join_types"
+    required: [relation]
+  consistent_partition_window_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: CONSISTENT_PARTITION_WINDOW
+    required: [relation]
+  exchange_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: EXCHANGE
+      kinds:
+        type: array
+        uniqueItems: true
+        description: The list of valid exchanges an exchange relation can perform.
+        items:
+          enum:
+            - SCATTER_BY_FIELDS
+            - SINGLE_TARGET
+            - MULTI_TARGET
+            - ROUND_ROBIN
+            - BROADCAST
+    required: [relation]
+  expand_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: EXPAND
+      field_types:
+        type: array
+        uniqueItems: true
+        description: The valid methods that control how an expand relation behaves.
+        items:
+          enum:
+            - SWITCHING_FIELD
+            - CONSTANT_FIELD
+    required: [relation]
+
+  # Definitions used for expressions
+  literal_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: LITERAL
+      # Type restriction not needed as types are restricted explicitly by supported_types.
+    required: [expression]
+  selection_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: SELECTION
+    required: [expression]
+  scalar_function_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: SCALAR_FUNCTION
+    required: [expression]
+  window_function_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: WINDOW_FUNCTION
+    required: [expression]
+  if_then_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: IF_THEN
+    required: [expression]
+  switch_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: SWITCH
+    required: [expression]
+  singular_or_list_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: SINGULAR_OR_LIST
+    required: [expression]
+  multi_or_list_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: MULTI_OR_LIST
+    required: [expression]
+  # embedded_function_expression not included due to insufficient proto support.
+  cast_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: CAST
+      failure_options:
+        type: array
+        uniqueItems: true
+        description: The permissible failure options for cast operations.
+        items:
+          enum:
+            - RETURN_NULL
+            - THROW_EXCEPTION
+    required: [expression]
+  subquery_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: SUBQUERY
+      subquery_types:
+        type: array
+        description: The possible subquery types for a subquery relation.
+        items:
+          enum:
+            - SCALAR
+            - IN_PREDICATE
+            - SET_PREDICATE
+            - SET_COMPARISON
+    required: [expression]
+  nested_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: NESTED
+      nested_types:
+        type: array
+        description: The valid nested types.
+        items:
+          enum:
+            - STRUCT
+            - LIST
+            - MAP
+    required: [expression]
+  dynamic_parameter_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: DYNAMIC_PARAMETER
+    required: [expression]

@@ -1,6 +1,45 @@
 Release Notes
 ---
 
+## [0.78.0](https://github.com/substrait-io/substrait/compare/v0.77.0...v0.78.0) (2025-11-16)
+
+### ⚠ BREAKING CHANGES
+
+* `type_reference` with value **0** is encoded
+differently on wire. However, the usage of `type_reference` in generated
+consumer code does not break in practice. **New consumer should consider
+`type_reference` is set to zero when no oneof is set.** See [Wire
+
+### Features
+
+* support type alias in user defined literal ([#868](https://github.com/substrait-io/substrait/issues/868)) ([cd99f03](https://github.com/substrait-io/substrait/commit/cd99f033ec3cf8170d5e76affe31f3262f60d4e7)), closes [#Wire-Encoding-Change](https://github.com/substrait-io/substrait/issues/Wire-Encoding-Change) [#857](https://github.com/substrait-io/substrait/issues/857)
+
+## [0.77.0](https://github.com/substrait-io/substrait/compare/v0.76.0...v0.77.0) (2025-10-05)
+
+### Features
+
+* per plan type aliases ([#857](https://github.com/substrait-io/substrait/issues/857)) ([dfd04c1](https://github.com/substrait-io/substrait/commit/dfd04c15caa12845f77db50688fdc16f59fdc9d0))
+
+## [0.76.0](https://github.com/substrait-io/substrait/compare/v0.75.0...v0.76.0) (2025-09-21)
+
+### Features
+
+* codify Substrait dialects ([#816](https://github.com/substrait-io/substrait/issues/816)) ([b8090b2](https://github.com/substrait-io/substrait/commit/b8090b247eb8f9f05dcf46048f5e8145ac719318))
+
+## [0.75.0](https://github.com/substrait-io/substrait/compare/v0.74.1...v0.75.0) (2025-09-14)
+
+### Features
+
+* add AdvancedExtension to SavedComputation and LoadedComputation ([#858](https://github.com/substrait-io/substrait/issues/858)) ([9ea478a](https://github.com/substrait-io/substrait/commit/9ea478af81a6971e378afb1ba28c1151ba276bc4))
+* canonicalize extension URNs ([#859](https://github.com/substrait-io/substrait/issues/859)) ([06cadc8](https://github.com/substrait-io/substrait/commit/06cadc8bc6dc5d031083b6094b0ece479219966e))
+
+## [0.74.1](https://github.com/substrait-io/substrait/compare/v0.74.0...v0.74.1) (2025-08-10)
+
+### Bug Fixes
+
+* make simple extensions schema accessible at specified URL ([#848](https://github.com/substrait-io/substrait/issues/848)) ([c0c74ea](https://github.com/substrait-io/substrait/commit/c0c74ea7f17c2d8f5d96e24d2c0dbb664f8126f9))
+* typo on window functions site page ([#825](https://github.com/substrait-io/substrait/issues/825)) ([36c1fd8](https://github.com/substrait-io/substrait/commit/36c1fd86e8c2dbfef879e58d42e91f303e429314))
+
 ## [0.74.0](https://github.com/substrait-io/substrait/compare/v0.73.0...v0.74.0) (2025-06-22)
 
 ### Features

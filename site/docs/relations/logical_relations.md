@@ -70,13 +70,24 @@ provide the consumer with more information on how to retrieve the data.
 | -------- | ---------------------------------------------------------------- | ----------------------- |
 | Names    | A list of namespaced strings that, together, form the table name | Required (at least one) |
 
-#### Files Type
+#### Local Files
+
+Local files are references to files which are locally-accessible. This may include files located in the receiving engine's file system, or files accessible as blob storage (e.g., S3, GCS, Azure Blob Storage). The method of file retrieval is determined by the URI's protocol (e.g. `file://`, `s3://`, `gs://`).
 
 | Property                    | Description                                                       | Required |
 | --------------------------- | ----------------------------------------------------------------- | -------- |
 | Items                       | An array of Items (path or path glob) associated with the read.   | Required |
-| Format per item             | Enumeration of available formats. Only current option is PARQUET. | Required |
-| Slicing parameters per item | Information to use when reading a slice of a file.                | Optional |
+
+##### File Formats
+
+Included in the definition of the local files above is a specification of the file type. The currently available file types are: 
+- [Parquet](https://parquet.apache.org/)
+- [Arrow](https://arrow.apache.org/)
+- [ORC](https://orc.apache.org/)
+- [Drwf](https://github.com/facebookarchive/hive-dwrf)
+- [Delimiter Separated Text](https://en.wikipedia.org/wiki/Delimiter-separated_values)
+
+There is also an `Any` field, allowing extension beyond the available formats.
 
 ##### Slicing Files
 
@@ -88,12 +99,6 @@ Many file formats consist of indivisible "chunks" of data (e.g. Parquet row grou
 happens the consumer can determine which slice a particular chunk belongs to. For example, one
 possible approach is that a chunk should only be read if the midpoint of the chunk (dividing by
 2 and rounding down) is contained within the asked-for byte range.
-
-=== "ReadRel Message"
-
-    ```proto
-%%% proto.algebra.ReadRel %%%
-    ```
 
 #### Iceberg Table Type
 
@@ -108,6 +113,12 @@ Points to an [Iceberg metadata file](https://iceberg.apache.org/spec/#table-meta
 | metadata_uri    | A URI for an Iceberg metadata file. This current snapshot will be read from this file.  | Required |
 | snapshot_id    | The snapshot that should be read using id. If not provided, the current snapshot is read. Only one of snapshot_id or snapshot_timestamp should be set. | Optional |
 | snapshot_timestamp    | The snapshot that should be read using timestamp. If not provided, the current snapshot is read. | Optional |
+
+=== "ReadRel Message"
+
+    ```proto
+%%% proto.algebra.ReadRel %%%
+    ```
 
 
 ## Filter Operation

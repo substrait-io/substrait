@@ -52,6 +52,9 @@ message Type {
     // encountered, treat it as being non-nullable and having the default
     // variation.
     uint32 user_defined_type_reference = 31 [deprecated = true];
+
+    // Reference an aliased type in `Plan.type_aliases`.
+    TypeAliasReference alias = 37;
   }
 
   enum Nullability {
@@ -243,6 +246,27 @@ message Type {
       string string = 6;
     }
   }
+
+  message TypeAliasReference {
+    uint32 type_alias_reference = 1;
+    // Nullability of the referenced type alias. Must be specified.
+    Nullability nullability = 2;
+  }
+}
+
+message TypeAlias {
+  // A surrogate key used in the context of a single plan to reference a
+  // specific type alias.
+  uint32 type_alias_anchor = 1;
+
+  // A concrete type to be aliased.
+  //
+  // * All type parameters must be specified.
+  // * Cannot directly be another alias.
+  // * Type parameters can reference other aliased types as long as no circular dependencies are introduced.
+  // * Nullability of aliased type is **ignored**. Nullability must be specified when the aliased type is referenced.
+  // * Type variation may be specified in the aliased type.
+  Type type = 2;
 }
 
 // A message for modeling name/type pairs.

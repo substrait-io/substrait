@@ -1,5 +1,6 @@
 %YAML 1.2
 ---
+urn: extension:io.substrait:functions_datetime
 scalar_functions:
   -
     name: extract
