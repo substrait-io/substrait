@@ -35,7 +35,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         primary_include = self.visitInclude(ctx.include())
         dependencies = []
         for dependency_ctx in ctx.dependency():
-            dependencies.extend(self.visitDependency(dependency_ctx))
+            dependencies.append(self.visitDependency(dependency_ctx))
         return version, primary_include, dependencies
 
     def visitVersion(self, ctx: FuncTestCaseParser.VersionContext):
@@ -46,12 +46,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return ctx.StringLiteral().getText().strip("'")
 
     def visitDependency(self, ctx: FuncTestCaseParser.DependencyContext):
-        # SUBSTRAIT_DEPENDENCY can have multiple comma-separated StringLiterals
-        # Always return a list for consistency
-        return [
-            ctx.StringLiteral(i).getText().strip("'")
-            for i in range(len(ctx.StringLiteral()))
-        ]
+        return ctx.StringLiteral().getText()
 
     def visitTestGroupDescription(
         self, ctx: FuncTestCaseParser.TestGroupDescriptionContext

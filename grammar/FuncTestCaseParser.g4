@@ -23,7 +23,7 @@ include
     ;
 
 dependency
-    : TripleHash SubstraitDependency Colon StringLiteral (Comma StringLiteral)*
+    : TripleHash SubstraitDependency Colon StringLiteral
     ;
 
 testGroupDescription
