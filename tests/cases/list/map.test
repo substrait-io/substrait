@@ -2,13 +2,10 @@
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
 ### SUBSTRAIT_DEPENDENCY: '/extensions/functions_arithmetic.yaml'
 
-# basic: Basic array mapping examples with expressions
+# basic: Basic array mapping examples
 map([1, 2, 3]::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = [2, 4, 6]::list<i32>
 map([5, 10, 15]::list<i32>, (x -> add(x, 1::i32))::func<i32 -> i32>) = [6, 11, 16]::list<i32>
 map([]::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = []::list<i32>
-
-# function_calls: Using function call syntax
-map([1, 2, 3]::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = [2, 4, 6]::list<i32>
 
 # nullable_elements: Handling nullable elements
 map([1, Null, 3]::list<i32?>, (x -> multiply(x, 2::i32))::func<i32? -> i32?>) = [2, Null, 6]::list<i32?>

@@ -27,12 +27,11 @@ scalar_functions:
       Returns a new array containing only elements for which the predicate
       function returns true.
 
-      The lambda receives one parameter (the current element) and must return
-      a boolean value. Elements for which the lambda returns true are included
-      in the result.
+      The lambda receives one parameter (the current element) and must return a
+      boolean.
 
-      If the predicate returns NULL for an element, that element is excluded
-      from the result (treated as false).
+      Elements for which the lambda returns true are included in the
+      result. Elements for which the lambda returns false or null are excluded.
     impls:
       - args:
           - name: input
