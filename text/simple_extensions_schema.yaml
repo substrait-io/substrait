@@ -7,6 +7,7 @@ required: [urn]
 properties:
   urn:
     type: string
+    pattern: "^extension:[a-zA-Z0-9_.-]+:[a-zA-Z0-9_.-]+$"
   dependencies:
     # For reusing type classes and type variations from other extension files.
     # The keys are namespace identifiers that you can then use as dot-separated
