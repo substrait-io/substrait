@@ -42,8 +42,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return ctx.FormatVersion().getText()
 
     def visitInclude(self, ctx: FuncTestCaseParser.IncludeContext):
-        # SUBSTRAIT_INCLUDE has exactly one StringLiteral
-        return ctx.StringLiteral().getText().strip("'")
+        # TODO handle multiple includes
+        return ctx.StringLiteral(0).getText().strip("'")
 
     def visitDependency(self, ctx: FuncTestCaseParser.DependencyContext):
         return ctx.StringLiteral().getText()

@@ -19,7 +19,7 @@ version
     ;
 
 include
-    : TripleHash SubstraitInclude Colon StringLiteral
+    : TripleHash SubstraitInclude Colon StringLiteral (Comma StringLiteral)*
     ;
 
 dependency
