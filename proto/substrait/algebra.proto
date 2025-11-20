@@ -1123,8 +1123,13 @@ message Expression {
     }
 
     message UserDefined {
-      // points to a type_anchor defined in this plan
-      uint32 type_reference = 1;
+      oneof type_anchor_type {
+        // points to a type_anchor defined in this plan
+        uint32 type_reference = 1;
+
+        // points to a type_alias_anchor defined in this plan.
+        uint32 type_alias_reference = 5;
+      }
 
       // The parameters to be bound to the type class, if the type class is
       // parameterizable.
