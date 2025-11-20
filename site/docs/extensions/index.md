@@ -133,7 +133,7 @@ Advanced extensions provide a way to embed custom functionality that goes beyond
 Advanced extensions come in several main forms, discussed below:
 
 1. Embedded extensions: These use the `AdvancedExtension` message for adding custom data to existing Substrait messages
-2. Custom read/write types: for defining new ways to read from or write to data sources
+2. Custom read/write types: For defining new ways to read from or write to data sources
 3. Custom relation types: For defining entirely new relational operations
 
 ### Embedded Extensions via `AdvancedExtension`
@@ -208,6 +208,6 @@ The third form of advanced extensions provides entirely new relational operation
 
 These extension relations are first-class relation types in Substrait and can be used anywhere a standard relation would be used.
 
-!!! note "Interoperability Guidance"
+#### When to Use What
 
-    Custom relations are the most flexible but least interoperable option. In most cases it is better to use enhancements to existing relations rather than defining new custom relations, as it means existing code patterns can easily be extended to work with the additional properties.
+Custom relations are the most flexible but least interoperable option. In most cases it is better to use enhancements to existing relations rather than defining new custom relations, as it means existing code patterns can easily be extended to work with the additional properties.
