@@ -133,22 +133,15 @@ Advanced extensions provide a way to embed custom functionality that goes beyond
 Advanced extensions come in several main forms, discussed below:
 
 1. Embedded extensions: These use the `AdvancedExtension` message for adding custom data to existing Substrait messages
-2. Custom relation types: For defining entirely new relational operations
-3. Custom read/write types: for defining new ways to read from or write to data sources
+2. Custom read/write types: for defining new ways to read from or write to data sources
+3. Custom relation types: For defining entirely new relational operations
 
 ### Embedded Extensions via `AdvancedExtension`
 
 The simplest forms of advanced extensions use the `AdvancedExtension` message, which contains two types of extensions:
 
 ```proto
-message AdvancedExtension {
-  // Optimizations are helpful information that don't influence semantics.
-  // May be ignored by a consumer.
-  repeated google.protobuf.Any optimization = 1;
-
-  // Enhancements alter semantics. Cannot be ignored by a consumer.
-  google.protobuf.Any enhancement = 2;
-}
+%%% proto.extensions.AdvancedExtension %%%
 ```
 
 !!! note "Enhancements vs Optimizations"
@@ -189,9 +182,23 @@ The `AdvancedExtension` message can be attached to various parts of a Substrait 
 | **`WriteRel.NamedObjectWrite`**   | Custom metadata to write targets            |
 | **`DdlRel.NamedObjectWrite`**     | Custom metadata to DDL targets              |
 
+### Custom Read and Write Types
+
+The second form of advanced extensions allows you to define extension data sources and destinations:
+
+| Extension Type                 | Description                          | Examples                     |
+| ------------------------------ | ------------------------------------ | ---------------------------- |
+| **`ReadRel.ExtensionTable`**   | Define new table source types        | APIs, specialized formats    |
+| **`WriteRel.ExtensionObject`** | Define new write destination types   | APIs, specialized formats    |
+| **`DdlRel.ExtensionObject`**   | Define new DDL destination types     | Catalogs, schema registries  |
+
+!!! note "Consider Core Specification First"
+
+    Before implementing custom read/write types as extensions, consider checking with the Substrait community. If your scenario turns out to be common enough, it may be more appropriate to add it directly to the specification rather than as an extension.
+
 ### Custom Relations
 
-The second form of advanced extensions provides entirely new relational operations via dedicated extension relation types. These allow you to define custom relations while maintaining proper integration with the type system:
+The third form of advanced extensions provides entirely new relational operations via dedicated extension relation types. These allow you to define custom relations while maintaining proper integration with the type system:
 
 | Relation Type          | Description                                     | Examples |
 | ---------------------- | ----------------------------------------------- | -------- |
@@ -204,17 +211,3 @@ These extension relations are first-class relation types in Substrait and can be
 !!! note "Interoperability Guidance"
 
     Custom relations are the most flexible but least interoperable option. In most cases it is better to use enhancements to existing relations rather than defining new custom relations, as it means existing code patterns can easily be extended to work with the additional properties.
-
-### Custom Read and Write Types
-
-The third form of advanced extensions allows you to define extension data sources and destinations:
-
-| Extension Type                 | Description                          | Examples                     |
-| ------------------------------ | ------------------------------------ | ---------------------------- |
-| **`ReadRel.ExtensionTable`**   | Define new table source types        | APIs, specialized formats    |
-| **`WriteRel.ExtensionObject`** | Define new write destination types   | APIs, specialized formats    |
-| **`DdlRel.ExtensionObject`**   | Define new DDL destination types     | Catalogs, schema registries  |
-
-!!! note "Consider Core Specification First"
-
-    Before implementing custom read/write types as extensions, consider checking with the Substrait community. If your scenario turns out to be common enough, it may be more appropriate to add it directly to the specification rather than as an extension.
