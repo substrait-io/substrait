@@ -330,6 +330,8 @@ $defs:
           properties:
             args:
               $ref: "#/$defs/arguments"
+            variadic:
+              $ref: "#/$defs/variadicBehavior"
             return:
               # The output schema (DerivationExpression, typically ExpressionNamedStruct).
               # This can be a static struct definition or a dynamic derivation based on

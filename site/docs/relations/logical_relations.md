@@ -116,6 +116,8 @@ The table function operator invokes a function that produces a relation (zero or
 
 Like scalar function return types, table function schemas can be concrete types or reference type parameters from arguments. The schema is expressed as an `ExpressionNamedStruct` and is either derived from the function signature or must be explicitly provided when it depends on runtime data content. It is preferred to explicitly provide a schema derivation in the YAML file when possible.
 
+Table functions can be **variadic**, meaning the last parameter can be repeated one or more times (specified via the `variadic` field in YAML).
+
 | Signature            | Value                                       |
 | -------------------- | ------------------------------------------- |
 | Inputs               | 0 (leaf operator)                           |
@@ -127,14 +129,13 @@ Like scalar function return types, table function schemas can be concrete types 
 | ------------------ | ------------------------------------------------------------ | -------- |
 | Function Reference | Points to a function_anchor defined in the plan, referencing a table function in the extension YAML files | Required |
 | Arguments          | Constant expressions to pass as arguments to the function. Must match the function signature exactly. Must be literals or expressions that can be evaluated without input data. | Required |
-| Derived            | Boolean flag indicating schema source:<br>• `true` - Schema determinable from function signature (concrete or type-parameterized). **Must be true if YAML defines a `return` field.**<br>• `false` - Schema depends on runtime data content. **Only allowed if YAML omits `return` field.** | Required |
-| Table Schema       | The output schema (NamedStruct). Always present. **Must match YAML definition (with type parameters resolved) when derived is true.** | Required |
+| Table Schema       | The output schema (NamedStruct). Always present. **Must match YAML definition (with type parameters resolved) when YAML defines a `return` field.** | Required |
 
 ### Use Cases
 
 Common examples of table functions include:
 - `generate_series`: Generate sequences of numbers
-- `unnest`: Expand arrays or lists into rows
+- `unnest`: Expand arrays or lists into rows (variadic - can accept multiple lists)
 
 ### Example
 
@@ -147,7 +148,6 @@ TableFunctionRel {
     { value: { literal: { i64: 1 } } },
     { value: { literal: { i64: 100 } } }
   ]
-  derived: true
   table_schema: {
     names: ["value"]
     struct: {

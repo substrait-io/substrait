@@ -1,29 +1,26 @@
 # Table Functions
 
+Table functions are functions that produce a relation (zero or more records) as output. Table functions are similar to scalar and aggregate functions but produce relations instead of individual values.
+
 !!! warning "Partial Implementation"
-    **Currently implemented:** 0-input table functions - leaf operators that take arguments and produce relations.
+    **Currently implemented:** 0-input table functions - leaf operators that take constant arguments and produce relations.
 
     **Not yet implemented:** Transformation table functions that accept input relations.
 
-## Definition
+## Function Signature Properties
 
-Table functions (0-input, currently supported) are **leaf operators** in the query tree that:
+Table function signatures contain the properties defined below:
 
-- Take a **fixed number of arguments**
-- Produce **zero or more records** as output (a relation/table)
-- Do **not consume an input relation as an argument**
-- Have a schema that is either **determinable from the YAML definition** (when `return` field is present) or **determined by the plan producer** (when YAML omits the `return` field)
+| Property               | Description                                                                                                                                                                                                                                                                                | Required                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------- |
+| Name                   | One or more user-friendly, case-sensitive UTF-8 strings that are used to reference this function.                                                                                                                                                                                         | At least one value is required.     |
+| List of arguments      | Argument properties follow the same pattern as [scalar functions](scalar_functions.md#argument-types): value arguments, type arguments, and enumerations. Arguments can be fully defined or calculated with a type expression.                                                             | Optional, defaults to niladic.      |
+| Variadic Behavior      | Whether the last argument of the function is variadic or a single argument. If variadic, the argument can optionally have a lower bound (minimum number of instances) and an upper bound (maximum number of instances).                                                                    | Optional, defaults to single value. |
+| Description            | Additional description of function for implementers or users. Should be written human-readable to allow exposure to end users. Presented as a map with language => description mappings.                                                                                                  | Optional                            |
+| Return Schema          | The output schema of the relation, expressed as an `ExpressionNamedStruct`. Can be concrete types or type-parameterized (derived from argument types). May be omitted if schema depends on runtime data content (not determinable from function signature).                               | Optional (see [Schema Determination](#schema-determination)) |
+| Implementation Map     | A map of implementation locations for one or more implementations of the given function. Each key is a function implementation type with properties associated with retrieval of that implementation.                                                                                      | Optional                            |
 
-See [Schema Determination](#schema-determination) for details on how schemas are specified.
-
-Future extensions may add support for transformation table functions that consume and transform input relations by adding an optional input field to `TableFunctionRel`.
-
-## Function Signatures
-
-Table functions are defined in YAML extension files, similar to scalar, aggregate, and window functions. A table function signature specifies:
-
-- **Arguments**: The parameters the function accepts
-- **Schema**: The output schema of the generated relation, expressed as an `ExpressionNamedStruct` that can be static or type-parameterized (may or may not be specified in the YAML definition)
+Table functions use the same argument types as scalar functions (value arguments, type arguments, and enumerations). See [Scalar Functions - Argument Types](scalar_functions.md#argument-types) for details.
 
 ## Schema Determination
 
@@ -31,19 +28,13 @@ Table function schemas can be specified in two ways, depending on whether the YA
 
 ### Schemas Derivable from YAML
 
-When a table function's YAML definition **includes a `return` field**, the schema can be deterministically derived from the function signature and the types of the bound arguments.
-
-- In the plan: Include the schema from YAML in `table_schema` with any type parameters resolved
-- The schema is fully determinable from type information alone
-
-This includes both:
-- **Concrete types**: Schema is fixed (e.g., `generate_series` always produces `{value: i64}`)
-- **Type-parameterized**: Schema depends on argument types (e.g., `unnest(list<T>)` produces `{element: T}` where `T` is resolved from the argument)
+When a table function's YAML definition includes a `return` field, the schema can be deterministically derived from the function signature and the types of the bound arguments. The plan must include this derived schema in the `table_schema` field with any type parameters resolved. 
 
 **Example YAML definitions** (from `functions_table.yaml`):
 
+Concrete type example - `generate_series` always produces `{value: i64}`:
+
 ```yaml
-# Concrete type example - schema is always {value: i64}
 - name: "generate_series"
   impls:
     - args:
@@ -59,45 +50,64 @@ This includes both:
         struct:
           types:
             - i64
+```
 
-# Type-parameterized example - schema is {element: T} where T comes from list<T>
+Type-parameterized and variadic example - `unnest` can take 1 or more lists:
+
+```yaml
 - name: "unnest"
   impls:
     - args:
         - name: input
-          value: "list<T>"
+          value: list<any1>
+      variadic:
+        min: 1
       return:
         names:
           - element
         struct:
           types:
-            - T
+            - any1
 ```
 
 ### Schemas Determined by Plan Producer
 
-When a table function's YAML definition **omits the `return` field**, the schema cannot be determined from type information alone.
-
-- In the plan: Provide the schema in `table_schema`
-- The plan producer determines the schema (e.g., by inspecting file contents, database metadata, etc.)
+When a table function's YAML definition omits the `return` field, the schema cannot be determined from type information alone. In these cases, the plan producer must provide the schema in `table_schema`.
 
 **Example:** A function like `read_parquet(path)` where the schema depends on the actual Parquet file's structure - the YAML would omit the `return` field, and the plan producer would provide the concrete schema in `table_schema`.
 
 !!! note "Required Constraint"
     **If a table function's YAML definition includes a `return` field, the `table_schema` field in the plan MUST match the YAML definition (with any type parameters resolved based on the bound argument types).**
 
+## Variadic Table Functions
+
+Table functions can be variadic, meaning the last parameter can be repeated one or more times. This is specified using the `variadic` field in the YAML definition with a `min` value indicating the minimum number of times the parameter must appear.
+
+**Example:** The `unnest` function is variadic with `min: 1`, allowing it to accept one or more list arguments:
+
+```yaml
+- name: "unnest"
+  impls:
+    - args:
+        - name: input
+          value: list<any1>
+      variadic:
+        min: 1
+      return:
+        names:
+          - element
+        struct:
+          types:
+            - any1
+```
+
+When multiple arguments are provided to a variadic table function, the behavior depends on the function's semantics. For example, `unnest` expands multiple lists in parallel (like a zip operation).
+
 ## Usage in Plans
 
-Table functions are represented as their own relation type, `TableFunctionRel`.
+Table functions are invoked in plans using the `TableFunctionRel` relation type. Table functions can be used anywhere a relation is expected - as a leaf node, or as input to other relational operators like `FilterRel`, `ProjectRel`, etc.
 
-### TableFunctionRel Components
-
-- **function_reference**: Points to a function anchor referencing the table function definition
-- **arguments**: Function arguments bound to the signature (value, type, or enum arguments)
-- **table_schema**: The concrete output schema (always present). When the YAML includes a `return` field, this must match the YAML definition with type parameters resolved. When the YAML omits the `return` field, this is determined by the plan producer.
-- **common**: Standard relation properties (emit, hints, etc.)
-
-Table functions can be used anywhere a relation is expected - as a leaf node, or as input to other relational operators like `FilterRel`, `ProjectRel`, etc.
+For details on the `TableFunctionRel` message structure and properties, see the [Table Function](../relations/logical_relations.md#table-function) section in Logical Relations.
 
 ## Examples
 
@@ -172,6 +182,50 @@ banana
 cherry
 ```
 
+### Example 2b: Variadic Unnest (Multiple Lists)
+
+Unnest multiple lists to produce their cross product:
+
+```
+TableFunctionRel {
+  function_reference: <unnest>
+  arguments: [
+    { value: { literal: {
+      list: {
+        values: [
+          { i32: { value: 1 } },
+          { i32: { value: 2 } }
+        ]
+      }
+    } } },  // First list: [1, 2]
+    { value: { literal: {
+      list: {
+        values: [
+          { i32: { value: 3 } },
+          { i32: { value: 4 } }
+        ]
+      }
+    } } }  // Second list: [3, 4]
+  ]
+  table_schema: {
+    names: ["element"]  // Note: With multiple lists, schema may have multiple fields
+    struct: {
+      types: [{ i32: {} }]
+    }
+  }
+}
+```
+
+**SQL equivalent:** `SELECT * FROM UNNEST([1, 2], [3, 4])`
+
+**Output (parallel expansion / zip):**
+```
+element
+-------
+1, 3
+2, 4
+```
+
 !!! note "Limitation: Correlated Table Functions"
     **The more sophisticated use case - unnesting a column from an existing table - cannot currently be represented.** For example, the SQL query `SELECT element FROM my_table, UNNEST(my_table.array_column)` would require applying the table function once per row of the input table.
 
@@ -230,10 +284,3 @@ The current specification focuses on 0-input (generator/leaf) table functions. F
 - **Transformation table functions**: Functions that take an input relation and transform it (by adding an optional `input` field to `TableFunctionRel`)
 - **Set-returning functions**: Functions that process input records and produce multiple output records per input
 - **Lateral joins**: Applying table functions to each row of an input relation
-
-
-=== "TableFunctionRel Message"
-
-    ```proto
-%%% proto.algebra.TableFunctionRel %%%
-    ```

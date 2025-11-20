@@ -72,17 +72,22 @@ table_functions:
             types:
               - i32
   - name: "unnest"
-    description: Expands a list expression into a set of rows, one row per element.
+    description: >-
+      Expands one or more list expressions into a set of rows.
+
+      When multiple lists are provided, produces rows by expanding the lists in parallel (like a zip operation).
+      For example, unnest([1,2], [3,4]) produces rows: (1,3), (2,4).
+      If lists have different lengths, shorter lists are padded with nulls.
     impls:
       - args:
           - name: input
-            value: list<T>
-            description: The list to unnest
-        # Schema references type parameter T from list<T>
-        # The field type is derived from the list element type
+            value: list<any1>
+            description: The list(s) to unnest
+        variadic:
+          min: 1
         return:
           names:
             - element
           struct:
             types:
-              - T
+              - any1
