@@ -118,7 +118,12 @@ message FunctionSignature {
     // - Type-parameterized (field types derived from argument types)
     DerivationExpression.ExpressionNamedStruct schema = 5;
 
-    repeated Implementation implementations = 6;
+    oneof final_variable_behavior {
+      FinalArgVariadic variadic = 6;
+      FinalArgNormal normal = 7;
+    }
+
+    repeated Implementation implementations = 8;
   }
 
   message Description {
