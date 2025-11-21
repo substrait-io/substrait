@@ -161,7 +161,7 @@ The simplest forms of advanced extensions use the `AdvancedExtension` message, w
 - Modify the semantic behavior of operations
 - Must be understood by consumers or the plan cannot be executed correctly
 - Only one enhancement per message
-- Examples: specialized join conditions (e.g. fuzzy matching, geospatial) or sorting (e.g. clustering)
+- Examples: specialized join conditions (e.g. fuzzy matching, geospatial) or sorting (e.g. custom comparators like locale-aware string ordering)
 
 !!! note "Enhancement Constraints"
 
@@ -194,7 +194,7 @@ The second form of advanced extensions allows you to define extension data sourc
 
 !!! note "Consider Core Specification First"
 
-    Before implementing custom read/write types as extensions, consider checking with the Substrait community. If your scenario turns out to be common enough, it may be more appropriate to add it directly to the specification rather than as an extension.
+    Before implementing custom read/write types as extensions, consider [checking with the Substrait community](https://substrait.io/community/#get-in-touch). If your scenario turns out to be common enough, it may be more appropriate to add it directly to the specification rather than as an extension.
 
 ### Custom Relations
 
