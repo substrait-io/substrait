@@ -225,6 +225,7 @@ def test_parse_file_add():
     assert test_file.testcases[0].func_name == "add"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
     assert test_file.include == "/extensions/functions_arithmetic.yaml"
+    assert test_file.dependencies == []
 
 
 def test_parse_file_max():
@@ -233,6 +234,7 @@ def test_parse_file_max():
     assert test_file.testcases[0].func_name == "max"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
     assert test_file.include == "/extensions/functions_arithmetic.yaml"
+    assert test_file.dependencies == []
 
 
 def test_parse_file_lt_datetime():
@@ -355,11 +357,11 @@ def test_parse_errors_with_bad_scalar_testcases(
         ),
         (
             "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(my_col::fp32, col0::fp32) = 1::fp64",
-            "mismatched input 'my_col'",
+            "mismatched input '::'",  # Now accepts bare identifiers, type annotation is the error
         ),
         (
             "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, column1::fp32) = 1::fp64",
-            "mismatched input 'column1'",
+            "mismatched input '::'",  # Now accepts bare identifiers, type annotation is the error
         ),
     ],
 )

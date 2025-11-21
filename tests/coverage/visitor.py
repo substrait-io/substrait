@@ -18,20 +18,25 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         self.file_path = file_path
 
     def visitDoc(self, ctx: FuncTestCaseParser.DocContext):
-        version, include = self.visitHeader(ctx.header())
+        version, primary_include, dependencies = self.visitHeader(ctx.header())
         testcases = []
         for group in ctx.testGroup():
             _, group_tests = self.visit(group)
             for test_case in group_tests:
-                test_case.base_uri = include
+                test_case.base_uri = primary_include
             testcases.extend(group_tests)
 
-        return TestFile(self.file_path, version, include, testcases)
+        return TestFile(
+            self.file_path, version, primary_include, dependencies, testcases
+        )
 
     def visitHeader(self, ctx: FuncTestCaseParser.HeaderContext):
         version = self.visitVersion(ctx.version())
-        include = self.visitInclude(ctx.include())
-        return version, include
+        primary_include = self.visitInclude(ctx.include())
+        dependencies = []
+        for dependency_ctx in ctx.dependency():
+            dependencies.append(self.visitDependency(dependency_ctx))
+        return version, primary_include, dependencies
 
     def visitVersion(self, ctx: FuncTestCaseParser.VersionContext):
         return ctx.FormatVersion().getText()
@@ -39,6 +44,9 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitInclude(self, ctx: FuncTestCaseParser.IncludeContext):
         # TODO handle multiple includes
         return ctx.StringLiteral(0).getText().strip("'")
+
+    def visitDependency(self, ctx: FuncTestCaseParser.DependencyContext):
+        return ctx.StringLiteral().getText()
 
     def visitTestGroupDescription(
         self, ctx: FuncTestCaseParser.TestGroupDescriptionContext
@@ -289,6 +297,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitNullArg(ctx.nullArg())
         if ctx.listArg() is not None:
             return self.visitListArg(ctx.listArg())
+        if ctx.lambdaArg() is not None:
+            return self.visitLambdaArg(ctx.lambdaArg())
 
         return CaseLiteral(value="unknown_value", type="unknown_type")
 
@@ -375,6 +385,10 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             value, _ = self.visitLiteral(literal)
             values.append(value)
         return values
+
+    def visitLambdaArg(self, ctx: FuncTestCaseParser.LambdaArgContext):
+        lambda_type = ctx.funcType().getText()
+        return CaseLiteral(value="lambda", type=lambda_type)
 
     def visitResult(self, ctx: FuncTestCaseParser.ResultContext):
         if ctx.argument() is not None:

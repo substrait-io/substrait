@@ -65,3 +65,21 @@ Similar to structs, maps and lists can also have a type as one of their paramete
     list<struct<string, i32>>
     map<i32?, list<map<i32, string?>>>
     ```
+
+### Function Types
+
+Function types represent anonymous functions with typed parameters and return values. They are used in higher-order functions that operate on collections.
+
+In YAML extension definitions, function types use the `func` keyword:
+
+```
+# Single parameter - both forms are equivalent
+func<T -> U>
+func<(T) -> U>
+
+# Multiple parameters - parentheses required
+func<(T, U) -> V>
+func<(T, U, V) -> W>
+```
+
+Function types use the arrow syntax (`->`) to separate parameter types from the return type. For multiple parameters, use parentheses to group the parameter types. See [Lambda Expressions](../expressions/lambda_functions.md) for more details on lambda expressions and their usage.
