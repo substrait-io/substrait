@@ -20,7 +20,7 @@ This extension URN uses the format `extension:<OWNER>:<ID>`, where:
 - `OWNER` represents the organization or entity providing the extension and should follow [reverse domain name convention](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) (e.g., `io.substrait`, `com.example`, `org.apache.arrow`) to prevent name collisions
 - `ID` is the specific identifier for the extension (e.g., `functions_arithmetic`, `custom_types`)
 
-These URNs must match the regex `^extension:[a-zA-Z0-9_.-]+:[a-zA-Z0-9_.-]+$`.
+These URNs must match the regex `^extension:[a-z0-9_.-]+:[a-z0-9_.-]+$`.
 
 The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
