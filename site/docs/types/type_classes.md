@@ -50,6 +50,8 @@ Compound type classes are type classes that need to be configured by means of a 
 
 User-defined type classes are defined as part of [simple extensions](../extensions/index.md#simple-extensions). An extension can declare an arbitrary number of user-defined extension types. Once a type has been declared, it can be used in function declarations.
 
+User-defined types are referenced in a plan using a `type_reference` anchor value that corresponds to a `type_anchor` defined in the plan's extension declarations. The anchor value is a non-negative integer starting from 0, meaning 0 is a valid anchor value.
+
 For example, the following declares a type named `point` (namespaced to the associated YAML file) and two scalar functions that operate on it.
 
 ```yaml
