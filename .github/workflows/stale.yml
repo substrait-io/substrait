@@ -13,8 +13,8 @@ jobs:
     steps:
       - uses: actions/stale@v8
         with:
-          only-pr-labels: '*' # ensure only PRs are affected
           repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-issue-stale: -1 # don't operate on issues
           stale-pr-message: |
             This PR has been automatically marked as stale because it has not had
             recent activity. It will be closed in 7 days if no further activity occurs.
