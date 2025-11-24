@@ -161,7 +161,7 @@ The simplest forms of advanced extensions use the `AdvancedExtension` message, w
 - Modify the semantic behavior of operations
 - Must be understood by consumers or the plan cannot be executed correctly
 - Only one enhancement per message
-- Examples: specialized join conditions (e.g. fuzzy matching, geospatial) or sorting (e.g. custom comparators like locale-aware string ordering)
+- Examples: specialized join conditions (e.g. fuzzy matching, geospatial)
 
 !!! note "Enhancement Constraints"
 
