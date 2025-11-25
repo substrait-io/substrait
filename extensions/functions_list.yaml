@@ -14,11 +14,11 @@ scalar_functions:
     impls:
       - args:
           - name: input
-            value: list<T>
+            value: list<any1>
           - name: mapper
-            value: func<T -> U>
+            value: func<any1 -> any2>
         nullability: MIRROR
-        return: list<U>
+        return: list<any2>
 
   - name: "filter"
     description: >-
@@ -35,8 +35,8 @@ scalar_functions:
     impls:
       - args:
           - name: input
-            value: list<T>
+            value: list<any1>
           - name: predicate
-            value: func<T -> boolean>
+            value: func<any1 -> boolean>
         nullability: MIRROR
-        return: list<T>
+        return: list<any1>

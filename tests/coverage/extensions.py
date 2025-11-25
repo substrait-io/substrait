@@ -56,7 +56,7 @@ def build_type_to_short_type():
         substrait_type_str(k): substrait_type_str(v) for k, v in rule_map.items()
     }
     any_type = substrait_type_str(FuncTestCaseLexer.Any)
-    for i in range(1, 3):
+    for i in range(1, 10):
         to_short_type[f"{any_type}{i}"] = f"{any_type}{i}"
     return to_short_type
 
@@ -73,11 +73,6 @@ class Extension:
     @staticmethod
     def get_short_type(long_type):
         original_type = long_type
-        # Check if this is a generic type parameter (single uppercase letter)
-        # e.g., T, U, V, T?, U?
-        if original_type.rstrip("?").isupper() and len(original_type.rstrip("?")) == 1:
-            return original_type.lower()
-
         long_type = long_type.lower().rstrip("?")
         short_type = type_to_short_type.get(long_type, None)
 
@@ -295,10 +290,6 @@ class FunctionRegistry:
         # Strip nullability markers for comparison
         func_type_clean = func_arg_type.rstrip("?")
         arg_type_clean = arg_type.rstrip("?")
-
-        # Check if function arg is a generic type parameter (t, u, v, etc.)
-        if func_type_clean.isalpha() and len(func_type_clean) == 1:
-            return True
 
         arg_type_base = arg_type_clean.split("<")[0]
         func_type_base = func_type_clean.split("<")[0]

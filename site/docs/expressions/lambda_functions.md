@@ -62,14 +62,14 @@ In YAML extension definitions, function types are specified using the `func` key
 
 **Single parameter** (represents a lambda with 1 entry in `parameter_types`):
 ```yaml
-func<T -> U>           # Single parameter without parentheses
-func<(T) -> U>         # Single parameter with parentheses (equivalent)
+func<any1 -> any2>           # Single parameter without parentheses
+func<(any1) -> any2>         # Single parameter with parentheses (equivalent)
 ```
 
 **Multiple parameters** (represents a lambda with 2+ entries in `parameter_types`):
 ```yaml
-func<(T, U) -> V>      # Multiple parameters (parentheses required)
-func<(T, U, V) -> W>   # Three parameters
+func<(any1, any2) -> any3>      # Multiple parameters (parentheses required)
+func<(any1, any2, any3) -> any4>   # Three parameters
 ```
 
 ### Example: The `map` Function
@@ -80,7 +80,7 @@ The `map` function transforms each element of a list using a lambda. Here's how 
 --8<-- "examples/extensions/lambda_function_example.yaml"
 ```
 
-The `func<T -> U>` type indicates the lambda accepts one parameter of type `T` and returns type `U`, allowing the list element type to be transformed.
+The `func<any1 -> any2>` type indicates the lambda accepts one parameter of type `any1` and returns type `any2`. Using numbered `any` types ensures repeated labels within a signature must resolve to the same concrete type.
 
 ## Closures
 

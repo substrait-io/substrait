@@ -35,7 +35,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         primary_include = self.visitInclude(ctx.include())
         dependencies = []
         for dependency_ctx in ctx.dependency():
-            dependencies.append(self.visitDependency(dependency_ctx))
+            dependencies.extend(self.visitDependency(dependency_ctx))
         return version, primary_include, dependencies
 
     def visitVersion(self, ctx: FuncTestCaseParser.VersionContext):
@@ -46,7 +46,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return ctx.StringLiteral(0).getText().strip("'")
 
     def visitDependency(self, ctx: FuncTestCaseParser.DependencyContext):
-        return ctx.StringLiteral().getText()
+        return [ctx.StringLiteral().getText().strip("'")]
 
     def visitTestGroupDescription(
         self, ctx: FuncTestCaseParser.TestGroupDescriptionContext
