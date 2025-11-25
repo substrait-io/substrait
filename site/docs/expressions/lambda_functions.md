@@ -60,6 +60,8 @@ For scalar parameters, use `LambdaParameterReference` directly (as shown above).
 
 In YAML extension definitions, function types are specified using the `func` keyword with generic type parameters:
 
+This notation applies to extension YAML signatures; in plans, lambdas are always represented as `Expression.Lambda` with `parameter_types`, `return_type`, and `body`.
+
 **Single parameter** (represents a lambda with 1 entry in `parameter_types`):
 ```yaml
 func<any1 -> any2>           # Single parameter without parentheses
@@ -88,7 +90,13 @@ Lambda bodies can reference data from outside their parameter list, enabling clo
 
 ### Outer Lambda Parameters
 
-In nested lambdas, use `lambda_depth > 0` in `LambdaParameterReference` to reference an enclosing lambda's parameters (1 = immediate parent, 2 = grandparent, etc.).
+In nested lambdas, use `lambda_depth > 0` in `LambdaParameterReference` to reference an enclosing lambda's parameters (1 = immediate parent, 2 = grandparent, etc.). See the example below for a concrete encoding.
+
+Text version: `(outer_x: i32) -> ((inner_y: i32) -> add(outer_x, inner_y))`
+
+```protobuf
+--8<-- "examples/proto-textformat/lambdas/nested_lambda_capture.textproto"
+```
 
 ### Input Record References
 
@@ -120,7 +128,7 @@ A lambda invocation consists of:
 | Lambda     | The inline lambda expression to invoke                                      | `lambda`       | Yes      |
 | Arguments  | The values to pass as parameters to the lambda                              | `arguments`    | Yes      |
 
-The number of arguments must match the lambda's `parameter_types` count exactly, and each argument's type must match the corresponding parameter type. The return type is derived from the lambda's `return_type` field - no separate output type declaration is needed.
+The number of arguments must match the lambda's `parameter_types` count exactly, and each argument i must match `parameter_types[i]`. The return type is derived from the lambda's `return_type` field - no separate output type declaration is needed.
 
 === "LambdaInvocation Message"
     ```proto
