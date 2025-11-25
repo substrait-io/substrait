@@ -56,7 +56,7 @@ def build_type_to_short_type():
         substrait_type_str(k): substrait_type_str(v) for k, v in rule_map.items()
     }
     any_type = substrait_type_str(FuncTestCaseLexer.Any)
-    for i in range(1, 10):
+    for i in range(1, 3):
         to_short_type[f"{any_type}{i}"] = f"{any_type}{i}"
     return to_short_type
 
@@ -72,7 +72,6 @@ class Extension:
 
     @staticmethod
     def get_short_type(long_type):
-        original_type = long_type
         long_type = long_type.lower().rstrip("?")
         short_type = type_to_short_type.get(long_type, None)
 
@@ -87,10 +86,7 @@ class Extension:
                     short_type = type_to_short_type.get(long_type, None)
             if short_type is None:
                 if "!" not in long_type:
-                    error(
-                        f"Type not found in the mapping: {long_type} "
-                        f"(original: {original_type})"
-                    )
+                    error(f"Type not found in the mapping: {long_type}")
                 return long_type
         return short_type
 
@@ -285,16 +281,8 @@ class FunctionRegistry:
 
     @staticmethod
     def is_same_type(func_arg_type, arg_type):
-        # TODO: this really needs to have more sophisticated type-matching
-        # logic
-        # Strip nullability markers for comparison
-        func_type_clean = func_arg_type.rstrip("?")
-        arg_type_clean = arg_type.rstrip("?")
-
-        arg_type_base = arg_type_clean.split("<")[0]
-        func_type_base = func_type_clean.split("<")[0]
-
-        if func_type_base == arg_type_base:
+        arg_type_base = arg_type.split("<")[0]
+        if func_arg_type == arg_type_base:
             return True
         return FunctionRegistry.is_type_any(func_arg_type)
 
