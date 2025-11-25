@@ -974,8 +974,8 @@ message Expression {
     Nested nested = 13;
     DynamicParameter dynamic_parameter = 14;
     Lambda lambda = 15;
-    LambdaInvocation lambda_invocation = 16;
-    LambdaParameterReference lambda_parameter_reference = 17;
+    LambdaParameterReference lambda_parameter_reference = 16;
+    LambdaInvocation lambda_invocation = 17;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
