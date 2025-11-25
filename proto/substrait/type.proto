@@ -232,8 +232,7 @@ message Type {
     repeated Type parameter_types = 1;
     // Return type of the function.
     Type return_type = 2;
-    uint32 type_variation_reference = 3;
-    Nullability nullability = 4;
+    Nullability nullability = 3;
   }
 
   message UserDefined {
