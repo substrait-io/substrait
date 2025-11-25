@@ -1196,7 +1196,7 @@ message Expression {
     // Types of parameters this lambda accepts. The number of entries in this list
     // defines the arity (number of parameters) of the lambda.
     // The body expression can reference these via LambdaParameterReference
-    // expressions with reference corresponding to the position in this list.
+    // expressions.
     repeated Type parameter_types = 1;
 
     // Return type of the lambda. Must match the type produced by evaluating
@@ -1204,8 +1204,8 @@ message Expression {
     Type return_type = 2;
 
     // The lambda body expression. Lambda parameters can be accessed directly via
-    // LambdaParameterReference expressions. Closures can be referenced using
-    // FieldReference with RootReference or OuterReference. The evaluated
+    // LambdaParameterReference expressions. To capture values from outer scopes,
+    // use FieldReference with RootReference or OuterReference. The evaluated
     // expression must match return_type.
     Expression body = 3;
   }
@@ -1214,20 +1214,18 @@ message Expression {
   // Enables immediate invocation patterns like: ((x) -> x * 2)(5)
   //
   // The return type is derived from lambda.return_type.
-  // Arguments must match lambda.parameter_types in count and type.
+  // Arguments are positional and must match lambda.parameter_types in count and type.
   message LambdaInvocation {
     // The lambda expression to invoke.
     Lambda lambda = 1;
 
-    // Arguments to pass to the lambda. The number and types of arguments
-    // must match the lambda's parameter_types exactly.
+    // Arguments to pass to the lambda. This list must be the same length as
+    // lambda.parameter_types, and argument i must have the type at
+    // lambda.parameter_types[i].
     repeated Expression arguments = 2;
   }
 
   // A reference to a lambda parameter within a lambda body expression.
-  // Unlike FieldReference, this directly accesses the parameter value without
-  // drilling into it. To access fields within a struct parameter, wrap this
-  // in a FieldReference using the expression root_type.
   message LambdaParameterReference {
     // Number of lambda boundaries to traverse up for this reference.
     // For nested lambdas:
