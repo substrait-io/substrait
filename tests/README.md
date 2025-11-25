@@ -37,13 +37,7 @@ The include statement specifies the extension file being tested. Each test file 
 ```
 
 ### Dependency Statements (Optional)
-Dependency statements specify additional extension files needed to run the tests, but which are not themselves being tested. These are typically used when test cases need helper functions from other extensions (e.g., lambda expressions that call arithmetic functions while testing list functions).
-
-A single dependency statement can include multiple extensions separated by commas:
-```code
-### SUBSTRAIT_DEPENDENCY: /extensions/functions_arithmetic.yaml
-### SUBSTRAIT_DEPENDENCY: /extensions/functions_comparison.yaml, /extensions/functions_string.yaml
-```
+Dependency statements specify additional extension files needed to run the tests, but which are not themselves being tested. These are typically used when test cases need helper functions from other extensions (e.g., lambda expressions that call arithmetic functions while testing list functions). Provide one extension per dependency line; include multiple lines if more than one helper extension is required.
 
 ### Test Groups
 A test group is a collection of test cases that are logically related. Test groups are purely for categorization purposes and do not affect the execution or meaning of tests.
