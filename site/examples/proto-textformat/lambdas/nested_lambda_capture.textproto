@@ -3,11 +3,9 @@
 #   - lambda_depth: 1, reference: 0 -> outer_x
 #   - lambda_depth: 0, reference: 0 -> inner_y
 parameter_types: [{i32: {nullability: NULLABILITY_REQUIRED}}]
-return_type: {i32: {nullability: NULLABILITY_REQUIRED}}
 body: {
   lambda: {
     parameter_types: [{i32: {nullability: NULLABILITY_REQUIRED}}]
-    return_type: {i32: {nullability: NULLABILITY_REQUIRED}}
     body: {
       scalar_function: {
         function_reference: 1

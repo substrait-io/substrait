@@ -6,12 +6,6 @@ parameter_types: [
   }
 ]
 
-return_type: {
-  i32: {
-    nullability: NULLABILITY_REQUIRED
-  }
-}
-
 body: {
   scalar_function: {
     function_reference: 1  # Reference to multiply function

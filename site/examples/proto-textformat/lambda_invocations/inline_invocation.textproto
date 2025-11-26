@@ -8,13 +8,6 @@ lambda: {
     }
   ]
 
-  # Return type: i32
-  return_type: {
-    i32: {
-      nullability: NULLABILITY_REQUIRED
-    }
-  }
-
   # Lambda body: x * 2
   body: {
     scalar_function: {

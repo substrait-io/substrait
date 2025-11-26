@@ -7,12 +7,6 @@ parameter_types: [
   }
 ]
 
-return_type: {
-  i32: {
-    nullability: NULLABILITY_REQUIRED
-  }
-}
-
 body: {
   scalar_function: {
     function_reference: 2  # Reference to add function

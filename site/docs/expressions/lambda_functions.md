@@ -16,13 +16,16 @@ A lambda expression consists of:
 | Component          | Description                                                                 | Protobuf Field        | Required |
 |--------------------|-----------------------------------------------------------------------------|-----------------------|----------|
 | Parameter Types    | List of types for the lambda's parameters. The length of this list defines the lambda's arity (number of parameters). | `parameter_types`     | Yes      |
-| Return Type        | Type of the value returned by the lambda                                   | `return_type`         | Yes      |
-| Body Expression    | The expression to evaluate (can reference parameters via LambdaParameterReference) | `body`                | Yes      |
+| Body Expression    | The expression to evaluate (can reference parameters via LambdaParameterReference). The type of this expression is the return type of the lambda. | `body`                | Yes      |
 
 === "Lambda Message"
     ```proto
 %%% proto.message.Expression.Lambda %%%
     ```
+
+### Type Derivation
+
+The return type of a lambda is derived from its body expression. Since all expressions in Substrait have deterministic types, the lambda's return type can be computed by determining the type of the body expression.
 
 ## Parameter References
 
@@ -60,7 +63,7 @@ For scalar parameters, use `LambdaParameterReference` directly (as shown above).
 
 In YAML extension definitions, function types are specified using the `func` keyword with generic type parameters:
 
-This notation applies to extension YAML signatures; in plans, lambdas are always represented as `Expression.Lambda` with `parameter_types`, `return_type`, and `body`.
+This notation applies to extension YAML signatures; in plans, lambdas are always represented as `Expression.Lambda` with `parameter_types` and `body`.
 
 **Single parameter** (represents a lambda with 1 entry in `parameter_types`):
 ```yaml
@@ -128,7 +131,7 @@ A lambda invocation consists of:
 | Lambda     | The inline lambda expression to invoke                                      | `lambda`       | Yes      |
 | Arguments  | The values to pass as parameters to the lambda                              | `arguments`    | Yes      |
 
-The number of arguments must match the lambda's `parameter_types` count exactly, and each argument i must match `parameter_types[i]`. The return type is derived from the lambda's `return_type` field - no separate output type declaration is needed.
+The number of arguments must match the lambda's `parameter_types` count exactly, and each argument i must match `parameter_types[i]`. The return type is derived from the type of the lambda's body expression.
 
 === "LambdaInvocation Message"
     ```proto

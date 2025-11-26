@@ -1199,21 +1199,17 @@ message Expression {
     // expressions.
     repeated Type parameter_types = 1;
 
-    // Return type of the lambda. Must match the type produced by evaluating
-    // the body expression.
-    Type return_type = 2;
-
     // The lambda body expression. Lambda parameters can be accessed directly via
     // LambdaParameterReference expressions. To capture values from outer scopes,
-    // use FieldReference with RootReference or OuterReference. The evaluated
-    // expression must match return_type.
-    Expression body = 3;
+    // use FieldReference with RootReference or OuterReference. The return type
+    // of the lambda is derived from the type of this body expression.
+    Expression body = 2;
   }
 
   // Invokes an inline lambda expression with provided arguments.
   // Enables immediate invocation patterns like: ((x) -> x * 2)(5)
   //
-  // The return type is derived from lambda.return_type.
+  // The return type is derived from the type of the lambda's body expression.
   // Arguments are positional and must match lambda.parameter_types in count and type.
   message LambdaInvocation {
     // The lambda expression to invoke.
