@@ -2,10 +2,10 @@
 # Demonstrates lambda_depth:
 #   - lambda_depth: 1 with struct_field: 0 -> outer_x
 #   - lambda_depth: 0 with struct_field: 0 -> inner_y
-parameter_types: [{i32: {nullability: NULLABILITY_REQUIRED}}]
+parameters: {types: [{i32: {nullability: NULLABILITY_REQUIRED}}]}
 body: {
   lambda: {
-    parameter_types: [{i32: {nullability: NULLABILITY_REQUIRED}}]
+    parameters: {types: [{i32: {nullability: NULLABILITY_REQUIRED}}]}
     body: {
       scalar_function: {
         function_reference: 1

@@ -15,7 +15,7 @@ A lambda expression consists of:
 
 | Component          | Description                                                                 | Protobuf Field        | Required |
 |--------------------|-----------------------------------------------------------------------------|-----------------------|----------|
-| Parameter Types    | List of types for the lambda's parameters. The length of this list defines the lambda's arity (number of parameters). | `parameter_types`     | Yes      |
+| Parameters         | Struct type defining the lambda's parameters. Each field in the struct represents a parameter that can be accessed via FieldReference. | `parameters`     | Yes      |
 | Body Expression    | The expression to evaluate (can reference parameters via LambdaParameterReference). The type of this expression is the return type of the lambda. | `body`                | Yes      |
 
 === "Lambda Message"
@@ -66,15 +66,15 @@ Because lambda parameters are accessed using [`FieldReference`](field_references
 
 In YAML extension definitions, function types are specified using the `func` keyword with generic type parameters:
 
-This notation applies to extension YAML signatures; in plans, lambdas are always represented as `Expression.Lambda` with `parameter_types` and `body`.
+This notation applies to extension YAML signatures; in plans, lambdas are always represented as `Expression.Lambda` with `parameters` (a struct type) and `body`.
 
-**Single parameter** (represents a lambda with 1 entry in `parameter_types`):
+**Single parameter** (represents a lambda with 1 field in the `parameters` struct):
 ```yaml
 func<any1 -> any2>           # Single parameter without parentheses
 func<(any1) -> any2>         # Single parameter with parentheses (equivalent)
 ```
 
-**Multiple parameters** (represents a lambda with 2+ entries in `parameter_types`):
+**Multiple parameters** (represents a lambda with 2+ fields in the `parameters` struct):
 ```yaml
 func<(any1, any2) -> any3>      # Multiple parameters (parentheses required)
 func<(any1, any2, any3) -> any4>   # Three parameters
@@ -136,9 +136,9 @@ A lambda invocation consists of:
 | Component  | Description                                                                 | Protobuf Field | Required |
 |------------|-----------------------------------------------------------------------------|----------------|----------|
 | Lambda     | The inline lambda expression to invoke                                      | `lambda`       | Yes      |
-| Arguments  | The values to pass as parameters to the lambda                              | `arguments`    | Yes      |
+| Arguments  | A struct expression containing the values to pass as parameters. Each field corresponds to a lambda parameter. | `arguments`    | Yes      |
 
-The number of arguments must match the lambda's `parameter_types` count exactly, and each argument i must match `parameter_types[i]`. The return type is derived from the type of the lambda's body expression.
+The arguments expression must evaluate to a struct type that matches the lambda's `parameters` exactly. The return type is derived from the type of the lambda's body expression.
 
 === "LambdaInvocation Message"
     ```proto

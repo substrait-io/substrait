@@ -1192,12 +1192,11 @@ message Expression {
   // Lambda expressions have parameters and a body expression that can reference
   // those parameters using FieldReference with FieldReference.LambdaParameterReference as the root_type.
   message Lambda {
-    // Types of parameters this lambda accepts. The number of entries in this list
-    // defines the arity (number of parameters) of the lambda.
-    // Lambda parameters are treated as a struct, where parameter i has type parameter_types[i].
-    // The body expression can reference these parameters using FieldReference with
-    // FieldReference.LambdaParameterReference as root_type and StructField to select specific parameters.
-    repeated Type parameter_types = 1;
+    // Parameters this lambda accepts, represented as a struct where each field corresponds
+    // to a parameter. Parameters can be accessed using FieldReference with
+    // FieldReference.LambdaParameterReference as root_type and StructField to select
+    // specific parameters.
+    Type.Struct parameters = 1;
 
     // The lambda body expression. Lambda parameters can be accessed using FieldReference
     // with FieldReference.LambdaParameterReference as root_type. To capture values from outer scopes,
@@ -1210,15 +1209,14 @@ message Expression {
   // Enables immediate invocation patterns like: ((x) -> x * 2)(5)
   //
   // The return type is derived from the type of the lambda's body expression.
-  // Arguments are positional and must match lambda.parameter_types in count and type.
   message LambdaInvocation {
     // The lambda expression to invoke.
     Lambda lambda = 1;
 
-    // Arguments to pass to the lambda. This list must be the same length as
-    // lambda.parameter_types, and argument i must have the type at
-    // lambda.parameter_types[i].
-    repeated Expression arguments = 2;
+    // Arguments to pass to the lambda. This expression must evaluate to a struct type
+    // that matches lambda.parameters exactly. Each field in the struct corresponds to a
+    // lambda parameter.
+    Expression arguments = 2;
   }
 
   // A scalar function call.

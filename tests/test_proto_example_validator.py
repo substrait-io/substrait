@@ -26,7 +26,7 @@ def validate_example(textproto: str, message_class: type[Message]) -> None:
 def test_validation_rejects_unknown_fields():
     """Test that validation rejects proto text with unknown fields."""
     invalid_textproto = """
-parameter_types: [{i32: {nullability: NULLABILITY_REQUIRED}}]
+parameters: {types: [{i32: {nullability: NULLABILITY_REQUIRED}}]}
 body: {literal: {i32: 42}}
 unknown_field: "should fail"
 """

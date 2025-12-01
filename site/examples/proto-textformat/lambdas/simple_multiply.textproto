@@ -1,10 +1,12 @@
-parameter_types: [
-  {
-    i32: {
-      nullability: NULLABILITY_REQUIRED
+parameters: {
+  types: [
+    {
+      i32: {
+        nullability: NULLABILITY_REQUIRED
+      }
     }
-  }
-]
+  ]
+}
 
 body: {
   scalar_function: {

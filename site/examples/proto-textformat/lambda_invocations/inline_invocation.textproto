@@ -1,12 +1,14 @@
 lambda: {
   # Lambda parameter: x (type i32)
-  parameter_types: [
-    {
-      i32: {
-        nullability: NULLABILITY_REQUIRED
+  parameters: {
+    types: [
+      {
+        i32: {
+          nullability: NULLABILITY_REQUIRED
+        }
       }
-    }
-  ]
+    ]
+  }
 
   # Lambda body: x * 2
   body: {
@@ -47,11 +49,15 @@ lambda: {
   }
 }
 
-# Invocation arguments: [5]
-arguments: [
-  {
-    literal: {
-      i32: 5
+# Invocation arguments: struct with one field containing 5
+arguments: {
+  literal: {
+    struct: {
+      fields: [
+        {
+          i32: 5
+        }
+      ]
     }
   }
-]
+}

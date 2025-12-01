@@ -1,11 +1,13 @@
-parameter_types: [
-  {
-    # Lambda parameter: x (type i32)
-    i32: {
-      nullability: NULLABILITY_REQUIRED
+# Lambda parameter: x (type i32)
+parameters: {
+  types: [
+    {
+      i32: {
+        nullability: NULLABILITY_REQUIRED
+      }
     }
-  }
-]
+  ]
+}
 
 body: {
   scalar_function: {
