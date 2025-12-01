@@ -2,6 +2,12 @@
 
 In Substrait, all fields are dealt with on a positional basis. Field names are only used at the edge of a plan, for the purposes of naming fields for the outside world. Each operation returns a simple or compound data type. Additional operations can refer to data within that initial operation using field references. To reference a field, you use a reference based on the type of field position you want to reference.
 
+Field references can originate from different root types:
+- **RootReference**: References the incoming record from the relation
+- **OuterReference**: References outer query records in correlated subqueries
+- **Expression**: References the result of evaluating an expression
+- **LambdaParameterReference**: References lambda parameters within lambda body expressions (see [Lambda Expressions](lambda_functions.md))
+
 | Reference Type            | Properties                                                   | Type Applicability | Type return                |
 | ------------------------- | ------------------------------------------------------------ | ------------------ | -------------------------- |
 | Struct Field              | Ordinal position. Zero-based. Only legal within the range of possible fields within a struct. Selecting an ordinal outside the applicable field range results in an invalid plan. | struct             | Type of field referenced   |

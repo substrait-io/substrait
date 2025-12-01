@@ -1,7 +1,7 @@
 # Represents: (outer_x: i32) -> ((inner_y: i32) -> add(outer_x, inner_y))
 # Demonstrates lambda_depth:
-#   - lambda_depth: 1, reference: 0 -> outer_x
-#   - lambda_depth: 0, reference: 0 -> inner_y
+#   - lambda_depth: 1 with struct_field: 0 -> outer_x
+#   - lambda_depth: 0 with struct_field: 0 -> inner_y
 parameter_types: [{i32: {nullability: NULLABILITY_REQUIRED}}]
 body: {
   lambda: {
@@ -10,8 +10,8 @@ body: {
       scalar_function: {
         function_reference: 1
         arguments: [
-          {value: {lambda_parameter_reference: {lambda_depth: 1, reference: 0}}},  # outer_x
-          {value: {lambda_parameter_reference: {lambda_depth: 0, reference: 0}}}   # inner_y
+          {value: {selection: {lambda_parameter_reference: {lambda_depth: 1}, direct_reference: {struct_field: {field: 0}}}}},  # outer_x
+          {value: {selection: {lambda_parameter_reference: {lambda_depth: 0}, direct_reference: {struct_field: {field: 0}}}}}   # inner_y
         ]
       }
     }

@@ -1,0 +1,30 @@
+# Access nested field within a struct parameter
+# Example: lambda parameter is a Person struct with fields:
+#   field 0: name (string)
+#   field 1: age (i32)
+#   field 2: address (struct with fields:)
+#     field 0: street (string)
+#     field 1: city (string)
+#     field 2: zip (string)
+#
+# This demonstrates accessing: person.address.city
+# Equivalent to: lambda_parameter[0].struct_field[2].struct_field[1]
+
+lambda_parameter_reference: {
+  lambda_depth: 0  # Current lambda's parameters
+}
+direct_reference: {
+  struct_field: {
+    field: 0       # First parameter (person)
+    child: {
+      struct_field: {
+        field: 2   # Third field of person (address)
+        child: {
+          struct_field: {
+            field: 1  # Second field of address (city)
+          }
+        }
+      }
+    }
+  }
+}

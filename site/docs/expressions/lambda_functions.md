@@ -29,19 +29,22 @@ The return type of a lambda is derived from its body expression. Since all expre
 
 ## Parameter References
 
-Lambda parameters are referenced within the lambda body using `LambdaParameterReference` expressions.
+Lambda parameters are referenced within the lambda body using [`FieldReference`](field_references.md) with `LambdaParameterReference` as the root type. Lambda parameters are conceptually treated as a struct, where each parameter occupies a position that can be accessed via `StructField` references.
 
 ### LambdaParameterReference Fields
+
+`LambdaParameterReference` is a nested message within `FieldReference` that identifies which lambda scope to reference:
 
 | Field             | Description                                                          | Values   |
 |-------------------|----------------------------------------------------------------------|----------|
 | `lambda_depth`    | Number of lambda boundaries to traverse (0 = current lambda)        | 0, 1, 2... |
-| `reference`       | Zero-based index into the lambda's parameter list                   | 0, 1, 2... |
 
 === "LambdaParameterReference Message"
     ```proto
-%%% proto.message.Expression.LambdaParameterReference %%%
+%%% proto.message.Expression.FieldReference.LambdaParameterReference %%%
     ```
+
+To access a specific parameter, wrap `LambdaParameterReference` in a [`FieldReference`](field_references.md) and use `direct_reference` with `StructField` to specify which parameter (field 0 = first parameter, field 1 = second parameter, etc.).
 
 ### Simple Example
 
@@ -53,10 +56,10 @@ For a lambda `(x: i32) -> x * 2`:
 
 ### Accessing Fields within Parameters
 
-For scalar parameters, use `LambdaParameterReference` directly (as shown above). For struct or complex type parameters, wrap the `LambdaParameterReference` in a [`FieldReference`](field_references.md) using the `expression` root_type to drill into specific fields:
+Because lambda parameters are accessed using [`FieldReference`](field_references.md), all field navigation mechanisms are available for drilling into complex objects. For example, when a lambda parameter is a struct, you can access deeply nested fields like `person.address.city`:
 
 ```protobuf
---8<-- "examples/proto-textformat/field_references/lambda_param_struct_field.textproto"
+--8<-- "examples/proto-textformat/field_references/lambda_param_nested_struct.textproto"
 ```
 
 ## Function Type Syntax
@@ -85,7 +88,7 @@ The `map` function transforms each element of a list using a lambda. Here's how 
 --8<-- "examples/extensions/lambda_function_example.yaml"
 ```
 
-The `func<any1 -> any2>` type indicates the lambda accepts one parameter of type `any1` and returns type `any2`. Using numbered `any` types ensures repeated labels within a signature must resolve to the same concrete type.
+The `func<any1 -> any2>` type indicates the lambda accepts one parameter of type `any1` and returns type `any2`. Using numbered [`any` types](../extensions/index.md#any-types) ensures repeated labels within a signature must resolve to the same concrete type.
 
 ## Closures
 
@@ -93,13 +96,17 @@ Lambda bodies can reference data from outside their parameter list, enabling clo
 
 ### Outer Lambda Parameters
 
-In nested lambdas, use `lambda_depth > 0` in `LambdaParameterReference` to reference an enclosing lambda's parameters (1 = immediate parent, 2 = grandparent, etc.). See the example below for a concrete encoding.
+In nested lambdas, use `lambda_depth > 0` in `LambdaParameterReference` to reference an enclosing lambda's parameter struct (1 = immediate parent, 2 = grandparent, etc.). Combine this with `StructField` to access specific parameters from that scope.
 
 Text version: `(outer_x: i32) -> ((inner_y: i32) -> add(outer_x, inner_y))`
 
 ```protobuf
 --8<-- "examples/proto-textformat/lambdas/nested_lambda_capture.textproto"
 ```
+
+In this example:
+- `lambda_depth: 1` with `struct_field: {field: 0}` accesses the first parameter of the outer lambda (outer_x)
+- `lambda_depth: 0` with `struct_field: {field: 0}` accesses the first parameter of the inner lambda (inner_y)
 
 ### Input Record References
 

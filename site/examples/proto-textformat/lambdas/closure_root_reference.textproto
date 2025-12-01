@@ -15,9 +15,15 @@ body: {
       {
         # First argument: lambda parameter x
         value: {
-          lambda_parameter_reference: {
-            lambda_depth: 0        # 0 = current lambda
-            reference: 0           # 0 = first parameter (x)
+          selection: {
+            lambda_parameter_reference: {
+              lambda_depth: 0        # 0 = current lambda
+            }
+            direct_reference: {
+              struct_field: {
+                field: 0               # 0 = first parameter (x)
+              }
+            }
           }
         }
       },

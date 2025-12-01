@@ -1,9 +1,0 @@
-expression: {
-  lambda_parameter_reference: {
-    lambda_depth: 0
-    reference: 0
-  }
-}
-direct_reference: {
-  struct_field: { field: 2 }
-}
