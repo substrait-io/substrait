@@ -1195,7 +1195,7 @@ message Expression {
     // Parameters this lambda accepts, represented as a struct where each field corresponds
     // to a parameter. Parameters can be accessed using FieldReference with
     // FieldReference.LambdaParameterReference as root_type and StructField to select
-    // specific parameters.
+    // specific parameters. The struct's nullability must be NULLABILITY_REQUIRED.
     Type.Struct parameters = 1;
 
     // The lambda body expression. Lambda parameters can be accessed using FieldReference

@@ -15,7 +15,7 @@ A lambda expression consists of:
 
 | Component          | Description                                                                 | Protobuf Field        | Required |
 |--------------------|-----------------------------------------------------------------------------|-----------------------|----------|
-| Parameters         | Struct type defining the lambda's parameters. Each field in the struct represents a parameter that can be accessed via FieldReference. | `parameters`     | Yes      |
+| Parameters         | Struct type defining the lambda's parameters. Each field in the struct represents a parameter that can be accessed via FieldReference. The struct's nullability must be `NULLABILITY_REQUIRED`. | `parameters`     | Yes      |
 | Body Expression    | The expression to evaluate (can reference parameters via LambdaParameterReference). The type of this expression is the return type of the lambda. | `body`                | Yes      |
 
 === "Lambda Message"
