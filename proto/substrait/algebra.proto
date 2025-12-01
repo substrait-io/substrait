@@ -1564,8 +1564,11 @@ message Expression {
     }
   }
 
-  // A reference to an inner part of a complex object. Can reference a
-  // single element or a masked version of elements
+  // A reference to data within a structured object, supporting navigation into
+  // nested fields. The root_type specifies the origin of the data (input record,
+  // outer query, lambda parameters, or an arbitrary expression), and the
+  // reference_type specifies how to navigate from that root (either a direct
+  // path to a single element or a mask selecting multiple elements).
   message FieldReference {
     // Whether this is composed of a single element reference or a masked
     // element subtree

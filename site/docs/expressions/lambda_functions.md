@@ -27,6 +27,9 @@ A lambda expression consists of:
 
 The return type of a lambda is derived from its body expression. Since all expressions in Substrait have deterministic types, the lambda's return type can be computed by determining the type of the body expression.
 
+!!! note "Future Work"
+    A detailed type derivation algorithm should be specified.
+
 ## Parameter References
 
 Lambda parameters are referenced within the lambda body using [`FieldReference`](field_references.md) with `LambdaParameterReference` as the root type. Lambda parameters are conceptually treated as a struct, where each parameter occupies a position that can be accessed via `StructField` references.
@@ -79,6 +82,10 @@ func<(any1) -> any2>         # Single parameter with parentheses (equivalent)
 func<(any1, any2) -> any3>      # Multiple parameters (parentheses required)
 func<(any1, any2, any3) -> any4>   # Three parameters
 ```
+
+### Nullability
+
+The `Func` type has its own nullability field, which applies to the function value itself—not its return type. A nullable function type (`func<i32 -> i32>?`) means the function reference may be null, whereas a function with a nullable return type (`func<i32 -> i32?>`) always exists but may return null.
 
 ### Example: The `map` Function
 
