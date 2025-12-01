@@ -98,8 +98,6 @@ Lambda bodies can reference data from outside their parameter list, enabling clo
 
 In nested lambdas, use `lambda_depth > 0` in `LambdaParameterReference` to reference an enclosing lambda's parameter struct (1 = immediate parent, 2 = grandparent, etc.). Combine this with `StructField` to access specific parameters from that scope.
 
-Text version: `(outer_x: i32) -> ((inner_y: i32) -> add(outer_x, inner_y))`
-
 ```protobuf
 --8<-- "examples/proto-textformat/lambdas/nested_lambda_capture.textproto"
 ```
@@ -115,17 +113,6 @@ Use [`FieldReference`](field_references.md) with `RootReference` to capture fiel
 ### Outer Query References
 
 Use [`FieldReference`](field_references.md) with `OuterReference` to reference outer query records in correlated subquery contexts.
-
-## Higher-Order Functions
-
-Lambdas are primarily used with higher-order functions that operate on collections. Current functions include:
-
-| Function | Description |
-|----------|-------------|
-| `map` | Apply an expression to each element of an array |
-| `filter` | Select elements matching a predicate |
-
-See the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml) for the complete list of lambda-accepting functions and their signatures.
 
 ## Lambda Invocation
 
