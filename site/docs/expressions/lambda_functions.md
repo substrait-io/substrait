@@ -130,9 +130,9 @@ A lambda invocation consists of:
 | Component  | Description                                                                 | Protobuf Field | Required |
 |------------|-----------------------------------------------------------------------------|----------------|----------|
 | Lambda     | The inline lambda expression to invoke                                      | `lambda`       | Yes      |
-| Arguments  | A struct expression containing the values to pass as parameters. Each field corresponds to a lambda parameter. | `arguments`    | Yes      |
+| Arguments  | A `Nested.Struct` containing expressions for each lambda parameter. Each field corresponds to a lambda parameter and must evaluate to the matching parameter type. | `arguments`    | Yes      |
 
-The arguments expression must evaluate to a struct type that matches the lambda's `parameters` exactly. The return type is derived from the type of the lambda's body expression.
+The `arguments` field must be a `Nested.Struct` with exactly as many fields as the lambda has parameters. The type of each expression field must match the corresponding parameter type. The return type is derived from the type of the lambda's body expression.
 
 === "LambdaInvocation Message"
     ```proto

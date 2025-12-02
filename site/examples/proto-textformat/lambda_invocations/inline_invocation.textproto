@@ -51,13 +51,11 @@ lambda: {
 
 # Invocation arguments: struct with one field containing 5
 arguments: {
-  literal: {
-    struct: {
-      fields: [
-        {
-          i32: 5
-        }
-      ]
+  fields: [
+    {
+      literal: {
+        i32: 5
+      }
     }
-  }
+  ]
 }

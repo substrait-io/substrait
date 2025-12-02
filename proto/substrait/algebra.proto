@@ -1213,10 +1213,10 @@ message Expression {
     // The lambda expression to invoke.
     Lambda lambda = 1;
 
-    // Arguments to pass to the lambda. This expression must evaluate to a struct type
-    // that matches lambda.parameters exactly. Each field in the struct corresponds to a
-    // lambda parameter.
-    Expression arguments = 2;
+    // Arguments to pass to the lambda, as a struct expression. The struct must have
+    // exactly one Expression field for each lambda parameter, and the expression at
+    // each position must have a type that matches the corresponding parameter type.
+    Nested.Struct arguments = 2;
   }
 
   // A scalar function call.
