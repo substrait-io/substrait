@@ -1,0 +1,15 @@
+%YAML 1.2
+---
+urn: extension:io.substrait:functions_binary
+scalar_functions:
+  - name: length
+    description: The number of bytes in the input
+    impls:
+      - args:
+          - value: "fixedbinary<L1>"
+            name: "input"
+        return: i64
+      - args:
+          - value: "varbinary<L1>"
+            name: "input"
+        return: i64
