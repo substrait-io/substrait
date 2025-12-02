@@ -42,6 +42,7 @@ def build_type_to_short_type():
         FuncTestCaseLexer.FixedChar: FuncTestCaseLexer.FChar,
         FuncTestCaseLexer.VarChar: FuncTestCaseLexer.VChar,
         FuncTestCaseLexer.FixedBinary: FuncTestCaseLexer.FBin,
+        FuncTestCaseLexer.VarBinary: FuncTestCaseLexer.VBIN,
         FuncTestCaseLexer.Decimal: FuncTestCaseLexer.Dec,
         FuncTestCaseLexer.Precision_Timestamp: FuncTestCaseLexer.PTs,
         FuncTestCaseLexer.Precision_Timestamp_TZ: FuncTestCaseLexer.PTsTZ,
