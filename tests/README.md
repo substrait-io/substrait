@@ -167,6 +167,7 @@ Use short names listed in https://substrait.io/extensions/#function-signature-co
 - **fchar**: Fixed-length string `fixedchar<N>`
 - **vchar**: Variable-length string `varchar<N>`
 - **vbin**: Fixed-length binary `fixedbinary<N>`
+- **vbar**: Variable-length binary `varbinary<N>`
 - **date**: Date
 - **time**: Time
 - **ts**: Timestamp

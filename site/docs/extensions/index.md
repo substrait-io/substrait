@@ -90,6 +90,7 @@ A function signature uniquely identifies a function implementation within a sing
 | fixedchar&lt;N&gt;              | fchar          |
 | varchar&lt;N&gt;                | vchar          |
 | fixedbinary&lt;N&gt;            | fbin           |
+| varbinary&lt;N&gt;              | vbin           |
 | decimal&lt;P,S&gt;              | dec            |
 | precision_time&lt;P&gt;         | pt             |
 | precision_timestamp&lt;P&gt;    | pts            |
