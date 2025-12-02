@@ -32,6 +32,7 @@ parameterizedType
   : FixedChar isnull=QMark? Lt length=numericParameter Gt                                   #fixedChar
   | VarChar isnull=QMark? Lt length=numericParameter Gt                                     #varChar
   | FixedBinary isnull=QMark? Lt length=numericParameter Gt                                 #fixedBinary
+  | VarBinary isnull=QMark? Lt length=numericParameter Gt                                   #varBinary
   | Decimal isnull=QMark? Lt precision=numericParameter Comma scale=numericParameter Gt     #decimal
   | Interval_Day isnull=QMark? Lt precision=numericParameter Gt                             #precisionIntervalDay
   | Precision_Time isnull=QMark? Lt precision=numericParameter Gt                           #precisionTime
