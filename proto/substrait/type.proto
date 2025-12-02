@@ -36,7 +36,7 @@ message Type {
     FixedChar fixed_char = 21;
     VarChar varchar = 22;
     FixedBinary fixed_binary = 23;
-    VarBinary var_binary = 37;
+    VarBinary varbinary = 38;
     Decimal decimal = 24;
     PrecisionTime precision_time = 36;
     PrecisionTimestamp precision_timestamp = 33;
