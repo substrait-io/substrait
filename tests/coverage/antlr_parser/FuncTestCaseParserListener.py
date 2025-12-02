@@ -378,6 +378,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#varBinaryArg.
+    def enterVarBinaryArg(self, ctx:FuncTestCaseParser.VarBinaryArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#varBinaryArg.
+    def exitVarBinaryArg(self, ctx:FuncTestCaseParser.VarBinaryArgContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#precisionTimeArg.
     def enterPrecisionTimeArg(self, ctx:FuncTestCaseParser.PrecisionTimeArgContext):
         pass
@@ -663,6 +672,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#fixedBinaryType.
     def exitFixedBinaryType(self, ctx:FuncTestCaseParser.FixedBinaryTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#varBinaryType.
+    def enterVarBinaryType(self, ctx:FuncTestCaseParser.VarBinaryTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#varBinaryType.
+    def exitVarBinaryType(self, ctx:FuncTestCaseParser.VarBinaryTypeContext):
         pass
 
 

@@ -215,6 +215,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#varBinaryArg.
+    def visitVarBinaryArg(self, ctx:FuncTestCaseParser.VarBinaryArgContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#precisionTimeArg.
     def visitPrecisionTimeArg(self, ctx:FuncTestCaseParser.PrecisionTimeArgContext):
         return self.visitChildren(ctx)
@@ -372,6 +377,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#fixedBinaryType.
     def visitFixedBinaryType(self, ctx:FuncTestCaseParser.FixedBinaryTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#varBinaryType.
+    def visitVarBinaryType(self, ctx:FuncTestCaseParser.VarBinaryTypeContext):
         return self.visitChildren(ctx)
 
 

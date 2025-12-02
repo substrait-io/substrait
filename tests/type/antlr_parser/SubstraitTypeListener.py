@@ -189,6 +189,15 @@ class SubstraitTypeListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SubstraitTypeParser#varBinary.
+    def enterVarBinary(self, ctx:SubstraitTypeParser.VarBinaryContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#varBinary.
+    def exitVarBinary(self, ctx:SubstraitTypeParser.VarBinaryContext):
+        pass
+
+
     # Enter a parse tree produced by SubstraitTypeParser#decimal.
     def enterDecimal(self, ctx:SubstraitTypeParser.DecimalContext):
         pass
