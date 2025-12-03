@@ -7,5 +7,5 @@ We use protobuf text format (textproto) rather than JSON for these examples beca
 ## Directories
 
 - `lambda/` - Examples of `Expression.Lambda` messages
-- `lambda_invocations/` - Examples of `Expression.LambdaInvocation` messages
-- `field_references/` - Examples of `Expression.FieldReference` messages
+- `lambda_invocation/` - Examples of `Expression.LambdaInvocation` messages
+- `field_reference/` - Examples of `Expression.FieldReference` messages

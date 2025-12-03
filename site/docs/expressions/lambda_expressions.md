@@ -57,7 +57,7 @@ To access a specific parameter, wrap `LambdaParameterReference` in a [`FieldRefe
 Because lambda parameters are accessed using [`FieldReference`](field_references.md), all field navigation mechanisms are available for drilling into complex objects. For example, when a lambda parameter is a struct, you can access deeply nested fields like `person.address.city`:
 
 ```protobuf
---8<-- "examples/proto-textformat/field_references/lambda_param_nested_struct.textproto"
+--8<-- "examples/proto-textformat/field_reference/lambda_param_nested_struct.textproto"
 ```
 
 ## Function Type Syntax
@@ -127,7 +127,7 @@ The `arguments` field must be a `Nested.Struct` with exactly as many fields as t
 Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 
 ```protobuf
---8<-- "examples/proto-textformat/lambda_invocations/inline_invocation.textproto"
+--8<-- "examples/proto-textformat/lambda_invocation/inline_invocation.textproto"
 ```
 
 ## See Also
