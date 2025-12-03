@@ -18,25 +18,25 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         self.file_path = file_path
 
     def visitDoc(self, ctx: FuncTestCaseParser.DocContext):
-        version, primary_include, dependencies = self.visitHeader(ctx.header())
+        version, include, dependencies = self.visitHeader(ctx.header())
         testcases = []
         for group in ctx.testGroup():
             _, group_tests = self.visit(group)
             for test_case in group_tests:
-                test_case.base_uri = primary_include
+                test_case.base_uri = include
             testcases.extend(group_tests)
 
         return TestFile(
-            self.file_path, version, primary_include, dependencies, testcases
+            self.file_path, version, include, dependencies, testcases
         )
 
     def visitHeader(self, ctx: FuncTestCaseParser.HeaderContext):
         version = self.visitVersion(ctx.version())
-        primary_include = self.visitInclude(ctx.include())
+        include = self.visitInclude(ctx.include())
         dependencies = []
         for dependency_ctx in ctx.dependency():
             dependencies.extend(self.visitDependency(dependency_ctx))
-        return version, primary_include, dependencies
+        return version, include, dependencies
 
     def visitVersion(self, ctx: FuncTestCaseParser.VersionContext):
         return ctx.FormatVersion().getText()
