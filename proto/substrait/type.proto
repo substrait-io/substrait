@@ -233,7 +233,7 @@ message Type {
     // Return type of the function.
     Type return_type = 2;
     // Nullability of the function value itself, not its return type.
-    // A nullable function type (e.g., func<i32 -> i32>?) means the function
+    // A nullable function type (e.g., func?<i32 -> i32>) means the function
     // reference may be null. This is distinct from the return type's
     // nullability (e.g., func<i32 -> i32?> where the function always exists
     // but may return null).
