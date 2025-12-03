@@ -49,7 +49,7 @@ To access a specific parameter, wrap `LambdaParameterReference` in a [`FieldRefe
 ### Simple Example
 
 ```protobuf
---8<-- "examples/proto-textformat/lambdas/simple_multiply.textproto"
+--8<-- "examples/proto-textformat/lambda/simple_multiply.textproto"
 ```
 
 ### Accessing Fields within Parameters
@@ -74,7 +74,7 @@ func<(any1) -> any2>         # Single parameter with parentheses (equivalent)
 
 **Multiple parameters** (represents a lambda with 2+ fields in the `parameters` struct):
 ```yaml
-func<(any1, any2) -> any3>      # Multiple parameters (parentheses required)
+func<(any1, any2) -> any3>         # Multiple parameters (parentheses required)
 func<(any1, any2, any3) -> any4>   # Three parameters
 ```
 
@@ -101,7 +101,7 @@ Lambda bodies can reference data from outside their parameter list, enabling clo
 `steps_out = 0` refers to the current lambda's parameters. To reference an enclosing lambda (i.e., a lambda further out in scope), use `steps_out > 0` (1 = immediate parent, 2 = grandparent, etc.). Combine this with `StructField` to access specific parameters from that scope.
 
 ```protobuf
---8<-- "examples/proto-textformat/lambdas/nested_lambda_capture.textproto"
+--8<-- "examples/proto-textformat/lambda/nested_lambda_capture.textproto"
 ```
 
 In this example:

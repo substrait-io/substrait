@@ -42,7 +42,7 @@ def test_validation_rejects_empty_messages():
 
 def test_validate_lambdas():
     """Validate lambda expression examples."""
-    examples_dir = Path("site/examples/proto-textformat/lambdas")
+    examples_dir = Path("site/examples/proto-textformat/lambda")
     for textproto_file in examples_dir.glob("*.textproto"):
         validate_example(textproto_file.read_text(), algebra_pb2.Expression.Lambda)
 
