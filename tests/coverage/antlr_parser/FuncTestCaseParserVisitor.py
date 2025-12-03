@@ -250,33 +250,13 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#i8.
-    def visitI8(self, ctx:FuncTestCaseParser.I8Context):
+    # Visit a parse tree produced by FuncTestCaseParser#int.
+    def visitInt(self, ctx:FuncTestCaseParser.IntContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#i16.
-    def visitI16(self, ctx:FuncTestCaseParser.I16Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#i32.
-    def visitI32(self, ctx:FuncTestCaseParser.I32Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#i64.
-    def visitI64(self, ctx:FuncTestCaseParser.I64Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#fp32.
-    def visitFp32(self, ctx:FuncTestCaseParser.Fp32Context):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#fp64.
-    def visitFp64(self, ctx:FuncTestCaseParser.Fp64Context):
+    # Visit a parse tree produced by FuncTestCaseParser#float.
+    def visitFloat(self, ctx:FuncTestCaseParser.FloatContext):
         return self.visitChildren(ctx)
 
 

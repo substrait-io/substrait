@@ -211,21 +211,17 @@ dataType
     ;
 
 scalarType
-  : booleanType             #boolean
-  | I8 isnull=QMark?        #i8
-  | I16 isnull=QMark?       #i16
-  | I32 isnull=QMark?       #i32
-  | I64 isnull=QMark?       #i64
-  | FP32 isnull=QMark?      #fp32
-  | FP64 isnull=QMark?      #fp64
-  | stringType              #string
-  | binaryType isnull=QMark? #binary
-  | timestampType           #timestamp
-  | timestampTZType         #timestampTz
-  | Date isnull=QMark?      #date
-  | Time isnull=QMark?      #time
-  | intervalYearType        #intervalYear
-  | UUID isnull=QMark?      #uuid
+  : booleanType                          #boolean
+  | intType                              #int
+  | floatType                            #float
+  | stringType                           #string
+  | binaryType                           #binary
+  | timestampType                        #timestamp
+  | timestampTZType                      #timestampTz
+  | dateType                             #date
+  | timeType                             #time
+  | intervalYearType                     #intervalYear
+  | UUID isnull=QMark?                   #uuid
   | UserDefined Identifier isnull=QMark? #userDefined
   ;
 
@@ -238,7 +234,7 @@ stringType
     ;
 
 binaryType
-    : (Binary | VBin)
+    : (Binary | VBin) isnull=QMark?
     ;
 
 intType
