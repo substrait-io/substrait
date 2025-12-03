@@ -15,7 +15,6 @@ fragment DIGIT: [0-9];
 If       : 'IF';
 Then     : 'THEN';
 Else     : 'ELSE';
-Lambda   : 'LAMBDA';
 Func     : 'FUNC';
 
 // TYPES
