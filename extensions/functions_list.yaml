@@ -2,20 +2,21 @@
 ---
 urn: extension:io.substrait:functions_list
 scalar_functions:
-  - name: "map"
+  - name: "transform"
     description: >-
-      Maps each element of an array using a lambda function.
+      Transforms each element of an array using a lambda function.
+      Also known as "map" in functional programming.
 
       Returns a new array where each element is the result of applying
-      the map function to the corresponding element in the input array.
+      the transformer function to the corresponding element in the input array.
 
       The lambda receives one parameter (the current element) and must return
-      the mapped value.
+      the transformed value.
     impls:
       - args:
           - name: input
             value: list<any1>
-          - name: mapper
+          - name: transformer
             value: func<any1 -> any2>
         nullability: MIRROR
         return: list<any2>

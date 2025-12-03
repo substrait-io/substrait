@@ -1,6 +1,6 @@
 # Lambda Expressions
 
-Lambda expressions represent inline, anonymous functions within query plans, enabling operations that require nested computation over data. They are primarily used to express array operations (such as `map` or `filter`) and support higher-order functions that apply computations element-wise over collections. A lambda consists of explicit parameter types and a body expression that references those parameters.
+Lambda expressions represent inline, anonymous functions within query plans, enabling operations that require nested computation over data. They are primarily used to express array operations (such as `transform` or `filter`) and support higher-order functions that apply computations element-wise over collections. A lambda consists of explicit parameter types and a body expression that references those parameters.
 
 ## Overview
 
@@ -87,9 +87,9 @@ func<(any1, any2, any3) -> any4>   # Three parameters
 
 The `Func` type has its own nullability field, which applies to the function value itself—not its return type. A nullable function type (`func<i32 -> i32>?`) means the function reference may be null, whereas a function with a nullable return type (`func<i32 -> i32?>`) always exists but may return null.
 
-### Example: The `map` Function
+### Example: The `transform` Function
 
-The `map` function transforms each element of a list using a lambda. Here's how it's defined in the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml):
+The `transform` function transforms each element of a list using a lambda. Here's how it's defined in the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml):
 
 ```yaml
 --8<-- "examples/extensions/lambda_function_example.yaml"

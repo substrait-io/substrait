@@ -232,12 +232,12 @@ corr(t1.col0, t1.col1) = -11::fp64
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
 ### SUBSTRAIT_DEPENDENCY: '/extensions/functions_arithmetic.yaml'
 
-# basic: Basic array mapping examples
-map([1, 2, 3]::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = [2, 4, 6]::list<i32>
-map([5, 10, 15]::list<i32>, (x -> add(x, 1::i32))::func<i32 -> i32>) = [6, 11, 16]::list<i32>
+# basic: Basic array transforming examples
+transform([1, 2, 3]::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = [2, 4, 6]::list<i32>
+transform([5, 10, 15]::list<i32>, (x -> add(x, 1::i32))::func<i32 -> i32>) = [6, 11, 16]::list<i32>
 ```
 
 In this example:
-- We are testing `functions_list.yaml` (specifically the `map` function)
+- We are testing `functions_list.yaml` (specifically the `transform` function)
 - We need `functions_arithmetic.yaml` as a dependency because the lambda expressions use `multiply` and `add` from that extension
 - Test coverage counts towards `functions_list.yaml`, not `functions_arithmetic.yaml`
