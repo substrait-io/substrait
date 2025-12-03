@@ -106,7 +106,7 @@ Lambda bodies can reference data from outside their parameter list through [`Fie
 
 ## Lambda Invocation
 
-Lambda expressions can be invoked directly using the `LambdaInvocation` expression type, allowing a lambda to be defined and called in a single expression.
+Lambda expressions can be invoked using the `LambdaInvocation` expression type, allowing a lambda to be defined and called in a single expression.
 
 A lambda invocation consists of:
 
