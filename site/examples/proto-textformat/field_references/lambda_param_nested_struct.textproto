@@ -17,10 +17,10 @@ lambda_parameter_reference: {
 }
 direct_reference: {
   struct_field: {
-    field: 0  # First parameter (person)
+    field: 0          # First parameter (person)
     child: {
       struct_field: {
-        field: 2  # Third field of person (address)
+        field: 2      # Third field of person (address)
         child: {
           struct_field: {
             field: 1  # Second field of address (city)

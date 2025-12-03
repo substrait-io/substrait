@@ -25,7 +25,7 @@ body: {
             }
             direct_reference: {
               struct_field: {
-                field: 0  # 0 = first parameter (x)
+                field: 0    # 0 = first parameter (x)
               }
             }
           }

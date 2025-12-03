@@ -17,7 +17,7 @@ lambda: {
   # Lambda body: x * 2
   body: {
     scalar_function: {
-      function_reference: 1  # Reference to multiply function
+      function_reference: 1   # Reference to multiply function
       arguments: [
         {
           # First argument: lambda parameter x
@@ -28,7 +28,7 @@ lambda: {
               }
               direct_reference: {
                 struct_field: {
-                  field: 0  # 0 = first parameter (x)
+                  field: 0    # 0 = first parameter (x)
                 }
               }
             }
