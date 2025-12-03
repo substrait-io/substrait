@@ -98,7 +98,7 @@ doc         := <version>
                ((<test_group>)?(<test_case>)+\n)+
 version     := ### SUBSTRAIT_SCALAR_TEST: <test_library_version>
 include     := ### SUBSTRAIT_INCLUDE: <uri>
-dependency  := ### SUBSTRAIT_DEPENDENCY: <uri>(, <uri>)*
+dependency  := ### SUBSTRAIT_DEPENDENCY: <uri>
 test_group  := # <description>
 test_case   := <function>(<arguments>) ([<options>])? = <result> (#<description>)?
 description := string
