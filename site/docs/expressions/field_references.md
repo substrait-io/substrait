@@ -7,7 +7,7 @@ Field references can originate from different root types:
 - **RootReference**: References the incoming record from the relation
 - **OuterReference**: References outer query records in correlated subqueries
 - **Expression**: References the result of evaluating an expression
-- **LambdaParameterReference**: References lambda parameters within lambda body expressions (see [Lambda Expressions](lambda_functions.md))
+- **LambdaParameterReference**: References lambda parameters within lambda body expressions (see [Lambda Expressions](lambda_expressions.md))
 
 | Reference Type            | Properties                                                   | Type Applicability | Type return                |
 | ------------------------- | ------------------------------------------------------------ | ------------------ | -------------------------- |
