@@ -40,7 +40,7 @@ Lambda parameters are referenced within the lambda body using [`FieldReference`]
 
 | Field             | Description                                                          | Values   |
 |-------------------|----------------------------------------------------------------------|----------|
-| `lambda_depth`    | Number of lambda boundaries to traverse (0 = current lambda)        | 0, 1, 2... |
+| `steps_out`       | Number of lambda boundaries to traverse (0 = current lambda)        | 0, 1, 2... |
 
 === "LambdaParameterReference Message"
     ```proto
@@ -103,15 +103,15 @@ Lambda bodies can reference data from outside their parameter list, enabling clo
 
 ### Outer Lambda Parameters
 
-In nested lambdas, use `lambda_depth > 0` in `LambdaParameterReference` to reference an enclosing lambda's parameter struct (1 = immediate parent, 2 = grandparent, etc.). Combine this with `StructField` to access specific parameters from that scope.
+`steps_out = 0` refers to the current lambda's parameters. To reference an enclosing lambda (i.e., a lambda further out in scope), use `steps_out > 0` (1 = immediate parent, 2 = grandparent, etc.). Combine this with `StructField` to access specific parameters from that scope.
 
 ```protobuf
 --8<-- "examples/proto-textformat/lambdas/nested_lambda_capture.textproto"
 ```
 
 In this example:
-- `lambda_depth: 1` with `struct_field: {field: 0}` accesses the first parameter of the outer lambda (outer_x)
-- `lambda_depth: 0` with `struct_field: {field: 0}` accesses the first parameter of the inner lambda (inner_y)
+- `steps_out: 1` with `struct_field: {field: 0}` accesses the first parameter of the outer lambda (outer_x)
+- `steps_out: 0` with `struct_field: {field: 0}` accesses the first parameter of the inner lambda (inner_y)
 
 ### Input Record References
 

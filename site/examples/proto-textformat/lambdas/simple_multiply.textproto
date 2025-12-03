@@ -17,7 +17,7 @@ body: {
         value: {
           selection: {
             lambda_parameter_reference: {
-              lambda_depth: 0        # 0 = current lambda
+              steps_out: 0        # 0 = current lambda
             }
             direct_reference: {
               struct_field: {

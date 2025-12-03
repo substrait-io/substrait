@@ -1609,7 +1609,7 @@ message Expression {
       //   0 = innermost lambda (current lambda's parameters as a struct)
       //   1 = one lambda level out (outer lambda's parameters as a struct)
       //   2 = two lambda levels out, etc.
-      uint32 lambda_depth = 1;
+      uint32 steps_out = 1;
     }
   }
 

@@ -11,7 +11,7 @@
 # Equivalent to: lambda_parameter[0].struct_field[2].struct_field[1]
 
 lambda_parameter_reference: {
-  lambda_depth: 0  # Current lambda's parameters
+  steps_out: 0  # Current lambda's parameters
 }
 direct_reference: {
   struct_field: {
