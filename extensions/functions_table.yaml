@@ -1,0 +1,93 @@
+%YAML 1.2
+---
+# Table functions: Functions that produce relations (zero or more records).
+urn: extension:io.substrait:functions_table
+table_functions:
+  - name: "generate_series"
+    description: >-
+      Generates a series of integer values from start to stop, incrementing by step.
+
+      Produces zero or more records containing a single integer value. The series
+      includes both the start and stop values if they fall on a step boundary.
+      If step is positive, stops when the value exceeds stop. If step is negative,
+      stops when the value is less than stop. Returns empty if step is zero or if
+      the step direction doesn't allow reaching stop from start.
+    impls:
+      - args:
+          - name: start
+            value: i64
+            description: The starting value of the series
+          - name: stop
+            value: i64
+            description: The ending value of the series (inclusive)
+          - name: step
+            value: i64
+            description: The increment between values
+        return:
+          names:
+            - value
+          struct:
+            types:
+              - i64
+      - args:
+          - name: start
+            value: i32
+            description: The starting value of the series
+          - name: stop
+            value: i32
+            description: The ending value of the series (inclusive)
+          - name: step
+            value: i32
+            description: The increment between values
+        return:
+          names:
+            - value
+          struct:
+            types:
+              - i32
+      - args:
+          - name: start
+            value: i64
+            description: The starting value of the series
+          - name: stop
+            value: i64
+            description: The ending value of the series (inclusive)
+        return:
+          names:
+            - value
+          struct:
+            types:
+              - i64
+      - args:
+          - name: start
+            value: i32
+            description: The starting value of the series
+          - name: stop
+            value: i32
+            description: The ending value of the series (inclusive)
+        return:
+          names:
+            - value
+          struct:
+            types:
+              - i32
+  - name: "unnest"
+    description: >-
+      Expands one or more list expressions into a set of rows.
+
+      When multiple lists are provided, produces rows by expanding the lists in parallel (like a zip operation).
+      For example, unnest([1,2], [3,4]) produces rows: (1,3), (2,4).
+      If lists have different lengths, shorter lists are padded with nulls.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+            description: The list(s) to unnest
+        variadic:
+          min: 1
+        return:
+          names:
+            - element
+          struct:
+            types:
+              - any1

@@ -106,6 +106,26 @@ message FunctionSignature {
     }
   }
 
+  message Table {
+    repeated Argument arguments = 2;
+    repeated string name = 3;
+    Description description = 4;
+
+    // The schema expression that defines the output relation structure.
+    // This must be an ExpressionNamedStruct since table functions always
+    // produce relations with named fields. The struct can be:
+    // - Static (concrete field types)
+    // - Type-parameterized (field types derived from argument types)
+    DerivationExpression.ExpressionNamedStruct schema = 5;
+
+    oneof final_variable_behavior {
+      FinalArgVariadic variadic = 6;
+      FinalArgNormal normal = 7;
+    }
+
+    repeated Implementation implementations = 8;
+  }
+
   message Description {
     string language = 1;
     string body = 2;
