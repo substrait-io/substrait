@@ -208,7 +208,7 @@ listArg
     ;
 
 lambdaArg
-    : literalLambda DoubleColon funcType isnull=QMark?
+    : literalLambda DoubleColon funcType
     ;
 
 literalList
