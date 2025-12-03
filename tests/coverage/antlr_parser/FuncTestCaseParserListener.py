@@ -603,6 +603,42 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#intType.
+    def enterIntType(self, ctx:FuncTestCaseParser.IntTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#intType.
+    def exitIntType(self, ctx:FuncTestCaseParser.IntTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#floatType.
+    def enterFloatType(self, ctx:FuncTestCaseParser.FloatTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#floatType.
+    def exitFloatType(self, ctx:FuncTestCaseParser.FloatTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#dateType.
+    def enterDateType(self, ctx:FuncTestCaseParser.DateTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#dateType.
+    def exitDateType(self, ctx:FuncTestCaseParser.DateTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#timeType.
+    def enterTimeType(self, ctx:FuncTestCaseParser.TimeTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#timeType.
+    def exitTimeType(self, ctx:FuncTestCaseParser.TimeTypeContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#timestampType.
     def enterTimestampType(self, ctx:FuncTestCaseParser.TimestampTypeContext):
         pass

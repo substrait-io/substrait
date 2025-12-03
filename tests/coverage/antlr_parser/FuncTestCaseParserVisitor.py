@@ -340,6 +340,26 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#intType.
+    def visitIntType(self, ctx:FuncTestCaseParser.IntTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#floatType.
+    def visitFloatType(self, ctx:FuncTestCaseParser.FloatTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#dateType.
+    def visitDateType(self, ctx:FuncTestCaseParser.DateTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#timeType.
+    def visitTimeType(self, ctx:FuncTestCaseParser.TimeTypeContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#timestampType.
     def visitTimestampType(self, ctx:FuncTestCaseParser.TimestampTypeContext):
         return self.visitChildren(ctx)

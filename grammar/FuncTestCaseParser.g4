@@ -133,72 +133,72 @@ floatLiteral
 
 nullArg: NullLiteral DoubleColon dataType;
 
-intArg: IntegerLiteral DoubleColon (I8 | I16 | I32 | I64) isnull=QMark?;
+intArg: IntegerLiteral DoubleColon intType;
 
-floatArg: numericLiteral DoubleColon (FP32 | FP64) isnull=QMark?;
+floatArg: numericLiteral DoubleColon floatType;
 
 decimalArg
-    : numericLiteral DoubleColon decimalType isnull=QMark?
+    : numericLiteral DoubleColon decimalType
     ;
 
 booleanArg
-    : BooleanLiteral DoubleColon booleanType isnull=QMark?
+    : BooleanLiteral DoubleColon booleanType
     ;
 
 stringArg
-    : StringLiteral DoubleColon stringType isnull=QMark?
+    : StringLiteral DoubleColon stringType
     ;
 
 dateArg
-    : DateLiteral DoubleColon Date isnull=QMark?
+    : DateLiteral DoubleColon dateType
     ;
 
 timeArg
-    : TimeLiteral DoubleColon Time isnull=QMark?
+    : TimeLiteral DoubleColon timeType
     ;
 
 timestampArg
-    : TimestampLiteral DoubleColon timestampType isnull=QMark?
+    : TimestampLiteral DoubleColon timestampType
     ;
 
 timestampTzArg
-    : TimestampTzLiteral DoubleColon timestampTZType isnull=QMark?
+    : TimestampTzLiteral DoubleColon timestampTZType
     ;
 
 intervalYearArg
-    : IntervalYearLiteral DoubleColon intervalYearType isnull=QMark?
+    : IntervalYearLiteral DoubleColon intervalYearType
     ;
 
 intervalDayArg
-    : IntervalDayLiteral DoubleColon intervalDayType isnull=QMark?
+    : IntervalDayLiteral DoubleColon intervalDayType
     ;
 
 fixedCharArg
-    : StringLiteral DoubleColon fixedCharType isnull=QMark?
+    : StringLiteral DoubleColon fixedCharType
     ;
 
 varCharArg
-    : StringLiteral DoubleColon varCharType isnull=QMark?
+    : StringLiteral DoubleColon varCharType
     ;
 
 fixedBinaryArg
-    : StringLiteral DoubleColon fixedBinaryType isnull=QMark?
+    : StringLiteral DoubleColon fixedBinaryType
     ;
 
 precisionTimeArg
-    : TimeLiteral DoubleColon precisionTimeType isnull=QMark?
+    : TimeLiteral DoubleColon precisionTimeType
     ;
 
 precisionTimestampArg
-    : TimestampLiteral DoubleColon precisionTimestampType isnull=QMark?
+    : TimestampLiteral DoubleColon precisionTimestampType
     ;
 
 precisionTimestampTZArg
-    : TimestampTzLiteral DoubleColon precisionTimestampTZType isnull=QMark?
+    : TimestampTzLiteral DoubleColon precisionTimestampTZType
     ;
 
 listArg
-    : literalList DoubleColon listType isnull=QMark?
+    : literalList DoubleColon listType
     ;
 
 literalList
@@ -206,51 +206,67 @@ literalList
     ;
 
 dataType
-    : scalarType isnull=QMark?
+    : scalarType
     | parameterizedType
     ;
 
 scalarType
   : booleanType             #boolean
-  | I8                      #i8
-  | I16                     #i16
-  | I32                     #i32
-  | I64                     #i64
-  | FP32                    #fp32
-  | FP64                    #fp64
+  | I8 isnull=QMark?        #i8
+  | I16 isnull=QMark?       #i16
+  | I32 isnull=QMark?       #i32
+  | I64 isnull=QMark?       #i64
+  | FP32 isnull=QMark?      #fp32
+  | FP64 isnull=QMark?      #fp64
   | stringType              #string
-  | binaryType              #binary
+  | binaryType isnull=QMark? #binary
   | timestampType           #timestamp
   | timestampTZType         #timestampTz
-  | Date                    #date
-  | Time                    #time
+  | Date isnull=QMark?      #date
+  | Time isnull=QMark?      #time
   | intervalYearType        #intervalYear
-  | UUID                    #uuid
-  | UserDefined Identifier  #userDefined
+  | UUID isnull=QMark?      #uuid
+  | UserDefined Identifier isnull=QMark? #userDefined
   ;
 
 booleanType
-    : (Bool | Boolean)
+    : (Bool | Boolean) isnull=QMark?
     ;
 
 stringType
-    : (Str | String)
+    : (Str | String) isnull=QMark?
     ;
 
 binaryType
     : (Binary | VBin)
     ;
 
+intType
+    : (I8 | I16 | I32 | I64) isnull=QMark?
+    ;
+
+floatType
+    : (FP32 | FP64) isnull=QMark?
+    ;
+
+dateType
+    : Date isnull=QMark?
+    ;
+
+timeType
+    : Time isnull=QMark?
+    ;
+
 timestampType
-    : (Ts | Timestamp)
+    : (Ts | Timestamp) isnull=QMark?
     ;
 
 timestampTZType
-    : (TsTZ | Timestamp_TZ)
+    : (TsTZ | Timestamp_TZ) isnull=QMark?
     ;
 
 intervalYearType
-    : (IYear | Interval_Year)
+    : (IYear | Interval_Year) isnull=QMark?
     ;
 
 intervalDayType
