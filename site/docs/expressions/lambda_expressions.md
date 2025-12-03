@@ -7,7 +7,7 @@ Lambda expressions represent inline, anonymous functions within query plans, ena
 Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions or [invoked directly](#lambda-invocation).
 
 !!! note "Documentation Syntax"
-    This documentation uses the syntax `(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. There is no formal syntax specified in the substrait spec for compactly representing lambdas.
+    This documentation uses the syntax `(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. There is no formal syntax specified in the Substrait spec for compactly representing lambdas.
 
 ## Lambda Expression Structure
 
