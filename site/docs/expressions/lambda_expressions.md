@@ -29,7 +29,7 @@ The return type of a lambda is derived from its body expression. Since all expre
 
 ## Parameter References
 
-Lambda parameters are referenced within the lambda body using [`FieldReference`](field_references.md) with `LambdaParameterReference` as the root type. Lambda parameters are conceptually treated as a struct, where each parameter occupies a position that can be accessed via `StructField` references.
+Lambda parameters are referenced within the lambda body using [`FieldReference`](field_references.md)s with `LambdaParameterReference` as the root type. Lambda parameters are conceptually treated as a struct, where each parameter occupies a position that can be accessed via `StructField` references.
 
 ### LambdaParameterReference Fields
 
