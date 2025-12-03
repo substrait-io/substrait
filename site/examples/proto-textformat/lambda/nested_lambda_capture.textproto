@@ -10,7 +10,7 @@ body: {
     parameters: {types: [{i32: {nullability: NULLABILITY_REQUIRED}}]}
     body: {
       scalar_function: {
-        function_reference: 1
+        function_reference: 1 # reference to add
         arguments: [
           {value: {selection: {lambda_parameter_reference: {steps_out: 1}, direct_reference: {struct_field: {field: 0}}}}},  # outer_x
           {value: {selection: {lambda_parameter_reference: {steps_out: 0}, direct_reference: {struct_field: {field: 0}}}}}   # inner_y

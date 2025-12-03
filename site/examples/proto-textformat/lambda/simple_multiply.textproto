@@ -21,11 +21,11 @@ body: {
         value: {
           selection: {
             lambda_parameter_reference: {
-              steps_out: 0        # 0 = current lambda
+              steps_out: 0  # 0 = current lambda
             }
             direct_reference: {
               struct_field: {
-                field: 0               # 0 = first parameter (x)
+                field: 0  # 0 = first parameter (x)
               }
             }
           }
