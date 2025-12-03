@@ -48,8 +48,6 @@ To access a specific parameter, wrap `LambdaParameterReference` in a [`FieldRefe
 
 ### Simple Example
 
-For a lambda `(x: i32) -> x * 2`:
-
 ```protobuf
 --8<-- "examples/proto-textformat/lambdas/simple_multiply.textproto"
 ```

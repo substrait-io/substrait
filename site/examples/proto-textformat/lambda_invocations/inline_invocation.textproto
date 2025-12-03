@@ -1,3 +1,7 @@
+# Represents the invocation of the lambda `(x: i32) -> x * 2)` on parameter `5`
+# i.e. `(x: i32) -> x * 2)(5)`
+#
+# message Expression.LambdaInvocation
 lambda: {
   # Lambda parameter: x (type i32)
   parameters: {

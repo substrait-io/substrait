@@ -1,3 +1,7 @@
+# Represents: `(x: i32) -> x * 2`
+#
+# message Expression.Lambda
+
 parameters: {
   types: [
     {
