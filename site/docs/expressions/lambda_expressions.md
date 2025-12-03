@@ -94,7 +94,7 @@ The `func<any1 -> any2>` type indicates the lambda accepts one parameter of type
 
 ## Closures
 
-Lambda bodies can reference data from outside their parameter list, enabling closures. This is accomplished through normal expression mechanisms:
+Lambda bodies can reference data from outside their parameter list through [`FieldReference`](field_references.md)s. References to input records (via `RootReference`) and outer query records (via `OuterReference`) work as they do elsewhere in Substrait. There is also a way to capture lambda parameters from outer lambdas.
 
 ### Outer Lambda Parameters
 
@@ -103,18 +103,6 @@ Lambda bodies can reference data from outside their parameter list, enabling clo
 ```protobuf
 --8<-- "examples/proto-textformat/lambda/nested_lambda_capture.textproto"
 ```
-
-In this example:
-- `steps_out: 1` with `struct_field: {field: 0}` accesses the first parameter of the outer lambda (outer_x)
-- `steps_out: 0` with `struct_field: {field: 0}` accesses the first parameter of the inner lambda (inner_y)
-
-### Input Record References
-
-Use [`FieldReference`](field_references.md) with `RootReference` to capture fields from the input record being processed.
-
-### Outer Query References
-
-Use [`FieldReference`](field_references.md) with `OuterReference` to reference outer query records in correlated subquery contexts.
 
 ## Lambda Invocation
 
