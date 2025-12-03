@@ -26,9 +26,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
                 test_case.base_uri = include
             testcases.extend(group_tests)
 
-        return TestFile(
-            self.file_path, version, include, dependencies, testcases
-        )
+        return TestFile(self.file_path, version, include, dependencies, testcases)
 
     def visitHeader(self, ctx: FuncTestCaseParser.HeaderContext):
         version = self.visitVersion(ctx.version())
