@@ -33,7 +33,7 @@ or
 The include statement specifies the extension file being tested. Each test file must have exactly one include statement. This identifies which extension's functions are being tested and counted for coverage purposes.
 
 ```code
-### SUBSTRAIT_INCLUDE: /extensions/functions_list.yaml
+### SUBSTRAIT_INCLUDE: /extensions/functions_aggregate_approx.yaml
 ```
 
 ### Dependency Statements (Optional)
