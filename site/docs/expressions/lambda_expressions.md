@@ -68,8 +68,8 @@ This notation applies to extension YAML signatures; in plans, lambdas are always
 
 **Single parameter** (represents a lambda with 1 field in the `parameters` struct):
 ```yaml
-func<any1 -> any2>           # Single parameter without parentheses
-func<(any1) -> any2>         # Single parameter with parentheses (equivalent)
+func<any1 -> any2>                 # Single parameter without parentheses
+func<(any1) -> any2>               # Single parameter with parentheses (equivalent)
 ```
 
 **Multiple parameters** (represents a lambda with 2+ fields in the `parameters` struct):
@@ -80,7 +80,7 @@ func<(any1, any2, any3) -> any4>   # Three parameters
 
 ### Nullability
 
-The `Func` type has its own nullability field, which applies to the function value itself—not its return type. A nullable function type (`func<i32 -> i32>?`) means the function reference may be null, whereas a function with a nullable return type (`func<i32 -> i32?>`) always exists but may return null.
+The `Func` type has its own nullability field, which applies to the function value itself — not its return type. A nullable function type (`func?<i32 -> i32>`) means the function reference may be null, whereas a non-nullable function with a nullable return type (`func<i32 -> i32?>`) always exists but may return null.
 
 ### Example: The `transform` Function
 
