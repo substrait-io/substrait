@@ -27,9 +27,6 @@ A lambda expression consists of:
 
 The return type of a lambda is derived from its body expression. Since all expressions in Substrait have deterministic types, the lambda's return type can be computed by determining the type of the body expression.
 
-!!! note "Future Work"
-    A detailed type derivation algorithm should be specified.
-
 ## Parameter References
 
 Lambda parameters are referenced within the lambda body using [`FieldReference`](field_references.md) with `LambdaParameterReference` as the root type. Lambda parameters are conceptually treated as a struct, where each parameter occupies a position that can be accessed via `StructField` references.
