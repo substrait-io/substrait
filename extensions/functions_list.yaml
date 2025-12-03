@@ -4,13 +4,13 @@ urn: extension:io.substrait:functions_list
 scalar_functions:
   - name: "transform"
     description: >-
-      Transforms each element of an array using a lambda function.
+      Transforms each element of a list using the provided function.
       Also known as "map" in functional programming.
 
-      Returns a new array where each element is the result of applying
-      the transformer function to the corresponding element in the input array.
+      Returns a new list where each element is the result of applying
+      the transformer to the corresponding element in the input list.
 
-      The lambda receives one parameter (the current element) and must return
+      The transformer receives one parameter (the current element) and must return
       the transformed value.
     impls:
       - args:
@@ -23,16 +23,16 @@ scalar_functions:
 
   - name: "filter"
     description: >-
-      Filters array elements based on a predicate function.
+      Filters a list of elements based on a predicate function.
 
-      Returns a new array containing only elements for which the predicate
+      Returns a new list containing only elements for which the predicate
       function returns true.
 
-      The lambda receives one parameter (the current element) and must return a
+      The predicate receives one parameter (the current element) and must return a
       boolean.
 
-      Elements for which the lambda returns true are included in the
-      result. Elements for which the lambda returns false or null are excluded.
+      Elements for which the predicate returns true are included in the
+      result. Elements for which the predicate returns false or null are excluded.
     impls:
       - args:
           - name: input
