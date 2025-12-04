@@ -44,7 +44,7 @@ message Type {
     Struct struct = 25;
     List list = 27;
     Map map = 28;
-    Func func = 50;
+    Func func = 38;
 
     UserDefined user_defined = 30;
 
