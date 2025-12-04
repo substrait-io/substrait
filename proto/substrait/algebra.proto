@@ -389,7 +389,7 @@ message ConsistentPartitionWindowRel {
   // to the `WindowFunction` message for a description of these fields.
   message WindowRelFunction {
     // References a function_anchor defined in this plan.
-    // 0 is a valid anchor/reference.
+    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 function_reference = 1;
 
     repeated FunctionArgument arguments = 9;
@@ -791,7 +791,7 @@ message ComparisonJoinKey {
       // collations, where we might want to do something like a case-insensitive comparison.
       //
       // This must be a binary function with a boolean return type.
-      // 0 is a valid anchor/reference.
+      // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
       uint32 custom_function_reference = 2;
     }
   }
@@ -1049,7 +1049,7 @@ message Expression {
     // optionally points to a type_variation_anchor defined in this plan.
     // Applies to all members of union other than the Typed null (which should
     // directly declare the type variation).
-    // 0 is a valid anchor/reference.
+    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 type_variation_reference = 51;
 
     message VarChar {
@@ -1129,11 +1129,11 @@ message Expression {
     message UserDefined {
       oneof type_anchor_type {
         // points to a type_anchor defined in this plan
-        // 0 is a valid anchor/reference.
+        // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
         uint32 type_reference = 1;
 
         // points to a type_alias_anchor defined in this plan.
-        // 0 is a valid anchor/reference.
+        // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
         uint32 type_alias_reference = 5;
       }
 
@@ -1158,7 +1158,7 @@ message Expression {
 
     // Optionally points to a type_variation_anchor defined in this plan for
     // the returned nested type.
-    // 0 is a valid anchor/reference.
+    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 type_variation_reference = 2;
 
     oneof nested_type {
@@ -1197,7 +1197,7 @@ message Expression {
   message ScalarFunction {
     // Points to a function_anchor defined in this plan, which must refer
     // to a scalar function in the associated YAML file.
-    // Required; 0 is a valid anchor/reference.
+    // Required; 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 function_reference = 1;
 
     // The arguments to be bound to the function. This must have exactly the
@@ -1235,7 +1235,7 @@ message Expression {
     // An aggregate function referenced here should be treated as a window
     // function with Window Type STREAMING
     //
-    // Required; 0 is considered to be a valid anchor/reference.
+    // Required; 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 function_reference = 1;
 
     // The arguments to be bound to the function. This must have exactly the
@@ -1656,7 +1656,7 @@ message DynamicParameter {
   Type type = 1;
 
   // The surrogate key used within a plan to reference a specific parameter binding.
-  // 0 is a valid anchor/reference.
+  // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
   uint32 parameter_reference = 2;
 }
 
@@ -1667,7 +1667,7 @@ message SortField {
   oneof sort_kind {
     SortDirection direction = 2;
     // References a function_anchor defined in this plan.
-    // 0 is a valid anchor/reference.
+    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 comparison_function_reference = 3;
   }
   enum SortDirection {
@@ -1714,7 +1714,7 @@ enum AggregationPhase {
 message AggregateFunction {
   // Points to a function_anchor defined in this plan, which must refer
   // to an aggregate function in the associated YAML file.
-  // Required; 0 is a valid anchor/reference.
+  // Required; 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
   uint32 function_reference = 1;
 
   // The arguments to be bound to the function. This must have exactly the

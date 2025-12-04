@@ -10,7 +10,7 @@ Type aliases allow a plan to declare a type once and reference it multiple times
 
 A type alias is a mapping from an anchor to a concrete Substrait type. A valid type alias is described below.
 
-* Anchors are non-negative integers starting from 0, meaning 0 is a valid anchor value.
+* Anchors are non-negative integers starting from 0, meaning 0 is a valid anchor value, but prefer non-zero values for ergonomics.
 * All type parameters must be specified.
 * Cannot directly be another alias.
 * Type parameters can reference other aliased types as long as no circular dependencies are introduced.

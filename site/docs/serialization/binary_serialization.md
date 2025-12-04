@@ -36,7 +36,7 @@ Extension URNs and declarations are encapsulated in the top level of the plan. E
 
 Once the YAML file extension URN anchor is defined, the anchor will be referenced by zero or more `SimpleExtensionDefinition`s. For each simple extension definition, an anchor is defined for that specific extension entity. This anchor is then referenced to within lower-level primitives (functions, etc.) to reference that specific extension. Message properties are named `*_anchor` where the anchor is defined and `*_reference` when referencing the anchor. For example `function_anchor` and `function_reference`.
 
-Anchor values are non-negative integers starting from 0. A value of 0 is valid and can be used to reference an extension entity.
+Anchor values are non-negative integers starting from 0. A value of 0 is valid and can be used to reference an extension entity, but prefer non-zero values for ergonomics.
 
 === "Simple Extension Declaration"
 
