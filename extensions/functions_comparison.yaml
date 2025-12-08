@@ -252,7 +252,8 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: any1
+        return: any1?
+        nullability: DECLARED_OUTPUT
   -
     name: "coalesce"
     description: >-
