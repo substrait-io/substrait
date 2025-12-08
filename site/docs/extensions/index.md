@@ -126,7 +126,7 @@ The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional rest
 
 ## Advanced Extensions
 
-Advanced extensions provide a way to embed custom functionality that goes beyond the standard YAML-based simple extensions. Unlike simple extensions, advanced extensions use Protocol Buffer's `google.protobuf.Any` type to embed arbitrary extension data directly into Substrait messages.
+Advanced extensions provide a way to embed custom functionality that goes beyond the standard YAML-based simple extensions. Unlike simple extensions, advanced extensions allow arbitrary, custom schemas. In the Protocol Buffers implementation, the `google.protobuf.Any` type is used to embed arbitrary extension data directly into Substrait messages.
 
 ### How Advanced Extensions Work
 
