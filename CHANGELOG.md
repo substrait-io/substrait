@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.78.1](https://github.com/substrait-io/substrait/compare/v0.78.0...v0.78.1) (2025-11-23)
+
+### Bug Fixes
+
+* remove invalid equal function test ([#893](https://github.com/substrait-io/substrait/issues/893)) ([9533cfe](https://github.com/substrait-io/substrait/commit/9533cfe79449cb4504d934ccb76a2d6026123f43))
+
 ## [0.78.0](https://github.com/substrait-io/substrait/compare/v0.77.0...v0.78.0) (2025-11-16)
 
 ### ⚠ BREAKING CHANGES
