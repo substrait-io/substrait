@@ -80,8 +80,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: bufbuild/buf-setup-action@v1.50.0
+        with:
+          github_token: ${{ github.token }}
       - name: Install dependencies
         run: python3 -m pip install -r requirements.txt
+      - name: Generate protobuf bindings
+        run: buf generate
       - name: Black
         run: python3 -m black --diff --check .
       - name: Flake8
