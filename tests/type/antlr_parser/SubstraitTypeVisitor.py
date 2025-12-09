@@ -110,6 +110,11 @@ class SubstraitTypeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by SubstraitTypeParser#varBinary.
+    def visitVarBinary(self, ctx:SubstraitTypeParser.VarBinaryContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by SubstraitTypeParser#decimal.
     def visitDecimal(self, ctx:SubstraitTypeParser.DecimalContext):
         return self.visitChildren(ctx)

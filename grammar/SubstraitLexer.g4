@@ -40,6 +40,7 @@ Precision_Timestamp_TZ: 'PRECISION_TIMESTAMP_TZ';
 FixedChar: 'FIXEDCHAR';
 VarChar  : 'VARCHAR';
 FixedBinary: 'FIXEDBINARY';
+VarBinary: 'VARBINARY';
 Struct   : 'STRUCT';
 NStruct  : 'NSTRUCT';
 List     : 'LIST';
@@ -61,6 +62,7 @@ PTsTZ: 'PTSTZ';
 FChar: 'FCHAR';
 VChar: 'VCHAR';
 FBin: 'FBIN';
+VBIN: 'VBIN';
 
 Any: 'ANY';
 AnyVar: Any [0-9];
