@@ -102,7 +102,7 @@ possible approach is that a chunk should only be read if the midpoint of the chu
 
 #### Iceberg Table Type
 
-A Iceberg Table is a table built on [Apache Iceberg](https://iceberg.apache.org/). Iceberg tables can be read by either directly reading a [metadata file](https://iceberg.apache.org/spec/#table-metadata) or by consulting a [catalog](https://iceberg.apache.org/concepts/catalog/). 
+A Iceberg Table is a table built on [Apache Iceberg](https://iceberg.apache.org/). Iceberg tables can be read by either directly reading a [metadata file](https://iceberg.apache.org/spec/#table-metadata) or by consulting a [catalog](https://iceberg.apache.org/concepts/catalog/).
 
 ##### Metadata File Reading
 
@@ -118,6 +118,62 @@ Points to an [Iceberg metadata file](https://iceberg.apache.org/spec/#table-meta
 
     ```proto
 %%% proto.algebra.ReadRel %%%
+    ```
+
+
+## Table Function
+
+The table function operator invokes a function that produces a relation (zero or more records).  These are leaf operators that take constant (non-relational) arguments and generate data.
+
+Like scalar function return types, table function schemas can be concrete types or reference type parameters from arguments. The schema is expressed as an `ExpressionNamedStruct` and is either derived from the function signature or must be explicitly provided when it depends on runtime data content. It is preferred to explicitly provide a schema derivation in the YAML file when possible.
+
+Table functions can be **variadic**, meaning the last parameter can be repeated one or more times (specified via the `variadic` field in YAML).
+
+| Signature            | Value                                       |
+| -------------------- | ------------------------------------------- |
+| Inputs               | 0 (leaf operator)                           |
+| Outputs              | 1                                           |
+
+### Table Function Properties
+
+| Property           | Description                                                  | Required |
+| ------------------ | ------------------------------------------------------------ | -------- |
+| Function Reference | Points to a function_anchor defined in the plan, referencing a table function in the extension YAML files | Required |
+| Arguments          | Constant expressions to pass as arguments to the function. Must match the function signature exactly. Must be literals or expressions that can be evaluated without input data. | Required |
+| Table Schema       | The output schema (NamedStruct). Always present. **Must match YAML definition (with type parameters resolved) when YAML defines a `return` field.** | Required |
+
+### Use Cases
+
+Common examples of table functions include:
+- `generate_series`: Generate sequences of numbers
+- `unnest`: Expand arrays or lists into rows (variadic - can accept multiple lists)
+
+### Example
+
+Generate a series of integers from 1 to 100:
+
+```
+TableFunctionRel {
+  function_reference: <generate_series>
+  arguments: [
+    { value: { literal: { i64: 1 } } },
+    { value: { literal: { i64: 100 } } }
+  ]
+  table_schema: {
+    names: ["value"]
+    struct: {
+      types: [{ i64: {} }]
+    }
+  }
+}
+```
+
+See [Table Functions](../expressions/table_functions.md) for detailed documentation.
+
+=== "TableFunctionRel Message"
+
+    ```proto
+%%% proto.algebra.TableFunctionRel %%%
     ```
 
 
