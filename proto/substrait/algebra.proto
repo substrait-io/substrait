@@ -375,10 +375,8 @@ message AggregateRel {
 
   // Various modes of operations of AggregateRel to capture different behaviors across systems.
   message Compatibility {
-    // If true, the AggregateRel must not yield a row on empty input
-    // when specified with non-empty groupings field even when groupings includes
-    // empty grouping sets.
-    bool groupings_yield_no_rows_on_empty_input = 1;
+    // If true, the AggregateRel must not yield a row on empty input.
+    bool yield_no_rows_on_empty_input = 1;
   }
 }
 
