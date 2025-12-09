@@ -12,8 +12,7 @@ option java_package = "io.substrait.proto";
 
 // Note: type_variation_reference fields within Type messages reference a
 // type_variation_anchor defined in the plan's extension declarations. The value
-// 0 represents the system-preferred variation and is a valid reference value,
-// but prefer non-zero values for ergonomics.
+// 0 represents the system-preferred variation and is a valid reference value.
 message Type {
   oneof kind {
     Boolean bool = 1;
