@@ -413,12 +413,14 @@ The aggregate operation is one of the most complex operations in the spec. Altho
 
 NOTE: The compatibility is meant to address gaps in the core implementation of aggregation such as grouping sets. For custom aggregations, consider using aggregate extension functions. If you want to introduce a new compatibility mode, reach out Substrait PMC to discuss.
 
-#### yield_no_rows_on_empty_input
+#### Empty Grouping Set on Empty Input
 
-AggregateRel **MUST NOT** produce a row on empty input even if the `groupings` is empty or `groupings` include an empty grounping set.
+This compatibility mode defines how the AggregateRel behaves with empty grouping set on an empty input. Default is `EMPTY_GROUPING_SET_ON_EMPTY_INPUT_YIELDS_ROWS`.
 
-**Default:** ***false***. Both empty `groupings` or any empty grounping sets in `groupings` yield a row on empty input.
-**Compatibility for**: Microsoft SQL server family, Oracle.
+| Mode                                             | Behavior                      | Example Systems |
+| -------------------------------------------------|-------------------------------|-----------------|
+| EMPTY_GROUPING_SET_ON_EMPTY_INPUT_YIELDS_ROWS    | A row for empty grouping set  | PostgreSQL      |
+| EMPTY_GROUPING_SET_ON_EMPTY_INPUT_YIELDS_NO_ROWS | No row for empty grouping set | Microsoft SQL Sever family, Oracle |
 
 **Example:**
 ```sql

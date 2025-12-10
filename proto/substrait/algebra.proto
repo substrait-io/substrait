@@ -375,8 +375,22 @@ message AggregateRel {
 
   // Various modes of operations of AggregateRel to capture different behaviors across systems.
   message Compatibility {
-    // If true, the AggregateRel must not yield a row on empty input.
-    bool yield_no_rows_on_empty_input = 1;
+    // Defines the behavior of AggregateRel when there is an empty grouping set in the `groupings`
+    // and the input is empty. An empty grouping set is an aggregation over the entire input and some
+    // systems implement different behaviors when the input is empty.
+    enum EmptyGroupingSetOnEmptyInput {
+      // Default is `EMPTY_GROUPING_SET_ON_EMPTY_INPUT_YIELDS_ROWS`.
+      EMPTY_GROUPING_SET_ON_EMPTY_INPUT_UNSPECIFIED = 0;
+      // If there is an empty grouping set in the `groupings`, the AggregateRel yields a single row
+      // for the empty grouping set on empty input (i.e., explicit grouping over the entire input).
+      // For example, AggregateRel[(), COUNT] yields one record of value 0 when the input is empty.
+      EMPTY_GROUPING_SET_ON_EMPTY_INPUT_YIELDS_ROWS = 1;
+      // The AggregateRel yields no row for the empty grouping set on empty input (i.e., grouping over the rows).
+      // For example, AggregateRel[(), COUNT] yields no record when the input is empty.
+      EMPTY_GROUPING_SET_ON_EMPTY_INPUT_YIELDS_NO_ROWS = 2;
+    }
+
+    EmptyGroupingSetOnEmptyInput empty_grouping_set_on_empty_input = 1;
   }
 }
 
