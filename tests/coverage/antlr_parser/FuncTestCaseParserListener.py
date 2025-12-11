@@ -441,57 +441,21 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#i8.
-    def enterI8(self, ctx:FuncTestCaseParser.I8Context):
+    # Enter a parse tree produced by FuncTestCaseParser#int.
+    def enterInt(self, ctx:FuncTestCaseParser.IntContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#i8.
-    def exitI8(self, ctx:FuncTestCaseParser.I8Context):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#i16.
-    def enterI16(self, ctx:FuncTestCaseParser.I16Context):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#i16.
-    def exitI16(self, ctx:FuncTestCaseParser.I16Context):
+    # Exit a parse tree produced by FuncTestCaseParser#int.
+    def exitInt(self, ctx:FuncTestCaseParser.IntContext):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#i32.
-    def enterI32(self, ctx:FuncTestCaseParser.I32Context):
+    # Enter a parse tree produced by FuncTestCaseParser#float.
+    def enterFloat(self, ctx:FuncTestCaseParser.FloatContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#i32.
-    def exitI32(self, ctx:FuncTestCaseParser.I32Context):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#i64.
-    def enterI64(self, ctx:FuncTestCaseParser.I64Context):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#i64.
-    def exitI64(self, ctx:FuncTestCaseParser.I64Context):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#fp32.
-    def enterFp32(self, ctx:FuncTestCaseParser.Fp32Context):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#fp32.
-    def exitFp32(self, ctx:FuncTestCaseParser.Fp32Context):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#fp64.
-    def enterFp64(self, ctx:FuncTestCaseParser.Fp64Context):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#fp64.
-    def exitFp64(self, ctx:FuncTestCaseParser.Fp64Context):
+    # Exit a parse tree produced by FuncTestCaseParser#float.
+    def exitFloat(self, ctx:FuncTestCaseParser.FloatContext):
         pass
 
 
@@ -600,6 +564,42 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#binaryType.
     def exitBinaryType(self, ctx:FuncTestCaseParser.BinaryTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#intType.
+    def enterIntType(self, ctx:FuncTestCaseParser.IntTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#intType.
+    def exitIntType(self, ctx:FuncTestCaseParser.IntTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#floatType.
+    def enterFloatType(self, ctx:FuncTestCaseParser.FloatTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#floatType.
+    def exitFloatType(self, ctx:FuncTestCaseParser.FloatTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#dateType.
+    def enterDateType(self, ctx:FuncTestCaseParser.DateTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#dateType.
+    def exitDateType(self, ctx:FuncTestCaseParser.DateTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#timeType.
+    def enterTimeType(self, ctx:FuncTestCaseParser.TimeTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#timeType.
+    def exitTimeType(self, ctx:FuncTestCaseParser.TimeTypeContext):
         pass
 
 
