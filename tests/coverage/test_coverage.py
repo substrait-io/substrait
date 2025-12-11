@@ -536,6 +536,7 @@ def test_double_nullable_rejected():
     invalid_cases = [
         "add([1, 2]::List?<i8>?, [3]::List?<i8>) = [1]::List?<i8>",
         "add(1.5::dec??, 2.5::dec?) = 4.0::dec?",
+        "add('a23':fchar<3?>, '123456789'::fchar<9?>) = 4.0::dec?",
         "add('abc'::fchar?<3>?, 'def'::fchar?<3>) = 'abcdef'::fchar?<6>",
         "add('abc'::vchar?<10>?, 'def'::vchar?<10>) = 'abcdef'::vchar?<10>",
         "add('abc'::fbin?<3>?, 'def'::fbin?<3>) = 'abcdef'::fbin?<6>",
