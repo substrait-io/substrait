@@ -108,7 +108,8 @@ scalar_functions:
         return: i64
       - args:
           - name: component
-            options: [ YEAR, ISO_YEAR, US_YEAR, UNIX_TIME ]
+            options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
+                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
             description: The part of the value to extract.
           - name: x
             value: date
