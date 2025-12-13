@@ -559,3 +559,106 @@ The operator that defines modifications of a database schema (CREATE/DROP/ALTER 
 ???+ question "Discussion Points"
 
     * How should correlated operations be handled?
+
+## Generate Operation
+
+The Generate operation applies a table function to each input row to produce zero or more output rows. This is commonly used to flatten or "explode" nested data structures like arrays and maps into separate rows.
+
+Unlike ExpandRel which duplicates input rows a fixed number of times known at plan time, GenerateRel produces a variable number of output rows that depends on the actual data values (e.g., the length of an array or number of entries in a map).
+
+### Common Use Cases
+
+- **Flattening arrays:** Turn one row with array [a,b,c] into three rows
+- **Exploding maps:** Turn one row with map {k1:v1, k2:v2} into two rows
+- **Position-indexed explode:** Generate (position, value) pairs from arrays
+- **JSON parsing:** Extract multiple fields from JSON strings
+
+| Signature            | Value                                                                                                                                                          |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Inputs               | 1                                                                                                                                                              |
+| Outputs              | 1                                                                                                                                                              |
+| Property Maintenance | Distribution and orderedness are not maintained. The variable number of output rows per input breaks distribution properties, and row multiplication breaks ordering. |
+| Direct Output Order  | Input fields followed by generated fields. The output schema is: `[input_field_1, ..., input_field_N, generated_field_1, ..., generated_field_M]` where generated fields come from the table function's output type. Unlike ExpandRel which appends an i32 ordinal column, GenerateRel does NOT automatically add an ordinal column. Table functions that need position information (like posexplode) include it explicitly in their output_type. The RelCommon.emit field can be used to reorder columns or project out unwanted fields. |
+
+### Generate Properties
+
+| Property | Description | Required |
+| -------- | ----------- | -------- |
+| Input | The input relation to generate from. | Required |
+| Generator | A table function that produces zero or more rows per input row. The function's output type (a Struct) defines the schema of generated columns. | Required |
+| Preserve On Empty | Controls behavior when the generator produces zero rows. When false (default), rows with empty generation are filtered out. When true, rows with empty generation produce one output row with NULL generated fields. | Optional, defaults to false |
+
+### Common Table Functions
+
+| Function | Input Type | Output Struct | Description |
+|----------|-----------|---------------|-------------|
+| `explode` | `array<T>` | `{value: T}` | Produces one output row per array element |
+| `posexplode` | `array<T>` | `{pos: i64, value: T}` | Produces one row per array element with its position (0-indexed) |
+| `explode` | `map<K,V>` | `{key: K, value: V}` | Produces one output row per map entry |
+| `unnest` | `array<T>` | `{value: T}` | Synonym for array explode (standard SQL) |
+
+### Empty Collection Handling
+
+The `preserve_on_empty` flag controls what happens when a table function produces no rows for an input record:
+
+- **preserve_on_empty=false (default):** Input rows that generate no output rows are excluded from the result. This is the standard "explode" or "unnest" behavior.
+- **preserve_on_empty=true:** Input rows that generate no output rows still produce one output row with input fields populated and generated fields set to NULL. This matches Spark's "LATERAL VIEW OUTER" or standard SQL's "LEFT JOIN LATERAL unnest()".
+
+**Example:**
+```
+Input row: {user_id: 1, tags: []}  (empty array)
+
+With preserve_on_empty=false:
+  Output: (no rows - filtered out)
+
+With preserve_on_empty=true:
+  Output: {user_id: 1, tags: [], tag: NULL}
+```
+
+### Examples
+
+**Array Explode:**
+```
+Input schema: {user_id: i64, tags: list<string>}
+Generator: explode(tags) -> Struct{tag: string}
+Output schema: {user_id: i64, tags: list<string>, tag: string}
+
+Input data:
+  {user_id: 1, tags: ['a', 'b']}
+  {user_id: 2, tags: ['x']}
+
+Output data:
+  {user_id: 1, tags: ['a', 'b'], tag: 'a'}
+  {user_id: 1, tags: ['a', 'b'], tag: 'b'}
+  {user_id: 2, tags: ['x'], tag: 'x'}
+```
+
+**Position Explode:**
+```
+Input schema: {line_id: i32, words: list<string>}
+Generator: posexplode(words) -> Struct{pos: i64, word: string}
+Output schema: {line_id: i32, words: list<string>, pos: i64, word: string}
+```
+
+**Map Explode:**
+```
+Input schema: {user_id: i64, properties: map<string, string>}
+Generator: explode(properties) -> Struct{key: string, value: string}
+Output schema: {user_id: i64, properties: map<string, string>, key: string, value: string}
+```
+
+### Comparison to ExpandRel
+
+| Aspect | ExpandRel | GenerateRel |
+|--------|-----------|-------------|
+| Purpose | Duplicate rows for grouping sets/cube operations | Flatten nested data (arrays/maps) |
+| Output Cardinality | Fixed at plan time (N duplicates per input) | Variable at runtime (depends on data) |
+| Use Case | SQL GROUPING SETS, CUBE, ROLLUP | SQL LATERAL VIEW, UNNEST, EXPLODE |
+| Extra Column | Appends i32 ordinal (which duplicate) | No automatic ordinal (posexplode includes position explicitly) |
+| Property Maintenance | Can maintain distribution under certain conditions | Cannot maintain distribution (variable cardinality) |
+
+=== "GenerateRel Message"
+
+    ```proto
+%%% proto.algebra.GenerateRel %%%
+    ```
