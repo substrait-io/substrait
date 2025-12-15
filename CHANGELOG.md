@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.78.2](https://github.com/substrait-io/substrait/compare/v0.78.1...v0.78.2) (2025-12-14)
+
+### Bug Fixes
+
+* **extensions:** nullif output should always be nullable ([#913](https://github.com/substrait-io/substrait/issues/913)) ([7e0404b](https://github.com/substrait-io/substrait/commit/7e0404ba8540bcd910bb652d67baeab86a69ccab))
+
 ## [0.78.1](https://github.com/substrait-io/substrait/compare/v0.78.0...v0.78.1) (2025-11-23)
 
 ### Bug Fixes
