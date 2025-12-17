@@ -1198,10 +1198,8 @@ message Expression {
     // specific parameters. The struct's nullability must be NULLABILITY_REQUIRED.
     Type.Struct parameters = 1;
 
-    // The lambda body expression. Lambda parameters can be accessed using FieldReference
-    // with FieldReference.LambdaParameterReference as root_type. To capture values from outer scopes,
-    // use FieldReference with RootReference or OuterReference. The return type
-    // of the lambda is derived from the type of this body expression.
+    // The lambda body expression. Lambda parameters can be referenced using FieldReference
+    // with FieldReference.LambdaParameterReference as root_type.
     Expression body = 2;
   }
 
