@@ -226,7 +226,7 @@ lambdaParameters
 
 lambdaBody
     : identifier OParen arguments CParen
-    ; // For now, we only allow lambda bodies of the form <func_name>(<arg1>,<arg2>,...)
+    ; // For now, we only allow lambda bodies of the form func_name(arg1,arg2,...)
 
 dataType
     : scalarType
