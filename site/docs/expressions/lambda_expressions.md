@@ -25,7 +25,7 @@ A lambda expression consists of:
 
 ### Type Derivation
 
-The return type of a lambda is derived from its body expression. Since all expressions in Substrait have deterministic types, the lambda's return type can be computed by determining the type of the body expression.
+The type of a lambda expression is a `func` type. The parameters of the `func` are the parameters of the lambda. The return type of the the `func` is determined by the type of the expression comprising the body of the lambda. 
 
 ## Parameter References
 
