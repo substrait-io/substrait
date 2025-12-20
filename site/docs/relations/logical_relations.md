@@ -593,9 +593,8 @@ Unlike ExpandRel which duplicates input rows a fixed number of times known at pl
 | Function | Input Type | Output Struct | Description |
 |----------|-----------|---------------|-------------|
 | `explode` | `array<T>` | `{value: T}` | Produces one output row per array element |
-| `posexplode` | `array<T>` | `{pos: i64, value: T}` | Produces one row per array element with its position (0-indexed) |
 | `explode` | `map<K,V>` | `{key: K, value: V}` | Produces one output row per map entry |
-| `unnest` | `array<T>` | `{value: T}` | Synonym for array explode (standard SQL) |
+| `posexplode` | `array<T>` | `{pos: i64, value: T}` | Produces one row per array element with its position (0-indexed) |
 
 ### Empty Collection Handling
 
