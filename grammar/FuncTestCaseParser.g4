@@ -11,7 +11,7 @@ doc
     ;
 
 header
-    : version include
+    : version include dependency*
     ;
 
 version
@@ -20,6 +20,10 @@ version
 
 include
     : TripleHash SubstraitInclude Colon StringLiteral (Comma StringLiteral)*
+    ;
+
+dependency
+    : TripleHash SubstraitDependency Colon StringLiteral
     ;
 
 testGroupDescription
@@ -64,6 +68,8 @@ argument
     | precisionTimestampArg
     | precisionTimestampTZArg
     | listArg
+    | lambdaArg
+    | Identifier  // Bare identifiers (for lambda parameters)
     ;
 
 aggFuncTestCase
@@ -201,9 +207,26 @@ listArg
     : literalList DoubleColon listType
     ;
 
+lambdaArg
+    : literalLambda DoubleColon funcType
+    ;
+
 literalList
     : OBracket (literal (Comma literal)*)? CBracket
     ;
+
+literalLambda
+    : OParen lambdaParameters Arrow lambdaBody CParen
+    ;
+
+lambdaParameters
+    : Identifier                                    # singleParam
+    | OParen Identifier (Comma Identifier)+ CParen  # tupleParams
+    ;
+
+lambdaBody
+    : identifier OParen arguments CParen
+    ; // For now, we only allow lambda bodies of the form func_name(arg1,arg2,...)
 
 dataType
     : scalarType
@@ -302,6 +325,15 @@ listType
     : List isnull=QMark? OAngleBracket elemType=dataType CAngleBracket #list
     ;
 
+funcType
+    : Func isnull=QMark? OAngleBracket params=funcParameters Arrow returnType=dataType CAngleBracket
+    ;
+
+funcParameters
+    : dataType                                  #singleFuncParam
+    | OParen dataType (Comma dataType)* CParen  #funcParamsWithParens
+    ;
+
 parameterizedType
     : fixedCharType
     | varCharType
@@ -311,6 +343,7 @@ parameterizedType
     | precisionTimeType
     | precisionTimestampType
     | precisionTimestampTZType
+    | funcType
 // TODO implement the rest of the parameterized types
 //  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct

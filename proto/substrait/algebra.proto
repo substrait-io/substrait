@@ -973,6 +973,8 @@ message Expression {
     Subquery subquery = 12;
     Nested nested = 13;
     DynamicParameter dynamic_parameter = 14;
+    Lambda lambda = 15;
+    LambdaInvocation lambda_invocation = 16;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -1184,6 +1186,35 @@ message Expression {
       // (otherwise type information would be missing).
       repeated Expression values = 1;
     }
+  }
+
+  // A lambda expression representing an inline, anonymous function.
+  // Lambda expressions have parameters and a body expression that can reference
+  // those parameters using FieldReference with FieldReference.LambdaParameterReference as the root_type.
+  message Lambda {
+    // Parameters this lambda accepts, represented as a struct where each field corresponds
+    // to a parameter. Parameters can be accessed using FieldReference with
+    // FieldReference.LambdaParameterReference as root_type and StructField to select
+    // specific parameters. The struct's nullability must be NULLABILITY_REQUIRED.
+    Type.Struct parameters = 1;
+
+    // The lambda body expression. Lambda parameters can be referenced using FieldReference
+    // with FieldReference.LambdaParameterReference as root_type.
+    Expression body = 2;
+  }
+
+  // Invokes an inline lambda expression with provided arguments.
+  // Enables immediate invocation patterns like: ((x) -> x * 2)(5)
+  //
+  // The return type is derived from the type of the lambda's body expression.
+  message LambdaInvocation {
+    // The lambda expression to invoke.
+    Lambda lambda = 1;
+
+    // Arguments to pass to the lambda, as a struct expression. The struct must have
+    // exactly one Expression field for each lambda parameter, and the expression at
+    // each position must have a type that matches the corresponding parameter type.
+    Nested.Struct arguments = 2;
   }
 
   // A scalar function call.
@@ -1531,8 +1562,11 @@ message Expression {
     }
   }
 
-  // A reference to an inner part of a complex object. Can reference reference a
-  // single element or a masked version of elements
+  // A reference to data within a structured object, supporting navigation into
+  // nested fields. The root_type specifies the origin of the data (input record,
+  // outer query, lambda parameters, or an arbitrary expression), and the
+  // reference_type specifies how to navigate from that root (either a direct
+  // path to a single element or a mask selecting multiple elements).
   message FieldReference {
     // Whether this is composed of a single element reference or a masked
     // element subtree
@@ -1541,13 +1575,14 @@ message Expression {
       MaskExpression masked_reference = 2;
     }
 
-    // Whether this reference has an origin of a root struct or is based on the
-    // ouput of an expression. When this is a RootReference and direct_reference
-    // above is used, the direct_reference must be of a type StructField.
+    // The origin of the data being referenced. When this is a RootReference and
+    // direct_reference above is used, the direct_reference must be of a type
+    // StructField.
     oneof root_type {
       Expression expression = 3;
       RootReference root_reference = 4;
       OuterReference outer_reference = 5;
+      LambdaParameterReference lambda_parameter_reference = 6;
     }
 
     // Singleton that expresses this FieldReference is rooted off the root
@@ -1559,6 +1594,19 @@ message Expression {
       // number of subquery boundaries to traverse up for this field's reference
       //
       // This value must be >= 1
+      uint32 steps_out = 1;
+    }
+
+    // A reference to a lambda parameter within a lambda body expression.
+    // This identifies which lambda scope to reference, treating its parameters
+    // as a struct. Use FieldReference with this as root_type to access specific
+    // parameters or nested fields within parameters.
+    message LambdaParameterReference {
+      // Number of lambda boundaries to traverse up for this reference.
+      // For nested lambdas:
+      //   0 = innermost lambda (current lambda's parameters as a struct)
+      //   1 = one lambda level out (outer lambda's parameters as a struct)
+      //   2 = two lambda levels out, etc.
       uint32 steps_out = 1;
     }
   }

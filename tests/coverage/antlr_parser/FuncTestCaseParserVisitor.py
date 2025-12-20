@@ -30,6 +30,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#dependency.
+    def visitDependency(self, ctx:FuncTestCaseParser.DependencyContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#testGroupDescription.
     def visitTestGroupDescription(self, ctx:FuncTestCaseParser.TestGroupDescriptionContext):
         return self.visitChildren(ctx)
@@ -235,8 +240,33 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaArg.
+    def visitLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#literalList.
     def visitLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#literalLambda.
+    def visitLiteralLambda(self, ctx:FuncTestCaseParser.LiteralLambdaContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#singleParam.
+    def visitSingleParam(self, ctx:FuncTestCaseParser.SingleParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#tupleParams.
+    def visitTupleParams(self, ctx:FuncTestCaseParser.TupleParamsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#lambdaBody.
+    def visitLambdaBody(self, ctx:FuncTestCaseParser.LambdaBodyContext):
         return self.visitChildren(ctx)
 
 
@@ -397,6 +427,21 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#list.
     def visitList(self, ctx:FuncTestCaseParser.ListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#funcType.
+    def visitFuncType(self, ctx:FuncTestCaseParser.FuncTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#singleFuncParam.
+    def visitSingleFuncParam(self, ctx:FuncTestCaseParser.SingleFuncParamContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#funcParamsWithParens.
+    def visitFuncParamsWithParens(self, ctx:FuncTestCaseParser.FuncParamsWithParensContext):
         return self.visitChildren(ctx)
 
 
