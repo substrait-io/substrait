@@ -24,7 +24,7 @@ The `TableFunction` message is used to invoke table functions within relational 
 
 ### Output Type
 
-The `output_type` field must be a `Struct` type where each field represents a column in the generated output rows. This explicitly defines the schema of rows produced by the table function.
+The `output_type` field must be a non-nullable `Struct` type where each field represents a column in the generated output rows. This explicitly defines the schema of rows produced by the table function.
 
 **Examples:**
 - `explode(array<i32>)` → `Struct{value: i32}`
@@ -123,7 +123,7 @@ table_functions:
 === "TableFunction Message"
 
     ```proto
-%%% proto.algebra.Expression.TableFunction %%%
+%%% proto.algebra.TableExpression.TableFunction %%%
     ```
 
 ## Future Extensions

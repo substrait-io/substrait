@@ -1,0 +1,57 @@
+%YAML 1.2
+---
+urn: extension:io.substrait:functions_table_generic
+table_functions:
+  - name: explode
+    description: >-
+      Produces one row per array element.
+
+      For each input row, this function generates one output row for each element
+      in the input array. The output is a struct with a single field 'value'
+      containing the array element.
+
+      Empty arrays produce zero output rows. For outer semantics (producing a row
+      with NULL when the array is empty), use GenerateRel's preserve_on_empty option.
+    impls:
+      - args:
+          - name: input
+            value: list<T>
+            description: The array to explode.
+        return: struct<value: T>
+
+  - name: explode
+    description: >-
+      Produces one row per map entry.
+
+      For each input row, this function generates one output row for each key-value
+      pair in the input map. The output is a struct with two fields: 'key' and 'value'.
+      Note that map entries may be visited in any order.
+
+      Empty maps produce zero output rows. For outer semantics (producing a row
+      with NULLs when the map is empty), use GenerateRel's preserve_on_empty option.
+
+      Some systems call this unnest.
+    impls:
+      - args:
+          - name: input
+            value: map<K, V>
+            description: The map to explode.
+        return: struct<key: K, value: V>
+
+  - name: posexplode
+    description: >-
+      Produces one row per array element with position.
+
+      For each input row, this function generates one output row for each element
+      in the input array. The output is a struct with two fields:
+      - 'pos': 0-indexed position of the element in the array (i64)
+      - 'value': the array element
+
+      Empty arrays produce zero output rows. For outer semantics (producing a row
+      with NULLs when the array is empty), use GenerateRel's preserve_on_empty option.
+    impls:
+      - args:
+          - name: input
+            value: list<T>
+            description: The array to explode with positions.
+        return: struct<pos: i64, value: T>
