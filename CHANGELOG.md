@@ -1,6 +1,16 @@
 Release Notes
 ---
 
+## [0.79.0](https://github.com/substrait-io/substrait/compare/v0.78.2...v0.79.0) (2025-12-21)
+
+### Features
+
+* introduce lambda expressions ([#889](https://github.com/substrait-io/substrait/issues/889)) ([e47197c](https://github.com/substrait-io/substrait/commit/e47197c8de012ac6db4329ad7c68caeb746c5951))
+
+### Bug Fixes
+
+* remove redundant nullability markers in test case grammar ([#910](https://github.com/substrait-io/substrait/issues/910)) ([6ad9251](https://github.com/substrait-io/substrait/commit/6ad9251f27f4760936b9fb84edba8378be593ae4))
+
 ## [0.78.2](https://github.com/substrait-io/substrait/compare/v0.78.1...v0.78.2) (2025-12-14)
 
 ### Bug Fixes
