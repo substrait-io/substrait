@@ -75,6 +75,9 @@ class Extension:
         short_type = type_to_short_type.get(long_type, None)
 
         if short_type is None:
+            # For struct types, preserve the full parameterized type
+            if long_type.startswith("struct<"):
+                return long_type
             # remove the type parameters and try again
             if "<" in long_type:
                 long_type = long_type[: long_type.find("<")].rstrip("?")
@@ -303,6 +306,11 @@ class FunctionRegistry:
     @staticmethod
     def is_same_type(func_arg_type, arg_type):
         arg_type_base = arg_type.split("<")[0]
+        func_arg_type_base = func_arg_type.split("<")[0]
+
+        # If base types match, that's good enough for now
+        if func_arg_type_base == arg_type_base:
+            return True
         if func_arg_type == arg_type_base:
             return True
         return FunctionRegistry.is_type_any(func_arg_type)

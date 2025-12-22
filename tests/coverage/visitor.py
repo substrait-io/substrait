@@ -10,6 +10,7 @@ from tests.coverage.nodes import (
     TestCase,
     CaseLiteral,
     SubstraitError,
+    MultiRowResult,
 )
 
 
@@ -77,6 +78,17 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             test_cases.append(testcase)
         return group, test_cases
 
+    def visitTableFuncTestGroup(
+        self, ctx: FuncTestCaseParser.TableFuncTestGroupContext
+    ):
+        group = self.visitTestGroupDescription(ctx.testGroupDescription())
+        test_cases = []
+        for test_case in ctx.tableFuncTestCase():
+            testcase = self.visitTableFuncTestCase(test_case)
+            testcase.group = group
+            test_cases.append(testcase)
+        return group, test_cases
+
     def visitTestCase(self, ctx: FuncTestCaseParser.TestCaseContext):
         # TODO Implement this method
         args = self.visitArguments(ctx.arguments())
@@ -101,6 +113,23 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.funcOptions() is not None:
             testcase.options = self.visitFuncOptions(ctx.funcOptions())
         return testcase
+
+    def visitTableFuncTestCase(self, ctx: FuncTestCaseParser.TableFuncTestCaseContext):
+        args = self.visitArguments(ctx.arguments())
+        result = self.visitMultiRowResult(ctx.multiRowResult())
+        options = dict()
+        if ctx.funcOptions() is not None:
+            options = self.visitFuncOptions(ctx.funcOptions())
+        return TestCase(
+            func_name=ctx.identifier().getText(),
+            base_uri="",
+            group=None,
+            options=options,
+            rows=None,
+            args=args,
+            result=result,
+            comment="",
+        )
 
     def visitSingleArgAggregateFuncCall(
         self, ctx: FuncTestCaseParser.SingleArgAggregateFuncCallContext
@@ -392,6 +421,26 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.UndefineResult() is not None:
             return SubstraitError("undefined")
         return SubstraitError("unknown_error")
+
+    def visitMultiRowResult(self, ctx: FuncTestCaseParser.MultiRowResultContext):
+        """Visit multi-row result: [(val1), (val2), ...] :: struct<T>."""
+        rows = []
+        for row_tuple_ctx in ctx.rowTuple():
+            rows.append(self.visitRowTuple(row_tuple_ctx))
+        struct_type = ctx.structType().getText()
+        return MultiRowResult(rows=rows, type=struct_type)
+
+    def visitRowTuple(self, ctx: FuncTestCaseParser.RowTupleContext):
+        """Visit a single row tuple: (val1, val2, ...)."""
+        values = []
+        for literal in ctx.literal():
+            value, _ = self.visitLiteral(literal)
+            values.append(value)
+        return values
+
+    def visitDataType(self, ctx):
+        """Visit a dataType context and return its text representation."""
+        return ctx.getText()
 
 
 class ParseError(Exception):
