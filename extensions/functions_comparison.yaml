@@ -16,7 +16,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: boolean
+        return: boolean?
   -
     name: "equal"
     description: >
@@ -31,7 +31,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: boolean
+        return: boolean?
   -
     name: "is_not_distinct_from"
     description: >
@@ -82,7 +82,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: boolean
+        return: boolean?
   -
     name: "gt"
     description: >
@@ -97,7 +97,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: boolean
+        return: boolean?
   -
     name: "lte"
     description: >
@@ -112,7 +112,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: boolean
+        return: boolean?
   -
     name: "gte"
     description: >
@@ -127,7 +127,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
-        return: boolean
+        return: boolean?
   -
     name: "between"
     description: >-
@@ -147,7 +147,7 @@ scalar_functions:
           - value: any1
             name: high
             description: The value to check if less than or equal to.
-        return: boolean
+        return: boolean?
   - name: "is_true"
     description: Whether a value is true.
     impls:
@@ -223,11 +223,11 @@ scalar_functions:
       - args:
           - value: fp32
             name: x
-        return: boolean
+        return: boolean?
       - args:
           - value: fp64
             name: x
-        return: boolean
+        return: boolean?
   -
     name: "is_infinite"
     description: >
@@ -238,11 +238,11 @@ scalar_functions:
       - args:
           - value: fp32
             name: x
-        return: boolean
+        return: boolean?
       - args:
           - value: fp64
             name: x
-        return: boolean
+        return: boolean?
   -
     name: "nullif"
     description: If two values are equal, return null. Otherwise, return the first value.
@@ -266,7 +266,7 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-        return: any1
+        return: any1?
   -
     name: "least"
     description: >-
@@ -277,7 +277,7 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-        return: any1
+        return: any1?
         nullability: MIRROR
   -
     name: "least_skip_null"
@@ -289,7 +289,7 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-        return: any1
+        return: any1?
         # NOTE: The return type nullability as described above cannot be expressed currently
         # See https://github.com/substrait-io/substrait/issues/601
         # Using MIRROR for now until it can be expressed
@@ -304,7 +304,7 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-        return: any1
+        return: any1?
         nullability: MIRROR
   -
     name: "greatest_skip_null"
@@ -316,7 +316,7 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-        return: any1
+        return: any1?
         # NOTE: The return type nullability as described above cannot be expressed currently
         # See https://github.com/substrait-io/substrait/issues/601
         # Using MIRROR for now until it can be expressed
