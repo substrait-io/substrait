@@ -125,19 +125,29 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                 # If the return value for the function implementation is multiple lines long,
                 # print each line separately. This is the case for some functions in
                 # functions_arithmetic_decimal.yaml
-                if "\n" in impl["return"]:
-                    mdFile.new_line(
-                        f"{count}. {function_name}({func_concat_arg_input_values}): -> "
-                    )
-                    multiline_return_str = "\t" + impl["return"]
-                    multiline_return_str = multiline_return_str.replace("\n", "\n\t")
-                    mdFile.new_line("\t```")
-                    mdFile.new_line(f"{multiline_return_str}")
-                    mdFile.new_line("\t```")
+                # Table functions may omit the return field if schema depends on runtime data
+                if "return" in impl:
+                    if "\n" in impl["return"]:
+                        mdFile.new_line(
+                            f"{count}. {function_name}({func_concat_arg_input_values}): -> "
+                        )
+                        multiline_return_str = "\t" + impl["return"]
+                        multiline_return_str = multiline_return_str.replace(
+                            "\n", "\n\t"
+                        )
+                        mdFile.new_line("\t```")
+                        mdFile.new_line(f"{multiline_return_str}")
+                        mdFile.new_line("\t```")
+                    else:
+                        mdFile.new_line(
+                            f"{count}. {function_name}({func_concat_arg_input_values}): -> "
+                            f"`{impl['return']}`"
+                        )
                 else:
+                    # Return type not specified (e.g., table functions with runtime-dependent schemas)
                     mdFile.new_line(
                         f"{count}. {function_name}({func_concat_arg_input_values}): -> "
-                        f"`{impl['return']}`"
+                        f"`schema determined at runtime`"
                     )
 
             if "description" in function_spec:
