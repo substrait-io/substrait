@@ -1,0 +1,41 @@
+# Represents: posexplode(words_array)
+# Produces one row per array element with 'pos' and 'value' fields
+#
+# message TableExpression.TableFunction
+
+function_reference: 2  # Reference to posexplode function in extension
+
+arguments: [
+  {
+    # Input: array field to explode
+    value: {
+      selection: {
+        direct_reference: {
+          struct_field: {
+            field: 1  # Assuming field 1 is the words array
+          }
+        }
+      }
+    }
+  }
+]
+
+output_type: {
+  struct: {
+    types: [
+      {
+        # Field 0: pos (0-indexed position)
+        i64: {
+          nullability: NULLABILITY_REQUIRED
+        }
+      },
+      {
+        # Field 1: value (type matches array element type)
+        string: {
+          nullability: NULLABILITY_NULLABLE
+        }
+      }
+    ]
+    nullability: NULLABILITY_REQUIRED
+  }
+}

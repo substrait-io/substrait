@@ -68,6 +68,18 @@ Table functions can also be used for:
 - **Sequence generation:** Generate arithmetic or date sequences
 - **Regex extraction:** Extract multiple matches from text
 
+### Examples
+
+**Simple Array Explode:**
+```protobuf
+--8<-- "examples/proto-textformat/table_function/simple_explode.textproto"
+```
+
+**Position Explode:**
+```protobuf
+--8<-- "examples/proto-textformat/table_function/posexplode.textproto"
+```
+
 ## Usage in Relations
 
 Table functions are primarily used within the `GenerateRel` operator, which applies a table function to each row of an input relation.
@@ -86,6 +98,11 @@ Output data:
   {user_id: 1, tags: ['python', 'rust'], tag: 'python'}
   {user_id: 1, tags: ['python', 'rust'], tag: 'rust'}
   {user_id: 2, tags: ['java'], tag: 'java'}
+```
+
+**Protobuf Example:**
+```protobuf
+--8<-- "examples/proto-textformat/table_function/generate_rel_explode.textproto"
 ```
 
 See the [Generate Operation](../relations/logical_relations.md#generate-operation) documentation for more details.
