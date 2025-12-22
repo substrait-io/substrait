@@ -15,7 +15,7 @@ header
     ;
 
 version
-    : TripleHash (SubstraitScalarTest | SubstraitAggregateTest) Colon FormatVersion
+    : TripleHash (SubstraitScalarTest | SubstraitAggregateTest | SubstraitTableTest) Colon FormatVersion
     ;
 
 include
@@ -37,6 +37,7 @@ testCase
 testGroup
     : testGroupDescription? (testCase)+                          #scalarFuncTestGroup
     | testGroupDescription? (aggFuncTestCase)+                   #aggregateFuncTestGroup
+    | testGroupDescription? (tableFuncTestCase)+                 #tableFuncTestGroup
     ;
 
 arguments
@@ -74,6 +75,18 @@ argument
 
 aggFuncTestCase
     : aggFuncCall ( OBracket funcOptions CBracket )? Eq result
+    ;
+
+tableFuncTestCase
+    : functionName=identifier OParen arguments CParen ( OBracket funcOptions CBracket )? Eq multiRowResult
+    ;
+
+multiRowResult
+    : OBracket (rowTuple (Comma rowTuple)*)? CBracket DoubleColon structType
+    ;
+
+rowTuple
+    : OParen (literal (Comma literal)*)? CParen
     ;
 
 aggFuncCall
@@ -344,10 +357,14 @@ parameterizedType
     | precisionTimestampType
     | precisionTimestampTZType
     | funcType
+    | structType
 // TODO implement the rest of the parameterized types
-//  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct
 //  | Map isnull='?'? Lt key=expr Comma value=expr Gt #map
+  ;
+
+structType
+    : Struct isnull=QMark? OAngleBracket dataType (Comma dataType)* CAngleBracket
   ;
 
 numericParameter
