@@ -17,7 +17,7 @@ table_functions:
           - name: input
             value: list<T>
             description: The array to explode.
-        return: struct<value: T>
+        return: struct<T>
 
   - name: explode
     description: >-
@@ -36,7 +36,7 @@ table_functions:
           - name: input
             value: map<K, V>
             description: The map to explode.
-        return: struct<key: K, value: V>
+        return: struct<K, V>
 
   - name: posexplode
     description: >-
@@ -54,7 +54,7 @@ table_functions:
           - name: input
             value: list<T>
             description: The array to explode with positions.
-        return: struct<pos: i64, value: T>
+        return: struct<i64, T>
 
   - name: unnest
     description: >-
@@ -73,7 +73,7 @@ table_functions:
           - name: input
             value: list<T>
             description: The array to unnest.
-        return: struct<col0: T>
+        return: struct<T>
       - args:
           - name: input1
             value: list<T1>
@@ -81,7 +81,7 @@ table_functions:
           - name: input2
             value: list<T2>
             description: Second array to unnest.
-        return: struct<col0: T1, col1: T2>
+        return: struct<T1, T2>
       - args:
           - name: input1
             value: list<T1>
@@ -92,7 +92,7 @@ table_functions:
           - name: input3
             value: list<T3>
             description: Third array to unnest.
-        return: struct<col0: T1, col1: T2, col2: T3>
+        return: struct<T1, T2, T3>
       - args:
           - name: input1
             value: list<T1>
@@ -106,4 +106,4 @@ table_functions:
           - name: input4
             value: list<T4>
             description: Fourth array to unnest.
-        return: struct<col0: T1, col1: T2, col2: T3, col3: T4>
+        return: struct<T1, T2, T3, T4>
