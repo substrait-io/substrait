@@ -1,0 +1,17 @@
+### SUBSTRAIT_TABLE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_table_generic.yaml'
+
+# basic_int: Basic integer array with positions
+posexplode([10, 20, 30]::list<i32>) = [(0, 10), (1, 20), (2, 30)]::struct<i64,i32>
+
+# basic_string: Basic string array with positions
+posexplode(['a', 'b', 'c']::list<str>) = [(0, 'a'), (1, 'b'), (2, 'c')]::struct<i64,str>
+
+# empty: Empty arrays produce zero rows
+posexplode([]::list<i32>) = []::struct<i64,i32>
+
+# single_element: Single element arrays start at position 0
+posexplode([42]::list<i32>) = [(0, 42)]::struct<i64,i32>
+
+# two_elements: Two element arrays
+posexplode([100, 200]::list<i32>) = [(0, 100), (1, 200)]::struct<i64,i32>
