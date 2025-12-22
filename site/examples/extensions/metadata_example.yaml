@@ -1,0 +1,17 @@
+# Example showing the metadata field at multiple levels
+urn: extension:io.substrait:functions_comparison
+metadata:
+  version: 2.0
+  maintainer: example-team
+scalar_functions:
+  - name: "not_equal"
+    impls:
+      - args:
+          - value: any1
+            name: x
+          - value: any1
+            name: y
+        return: boolean
+    metadata:
+      performance_hint: "vectorized"
+      cost_estimate: 1

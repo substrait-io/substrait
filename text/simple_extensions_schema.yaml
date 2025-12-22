@@ -17,6 +17,8 @@ properties:
     patternProperties:
       "^[a-zA-Z_\\$][a-zA-Z0-9_\\$]*$":
         type: string
+  metadata: # arbitrary data created by extension author
+    type: object
   types:
     type: array
     minItems: 1
@@ -35,6 +37,8 @@ properties:
           $ref: "#/$defs/type_param_defs"
         variadic: # when set, last parameter may be specified one or more times
           type: boolean
+        metadata: # arbitrary data created by extension author
+          type: object
   type_variations:
     type: array
     minItems: 1
@@ -221,6 +225,8 @@ $defs:
               $ref: "#/$defs/returnValue"
             implementation:
               $ref: "#/$defs/implementation"
+      metadata: # arbitrary data created by extension author
+        type: object
   aggregateFunction:
     type: object
     additionalProperties: false
@@ -262,7 +268,8 @@ $defs:
               $ref: "#/$defs/maxset"
             decomposable:
               $ref: "#/$defs/decomposable"
-
+      metadata: # arbitrary data created by extension author
+        type: object
   windowFunction:
     type: object
     additionalProperties: false
@@ -307,3 +314,5 @@ $defs:
             window_type:
               type: string
               enum: [STREAMING, PARTITION]
+      metadata: # arbitrary data created by extension author
+        type: object
