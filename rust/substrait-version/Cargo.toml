@@ -1,0 +1,9 @@
+[package]
+name = "substrait-version"
+version = "0.0.0"
+edition = "2024"
+
+[dependencies]
+
+[build-dependencies]
+semver = "1.0.27"

@@ -250,6 +250,13 @@ name = "substrait-protobuf"
 version = "0.0.0"
 
 [[package]]
+name = "substrait-version"
+version = "0.0.0"
+dependencies = [
+ "semver",
+]
+
+[[package]]
 name = "syn"
 version = "2.0.111"
 source = "registry+https://github.com/rust-lang/crates.io-index"
