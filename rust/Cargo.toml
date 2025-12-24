@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "substrait-extensions",
+    "substrait-protobuf",
+]
+
+resolver = "2"
