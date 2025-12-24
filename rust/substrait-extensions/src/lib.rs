@@ -1,14 +1,8 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+#![allow(
+    clippy::clone_on_copy,
+    clippy::derivable_impls,
+)]
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+// Include the generated code.
+include!(concat!(env!("OUT_DIR"), "/codegen.rs"));
