@@ -3,4 +3,16 @@ name = "substrait-protobuf"
 version = "0.0.0"
 edition = "2024"
 
+[features]
+serde = ["dep:serde_json"]
+
 [dependencies]
+prost = "0.14.1"
+prost-types = "0.14.1"
+serde_json = { version = "1.0.145", features = ["preserve_order"], optional = true }
+
+
+[build-dependencies]
+pbjson-build = "0.9.0"
+prost-build = "0.14.1"
+walkdir = "2.5.0"
