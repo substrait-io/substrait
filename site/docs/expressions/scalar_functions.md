@@ -84,7 +84,10 @@ When the same parameter name is used multiple times in a function definition, th
 
 #### Type Parameter Resolution in Variadic Functions
 
-When the last argument of a function is variadic and declares a type parameter e.g. `fn(A, B, C...)`, the C parameter can be marked as either consistent or inconsistent. If marked as consistent, the function can only be bound to arguments where all the C types are the same concrete type. If marked as inconsistent, each unique C can be bound to a different type within the constraints of what T allows.
+When the last argument of a function is variadic and declares a type parameter e.g. `fn(A, B, C...)`, the C parameter can be marked as either consistent or inconsistent. If marked as consistent, the function can only be bound to arguments where all the C types are the same concrete type. If marked as inconsistent, each unique C can be bound to a different type within the constraints of what T allows. The default behavior is `CONSISTENT`.
+
+!!! note
+    The `parameterConsistency` field only has an effect when the variadic argument contains a type parameter (like `any1`, `T`, etc.). For concrete types (like `boolean?`, `i32`, `string`), it has no effect. When the variadic argument does contain a type parameter, it is recommended that extension authors explicitly specify `parameterConsistency` to make the intended behavior clear.
 
  
 
