@@ -56,6 +56,8 @@ For example, the following declares a type named `point` (namespaced to the asso
 --8<-- "examples/types/user_defined_point.yaml"
 ```
 
+Note that user-defined types must be referenced using the `u!` prefix (e.g., `u!point`). See [Type Syntax Parsing](type_parsing.md#user-defined-types) for more details.
+
 ### Handling User-Defined Types
 
 Systems without support for a specific user-defined type:

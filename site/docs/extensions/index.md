@@ -30,6 +30,14 @@ A Substrait plan can reference one or more YAML files via their extension URN. I
 | Type Variation     | The name as defined on the type variation object.            |
 | Function Signature | A function signature as described below.       |
 
+Within YAML extension files, user-defined types must be referenced with the `u!` prefix followed by the type name (e.g., `u!point`) in function arguments and return types:
+
+```yaml
+--8<-- "examples/types/user_defined_point.yaml"
+```
+
+Built-in types like `i32`, `fp64`, and `string` do not use any prefix.
+
 A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the extension it depends on using a key-value pair in the `dependencies` key, where the value is the extension URN, and the key is a valid identifier that can then be used as an identifier-safe alias for the extension URN. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected.
 
 For example, if the extension with extension URN `extension:io.substrait:extension_types` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
