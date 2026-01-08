@@ -18,8 +18,16 @@ When binding a window function, the binding must include the following additiona
 | Property    | Description                                                  | Required                                                     |
 | ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Partition   | A list of partitioning expressions.                          | False, defaults to a single partition for the entire dataset |
-| Lower Bound | Bound Following(int64), Bound Trailing(int64) or CurrentRow. | False, defaults to start of partition                        |
-| Upper Bound | Bound Following(int64), Bound Trailing(int64) or CurrentRow. | False, defaults to end of partition                          |
+| Order By    | A list of ordering expressions with sort directions.         | False, defaults to unordered                                 |
+| Bounds Type | ROWS or RANGE. ROWS bounds count physical rows. RANGE bounds consider value equivalence based on ordering columns. | False, defaults to RANGE                                     |
+| Lower Bound | Preceding(int64), Following(int64), CurrentRow, or Unbounded. | False, defaults to Unbounded (start of partition)            |
+| Upper Bound | Preceding(int64), Following(int64), CurrentRow, or Unbounded. | False, defaults to Unbounded (end of partition)              |
+
+### RANGE Bounds with Multiple Ordering Columns
+
+When using RANGE bounds with numeric offsets (Preceding or Following with offset > 0), only a single ordering column is allowed. This is because numeric offsets require arithmetic on the ordering column values (e.g., current_value - offset), which is ambiguous with multiple columns.
+
+RANGE bounds with UNBOUNDED or CURRENT ROW work with any number of ordering columns. CURRENT ROW includes all rows with matching values across all ordering columns (peer rows).
 
 ## Aggregate Functions as Window Functions
 

@@ -1334,10 +1334,12 @@ message Expression {
       // The lower and upper bound specify how many rows before and after the current row
       // the window should extend.
       BOUNDS_TYPE_ROWS = 1;
-      // The lower and upper bound describe a range of values.  The window should include all rows
-      // where the value of the ordering column is greater than or equal to (current_value - lower bound)
-      // and less than or equal to (current_value + upper bound).  This bounds type is only valid if there
-      // is a single ordering column.
+      // The lower and upper bound describe a range of values. When using numeric offsets (Preceding
+      // or Following with offset > 0), the window includes all rows where the value of the ordering
+      // column is greater than or equal to (current_value - lower bound) and less than or equal to
+      // (current_value + upper bound). Numeric offsets require a single ordering column.
+      // UNBOUNDED and CURRENT ROW bounds work with any number of ordering columns. CURRENT ROW
+      // includes all rows with matching values across all ordering columns (peer rows).
       BOUNDS_TYPE_RANGE = 2;
     }
 
