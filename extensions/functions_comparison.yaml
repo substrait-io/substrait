@@ -16,6 +16,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
+        nullability: DECLARED_OUTPUT
         return: boolean?
   -
     name: "equal"
@@ -31,6 +32,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
+        nullability: DECLARED_OUTPUT
         return: boolean?
   -
     name: "is_not_distinct_from"
@@ -82,6 +84,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
+        nullability: DECLARED_OUTPUT
         return: boolean?
   -
     name: "gt"
@@ -97,6 +100,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
+        nullability: DECLARED_OUTPUT
         return: boolean?
   -
     name: "lte"
@@ -112,6 +116,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
+        nullability: DECLARED_OUTPUT
         return: boolean?
   -
     name: "gte"
@@ -127,6 +132,7 @@ scalar_functions:
             name: x
           - value: any1
             name: y
+        nullability: DECLARED_OUTPUT
         return: boolean?
   -
     name: "between"
@@ -147,6 +153,7 @@ scalar_functions:
           - value: any1
             name: high
             description: The value to check if less than or equal to.
+        nullability: DECLARED_OUTPUT
         return: boolean?
   - name: "is_true"
     description: Whether a value is true.
@@ -223,10 +230,12 @@ scalar_functions:
       - args:
           - value: fp32
             name: x
+        nullability: DECLARED_OUTPUT
         return: boolean?
       - args:
           - value: fp64
             name: x
+        nullability: DECLARED_OUTPUT
         return: boolean?
   -
     name: "is_infinite"
@@ -238,10 +247,12 @@ scalar_functions:
       - args:
           - value: fp32
             name: x
+        nullability: DECLARED_OUTPUT
         return: boolean?
       - args:
           - value: fp64
             name: x
+        nullability: DECLARED_OUTPUT
         return: boolean?
   -
     name: "nullif"
@@ -266,6 +277,7 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
+        nullability: DECLARED_OUTPUT
         return: any1?
   -
     name: "least"
@@ -289,7 +301,7 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-        return: any1?
+        return: any1
         # NOTE: The return type nullability as described above cannot be expressed currently
         # See https://github.com/substrait-io/substrait/issues/601
         # Using MIRROR for now until it can be expressed
@@ -304,7 +316,7 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-        return: any1?
+        return: any1
         nullability: MIRROR
   -
     name: "greatest_skip_null"
@@ -316,7 +328,7 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-        return: any1?
+        return: any1
         # NOTE: The return type nullability as described above cannot be expressed currently
         # See https://github.com/substrait-io/substrait/issues/601
         # Using MIRROR for now until it can be expressed
