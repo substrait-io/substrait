@@ -7,15 +7,33 @@ options {
 }
 
 doc
-    : header testGroup+ EOF
+    : scalarDoc
+    | aggregateDoc
+    | tableDoc
     ;
 
-header
-    : version include dependency*
+scalarDoc
+    : scalarHeader scalarTestGroup+ EOF
     ;
 
-version
-    : TripleHash (SubstraitScalarTest | SubstraitAggregateTest | SubstraitTableTest) Colon FormatVersion
+aggregateDoc
+    : aggregateHeader aggregateTestGroup+ EOF
+    ;
+
+tableDoc
+    : tableHeader tableTestGroup+ EOF
+    ;
+
+scalarHeader
+    : TripleHash SubstraitScalarTest Colon FormatVersion include dependency*
+    ;
+
+aggregateHeader
+    : TripleHash SubstraitAggregateTest Colon FormatVersion include dependency*
+    ;
+
+tableHeader
+    : TripleHash SubstraitTableTest Colon FormatVersion include dependency*
     ;
 
 include
@@ -34,10 +52,16 @@ testCase
     : functionName=identifier OParen arguments CParen ( OBracket funcOptions CBracket )? Eq result
     ;
 
-testGroup
-    : testGroupDescription? (testCase)+                          #scalarFuncTestGroup
-    | testGroupDescription? (aggFuncTestCase)+                   #aggregateFuncTestGroup
-    | testGroupDescription? (tableFuncTestCase)+                 #tableFuncTestGroup
+scalarTestGroup
+    : testGroupDescription? testCase+
+    ;
+
+aggregateTestGroup
+    : testGroupDescription? aggFuncTestCase+
+    ;
+
+tableTestGroup
+    : testGroupDescription? tableFuncTestCase+
     ;
 
 arguments
