@@ -266,7 +266,6 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-          parameterConsistency: CONSISTENT
         return: any1
   -
     name: "least"
@@ -278,7 +277,6 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-          parameterConsistency: CONSISTENT
         return: any1
         nullability: MIRROR
   -
@@ -291,7 +289,6 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-          parameterConsistency: CONSISTENT
         return: any1
         # NOTE: The return type nullability as described above cannot be expressed currently
         # See https://github.com/substrait-io/substrait/issues/601
@@ -307,7 +304,6 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-          parameterConsistency: CONSISTENT
         return: any1
         nullability: MIRROR
   -
@@ -320,7 +316,6 @@ scalar_functions:
           - value: any1
         variadic:
           min: 2
-          parameterConsistency: CONSISTENT
         return: any1
         # NOTE: The return type nullability as described above cannot be expressed currently
         # See https://github.com/substrait-io/substrait/issues/601
