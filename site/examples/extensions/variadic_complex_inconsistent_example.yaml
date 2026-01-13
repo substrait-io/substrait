@@ -1,0 +1,12 @@
+urn: extension:example:variadic_complex_inconsistent
+scalar_functions:
+- name: count_pairs
+  description: Returns the number of pairs. Within each pair, both elements must be the same type. Across pairs, different types are allowed.
+  impls:
+  - args:
+    - name: first
+      value: struct<any1, any1>
+    variadic:
+      min: 1
+      parameterConsistency: INCONSISTENT
+    return: i64

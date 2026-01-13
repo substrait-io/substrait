@@ -84,10 +84,32 @@ When the same parameter name is used multiple times in a function definition, th
 
 #### Type Parameter Resolution in Variadic Functions
 
-When the last argument of a function is variadic and declares a type parameter e.g. `fn(A, B, C...)`, the C parameter can be marked as either consistent or inconsistent. If marked as consistent, the function can only be bound to arguments where all the C types are the same concrete type. If marked as inconsistent, each unique C can be bound to a different type within the constraints of what T allows. The default behavior is `CONSISTENT`.
+When the last argument of a function is variadic and declares a type parameter e.g. `fn(A, B, C...)`, the C parameter can be marked as either consistent or inconsistent. If marked as consistent, the function can only be bound to arguments where all the C types are the same concrete type. If marked as inconsistent, each unique C can be bound to a different type within the type parameter's constraints. The default behavior is `CONSISTENT`.
+
+##### Examples
+
+```yaml
+--8<-- "examples/extensions/variadic_consistent_example.yaml"
+```
+With `CONSISTENT`, all variadic arguments must resolve to the same concrete type. In the `all_equal` function above, valid invocations include `all_equal(1, 2, 3)` where all arguments are `i32`, or `all_equal('a', 'b')` where all arguments are `string`. However, `all_equal(1, 'hello')` would be invalid because the arguments have different types.
+
+```yaml
+--8<-- "examples/extensions/variadic_inconsistent_example.yaml"
+```
+With `INCONSISTENT`, each variadic argument can resolve to a different concrete type. In the `count_args` function above, an invocation like `count_args(1, 'hello', true)` is valid because arguments of type `i32`, `string`, and `boolean` can be freely mixed.
+
+```yaml
+--8<-- "examples/extensions/variadic_complex_type_example.yaml"
+```
+When the variadic argument contains a type parameter like `any1`, all occurrences of `any1` within each argument must still match (as described above). In the `all_pairs_equal` function above, each `struct<any1, any1>` must have both fields be the same type (e.g., `struct<i32, i32>` is valid, but `struct<i32, string>` is not). With `CONSISTENT`, all variadic arguments must also use the same `any1` binding. For example, `all_pairs_equal({1, 2}, {3, 4})` is valid because all pairs are `struct<i32, i32>`, but `all_pairs_equal({1, 2}, {'a', 'b'})` would be invalid because the pairs use different types.
+
+```yaml
+--8<-- "examples/extensions/variadic_complex_inconsistent_example.yaml"
+```
+With `INCONSISTENT`, each variadic argument can use a different `any1` binding, while still requiring `any1` to be consistent within each argument. In the `count_pairs` function above, `count_pairs({1, 2}, {'a', 'b'})` is valid because the first pair is `struct<i32, i32>` and the second is `struct<string, string>`. However, `count_pairs({1, 'a'})` would still be invalid because within a single pair, both fields must match.
 
 !!! note
-    The `parameterConsistency` field only has an effect when the variadic argument contains a type parameter (like `any1`, `T`, etc.). For concrete types (like `boolean?`, `i32`, `string`), it has no effect. When the variadic argument does contain a type parameter, it is recommended that extension authors explicitly specify `parameterConsistency` to make the intended behavior clear.
+    The `parameterConsistency` field only has an effect when the variadic argument contains a type parameter (like `any1`, `T`, etc.). For concrete types (like `boolean?`, `i32`, `string`), it has no effect. Additionally, if the type parameter appears in non-variadic positions (such as the return type), those occurrences pin the parameter and all variadic arguments must match that type regardless of the `parameterConsistency` setting. When the variadic argument does contain a type parameter, it is recommended that extension authors explicitly specify `parameterConsistency` to make the intended behavior clear.
 
  
 

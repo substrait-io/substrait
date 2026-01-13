@@ -1,0 +1,12 @@
+urn: extension:example:variadic_consistent
+scalar_functions:
+- name: all_equal
+  description: Returns true if all arguments are equal. All arguments must be the same type.
+  impls:
+  - args:
+    - name: first
+      value: any
+    variadic:
+      min: 1
+      parameterConsistency: CONSISTENT
+    return: boolean
