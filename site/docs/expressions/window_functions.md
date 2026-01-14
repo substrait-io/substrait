@@ -15,13 +15,13 @@ Window function signatures contain all the properties defined for [aggregate fun
 
 When binding a window function, the binding must include the following additional properties beyond the standard aggregate binding properties:
 
-| Property    | Description                                                  | Required                                                     |
-| ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| Partition   | A list of partitioning expressions.                          | False, defaults to a single partition for the entire dataset |
-| Order By    | A list of ordering expressions with sort directions.         | False, defaults to unordered                                 |
-| Bounds Type | ROWS or RANGE. ROWS bounds count physical rows. RANGE bounds consider value equivalence based on ordering columns. | False, defaults to RANGE                                     |
-| Lower Bound | Preceding(int64), Following(int64), CurrentRow, or Unbounded. | False, defaults to Unbounded (start of partition)            |
-| Upper Bound | Preceding(int64), Following(int64), CurrentRow, or Unbounded. | False, defaults to Unbounded (end of partition)              |
+| Property    | Description                                                  | Required |
+| ----------- | ------------------------------------------------------------ | -------- |
+| Partition   | A list of partitioning expressions. Empty list means a single partition for the entire dataset. | True     |
+| Order By    | A list of ordering expressions with sort directions. Empty list means unordered. | True     |
+| Bounds Type | ROWS or RANGE. ROWS bounds count physical rows. RANGE bounds consider value equivalence based on ordering columns. | True     |
+| Lower Bound | Preceding(int64), Following(int64), CurrentRow, or Unbounded. | True     |
+| Upper Bound | Preceding(int64), Following(int64), CurrentRow, or Unbounded. | True     |
 
 ### RANGE Bounds with Multiple Ordering Columns
 
