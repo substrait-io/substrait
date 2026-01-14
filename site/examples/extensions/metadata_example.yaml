@@ -1,5 +1,5 @@
 # Example showing the metadata field at multiple levels
-urn: extension:io.substrait:functions_comparison
+urn: extension:io.substrait:metadata_examples
 metadata:
   version: 2.0
   maintainer: example-team
