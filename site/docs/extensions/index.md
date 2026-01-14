@@ -42,11 +42,12 @@ Here, the choice for the name `ext` is arbitrary, as long as it does not conflic
 
 ### Function Signature
 
-A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components
+A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components:
+
 * Function Name: the name of the function
 * Argument Signature: a signature based on the defined arguments of the function
 
-These component are defined as follows
+These components are defined as follows:
 ```
 <function_signature> ::= <function_name>:<argument_signature>
 <argument_signature> ::= <short_arg_type> { _ <short_arg_type> }*
