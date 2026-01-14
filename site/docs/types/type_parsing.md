@@ -68,7 +68,7 @@ Similar to structs, maps and lists can also have a type as one of their paramete
 
 ### User-Defined Types
 
-User-defined types must be referenced using the `u!` prefix followed by the type name:
+[User-defined types](type_classes.md#user-defined-types) must be referenced using the `u!` prefix followed by the type name:
 
 === "YAML"
 

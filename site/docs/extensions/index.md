@@ -30,7 +30,7 @@ A Substrait plan can reference one or more YAML files via their extension URN. I
 | Type Variation     | The name as defined on the type variation object.            |
 | Function Signature | A function signature as described below.       |
 
-Within YAML extension files, user-defined types must be referenced with the `u!` prefix followed by the type name (e.g., `u!point`) in function arguments and return types:
+Within YAML extension files, [user-defined types](../types/type_classes.md#user-defined-types) must be referenced with the `u!` prefix followed by the type name (e.g., `u!point`) in function arguments and return types:
 
 ```yaml
 --8<-- "examples/types/user_defined_point.yaml"
