@@ -1337,8 +1337,9 @@ message Expression {
       // The lower and upper bound describe a range of values. When using numeric offsets (Preceding
       // or Following with offset > 0), the window includes all rows where the value of the ordering
       // column is greater than or equal to (current_value - lower bound) and less than or equal to
-      // (current_value + upper bound). Numeric offsets require a single ordering column.
-      // UNBOUNDED and CURRENT ROW bounds work with any number of ordering columns. CURRENT ROW
+      // (current_value + upper bound). When ANY numeric offset is present as a bound, there must be
+      // EXACTLY ONE ordering column.
+      // UNBOUNDED and CURRENT ROW bounds work with 0 or more ordering columns. CURRENT ROW
       // includes all rows with matching values across all ordering columns (peer rows).
       BOUNDS_TYPE_RANGE = 2;
     }
