@@ -15,9 +15,9 @@ table_functions:
     impls:
       - args:
           - name: input
-            value: list<T>
+            value: list<any1>
             description: The array to explode.
-        return: struct<T>
+        return: struct<any1>
 
   - name: explode
     description: >-
@@ -34,9 +34,9 @@ table_functions:
     impls:
       - args:
           - name: input
-            value: map<K, V>
+            value: map<any1, any2>
             description: The map to explode.
-        return: struct<K, V>
+        return: struct<any1, any2>
 
   - name: posexplode
     description: >-
@@ -52,9 +52,9 @@ table_functions:
     impls:
       - args:
           - name: input
-            value: list<T>
+            value: list<any1>
             description: The array to explode with positions.
-        return: struct<i64, T>
+        return: struct<i64, any1>
 
   - name: unnest
     description: >-
@@ -71,39 +71,39 @@ table_functions:
     impls:
       - args:
           - name: input
-            value: list<T>
+            value: list<any1>
             description: The array to unnest.
-        return: struct<T>
+        return: struct<any1>
       - args:
           - name: input1
-            value: list<T1>
+            value: list<any1>
             description: First array to unnest.
           - name: input2
-            value: list<T2>
+            value: list<any2>
             description: Second array to unnest.
-        return: struct<T1, T2>
+        return: struct<any1, any2>
       - args:
           - name: input1
-            value: list<T1>
+            value: list<any1>
             description: First array to unnest.
           - name: input2
-            value: list<T2>
+            value: list<any2>
             description: Second array to unnest.
           - name: input3
-            value: list<T3>
+            value: list<any3>
             description: Third array to unnest.
-        return: struct<T1, T2, T3>
+        return: struct<any1, any2, any3>
       - args:
           - name: input1
-            value: list<T1>
+            value: list<any1>
             description: First array to unnest.
           - name: input2
-            value: list<T2>
+            value: list<any2>
             description: Second array to unnest.
           - name: input3
-            value: list<T3>
+            value: list<any3>
             description: Third array to unnest.
           - name: input4
-            value: list<T4>
+            value: list<any4>
             description: Fourth array to unnest.
-        return: struct<T1, T2, T3, T4>
+        return: struct<any1, any2, any3, any4>
