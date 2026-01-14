@@ -4,7 +4,9 @@ In Substrait, the "class" of a type, not to be confused with the concept from ob
 
 Implementations of a Substrait type must support *at least* this set of values, but may include more; for example, an `i8` could be represented using the same in-memory format as an `i32`, as long as functions operating on `i8` values within [-128..127] behave as specified (in this case, this means 8-bit overflow must work as expected). Operating on values outside the specified range is unspecified behavior.
 
-## Simple Types
+## Built-in Types
+
+### Simple Types
 
 Simple type classes are those that don't support any form of configuration. For simplicity, any generic type that has only a small number of discrete implementations is declared directly, as opposed to via configuration.
 
@@ -26,7 +28,7 @@ Simple type classes are those that don't support any form of configuration. For 
 | interval_year   | Interval year to month. Supports a range of [-10,000..10,000] years with month precision (= [-120,000..120,000] months). Usually stored as separate integers for years and months, but only the total number of months is significant, i.e. `1y 0m` is considered equal to `0y 12m` or `1001y -12000m`. | `int32` years and `int32` months, with the added constraint that each component can never independently specify more than 10,000 years, even if the components have opposite signs (e.g. `-10000y 200000m` is **not** allowed)
 | uuid            | A universally-unique identifier composed of 128 bits. Typically presented to users in the following hexadecimal format: `c48ffa9e-64f4-44cb-ae47-152b4e60e77b`. Any 128-bit value is allowed, without specific adherence to RFC4122. | 16-byte `binary`
 
-## Compound Types
+### Compound Types
 
 Compound type classes are type classes that need to be configured by means of a parameter pack.
 
