@@ -3,6 +3,13 @@ urn: extension:io.substrait:functions_comparison
 metadata:
   version: 2.0
   maintainer: example-team
+types:
+  - name: point
+    structure:
+      latitude: i32
+      longitude: i32
+    metadata:
+      coordinate_system: "WGS84"
 scalar_functions:
   - name: "not_equal"
     impls:
