@@ -66,6 +66,30 @@ Similar to structs, maps and lists can also have a type as one of their paramete
     map<i32?, list<map<i32, string?>>>
     ```
 
+### User-Defined Types
+
+[User-defined types](type_classes.md#user-defined-types) must be referenced using the `u!` prefix followed by the type name:
+
+=== "YAML"
+
+    ```
+    u!typename
+    ```
+
+=== "Example"
+
+    ```yaml
+    types:
+      - name: point
+    scalar_functions:
+      - name: distance
+        impls:
+          - args:
+            - name: p
+              value: u!point
+            return: fp64
+    ```
+
 ### Function Types
 
 Function types represent anonymous functions with typed parameters and return values. They are used in higher-order functions that operate on collections.
