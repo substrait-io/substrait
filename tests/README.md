@@ -6,7 +6,7 @@ Validates protobuf textformat examples in `site/examples/proto-textformat/`.
 
 ## Substrait Test Format
 
-This document describes the format for Substrait scalar test files.
+This document describes the format for Substrait test files (scalar, aggregate, and table function tests).
 A test file consists of the following elements:
 
 1. Version declaration
@@ -18,7 +18,7 @@ A test file consists of the following elements:
 
 ### Version Declaration
 The version declaration must appear as the first line of the file. It defines the type of tests in the file and test file format version.
-Each test file must exclusively contain either scalar tests or aggregate tests. Mixing test types in the same file is not allowed.
+Each test file must exclusively contain one type of test (scalar, aggregate, or table). Mixing test types in the same file is not allowed.
 The version declaration should follow this format:
 ```code
 ### SUBSTRAIT_SCALAR_TEST: V1
@@ -27,6 +27,11 @@ or
 
 ```code
 ### SUBSTRAIT_AGGREGATE_TEST: V1
+```
+or
+
+```code
+### SUBSTRAIT_TABLE_TEST: V1
 ```
 
 ### Include Statement
@@ -87,6 +92,34 @@ Aggregate test cases support 3 formats:
 A testcase with mixed arguments
 ```code
     ((20), (-3), (1), (10)) LIST_AGG(col0::fp32, ','::string) = 1::fp64
+```
+
+### Table Function Test Cases
+Table function tests are used to test functions that return multiple rows (table-valued functions) such as `explode`, `posexplode`, and `unnest`.
+
+A test case consists of the following elements:
+
+- **function**: The name of the table function being tested.
+- **arguments**: Comma-separated list of arguments to the function. Arguments are typically list literals.
+- **result**: A list of struct values representing the expected output rows. Each struct represents one row of output.
+
+```code
+explode([1, 2, 3]::list<i32>) = [(1), (2), (3)]::struct<i32>
+```
+
+Table functions can return multiple columns per row:
+```code
+posexplode([10, 20, 30]::list<i32>) = [(0, 10), (1, 20), (2, 30)]::struct<i64,i32>
+```
+
+Table functions can also take multiple arguments:
+```code
+unnest([1, 2]::list<i32>, ['a', 'b']::list<str>) = [(1, 'a'), (2, 'b')]::struct<i32,str>
+```
+
+Empty input produces empty output:
+```code
+explode([]::list<i32>) = []::struct<i32>
 ```
 
 ### Spec
@@ -241,3 +274,22 @@ In this example:
 - We are testing `functions_list.yaml` (specifically the `transform` function)
 - We need `functions_arithmetic.yaml` as a dependency because the lambda expressions use `multiply` and `add` from that extension
 - Test coverage counts towards `functions_list.yaml`, not `functions_arithmetic.yaml`
+
+### Example of a test file for table functions
+
+```code
+### SUBSTRAIT_TABLE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_table_generic.yaml'
+
+# basic_int: Basic integer array explosion
+explode([1, 2, 3]::list<i32>) = [(1), (2), (3)]::struct<i32>
+
+# empty: Empty arrays produce zero rows
+explode([]::list<i32>) = []::struct<i32>
+
+# posexplode: Returns position and value
+posexplode([10, 20, 30]::list<i32>) = [(0, 10), (1, 20), (2, 30)]::struct<i64,i32>
+
+# unnest_multi: Unnest multiple lists together
+unnest([1, 2]::list<i32>, ['a', 'b']::list<str>) = [(1, 'a'), (2, 'b')]::struct<i32,str>
+```
