@@ -117,7 +117,7 @@ A function signature uniquely identifies a function implementation within a sing
 | list&lt;T&gt;                   | list           |
 | map&lt;K,V&gt;                  | map            |
 | any[\d]?                        | any            |
-| user defined type               | u!name         |
+| user-defined type &lt;name&gt;  | u!&lt;name&gt; |
 
 #### Examples
 
