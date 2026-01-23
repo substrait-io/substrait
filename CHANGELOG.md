@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.80.0](https://github.com/substrait-io/substrait/compare/v0.79.0...v0.80.0) (2026-01-18)
+
+### Features
+
+* add optional metadata to simple extension yaml files ([#922](https://github.com/substrait-io/substrait/issues/922)) ([0ef31ac](https://github.com/substrait-io/substrait/commit/0ef31ac4572b3e03fd8ad86346db451f08ce17cd))
+
 ## [0.79.0](https://github.com/substrait-io/substrait/compare/v0.78.2...v0.79.0) (2025-12-21)
 
 ### Features

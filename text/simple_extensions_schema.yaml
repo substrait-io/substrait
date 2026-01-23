@@ -17,6 +17,8 @@ properties:
     patternProperties:
       "^[a-zA-Z_\\$][a-zA-Z0-9_\\$]*$":
         type: string
+  metadata: # arbitrary data created by extension author
+    type: object
   types:
     type: array
     minItems: 1
@@ -29,6 +31,8 @@ properties:
           type: string
         description:
           type: string
+        metadata: # arbitrary data created by extension author
+          type: object
         structure:
           $ref: "#/$defs/type"
         parameters: # parameter list for compound types
@@ -201,6 +205,8 @@ $defs:
         type: string
       description:
         type: string
+      metadata: # arbitrary data created by extension author
+        type: object
       impls:
         type: array
         minItems: 1
@@ -234,6 +240,8 @@ $defs:
         type: string
       description:
         type: string
+      metadata: # arbitrary data created by extension author
+        type: object
       impls:
         type: array
         minItems: 1
@@ -266,7 +274,6 @@ $defs:
               $ref: "#/$defs/maxset"
             decomposable:
               $ref: "#/$defs/decomposable"
-
   windowFunction:
     type: object
     additionalProperties: false
@@ -276,6 +283,8 @@ $defs:
         type: string
       description:
         type: string
+      metadata: # arbitrary data created by extension author
+        type: object
       impls:
         type: array
         minItems: 1
