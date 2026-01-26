@@ -13,5 +13,7 @@ Substrait types fundamentally consist of four components:
 
 Refer to [Type Parsing](type_parsing.md) for a description of the syntax used to describe types.
 
+Two types are considered equal if and only if all four components (class, nullability, variation, and parameters) are identical. For compound types, this definition applies recursively to parameter types. For example, `list<i32>` and `list<i32?>` are distinct types because their element types differ in nullability.
+
 !!! note "Note"
     Substrait employs a strict type system without any coercion rules. All changes in types must be made explicit via [cast expressions](../expressions/specialized_record_expressions.md).

@@ -74,6 +74,9 @@ A producer may specify multiple values for an option.  If the producer does so t
 | DECLARED_OUTPUT | Input arguments are accepted of any mix of nullability. The nullability of the output function is whatever the return type expression states. Example use might be the function `is_null()` where the output is always `boolean` independent of the nullability of the input. |
 | DISCRETE        | DISCRETE nullability extends DECLARED_OUTPUT. The output nullability must still match the return type expression's nullability. Additionally, the input and arguments all define concrete nullabilities and can only be bound to the types that have those nullabilities. For example, if a type input is declared as `i64?` and one has an `i64` literal, the `i64` literal must be cast to `i64?` to allow the operation to bind. |
 
+!!! note "MIRROR and Compound Types"
+    For MIRROR mode, only the outermost nullability of each argument is considered. For compound types, the nullability of inner types (e.g., element types in `list<i32?>`) does not affect MIRROR behavior.
+
 
 
 ### Parameterized Types
