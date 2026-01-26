@@ -42,11 +42,12 @@ Here, the choice for the name `ext` is arbitrary, as long as it does not conflic
 
 ### Function Signature
 
-A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components
+A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components:
+
 * Function Name: the name of the function
 * Argument Signature: a signature based on the defined arguments of the function
 
-These component are defined as follows
+These components are defined as follows:
 ```
 <function_signature> ::= <function_name>:<argument_signature>
 <argument_signature> ::= <short_arg_type> { _ <short_arg_type> }*
@@ -125,6 +126,22 @@ The `any` type indicates that the argument can take any possible type. In the `f
 ```
 The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
 
+### Extension Metadata
+
+Extensibility is a core principle of Substrait. To ensure that the extension mechanism itself remains extensible, extension files support an optional `metadata` field that can contain arbitrary data created by the extension author. If you find that the standard YAML schema lacks a field you need, the metadata field provides a forward-compatible way to add it without waiting for schema changes.
+
+This field is available at multiple levels to provide flexibility:
+
+- **Top-level**: Metadata about the extension file itself
+- **Type definitions**: Metadata about custom types
+- **Functions**: Metadata about functions (scalar, aggregate, and window functions)
+
+Example:
+```yaml
+--8<-- "examples/extensions/metadata_example.yaml"
+```
+
+Consumers of extension files are not required to understand or validate metadata fields.
 
 ## Advanced Extensions
 
