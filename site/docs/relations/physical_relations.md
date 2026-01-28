@@ -23,11 +23,47 @@ The hash equijoin join operator will build a hash table out of one input (defaul
 |---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
 | Left Input          | A relational input.                                                                                                                                                                                                    | Required                 |
 | Right Input         | A relational input.                                                                                                                                                                                                    | Required                 |
-| Build Input         | Specifies which input is the `Build`.                                                                                                                                                                                  | Optional, defaults to build `Right`, probe `Left`. |
+| Build Input         | Specifies which input side to build the hash table from. See [Build Input Details](#build-input-details) below.                                                                                                       | Optional, defaults to `BUILD_INPUT_RIGHT` |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                 | Required                 |
 | Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                | Required                 |
 | Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true. |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                    | Required                 |
+
+### Build Input Details
+
+The `build_input` field specifies which side of the join to use for building the hash table. The hash join algorithm consists of two phases:
+
+1. **Build Phase**: Read one input and build a hash table on the join keys
+2. **Probe Phase**: Read the other input and probe the hash table for matching records
+
+The choice of build side can significantly impact performance:
+
+| Value | Description | When to Use |
+|-------|-------------|-------------|
+| BUILD_INPUT_UNSPECIFIED | Behavior is unspecified; consumers may choose either side | Default behavior, typically builds on right |
+| BUILD_INPUT_LEFT | Build hash table from left input, probe with right | When left input is smaller than right |
+| BUILD_INPUT_RIGHT | Build hash table from right input, probe with left | When right input is smaller than left (common case) |
+
+**Performance Considerations:**
+
+* The build side should typically be the smaller input to minimize memory usage
+* The build side must fit entirely in memory (or be spilled to disk)
+* For very large builds, memory pressure may cause degraded performance
+* Some join types have natural build side preferences:
+  - **Left Semi/Anti Join**: Build on right is more efficient
+  - **Right Semi/Anti Join**: Build on left is more efficient
+  - **Inner/Outer Joins**: Build on smaller side
+
+**Example:**
+```
+HashJoinRel {
+  left: scan_large_table    // 1M rows
+  right: scan_small_table   // 10K rows
+  build_input: BUILD_INPUT_RIGHT  // Build hash table from smaller right side
+  keys: [...]
+  type: INNER
+}
+```
 
 
 ## NLJ (Nested Loop Join) Operator
