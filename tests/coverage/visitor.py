@@ -79,7 +79,9 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitTestCase(self, ctx: FuncTestCaseParser.TestCaseContext):
         # TODO Implement this method
-        args = self.visitArguments(ctx.arguments())
+        args = []
+        if ctx.arguments() is not None:
+            args = self.visitArguments(ctx.arguments())
         result = self.visitResult(ctx.result())
         options = dict()
         if ctx.funcOptions() is not None:
@@ -291,6 +293,18 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitIntervalDayArg(ctx.intervalDayArg())
         if ctx.intervalYearArg() is not None:
             return self.visitIntervalYearArg(ctx.intervalYearArg())
+        if ctx.fixedCharArg() is not None:
+            return self.visitFixedCharArg(ctx.fixedCharArg())
+        if ctx.varCharArg() is not None:
+            return self.visitVarCharArg(ctx.varCharArg())
+        if ctx.fixedBinaryArg() is not None:
+            return self.visitFixedBinaryArg(ctx.fixedBinaryArg())
+        if ctx.precisionTimeArg() is not None:
+            return self.visitPrecisionTimeArg(ctx.precisionTimeArg())
+        if ctx.precisionTimestampArg() is not None:
+            return self.visitPrecisionTimestampArg(ctx.precisionTimestampArg())
+        if ctx.precisionTimestampTZArg() is not None:
+            return self.visitPrecisionTimestampTZArg(ctx.precisionTimestampTZArg())
         if ctx.nullArg() is not None:
             return self.visitNullArg(ctx.nullArg())
         if ctx.listArg() is not None:
@@ -362,6 +376,38 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitIntervalYearArg(self, ctx: FuncTestCaseParser.IntervalYearArgContext):
         return CaseLiteral(
             value=ctx.IntervalYearLiteral().getText().strip("'"), type="iyear"
+        )
+
+    def visitFixedCharArg(self, ctx: FuncTestCaseParser.FixedCharArgContext):
+        type_str = ctx.fixedCharType().getText().lower()
+        return CaseLiteral(value=ctx.StringLiteral().getText(), type=type_str)
+
+    def visitVarCharArg(self, ctx: FuncTestCaseParser.VarCharArgContext):
+        type_str = ctx.varCharType().getText().lower()
+        return CaseLiteral(value=ctx.StringLiteral().getText(), type=type_str)
+
+    def visitFixedBinaryArg(self, ctx: FuncTestCaseParser.FixedBinaryArgContext):
+        type_str = ctx.fixedBinaryType().getText().lower()
+        return CaseLiteral(value=ctx.StringLiteral().getText(), type=type_str)
+
+    def visitPrecisionTimeArg(self, ctx: FuncTestCaseParser.PrecisionTimeArgContext):
+        type_str = ctx.precisionTimeType().getText().lower()
+        return CaseLiteral(value=ctx.TimeLiteral().getText().strip("'"), type=type_str)
+
+    def visitPrecisionTimestampArg(
+        self, ctx: FuncTestCaseParser.PrecisionTimestampArgContext
+    ):
+        type_str = ctx.precisionTimestampType().getText().lower()
+        return CaseLiteral(
+            value=ctx.TimestampLiteral().getText().strip("'"), type=type_str
+        )
+
+    def visitPrecisionTimestampTZArg(
+        self, ctx: FuncTestCaseParser.PrecisionTimestampTZArgContext
+    ):
+        type_str = ctx.precisionTimestampTZType().getText().lower()
+        return CaseLiteral(
+            value=ctx.TimestampTzLiteral().getText().strip("'"), type=type_str
         )
 
     def visitListArg(self, ctx: FuncTestCaseParser.ListArgContext):
