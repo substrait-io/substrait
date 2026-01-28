@@ -23,4 +23,8 @@ Two types are considered equal if and only if all four components match: type cl
 For example, `i32` and `i32?` are different types because they differ in nullability. Similarly, `list<i32>` and `list<i32?>` are different types because their parameters differ.
 
 !!! note
-    Some contexts explicitly ignore nullability when comparing types. For example, functions with `MIRROR` nullability handling ignore outermost nullability when binding type parameters. See [Nullability Handling](../expressions/scalar_functions.md#nullability-handling) for details.
+    Some contexts explicitly ignore nullability when comparing types:
+
+    - Functions with [MIRROR nullability](../expressions/scalar_functions.md#mirror-default) ignore outermost nullability when binding `any[\d]` type parameters
+    - Functions with [DECLARED_OUTPUT nullability](../expressions/scalar_functions.md#declared_output) accept any mix of nullability in inputs; output nullability is determined solely by return type
+    - [Variadic type parameters](../expressions/scalar_functions.md#type-parameter-resolution-in-variadic-functions) can be marked as consistent or inconsistent for type binding across variadic arguments
