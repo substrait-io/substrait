@@ -31,7 +31,7 @@ testGroupDescription
     ;
 
 testCase
-    : functionName=identifier OParen arguments CParen ( OBracket funcOptions CBracket )? Eq result
+    : functionName=identifier OParen arguments? CParen ( OBracket funcOptions CBracket )? Eq result
     ;
 
 testGroup
