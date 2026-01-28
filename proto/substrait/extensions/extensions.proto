@@ -47,13 +47,11 @@ message SimpleExtensionDeclaration {
   message ExtensionType {
     // references the extension_uri_anchor defined for a specific extension URI.
     // this is now deprecated and extension_urn_reference should be used instead.
-    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 extension_uri_reference = 1 [deprecated = true];
 
     // references the extension_urn_anchor defined for a specific extension URN.
     // If both extension_urn_reference and extension_uri_reference are present,
     // extension_urn_reference takes precedence.
-    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 extension_urn_reference = 4;
 
     // A surrogate key used in the context of a single plan to reference a
@@ -68,18 +66,16 @@ message SimpleExtensionDeclaration {
   message ExtensionTypeVariation {
     // references the extension_uri_anchor defined for a specific extension URI.
     // this is now deprecated and extension_urn_reference should be used instead.
-    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 extension_uri_reference = 1 [deprecated = true];
 
     // references the extension_urn_anchor defined for a specific extension URN.
     // If both extension_urn_reference and extension_uri_reference are present,
     // extension_urn_reference takes precedence.
-    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 extension_urn_reference = 4;
 
     // A surrogate key used in the context of a single plan to reference a
     // specific type variation.
-    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
+    // Use non-zero values; 0 is reserved for the system-preferred variation.
     uint32 type_variation_anchor = 2;
 
     // the name of the type in the defined extension YAML.
@@ -89,13 +85,11 @@ message SimpleExtensionDeclaration {
   message ExtensionFunction {
     // references the extension_uri_anchor defined for a specific extension URI.
     // this is now deprecated and extension_urn_reference should be used instead.
-    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 extension_uri_reference = 1 [deprecated = true];
 
     // references the extension_urn_anchor defined for a specific extension URN.
     // If both extension_urn_reference and extension_uri_reference are present,
     // extension_urn_reference takes precedence.
-    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
     uint32 extension_urn_reference = 4;
 
     // A surrogate key used in the context of a single plan to reference a
