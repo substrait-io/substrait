@@ -4,7 +4,9 @@ In Substrait, the "class" of a type, not to be confused with the concept from ob
 
 Implementations of a Substrait type must support *at least* this set of values, but may include more; for example, an `i8` could be represented using the same in-memory format as an `i32`, as long as functions operating on `i8` values within [-128..127] behave as specified (in this case, this means 8-bit overflow must work as expected). Operating on values outside the specified range is unspecified behavior.
 
-## Simple Types
+## Built-in Types
+
+### Simple Types
 
 Simple type classes are those that don't support any form of configuration. For simplicity, any generic type that has only a small number of discrete implementations is declared directly, as opposed to via configuration.
 
@@ -20,13 +22,13 @@ Simple type classes are those that don't support any form of configuration. For 
 | string          | A unicode string of text, [0..2,147,483,647] UTF-8 bytes in length. | `string`
 | binary          | A binary value, [0..2,147,483,647] bytes in length.          | `binary`
 | timestamp       | A naive timestamp with microsecond precision. Does not include timezone information and can thus not be unambiguously mapped to a moment on the timeline without context. Similar to naive datetime in Python. | `int64` microseconds since 1970-01-01 00:00:00.000000 (in an unspecified timezone)
-| timestamp_tz    | A timezone-aware timestamp with microsecond precision. Similar to aware datetime in Python. | `int64` microseconds since 1970-01-01 00:00:00.000000 UTC
+| timestamp_tz    | A timezone-aware timestamp with microsecond precision. Similar to timezone-aware datetime in Python. | `int64` microseconds since 1970-01-01 00:00:00.000000 UTC
 | date            | A date within [1000-01-01..9999-12-31].                      | `int32` days since `1970-01-01`
 | time            | A time since the beginning of any day. Range of [0..86,399,999,999] microseconds; leap seconds need not be supported. | `int64` microseconds past midnight
 | interval_year   | Interval year to month. Supports a range of [-10,000..10,000] years with month precision (= [-120,000..120,000] months). Usually stored as separate integers for years and months, but only the total number of months is significant, i.e. `1y 0m` is considered equal to `0y 12m` or `1001y -12000m`. | `int32` years and `int32` months, with the added constraint that each component can never independently specify more than 10,000 years, even if the components have opposite signs (e.g. `-10000y 200000m` is **not** allowed)
 | uuid            | A universally-unique identifier composed of 128 bits. Typically presented to users in the following hexadecimal format: `c48ffa9e-64f4-44cb-ae47-152b4e60e77b`. Any 128-bit value is allowed, without specific adherence to RFC4122. | 16-byte `binary`
 
-## Compound Types
+### Compound Types
 
 Compound type classes are type classes that need to be configured by means of a parameter pack.
 
@@ -40,9 +42,10 @@ Compound type classes are type classes that need to be configured by means of a 
 | NSTRUCT&lt;N:T1,...,N:Tn&gt;  | **Pseudo-type**: A struct that maps unique names to value types. Each name is a UTF-8-encoded string. Each value can have a distinct type. Note that NSTRUCT is actually a pseudo-type, because Substrait's core type system is based entirely on ordinal positions, not named fields. Nonetheless, when working with systems outside Substrait, names are important. | n/a
 | LIST&lt;T&gt;                 | A list of values of type T. The list can be between [0..2,147,483,647] values in length.                                                                                                                                                                                                                                                                              | `repeated Literal`, all types matching T
 | MAP&lt;K, V&gt;               | An unordered list of type K keys with type V values. Keys may be repeated. While the key type could be nullable, keys may not be null.                                                                                                                                                                                                                                | `repeated KeyValue` (in turn two `Literal`s), all key types matching K and all value types matching V
-| PRECISIONTIME&lt;P&gt;        | Time since midnight with precision (P, number of digits) 0 <= P <= 12.                                                                                                                                                                                                                                                                                                | `int64` seconds, milliseconds, microseconds, nanoseconds or picoseconds since midnight
-| PRECISIONTIMESTAMP&lt;P&gt;   | A timestamp with fractional second precision (P, number of digits) 0 <= P <= 12. Does not include timezone information and can thus not be unambiguously mapped to a moment on the timeline without context. Similar to naive datetime in Python.                                                                                                                     | `int64` seconds, milliseconds, microseconds, nanoseconds or picoseconds since 1970-01-01 00:00:00.000000000000 (in an unspecified timezone)
-| PRECISIONTIMESTAMPTZ&lt;P&gt; | A timezone-aware timestamp, with fractional second precision (P, number of digits) 0 <= P <= 12. Similar to aware datetime in Python.                                                                                                                                                                                                                                 | `int64` seconds, milliseconds, microseconds, nanoseconds or picoseconds since 1970-01-01 00:00:00.000000000000 UTC
+| FUNC&lt;T-&gt;R&gt;<br>FUNC&lt;(T1,...,Tn)-&gt;R&gt; | A function type representing a [lambda](../expressions/lambda_expressions.md) that takes parameters of the specified types and returns a value of type R. Used in higher-order functions like `transform` and `filter` that operate on collections.                                                                                                        | n/a
+| PRECISION_TIME&lt;P&gt;        | Time since midnight with precision (P, number of digits) 0 <= P <= 12.                                                                                                                                                                                                                                                                                                | `int64` seconds, milliseconds, microseconds, nanoseconds or picoseconds since midnight
+| PRECISION_TIMESTAMP&lt;P&gt;   | A timestamp with fractional second precision (P, number of digits) 0 <= P <= 12. Does not include timezone information and can thus not be unambiguously mapped to a moment on the timeline without context. Similar to naive datetime in Python.                                                                                                                     | `int64` seconds, milliseconds, microseconds, nanoseconds or picoseconds since 1970-01-01 00:00:00.000000000000 (in an unspecified timezone)
+| PRECISION_TIMESTAMP_TZ&lt;P&gt; | A timezone-aware timestamp, with fractional second precision (P, number of digits) 0 <= P <= 12. Similar to timezone-aware datetime in Python.                                                                                                                                                                                                                                 | `int64` seconds, milliseconds, microseconds, nanoseconds or picoseconds since 1970-01-01 00:00:00.000000000000 UTC
 | INTERVAL_DAY&lt;P&gt;         | Interval day to second. Supports a range of [-3,650,000..3,650,000] days with fractional second precision (P, number of digits) 0 <= P <= 9. Usually stored as separate integers for various components, but only the total number of fractional seconds is significant, i.e. `1d 0s` is considered equal to `0d 86400s`.                                             | `int32` days, `int32` seconds, and `int64` fractional seconds, with the added constraint that each component can never independently specify more than 10,000 years, even if the components have opposite signs (e.g. `3650001d -86400s 0us` is **not** allowed)
 | INTERVAL_COMPOUND&lt;P&gt;    | A compound interval type that is composed of elements of the underlying elements and rules of both interval_month and interval_day to express arbitrary durations across multiple grains. Substrait gives no definition for the conversion of values between independent grains (e.g. months to days).                                                                |
 
@@ -57,6 +60,8 @@ For example, the following declares a type named `point` (namespaced to the asso
 ```yaml
 --8<-- "examples/types/user_defined_point.yaml"
 ```
+
+Note that user-defined types must be referenced using the `u!` prefix (e.g., `u!point`). See [Type Syntax Parsing](type_parsing.md#user-defined-types) for more details.
 
 ### Handling User-Defined Types
 

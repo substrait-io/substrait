@@ -225,6 +225,7 @@ def test_parse_file_add():
     assert test_file.testcases[0].func_name == "add"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
     assert test_file.include == "/extensions/functions_arithmetic.yaml"
+    assert test_file.dependencies == []
 
 
 def test_parse_file_max():
@@ -233,6 +234,7 @@ def test_parse_file_max():
     assert test_file.testcases[0].func_name == "max"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
     assert test_file.include == "/extensions/functions_arithmetic.yaml"
+    assert test_file.dependencies == []
 
 
 def test_parse_file_lt_datetime():
@@ -355,11 +357,11 @@ def test_parse_errors_with_bad_scalar_testcases(
         ),
         (
             "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(my_col::fp32, col0::fp32) = 1::fp64",
-            "mismatched input 'my_col'",
+            "mismatched input '::'",  # Now accepts bare identifiers, type annotation is the error
         ),
         (
             "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, column1::fp32) = 1::fp64",
-            "mismatched input 'column1'",
+            "mismatched input '::'",  # Now accepts bare identifiers, type annotation is the error
         ),
     ],
 )
@@ -499,3 +501,54 @@ def test_uri_match_in_get_function(
 
     function = registry.get_function(func_name, func_uri, func_args, func_ret)
     assert (function is None) == expected_failure
+
+
+def test_nullable_types():
+    valid_cases = [
+        # Integer types
+        "add(1::i8?, 2::i8?) = 3::i8?",
+        "add(1::i16?, 2::i32?) = 3::i64?",
+        # Float types
+        "add(1.0::fp32?, 2.0::fp64?) = 3.0::fp64?",
+        # Decimal
+        "add(1.5::dec?, 2.5::dec?) = 4.0::dec?",
+        # List
+        "concat([1, 2]::List?<i8>, [3]::List?<i8>) = [1, 2, 3]::List?<i8>",
+        # Date and time types
+        "lt('2020-01-01'::date?, '2020-01-02'::date?) = true::bool",
+        "lt('12:00:00'::time?, '13:00:00'::time?) = true::bool",
+        "lt('2020-01-01T12:00:00'::ts?, '2020-01-02T12:00:00'::ts?) = true::bool",
+        "lt('2020-01-01T12:00:00+00:00'::tstz?, '2020-01-02T12:00:00+00:00'::tstz?) = true::bool",
+        # Interval types
+        "lt('P1Y'::iyear?, 'P2Y'::iyear?) = true::bool",
+        "lt('P1D'::iday?, 'P2D'::iday?) = true::bool",
+        # Precision time types
+        "lt('12:00:00.123'::pt?<3>, '13:00:00.456'::pt?<3>) = true::bool",
+        "lt('2020-01-01T12:00:00.123'::pts?<3>, '2020-01-02T12:00:00.456'::pts?<3>) = true::bool",
+        "lt('2020-01-01T12:00:00.123+00:00'::ptstz?<3>, '2020-01-02T12:00:00.456+00:00'::ptstz?<3>) = true::bool",
+    ]
+    header = make_header("v1.0", "extensions/functions_arithmetic.yaml") + "# basic\n"
+    for case in valid_cases:
+        test_file = parse_string(header + case + "\n")
+        assert len(test_file.testcases) == 1
+
+
+def test_double_nullable_rejected():
+    """Verify that double-nullable syntax (e.g., Type??) is rejected by the parser."""
+    invalid_cases = [
+        "add([1, 2]::List?<i8>?, [3]::List?<i8>) = [1]::List?<i8>",
+        "add(1.5::dec??, 2.5::dec?) = 4.0::dec?",
+        "add('a23':fchar<3?>, '123456789'::fchar<9?>) = 4.0::dec?",
+        "add('abc'::fchar?<3>?, 'def'::fchar?<3>) = 'abcdef'::fchar?<6>",
+        "add('abc'::vchar?<10>?, 'def'::vchar?<10>) = 'abcdef'::vchar?<10>",
+        "add('abc'::fbin?<3>?, 'def'::fbin?<3>) = 'abcdef'::fbin?<6>",
+        "add('P1D'::iday??, 'P2D'::iday?) = 'P3D'::iday?",
+        "add('12:00:00'::pt?<3>?, '13:00:00'::pt?<3>) = '01:00:00'::pt?<3>",
+        "add('2020-01-01T12:00:00'::pts?<3>?, '2020-01-02T12:00:00'::pts?<3>) = 1::i64",
+        "add('2020-01-01T12:00:00+00:00'::ptstz?<3>?, '2020-01-02T12:00:00+00:00'::ptstz?<3>) = 1::i64",
+    ]
+    header = make_header("v1.0", "extensions/functions_arithmetic.yaml") + "# basic\n"
+    for case in invalid_cases:
+        with pytest.raises(ParseError) as pm:
+            parse_string(header + case + "\n")
+        assert "?" in str(pm.value), f"Expected parse error about '?' for: {case}"

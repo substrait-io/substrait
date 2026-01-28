@@ -30,9 +30,25 @@ A Substrait plan can reference one or more YAML files via their extension URN. I
 | Type Variation     | The name as defined on the type variation object.            |
 | Function Signature | A function signature as described below.       |
 
-A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the extension it depends on using a key-value pair in the `dependencies` key, where the value is the extension URN, and the key is a valid identifier that can then be used as an identifier-safe alias for the extension URN. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected.
+### Referencing User-Defined Types
 
-For example, if the extension with extension URN `extension:io.substrait:extension_types` defines a type called `point`, a different YAML file can use the type in a function declaration as follows:
+Within YAML extension files, [user-defined types](../types/type_classes.md#user-defined-types) must be referenced with the `u!` prefix followed by the type name (e.g., `u!point`) in function arguments and return types:
+
+```yaml
+--8<-- "examples/types/user_defined_point.yaml"
+```
+
+[Built-in types](../types/type_classes.md#built-in-types) like `i32`, `string`, or `list` (as in `list<fp64>`) do not use any prefix.
+
+A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the extension it depends on using a key-value pair in the `dependencies` key, where the value is the extension URN, and the key is a valid identifier that can then be used as an identifier-safe alias for the extension URN. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected. Note that user-defined types still require the `u!` prefix when referenced via namespace aliases (e.g., `ext.u!point`).
+
+!!! note "Grammar"
+    The grammar for referencing [user-defined types](../types/type_classes.md#user-defined-types) is (in [ABNF](https://datatracker.ietf.org/doc/html/rfc5234)):
+    ```abnf
+    udt-reference = [dependency-alias "."] "u!" type-name
+    ```
+
+For example, if the extension with extension URN `extension:io.substrait:extension_types` defines a user-defined type called `point`, a different YAML file can use the type in a function declaration as follows:
 
 ```yaml
 --8<-- "examples/extensions/distance_functions.yaml"
@@ -42,18 +58,21 @@ Here, the choice for the name `ext` is arbitrary, as long as it does not conflic
 
 ### Function Signature
 
-A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components
+A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components:
+
 * Function Name: the name of the function
-* Argument Signature: a signature based on the defined arguments of the function
+* Argument Signature: the short type names of each argument joined with underscores
 
-These component are defined as follows
-```
-<function_signature> ::= <function_name>:<argument_signature>
-<argument_signature> ::= <short_arg_type> { _ <short_arg_type> }*
-```
+These are combined with a colon separator.
 
-and the resulting function signatures look like:
-`<function name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>`
+The resulting function signatures look like: `<function_name>:<short_arg_type0>_<short_arg_type1>_..._<short_arg_typeN>`
+
+!!! note "Grammar"
+    The formal grammar for function signatures (in [ABNF](https://datatracker.ietf.org/doc/html/rfc5234)):
+    ```abnf
+    function-signature = function-name ":" argument-signature
+    argument-signature = short-arg-type *("_" short-arg-type)
+    ```
 
 Argument types (`short_arg_type`) are encoded using the Type Short Names given below.
 
@@ -97,18 +116,20 @@ A function signature uniquely identifies a function implementation within a sing
 | struct&lt;T1,T2,...,TN&gt;      | struct         |
 | list&lt;T&gt;                   | list           |
 | map&lt;K,V&gt;                  | map            |
+| func&lt;T-&gt;R&gt;, func&lt;(T1,...,TN)-&gt;R&gt; | func |
 | any[\d]?                        | any            |
-| user defined type               | u!name         |
+| user-defined type &lt;name&gt;  | u!&lt;name&gt; |
 
 #### Examples
 
-| Function Signature                                | Function Name    |
-| ------------------------------------------------- | ---------------- |
-| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`      |
-| `avg(fp32) => fp32`                               | `avg:fp32`       |
-| `extract(required enumeration, timestamp) => i64` | `extract:req_ts` |
-| `sum(any1) => any1`                               | `sum:any`        |
-| `concat(str...) => str`                           | `concat:str`     |
+| Function Signature                                | Function Name       |
+| ------------------------------------------------- | ------------------- |
+| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`         |
+| `avg(fp32) => fp32`                               | `avg:fp32`          |
+| `extract(required enumeration, timestamp) => i64` | `extract:req_ts`    |
+| `sum(any1) => any1`                               | `sum:any`           |
+| `concat(str...) => str`                           | `concat:str`        |
+| `transform(list<any1>, func<any1 -> any2>) => list<any2>` | `transform:list_func` |
 
 ### Any Types
 
@@ -123,6 +144,22 @@ The `any` type indicates that the argument can take any possible type. In the `f
 ```
 The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
 
+### Extension Metadata
+
+Extensibility is a core principle of Substrait. To ensure that the extension mechanism itself remains extensible, extension files support an optional `metadata` field that can contain arbitrary data created by the extension author. If you find that the standard YAML schema lacks a field you need, the metadata field provides a forward-compatible way to add it without waiting for schema changes.
+
+This field is available at multiple levels to provide flexibility:
+
+- **Top-level**: Metadata about the extension file itself
+- **Type definitions**: Metadata about custom types
+- **Functions**: Metadata about functions (scalar, aggregate, and window functions)
+
+Example:
+```yaml
+--8<-- "examples/extensions/metadata_example.yaml"
+```
+
+Consumers of extension files are not required to understand or validate metadata fields.
 
 ## Advanced Extensions
 

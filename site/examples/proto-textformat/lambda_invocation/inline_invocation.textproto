@@ -1,0 +1,66 @@
+# Represents the invocation of the lambda `(x: i32) -> x * 2)` on parameter `5`
+# i.e. `(x: i32) -> x * 2)(5)`
+#
+# message Expression.LambdaInvocation
+
+lambda: {
+  # Lambda parameter: x (type i32)
+  parameters: {
+    types: [
+      {
+        i32: {
+          nullability: NULLABILITY_REQUIRED
+        }
+      }
+    ]
+  }
+
+  # Lambda body: x * 2
+  body: {
+    scalar_function: {
+      function_reference: 1   # Reference to multiply function
+      arguments: [
+        {
+          # First argument: lambda parameter x
+          value: {
+            selection: {
+              lambda_parameter_reference: {
+                steps_out: 0  # 0 = current lambda
+              }
+              direct_reference: {
+                struct_field: {
+                  field: 0    # 0 = first parameter (x)
+                }
+              }
+            }
+          }
+        },
+        {
+          # Second argument: literal 2
+          value: {
+            literal: {
+              i32: 2
+            }
+          }
+        }
+      ]
+
+      output_type: {
+        i32: {
+          nullability: NULLABILITY_REQUIRED
+        }
+      }
+    }
+  }
+}
+
+# Invocation arguments: struct with one field containing 5
+arguments: {
+  fields: [
+    {
+      literal: {
+        i32: 5
+      }
+    }
+  ]
+}

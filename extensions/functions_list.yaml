@@ -1,0 +1,43 @@
+%YAML 1.2
+---
+urn: extension:io.substrait:functions_list
+scalar_functions:
+  - name: "transform"
+    description: >-
+      Transforms each element of a list using the provided function.
+      Also known as "map" in functional programming.
+
+      Returns a new list where each element is the result of applying
+      the transformer to the corresponding element in the input list.
+
+      The transformer receives one parameter (the current element) and must return
+      the transformed value.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: transformer
+            value: func<any1 -> any2>
+        nullability: MIRROR
+        return: list<any2>
+
+  - name: "filter"
+    description: >-
+      Filters a list of elements based on a predicate function.
+
+      Returns a new list containing only elements for which the predicate
+      function returns true.
+
+      The predicate receives one parameter (the current element) and must return a
+      boolean.
+
+      Elements for which the predicate returns true are included in the
+      result. Elements for which the predicate returns false or null are excluded.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: predicate
+            value: func<any1 -> boolean>
+        nullability: MIRROR
+        return: list<any1>

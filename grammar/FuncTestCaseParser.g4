@@ -11,7 +11,7 @@ doc
     ;
 
 header
-    : version include
+    : version include dependency*
     ;
 
 version
@@ -20,6 +20,10 @@ version
 
 include
     : TripleHash SubstraitInclude Colon StringLiteral (Comma StringLiteral)*
+    ;
+
+dependency
+    : TripleHash SubstraitDependency Colon StringLiteral
     ;
 
 testGroupDescription
@@ -64,6 +68,8 @@ argument
     | precisionTimestampArg
     | precisionTimestampTZArg
     | listArg
+    | lambdaArg
+    | Identifier  // Bare identifiers (for lambda parameters)
     ;
 
 aggFuncTestCase
@@ -133,124 +139,153 @@ floatLiteral
 
 nullArg: NullLiteral DoubleColon dataType;
 
-intArg: IntegerLiteral DoubleColon (I8 | I16 | I32 | I64) isnull=QMark?;
+intArg: IntegerLiteral DoubleColon intType;
 
-floatArg: numericLiteral DoubleColon (FP32 | FP64) isnull=QMark?;
+floatArg: numericLiteral DoubleColon floatType;
 
 decimalArg
-    : numericLiteral DoubleColon decimalType isnull=QMark?
+    : numericLiteral DoubleColon decimalType
     ;
 
 booleanArg
-    : BooleanLiteral DoubleColon booleanType isnull=QMark?
+    : BooleanLiteral DoubleColon booleanType
     ;
 
 stringArg
-    : StringLiteral DoubleColon stringType isnull=QMark?
+    : StringLiteral DoubleColon stringType
     ;
 
 dateArg
-    : DateLiteral DoubleColon Date isnull=QMark?
+    : DateLiteral DoubleColon dateType
     ;
 
 timeArg
-    : TimeLiteral DoubleColon Time isnull=QMark?
+    : TimeLiteral DoubleColon timeType
     ;
 
 timestampArg
-    : TimestampLiteral DoubleColon timestampType isnull=QMark?
+    : TimestampLiteral DoubleColon timestampType
     ;
 
 timestampTzArg
-    : TimestampTzLiteral DoubleColon timestampTZType isnull=QMark?
+    : TimestampTzLiteral DoubleColon timestampTZType
     ;
 
 intervalYearArg
-    : IntervalYearLiteral DoubleColon intervalYearType isnull=QMark?
+    : IntervalYearLiteral DoubleColon intervalYearType
     ;
 
 intervalDayArg
-    : IntervalDayLiteral DoubleColon intervalDayType isnull=QMark?
+    : IntervalDayLiteral DoubleColon intervalDayType
     ;
 
 fixedCharArg
-    : StringLiteral DoubleColon fixedCharType isnull=QMark?
+    : StringLiteral DoubleColon fixedCharType
     ;
 
 varCharArg
-    : StringLiteral DoubleColon varCharType isnull=QMark?
+    : StringLiteral DoubleColon varCharType
     ;
 
 fixedBinaryArg
-    : StringLiteral DoubleColon fixedBinaryType isnull=QMark?
+    : StringLiteral DoubleColon fixedBinaryType
     ;
 
 precisionTimeArg
-    : TimeLiteral DoubleColon precisionTimeType isnull=QMark?
+    : TimeLiteral DoubleColon precisionTimeType
     ;
 
 precisionTimestampArg
-    : TimestampLiteral DoubleColon precisionTimestampType isnull=QMark?
+    : TimestampLiteral DoubleColon precisionTimestampType
     ;
 
 precisionTimestampTZArg
-    : TimestampTzLiteral DoubleColon precisionTimestampTZType isnull=QMark?
+    : TimestampTzLiteral DoubleColon precisionTimestampTZType
     ;
 
 listArg
-    : literalList DoubleColon listType isnull=QMark?
+    : literalList DoubleColon listType
+    ;
+
+lambdaArg
+    : literalLambda DoubleColon funcType
     ;
 
 literalList
     : OBracket (literal (Comma literal)*)? CBracket
     ;
 
+literalLambda
+    : OParen lambdaParameters Arrow lambdaBody CParen
+    ;
+
+lambdaParameters
+    : Identifier                                    # singleParam
+    | OParen Identifier (Comma Identifier)+ CParen  # tupleParams
+    ;
+
+lambdaBody
+    : identifier OParen arguments CParen
+    ; // For now, we only allow lambda bodies of the form func_name(arg1,arg2,...)
+
 dataType
-    : scalarType isnull=QMark?
+    : scalarType
     | parameterizedType
     ;
 
 scalarType
-  : booleanType             #boolean
-  | I8                      #i8
-  | I16                     #i16
-  | I32                     #i32
-  | I64                     #i64
-  | FP32                    #fp32
-  | FP64                    #fp64
-  | stringType              #string
-  | binaryType              #binary
-  | timestampType           #timestamp
-  | timestampTZType         #timestampTz
-  | Date                    #date
-  | Time                    #time
-  | intervalYearType        #intervalYear
-  | UUID                    #uuid
-  | UserDefined Identifier  #userDefined
+  : booleanType                          #boolean
+  | intType                              #int
+  | floatType                            #float
+  | stringType                           #string
+  | binaryType                           #binary
+  | timestampType                        #timestamp
+  | timestampTZType                      #timestampTz
+  | dateType                             #date
+  | timeType                             #time
+  | intervalYearType                     #intervalYear
+  | UUID isnull=QMark?                   #uuid
+  | UserDefined Identifier isnull=QMark? #userDefined
   ;
 
 booleanType
-    : (Bool | Boolean)
+    : (Bool | Boolean) isnull=QMark?
     ;
 
 stringType
-    : (Str | String)
+    : (Str | String) isnull=QMark?
     ;
 
 binaryType
-    : (Binary | VBin)
+    : (Binary | VBin) isnull=QMark?
+    ;
+
+intType
+    : (I8 | I16 | I32 | I64) isnull=QMark?
+    ;
+
+floatType
+    : (FP32 | FP64) isnull=QMark?
+    ;
+
+dateType
+    : Date isnull=QMark?
+    ;
+
+timeType
+    : Time isnull=QMark?
     ;
 
 timestampType
-    : (Ts | Timestamp)
+    : (Ts | Timestamp) isnull=QMark?
     ;
 
 timestampTZType
-    : (TsTZ | Timestamp_TZ)
+    : (TsTZ | Timestamp_TZ) isnull=QMark?
     ;
 
 intervalYearType
-    : (IYear | Interval_Year)
+    : (IYear | Interval_Year) isnull=QMark?
     ;
 
 intervalDayType
@@ -290,6 +325,15 @@ listType
     : List isnull=QMark? OAngleBracket elemType=dataType CAngleBracket #list
     ;
 
+funcType
+    : Func isnull=QMark? OAngleBracket params=funcParameters Arrow returnType=dataType CAngleBracket
+    ;
+
+funcParameters
+    : dataType                                  #singleFuncParam
+    | OParen dataType (Comma dataType)* CParen  #funcParamsWithParens
+    ;
+
 parameterizedType
     : fixedCharType
     | varCharType
@@ -299,6 +343,7 @@ parameterizedType
     | precisionTimeType
     | precisionTimestampType
     | precisionTimestampTZType
+    | funcType
 // TODO implement the rest of the parameterized types
 //  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct

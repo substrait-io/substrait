@@ -47,6 +47,7 @@ message Type {
     Struct struct = 25;
     List list = 27;
     Map map = 28;
+    Func func = 38;
 
     UserDefined user_defined = 30;
 
@@ -224,6 +225,22 @@ message Type {
     Type value = 2;
     uint32 type_variation_reference = 3;
     Nullability nullability = 4;
+  }
+
+  // A function type for higher-order functions.
+  // Represents a function that takes parameters of specified types and
+  // returns a value of a specified type.
+  message Func {
+    // Types of parameters this function type accepts.
+    repeated Type parameter_types = 1;
+    // Return type of the function.
+    Type return_type = 2;
+    // Nullability of the function value itself, not its return type.
+    // A nullable function type (e.g., func?<i32 -> i32>) means the function
+    // reference may be null. This is distinct from the return type's
+    // nullability (e.g., func<i32 -> i32?> where the function always exists
+    // but may return null).
+    Nullability nullability = 3;
   }
 
   message UserDefined {

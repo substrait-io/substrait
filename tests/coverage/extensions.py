@@ -49,6 +49,7 @@ def build_type_to_short_type():
         FuncTestCaseLexer.List: FuncTestCaseLexer.List,
         FuncTestCaseLexer.Map: FuncTestCaseLexer.Map,
         FuncTestCaseLexer.Any: FuncTestCaseLexer.Any,
+        FuncTestCaseLexer.Func: FuncTestCaseLexer.Func,
     }
     to_short_type = {
         substrait_type_str(k): substrait_type_str(v) for k, v in rule_map.items()

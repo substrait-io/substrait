@@ -18,7 +18,7 @@ A function is a scalar function if that function takes in values from a single r
 
 ## Argument Types
 
-There are three main types of arguments: value arguments, type arguments, and enumerations.  Every defined arguments must be specified in every invocation of the function.  When specified, the position of these arguments in the function invocation must match the position of the arguments as defined in the YAML function definition.
+There are three main types of arguments: value arguments, type arguments, and enumerations.  Every defined argument must be specified in every invocation of the function.  When specified, the position of these arguments in the function invocation must match the position of the arguments as defined in the YAML function definition.
 
 * Value arguments: arguments that refer to a data value. These could be constants (literal expressions defined in the plan) or variables (a reference expression that references data being processed by the plan). This is the most common type of argument. The value of a value argument is not available in output derivation, but its type is. Value arguments can be declared in one of two ways: concrete or parameterized. Concrete types are either simple types or compound types with all parameters fully defined (without referencing any type arguments). Examples include `i32`, `fp32`, `VARCHAR<20>`, `List<fp32>`, etc. Parameterized types are discussed further below.
 * Type arguments: arguments that are used only to inform the evaluation and/or type derivation of the function. For example, you might have a function which is `truncate(<type> DECIMAL<P0,S0>, <value> DECIMAL<P1, S1>, <value> i32)`. This function declares two value arguments and a type argument. The difference between them is that the type argument has no value at runtime, while the value arguments do.
@@ -70,9 +70,9 @@ A producer may specify multiple values for an option.  If the producer does so t
 
 | Mode            | Description                                                  |
 | --------------- | ------------------------------------------------------------ |
-| MIRROR          | This means that the function has the behavior that if at least one of the input arguments are nullable, the return type is also nullable. If all arguments are non-nullable, the return type will be non-nullable.  An example might be the `+` function. |
+| MIRROR          | This means that the function has the behavior that if at least one of the input arguments are nullable, the return type is also nullable. If all arguments are non-nullable, the return type will be non-nullable.  The nullability of the expected return type in the function definition can be disregarded, as the nullability of the output is determined by the nullability of the inputs. An example of a function with MIRROR nullability is the `add` function. |
 | DECLARED_OUTPUT | Input arguments are accepted of any mix of nullability. The nullability of the output function is whatever the return type expression states. Example use might be the function `is_null()` where the output is always `boolean` independent of the nullability of the input. |
-| DISCRETE        | The input and arguments all define concrete nullability and can only be bound to the types that have those nullability. For example, if a type input is declared `i64?` and one has an `i64` literal, the `i64` literal must be specifically cast to `i64?` to allow the operation to bind. |
+| DISCRETE        | DISCRETE nullability extends DECLARED_OUTPUT. The output nullability must still match the return type expression's nullability. Additionally, the input and arguments all define concrete nullabilities and can only be bound to the types that have those nullabilities. For example, if a type input is declared as `i64?` and one has an `i64` literal, the `i64` literal must be cast to `i64?` to allow the operation to bind. |
 
 
 

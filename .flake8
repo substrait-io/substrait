@@ -6,4 +6,6 @@ exclude =
     # exclude generated test parser
     tests/coverage/antlr_parser/*.py,
     # exclude generated type parser
-    tests/type/antlr_parser/*.py
+    tests/type/antlr_parser/*.py,
+    # exclude generated files
+    gen/

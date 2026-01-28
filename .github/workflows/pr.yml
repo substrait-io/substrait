@@ -69,6 +69,8 @@ jobs:
         with:
           fetch-depth: 0
       - uses: bufbuild/buf-setup-action@v1.50.0
+        with:
+          github_token: ${{ github.token }}
       - uses: actions/setup-node@v6
         with:
           node-version: "20"
@@ -78,8 +80,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - uses: bufbuild/buf-setup-action@v1.50.0
+        with:
+          github_token: ${{ github.token }}
       - name: Install dependencies
         run: python3 -m pip install -r requirements.txt
+      - name: Generate protobuf bindings
+        run: buf generate
       - name: Black
         run: python3 -m black --diff --check .
       - name: Flake8
@@ -93,6 +100,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: bufbuild/buf-setup-action@v1.50.0
+        with:
+          github_token: ${{ github.token }}
       - name: Run proto-prefix.py
         run: tools/proto_prefix.py output test proto go_package=github.com/test/proto
       - name: Modify buf config to build rewritten proto files

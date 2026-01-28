@@ -1,6 +1,28 @@
 Release Notes
 ---
 
+## [0.80.0](https://github.com/substrait-io/substrait/compare/v0.79.0...v0.80.0) (2026-01-18)
+
+### Features
+
+* add optional metadata to simple extension yaml files ([#922](https://github.com/substrait-io/substrait/issues/922)) ([0ef31ac](https://github.com/substrait-io/substrait/commit/0ef31ac4572b3e03fd8ad86346db451f08ce17cd))
+
+## [0.79.0](https://github.com/substrait-io/substrait/compare/v0.78.2...v0.79.0) (2025-12-21)
+
+### Features
+
+* introduce lambda expressions ([#889](https://github.com/substrait-io/substrait/issues/889)) ([e47197c](https://github.com/substrait-io/substrait/commit/e47197c8de012ac6db4329ad7c68caeb746c5951))
+
+### Bug Fixes
+
+* remove redundant nullability markers in test case grammar ([#910](https://github.com/substrait-io/substrait/issues/910)) ([6ad9251](https://github.com/substrait-io/substrait/commit/6ad9251f27f4760936b9fb84edba8378be593ae4))
+
+## [0.78.2](https://github.com/substrait-io/substrait/compare/v0.78.1...v0.78.2) (2025-12-14)
+
+### Bug Fixes
+
+* **extensions:** nullif output should always be nullable ([#913](https://github.com/substrait-io/substrait/issues/913)) ([7e0404b](https://github.com/substrait-io/substrait/commit/7e0404ba8540bcd910bb652d67baeab86a69ccab))
+
 ## [0.78.1](https://github.com/substrait-io/substrait/compare/v0.78.0...v0.78.1) (2025-11-23)
 
 ### Bug Fixes
