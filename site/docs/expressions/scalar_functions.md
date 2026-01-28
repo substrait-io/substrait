@@ -84,19 +84,21 @@ When the same parameter name is used multiple times in a function definition, th
 
 #### Type Parameter Resolution in Variadic Functions
 
-When the last argument of a function is variadic and declares a type parameter e.g. `fn(A, B, C...)`, the C parameter can be marked as either consistent or inconsistent. If marked as consistent, the function can only be bound to arguments where all the C types are the same concrete type. If marked as inconsistent, each unique C can be bound to a different type within the type parameter's constraints. The default behavior is `CONSISTENT`.
+Two types have the same *base type* if they are identical modulo their outermost nullability. For example, `i32` and `i32?` have the same base type, but `list<i32>` and `list<i32?>` do not.
+
+When the last argument of a function is variadic and declares a type parameter e.g. `fn(A, B, C...)`, the `C` parameter can be marked as either consistent or inconsistent. If marked as consistent, the function can only be bound to arguments where all the `C` types have the same base type. If marked as inconsistent, each unique `C` can be bound to a different type within the type parameter's constraints. Nullability follows the [nullability handling](#nullability-handling) option. The default behavior is `CONSISTENT`.
 
 ##### Examples
 
 ```yaml
 --8<-- "examples/extensions/variadic_consistent_example.yaml"
 ```
-With `CONSISTENT`, all variadic arguments must resolve to the same concrete type. In the `all_equal` function above, valid invocations include `all_equal(1, 2, 3)` where all arguments are `i32`, or `all_equal('a', 'b')` where all arguments are `string`. However, `all_equal(1, 'hello')` would be invalid because the arguments have different types.
+With `CONSISTENT`, all variadic arguments must resolve to the same base type. In the `all_equal` function above, valid invocations include `all_equal(1, 2, 3)` where all arguments are `i32`, or `all_equal('a', 'b')` where all arguments are `string`. However, `all_equal(1, 'hello')` would be invalid because the arguments have different types.
 
 ```yaml
 --8<-- "examples/extensions/variadic_inconsistent_example.yaml"
 ```
-With `INCONSISTENT`, each variadic argument can resolve to a different concrete type. In the `count_args` function above, an invocation like `count_args(1, 'hello', true)` is valid because arguments of type `i32`, `string`, and `boolean` can be freely mixed.
+With `INCONSISTENT`, each variadic argument can resolve to a different type. In the `count_args` function above, an invocation like `count_args(1, 'hello', true)` is valid because arguments of type `i32`, `string`, and `boolean` can be freely mixed.
 
 ```yaml
 --8<-- "examples/extensions/variadic_complex_type_example.yaml"
