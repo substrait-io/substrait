@@ -1,0 +1,35 @@
+# Represents: explode(tags_array)
+# Produces one row per array element with a single 'value' field
+#
+# message TableExpression.TableFunction
+
+function_reference: 1  # Reference to explode function in extension
+
+arguments: [
+  {
+    # Input: array field to explode
+    value: {
+      selection: {
+        direct_reference: {
+          struct_field: {
+            field: 2  # Assuming field 2 is the tags array
+          }
+        }
+      }
+    }
+  }
+]
+
+output_type: {
+  struct: {
+    types: [
+      {
+        # Field 0: value (type matches array element type)
+        string: {
+          nullability: NULLABILITY_NULLABLE
+        }
+      }
+    ]
+    nullability: NULLABILITY_REQUIRED
+  }
+}

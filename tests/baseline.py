@@ -15,6 +15,7 @@ class Registry:
     num_aggregate_functions: int
     num_scalar_functions: int
     num_window_functions: int
+    num_table_functions: int
     num_function_overloads: int
 
 
@@ -74,6 +75,10 @@ class Baseline:
             errors.append(
                 f"Window function count mismatch: expected {expected.registry.num_window_functions}, got {self.registry.num_window_functions}"
             )
+        if self.registry.num_table_functions < expected.registry.num_table_functions:
+            errors.append(
+                f"Table function count mismatch: expected {expected.registry.num_table_functions}, got {self.registry.num_table_functions}"
+            )
         if (
             self.registry.num_function_overloads
             < expected.registry.num_function_overloads
@@ -127,6 +132,7 @@ def generate_baseline(registry: FunctionRegistry, coverage: TestCoverage):
         num_aggregate_functions=len(registry.aggregate_functions),
         num_scalar_functions=len(registry.scalar_functions),
         num_window_functions=len(registry.window_functions),
+        num_table_functions=len(registry.table_functions),
         num_function_overloads=sum([len(f) for f in registry.registry.values()]),
     )
     test_coverage_data = Coverage(
