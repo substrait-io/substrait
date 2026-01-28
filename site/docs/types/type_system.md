@@ -28,3 +28,14 @@ For example, `i32` and `i32?` are different types because they differ in nullabi
     - Functions with [MIRROR nullability](../expressions/scalar_functions.md#mirror-default) ignore outermost nullability when binding `any[\d]` type parameters
     - Functions with [DECLARED_OUTPUT nullability](../expressions/scalar_functions.md#declared_output) accept any mix of nullability in inputs; output nullability is determined solely by return type
     - [Variadic type parameters](../expressions/scalar_functions.md#type-parameter-resolution-in-variadic-functions) can be marked as consistent or inconsistent for type binding across variadic arguments
+
+## Base Type
+
+The **base type** of a type is the type with all four components (type class, variation, and parameters) except nullability. In other words, it is the type modulo nullability.
+
+For example:
+- The base type of both `i32` and `i32?` is `i32` (when considering the type class alone)
+- The base type of both `list<i32>` and `list<i32>?` is `list<i32>` (when considering the outermost nullability)
+- Two types share the same base type if they differ only in their nullability marker
+
+The notion of base type is useful in contexts where nullability should be ignored in type comparisons, such as when binding type parameters with MIRROR nullability handling.
