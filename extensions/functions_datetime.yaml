@@ -1020,6 +1020,7 @@ scalar_functions:
         deterministic: false
       - return: precision_timestamp<P>
         deterministic: false
+        sessionDependent: true
   - name: "current_timezone"
     description: >-
       Returns the current local timezone as a string defined by IANA timezone database
@@ -1028,6 +1029,7 @@ scalar_functions:
     impls:
       - return: string
         deterministic: false
+        sessionDependent: true
 
 aggregate_functions:
   - name: "min"
