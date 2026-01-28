@@ -1,0 +1,6 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_datetime.yaml'
+
+current_date() = '2026-01-28'::date
+current_timestamp() = '2026-01-28T14:55:42.123456'::pts<6>
+current_timestamp('Pacific/Marquesas'::str) = '2026-01-28T14:55:42.123456-09:30'::ptstz<6>
