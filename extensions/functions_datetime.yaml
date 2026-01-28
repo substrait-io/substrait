@@ -1002,6 +1002,7 @@ scalar_functions:
       Returns the current date.
     impls:
       - return: date
+        deterministic: false
   - name: "current_timestamp"
     description: >-
       Returns the current timestamp either in UTC using the provided timezone or in local timezone if none is 
@@ -1016,7 +1017,9 @@ scalar_functions:
             description: Timezone string from IANA tzdb.
             value: string
         return: precision_timestamp_tz<P>
+        deterministic: false
       - return: precision_timestamp<P>
+        deterministic: false
   - name: "current_timezone"
     description: >-
       Returns the current local timezone as a string defined by IANA timezone database
@@ -1024,6 +1027,7 @@ scalar_functions:
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
     impls:
       - return: string
+        deterministic: false
 
 aggregate_functions:
   - name: "min"
