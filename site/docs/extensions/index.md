@@ -98,18 +98,20 @@ A function signature uniquely identifies a function implementation within a sing
 | struct&lt;T1,T2,...,TN&gt;      | struct         |
 | list&lt;T&gt;                   | list           |
 | map&lt;K,V&gt;                  | map            |
+| func&lt;T-&gt;R&gt;, func&lt;(T1,...,TN)-&gt;R&gt; | func |
 | any[\d]?                        | any            |
 | user defined type               | u!name         |
 
 #### Examples
 
-| Function Signature                                | Function Name    |
-| ------------------------------------------------- | ---------------- |
-| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`      |
-| `avg(fp32) => fp32`                               | `avg:fp32`       |
-| `extract(required enumeration, timestamp) => i64` | `extract:req_ts` |
-| `sum(any1) => any1`                               | `sum:any`        |
-| `concat(str...) => str`                           | `concat:str`     |
+| Function Signature                                | Function Name       |
+| ------------------------------------------------- | ------------------- |
+| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`         |
+| `avg(fp32) => fp32`                               | `avg:fp32`          |
+| `extract(required enumeration, timestamp) => i64` | `extract:req_ts`    |
+| `sum(any1) => any1`                               | `sum:any`           |
+| `concat(str...) => str`                           | `concat:str`        |
+| `transform(list<any1>, func<any1 -> any2>) => list<any2>` | `transform:list_func` |
 
 ### Any Types
 
