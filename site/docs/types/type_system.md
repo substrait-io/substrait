@@ -15,3 +15,12 @@ Refer to [Type Parsing](type_parsing.md) for a description of the syntax used to
 
 !!! note "Note"
     Substrait employs a strict type system without any coercion rules. All changes in types must be made explicit via [cast expressions](../expressions/specialized_record_expressions.md).
+
+## Type Equality
+
+Two types are considered equal if and only if all four components match: type class, nullability, variation, and parameters (compared recursively for compound types).
+
+For example, `i32` and `i32?` are different types because they differ in nullability. Similarly, `list<i32>` and `list<i32?>` are different types because their parameters differ.
+
+!!! note
+    Some contexts explicitly ignore nullability when comparing types. For example, functions with `MIRROR` nullability handling ignore outermost nullability when binding type parameters. See [Nullability Handling](../expressions/scalar_functions.md#nullability-handling) for details.

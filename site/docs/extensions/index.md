@@ -144,6 +144,9 @@ The `any` type indicates that the argument can take any possible type. In the `f
 ```
 The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
 
+!!! note
+    When a function uses `MIRROR` nullability handling (the default), `any[\d]` type parameters ignore outermost nullability during binding. For example, [`coalesce`](https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml#:~:text=name%3A%20%22coalesce%22)`(i8?, i8)` is valid because `i8?` and `i8` are considered the same type for binding purposes. However, inner nullability in compound types still matters: `coalesce(list<i32>, list<i32?>)` is invalid because `list<i32>` and `list<i32?>` differ in their parameter's nullability.
+
 ### Extension Metadata
 
 Extensibility is a core principle of Substrait. To ensure that the extension mechanism itself remains extensible, extension files support an optional `metadata` field that can contain arbitrary data created by the extension author. If you find that the standard YAML schema lacks a field you need, the metadata field provides a forward-compatible way to add it without waiting for schema changes.

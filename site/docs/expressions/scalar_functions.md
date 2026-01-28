@@ -74,6 +74,39 @@ A producer may specify multiple values for an option.  If the producer does so t
 | DECLARED_OUTPUT | Input arguments are accepted of any mix of nullability. The nullability of the output function is whatever the return type expression states. Example use might be the function `is_null()` where the output is always `boolean` independent of the nullability of the input. |
 | DISCRETE        | DISCRETE nullability extends DECLARED_OUTPUT. The output nullability must still match the return type expression's nullability. Additionally, the input and arguments all define concrete nullabilities and can only be bound to the types that have those nullabilities. For example, if a type input is declared as `i64?` and one has an `i64` literal, the `i64` literal must be cast to `i64?` to allow the operation to bind. |
 
+#### Examples
+
+##### MIRROR (default)
+
+The [`add`](https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml#:~:text=name%3A%20%22add%22) and [`coalesce`](https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml#:~:text=name%3A%20%22coalesce%22) functions use MIRROR nullability. Under MIRROR, outermost nullability is ignored when binding type parameters. If any input is nullable, the output is nullable.
+
+```
+# add uses MIRROR (the default)
+add(i32, i32) → i32         # both non-nullable → non-nullable output
+add(i32?, i32) → i32?       # one nullable → nullable output
+add(i32?, i32?) → i32?      # both nullable → nullable output
+
+# coalesce binds any1 ignoring outermost nullability
+coalesce(i8?, i8) → i8?     # valid: i8? and i8 bind to same any1
+coalesce(list?<i32>, list<i32>) → list?<i32>  # valid: outermost nullability ignored
+
+# inner nullability still matters for type equality
+coalesce(list<i32>, list<i32?>) → ERROR  # invalid: list<i32> ≠ list<i32?>
+```
+
+##### DECLARED_OUTPUT
+
+The [`is_null`](https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml#:~:text=name%3A%20%22is_null%22) and [`is_not_distinct_from`](https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml#:~:text=name%3A%20%22is_not_distinct_from%22) functions use DECLARED_OUTPUT. The output nullability is determined solely by the return type, regardless of input nullability.
+
+```
+# is_null always returns non-nullable boolean
+is_null(i32) → boolean      # non-nullable input → non-nullable output
+is_null(i32?) → boolean     # nullable input → still non-nullable output
+
+# is_not_distinct_from compares values including nulls
+is_not_distinct_from(i32?, i32?) → boolean  # handles null comparisons, returns non-nullable
+```
+
 
 
 ### Parameterized Types
