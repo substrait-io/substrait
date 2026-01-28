@@ -22,7 +22,7 @@ This extension URN uses the format `extension:<OWNER>:<ID>`, where:
 
 The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
-A Substrait plan can reference one or more YAML files via their extension URN. In the places where these entities are referenced, they will be referenced using an extension URN + name reference. The name scheme per type works as follows:
+A Substrait plan can reference one or more YAML files via their extension URN. In the places where these entities are referenced, they will be referenced using an extension URN + name reference. Each extension entity (type, type variation, or function) is assigned an anchor value, which is a non-negative integer starting from 0. The anchor value 0 is valid and can be used to reference extension entities, but prefer non-zero values for ergonomics. The name scheme per type works as follows:
 
 | Category           | Naming scheme                                                |
 | ------------------ | ------------------------------------------------------------ |
