@@ -176,13 +176,18 @@ $defs:
     type: boolean
   nullabilityHandling:
     description: >-
-      Describes how nullability of input arguments maps to nullability of output.
-      MIRROR: Output is nullable if any input is nullable; argument and return types
-      must not include nullability markers as nullability is determined at runtime.
-      DECLARED_OUTPUT: Output nullability matches the declared return type regardless
-      of input nullability; argument types must not include nullability markers.
-      DISCRETE: Like DECLARED_OUTPUT, but inputs must also match their declared
-      nullability exactly.
+      Describes how nullability of arguments maps to nullability of output.
+
+      * MIRROR: Output is nullable if any argument is nullable; argument and return
+      types must not include nullability markers as nullability is determined at
+      runtime.
+
+      * DECLARED_OUTPUT: Output nullability matches the declared return type
+      regardless of argument nullability; argument types must not include
+      nullability markers.
+
+      * DISCRETE: Like DECLARED_OUTPUT, but arguments must also match their
+      declared nullability exactly.
     type: string
     enum: [MIRROR, DECLARED_OUTPUT, DISCRETE]
   returnValue:

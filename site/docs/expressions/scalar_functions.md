@@ -68,10 +68,12 @@ A producer may specify multiple values for an option.  If the producer does so t
 
 ### Nullability Handling
 
+The base type refers to the type without considering nullability. For example, both `i64` and `i64?` have the same base type. Similarly, `list<i32>` and `list?<i32>` have the same base type, but `list<i32?>` does not.
+
 | Mode            | Description                                                  |
 | --------------- | ------------------------------------------------------------ |
-| MIRROR          | This means that the function has the behavior that if at least one of the input arguments are nullable, the return type is also nullable. If all arguments are non-nullable, the return type will be non-nullable. Since the nullability of the output is determined by the nullability of the inputs, argument types and return types must not include nullability markers (`?`). An example of a function with MIRROR nullability is the `add` function. |
-| DECLARED_OUTPUT | This means that the function accepts input arguments of any nullability. The nullability of the output is determined solely by the return type expression. Since the nullability of the inputs is not considered, argument types must not include nullability markers (`?`). An example of a function with DECLARED_OUTPUT nullability is the `is_null()` function where the output is always `boolean` independent of the nullability of the input. |
+| MIRROR          | This means that the function has the behavior that if at least one of the input arguments are nullable, the return type is also nullable. If all arguments are non-nullable, the return type will be non-nullable. Since the nullability of the output is determined by the nullability of the inputs, argument types and return types must not include nullability markers (`?`). The function binds regardless of argument nullability as long as the base types match. An example of a function with MIRROR nullability is the `add` function. |
+| DECLARED_OUTPUT | This means that the function accepts input arguments of any nullability. The nullability of the output is determined solely by the return type expression. Since the nullability of the inputs is not considered, argument types must not include nullability markers (`?`). The function binds regardless of argument nullability as long as the base types match. An example of a function with DECLARED_OUTPUT nullability is the `is_null()` function where the output is always `boolean` independent of the nullability of the input. |
 | DISCRETE        | DISCRETE nullability extends DECLARED_OUTPUT. The output nullability must still match the return type expression's nullability. Additionally, the input and arguments all define concrete nullabilities and can only be bound to the types that have those nullabilities. For example, if a type input is declared as `i64?` and one has an `i64` literal, the `i64` literal must be cast to `i64?` to allow the operation to bind. |
 
 
