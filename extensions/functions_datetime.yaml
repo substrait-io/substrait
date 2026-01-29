@@ -1016,9 +1016,29 @@ scalar_functions:
           - name: timezone
             description: Timezone string from IANA tzdb.
             value: string
-        return: precision_timestamp_tz<P>
+        return: precision_timestamp_tz<12>
         deterministic: false
-      - return: precision_timestamp<P>
+      - return: precision_timestamp<12>
+        deterministic: false
+        sessionDependent: true
+      - args:
+          - name: p
+            description: precision of the returned timestamp 0 <= p <= 12
+            value: i8
+          - name: timezone
+            description: Timezone string from IANA tzdb.
+            value: string
+        return: |-
+          precision = integer_parameter(p)
+          precision_timestamp_tz<precision>
+        deterministic: false
+      - args:
+          - name: p
+            description: precision of the returned timestamp 0 <= p <= 12
+            value: i8
+        return: |-
+          precision = integer_parameter(p)
+          precision_timestamp<precision>
         deterministic: false
         sessionDependent: true
   - name: "current_timezone"
