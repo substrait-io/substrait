@@ -1199,7 +1199,8 @@ message Expression {
     Type.Struct parameters = 1;
 
     // The lambda body expression. Lambda parameters can be referenced using FieldReference
-    // with FieldReference.LambdaParameterReference as root_type.
+    // with FieldReference.LambdaParameterReference as root_type and ReferenceSegment.StructField
+    // as direct_reference to select specific parameters.
     Expression body = 2;
   }
 
@@ -1575,21 +1576,25 @@ message Expression {
       MaskExpression masked_reference = 2;
     }
 
-    // The origin of the data being referenced. When this is a RootReference and
-    // direct_reference above is used, the direct_reference must be of a type
-    // StructField.
+    // The origin of the data being referenced.
     oneof root_type {
       Expression expression = 3;
+      // When used with direct_reference, the direct_reference must be of type
+      // ReferenceSegment.StructField.
       RootReference root_reference = 4;
+      // When used with direct_reference, the direct_reference must be of type
+      // ReferenceSegment.StructField.
       OuterReference outer_reference = 5;
+      // Must use direct_reference and the direct_reference
+      // must be of type ReferenceSegment.StructField.
       LambdaParameterReference lambda_parameter_reference = 6;
     }
 
     // Singleton that expresses this FieldReference is rooted off the root
-    // incoming record type
+    // incoming record type.
     message RootReference {}
 
-    // A root reference for the outer relation's subquery
+    // A root reference for the outer relation's subquery.
     message OuterReference {
       // number of subquery boundaries to traverse up for this field's reference
       //
@@ -1599,8 +1604,8 @@ message Expression {
 
     // A reference to a lambda parameter within a lambda body expression.
     // This identifies which lambda scope to reference, treating its parameters
-    // as a struct. Use FieldReference with this as root_type to access specific
-    // parameters or nested fields within parameters.
+    // as a struct. Further navigation into nested fields within parameters uses
+    // the child field of StructField.
     message LambdaParameterReference {
       // Number of lambda boundaries to traverse up for this reference.
       // For nested lambdas:
