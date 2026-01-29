@@ -1,0 +1,18 @@
+%YAML 1.2
+---
+urn: "extension:io.substrait:extension_types_numeric"
+
+# Unsigned integer literals are encoded as user defined literals.
+types:
+  - name: u8
+    description: Unsigned 8-bit integer
+    structure: {}
+  - name: u16
+    description: Unsigned 16-bit integer
+    structure: {}
+  - name: u32
+    description: Unsigned 32-bit integer
+    structure: {}
+  - name: u64
+    description: Unsigned 64-bit integer
+    structure: {}
