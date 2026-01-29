@@ -152,7 +152,7 @@ scalar_functions:
     description: Whether a value is true.
     impls:
       - args:
-          - value: boolean?
+          - value: boolean
             name: x
         return: BOOLEAN
         nullability: DECLARED_OUTPUT
@@ -160,7 +160,7 @@ scalar_functions:
     description: Whether a value is not true.
     impls:
       - args:
-          - value: boolean?
+          - value: boolean
             name: x
         return: BOOLEAN
         nullability: DECLARED_OUTPUT
@@ -168,7 +168,7 @@ scalar_functions:
     description: Whether a value is false.
     impls:
       - args:
-          - value: boolean?
+          - value: boolean
             name: x
         return: BOOLEAN
         nullability: DECLARED_OUTPUT
@@ -176,7 +176,7 @@ scalar_functions:
     description: Whether a value is not false.
     impls:
       - args:
-          - value: boolean?
+          - value: boolean
             name: x
         return: BOOLEAN
         nullability: DECLARED_OUTPUT
