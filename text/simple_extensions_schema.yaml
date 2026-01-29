@@ -179,8 +179,8 @@ $defs:
       Describes how nullability of arguments maps to nullability of output.
 
       * MIRROR: Output is nullable if any argument is nullable; argument and return
-      types must not include nullability markers as nullability is determined at
-      runtime.
+      types must not include nullability markers as they will be ignored for output
+      nullability derivation.
 
       * DECLARED_OUTPUT: Output nullability matches the declared return type
       regardless of argument nullability; argument types must not include
