@@ -76,7 +76,7 @@ A producer may specify multiple values for an option.  If the producer does so t
 
 #### Examples
 
-[`add`](https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml#:~:text=%2D-,name%3A%20%22add%22,-description%3A%20Add) is declared as `add(i32, i32) -> i32` with `MIRROR` nullability. `add(i32?, i32)`, `add(i32, i32?)`, and `add(i32?, i32?)` all return `i32?` because at least one argument is nullable, but `add(i32, i32)` returns `i32` because all arguments are non-nullable.
+[`add`](https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic.yaml#:~:text=%2D-,name%3A%20%22add%22,-description%3A%20%22Add%20two) is declared as `add(i32, i32) -> i32` with `MIRROR` nullability. `add(i32?, i32)`, `add(i32, i32?)`, and `add(i32?, i32?)` all return `i32?` because at least one argument is nullable, but `add(i32, i32)` returns `i32` because all arguments are non-nullable.
 
 [`is_null`](https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml#:~:text=%2D-,name%3A%20%22is_null%22,-description%3A%20Whether) is declared as `is_null(i64) -> boolean` with `DECLARED_OUTPUT` nullability. Both `is_null(i64)` and `is_null(i64?)` return `boolean` because the output type is determined solely by the declared return type regardless of input nullability.
 
