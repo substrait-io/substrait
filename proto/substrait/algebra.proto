@@ -1591,10 +1591,10 @@ message Expression {
     }
 
     // Singleton that expresses this FieldReference is rooted off the root
-    // incoming record type.
+    // incoming record type
     message RootReference {}
 
-    // A root reference for the outer relation's subquery.
+    // A root reference for the outer relation's subquery
     message OuterReference {
       // number of subquery boundaries to traverse up for this field's reference
       //
