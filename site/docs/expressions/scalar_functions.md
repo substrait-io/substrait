@@ -66,7 +66,7 @@ A producer may specify multiple values for an option.  If the producer does so t
 
 
 
-### Nullability Handling
+## Nullability Handling
 
 | Mode            | Description                                                  |
 | --------------- | ------------------------------------------------------------ |
@@ -82,7 +82,7 @@ A producer may specify multiple values for an option.  If the producer does so t
 
 
 
-### Parameterized Types
+## Parameterized Types
 
 Types are parameterized by two types of values: by inner types (e.g. `List<K>`) and numeric values (e.g. `DECIMAL<P,S>`). Parameter names are simple strings (frequently a single character). There are two types of parameters: integer parameters and type parameters.
 
