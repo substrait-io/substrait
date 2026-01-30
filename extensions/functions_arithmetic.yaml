@@ -42,6 +42,42 @@ scalar_functions:
         return: i64
       - args:
           - name: x
+            value: u!u8
+          - name: y
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u8
+      - args:
+          - name: x
+            value: u!u16
+          - name: y
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u16
+      - args:
+          - name: x
+            value: u!u32
+          - name: y
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u32
+      - args:
+          - name: x
+            value: u!u64
+          - name: y
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u64
+      - args:
+          - name: x
             value: fp32
           - name: y
             value: fp32
@@ -100,6 +136,42 @@ scalar_functions:
         return: i64
       - args:
           - name: x
+            value: u!u8
+          - name: y
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u8
+      - args:
+          - name: x
+            value: u!u16
+          - name: y
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u16
+      - args:
+          - name: x
+            value: u!u32
+          - name: y
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u32
+      - args:
+          - name: x
+            value: u!u64
+          - name: y
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u64
+      - args:
+          - name: x
             value: fp32
           - name: y
             value: fp32
@@ -156,6 +228,42 @@ scalar_functions:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
         return: i64
+      - args:
+          - name: x
+            value: u!u8
+          - name: y
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u8
+      - args:
+          - name: x
+            value: u!u16
+          - name: y
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u16
+      - args:
+          - name: x
+            value: u!u32
+          - name: y
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u32
+      - args:
+          - name: x
+            value: u!u64
+          - name: y
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u64
       - args:
           - name: x
             value: fp32
@@ -236,6 +344,58 @@ scalar_functions:
           on_division_by_zero:
             values: [ "NULL", ERROR ]
         return: i64
+      - args:
+          - name: x
+            value: u!u8
+          - name: y
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
+        return: u!u8
+      - args:
+          - name: x
+            value: u!u16
+          - name: y
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
+        return: u!u16
+      - args:
+          - name: x
+            value: u!u32
+          - name: y
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
+        return: u!u32
+      - args:
+          - name: x
+            value: u!u64
+          - name: y
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
+        return: u!u64
       - args:
           - name: x
             value: fp32
@@ -383,6 +543,58 @@ scalar_functions:
           on_domain_error:
             values: [ "NULL", ERROR ]
         return: i64
+      - args:
+          - name: x
+            value: u!u8
+          - name: y
+            value: u!u8
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+        return: u!u8
+      - args:
+          - name: x
+            value: u!u16
+          - name: y
+            value: u!u16
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+        return: u!u16
+      - args:
+          - name: x
+            value: u!u32
+          - name: y
+            value: u!u32
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+        return: u!u32
+      - args:
+          - name: x
+            value: u!u64
+          - name: y
+            value: u!u64
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+        return: u!u64
   -
     name: "power"
     description: "Take the power with x as the base and y as exponent."
@@ -1089,6 +1301,46 @@ aggregate_functions:
         return: i64?
       - args:
           - name: x
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
+      - args:
+          - name: x
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
+      - args:
+          - name: x
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
+      - args:
+          - name: x
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
+      - args:
+          - name: x
             value: fp32
         options:
           overflow:
@@ -1155,6 +1407,46 @@ aggregate_functions:
         return: i64
       - args:
           - name: x
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64
+        return: u!u64
+      - args:
+          - name: x
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64
+        return: u!u64
+      - args:
+          - name: x
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64
+        return: u!u64
+      - args:
+          - name: x
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64
+        return: u!u64
+      - args:
+          - name: x
             value: fp32
         options:
           overflow:
@@ -1218,6 +1510,46 @@ aggregate_functions:
         return: i64?
       - args:
           - name: x
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: "STRUCT<u!u64,i64>"
+        return: u!u8?
+      - args:
+          - name: x
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: "STRUCT<u!u64,i64>"
+        return: u!u16?
+      - args:
+          - name: x
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: "STRUCT<u!u64,i64>"
+        return: u!u32?
+      - args:
+          - name: x
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: "STRUCT<u!u64,i64>"
+        return: u!u64?
+      - args:
+          - name: x
             value: fp32
         options:
           overflow:
@@ -1269,6 +1601,34 @@ aggregate_functions:
         return: i64?
       - args:
           - name: x
+            value: u!u8
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u8?
+        return: u!u8?
+      - args:
+          - name: x
+            value: u!u16
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u16?
+        return: u!u16?
+      - args:
+          - name: x
+            value: u!u32
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u32?
+        return: u!u32?
+      - args:
+          - name: x
+            value: u!u64
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
+      - args:
+          - name: x
             value: fp32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
@@ -1312,6 +1672,34 @@ aggregate_functions:
         decomposable: MANY
         intermediate: i64?
         return: i64?
+      - args:
+          - name: x
+            value: u!u8
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u8?
+        return: u!u8?
+      - args:
+          - name: x
+            value: u!u16
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u16?
+        return: u!u16?
+      - args:
+          - name: x
+            value: u!u32
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u32?
+        return: u!u32?
+      - args:
+          - name: x
+            value: u!u64
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
       - args:
           - name: x
             value: fp32
