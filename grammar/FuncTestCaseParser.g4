@@ -7,15 +7,33 @@ options {
 }
 
 doc
-    : header testGroup+ EOF
+    : scalarDoc
+    | aggregateDoc
+    | tableDoc
     ;
 
-header
-    : version include dependency*
+scalarDoc
+    : scalarHeader scalarTestGroup+ EOF
     ;
 
-version
-    : TripleHash (SubstraitScalarTest | SubstraitAggregateTest) Colon FormatVersion
+aggregateDoc
+    : aggregateHeader aggregateTestGroup+ EOF
+    ;
+
+tableDoc
+    : tableHeader tableTestGroup+ EOF
+    ;
+
+scalarHeader
+    : TripleHash SubstraitScalarTest Colon FormatVersion include dependency*
+    ;
+
+aggregateHeader
+    : TripleHash SubstraitAggregateTest Colon FormatVersion include dependency*
+    ;
+
+tableHeader
+    : TripleHash SubstraitTableTest Colon FormatVersion include dependency*
     ;
 
 include
@@ -34,9 +52,16 @@ testCase
     : functionName=identifier OParen arguments CParen ( OBracket funcOptions CBracket )? Eq result
     ;
 
-testGroup
-    : testGroupDescription? (testCase)+                          #scalarFuncTestGroup
-    | testGroupDescription? (aggFuncTestCase)+                   #aggregateFuncTestGroup
+scalarTestGroup
+    : testGroupDescription? testCase+
+    ;
+
+aggregateTestGroup
+    : testGroupDescription? aggFuncTestCase+
+    ;
+
+tableTestGroup
+    : testGroupDescription? tableFuncTestCase+
     ;
 
 arguments
@@ -74,6 +99,18 @@ argument
 
 aggFuncTestCase
     : aggFuncCall ( OBracket funcOptions CBracket )? Eq result
+    ;
+
+tableFuncTestCase
+    : functionName=identifier OParen arguments CParen ( OBracket funcOptions CBracket )? Eq multiRowResult
+    ;
+
+multiRowResult
+    : OBracket (rowTuple (Comma rowTuple)*)? CBracket DoubleColon structType
+    ;
+
+rowTuple
+    : OParen (literal (Comma literal)*)? CParen
     ;
 
 aggFuncCall
@@ -344,10 +381,14 @@ parameterizedType
     | precisionTimestampType
     | precisionTimestampTZType
     | funcType
+    | structType
 // TODO implement the rest of the parameterized types
-//  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct
 //  | Map isnull='?'? Lt key=expr Comma value=expr Gt #map
+  ;
+
+structType
+    : Struct isnull=QMark? OAngleBracket dataType (Comma dataType)* CAngleBracket
   ;
 
 numericParameter
