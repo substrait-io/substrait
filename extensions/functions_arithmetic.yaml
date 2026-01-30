@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_arithmetic
+dependencies:
+  unsigned: extension:io.substrait:extension_types_numeric
 scalar_functions:
   -
     name: "add"
