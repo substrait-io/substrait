@@ -7,6 +7,12 @@ add(100::i16, 100::i16) = 200::i16
 add(30000::i32, 30000::i32) = 60000::i32
 add(2000000000::i64, 2000000000::i64) = 4000000000::i64
 
+# unsigned: Unsigned integer examples
+add(200::u!u8, 50::u!u8) = 250::u!u8
+add(50000::u!u16, 10000::u!u16) = 60000::u!u16
+add(3000000000::u!u32, 1000000000::u!u32) = 4000000000::u!u32
+add(10000000000000000000::u!u64, 1000000000000000000::u!u64) = 11000000000000000000::u!u64
+
 # overflow: Examples demonstrating overflow behavior
 add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
 add(30000::i16, 30000::i16) [overflow:ERROR] = <!ERROR>

@@ -221,7 +221,7 @@ def get_absolute_path(relative_path):
 
 def test_parse_file_add():
     test_file = parse_one_file(get_absolute_path("../cases/arithmetic/add.test"))
-    assert len(test_file.testcases) == 15
+    assert len(test_file.testcases) == 19
     assert test_file.testcases[0].func_name == "add"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
     assert test_file.include == "/extensions/functions_arithmetic.yaml"
@@ -230,7 +230,7 @@ def test_parse_file_add():
 
 def test_parse_file_max():
     test_file = parse_one_file(get_absolute_path("../cases/arithmetic/max.test"))
-    assert len(test_file.testcases) == 12
+    assert len(test_file.testcases) == 16
     assert test_file.testcases[0].func_name == "max"
     assert test_file.testcases[0].base_uri == "/extensions/functions_arithmetic.yaml"
     assert test_file.include == "/extensions/functions_arithmetic.yaml"
