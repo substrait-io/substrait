@@ -64,7 +64,7 @@ scalar_functions:
       indexing option cannot be specified when the component is YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
       MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME, or TIMEZONE_OFFSET.
 
-      Timezone strings must be specified as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
     impls:
@@ -189,7 +189,7 @@ scalar_functions:
       * IS_DST Return true if DST (Daylight Savings Time) is observed at the given value
         in the given timezone.
 
-      Timezone strings must be specified as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
     impls:
@@ -239,7 +239,7 @@ scalar_functions:
     description: >-
       Add an interval to a date/time type.
 
-      Timezone strings must be specified as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
     impls:
@@ -382,7 +382,7 @@ scalar_functions:
     description: >-
       Subtract an interval from a date/time type.
 
-      Timezone strings must be specified as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
     impls:
@@ -653,7 +653,7 @@ scalar_functions:
     description: >-
       Convert local timestamp to UTC-relative timestamp_tz using given local time's timezone.
 
-      Timezone strings must be specified as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
     impls:
@@ -683,7 +683,7 @@ scalar_functions:
     description: >-
       Convert UTC-relative timestamp_tz to local timestamp using given local time's timezone.
 
-      Timezone strings must be specified as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
     impls:
@@ -732,7 +732,7 @@ scalar_functions:
       see https://man7.org/linux/man-pages/man3/strptime.3.html for reference.
       If timezone is present in timestamp and provided as parameter an error is thrown.
 
-      Timezone strings must be specified as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is supplied as parameter and present in the parsed string the parsed timezone is used.
       If parameter supplied timezone is invalid an error is thrown.
@@ -758,7 +758,7 @@ scalar_functions:
       Convert timestamp/date/time to string using provided format,
       see https://man7.org/linux/man-pages/man3/strftime.3.html for reference.
 
-      Timezone strings must be specified as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
     impls:
@@ -814,7 +814,7 @@ scalar_functions:
       earlier one if equidistant, ROUND_TIE_UP means to choose the nearest and tie to the later one if
       equidistant.
 
-      Timezone strings must be specified as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
     impls:
@@ -906,7 +906,7 @@ scalar_functions:
       earlier one if equidistant, ROUND_TIE_UP means to choose the nearest and tie to the later one if
       equidistant.
 
-      Timezone strings must be specified as defined by IANA timezone database (https://www.iana.org/time-zones).
+      Timezone strings must be as defined by IANA timezone database (https://www.iana.org/time-zones).
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
 
