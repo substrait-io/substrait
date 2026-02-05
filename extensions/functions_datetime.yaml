@@ -1013,15 +1013,6 @@ scalar_functions:
       If timezone is invalid an error is thrown.
     impls:
       - args:
-          - name: timezone
-            description: Timezone string from IANA tzdb.
-            value: string
-        return: precision_timestamp_tz<12>
-        deterministic: false
-      - return: precision_timestamp<12>
-        deterministic: false
-        sessionDependent: true
-      - args:
           - name: p
             description: precision of the returned timestamp 0 <= p <= 12
             value: i8
