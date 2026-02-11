@@ -1,0 +1,8 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/unsigned_integers.yaml'
+
+# basic: Basic unsigned integer examples
+divide('250'::u!u8, '5'::u!u8) = '50'::u!u8
+divide('60000'::u!u16, '100'::u!u16) = '600'::u!u16
+divide('4000000000'::u!u32, '200'::u!u32) = '20000000'::u!u32
+divide('10000000000000000000'::u!u64, '5000'::u!u64) = '2000000000000000'::u!u64
