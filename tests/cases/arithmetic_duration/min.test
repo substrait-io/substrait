@@ -1,0 +1,6 @@
+### SUBSTRAIT_AGGREGATE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/duration.yaml'
+
+# basic: Basic duration min examples
+min(('1000', '500', '2000', '100')::u!duration) = '100'::u!duration
+min(('86400000', '3600000', '60000', '1000')::u!duration) = '1000'::u!duration

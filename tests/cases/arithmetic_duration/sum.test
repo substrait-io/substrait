@@ -1,0 +1,6 @@
+### SUBSTRAIT_AGGREGATE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/duration.yaml'
+
+# basic: Basic duration sum examples
+sum(('1000', '2000', '3000')::u!duration) = '6000'::u!duration
+sum(('86400000', '3600000', '60000', '1000')::u!duration) = '90061000'::u!duration

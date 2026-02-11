@@ -1,0 +1,8 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/duration.yaml'
+
+# basic: Basic duration addition examples
+add('1000'::u!duration, '500'::u!duration) = '1500'::u!duration
+add('0'::u!duration, '0'::u!duration) = '0'::u!duration
+add('86400000'::u!duration, '3600000'::u!duration) = '90000000'::u!duration
+add('250'::u!duration, '750'::u!duration) = '1000'::u!duration

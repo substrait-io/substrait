@@ -1,0 +1,80 @@
+%YAML 1.2
+---
+urn: "extension:io.substrait:duration"
+
+types:
+  - name: duration
+    description: >-
+      An absolute elapsed time span. The unit parameter specifies the
+      precision of the stored value.
+    parameters:
+      - name: unit
+        type: string
+        description: >-
+          The time unit of the duration value. Must be one of
+          SECOND, MILLISECOND, MICROSECOND, or NANOSECOND.
+    structure:
+      value: str
+
+scalar_functions:
+  -
+    name: "add"
+    description: "Add two duration values."
+    impls:
+      - args:
+          - name: x
+            value: u!duration
+          - name: y
+            value: u!duration
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!duration
+  -
+    name: "subtract"
+    description: "Subtract one duration value from another."
+    impls:
+      - args:
+          - name: x
+            value: u!duration
+          - name: y
+            value: u!duration
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!duration
+
+aggregate_functions:
+  - name: "sum"
+    description: Sum a set of duration values. The sum of zero elements yields null.
+    impls:
+      - args:
+          - name: x
+            value: u!duration
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!duration?
+        return: u!duration?
+  - name: "min"
+    description: Min of a set of duration values.
+    impls:
+      - args:
+          - name: x
+            value: u!duration
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!duration?
+        return: u!duration?
+  - name: "max"
+    description: Max of a set of duration values.
+    impls:
+      - args:
+          - name: x
+            value: u!duration
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!duration?
+        return: u!duration?
