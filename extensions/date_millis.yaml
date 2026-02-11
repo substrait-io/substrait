@@ -1,0 +1,9 @@
+%YAML 1.2
+---
+urn: "extension:io.substrait:date_millis"
+
+types:
+  - name: date_millis
+    description: "Date stored as milliseconds since epoch (64-bit)"
+    structure:
+      value: str
