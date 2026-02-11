@@ -385,7 +385,9 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitUdtArg(self, ctx: FuncTestCaseParser.UdtArgContext):
         value, _ = self.visitLiteral(ctx.literal())
-        # Type is optional "alias." + "u!" + identifier, e.g., "unsigned.u!u8"
+        # Type is "u!" + identifier, e.g., "u!u8"
+        # The optional depAlias prefix (e.g., "unsigned.") is supported for
+        # forward compatibility but is no longer used in self-contained extensions.
         type_str = ""
         if ctx.depAlias is not None:
             type_str = ctx.depAlias.text.lower() + "."

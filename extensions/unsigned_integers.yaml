@@ -19,3 +19,346 @@ types:
     description: Unsigned 64-bit integer (0 to 18446744073709551615)
     structure:
       value: str
+
+scalar_functions:
+  -
+    name: "add"
+    description: "Add two unsigned integer values."
+    impls:
+      - args:
+          - name: x
+            value: u!u8
+          - name: y
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u8
+      - args:
+          - name: x
+            value: u!u16
+          - name: y
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u16
+      - args:
+          - name: x
+            value: u!u32
+          - name: y
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u32
+      - args:
+          - name: x
+            value: u!u64
+          - name: y
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u64
+  -
+    name: "subtract"
+    description: "Subtract one unsigned integer value from another."
+    impls:
+      - args:
+          - name: x
+            value: u!u8
+          - name: y
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u8
+      - args:
+          - name: x
+            value: u!u16
+          - name: y
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u16
+      - args:
+          - name: x
+            value: u!u32
+          - name: y
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u32
+      - args:
+          - name: x
+            value: u!u64
+          - name: y
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u64
+  -
+    name: "multiply"
+    description: "Multiply two unsigned integer values."
+    impls:
+      - args:
+          - name: x
+            value: u!u8
+          - name: y
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u8
+      - args:
+          - name: x
+            value: u!u16
+          - name: y
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u16
+      - args:
+          - name: x
+            value: u!u32
+          - name: y
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u32
+      - args:
+          - name: x
+            value: u!u64
+          - name: y
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!u64
+  -
+    name: "divide"
+    description: >
+      Divide x by y. Partial values are truncated (rounded towards 0).
+    impls:
+      - args:
+          - name: x
+            value: u!u8
+          - name: y
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
+        return: u!u8
+      - args:
+          - name: x
+            value: u!u16
+          - name: y
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
+        return: u!u16
+      - args:
+          - name: x
+            value: u!u32
+          - name: y
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
+        return: u!u32
+      - args:
+          - name: x
+            value: u!u64
+          - name: y
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
+        return: u!u64
+  -
+    name: "modulus"
+    description: >
+      Calculate the remainder when dividing dividend (x) by divisor (y).
+    impls:
+      - args:
+          - name: x
+            value: u!u8
+          - name: y
+            value: u!u8
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+        return: u!u8
+      - args:
+          - name: x
+            value: u!u16
+          - name: y
+            value: u!u16
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+        return: u!u16
+      - args:
+          - name: x
+            value: u!u32
+          - name: y
+            value: u!u32
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+        return: u!u32
+      - args:
+          - name: x
+            value: u!u64
+          - name: y
+            value: u!u64
+        options:
+          division_type:
+            values: [ TRUNCATE, FLOOR ]
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+        return: u!u64
+
+aggregate_functions:
+  - name: "sum"
+    description: Sum a set of unsigned integer values. The sum of zero elements yields null.
+    impls:
+      - args:
+          - name: x
+            value: u!u8
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
+      - args:
+          - name: x
+            value: u!u16
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
+      - args:
+          - name: x
+            value: u!u32
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
+      - args:
+          - name: x
+            value: u!u64
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
+  - name: "min"
+    description: Min of a set of unsigned integer values.
+    impls:
+      - args:
+          - name: x
+            value: u!u8
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u8?
+        return: u!u8?
+      - args:
+          - name: x
+            value: u!u16
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u16?
+        return: u!u16?
+      - args:
+          - name: x
+            value: u!u32
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u32?
+        return: u!u32?
+      - args:
+          - name: x
+            value: u!u64
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?
+  - name: "max"
+    description: Max of a set of unsigned integer values.
+    impls:
+      - args:
+          - name: x
+            value: u!u8
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u8?
+        return: u!u8?
+      - args:
+          - name: x
+            value: u!u16
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u16?
+        return: u!u16?
+      - args:
+          - name: x
+            value: u!u32
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u32?
+        return: u!u32?
+      - args:
+          - name: x
+            value: u!u64
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!u64?
+        return: u!u64?

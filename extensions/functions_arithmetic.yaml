@@ -1,8 +1,6 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_arithmetic
-dependencies:
-  unsigned: extension:io.substrait:unsigned_integers
 scalar_functions:
   -
     name: "add"
@@ -42,42 +40,6 @@ scalar_functions:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
         return: i64
-      - args:
-          - name: x
-            value: unsigned.u!u8
-          - name: y
-            value: unsigned.u!u8
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u8
-      - args:
-          - name: x
-            value: unsigned.u!u16
-          - name: y
-            value: unsigned.u!u16
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u16
-      - args:
-          - name: x
-            value: unsigned.u!u32
-          - name: y
-            value: unsigned.u!u32
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u32
-      - args:
-          - name: x
-            value: unsigned.u!u64
-          - name: y
-            value: unsigned.u!u64
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u64
       - args:
           - name: x
             value: fp32
@@ -138,42 +100,6 @@ scalar_functions:
         return: i64
       - args:
           - name: x
-            value: unsigned.u!u8
-          - name: y
-            value: unsigned.u!u8
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u8
-      - args:
-          - name: x
-            value: unsigned.u!u16
-          - name: y
-            value: unsigned.u!u16
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u16
-      - args:
-          - name: x
-            value: unsigned.u!u32
-          - name: y
-            value: unsigned.u!u32
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u32
-      - args:
-          - name: x
-            value: unsigned.u!u64
-          - name: y
-            value: unsigned.u!u64
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u64
-      - args:
-          - name: x
             value: fp32
           - name: y
             value: fp32
@@ -230,42 +156,6 @@ scalar_functions:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
         return: i64
-      - args:
-          - name: x
-            value: unsigned.u!u8
-          - name: y
-            value: unsigned.u!u8
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u8
-      - args:
-          - name: x
-            value: unsigned.u!u16
-          - name: y
-            value: unsigned.u!u16
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u16
-      - args:
-          - name: x
-            value: unsigned.u!u32
-          - name: y
-            value: unsigned.u!u32
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u32
-      - args:
-          - name: x
-            value: unsigned.u!u64
-          - name: y
-            value: unsigned.u!u64
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        return: unsigned.u!u64
       - args:
           - name: x
             value: fp32
@@ -346,58 +236,6 @@ scalar_functions:
           on_division_by_zero:
             values: [ "NULL", ERROR ]
         return: i64
-      - args:
-          - name: x
-            value: unsigned.u!u8
-          - name: y
-            value: unsigned.u!u8
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-          on_domain_error:
-            values: [ "NULL", ERROR ]
-          on_division_by_zero:
-            values: [ "NULL", ERROR ]
-        return: unsigned.u!u8
-      - args:
-          - name: x
-            value: unsigned.u!u16
-          - name: y
-            value: unsigned.u!u16
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-          on_domain_error:
-            values: [ "NULL", ERROR ]
-          on_division_by_zero:
-            values: [ "NULL", ERROR ]
-        return: unsigned.u!u16
-      - args:
-          - name: x
-            value: unsigned.u!u32
-          - name: y
-            value: unsigned.u!u32
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-          on_domain_error:
-            values: [ "NULL", ERROR ]
-          on_division_by_zero:
-            values: [ "NULL", ERROR ]
-        return: unsigned.u!u32
-      - args:
-          - name: x
-            value: unsigned.u!u64
-          - name: y
-            value: unsigned.u!u64
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-          on_domain_error:
-            values: [ "NULL", ERROR ]
-          on_division_by_zero:
-            values: [ "NULL", ERROR ]
-        return: unsigned.u!u64
       - args:
           - name: x
             value: fp32
@@ -545,58 +383,6 @@ scalar_functions:
           on_domain_error:
             values: [ "NULL", ERROR ]
         return: i64
-      - args:
-          - name: x
-            value: unsigned.u!u8
-          - name: y
-            value: unsigned.u!u8
-        options:
-          division_type:
-            values: [ TRUNCATE, FLOOR ]
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-          on_domain_error:
-            values: [ "NULL", ERROR ]
-        return: unsigned.u!u8
-      - args:
-          - name: x
-            value: unsigned.u!u16
-          - name: y
-            value: unsigned.u!u16
-        options:
-          division_type:
-            values: [ TRUNCATE, FLOOR ]
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-          on_domain_error:
-            values: [ "NULL", ERROR ]
-        return: unsigned.u!u16
-      - args:
-          - name: x
-            value: unsigned.u!u32
-          - name: y
-            value: unsigned.u!u32
-        options:
-          division_type:
-            values: [ TRUNCATE, FLOOR ]
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-          on_domain_error:
-            values: [ "NULL", ERROR ]
-        return: unsigned.u!u32
-      - args:
-          - name: x
-            value: unsigned.u!u64
-          - name: y
-            value: unsigned.u!u64
-        options:
-          division_type:
-            values: [ TRUNCATE, FLOOR ]
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-          on_domain_error:
-            values: [ "NULL", ERROR ]
-        return: unsigned.u!u64
   -
     name: "power"
     description: "Take the power with x as the base and y as exponent."
@@ -1303,46 +1089,6 @@ aggregate_functions:
         return: i64?
       - args:
           - name: x
-            value: unsigned.u!u8
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u64?
-        return: unsigned.u!u64?
-      - args:
-          - name: x
-            value: unsigned.u!u16
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u64?
-        return: unsigned.u!u64?
-      - args:
-          - name: x
-            value: unsigned.u!u32
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u64?
-        return: unsigned.u!u64?
-      - args:
-          - name: x
-            value: unsigned.u!u64
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u64?
-        return: unsigned.u!u64?
-      - args:
-          - name: x
             value: fp32
         options:
           overflow:
@@ -1409,46 +1155,6 @@ aggregate_functions:
         return: i64
       - args:
           - name: x
-            value: unsigned.u!u8
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u64
-        return: unsigned.u!u64
-      - args:
-          - name: x
-            value: unsigned.u!u16
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u64
-        return: unsigned.u!u64
-      - args:
-          - name: x
-            value: unsigned.u!u32
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u64
-        return: unsigned.u!u64
-      - args:
-          - name: x
-            value: unsigned.u!u64
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u64
-        return: unsigned.u!u64
-      - args:
-          - name: x
             value: fp32
         options:
           overflow:
@@ -1512,46 +1218,6 @@ aggregate_functions:
         return: i64?
       - args:
           - name: x
-            value: unsigned.u!u8
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: "STRUCT<unsigned.u!u64,i64>"
-        return: unsigned.u!u8?
-      - args:
-          - name: x
-            value: unsigned.u!u16
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: "STRUCT<unsigned.u!u64,i64>"
-        return: unsigned.u!u16?
-      - args:
-          - name: x
-            value: unsigned.u!u32
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: "STRUCT<unsigned.u!u64,i64>"
-        return: unsigned.u!u32?
-      - args:
-          - name: x
-            value: unsigned.u!u64
-        options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: "STRUCT<unsigned.u!u64,i64>"
-        return: unsigned.u!u64?
-      - args:
-          - name: x
             value: fp32
         options:
           overflow:
@@ -1603,34 +1269,6 @@ aggregate_functions:
         return: i64?
       - args:
           - name: x
-            value: unsigned.u!u8
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u8?
-        return: unsigned.u!u8?
-      - args:
-          - name: x
-            value: unsigned.u!u16
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u16?
-        return: unsigned.u!u16?
-      - args:
-          - name: x
-            value: unsigned.u!u32
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u32?
-        return: unsigned.u!u32?
-      - args:
-          - name: x
-            value: unsigned.u!u64
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u64?
-        return: unsigned.u!u64?
-      - args:
-          - name: x
             value: fp32
         nullability: DECLARED_OUTPUT
         decomposable: MANY
@@ -1674,34 +1312,6 @@ aggregate_functions:
         decomposable: MANY
         intermediate: i64?
         return: i64?
-      - args:
-          - name: x
-            value: unsigned.u!u8
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u8?
-        return: unsigned.u!u8?
-      - args:
-          - name: x
-            value: unsigned.u!u16
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u16?
-        return: unsigned.u!u16?
-      - args:
-          - name: x
-            value: unsigned.u!u32
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u32?
-        return: unsigned.u!u32?
-      - args:
-          - name: x
-            value: unsigned.u!u64
-        nullability: DECLARED_OUTPUT
-        decomposable: MANY
-        intermediate: unsigned.u!u64?
-        return: unsigned.u!u64?
       - args:
           - name: x
             value: fp32

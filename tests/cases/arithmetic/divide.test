@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic.yaml'
+### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic.yaml', '/extensions/unsigned_integers.yaml'
 
 # basic: Basic examples without any special cases
 divide(25::i8, 5::i8) = 5::i8
@@ -8,10 +8,10 @@ divide(60000::i32, 200::i32) = 300::i32
 divide(4000000000::i64, -5000::i64) = -800000::i64
 
 # unsigned: Unsigned integer examples
-divide('250'::unsigned.u!u8, '5'::unsigned.u!u8) = '50'::unsigned.u!u8
-divide('60000'::unsigned.u!u16, '100'::unsigned.u!u16) = '600'::unsigned.u!u16
-divide('4000000000'::unsigned.u!u32, '200'::unsigned.u!u32) = '20000000'::unsigned.u!u32
-divide('10000000000000000000'::unsigned.u!u64, '5000'::unsigned.u!u64) = '2000000000000000'::unsigned.u!u64
+divide('250'::u!u8, '5'::u!u8) = '50'::u!u8
+divide('60000'::u!u16, '100'::u!u16) = '600'::u!u16
+divide('4000000000'::u!u32, '200'::u!u32) = '20000000'::u!u32
+divide('10000000000000000000'::u!u64, '5000'::u!u64) = '2000000000000000'::u!u64
 
 # division_by_zero: Examples demonstrating division by zero
 divide(5::i8, 0::i8) [on_division_by_zero:NAN] = null::i8
