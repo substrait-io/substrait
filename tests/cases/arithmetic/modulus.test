@@ -12,10 +12,10 @@ modulus(null::i64, 1::i64) = null::i64
 modulus(null::i64, null::i64) = null::i64
 
 # unsigned: Unsigned integer examples
-modulus(250::unsigned.u!u8, 100::unsigned.u!u8) = 50::unsigned.u!u8
-modulus(60000::unsigned.u!u16, 7000::unsigned.u!u16) = 4000::unsigned.u!u16
-modulus(4000000000::unsigned.u!u32, 300000000::unsigned.u!u32) = 100000000::unsigned.u!u32
-modulus(10000000000000000000::unsigned.u!u64, 3000000000000000000::unsigned.u!u64) = 1000000000000000000::unsigned.u!u64
+modulus('250'::unsigned.u!u8, '100'::unsigned.u!u8) = '50'::unsigned.u!u8
+modulus('60000'::unsigned.u!u16, '7000'::unsigned.u!u16) = '4000'::unsigned.u!u16
+modulus('4000000000'::unsigned.u!u32, '300000000'::unsigned.u!u32) = '100000000'::unsigned.u!u32
+modulus('10000000000000000000'::unsigned.u!u64, '3000000000000000000'::unsigned.u!u64) = '1000000000000000000'::unsigned.u!u64
 
 # on_domain_error: Examples demonstrating operation when the divisor is 0
 modulus(5::i8, 0::i8) [on_domain_error:NULL] = null::i8

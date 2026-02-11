@@ -8,10 +8,10 @@ sum((2.5, 0, 5.0, -2.5, -7.5)::fp32) = -2.5::fp64
 sum((2.5000007152557373046875, 7.0000007152557373046875, 0, 7.0000007152557373046875)::fp64) = 16.500002145767212::fp64
 
 # unsigned: Unsigned integer examples
-sum((0, 1, 2, 20)::unsigned.u!u8) = 23::unsigned.u!u64
-sum((100, 200, 50)::unsigned.u!u16) = 350::unsigned.u!u64
-sum((2000000, 3217908, 629000, 100000, 0, 987654)::unsigned.u!u32) = 6934562::unsigned.u!u64
-sum((1000000000000, 2000000000000, 3000000000000)::unsigned.u!u64) = 6000000000000::unsigned.u!u64
+sum(('0', '1', '2', '20')::unsigned.u!u8) = '23'::unsigned.u!u64
+sum(('100', '200', '50')::unsigned.u!u16) = '350'::unsigned.u!u64
+sum(('2000000', '3217908', '629000', '100000', '0', '987654')::unsigned.u!u32) = '6934562'::unsigned.u!u64
+sum(('1000000000000', '2000000000000', '3000000000000')::unsigned.u!u64) = '6000000000000'::unsigned.u!u64
 
 # overflow: Examples demonstrating overflow behavior
 sum((9223372036854775806, 1, 1, 1, 1, 10000000000)::i64) [overflow:ERROR] = <!ERROR>

@@ -10,10 +10,10 @@ max((2.5, 0, 5.0, -2.5, -7.5)::fp32) = 5.0::fp32
 max((1.5e+308, 1.5e+10, -1.5e+8, -1.5e+7, -1.5e+70)::fp64) = 1.5e+308::fp64
 
 # unsigned: Unsigned integer examples
-max((20, 3, 1, 10, 0, 5)::unsigned.u!u8) = 20::unsigned.u!u8
-max((32768, 32767, 20000, 30000)::unsigned.u!u16) = 32768::unsigned.u!u16
-max((214748648, 214748647, 21470048, 4000000)::unsigned.u!u32) = 214748648::unsigned.u!u32
-max((2000000000, 3217908979, 629000000, 100000000, 0, 987654321)::unsigned.u!u64) = 3217908979::unsigned.u!u64
+max(('20', '3', '1', '10', '0', '5')::unsigned.u!u8) = '20'::unsigned.u!u8
+max(('32768', '32767', '20000', '30000')::unsigned.u!u16) = '32768'::unsigned.u!u16
+max(('214748648', '214748647', '21470048', '4000000')::unsigned.u!u32) = '214748648'::unsigned.u!u32
+max(('2000000000', '3217908979', '629000000', '100000000', '0', '987654321')::unsigned.u!u64) = '3217908979'::unsigned.u!u64
 
 # null_handling: Examples with null as input or output
 max((Null, Null, Null)::i16) = Null::i16

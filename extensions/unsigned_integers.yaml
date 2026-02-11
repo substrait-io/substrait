@@ -2,17 +2,20 @@
 ---
 urn: "extension:io.substrait:unsigned_integers"
 
-# Unsigned integer literals are encoded as user defined literals.
 types:
   - name: u8
-    description: Unsigned 8-bit integer
-    structure: {}
+    description: Unsigned 8-bit integer (0 to 255)
+    structure:
+      value: str
   - name: u16
-    description: Unsigned 16-bit integer
-    structure: {}
+    description: Unsigned 16-bit integer (0 to 65535)
+    structure:
+      value: str
   - name: u32
-    description: Unsigned 32-bit integer
-    structure: {}
+    description: Unsigned 32-bit integer (0 to 4294967295)
+    structure:
+      value: str
   - name: u64
-    description: Unsigned 64-bit integer
-    structure: {}
+    description: Unsigned 64-bit integer (0 to 18446744073709551615)
+    structure:
+      value: str

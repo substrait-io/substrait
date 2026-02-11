@@ -8,10 +8,10 @@ add(30000::i32, 30000::i32) = 60000::i32
 add(2000000000::i64, 2000000000::i64) = 4000000000::i64
 
 # unsigned: Unsigned integer examples
-add(200::unsigned.u!u8, 50::unsigned.u!u8) = 250::unsigned.u!u8
-add(50000::unsigned.u!u16, 10000::unsigned.u!u16) = 60000::unsigned.u!u16
-add(3000000000::unsigned.u!u32, 1000000000::unsigned.u!u32) = 4000000000::unsigned.u!u32
-add(10000000000000000000::unsigned.u!u64, 1000000000000000000::unsigned.u!u64) = 11000000000000000000::unsigned.u!u64
+add('200'::unsigned.u!u8, '50'::unsigned.u!u8) = '250'::unsigned.u!u8
+add('50000'::unsigned.u!u16, '10000'::unsigned.u!u16) = '60000'::unsigned.u!u16
+add('3000000000'::unsigned.u!u32, '1000000000'::unsigned.u!u32) = '4000000000'::unsigned.u!u32
+add('10000000000000000000'::unsigned.u!u64, '1000000000000000000'::unsigned.u!u64) = '11000000000000000000'::unsigned.u!u64
 
 # overflow: Examples demonstrating overflow behavior
 add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
