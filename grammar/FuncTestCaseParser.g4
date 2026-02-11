@@ -213,7 +213,7 @@ lambdaArg
     ;
 
 udtArg
-    : literal DoubleColon (depAlias=Identifier Dot)? UserDefined Identifier isnull=QMark?
+    : literal DoubleColon UserDefined Identifier isnull=QMark?
     ;
 
 literalList
@@ -250,7 +250,7 @@ scalarType
   | timeType                             #time
   | intervalYearType                     #intervalYear
   | UUID isnull=QMark?                   #uuid
-  | (depAlias=Identifier Dot)? UserDefined Identifier isnull=QMark? #userDefined
+  | UserDefined Identifier isnull=QMark? #userDefined
   ;
 
 booleanType

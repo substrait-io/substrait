@@ -386,15 +386,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitUdtArg(self, ctx: FuncTestCaseParser.UdtArgContext):
         value, _ = self.visitLiteral(ctx.literal())
         # Type is "u!" + identifier, e.g., "u!u8"
-        # The optional depAlias prefix (e.g., "unsigned.") is supported for
-        # forward compatibility but is no longer used in self-contained extensions.
-        type_str = ""
-        if ctx.depAlias is not None:
-            type_str = ctx.depAlias.text.lower() + "."
-        # Identifier() returns a list when multiple Identifier tokens exist in the rule
-        identifiers = ctx.Identifier()
-        type_name = identifiers[-1].getText().lower()
-        type_str += "u!" + type_name
+        type_str = "u!" + ctx.Identifier().getText().lower()
         if ctx.isnull is not None:
             type_str += "?"
         return CaseLiteral(value=value, type=type_str)
