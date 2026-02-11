@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_arithmetic
 dependencies:
-  unsigned: extension:io.substrait:extension_types_numeric
+  unsigned: extension:io.substrait:unsigned_integers
 scalar_functions:
   -
     name: "add"

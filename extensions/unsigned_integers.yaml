@@ -1,6 +1,6 @@
 %YAML 1.2
 ---
-urn: "extension:io.substrait:extension_types_numeric"
+urn: "extension:io.substrait:unsigned_integers"
 
 # Unsigned integer literals are encoded as user defined literals.
 types:
