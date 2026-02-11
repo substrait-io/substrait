@@ -385,8 +385,14 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitUdtArg(self, ctx: FuncTestCaseParser.UdtArgContext):
         value, _ = self.visitLiteral(ctx.literal())
-        # Type is "u!" + identifier, e.g., "u!u8"
-        type_str = "u!" + ctx.Identifier().getText().lower()
+        # Type is optional "alias." + "u!" + identifier, e.g., "unsigned.u!u8"
+        type_str = ""
+        if ctx.depAlias is not None:
+            type_str = ctx.depAlias.text.lower() + "."
+        # Identifier() returns a list when multiple Identifier tokens exist in the rule
+        identifiers = ctx.Identifier()
+        type_name = identifiers[-1].getText().lower()
+        type_str += "u!" + type_name
         if ctx.isnull is not None:
             type_str += "?"
         return CaseLiteral(value=value, type=type_str)

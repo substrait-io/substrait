@@ -58,10 +58,10 @@ def build_type_to_short_type():
     for i in range(1, 3):
         to_short_type[f"{any_type}{i}"] = f"{any_type}{i}"
     # Map user-defined unsigned integer types (identity mapping)
-    to_short_type["u!u8"] = "u!u8"
-    to_short_type["u!u16"] = "u!u16"
-    to_short_type["u!u32"] = "u!u32"
-    to_short_type["u!u64"] = "u!u64"
+    to_short_type["unsigned.u!u8"] = "unsigned.u!u8"
+    to_short_type["unsigned.u!u16"] = "unsigned.u!u16"
+    to_short_type["unsigned.u!u32"] = "unsigned.u!u32"
+    to_short_type["unsigned.u!u64"] = "unsigned.u!u64"
     return to_short_type
 
 

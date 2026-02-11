@@ -8,10 +8,10 @@ multiply(300::i32, 200::i32) = 60000::i32
 multiply(80000::i64, -5000::i64) = -400000000::i64
 
 # unsigned: Unsigned integer examples
-multiply(25::u!u8, 5::u!u8) = 125::u!u8
-multiply(200::u!u16, 100::u!u16) = 20000::u!u16
-multiply(300::u!u32, 200::u!u32) = 60000::u!u32
-multiply(80000::u!u64, 5000::u!u64) = 400000000::u!u64
+multiply(25::unsigned.u!u8, 5::unsigned.u!u8) = 125::unsigned.u!u8
+multiply(200::unsigned.u!u16, 100::unsigned.u!u16) = 20000::unsigned.u!u16
+multiply(300::unsigned.u!u32, 200::unsigned.u!u32) = 60000::unsigned.u!u32
+multiply(80000::unsigned.u!u64, 5000::unsigned.u!u64) = 400000000::unsigned.u!u64
 
 # overflow: Examples demonstrating overflow behavior
 multiply(13::i8, 10::i8) [overflow:ERROR] = <!ERROR>
