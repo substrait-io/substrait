@@ -1,0 +1,8 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/float16.yaml'
+
+# basic: Basic float16 examples
+divide('6.0'::u!fp16, '3.0'::u!fp16) = '2.0'::u!fp16
+divide('55.0'::u!fp16, '5.5'::u!fp16) = '10.0'::u!fp16
+divide('1.0'::u!fp16, '4.0'::u!fp16) = '0.25'::u!fp16
+divide('5000.0'::u!fp16, '100.0'::u!fp16) = '50.0'::u!fp16

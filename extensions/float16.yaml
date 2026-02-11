@@ -1,0 +1,99 @@
+%YAML 1.2
+---
+urn: "extension:io.substrait:float16"
+
+types:
+  - name: fp16
+    description: "Half-precision 16-bit floating point (IEEE 754)"
+    structure:
+      value: str
+
+scalar_functions:
+  -
+    name: "add"
+    description: "Add two fp16 values."
+    impls:
+      - args:
+          - name: x
+            value: u!fp16
+          - name: y
+            value: u!fp16
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+        return: u!fp16
+  -
+    name: "subtract"
+    description: "Subtract one fp16 value from another."
+    impls:
+      - args:
+          - name: x
+            value: u!fp16
+          - name: y
+            value: u!fp16
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+        return: u!fp16
+  -
+    name: "multiply"
+    description: "Multiply two fp16 values."
+    impls:
+      - args:
+          - name: x
+            value: u!fp16
+          - name: y
+            value: u!fp16
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+        return: u!fp16
+  -
+    name: "divide"
+    description: "Divide one fp16 value by another."
+    impls:
+      - args:
+          - name: x
+            value: u!fp16
+          - name: y
+            value: u!fp16
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+          on_domain_error:
+            values: [ NAN, "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ IEEE, LIMIT, "NULL", ERROR ]
+        return: u!fp16
+
+aggregate_functions:
+  - name: "sum"
+    description: Sum a set of fp16 values. The sum of zero elements yields null.
+    impls:
+      - args:
+          - name: x
+            value: u!fp16
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!fp16?
+        return: u!fp16?
+  - name: "min"
+    description: Min of a set of fp16 values.
+    impls:
+      - args:
+          - name: x
+            value: u!fp16
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!fp16?
+        return: u!fp16?
+  - name: "max"
+    description: Max of a set of fp16 values.
+    impls:
+      - args:
+          - name: x
+            value: u!fp16
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!fp16?
+        return: u!fp16?

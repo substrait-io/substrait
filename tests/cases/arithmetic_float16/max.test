@@ -1,0 +1,6 @@
+### SUBSTRAIT_AGGREGATE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/float16.yaml'
+
+# basic: Basic float16 examples
+max(('3.5', '1.0', '7.25', '2.0', '0.5')::u!fp16) = '7.25'::u!fp16
+max(('100.0', '50.0', '200.0', '75.0')::u!fp16) = '200.0'::u!fp16

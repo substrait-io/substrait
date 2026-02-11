@@ -1,0 +1,8 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/float16.yaml'
+
+# basic: Basic float16 examples
+add('1.5'::u!fp16, '2.5'::u!fp16) = '4.0'::u!fp16
+add('100.0'::u!fp16, '200.0'::u!fp16) = '300.0'::u!fp16
+add('0.25'::u!fp16, '0.75'::u!fp16) = '1.0'::u!fp16
+add('1000.0'::u!fp16, '500.0'::u!fp16) = '1500.0'::u!fp16

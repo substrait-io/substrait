@@ -1,0 +1,6 @@
+### SUBSTRAIT_AGGREGATE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/float16.yaml'
+
+# basic: Basic float16 examples
+sum(('1.5', '2.5', '3.0', '4.0')::u!fp16) = '11.0'::u!fp16
+sum(('100.0', '200.0', '50.0')::u!fp16) = '350.0'::u!fp16
