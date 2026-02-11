@@ -1,0 +1,6 @@
+### SUBSTRAIT_AGGREGATE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/decimal256.yaml'
+
+# basic: Basic decimal256 max examples
+max(('50.50', '10.25', '99.99', '0.01')::u!decimal256) = '99.99'::u!decimal256
+max(('-100.50', '200.75', '-300.25', '0.00')::u!decimal256) = '200.75'::u!decimal256

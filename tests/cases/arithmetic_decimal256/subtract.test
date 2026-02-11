@@ -1,0 +1,8 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/decimal256.yaml'
+
+# basic: Basic decimal256 subtraction examples
+subtract('124.000'::u!decimal256, '0.544'::u!decimal256) = '123.456'::u!decimal256
+subtract('100000.00'::u!decimal256, '0.01'::u!decimal256) = '99999.99'::u!decimal256
+subtract('1000.75'::u!decimal256, '500.25'::u!decimal256) = '500.50'::u!decimal256
+subtract('0.003'::u!decimal256, '0.001'::u!decimal256) = '0.002'::u!decimal256

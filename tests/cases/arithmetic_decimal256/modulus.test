@@ -1,0 +1,8 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/decimal256.yaml'
+
+# basic: Basic decimal256 modulus examples
+modulus('10.50'::u!decimal256, '3.00'::u!decimal256) = '1.50'::u!decimal256
+modulus('100.75'::u!decimal256, '10.00'::u!decimal256) = '0.75'::u!decimal256
+modulus('7.777'::u!decimal256, '2.500'::u!decimal256) = '0.277'::u!decimal256
+modulus('1000.00'::u!decimal256, '300.00'::u!decimal256) = '100.00'::u!decimal256

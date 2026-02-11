@@ -1,0 +1,6 @@
+### SUBSTRAIT_AGGREGATE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/decimal256.yaml'
+
+# basic: Basic decimal256 sum examples
+sum(('10.50', '20.25', '30.75', '0.50')::u!decimal256) = '62.00'::u!decimal256
+sum(('100.001', '200.002', '300.003')::u!decimal256) = '600.006'::u!decimal256

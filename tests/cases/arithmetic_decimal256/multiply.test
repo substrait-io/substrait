@@ -1,0 +1,8 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/decimal256.yaml'
+
+# basic: Basic decimal256 multiplication examples
+multiply('12.50'::u!decimal256, '4.00'::u!decimal256) = '50.00'::u!decimal256
+multiply('0.333'::u!decimal256, '3.000'::u!decimal256) = '0.999'::u!decimal256
+multiply('100.00'::u!decimal256, '0.15'::u!decimal256) = '15.00'::u!decimal256
+multiply('-25.50'::u!decimal256, '2.00'::u!decimal256) = '-51.00'::u!decimal256

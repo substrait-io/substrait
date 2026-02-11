@@ -1,0 +1,6 @@
+### SUBSTRAIT_AGGREGATE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/decimal256.yaml'
+
+# basic: Basic decimal256 min examples
+min(('50.50', '10.25', '99.99', '0.01')::u!decimal256) = '0.01'::u!decimal256
+min(('-100.50', '200.75', '-300.25', '0.00')::u!decimal256) = '-300.25'::u!decimal256

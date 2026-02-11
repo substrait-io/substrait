@@ -1,0 +1,8 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/decimal256.yaml'
+
+# basic: Basic decimal256 division examples
+divide('100.00'::u!decimal256, '4.00'::u!decimal256) = '25.00'::u!decimal256
+divide('999.999'::u!decimal256, '3.000'::u!decimal256) = '333.333'::u!decimal256
+divide('50.00'::u!decimal256, '0.25'::u!decimal256) = '200.00'::u!decimal256
+divide('-75.00'::u!decimal256, '2.50'::u!decimal256) = '-30.00'::u!decimal256

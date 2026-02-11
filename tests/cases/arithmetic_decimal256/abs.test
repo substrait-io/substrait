@@ -1,0 +1,8 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/decimal256.yaml'
+
+# basic: Basic decimal256 absolute value examples
+abs('-123.456'::u!decimal256) = '123.456'::u!decimal256
+abs('789.012'::u!decimal256) = '789.012'::u!decimal256
+abs('-0.001'::u!decimal256) = '0.001'::u!decimal256
+abs('0.000'::u!decimal256) = '0.000'::u!decimal256

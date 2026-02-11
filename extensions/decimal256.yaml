@@ -1,0 +1,149 @@
+%YAML 1.2
+---
+urn: "extension:io.substrait:decimal256"
+
+types:
+  - name: decimal256
+    description: 256-bit decimal with up to 76 digits of precision
+    parameters:
+      - name: precision
+        type: integer
+        min: 0
+        max: 76
+      - name: scale
+        type: integer
+        min: 0
+        max: 76
+    structure:
+      value: str
+
+scalar_functions:
+  -
+    name: "add"
+    description: "Add two decimal256 values."
+    impls:
+      - args:
+          - name: x
+            value: u!decimal256
+          - name: y
+            value: u!decimal256
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!decimal256
+  -
+    name: "subtract"
+    description: "Subtract one decimal256 value from another."
+    impls:
+      - args:
+          - name: x
+            value: u!decimal256
+          - name: y
+            value: u!decimal256
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!decimal256
+  -
+    name: "multiply"
+    description: "Multiply two decimal256 values."
+    impls:
+      - args:
+          - name: x
+            value: u!decimal256
+          - name: y
+            value: u!decimal256
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        return: u!decimal256
+  -
+    name: "divide"
+    description: >
+      Divide x by y.
+    impls:
+      - args:
+          - name: x
+            value: u!decimal256
+          - name: y
+            value: u!decimal256
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+          on_division_by_zero:
+            values: [ "NULL", ERROR ]
+        return: u!decimal256
+  -
+    name: "modulus"
+    description: >
+      Calculate the remainder when dividing dividend (x) by divisor (y).
+    impls:
+      - args:
+          - name: x
+            value: u!decimal256
+          - name: y
+            value: u!decimal256
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+          on_domain_error:
+            values: [ "NULL", ERROR ]
+        return: u!decimal256
+  -
+    name: "abs"
+    description: "Calculate the absolute value of the argument."
+    impls:
+      - args:
+          - name: x
+            value: u!decimal256
+        return: u!decimal256
+
+aggregate_functions:
+  - name: "sum"
+    description: Sum a set of decimal256 values. The sum of zero elements yields null.
+    impls:
+      - args:
+          - name: x
+            value: u!decimal256
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!decimal256?
+        return: u!decimal256?
+  - name: "min"
+    description: Min of a set of decimal256 values.
+    impls:
+      - args:
+          - name: x
+            value: u!decimal256
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!decimal256?
+        return: u!decimal256?
+  - name: "max"
+    description: Max of a set of decimal256 values.
+    impls:
+      - args:
+          - name: x
+            value: u!decimal256
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: u!decimal256?
+        return: u!decimal256?
+  - name: "avg"
+    description: Average a set of decimal256 values.
+    impls:
+      - args:
+          - name: x
+            value: u!decimal256
+        options:
+          overflow:
+            values: [ SILENT, SATURATE, ERROR ]
+        nullability: DECLARED_OUTPUT
+        decomposable: MANY
+        intermediate: "STRUCT<u!decimal256,i64>"
+        return: u!decimal256
