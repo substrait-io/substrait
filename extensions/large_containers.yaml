@@ -1,0 +1,19 @@
+%YAML 1.2
+---
+urn: "extension:io.substrait:large_containers"
+
+types:
+  - name: large_string
+    description: "String with 64-bit offsets (max ~8EB)"
+    structure:
+      value: str
+  - name: large_binary
+    description: "Binary with 64-bit offsets (max ~8EB)"
+    structure:
+      value: str
+  - name: large_list
+    description: "List with 64-bit offsets"
+    parameters:
+      - name: value_type
+        type: dataType
+    structure: {}
