@@ -1,0 +1,14 @@
+%YAML 1.2
+---
+urn: "extension:io.substrait:fixed_size_list"
+
+types:
+  - name: fixed_size_list
+    description: List with a fixed number of elements
+    parameters:
+      - name: value_type
+        type: dataType
+      - name: dimension
+        type: integer
+        min: 0
+    structure: {}
