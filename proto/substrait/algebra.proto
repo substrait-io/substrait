@@ -975,6 +975,7 @@ message Expression {
     DynamicParameter dynamic_parameter = 14;
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
+    SessionVariable session_variable = 17;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -1686,6 +1687,39 @@ message Expression {
       Expression left = 3;
       // right side of the expression
       Rel right = 4;
+    }
+  }
+
+  // Expression that represents common session dependent variables
+  message SessionVariable {
+    oneof session_variable_type {
+      CurrentTimestamp current_timestamp = 1;
+      CurrentTimezone current_timezone = 2;
+      CurrentDate current_date = 3;
+    }
+
+    // a non-deterministic, session dependent variable containing the current
+    // timestamp in CurrentTimezone
+    message CurrentTimestamp {
+      // type of the CurrentTimestamp session variable
+      // nullability must be NULLABILITY_REQUIRED
+      Type.PrecisionTimestampTZ type = 1;
+    }
+
+    // a deterministic, session dependent variable containing the current
+    // session timezone as a string defined by IANA timezone database
+    // (https://www.iana.org/time-zones).
+    message CurrentTimezone {
+      // type of the CurrentTimestamp session variable
+      // nullability must be NULLABILITY_REQUIRED
+      Type.String type = 1;
+    }
+
+    // a non-deterministic, session dependent variable containing the current date
+    message CurrentDate {
+      // type of the CurrentDate session variable
+      // nullability must be NULLABILITY_REQUIRED
+      Type.Date type = 1;
     }
   }
 }
