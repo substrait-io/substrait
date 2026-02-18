@@ -165,7 +165,7 @@ The simplest forms of advanced extensions use the `AdvancedExtension` message, w
 
 !!! note "Enhancement Constraints"
 
-    Semantic-changing extensions shouldn't change the core characteristics of the underlying relation. For example, they should *not* change the default direct output field ordering, change the number of fields output or change the behavior of physical property characteristics. If one needs to change one of these behaviors, one should define a new relation as described below.
+    Semantic-changing extensions shouldn't change the core characteristics of the underlying relation. For example, they should avoid changing the default direct output field ordering or the number of fields output. If one needs to change one of these behaviors, one should define a new relation as described below.
 
 #### Where `AdvancedExtension` Messages Can Be Used
 
@@ -200,14 +200,14 @@ The second form of advanced extensions allows you to define extension data sourc
 
 The third form of advanced extensions provides entirely new relational operations via dedicated extension relation types. These allow you to define custom relations while maintaining proper integration with the type system:
 
-| Relation Type          | Description                                     | Examples |
-| ---------------------- | ----------------------------------------------- | -------- |
-| **`ExtensionLeafRel`**   | Custom relations with no inputs | Custom table sources   |
-| **`ExtensionSingleRel`** | Custom relations with one input | Custom transforms      |
-| **`ExtensionMultiRel`**  | Custom relations with multiple inputs | Custom joins     |
+| Relation Type            | Description                                     | Examples               |
+| ------------------------ | ----------------------------------------------- | ---------------------- |
+| **`ExtensionLeafRel`**   | Custom relations with no inputs                 | Custom table sources   |
+| **`ExtensionSingleRel`** | Custom relations with one input                 | Custom transforms      |
+| **`ExtensionMultiRel`**  | Custom relations with multiple inputs           | Custom joins           |
 
 These extension relations are first-class relation types in Substrait and can be used anywhere a standard relation would be used.
 
-#### When to Use What
+### When to Use What
 
-Custom relations are the most flexible but least interoperable option. In most cases it is better to use enhancements to existing relations rather than defining new custom relations, as it means existing code patterns can easily be extended to work with the additional properties.
+Custom relations are the most flexible option, but also the least interoperable. Prefer enhancements to existing relations when they can express your use case, since this preserves existing patterns and compatibility. As a general rule, choose the least powerful extension mechanism that solves the problem.
