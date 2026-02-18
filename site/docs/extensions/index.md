@@ -146,7 +146,7 @@ The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional rest
 
 #### Type Parameter Binding and Nullability
 
-The function's [nullability mode](../expressions/scalar_functions.md#nullability-handling) determines whether the function cares about the outermost nullability of each argument. Everything else matches structurally.
+The function's [nullability mode](../expressions/scalar_functions.md#nullability-handling) determines whether the outermost nullability of each argument must match the signature for binding. Everything else matches structurally.
 
 - With `MIRROR` or `DECLARED_OUTPUT`, the outermost nullability of each argument is ignored for matching. It is only used to [determine the output nullability](../expressions/scalar_functions.md#nullability-handling). These modes do not allow nullable parameters in the signature.
 - With `DISCRETE`, the outermost nullability of each argument must match the nullability declared at the corresponding position in the signature. For example, `fn(any1, any1?)` requires a non-nullable first argument and a nullable second argument.
