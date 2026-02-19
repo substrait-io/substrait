@@ -157,7 +157,7 @@ Given `f(any1, any1) -> any1` with `MIRROR` nullability:
 
 | Invocation | Matches? | `any1` binds to | Returns | Reason |
 | --- | --- | --- | --- | --- |
-| `f(i32, i32)` | Yes | `i32` | `i32` | |
+| `f(i32, i32)` | Yes | `i32` | `i32` | Both arguments non-nullable; MIRROR keeps output non-nullable |
 | `f(i32?, i32)` | Yes | `i32` | `i32?` | Outermost nullability stripped before binding; MIRROR propagates it to output |
 | `f(i32, i32?)` | Yes | `i32` | `i32?` | Outermost nullability stripped before binding; MIRROR propagates it to output |
 
@@ -165,7 +165,7 @@ Given `h(list<any1>, list<any1>) -> list<any1>` with `MIRROR` nullability:
 
 | Invocation | Matches? | `any1` binds to | Returns | Reason |
 | --- | --- | --- | --- | --- |
-| `h(list<i32>, list<i32>)` | Yes | `i32` | `list<i32>` | |
+| `h(list<i32>, list<i32>)` | Yes | `i32` | `list<i32>` | Both args non-nullable; outer list stays non-nullable under MIRROR |
 | `h(list?<i32>, list<i32>)` | Yes | `i32` | `list?<i32>` | Outermost nullability stripped before binding; MIRROR propagates it to output |
 | `h(list<i32?>, list<i32?>)` | Yes | `i32?` | `list<i32?>` | Inner nullability is not stripped; both args agree so `any1` binds to `i32?` |
 | `h(list<i32>, list<i32?>)` | No | | | Inner nullability is not stripped; `list<i32>` and `list<i32?>` are structurally different |
@@ -182,7 +182,7 @@ Given `g(any1, any1) -> any1` with `DISCRETE` nullability:
 
 | Invocation | Matches? | `any1` binds to | Returns | Reason |
 | --- | --- | --- | --- | --- |
-| `g(i32, i32)` | Yes | `i32` | `i32` | |
+| `g(i32, i32)` | Yes | `i32` | `i32` | Matches signature exactly; both arguments non-nullable |
 | `g(i32?, i32?)` | No | | | Signature requires non-nullable arguments |
 | `g(i32, i32?)` | No | | | Second argument is nullable but signature requires non-nullable |
 
@@ -190,7 +190,7 @@ Given `g2(any1, any1?) -> any1` with `DISCRETE` nullability:
 
 | Invocation | Matches? | `any1` binds to | Returns | Reason |
 | --- | --- | --- | --- | --- |
-| `g2(i32, i32?)` | Yes | `i32` | `i32` | |
+| `g2(i32, i32?)` | Yes | `i32` | `i32` | Matches declared outer nullabilities (non-nullable, nullable) |
 | `g2(i32, i32)` | No | | | Second argument is non-nullable but signature requires nullable |
 | `g2(i32?, i32?)` | No | | | First argument is nullable but signature requires non-nullable |
 
