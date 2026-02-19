@@ -11,3 +11,9 @@ supported_expressions:
   - expression: NESTED
     nested_types:
       - LIST
+  - expression: SESSION_VARIABLE
+    variable_types:
+      - CURRENT_DATE
+      - CURRENT_TIMESTAMP
+      - CURRENT_TIMEZONE
+      - name: "MY_EXT_SESSION_VAR"

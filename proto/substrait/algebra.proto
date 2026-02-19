@@ -1693,33 +1693,32 @@ message Expression {
   // Expression that represents common session dependent variables
   message SessionVariable {
     oneof session_variable_type {
-      CurrentTimestamp current_timestamp = 1;
-      CurrentTimezone current_timezone = 2;
-      CurrentDate current_date = 3;
+      // a non-deterministic, session dependent variable containing the current
+      // timestamp in current_timezone
+      // nullability must be NULLABILITY_REQUIRED
+      Type.PrecisionTimestampTZ current_timestamp = 1;
+
+      // a deterministic, session dependent variable containing the current
+      // session timezone as a string defined by IANA timezone database
+      // (https://www.iana.org/time-zones).
+      // nullability must be NULLABILITY_REQUIRED
+      Type.String current_timezone = 2;
+
+      // a non-deterministic, session dependent variable containing the current date
+      // nullability must be NULLABILITY_REQUIRED
+      Type.Date current_date = 3;
+
+      // allow to extend session variables
+      ExtensionSessionVariable extension_session_variable = 4;
     }
 
-    // a non-deterministic, session dependent variable containing the current
-    // timestamp in CurrentTimezone
-    message CurrentTimestamp {
-      // type of the CurrentTimestamp session variable
-      // nullability must be NULLABILITY_REQUIRED
-      Type.PrecisionTimestampTZ type = 1;
-    }
+    // extension session variables
+    message ExtensionSessionVariable {
+      // name of the extension session variable, required
+      string name = 1;
 
-    // a deterministic, session dependent variable containing the current
-    // session timezone as a string defined by IANA timezone database
-    // (https://www.iana.org/time-zones).
-    message CurrentTimezone {
-      // type of the CurrentTimestamp session variable
-      // nullability must be NULLABILITY_REQUIRED
-      Type.String type = 1;
-    }
-
-    // a non-deterministic, session dependent variable containing the current date
-    message CurrentDate {
-      // type of the CurrentDate session variable
-      // nullability must be NULLABILITY_REQUIRED
-      Type.Date type = 1;
+      // type of the extension session variable, required
+      Type type = 2;
     }
   }
 }

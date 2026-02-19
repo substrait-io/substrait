@@ -922,8 +922,17 @@ definitions:
         type: array
         description: The possible session variable types.
         items:
-          enum:
-          - CURRENT_TIMESTAMP
-          - CURRENT_TIMEZONE
-          - CURRENT_DATE
+          oneof:
+            - enum:
+              - CURRENT_TIMESTAMP
+              - CURRENT_TIMEZONE
+              - CURRENT_DATE
+            - $ref: "#/definitions/extension_session_variable"
     required: [expression]
+  extension_session_variable:
+    type: object
+    additionalProperties: false
+    properties:
+      name:
+        type: string
+    required: [name]
