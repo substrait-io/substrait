@@ -159,7 +159,7 @@ The simplest forms of advanced extensions use the `AdvancedExtension` message, w
 #### Enhancements
 
 - Modify the semantic behavior of operations
-- Must be understood by consumers or the plan cannot be executed correctly
+- Must be understood by consumers, or else the plan cannot be executed correctly
 - Only one enhancement per message
 - Examples: specialized join conditions (e.g. fuzzy matching, geospatial)
 
