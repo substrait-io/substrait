@@ -163,15 +163,88 @@ Consumers of extension files are not required to understand or validate metadata
 
 ## Advanced Extensions
 
-Less common extensions can be extended using customization support at the serialization level. This includes the following kinds of extensions:
+Advanced extensions provide a way to embed custom functionality that goes beyond the standard YAML-based simple extensions. Unlike simple extensions, advanced extensions allow arbitrary, custom schemas. In the Protocol Buffers implementation, the `google.protobuf.Any` type is used to embed arbitrary extension data directly into Substrait messages.
 
-| Extension Type                       | Description                                                  |
-| ------------------------------------ | ------------------------------------------------------------ |
-| Relation Modification (semantic)     | Extensions to an existing relation that will alter the semantics of that relation. These kinds of extensions require that any plan consumer understand the extension to be able to manipulate or execute that operator. Ignoring these extensions will result in an incorrect interpretation of the plan. An example extension might be creating a customized version of Aggregate that can optionally apply a filter before aggregating the data. <br /><br />Note: Semantic-changing extensions shouldn't change the core characteristics of the underlying relation. For example, they should *not* change the default direct output field ordering, change the number of fields output or change the behavior of physical property characteristics. If one needs to change one of these behaviors, one should define a new relation as described below. |
-| Relation Modification (optimization) | Extensions to an existing relation that can improve the efficiency of a plan consumer but don't fundamentally change the behavior of the operation. An example might be an estimated amount of memory the relation is expected to use or a particular algorithmic pattern that is perceived to be optimal. |
-| New Relations                        | Creates an entirely new kind of relation. It is the most flexible way to extend Substrait but also make the Substrait plan the least interoperable. In most cases it is better to use a semantic changing relation as oppposed to a new relation as it means existing code patterns can easily be extended to work with the additional properties. |
-| New Read Types                       | Defines a new subcategory of read that can be used in a ReadRel. One of Substrait is to provide a fairly extensive set of read patterns within the project as opposed to requiring people to define new types externally. As such, we suggest that you first talk with the Substrait community to determine whether you read type can be incorporated directly in the core specification. |
-| New Write Types                      | Similar to a read type but for writes. As with reads, the community recommends that interested extenders first discuss with the community about developing new write types in the community before using the extension mechanisms. |
-| Plan Extensions                      | Semantic and/or optimization based additions at the plan level. |
+### How Advanced Extensions Work
 
-Because extension mechanisms are different for each serialization format, please refer to the corresponding serialization sections to understand how these extensions are defined in more detail.
+Advanced extensions come in several main forms, discussed below:
+
+1. Embedded extensions: These use the `AdvancedExtension` message for adding custom data to existing Substrait messages
+2. Custom read/write types: For defining new ways to read from or write to data sources
+3. Custom relation types: For defining entirely new relational operations
+
+### Embedded Extensions via `AdvancedExtension`
+
+The simplest forms of advanced extensions use the `AdvancedExtension` message, which contains two types of extensions:
+
+```proto
+%%% proto.extensions.AdvancedExtension %%%
+```
+
+!!! note "Enhancements vs Optimizations"
+
+    * Use **optimizations** for performance hints that don't change semantics and can be safely ignored.
+    * Use **enhancements** for semantic changes that must be understood by consumers or the plan cannot be executed correctly.
+
+#### Optimizations
+
+- Provide hints to improve performance but don't change the meaning of operations
+- Can be safely ignored by consumers that don't understand them
+- Multiple optimizations can be attached to a single message
+- Examples: memory usage hints, preferred algorithms, caching strategies
+
+#### Enhancements
+
+- Modify the semantic behavior of operations
+- Must be understood by consumers, or else the plan cannot be executed correctly
+- Only one enhancement per message
+- Examples: specialized join conditions (e.g. fuzzy matching, geospatial)
+
+!!! note "Enhancement Constraints"
+
+    Semantic-changing extensions shouldn't change the core characteristics of the underlying relation. For example, they should avoid changing the default direct output field ordering or the number of fields output. If one needs to change one of these behaviors, one should define a new relation as described in [Custom Relations](#custom-relations).
+
+#### Where `AdvancedExtension` Messages Can Be Used
+
+The `AdvancedExtension` message can be attached to various parts of a Substrait plan:
+
+| Location                          | Usage                                       |
+| --------------------------------- | ------------------------------------------- |
+| **`Plan`**                        | Global extensions affecting the entire plan |
+| **`RelCommon`**                   | Extensions for any relational operator      |
+| **Relations** (e.g. `ProjectRel`) | Extensions for a specific relation type     |
+| **Hints**                         | Extensions within optimization hints        |
+| **`ReadRel.NamedTable`**          | Custom metadata to named table references   |
+| **`ReadRel.LocalFiles`**          | Custom metadata to local file sources       |
+| **`WriteRel.NamedObjectWrite`**   | Custom metadata to write targets            |
+| **`DdlRel.NamedObjectWrite`**     | Custom metadata to DDL targets              |
+
+### Custom Read and Write Types
+
+The second form of advanced extensions allows you to define extension data sources and destinations:
+
+| Extension Type                 | Description                          | Examples                     |
+| ------------------------------ | ------------------------------------ | ---------------------------- |
+| **`ReadRel.ExtensionTable`**   | Define new table source types        | APIs, specialized formats    |
+| **`WriteRel.ExtensionObject`** | Define new write destination types   | APIs, specialized formats    |
+| **`DdlRel.ExtensionObject`**   | Define new DDL destination types     | Catalogs, schema registries  |
+
+!!! note "Consider Core Specification First"
+
+    Before implementing custom read/write types as extensions, consider [checking with the Substrait community](https://substrait.io/community/#get-in-touch). If your scenario turns out to be common enough, it may be more appropriate to add it directly to the specification rather than as an extension.
+
+### Custom Relations
+
+The third form of advanced extensions provides entirely new relational operations via dedicated extension relation types. These allow you to define custom relations while maintaining proper integration with the type system:
+
+| Relation Type            | Description                           | Examples                          |
+| ------------------------ | ------------------------------------- | --------------------------------- |
+| **`ExtensionLeafRel`**   | Custom relations with no inputs       | Custom table sources              |
+| **`ExtensionSingleRel`** | Custom relations with one input       | Custom relational transformations |
+| **`ExtensionMultiRel`**  | Custom relations with multiple inputs | Custom joins                      |
+
+These extension relations are first-class relation types in Substrait and can be used anywhere a standard relation would be used.
+
+### When to Use What
+
+Custom relations are the most flexible option, but also the least interoperable. Prefer enhancements to existing relations when they can express your use case, since this preserves existing patterns and compatibility. As a general rule, choose the least powerful extension mechanism that solves the problem.
