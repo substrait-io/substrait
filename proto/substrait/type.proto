@@ -145,7 +145,7 @@ message Type {
     optional int32 precision = 3;
   }
 
-  // An interval consisting of the components of both IntervalMonth and IntervalDay
+  // An interval consisting of the components of both IntervalYear and IntervalDay
   message IntervalCompound {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
