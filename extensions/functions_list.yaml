@@ -94,7 +94,7 @@ scalar_functions:
       Returns false if all elements return false.
 
       For an empty list, returns false.
-      If the input list is null, the result is null.
+      If the input list or predicate is null, the result is null.
     impls:
       - args:
           - name: input
@@ -114,7 +114,7 @@ scalar_functions:
       Returns true if all elements return true.
 
       For an empty list, returns true (vacuously true).
-      If the input list is null, the result is null.
+      If the input list or predicate is null, the result is null.
     impls:
       - args:
           - name: input
