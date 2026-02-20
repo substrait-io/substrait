@@ -1714,7 +1714,7 @@ message Expression {
 
     // extension session variables
     message ExtensionSessionVariable {
-      // name of the extension session variable, required
+      // name of the extension session variable, must be unique, required
       string name = 1;
 
       // type of the extension session variable, required
