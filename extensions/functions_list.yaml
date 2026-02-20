@@ -41,3 +41,69 @@ scalar_functions:
             value: func<any1 -> boolean>
         nullability: MIRROR
         return: list<any1>
+
+  - name: "cardinality"
+    description: >-
+      Returns the number of elements in the list.
+
+      Null elements are counted. If the input list is null, the result is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+        nullability: MIRROR
+        return: i64
+
+  # TODO: Add comparator overload for custom sorting (see #972)
+  - name: "sort"
+    description: >-
+      Sorts the elements of a list in ascending order with null elements
+      placed at the end.
+
+      If the input list is null, the result is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+        nullability: MIRROR
+        return: list<any1>
+
+  - name: "any_match"
+    description: >-
+      Returns true if any element of the list matches the predicate.
+
+      The predicate function is applied to each element using three-valued logic.
+      Returns true if the predicate returns true for at least one element.
+      Returns null if no element returns true but at least one returns null.
+      Returns false if all elements return false.
+
+      For an empty list, returns false.
+      If the input list or predicate is null, the result is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: predicate
+            value: func<any1 -> boolean>
+        nullability: MIRROR
+        return: boolean
+
+  - name: "all_match"
+    description: >-
+      Returns true if all elements of the list match the predicate.
+
+      The predicate function is applied to each element using three-valued logic.
+      Returns false if the predicate returns false for at least one element.
+      Returns null if no element returns false but at least one returns null.
+      Returns true if all elements return true.
+
+      For an empty list, returns true (vacuously true).
+      If the input list or predicate is null, the result is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: predicate
+            value: func<any1 -> boolean>
+        nullability: MIRROR
+        return: boolean
