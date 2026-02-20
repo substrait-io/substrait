@@ -98,7 +98,7 @@ scalar_functions:
             value: i64
         options:
           negative_index_behavior:
-            values: [FROM_END, NULL, ERROR]
+            values: [FROM_END, "NULL", ERROR]
             description: >-
               Defines how negative index values are handled.
               FROM_END: Negative indices count from the end of the list (-1 is last element).
