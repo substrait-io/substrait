@@ -404,6 +404,10 @@ definitions:
         const: PRECISION_TIME
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        type: integer
+        minimum: 0
+        maximum: 12
   type_precision_timestamp:
     type: object
     additionalProperties: false
@@ -413,6 +417,10 @@ definitions:
         const: PRECISION_TIMESTAMP
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        type: integer
+        minimum: 0
+        maximum: 12
   type_precision_timestamp_tz:
     type: object
     additionalProperties: false
@@ -422,6 +430,10 @@ definitions:
         const: PRECISION_TIMESTAMP_TZ
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        type: integer
+        minimum: 0
+        maximum: 12
   type_date:
     type: object
     additionalProperties: false
@@ -449,6 +461,10 @@ definitions:
         const: INTERVAL_COMPOUND
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        type: integer
+        minimum: 0
+        maximum: 12
   type_interval_day:
     type: object
     additionalProperties: false
