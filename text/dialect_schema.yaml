@@ -398,7 +398,7 @@ definitions:
   type_precision_time:
     type: object
     additionalProperties: false
-    required: [type]
+    required: [type, max_precision]
     properties:
       type:
         const: PRECISION_TIME
@@ -417,7 +417,7 @@ definitions:
   type_precision_timestamp:
     type: object
     additionalProperties: false
-    required: [type]
+    required: [type, max_precision]
     properties:
       type:
         const: PRECISION_TIMESTAMP
@@ -436,7 +436,7 @@ definitions:
   type_precision_timestamp_tz:
     type: object
     additionalProperties: false
-    required: [type]
+    required: [type, max_precision]
     properties:
       type:
         const: PRECISION_TIMESTAMP_TZ
@@ -473,7 +473,7 @@ definitions:
   type_interval_compound:
     type: object
     additionalProperties: false
-    required: [type]
+    required: [type, max_precision]
     properties:
       type:
         const: INTERVAL_COMPOUND
@@ -492,7 +492,7 @@ definitions:
   type_interval_day:
     type: object
     additionalProperties: false
-    required: [type]
+    required: [type, max_precision]
     properties:
       type:
         const: INTERVAL_DAY
