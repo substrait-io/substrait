@@ -51,8 +51,8 @@ scalar_functions:
       - args:
           - name: input
             value: list<any1>
-        nullability: DECLARED_OUTPUT
-        return: i64?
+        nullability: MIRROR
+        return: i64
 
   - name: "contains"
     description: >-
@@ -74,8 +74,8 @@ scalar_functions:
         options:
           null_equality:
             values: [NULL_EQUAL_NULL, NULL_NOT_EQUAL]
-        nullability: DECLARED_OUTPUT
-        return: boolean?
+        nullability: MIRROR
+        return: boolean
 
   - name: "element_at"
     description: >-
@@ -92,8 +92,8 @@ scalar_functions:
             value: list<any1>
           - name: index
             value: i64
-        nullability: DECLARED_OUTPUT
-        return: any1?
+        nullability: MIRROR
+        return: any1
 
   - name: "concat"
     description: >-
@@ -109,8 +109,8 @@ scalar_functions:
             value: list<any1>
           - name: right
             value: list<any1>
-        nullability: DECLARED_OUTPUT
-        return: list<any1>?
+        nullability: MIRROR
+        return: list<any1>
 
   - name: "flatten"
     description: >-
@@ -128,8 +128,8 @@ scalar_functions:
       - args:
           - name: input
             value: list<list<any1>>
-        nullability: DECLARED_OUTPUT
-        return: list<any1>?
+        nullability: MIRROR
+        return: list<any1>
 
   - name: "sort"
     description: >-
@@ -143,8 +143,8 @@ scalar_functions:
       - args:
           - name: input
             value: list<any1>
-        nullability: DECLARED_OUTPUT
-        return: list<any1>?
+        nullability: MIRROR
+        return: list<any1>
 
   - name: "distinct"
     description: >-
@@ -159,8 +159,8 @@ scalar_functions:
       - args:
           - name: input
             value: list<any1>
-        nullability: DECLARED_OUTPUT
-        return: list<any1>?
+        nullability: MIRROR
+        return: list<any1>
 
   - name: "any_match"
     description: >-
@@ -178,8 +178,8 @@ scalar_functions:
             value: list<any1>
           - name: predicate
             value: func<any1 -> boolean>
-        nullability: DECLARED_OUTPUT
-        return: boolean?
+        nullability: MIRROR
+        return: boolean
 
   - name: "all_match"
     description: >-
@@ -197,5 +197,5 @@ scalar_functions:
             value: list<any1>
           - name: predicate
             value: func<any1 -> boolean>
-        nullability: DECLARED_OUTPUT
-        return: boolean?
+        nullability: MIRROR
+        return: boolean
