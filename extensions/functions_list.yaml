@@ -81,8 +81,12 @@ scalar_functions:
     description: >-
       Returns the element at the specified 1-based index in the list.
 
-      Positive indices start from 1 (first element). Negative indices count from
-      the end (-1 is the last element, -2 is second to last, etc.).
+      Positive indices start from 1 (first element). The `negative_index_behavior`
+      option controls how negative indices are handled:
+      - `FROM_END`: Negative indices count from the end (-1 is the last element,
+        -2 is second to last, etc.).
+      - `NULL`: Negative indices are treated as out-of-bounds and return null.
+      - `ERROR`: Negative indices raise an error.
 
       Returns null if the index is out of bounds (including index 0), if the
       list is null, or if the index is null.
@@ -92,6 +96,14 @@ scalar_functions:
             value: list<any1>
           - name: index
             value: i64
+        options:
+          negative_index_behavior:
+            values: [FROM_END, NULL, ERROR]
+            description: >-
+              Defines how negative index values are handled.
+              FROM_END: Negative indices count from the end of the list (-1 is last element).
+              NULL: Negative indices are treated as out-of-bounds and return null.
+              ERROR: Negative indices raise an error.
         nullability: MIRROR
         return: any1
 
