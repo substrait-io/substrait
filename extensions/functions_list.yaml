@@ -145,16 +145,31 @@ scalar_functions:
 
   - name: "sort"
     description: >-
-      Sorts the elements of a list in ascending order.
+      Sorts the elements of a list.
 
-      Elements must be orderable. Null elements are placed at the end of the
-      sorted result.
+      When called with just a list, sorts in ascending order with null elements
+      placed at the end.
+
+      When called with a comparator function, the comparator receives two elements
+      and must return a negative integer if the first is less than the second,
+      zero if they are equal, or a positive integer if the first is greater.
+      If the comparator returns null, the behavior is undefined.
 
       If the input list is null, the result is null.
+
+      Note: Test cases for the comparator overload require a compare function
+      that returns i32, which is not currently available in the extensions.
     impls:
       - args:
           - name: input
             value: list<any1>
+        nullability: MIRROR
+        return: list<any1>
+      - args:
+          - name: input
+            value: list<any1>
+          - name: comparator
+            value: func<any1, any1 -> i32>
         nullability: MIRROR
         return: list<any1>
 
