@@ -88,11 +88,12 @@ scalar_functions:
     description: >-
       Returns true if any element of the list matches the predicate.
 
-      The predicate function is applied to each element. Returns true if the
-      predicate returns true for at least one element, false otherwise.
+      The predicate function is applied to each element using three-valued logic.
+      Returns true if the predicate returns true for at least one element.
+      Returns null if no element returns true but at least one returns null.
+      Returns false if all elements return false.
 
       For an empty list, returns false.
-      Null predicate results are ignored when determining the result.
       If the input list is null, the result is null.
     impls:
       - args:
@@ -107,11 +108,12 @@ scalar_functions:
     description: >-
       Returns true if all elements of the list match the predicate.
 
-      The predicate function is applied to each element. Returns true if the
-      predicate returns true for all elements, false if any element returns false.
+      The predicate function is applied to each element using three-valued logic.
+      Returns false if the predicate returns false for at least one element.
+      Returns null if no element returns false but at least one returns null.
+      Returns true if all elements return true.
 
       For an empty list, returns true (vacuously true).
-      Null predicate results are ignored when determining the result.
       If the input list is null, the result is null.
     impls:
       - args:
