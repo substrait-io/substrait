@@ -71,7 +71,7 @@ For single value expressions, these are a compact equivalent of `expression = va
 
 ## Session Variables
 
-Session variables are a special class of expressions whose behavior depends on the current session context. Substrait defines a set of common session variables and allows to define extension session variables.
+Session variables are a special class of expressions whose behavior depends on the current session context. Substrait defines a set of common session variables, but plan producers can also define extension session variables.
 
 | Session Variable | Description | Return Type |
 | --------------------- | ----------- | ----------- |
