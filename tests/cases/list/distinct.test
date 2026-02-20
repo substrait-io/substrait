@@ -1,0 +1,19 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
+
+# basic: Basic distinct examples
+distinct([1, 2, 2, 3, 1]::list<i32>) = [1, 2, 3]::list<i32>
+distinct(['a', 'b', 'a']::list<string>) = ['a', 'b']::list<string>
+
+# no_duplicates: No duplicates to remove
+distinct([1, 2, 3]::list<i32>) = [1, 2, 3]::list<i32>
+
+# all_same: All elements the same
+distinct([1, 1, 1]::list<i32>) = [1]::list<i32>
+
+# empty: Empty list
+distinct([]::list<i32>) = []::list<i32>
+
+# nullable_elements: Multiple nulls deduplicated to one
+distinct([1, Null, 2, Null]::list<i32?>) = [1, Null, 2]::list<i32?>
+distinct([Null, Null, Null]::list<i32?>) = [Null]::list<i32?>

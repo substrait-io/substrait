@@ -1,0 +1,19 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
+
+# basic: Basic contains examples
+contains([1, 2, 3]::list<i32>, 2::i32) [null_equality:NULL_EQUAL_NULL] = true::bool
+contains([1, 2, 3]::list<i32>, 5::i32) [null_equality:NULL_EQUAL_NULL] = false::bool
+contains(['a', 'b', 'c']::list<string>, 'b'::string) [null_equality:NULL_EQUAL_NULL] = true::bool
+contains(['a', 'b', 'c']::list<string>, 'd'::string) [null_equality:NULL_EQUAL_NULL] = false::bool
+
+# empty: Empty list
+contains([]::list<i32>, 1::i32) [null_equality:NULL_EQUAL_NULL] = false::bool
+
+# null_element_search_equal: Searching for null with NULL_EQUAL_NULL
+contains([1, Null, 3]::list<i32?>, null::i32?) [null_equality:NULL_EQUAL_NULL] = true::bool
+contains([1, 2, 3]::list<i32?>, null::i32?) [null_equality:NULL_EQUAL_NULL] = false::bool
+
+# null_element_search_not_equal: Searching for null with NULL_NOT_EQUAL
+contains([1, Null, 3]::list<i32?>, null::i32?) [null_equality:NULL_NOT_EQUAL] = null::bool
+contains([1, 2, 3]::list<i32?>, null::i32?) [null_equality:NULL_NOT_EQUAL] = null::bool

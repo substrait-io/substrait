@@ -1,0 +1,25 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
+
+# basic: Basic element access (1-based indexing)
+element_at([10, 20, 30]::list<i32>, 1::i64) = 10::i32
+element_at([10, 20, 30]::list<i32>, 2::i64) = 20::i32
+element_at([10, 20, 30]::list<i32>, 3::i64) = 30::i32
+element_at(['a', 'b', 'c']::list<string>, 2::i64) = 'b'::string
+
+# negative_index: Negative indices count from end
+element_at([10, 20, 30]::list<i32>, -1::i64) = 30::i32
+element_at([10, 20, 30]::list<i32>, -2::i64) = 20::i32
+element_at([10, 20, 30]::list<i32>, -3::i64) = 10::i32
+
+# out_of_bounds: Out of bounds returns null
+element_at([10, 20, 30]::list<i32>, 0::i64) = null::i32
+element_at([10, 20, 30]::list<i32>, 4::i64) = null::i32
+element_at([10, 20, 30]::list<i32>, -4::i64) = null::i32
+element_at([]::list<i32>, 1::i64) = null::i32
+
+# nullable_elements: Element at index is null
+element_at([1, Null, 3]::list<i32?>, 2::i64) = null::i32
+
+# null_index: Null index returns null
+element_at([1, 2, 3]::list<i32>, null::i64) = null::i32

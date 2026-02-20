@@ -41,3 +41,161 @@ scalar_functions:
             value: func<any1 -> boolean>
         nullability: MIRROR
         return: list<any1>
+
+  - name: "cardinality"
+    description: >-
+      Returns the number of elements in the list.
+
+      Null elements are counted. If the input list is null, the result is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+        nullability: DECLARED_OUTPUT
+        return: i64?
+
+  - name: "contains"
+    description: >-
+      Returns true if the list contains the specified element.
+
+      The `null_equality` option controls how null values are compared:
+      - NULL_EQUAL_NULL: Null is considered equal to null, so searching for null
+        in a list containing null returns true.
+      - NULL_NOT_EQUAL: Null is not equal to anything including null (SQL standard),
+        so searching for null returns null.
+
+      If the input list is null, the result is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: element
+            value: any1
+        options:
+          null_equality:
+            values: [NULL_EQUAL_NULL, NULL_NOT_EQUAL]
+        nullability: DECLARED_OUTPUT
+        return: boolean?
+
+  - name: "element_at"
+    description: >-
+      Returns the element at the specified 1-based index in the list.
+
+      Positive indices start from 1 (first element). Negative indices count from
+      the end (-1 is the last element, -2 is second to last, etc.).
+
+      Returns null if the index is out of bounds (including index 0), if the
+      list is null, or if the index is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: index
+            value: i64
+        nullability: DECLARED_OUTPUT
+        return: any1?
+
+  - name: "concat"
+    description: >-
+      Concatenates two lists into a single list.
+
+      The elements of the second list are appended to the elements of the first
+      list. Null elements within lists are preserved.
+
+      If either input list is null, the result is null.
+    impls:
+      - args:
+          - name: left
+            value: list<any1>
+          - name: right
+            value: list<any1>
+        nullability: DECLARED_OUTPUT
+        return: list<any1>?
+
+  - name: "flatten"
+    description: >-
+      Flattens a nested list by one level.
+
+      Takes a list of lists and returns a single list containing all elements
+      from the inner lists concatenated together.
+
+      Null inner lists are skipped. Null elements within inner lists are preserved.
+      If the input list is null, the result is null.
+
+      Note: Test cases for this function are pending grammar support for nested
+      list literals. See https://github.com/substrait-io/substrait/issues/968
+    impls:
+      - args:
+          - name: input
+            value: list<list<any1>>
+        nullability: DECLARED_OUTPUT
+        return: list<any1>?
+
+  - name: "sort"
+    description: >-
+      Sorts the elements of a list in ascending order.
+
+      Elements must be orderable. Null elements are placed at the end of the
+      sorted result.
+
+      If the input list is null, the result is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+        nullability: DECLARED_OUTPUT
+        return: list<any1>?
+
+  - name: "distinct"
+    description: >-
+      Removes duplicate elements from a list.
+
+      Returns a list containing only unique elements. The order of elements
+      in the result is implementation-defined.
+
+      Multiple null values are deduplicated to a single null.
+      If the input list is null, the result is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+        nullability: DECLARED_OUTPUT
+        return: list<any1>?
+
+  - name: "any_match"
+    description: >-
+      Returns true if any element of the list matches the predicate.
+
+      The predicate function is applied to each element. Returns true if the
+      predicate returns true for at least one element, false otherwise.
+
+      For an empty list, returns false.
+      Null predicate results are ignored when determining the result.
+      If the input list is null, the result is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: predicate
+            value: func<any1 -> boolean>
+        nullability: DECLARED_OUTPUT
+        return: boolean?
+
+  - name: "all_match"
+    description: >-
+      Returns true if all elements of the list match the predicate.
+
+      The predicate function is applied to each element. Returns true if the
+      predicate returns true for all elements, false if any element returns false.
+
+      For an empty list, returns true (vacuously true).
+      Null predicate results are ignored when determining the result.
+      If the input list is null, the result is null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: predicate
+            value: func<any1 -> boolean>
+        nullability: DECLARED_OUTPUT
+        return: boolean?
