@@ -49,6 +49,7 @@ def test_build_type_to_short_type():
     assert long_to_short["precision_timestamp_tz"] == "ptstz"
     assert long_to_short["interval_year"] == "iyear"
     assert long_to_short["interval_day"] == "iday"
+    assert long_to_short["interval_compound"] == "icompound"
     assert long_to_short["decimal"] == "dec"
     assert long_to_short["boolean"] == "bool"
     assert long_to_short["string"] == "str"

@@ -205,6 +205,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#intervalCompoundArg.
+    def visitIntervalCompoundArg(self, ctx:FuncTestCaseParser.IntervalCompoundArgContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#fixedCharArg.
     def visitFixedCharArg(self, ctx:FuncTestCaseParser.FixedCharArgContext):
         return self.visitChildren(ctx)
@@ -387,6 +392,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#intervalDayType.
     def visitIntervalDayType(self, ctx:FuncTestCaseParser.IntervalDayTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#intervalCompoundType.
+    def visitIntervalCompoundType(self, ctx:FuncTestCaseParser.IntervalCompoundTypeContext):
         return self.visitChildren(ctx)
 
 
