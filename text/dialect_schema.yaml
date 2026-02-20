@@ -405,6 +405,12 @@ definitions:
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
       max_precision:
+        description: >-
+          The maximum subsecond precision for the PRECISION_TIME data type
+          supported by this dialect.
+
+          Since the maximum precision in Substrait for PRECISION_TIME is 12
+          the value must be in range: 0 <= max_precision <= 12.
         type: integer
         minimum: 0
         maximum: 12
@@ -418,6 +424,12 @@ definitions:
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
       max_precision:
+        description: >-
+          The maximum subsecond precision for the PRECISION_TIMESTAMP data type
+          supported by this dialect.
+
+          Since the maximum precision in Substrait for PRECISION_TIMESTAMP is
+          12 the value must be in range: 0 <= max_precision <= 12.
         type: integer
         minimum: 0
         maximum: 12
@@ -431,6 +443,12 @@ definitions:
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
       max_precision:
+        description: >-
+          The maximum subsecond precision for the PRECISION_TIMESTAMP_TZ data
+          type supported by this dialect.
+
+          Since the maximum precision in Substrait for PRECISION_TIMESTAMP_TZ is
+          12 the value must be in range: 0 <= max_precision <= 12.
         type: integer
         minimum: 0
         maximum: 12
@@ -462,6 +480,12 @@ definitions:
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
       max_precision:
+        description: >-
+          The maximum subsecond precision for the INTERVAL_COMPOUND data type
+          supported by this dialect.
+
+          Since the maximum precision in Substrait for INTERVAL_COMPOUND is 12
+          the value must be in range: 0 <= max_precision <= 12.
         type: integer
         minimum: 0
         maximum: 12
@@ -475,6 +499,13 @@ definitions:
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
       max_precision:
+        description: >-
+          The maximum subsecond precision for the INTERVAL_DAY data type
+          supported by this dialect.
+
+
+          Since the maximum precision in Substrait for INTERVAL_DAY is 9
+          the value must be in range: 0 <= max_precision <= 9.
         type: integer
         minimum: 0
         maximum: 9
