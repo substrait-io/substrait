@@ -477,7 +477,7 @@ definitions:
       max_precision:
         type: integer
         minimum: 0
-        maximum: 12
+        maximum: 9
   type_interval_year:
     type: object
     additionalProperties: false
