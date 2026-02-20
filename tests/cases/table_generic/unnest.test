@@ -1,0 +1,23 @@
+### SUBSTRAIT_TABLE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_table_generic.yaml'
+
+# single_list_int: Single list unnest (same as explode)
+unnest([1, 2, 3]::list<i32>) = [(1), (2), (3)]::struct<i32>
+
+# single_list_string: Single list unnest with strings
+unnest(['a', 'b']::list<str>) = [('a'), ('b')]::struct<str>
+
+# single_list_empty: Empty list produces zero rows
+unnest([]::list<i32>) = []::struct<i32>
+
+# two_lists_same_length: Zip two lists of same length
+unnest([1, 2, 3]::list<i32>, [4, 5, 6]::list<i32>) = [(1, 4), (2, 5), (3, 6)]::struct<i32,i32>
+
+# two_lists_different_types: Zip lists of different types
+unnest([1, 2]::list<i32>, ['a', 'b']::list<str>) = [(1, 'a'), (2, 'b')]::struct<i32,str>
+
+# three_lists: Zip three lists
+unnest([1, 2]::list<i32>, [3, 4]::list<i32>, [5, 6]::list<i32>) = [(1, 3, 5), (2, 4, 6)]::struct<i32,i32,i32>
+
+# four_lists: Zip four lists
+unnest([1, 2]::list<i32>, [3, 4]::list<i32>, [5, 6]::list<i32>, [7, 8]::list<i32>) = [(1, 3, 5, 7), (2, 4, 6, 8)]::struct<i32,i32,i32,i32>

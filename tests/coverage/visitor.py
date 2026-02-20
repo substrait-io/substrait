@@ -10,6 +10,7 @@ from tests.coverage.nodes import (
     TestCase,
     CaseLiteral,
     SubstraitError,
+    MultiRowResult,
 )
 
 
@@ -18,26 +19,69 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         self.file_path = file_path
 
     def visitDoc(self, ctx: FuncTestCaseParser.DocContext):
-        version, include, dependencies = self.visitHeader(ctx.header())
+        # Delegate to the specific doc type visitor
+        if ctx.scalarDoc() is not None:
+            return self.visitScalarDoc(ctx.scalarDoc())
+        elif ctx.aggregateDoc() is not None:
+            return self.visitAggregateDoc(ctx.aggregateDoc())
+        elif ctx.tableDoc() is not None:
+            return self.visitTableDoc(ctx.tableDoc())
+
+    def visitScalarDoc(self, ctx: FuncTestCaseParser.ScalarDocContext):
+        version, include, dependencies = self.visitScalarHeader(ctx.scalarHeader())
         testcases = []
-        for group in ctx.testGroup():
-            _, group_tests = self.visit(group)
+        for group in ctx.scalarTestGroup():
+            _, group_tests = self.visitScalarTestGroup(group)
             for test_case in group_tests:
                 test_case.base_uri = include
             testcases.extend(group_tests)
-
         return TestFile(self.file_path, version, include, dependencies, testcases)
 
-    def visitHeader(self, ctx: FuncTestCaseParser.HeaderContext):
-        version = self.visitVersion(ctx.version())
+    def visitAggregateDoc(self, ctx: FuncTestCaseParser.AggregateDocContext):
+        version, include, dependencies = self.visitAggregateHeader(
+            ctx.aggregateHeader()
+        )
+        testcases = []
+        for group in ctx.aggregateTestGroup():
+            _, group_tests = self.visitAggregateTestGroup(group)
+            for test_case in group_tests:
+                test_case.base_uri = include
+            testcases.extend(group_tests)
+        return TestFile(self.file_path, version, include, dependencies, testcases)
+
+    def visitTableDoc(self, ctx: FuncTestCaseParser.TableDocContext):
+        version, include, dependencies = self.visitTableHeader(ctx.tableHeader())
+        testcases = []
+        for group in ctx.tableTestGroup():
+            _, group_tests = self.visitTableTestGroup(group)
+            for test_case in group_tests:
+                test_case.base_uri = include
+            testcases.extend(group_tests)
+        return TestFile(self.file_path, version, include, dependencies, testcases)
+
+    def visitScalarHeader(self, ctx: FuncTestCaseParser.ScalarHeaderContext):
+        version = ctx.FormatVersion().getText()
         include = self.visitInclude(ctx.include())
         dependencies = []
         for dependency_ctx in ctx.dependency():
             dependencies.extend(self.visitDependency(dependency_ctx))
         return version, include, dependencies
 
-    def visitVersion(self, ctx: FuncTestCaseParser.VersionContext):
-        return ctx.FormatVersion().getText()
+    def visitAggregateHeader(self, ctx: FuncTestCaseParser.AggregateHeaderContext):
+        version = ctx.FormatVersion().getText()
+        include = self.visitInclude(ctx.include())
+        dependencies = []
+        for dependency_ctx in ctx.dependency():
+            dependencies.extend(self.visitDependency(dependency_ctx))
+        return version, include, dependencies
+
+    def visitTableHeader(self, ctx: FuncTestCaseParser.TableHeaderContext):
+        version = ctx.FormatVersion().getText()
+        include = self.visitInclude(ctx.include())
+        dependencies = []
+        for dependency_ctx in ctx.dependency():
+            dependencies.extend(self.visitDependency(dependency_ctx))
+        return version, include, dependencies
 
     def visitInclude(self, ctx: FuncTestCaseParser.IncludeContext):
         # TODO handle multiple includes
@@ -55,9 +99,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         else:
             return CaseGroup("", "")
 
-    def visitScalarFuncTestGroup(
-        self, ctx: FuncTestCaseParser.ScalarFuncTestGroupContext
-    ):
+    def visitScalarTestGroup(self, ctx: FuncTestCaseParser.ScalarTestGroupContext):
         group = self.visitTestGroupDescription(ctx.testGroupDescription())
         test_cases = []
         for test_case in ctx.testCase():
@@ -66,13 +108,22 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             test_cases.append(testcase)
         return group, test_cases
 
-    def visitAggregateFuncTestGroup(
-        self, ctx: FuncTestCaseParser.AggregateFuncTestGroupContext
+    def visitAggregateTestGroup(
+        self, ctx: FuncTestCaseParser.AggregateTestGroupContext
     ):
         group = self.visitTestGroupDescription(ctx.testGroupDescription())
         test_cases = []
         for test_case in ctx.aggFuncTestCase():
             testcase = self.visitAggFuncTestCase(test_case)
+            testcase.group = group
+            test_cases.append(testcase)
+        return group, test_cases
+
+    def visitTableTestGroup(self, ctx: FuncTestCaseParser.TableTestGroupContext):
+        group = self.visitTestGroupDescription(ctx.testGroupDescription())
+        test_cases = []
+        for test_case in ctx.tableFuncTestCase():
+            testcase = self.visitTableFuncTestCase(test_case)
             testcase.group = group
             test_cases.append(testcase)
         return group, test_cases
@@ -101,6 +152,23 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.funcOptions() is not None:
             testcase.options = self.visitFuncOptions(ctx.funcOptions())
         return testcase
+
+    def visitTableFuncTestCase(self, ctx: FuncTestCaseParser.TableFuncTestCaseContext):
+        args = self.visitArguments(ctx.arguments())
+        result = self.visitMultiRowResult(ctx.multiRowResult())
+        options = dict()
+        if ctx.funcOptions() is not None:
+            options = self.visitFuncOptions(ctx.funcOptions())
+        return TestCase(
+            func_name=ctx.identifier().getText(),
+            base_uri="",
+            group=None,
+            options=options,
+            rows=None,
+            args=args,
+            result=result,
+            comment="",
+        )
 
     def visitSingleArgAggregateFuncCall(
         self, ctx: FuncTestCaseParser.SingleArgAggregateFuncCallContext
@@ -436,6 +504,26 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.UndefineResult() is not None:
             return SubstraitError("undefined")
         return SubstraitError("unknown_error")
+
+    def visitMultiRowResult(self, ctx: FuncTestCaseParser.MultiRowResultContext):
+        """Visit multi-row result: [(val1), (val2), ...] :: struct<T>."""
+        rows = []
+        for row_tuple_ctx in ctx.rowTuple():
+            rows.append(self.visitRowTuple(row_tuple_ctx))
+        struct_type = ctx.structType().getText()
+        return MultiRowResult(rows=rows, type=struct_type)
+
+    def visitRowTuple(self, ctx: FuncTestCaseParser.RowTupleContext):
+        """Visit a single row tuple: (val1, val2, ...)."""
+        values = []
+        for literal in ctx.literal():
+            value, _ = self.visitLiteral(literal)
+            values.append(value)
+        return values
+
+    def visitDataType(self, ctx):
+        """Visit a dataType context and return its text representation."""
+        return ctx.getText()
 
 
 class ParseError(Exception):

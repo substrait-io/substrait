@@ -15,13 +15,33 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#header.
-    def visitHeader(self, ctx:FuncTestCaseParser.HeaderContext):
+    # Visit a parse tree produced by FuncTestCaseParser#scalarDoc.
+    def visitScalarDoc(self, ctx:FuncTestCaseParser.ScalarDocContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#version.
-    def visitVersion(self, ctx:FuncTestCaseParser.VersionContext):
+    # Visit a parse tree produced by FuncTestCaseParser#aggregateDoc.
+    def visitAggregateDoc(self, ctx:FuncTestCaseParser.AggregateDocContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#tableDoc.
+    def visitTableDoc(self, ctx:FuncTestCaseParser.TableDocContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#scalarHeader.
+    def visitScalarHeader(self, ctx:FuncTestCaseParser.ScalarHeaderContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#aggregateHeader.
+    def visitAggregateHeader(self, ctx:FuncTestCaseParser.AggregateHeaderContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#tableHeader.
+    def visitTableHeader(self, ctx:FuncTestCaseParser.TableHeaderContext):
         return self.visitChildren(ctx)
 
 
@@ -45,13 +65,18 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#scalarFuncTestGroup.
-    def visitScalarFuncTestGroup(self, ctx:FuncTestCaseParser.ScalarFuncTestGroupContext):
+    # Visit a parse tree produced by FuncTestCaseParser#scalarTestGroup.
+    def visitScalarTestGroup(self, ctx:FuncTestCaseParser.ScalarTestGroupContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#aggregateFuncTestGroup.
-    def visitAggregateFuncTestGroup(self, ctx:FuncTestCaseParser.AggregateFuncTestGroupContext):
+    # Visit a parse tree produced by FuncTestCaseParser#aggregateTestGroup.
+    def visitAggregateTestGroup(self, ctx:FuncTestCaseParser.AggregateTestGroupContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#tableTestGroup.
+    def visitTableTestGroup(self, ctx:FuncTestCaseParser.TableTestGroupContext):
         return self.visitChildren(ctx)
 
 
@@ -72,6 +97,21 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#aggFuncTestCase.
     def visitAggFuncTestCase(self, ctx:FuncTestCaseParser.AggFuncTestCaseContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#tableFuncTestCase.
+    def visitTableFuncTestCase(self, ctx:FuncTestCaseParser.TableFuncTestCaseContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#multiRowResult.
+    def visitMultiRowResult(self, ctx:FuncTestCaseParser.MultiRowResultContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#rowTuple.
+    def visitRowTuple(self, ctx:FuncTestCaseParser.RowTupleContext):
         return self.visitChildren(ctx)
 
 
@@ -447,6 +487,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#parameterizedType.
     def visitParameterizedType(self, ctx:FuncTestCaseParser.ParameterizedTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#structType.
+    def visitStructType(self, ctx:FuncTestCaseParser.StructTypeContext):
         return self.visitChildren(ctx)
 
 
