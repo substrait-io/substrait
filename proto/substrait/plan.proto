@@ -29,10 +29,6 @@ message Plan {
   // versions.
   Version version = 6;
 
-  // a list of yaml specifications this plan may depend on
-  // this is now deprecated and extension_urns should be used instead.
-  repeated substrait.extensions.SimpleExtensionURI extension_uris = 1 [deprecated = true];
-
   // a list of extension URNs this plan may depend on
   repeated substrait.extensions.SimpleExtensionURN extension_urns = 8;
 

@@ -29,10 +29,6 @@ message ExtendedExpression {
   // versions.
   Version version = 7;
 
-  // a list of yaml specifications this expression may depend on
-  // this is now deprecated and extension_urns should be used instead.
-  repeated substrait.extensions.SimpleExtensionURI extension_uris = 1 [deprecated = true];
-
   // a list of extension specifications this expression may depend on,
   // referenced by Extension URN
   repeated substrait.extensions.SimpleExtensionURN extension_urns = 8;
