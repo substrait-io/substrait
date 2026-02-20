@@ -1,0 +1,8 @@
+### SUBSTRAIT_AGGREGATE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/unsigned_integers.yaml'
+
+# basic: Basic unsigned integer examples
+max(('20', '3', '1', '10', '0', '5')::u!u8) = '20'::u!u8
+max(('32768', '32767', '20000', '30000')::u!u16) = '32768'::u!u16
+max(('214748648', '214748647', '21470048', '4000000')::u!u32) = '214748648'::u!u32
+max(('2000000000', '3217908979', '629000000', '100000000', '0', '987654321')::u!u64) = '3217908979'::u!u64

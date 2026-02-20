@@ -1,0 +1,8 @@
+### SUBSTRAIT_AGGREGATE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/unsigned_integers.yaml'
+
+# basic: Basic unsigned integer examples
+sum(('0', '1', '2', '20')::u!u8) = '23'::u!u64
+sum(('100', '200', '50')::u!u16) = '350'::u!u64
+sum(('2000000', '3217908', '629000', '100000', '0', '987654')::u!u32) = '6934562'::u!u64
+sum(('1000000000000', '2000000000000', '3000000000000')::u!u64) = '6000000000000'::u!u64
