@@ -1,10 +1,15 @@
 name: "dialect test file for expressions"
 
+metadata:
+  max_expression_depth: 128
+
 supported_expressions:
   - LITERAL
   - SELECTION
   - SCALAR_FUNCTION
   - expression: CAST
+    metadata:
+      truncates_on_overflow: true
     failure_options: [RETURN_NULL]
   - expression: SUBQUERY
     subquery_types: [SCALAR]
