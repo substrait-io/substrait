@@ -25,3 +25,5 @@ supported_types:
     max_precision: 9
   - type: INTERVAL_COMPOUND
     max_precision: 0
+  - type: INTERVAL_DAY
+    max_precision: 12

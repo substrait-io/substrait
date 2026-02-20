@@ -474,6 +474,10 @@ definitions:
         const: INTERVAL_DAY
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        type: integer
+        minimum: 0
+        maximum: 12
   type_interval_year:
     type: object
     additionalProperties: false
