@@ -1690,7 +1690,7 @@ message Expression {
     }
   }
 
-  // Expression that represents common session dependent variables
+  // Expression that represents session dependent variables
   message SessionVariable {
     oneof session_variable_type {
       // a non-deterministic, session dependent variable containing the current
