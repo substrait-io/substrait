@@ -81,7 +81,11 @@ Session variables are a special class of expressions whose behavior depends on t
 
 ### Extension Session Variables
 
-Extension session variables in Substrait are defined by the following properties:
+System specific session variables not covered in Substrait can be accessed using Extension Session Variables. The evaluation of such values are system-dependent.
+
+note: contact Substrait community to propose standard session variables.
+
+To use extension session variables, use following properties:
 
 | Property | Type   | Required | Description |
 | -------- | ------ | -------- | ----------- |
