@@ -80,7 +80,14 @@ A producer may specify multiple values for an option.  If the producer does so t
 
 [`is_null`](https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml#:~:text=%2D-,name%3A%20%22is_null%22,-description%3A%20Whether) is declared as `is_null(i64) -> boolean` with `DECLARED_OUTPUT` nullability. Both `is_null(i64)` and `is_null(i64?)` return `boolean` because the output type is determined solely by the declared return type regardless of input nullability.
 
+#### Nullability and `any` Type Binding
 
+The nullability mode also determines how [`any` types](../extensions/index.md#any-types) bind to concrete argument types:
+
+- With `MIRROR` or `DECLARED_OUTPUT`, the outermost nullability of each argument is stripped before binding. It is only used to [determine the output nullability](#nullability-handling). These modes do not allow nullable parameters in the signature.
+- With `DISCRETE`, the outermost nullability of each argument must match the nullability declared at the corresponding position in the signature. For example, `fn(any1, any1?)` requires a non-nullable first argument and a nullable second argument.
+
+See [Type Parameter Binding and Nullability](../extensions/index.md#type-parameter-binding-and-nullability) for detailed examples.
 
 ## Parameterized Types
 
