@@ -1707,18 +1707,6 @@ message Expression {
       // a non-deterministic, session dependent variable containing the current date
       // nullability must be NULLABILITY_REQUIRED
       Type.Date current_date = 3;
-
-      // allow to extend session variables
-      ExtensionSessionVariable extension_session_variable = 4;
-    }
-
-    // extension session variables
-    message ExtensionSessionVariable {
-      // name of the extension session variable, must be unique, required
-      string name = 1;
-
-      // type of the extension session variable, required
-      Type type = 2;
     }
   }
 }

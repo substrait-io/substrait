@@ -927,18 +927,4 @@ definitions:
               - CURRENT_TIMESTAMP
               - CURRENT_TIMEZONE
               - CURRENT_DATE
-            - $ref: "#/definitions/extension_session_variable"
     required: [expression]
-  extension_session_variable:
-    type: object
-    additionalProperties: false
-    properties:
-      name:
-        description: the name of the session variable, must be unique
-        type: string
-      type:
-        description: >
-          the data type of the session variable as a string following the
-          Substrait type syntax: https://substrait.io/types/type_parsing/
-        type: string
-    required: [name, type]

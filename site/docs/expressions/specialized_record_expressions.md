@@ -71,23 +71,10 @@ For single value expressions, these are a compact equivalent of `expression = va
 
 ## Session Variables
 
-Session variables are a special class of expressions whose behavior depends on the current session context. Substrait defines a set of common session variables, but plan producers can also define extension session variables.
+Session variables are a special class of expressions whose behavior depends on the current session context.
 
 | Session Variable | Description | Return Type |
 | --------------------- | ----------- | ----------- |
 | current_date | a non-deterministic, session dependent variable containing the current date | date |
 | current_timestamp | a non-deterministic, session dependent variable containing the current timestamp in current_timezone | PRECISION_TIMESTAMP_TZ<P> |
 | current_timezone | a deterministic, session dependent variable containing the current session timezone as a string defined by IANA timezone database (https://www.iana.org/time-zones). | string |
-
-### Extension Session Variables
-
-System specific session variables not covered in Substrait can be accessed using Extension Session Variables. The evaluation of such values are system-dependent.
-
-note: contact Substrait community to propose standard session variables.
-
-To use extension session variables, use following properties:
-
-| Property | Type   | Required | Description |
-| -------- | ------ | -------- | ----------- |
-| name     | string | Yes      | the name of the session variable, must be unique |
-| type     | Type   | Yes      | the type of the session variable |
