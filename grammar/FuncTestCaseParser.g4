@@ -61,6 +61,7 @@ argument
     | timestampTzArg
     | intervalYearArg
     | intervalDayArg
+    | intervalCompoundArg
     | fixedCharArg
     | varCharArg
     | fixedBinaryArg
@@ -109,6 +110,7 @@ literal
     | TimestampTzLiteral
     | IntervalYearLiteral
     | IntervalDayLiteral
+    | IntervalCompoundLiteral
     ;
 
 qualifiedAggregateFuncArgs
@@ -177,6 +179,10 @@ intervalYearArg
 
 intervalDayArg
     : IntervalDayLiteral DoubleColon intervalDayType
+    ;
+
+intervalCompoundArg
+    : IntervalCompoundLiteral DoubleColon intervalCompoundType
     ;
 
 fixedCharArg
@@ -292,6 +298,10 @@ intervalDayType
     : (IDay | Interval_Day) isnull=QMark? (OAngleBracket len=numericParameter CAngleBracket)?
     ;
 
+intervalCompoundType
+    : (ICompound | Interval_Compound) isnull=QMark? (OAngleBracket len=numericParameter CAngleBracket)?
+    ;
+
 fixedCharType
     : (FChar | FixedChar) isnull=QMark? OAngleBracket len=numericParameter CAngleBracket
     ;
@@ -340,6 +350,7 @@ parameterizedType
     | fixedBinaryType
     | decimalType
     | intervalDayType
+    | intervalCompoundType
     | precisionTimeType
     | precisionTimestampType
     | precisionTimestampTZType

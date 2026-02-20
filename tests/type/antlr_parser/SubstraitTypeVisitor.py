@@ -120,6 +120,11 @@ class SubstraitTypeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by SubstraitTypeParser#precisionIntervalCompound.
+    def visitPrecisionIntervalCompound(self, ctx:SubstraitTypeParser.PrecisionIntervalCompoundContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by SubstraitTypeParser#precisionTime.
     def visitPrecisionTime(self, ctx:SubstraitTypeParser.PrecisionTimeContext):
         return self.visitChildren(ctx)

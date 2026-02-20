@@ -103,6 +103,10 @@ fragment TimeInterval
     | DecimalLiteral SecondSuffix
     ;
 
+IntervalCompoundLiteral
+    : '\'' PeriodPrefix (IntegerLiteral YearPrefix)? (IntegerLiteral MSuffix)? (IntegerLiteral DaySuffix)? (TimePrefix TimeInterval)? '\''
+    ;
+
 NullLiteral: 'null';
 
 StringLiteral
