@@ -934,5 +934,11 @@ definitions:
     additionalProperties: false
     properties:
       name:
+        description: the name of the session variable, must be unique
         type: string
-    required: [name]
+      type:
+        description: >
+          the data type of the session variable as a string following the
+          Substrait type syntax: https://substrait.io/types/type_parsing/
+        type: string
+    required: [name, type]

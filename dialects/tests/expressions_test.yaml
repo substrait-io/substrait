@@ -17,3 +17,4 @@ supported_expressions:
       - CURRENT_TIMESTAMP
       - CURRENT_TIMEZONE
       - name: "MY_EXT_SESSION_VAR"
+        type: "i16"
