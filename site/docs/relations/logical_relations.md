@@ -556,6 +556,41 @@ The operator that defines modifications of a database schema (CREATE/DROP/ALTER 
 %%% proto.algebra.DdlRel %%%
     ```
 
+## Apply Operator
+
+The apply operator will evaluate a given subquery for each row from the input, and produces output from the subquery invocation. For Cross and Outer invocations, each subquery output is prepended with the current input row (see `Apply Invocation Types` for more detail). For Semi and Anti Semi invocations, only the input columns are included in the output. This is a general way to express a correlated subquery evaluation in a relational context. The subquery can reference the fields of the current input row using `OuterReference` with `steps_out = 1`.
+
+| Signature            | Value                                                        |
+| -------------------- | ------------------------------------------------------------ |
+| Inputs               | 1 + 1 (Correlated subquery)                                  |
+| Outputs              | 1                                                            |
+| Property Maintenance | Input distribution is maintained. Physical relations may provide better property maintenance. |
+| Input Order          | The input order is the same as the output order of the `Input`. The subquery may reference the input row fields in this order using `OuterReference` with `steps_out = 1`. |
+| Direct Output Order  | For semi apply and anti semi apply, the emit order is `Input Order` only. Otherwise, the emit order is `Input Order` followed by the output order of the subquery. |
+
+### Apply Properties
+
+| Property         | Description                                                  | Required                           |
+| ---------------- | ------------------------------------------------------------ | ---------------------------------- |
+| Input            | A relational input.                                          | Required                           |
+| Subquery         | A subquery to evaluate for each row from the `Input`. May access the input row with `OuterReference` (`steps_out = 1`). | Required                           |
+| Invocation       | One of the apply invocation types defined below.             | Required                           |
+
+### Apply Invocation Types
+
+| Type  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ----- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Cross | For each input record, yields the subquery output records prepended with the input record. If the subquery yields no rows, no output records for the input row. |
+| Outer | Same as *Cross* except that yields one row with all NULLs for the subquery output fields if the subquery yields no rows. |
+| Semi  | For each input record, yields the input record (without subquery columns) if the subquery yields at least one row. |
+| Anti Semi | For each input record, yields the input record (without subquery columns) if the subquery yields no rows. |
+
+=== "ApplyRel Message"
+
+    ```proto
+%%% proto.algebra.ApplyRel %%%
+    ```
+
 ???+ question "Discussion Points"
 
-    * How should correlated operations be handled?
+    * How should nested correlated subqueries (multiple levels of `OuterReference`) be handled?
