@@ -11,3 +11,8 @@ supported_expressions:
   - expression: NESTED
     nested_types:
       - LIST
+  - expression: EXECUTION_CONTEXT_VARIABLE
+    variable_types:
+      - CURRENT_DATE
+      - CURRENT_TIMESTAMP
+      - CURRENT_TIMEZONE
