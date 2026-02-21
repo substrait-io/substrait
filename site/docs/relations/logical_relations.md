@@ -558,7 +558,29 @@ The operator that defines modifications of a database schema (CREATE/DROP/ALTER 
 
 ## Apply Operator
 
-The apply operator will evaluate a given subquery for each row from the input, and produces output from the subquery invocation. For Cross and Outer invocations, each subquery output is prepended with the current input row (see `Apply Invocation Types` for more detail). For Semi and Anti Semi invocations, only the input columns are included in the output. This is a general way to express a correlated subquery evaluation in a relational context. The subquery can reference the fields of the current input row using `OuterReference` with `steps_out = 1`.
+The apply operator evaluates a given subquery for each row from the input and produces output from the subquery invocation. For Cross and Outer invocations, each subquery output is prepended with the current input row (see `Apply Invocation Types` for more detail). For Semi and Anti Semi invocations, only the input columns are included in the output. This is a general way to express a correlated subquery evaluation in a relational context. The subquery can reference the fields of the current input row using a `FieldReference` with `OuterReference` as the `root_type` and `steps_out = 1`, combined with a `direct_reference` to select the specific field.
+
+For example, the SQL query:
+
+```sql
+SELECT a, (SELECT MAX(b) FROM T2 WHERE T2.x = T1.a) FROM T1
+```
+
+can be represented as a Cross Apply where `T1` is the input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the subquery. Inside the subquery, `T1.a` is referenced via a `FieldReference` with `OuterReference { steps_out = 1 }` as the root.
+
+The Apply operator can introduce multiple nestings of subqueries. All outer input fields can be referenced using appropriate `steps_out` values with `OuterReference`. In the diagram below, each Apply node's left child is its `input` and right child is its `subquery`:
+
+```
+            Apply (outer)
+           /     \
+     Input1(a)    Apply (inner)
+                 /     \
+           Input2(b)    Subquery
+
+OuterReference access within each scope:
+  Input2   : a [steps_out=1]
+  Subquery : a [steps_out=2], b [steps_out=1]
+```
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -578,11 +600,11 @@ The apply operator will evaluate a given subquery for each row from the input, a
 
 ### Apply Invocation Types
 
-| Type  | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| ----- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Cross | For each input record, yields the subquery output records prepended with the input record. If the subquery yields no rows, no output records for the input row. |
-| Outer | Same as *Cross* except that yields one row with all NULLs for the subquery output fields if the subquery yields no rows. |
-| Semi  | For each input record, yields the input record (without subquery columns) if the subquery yields at least one row. |
+| Type      | Description                                                  |
+| --------- | ------------------------------------------------------------ |
+| Cross     | For each input record, yields the subquery output records prepended with the input record. If the subquery yields no rows, no output records are produced for that input row. This is the default when the invocation type is unspecified. |
+| Outer     | Same as *Cross* except that it yields one row with all NULLs for the subquery output fields if the subquery yields no rows. |
+| Semi      | For each input record, yields the input record (without subquery columns) if the subquery yields at least one row. |
 | Anti Semi | For each input record, yields the input record (without subquery columns) if the subquery yields no rows. |
 
 === "ApplyRel Message"
@@ -590,7 +612,3 @@ The apply operator will evaluate a given subquery for each row from the input, a
     ```proto
 %%% proto.algebra.ApplyRel %%%
     ```
-
-???+ question "Discussion Points"
-
-    * How should nested correlated subqueries (multiple levels of `OuterReference`) be handled?
