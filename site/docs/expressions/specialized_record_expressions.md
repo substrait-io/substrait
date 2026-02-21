@@ -69,12 +69,12 @@ Multi Value:
 For single value expressions, these are a compact equivalent of `expression = value1 OR expression = value2 OR .. OR expression = valueN`. When using an expression of this type, two things are required; the types of the test expression and all value expressions that are related must be of the same type. Additionally, a function signature for equality must be available for the expression type used.
 
 
-## Session Variables
+## Execution Context Variables
 
-Session variables are a special class of expressions whose behavior depends on the current session context.
+Execution context variables are a special class of expressions whose behavior depends on the current execution context.
 
-| Session Variable | Description | Return Type |
-| --------------------- | ----------- | ----------- |
-| current_date | a non-deterministic, session dependent variable containing the current date | date |
-| current_timestamp | a non-deterministic, session dependent variable containing the current timestamp in current_timezone | PRECISION_TIMESTAMP_TZ<P> |
-| current_timezone | a deterministic, session dependent variable containing the current session timezone as a string defined by IANA timezone database (https://www.iana.org/time-zones). | string |
+| Execution Context Variables | Description | Return Type |
+| --------------------------- | ----------- | ----------- |
+| current_date | a variable containing the current date | date |
+| current_timestamp | a variable containing the current timestamp in current_timezone | PRECISION_TIMESTAMP_TZ<P> |
+| current_timezone | a variable containing the current session timezone as a string defined by IANA timezone database (https://www.iana.org/time-zones). | string |

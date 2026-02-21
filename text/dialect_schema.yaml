@@ -155,7 +155,7 @@ properties:
           - SUBQUERY
           - NESTED
           - DYNAMIC_PARAMETER
-          - SESSION_VARIABLE
+          - EXECUTION_CONTEXT_VARIABLE
         - $ref: "#/definitions/literal_expression"
         - $ref: "#/definitions/selection_expression"
         - $ref: "#/definitions/scalar_function_expression"
@@ -168,7 +168,7 @@ properties:
         - $ref: "#/definitions/subquery_expression"
         - $ref: "#/definitions/nested_expression"
         - $ref: "#/definitions/dynamic_parameter_expression"
-        - $ref: "#/definitions/session_variable"
+        - $ref: "#/definitions/execution_context_variable"
 
   supported_scalar_functions:
     type: array
@@ -912,15 +912,15 @@ definitions:
       expression:
         const: DYNAMIC_PARAMETER
     required: [expression]
-  session_variable:
+  execution_context_variable:
     type: object
     additionalProperties: false
     properties:
       expression:
-        const: SESSION_VARIABLE
+        const: EXECUTION_CONTEXT_VARIABLE
       variable_types:
         type: array
-        description: The possible session variable types.
+        description: The possible execution context variable types.
         items:
           oneof:
             - enum:
