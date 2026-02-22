@@ -1,6 +1,19 @@
 Release Notes
 ---
 
+## [0.82.0](https://github.com/substrait-io/substrait/compare/v0.81.0...v0.82.0) (2026-02-22)
+
+### ⚠ BREAKING CHANGES
+
+* removes capabilities.proto and corresponding
+documentation
+
+Signed-off-by: Niels Pardon <par@zurich.ibm.com>
+
+### Features
+
+* remove capabilities.proto ([#952](https://github.com/substrait-io/substrait/issues/952)) ([23ac2f3](https://github.com/substrait-io/substrait/commit/23ac2f30e03a8d28f76e445bcd439064f3d688fd))
+
 ## [0.81.0](https://github.com/substrait-io/substrait/compare/v0.80.0...v0.81.0) (2026-02-08)
 
 ### ⚠ BREAKING CHANGES
