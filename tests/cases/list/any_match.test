@@ -13,6 +13,6 @@ any_match([]::list<i32>, (x -> gt(x, 0::i32))::func<i32 -> bool>) = false::bool
 # all_match: All elements match
 any_match([5, 6, 7]::list<i32>, (x -> gt(x, 4::i32))::func<i32 -> bool>) = true::bool
 
-# nullable_elements: Null elements (predicate returns null, ignored)
+# three_valued_logic: Null predicate results follow three-valued logic
 any_match([1, Null, 3]::list<i32?>, (x -> gt(x, 2::i32))::func<i32? -> bool>) = true::bool
-any_match([1, Null, 2]::list<i32?>, (x -> gt(x, 5::i32))::func<i32? -> bool>) = false::bool
+any_match([1, Null, 2]::list<i32?>, (x -> gt(x, 5::i32))::func<i32? -> bool>) = Null::bool
