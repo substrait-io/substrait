@@ -102,6 +102,7 @@ message Version {
 // Represents a binding for a dynamic parameter.
 message DynamicParameterBinding {
   // The parameter anchor that identifies the dynamic parameter reference.
+  // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
   uint32 parameter_anchor = 1;
 
   // The literal value assigned to the parameter at runtime.
