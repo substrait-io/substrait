@@ -12,6 +12,8 @@ scalar_functions:
 
       The transformer receives one parameter (the current element) and must return
       the transformed value.
+
+      If the input list is null, the result is null.
     impls:
       - args:
           - name: input
@@ -33,6 +35,8 @@ scalar_functions:
 
       Elements for which the predicate returns true are included in the
       result. Elements for which the predicate returns false or null are excluded.
+
+      If the input list is null, the result is null.
     impls:
       - args:
           - name: input
@@ -57,7 +61,7 @@ scalar_functions:
   # TODO: Add comparator overload for custom sorting (see #972)
   - name: "sort"
     description: >-
-      Sorts the elements of a list.
+      Sorts the elements of a list. Elements must be orderable.
 
       If the input list is null, the result is null.
     impls:
