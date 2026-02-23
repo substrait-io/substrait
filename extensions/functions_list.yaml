@@ -93,7 +93,7 @@ scalar_functions:
           - name: input
             value: list<any1>
           - name: predicate
-            value: func<any1 -> boolean>
+            value: func<any1 -> boolean?>
         nullability: MIRROR
         return: boolean
 
@@ -113,6 +113,6 @@ scalar_functions:
           - name: input
             value: list<any1>
           - name: predicate
-            value: func<any1 -> boolean>
+            value: func<any1 -> boolean?>
         nullability: MIRROR
         return: boolean
