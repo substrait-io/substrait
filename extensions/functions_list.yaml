@@ -70,11 +70,10 @@ scalar_functions:
             value: list<any1>
         options:
           direction:
-            description: Whether to sort in ascending (ASC) or descending (DESC) order.
-            values: [ASC, DESC]
-          null_placement:
-            description: Whether null elements appear at the beginning (NULLS_FIRST) or end (NULLS_LAST) of the result.
-            values: [NULLS_FIRST, NULLS_LAST]
+            description: >-
+              Sort direction and null placement, matching SortField.SortDirection
+              in the Sort relation.
+            values: [ASC_NULLS_FIRST, ASC_NULLS_LAST, DESC_NULLS_FIRST, DESC_NULLS_LAST]
         nullability: MIRROR
         return: list<any1>
 
