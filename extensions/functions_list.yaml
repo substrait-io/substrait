@@ -57,14 +57,18 @@ scalar_functions:
   # TODO: Add comparator overload for custom sorting (see #972)
   - name: "sort"
     description: >-
-      Sorts the elements of a list in ascending order with null elements
-      placed at the end.
+      Sorts the elements of a list.
 
       If the input list is null, the result is null.
     impls:
       - args:
           - name: input
             value: list<any1>
+        options:
+          direction:
+            values: [ASC, DESC]
+          null_placement:
+            values: [NULLS_FIRST, NULLS_LAST]
         nullability: MIRROR
         return: list<any1>
 
