@@ -557,6 +557,41 @@ message ExpandRel {
   }
 }
 
+// The Generate operator applies a table function to produce zero or more output
+// rows for each input row. This operation is used to flatten or "explode" nested
+// data structures like arrays and maps into separate rows, similar to SQL's
+// LATERAL VIEW EXPLODE or UNNEST operations.
+message GenerateRel {
+  RelCommon common = 1;
+
+  // The input relation to generate from. Each input row will produce zero or
+  // more output rows based on the generator table function.
+  Rel input = 2;
+
+  // The table expression to apply to each input row. This produces zero
+  // or more rows per input row. The output_type defines the schema
+  // of the generated columns, which are appended to the input schema.
+  //
+  // Required.
+  TableExpression generator = 3;
+
+  // Controls behavior when the generator produces zero rows for an input record.
+  //
+  // When false (default):
+  //   Input rows that produce zero output rows are excluded from the result.
+  //
+  // When true:
+  //   Input rows that produce zero output rows still generate one output row
+  //   with the input fields populated and the generator output fields set to NULL.
+  //   This is equivalent to Spark's "LATERAL VIEW OUTER" or can be achieved in
+  //   standard SQL via LEFT JOIN LATERAL.
+  //
+  // Optional; defaults to false.
+  bool preserve_on_empty = 4;
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
 // A relation with output field names.
 //
 // This is for use at the root of a `Rel` tree.
@@ -586,6 +621,7 @@ message Rel {
     WriteRel write = 19;
     DdlRel ddl = 20;
     UpdateRel update = 22;
+    GenerateRel generate = 23;
     // Physical relations
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
@@ -1687,6 +1723,54 @@ message Expression {
       // right side of the expression
       Rel right = 4;
     }
+  }
+}
+
+// TableExpression represents expressions that produce zero or more rows,
+// as opposed to Expression which produces a single scalar value.
+// Table expressions are used in relational contexts where multi-row output
+// is expected (e.g., GenerateRel for lateral views and unnest operations).
+//
+// Since they have different cardinality than Expression expressions,
+// TableExpression expressions cannot be composed with other expressions.
+message TableExpression {
+  oneof table_expr_type {
+    TableFunction table_function = 1;
+  }
+
+  // A table function call that produces zero or more rows per invocation.
+  // Table functions are similar to scalar functions but produce multiple output rows
+  // instead of a single scalar value. They are commonly used with the GenerateRel
+  // operator to flatten nested data structures like arrays and maps.
+  message TableFunction {
+    // Points to a function_anchor defined in this plan, which must refer
+    // to a table function in the associated YAML file. Table functions are
+    // distinguished from scalar functions by their ability to produce multiple
+    // output rows. Required; 0 is a valid anchor/reference.
+    uint32 function_reference = 1;
+
+    // The arguments to be bound to the table function. This must have exactly the
+    // number of arguments specified in the function definition, and the argument
+    // types must match:
+    //
+    //  - Value arguments must be bound using FunctionArgument.value
+    //  - Type arguments must be bound using FunctionArgument.type
+    //  - Enum arguments must be bound using FunctionArgument.enum
+    //
+    // For table functions, arguments typically reference fields from the input
+    // relation that contain nested data (arrays, maps, etc.) to be exploded.
+    repeated FunctionArgument arguments = 2;
+
+    // Options to specify behavior for corner cases (e.g., handling malformed data,
+    // ordering within generated rows, deduplication).
+    repeated FunctionOption options = 3;
+
+    // Must be set to the output type of the table function. For table functions,
+    // this must be a Struct type where each field represents a column in the
+    // generated output rows.
+    //
+    // Required.
+    Type output_type = 4;
   }
 }
 

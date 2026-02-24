@@ -75,6 +75,9 @@ class Extension:
         short_type = type_to_short_type.get(long_type, None)
 
         if short_type is None:
+            # For struct types, preserve the full parameterized type
+            if long_type.startswith("struct<"):
+                return long_type
             # remove the type parameters and try again
             if "<" in long_type:
                 long_type = long_type[: long_type.find("<")].rstrip("?")
@@ -157,6 +160,7 @@ class Extension:
         scalar_functions = {}
         aggregate_functions = {}
         window_functions = {}
+        table_functions = {}
         dependencies = {}
         # convert yaml file to a python dictionary
         for extension in extensions:
@@ -194,9 +198,21 @@ class Extension:
                         extension,
                         uri,
                     )
+                if "table_functions" in data:
+                    Extension.add_functions_to_map(
+                        data["table_functions"],
+                        table_functions,
+                        suffix,
+                        extension,
+                        uri,
+                    )
 
         return FunctionRegistry(
-            scalar_functions, aggregate_functions, window_functions, dependencies
+            scalar_functions,
+            aggregate_functions,
+            window_functions,
+            table_functions,
+            dependencies,
         )
 
 
@@ -204,6 +220,7 @@ class FunctionType:
     SCALAR = 1
     AGGREGATE = 2
     WINDOW = 3
+    TABLE = 4
 
 
 class FunctionVariant:
@@ -243,18 +260,26 @@ class FunctionRegistry:
     scalar_functions = dict()
     aggregate_functions = dict()
     window_functions = dict()
+    table_functions = dict()
     extensions = set()
 
     def __init__(
-        self, scalar_functions, aggregate_functions, window_functions, dependencies
+        self,
+        scalar_functions,
+        aggregate_functions,
+        window_functions,
+        table_functions,
+        dependencies,
     ):
         self.dependencies = dependencies
         self.scalar_functions = scalar_functions
         self.aggregate_functions = aggregate_functions
         self.window_functions = window_functions
+        self.table_functions = table_functions
         self.add_functions(scalar_functions, FunctionType.SCALAR)
         self.add_functions(aggregate_functions, FunctionType.AGGREGATE)
         self.add_functions(window_functions, FunctionType.WINDOW)
+        self.add_functions(table_functions, FunctionType.TABLE)
 
     def add_functions(self, functions, func_type):
         for func in functions.values():
@@ -281,6 +306,11 @@ class FunctionRegistry:
     @staticmethod
     def is_same_type(func_arg_type, arg_type):
         arg_type_base = arg_type.split("<")[0]
+        func_arg_type_base = func_arg_type.split("<")[0]
+
+        # If base types match, that's good enough for now
+        if func_arg_type_base == arg_type_base:
+            return True
         if func_arg_type == arg_type_base:
             return True
         return FunctionRegistry.is_type_any(func_arg_type)
