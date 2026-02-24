@@ -245,10 +245,11 @@ The join operation will combine two separate inputs into a single output, based 
 | Property         | Description                                                  | Required                           |
 | ---------------- | ------------------------------------------------------------ | ---------------------------------- |
 | Left Input       | A relational input.                                          | Required                           |
-| Right Input      | A relational input.                                          | Required                           |
+| Right Input      | A relational input. When `lateral` is true, this input may reference the current left row using `OuterReference`. | Required                           |
 | Join Expression  | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the input order of the data. | Required. Can be the literal True. |
 | Post-Join Filter | A boolean condition to be applied to each result record after the inputs have been joined, yielding only the records that satisfied the condition. | Optional                           |
 | Join Type        | One of the join types defined below.                         | Required                           |
+| Lateral          | When true, the right input is evaluated once per row of the left input (lateral join / correlated subquery). The right input may reference fields from the current left row using `FieldReference` with `OuterReference` as the `root_type` and `steps_out = 1`. When false (default), both inputs are independent. | Optional (default: false)          |
 
 ### Join Types
 
@@ -273,6 +274,24 @@ The join operation will combine two separate inputs into a single output, based 
     ```proto
 %%% proto.algebra.JoinRel %%%
     ```
+
+### Lateral Joins
+
+When the `lateral` flag is set to true, the join operates as a lateral (correlated) join. The right input is evaluated once per row of the left input, and the right input may reference fields from the current left row using a `FieldReference` with `OuterReference` as the `root_type` and `steps_out = 1`.
+
+Lateral joins can also introduce multiple nestings of subqueries. All outer input fields can be referenced using appropriate `steps_out` values with `OuterReference`. For example:
+
+```
+            Join (outer, lateral=true)
+           /     \
+     Input1(a)    Join (inner, lateral=true)
+                 /     \
+           Input2(b)    Subquery
+
+OuterReference access within each scope:
+  Input2   : a [steps_out=1]
+  Subquery : a [steps_out=2], b [steps_out=1]
+```
 
 
 ## Set Operation
@@ -556,59 +575,3 @@ The operator that defines modifications of a database schema (CREATE/DROP/ALTER 
 %%% proto.algebra.DdlRel %%%
     ```
 
-## Apply Operator
-
-The apply operator evaluates a given subquery for each row from the input and produces output from the subquery invocation. For Cross and Outer invocations, each subquery output is prepended with the current input row (see `Apply Invocation Types` for more detail). For Semi and Anti Semi invocations, only the input columns are included in the output. This is a general way to express a correlated subquery evaluation in a relational context. The subquery can reference the fields of the current input row using a `FieldReference` with `OuterReference` as the `root_type` and `steps_out = 1`, combined with a `direct_reference` to select the specific field.
-
-For example, the SQL query:
-
-```sql
-SELECT a, (SELECT MAX(b) FROM T2 WHERE T2.x = T1.a) FROM T1
-```
-
-can be represented as a Cross Apply where `T1` is the input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the subquery. Inside the subquery, `T1.a` is referenced via a `FieldReference` with `OuterReference { steps_out = 1 }` as the root.
-
-The Apply operator can introduce multiple nestings of subqueries. All outer input fields can be referenced using appropriate `steps_out` values with `OuterReference`. In the diagram below, each Apply node's left child is its `input` and right child is its `subquery`:
-
-```
-            Apply (outer)
-           /     \
-     Input1(a)    Apply (inner)
-                 /     \
-           Input2(b)    Subquery
-
-OuterReference access within each scope:
-  Input2   : a [steps_out=1]
-  Subquery : a [steps_out=2], b [steps_out=1]
-```
-
-| Signature            | Value                                                        |
-| -------------------- | ------------------------------------------------------------ |
-| Inputs               | 1 + 1 (Correlated subquery)                                  |
-| Outputs              | 1                                                            |
-| Property Maintenance | Input distribution is maintained. Physical relations may provide better property maintenance. |
-| Input Order          | The input order is the same as the output order of the `Input`. The subquery may reference the input row fields in this order using `OuterReference` with `steps_out = 1`. |
-| Direct Output Order  | For semi apply and anti semi apply, the emit order is `Input Order` only. Otherwise, the emit order is `Input Order` followed by the output order of the subquery. |
-
-### Apply Properties
-
-| Property         | Description                                                  | Required                           |
-| ---------------- | ------------------------------------------------------------ | ---------------------------------- |
-| Input            | A relational input.                                          | Required                           |
-| Subquery         | A subquery to evaluate for each row from the `Input`. May access the input row with `OuterReference` (`steps_out = 1`). | Required                           |
-| Invocation       | One of the apply invocation types defined below.             | Required                           |
-
-### Apply Invocation Types
-
-| Type      | Description                                                  |
-| --------- | ------------------------------------------------------------ |
-| Cross     | For each input record, yields the subquery output records prepended with the input record. If the subquery yields no rows, no output records are produced for that input row. This is the default when the invocation type is unspecified. |
-| Outer     | Same as *Cross* except that it yields one row with all NULLs for the subquery output fields if the subquery yields no rows. |
-| Semi      | For each input record, yields the input record (without subquery columns) if the subquery yields at least one row. |
-| Anti Semi | For each input record, yields the input record (without subquery columns) if the subquery yields no rows. |
-
-=== "ApplyRel Message"
-
-    ```proto
-%%% proto.algebra.ApplyRel %%%
-    ```
