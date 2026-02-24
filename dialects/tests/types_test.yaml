@@ -17,4 +17,13 @@ supported_types:
   - type: USER_DEFINED
     source: geo
     name: geometry
-
+  - type: PRECISION_TIME
+    max_precision: 3
+  - type: PRECISION_TIMESTAMP
+    max_precision: 6
+  - type: PRECISION_TIMESTAMP_TZ
+    max_precision: 12
+  - type: INTERVAL_COMPOUND
+    max_precision: 0
+  - type: INTERVAL_DAY
+    max_precision: 9
