@@ -271,6 +271,12 @@ message JoinRel {
   // root_type and steps_out = 1.
   //
   // When false (default), both inputs are independent.
+  //
+  // Right-oriented join types (RIGHT, RIGHT_SEMI, RIGHT_ANTI, RIGHT_SINGLE,
+  // RIGHT_MARK) and OUTER are not valid when lateral is true, because the
+  // right input has no independent existence — it is defined only in the
+  // context of a left row. Only INNER, LEFT, LEFT_SEMI, LEFT_ANTI,
+  // LEFT_SINGLE, and LEFT_MARK are permitted.
   bool lateral = 7;
 
   enum JoinType {
