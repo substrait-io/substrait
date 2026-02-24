@@ -265,6 +265,14 @@ message JoinRel {
 
   JoinType type = 6;
 
+  // When true, the right input is evaluated once per row of the left input
+  // (lateral join / correlated subquery). The right input may reference fields
+  // from the current left row using FieldReference with OuterReference as the
+  // root_type and steps_out = 1.
+  //
+  // When false (default), both inputs are independent.
+  bool lateral = 7;
+
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;
     JOIN_TYPE_INNER = 1;
@@ -585,7 +593,6 @@ message Rel {
     WriteRel write = 19;
     DdlRel ddl = 20;
     UpdateRel update = 22;
-    ApplyRel apply = 23;
     // Physical relations
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
@@ -1817,48 +1824,4 @@ message AggregateFunction {
 // in case we refer to a RelRoot field names will be ignored
 message ReferenceRel {
   int32 subtree_ordinal = 1;
-}
-
-// A rel that applies the subquery to each row of its input, producing a new relation.
-// For Cross and Outer invocations, each output row is the concatenation of the input row and a
-// row produced by the subquery for that input. For Semi and Anti Semi invocations, the output
-// rows contain only the input columns (the subquery columns are not included).
-// The subquery can reference the current row of the input relation, and the ApplyRel produces
-// zero or more output rows for each input row depending on the semantics of the invocation.
-message ApplyRel {
-  RelCommon common = 1;
-
-  // The input relation whose rows will be fed into the subquery.
-  // The subquery can reference the current row of this input relation using FieldReference with OuterReference
-  // as the root_type and steps_out = 1.
-  Rel input = 2;
-
-  // The subquery to apply to each row of the input relation.
-  Rel subquery = 3;
-
-  // Determines how input and subquery rows are combined in the output.
-  ApplyInvocation invocation = 4;
-
-  enum ApplyInvocation {
-    // This default value implies APPLY_INVOCATION_CROSS.
-    APPLY_INVOCATION_UNSPECIFIED = 0;
-
-    // The subquery is applied to each row of the input relation, and all subquery output rows are included in the final result.
-    // If the subquery produces zero rows for a given input, no output rows are produced for that input row.
-    APPLY_INVOCATION_CROSS = 1;
-
-    // Same as APPLY_INVOCATION_CROSS, except that if the subquery produces zero rows for a given input, exactly one output row
-    // is produced for that input with all subquery output fields set to NULL.
-    APPLY_INVOCATION_OUTER = 2;
-
-    // Only one row containing the input columns (without subquery columns) is produced for the input
-    // if the subquery produces at least one row for a given input. If the subquery produces zero rows,
-    // no output row is produced for that input.
-    APPLY_INVOCATION_SEMI = 3;
-
-    // Only one row containing the input columns (without subquery columns) is produced for the input
-    // if the subquery produces zero rows for a given input. If the subquery produces one or more rows,
-    // no output row is produced for that input.
-    APPLY_INVOCATION_ANTI_SEMI = 4;
-  }
 }
