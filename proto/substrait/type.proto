@@ -10,6 +10,10 @@ option go_package = "github.com/substrait-io/substrait-protobuf/go/substraitpb";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
 
+// Note: type_variation_reference fields within Type messages reference a
+// type_variation_anchor defined in the plan's extension declarations.
+//
+// The value 0 represents the system-preferred variation and is a valid reference value.
 message Type {
   oneof kind {
     Boolean bool = 1;
@@ -241,6 +245,7 @@ message Type {
   }
 
   message UserDefined {
+    // References a type_anchor defined in the plan's extension declarations.
     uint32 type_reference = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
@@ -274,6 +279,7 @@ message Type {
 message TypeAlias {
   // A surrogate key used in the context of a single plan to reference a
   // specific type alias.
+  // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
   uint32 type_alias_anchor = 1;
 
   // A concrete type to be aliased.
