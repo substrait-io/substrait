@@ -94,8 +94,8 @@ scalar_functions:
             value: list<any1>
           - name: predicate
             value: func<any1 -> boolean?>
-        nullability: MIRROR
-        return: boolean
+        nullability: DECLARED_OUTPUT
+        return: boolean?
 
   - name: "all_match"
     description: >-
@@ -114,5 +114,5 @@ scalar_functions:
             value: list<any1>
           - name: predicate
             value: func<any1 -> boolean?>
-        nullability: MIRROR
-        return: boolean
+        nullability: DECLARED_OUTPUT
+        return: boolean?
