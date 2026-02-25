@@ -527,7 +527,7 @@ class FuncTestCaseLexer(Lexer):
     DateLiteral = 31
     PeriodPrefix = 32
     TimePrefix = 33
-    YearPrefix = 34
+    YearSuffix = 34
     MSuffix = 35
     DaySuffix = 36
     HourSuffix = 37
@@ -657,7 +657,7 @@ class FuncTestCaseLexer(Lexer):
             "Truncate", "IntegerLiteral", "DecimalLiteral", "FloatLiteral", 
             "BooleanLiteral", "TimestampTzLiteral", "TimestampLiteral", 
             "TimeLiteral", "DateLiteral", "PeriodPrefix", "TimePrefix", 
-            "YearPrefix", "MSuffix", "DaySuffix", "HourSuffix", "SecondSuffix", 
+            "YearSuffix", "MSuffix", "DaySuffix", "HourSuffix", "SecondSuffix", 
             "FractionalSecondSuffix", "OAngleBracket", "CAngleBracket", 
             "IntervalYearLiteral", "IntervalDayLiteral", "IntervalCompoundLiteral", 
             "NullLiteral", "StringLiteral", "ColumnName", "LineComment", 
@@ -682,7 +682,7 @@ class FuncTestCaseLexer(Lexer):
                   "SpacesOnly", "Truncate", "IntegerLiteral", "DecimalLiteral", 
                   "FloatLiteral", "BooleanLiteral", "FourDigits", "TwoDigits", 
                   "TimestampTzLiteral", "TimestampLiteral", "TimeLiteral", 
-                  "DateLiteral", "PeriodPrefix", "TimePrefix", "YearPrefix", 
+                  "DateLiteral", "PeriodPrefix", "TimePrefix", "YearSuffix", 
                   "MSuffix", "DaySuffix", "HourSuffix", "SecondSuffix", 
                   "FractionalSecondSuffix", "OAngleBracket", "CAngleBracket", 
                   "IntervalYearLiteral", "IntervalDayLiteral", "TimeInterval", 

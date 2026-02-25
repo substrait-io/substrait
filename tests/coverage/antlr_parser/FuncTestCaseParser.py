@@ -331,7 +331,7 @@ class FuncTestCaseParser ( Parser ):
                       "IntegerLiteral", "DecimalLiteral", "FloatLiteral", 
                       "BooleanLiteral", "TimestampTzLiteral", "TimestampLiteral", 
                       "TimeLiteral", "DateLiteral", "PeriodPrefix", "TimePrefix", 
-                      "YearPrefix", "MSuffix", "DaySuffix", "HourSuffix", 
+                      "YearSuffix", "MSuffix", "DaySuffix", "HourSuffix", 
                       "SecondSuffix", "FractionalSecondSuffix", "OAngleBracket", 
                       "CAngleBracket", "IntervalYearLiteral", "IntervalDayLiteral", 
                       "IntervalCompoundLiteral", "NullLiteral", "StringLiteral", 
@@ -491,7 +491,7 @@ class FuncTestCaseParser ( Parser ):
     DateLiteral=31
     PeriodPrefix=32
     TimePrefix=33
-    YearPrefix=34
+    YearSuffix=34
     MSuffix=35
     DaySuffix=36
     HourSuffix=37
