@@ -360,6 +360,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#intervalCompoundArg.
+    def enterIntervalCompoundArg(self, ctx:FuncTestCaseParser.IntervalCompoundArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#intervalCompoundArg.
+    def exitIntervalCompoundArg(self, ctx:FuncTestCaseParser.IntervalCompoundArgContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#fixedCharArg.
     def enterFixedCharArg(self, ctx:FuncTestCaseParser.FixedCharArgContext):
         pass
@@ -699,6 +708,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#intervalDayType.
     def exitIntervalDayType(self, ctx:FuncTestCaseParser.IntervalDayTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#intervalCompoundType.
+    def enterIntervalCompoundType(self, ctx:FuncTestCaseParser.IntervalCompoundTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#intervalCompoundType.
+    def exitIntervalCompoundType(self, ctx:FuncTestCaseParser.IntervalCompoundTypeContext):
         pass
 
 

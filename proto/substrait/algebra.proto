@@ -388,6 +388,7 @@ message ConsistentPartitionWindowRel {
   // sorts, and bounds, since those must be consistent across the various functions in this rel.  Refer
   // to the `WindowFunction` message for a description of these fields.
   message WindowRelFunction {
+    // References a function_anchor defined in this plan.
     uint32 function_reference = 1;
 
     repeated FunctionArgument arguments = 9;
@@ -788,7 +789,7 @@ message ComparisonJoinKey {
       // A custom comparison behavior is used.  This can happen, for example, when using
       // collations, where we might want to do something like a case-insensitive comparison.
       //
-      // This must be a binary function with a boolean return type
+      // This must be a binary function with a boolean return type.
       uint32 custom_function_reference = 2;
     }
   }
@@ -1220,8 +1221,7 @@ message Expression {
   // A scalar function call.
   message ScalarFunction {
     // Points to a function_anchor defined in this plan, which must refer
-    // to a scalar function in the associated YAML file. Required; avoid
-    // using anchor/reference zero.
+    // to a scalar function in the associated YAML file. Required.
     uint32 function_reference = 1;
 
     // The arguments to be bound to the function. This must have exactly the
@@ -1259,7 +1259,7 @@ message Expression {
     // An aggregate function referenced here should be treated as a window
     // function with Window Type STREAMING
     //
-    // Required; 0 is considered to be a valid anchor/reference.
+    // Required.
     uint32 function_reference = 1;
 
     // The arguments to be bound to the function. This must have exactly the
@@ -1697,6 +1697,7 @@ message DynamicParameter {
   Type type = 1;
 
   // The surrogate key used within a plan to reference a specific parameter binding.
+  // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
   uint32 parameter_reference = 2;
 }
 
@@ -1706,6 +1707,7 @@ message SortField {
 
   oneof sort_kind {
     SortDirection direction = 2;
+    // References a function_anchor defined in this plan.
     uint32 comparison_function_reference = 3;
   }
   enum SortDirection {
@@ -1751,8 +1753,7 @@ enum AggregationPhase {
 // An aggregate function.
 message AggregateFunction {
   // Points to a function_anchor defined in this plan, which must refer
-  // to an aggregate function in the associated YAML file. Required; 0 is
-  // considered to be a valid anchor/reference.
+  // to an aggregate function in the associated YAML file. Required.
   uint32 function_reference = 1;
 
   // The arguments to be bound to the function. This must have exactly the

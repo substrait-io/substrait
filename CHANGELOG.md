@@ -1,6 +1,34 @@
 Release Notes
 ---
 
+## [0.82.0](https://github.com/substrait-io/substrait/compare/v0.81.0...v0.82.0) (2026-02-22)
+
+### ⚠ BREAKING CHANGES
+
+* removes capabilities.proto and corresponding
+documentation
+
+Signed-off-by: Niels Pardon <par@zurich.ibm.com>
+
+### Features
+
+* remove capabilities.proto ([#952](https://github.com/substrait-io/substrait/issues/952)) ([23ac2f3](https://github.com/substrait-io/substrait/commit/23ac2f30e03a8d28f76e445bcd439064f3d688fd))
+
+## [0.81.0](https://github.com/substrait-io/substrait/compare/v0.80.0...v0.81.0) (2026-02-08)
+
+### ⚠ BREAKING CHANGES
+
+* I would propose to remove these proto definitions if
+they are not used / no longer part of the spec.
+
+### Features
+
+* remove unused function.proto, parameterized_types.proto, type_expressions.proto ([#940](https://github.com/substrait-io/substrait/issues/940)) ([788faab](https://github.com/substrait-io/substrait/commit/788faab7fdcc42742f5f2cb83294dd6966804109))
+
+### Bug Fixes
+
+* add missing visit methods in TestCaseVisitor ([#958](https://github.com/substrait-io/substrait/issues/958)) ([09e7c18](https://github.com/substrait-io/substrait/commit/09e7c180b32ebbd153a66e8fd78eec11d5aad386))
+
 ## [0.80.0](https://github.com/substrait-io/substrait/compare/v0.79.0...v0.80.0) (2026-01-18)
 
 ### Features
