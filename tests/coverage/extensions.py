@@ -147,6 +147,12 @@ class Extension:
     @staticmethod
     def read_substrait_extensions(dir_path: str):
         # read files from extensions directory
+        # Scan all YAML files, not just functions_* prefixed ones, so that
+        # self-contained extension type files (e.g. unsigned_integers.yaml)
+        # with function definitions are also discovered. Files without
+        # scalar_functions/aggregate_functions/window_functions sections are
+        # safely skipped by the guards below. unknown.yaml is excluded
+        # because it defines an "unknown" type not in the type mapping.
         extensions = []
         for root, dirs, files in os.walk(dir_path):
             for file in files:
