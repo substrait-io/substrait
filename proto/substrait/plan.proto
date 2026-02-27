@@ -20,6 +20,33 @@ message PlanRel {
     // The root of a relation tree
     RelRoot root = 2;
   }
+
+  // Declarations of outer reference parameters for this PlanRel. Required
+  // when the Rel contains FieldReference expressions rooted on OuterReference.
+  // Any ReferenceRel that references this PlanRel's ordinal position must
+  // provide outer_reference_bindings whose entries positionally correspond
+  // to these declarations.
+  //
+  // This is used when the Rel within this PlanRel is a parameterized common
+  // subexpression — i.e., it contains FieldReference expressions rooted on
+  // OuterReference that act as free variables. Each declaration identifies the
+  // outer reference slot (via a FieldReference rooted on OuterReference) and
+  // its expected type.
+  //
+  // There must be exactly one declaration per distinct outer-reference-rooted
+  // FieldReference used within the Rel.
+  repeated OuterReferenceDeclaration outer_reference_declarations = 3;
+
+  // Declares the type of a single outer reference parameter.
+  message OuterReferenceDeclaration {
+    // The outer reference being declared. This must be a FieldReference with
+    // root_type set to OuterReference, matching a FieldReference used inside
+    // the Rel of this PlanRel.
+    Expression.FieldReference outer_reference = 1;
+
+    // The type of the value at this outer reference slot.
+    Type type = 2;
+  }
 }
 
 // Describe a set of operations to complete.

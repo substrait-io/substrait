@@ -1813,8 +1813,29 @@ message AggregateFunction {
   }
 }
 
-// This rel is used  to create references,
-// in case we refer to a RelRoot field names will be ignored
+// This rel is used to create references to other Rels within the same Plan,
+// enabling DAGs of operations and multi-query optimization. When the
+// referenced Rel contains outer references (free variables), the
+// outer_reference_bindings field must be used to provide field references
+// that resolve those references. In case we refer to a RelRoot, field names
+// will be ignored.
 message ReferenceRel {
+  // A zero-indexed positional reference to a Rel defined within the same Plan.
   int32 subtree_ordinal = 1;
+
+  // Bindings for outer references within the referenced Rel subtree.
+  //
+  // When the referenced Rel (at the specified subtree_ordinal) contains
+  // FieldReference expressions with OuterReference root types, these bindings
+  // resolve those references. Each entry is a FieldReference evaluated in
+  // the relational context where this ReferenceRel appears.
+  //
+  // Entries are positionally matched to the outer_reference_declarations in
+  // the corresponding PlanRel: outer_reference_bindings[i] provides the
+  // concrete value for outer_reference_declarations[i]. The number of
+  // bindings must equal the number of declarations.
+  //
+  // If the referenced Rel contains no outer references, this field should
+  // be empty.
+  repeated Expression.FieldReference outer_reference_bindings = 2;
 }
