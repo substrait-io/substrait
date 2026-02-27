@@ -3,3 +3,4 @@
 **/.idea
 **/build
 gen
+tests/coverage/antlr_parser/__pycache__/
