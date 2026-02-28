@@ -1,0 +1,12 @@
+urn: extension:example:variadic_inconsistent
+scalar_functions:
+- name: count_args
+  description: Returns the number of arguments. Each argument can be a different type.
+  impls:
+  - args:
+    - name: first
+      value: any
+    variadic:
+      min: 1
+      parameterConsistency: INCONSISTENT
+    return: i64
