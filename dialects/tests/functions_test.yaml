@@ -1,5 +1,8 @@
 name: "dialect test file for functions"
 
+metadata:
+  vendor: "Example Database Corp"
+
 dependencies:
   arithmetic: extension:io.substrait:functions_arithmetic
   boolean: extension:io.substrait:functions_boolean
@@ -9,6 +12,8 @@ dependencies:
 supported_scalar_functions:
 - source: arithmetic
   name: add
+  metadata:
+    doc_url: "https://example.com/docs/add"
   system_metadata:
     name: +
     notation: INFIX

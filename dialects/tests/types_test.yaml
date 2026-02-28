@@ -1,5 +1,8 @@
 name: "dialect test file for types"
 
+metadata:
+  supported_precision_range: [1, 38]
+
 dependencies:
   geo: extension:io.substrait:functions_geometry
 
@@ -7,6 +10,8 @@ supported_types:
   - I8
   - I16
   - type: I32
+    metadata:
+      storage_bytes: 4
     system_metadata:
       name: INTEGER
       supported_as_column: true

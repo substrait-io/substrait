@@ -12,6 +12,9 @@ properties:
   name:
     type: string
     description: Optional name of the dialect (e.g., "MySQL", "PostgreSQL", "Spark").
+  metadata:
+    type: object
+    description: Arbitrary data created by the dialect author.
   dependencies:
     type: object
     description: >
@@ -198,6 +201,9 @@ definitions:
         type: string
         description: >
           The name of the function as declared in the extension it is defined in.
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         type: object
         description: system specific metadata for the function
@@ -266,6 +272,9 @@ definitions:
     type: object
     description: Dialect properties shared by all types
     properties:
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         type: object
         description: system specific metadata for the type
@@ -294,6 +303,9 @@ definitions:
     properties:
       type:
         const: BOOL
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_i8:
@@ -303,6 +315,9 @@ definitions:
     properties:
       type:
         const: I8
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_i16:
@@ -312,6 +327,9 @@ definitions:
     properties:
       type:
         const: I16
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_i32:
@@ -321,6 +339,9 @@ definitions:
     properties:
       type:
         const: I32
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_i64:
@@ -330,6 +351,9 @@ definitions:
     properties:
       type:
         const: I64
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_fp32:
@@ -339,6 +363,9 @@ definitions:
     properties:
       type:
         const: FP32
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_fp64:
@@ -348,6 +375,9 @@ definitions:
     properties:
       type:
         const: FP64
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_binary:
@@ -357,6 +387,9 @@ definitions:
     properties:
       type:
         const: BINARY
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_fixed_binary:
@@ -366,6 +399,9 @@ definitions:
     properties:
       type:
         const: FIXED_BINARY
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_string:
@@ -375,6 +411,9 @@ definitions:
     properties:
       type:
         const: STRING
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_varchar:
@@ -384,6 +423,9 @@ definitions:
     properties:
       type:
         const: VARCHAR
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_fixed_char:
@@ -393,6 +435,9 @@ definitions:
     properties:
       type:
         const: FIXED_CHAR
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_precision_time:
@@ -402,6 +447,9 @@ definitions:
     properties:
       type:
         const: PRECISION_TIME
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
       max_precision:
@@ -421,6 +469,9 @@ definitions:
     properties:
       type:
         const: PRECISION_TIMESTAMP
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
       max_precision:
@@ -440,6 +491,9 @@ definitions:
     properties:
       type:
         const: PRECISION_TIMESTAMP_TZ
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
       max_precision:
@@ -459,6 +513,9 @@ definitions:
     properties:
       type:
         const: DATE
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_time:
@@ -468,6 +525,9 @@ definitions:
     properties:
       type:
         const: TIME
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_interval_compound:
@@ -477,6 +537,9 @@ definitions:
     properties:
       type:
         const: INTERVAL_COMPOUND
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
       max_precision:
@@ -496,6 +559,9 @@ definitions:
     properties:
       type:
         const: INTERVAL_DAY
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
       max_precision:
@@ -516,6 +582,9 @@ definitions:
     properties:
       type:
         const: INTERVAL_YEAR
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_uuid:
@@ -525,6 +594,9 @@ definitions:
     properties:
       type:
         const: UUID
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_decimal:
@@ -534,6 +606,9 @@ definitions:
     properties:
       type:
         const: DECIMAL
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_struct:
@@ -543,6 +618,9 @@ definitions:
     properties:
       type:
         const: STRUCT
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_list:
@@ -552,6 +630,9 @@ definitions:
     properties:
       type:
         const: LIST
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_map:
@@ -561,6 +642,9 @@ definitions:
     properties:
       type:
         const: MAP
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
   type_user_defined:
@@ -577,6 +661,9 @@ definitions:
         type: string
         description: >
           The name of the type as declared in the extension it is defined in.
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
 
@@ -605,6 +692,9 @@ definitions:
     properties:
       relation:
         const: READ
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       read_types:
         type: array
         uniqueItems: true
@@ -623,6 +713,9 @@ definitions:
     properties:
       relation:
         const: FILTER
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [relation]
   fetch_relation:
     type: object
@@ -630,6 +723,9 @@ definitions:
     properties:
       relation:
         const: FETCH
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [relation]
   aggregate_relation:
     type: object
@@ -637,6 +733,9 @@ definitions:
     properties:
       relation:
         const: AGGREGATE
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [relation]
   sort_relation:
     type: object
@@ -644,6 +743,9 @@ definitions:
     properties:
       relation:
         const: SORT
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [relation]
   join_relation:
     type: object
@@ -651,6 +753,9 @@ definitions:
     properties:
       relation:
         const: JOIN
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       join_types:
         $ref: "#/definitions/join_types"
     required: [relation]
@@ -660,6 +765,9 @@ definitions:
     properties:
       relation:
         const: PROJECT
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [relation]
   set_relation:
     type: object
@@ -667,6 +775,9 @@ definitions:
     properties:
       relation:
         const: SET
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       operations:
         type: array
         uniqueItems: true
@@ -688,6 +799,9 @@ definitions:
     properties:
       relation:
         const: EXTENSION_SINGLE
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       message_types:
         type: array
         uniqueItems: true
@@ -704,6 +818,9 @@ definitions:
     properties:
       relation:
         const: EXTENSION_MULTI
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       message_types:
         type: array
         uniqueItems: true
@@ -720,6 +837,9 @@ definitions:
     properties:
       relation:
         const: EXTENSION_LEAF
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       message_types:
         type: array
         uniqueItems: true
@@ -736,6 +856,9 @@ definitions:
     properties:
       relation:
         const: CROSS
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [relation]
   reference_relation:
     type: object
@@ -743,6 +866,9 @@ definitions:
     properties:
       relation:
         const: REFERENCE
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [relation]
   write_relation:
     type: object
@@ -750,6 +876,9 @@ definitions:
     properties:
       relation:
         const: WRITE
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       write_types:
         type: array
         uniqueItems: true
@@ -765,6 +894,9 @@ definitions:
     properties:
       relation:
         const: DDL
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       write_types:
         type: array
         uniqueItems: true
@@ -780,6 +912,9 @@ definitions:
     properties:
       relation:
         const: UPDATE
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [relation]
   hash_join_relation:
     type: object
@@ -787,6 +922,9 @@ definitions:
     properties:
       relation:
         const: HASH_JOIN
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       join_types:
         $ref: "#/definitions/join_types"
     required: [relation]
@@ -796,6 +934,9 @@ definitions:
     properties:
       relation:
         const: MERGE_JOIN
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       join_types:
         $ref: "#/definitions/join_types"
     required: [relation]
@@ -805,6 +946,9 @@ definitions:
     properties:
       relation:
         const: NESTED_LOOP_JOIN
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       join_types:
         $ref: "#/definitions/join_types"
     required: [relation]
@@ -814,6 +958,9 @@ definitions:
     properties:
       relation:
         const: CONSISTENT_PARTITION_WINDOW
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [relation]
   exchange_relation:
     type: object
@@ -821,6 +968,9 @@ definitions:
     properties:
       relation:
         const: EXCHANGE
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       kinds:
         type: array
         uniqueItems: true
@@ -839,6 +989,9 @@ definitions:
     properties:
       relation:
         const: EXPAND
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       field_types:
         type: array
         uniqueItems: true
@@ -856,6 +1009,9 @@ definitions:
     properties:
       expression:
         const: LITERAL
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       # Type restriction not needed as types are restricted explicitly by supported_types.
     required: [expression]
   selection_expression:
@@ -864,6 +1020,9 @@ definitions:
     properties:
       expression:
         const: SELECTION
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [expression]
   scalar_function_expression:
     type: object
@@ -871,6 +1030,9 @@ definitions:
     properties:
       expression:
         const: SCALAR_FUNCTION
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [expression]
   window_function_expression:
     type: object
@@ -878,6 +1040,9 @@ definitions:
     properties:
       expression:
         const: WINDOW_FUNCTION
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [expression]
   if_then_expression:
     type: object
@@ -885,6 +1050,9 @@ definitions:
     properties:
       expression:
         const: IF_THEN
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [expression]
   switch_expression:
     type: object
@@ -892,6 +1060,9 @@ definitions:
     properties:
       expression:
         const: SWITCH
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [expression]
   singular_or_list_expression:
     type: object
@@ -899,6 +1070,9 @@ definitions:
     properties:
       expression:
         const: SINGULAR_OR_LIST
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [expression]
   multi_or_list_expression:
     type: object
@@ -906,6 +1080,9 @@ definitions:
     properties:
       expression:
         const: MULTI_OR_LIST
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [expression]
   # embedded_function_expression not included due to insufficient proto support.
   cast_expression:
@@ -914,6 +1091,9 @@ definitions:
     properties:
       expression:
         const: CAST
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       failure_options:
         type: array
         uniqueItems: true
@@ -929,6 +1109,9 @@ definitions:
     properties:
       expression:
         const: SUBQUERY
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       subquery_types:
         type: array
         description: The possible subquery types for a subquery relation.
@@ -945,6 +1128,9 @@ definitions:
     properties:
       expression:
         const: NESTED
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
       nested_types:
         type: array
         description: The valid nested types.
@@ -960,4 +1146,7 @@ definitions:
     properties:
       expression:
         const: DYNAMIC_PARAMETER
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
     required: [expression]
