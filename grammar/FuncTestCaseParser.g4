@@ -70,6 +70,7 @@ argument
     | precisionTimestampTZArg
     | listArg
     | lambdaArg
+    | udtArg
     | Identifier  // Bare identifiers (for lambda parameters)
     ;
 
@@ -215,6 +216,10 @@ listArg
 
 lambdaArg
     : literalLambda DoubleColon funcType
+    ;
+
+udtArg
+    : literal DoubleColon UserDefined Identifier isnull=QMark?
     ;
 
 literalList

@@ -1,0 +1,8 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/unsigned_integers.yaml'
+
+# basic: Basic unsigned integer examples
+subtract('250'::u!u8, '50'::u!u8) = '200'::u!u8
+subtract('60000'::u!u16, '10000'::u!u16) = '50000'::u!u16
+subtract('4000000000'::u!u32, '1000000000'::u!u32) = '3000000000'::u!u32
+subtract('11000000000000000000'::u!u64, '1000000000000000000'::u!u64) = '10000000000000000000'::u!u64

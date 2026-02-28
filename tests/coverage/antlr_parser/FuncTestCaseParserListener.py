@@ -441,6 +441,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#udtArg.
+    def enterUdtArg(self, ctx:FuncTestCaseParser.UdtArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#udtArg.
+    def exitUdtArg(self, ctx:FuncTestCaseParser.UdtArgContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#literalList.
     def enterLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
         pass
