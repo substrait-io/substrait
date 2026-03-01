@@ -2,7 +2,6 @@ parser grammar FuncTestCaseParser;
 
 options {
     caseInsensitive = true;
-    tokenVocab=SubstraitLexer;
     tokenVocab=FuncTestCaseLexer;
 }
 
