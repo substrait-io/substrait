@@ -976,6 +976,7 @@ message Expression {
     DynamicParameter dynamic_parameter = 14;
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
+    ExecutionContextVariable execution_context_variable = 17;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -1686,6 +1687,26 @@ message Expression {
       Expression left = 3;
       // right side of the expression
       Rel right = 4;
+    }
+  }
+
+  // Expression that represents execution context dependent dependent variables
+  message ExecutionContextVariable {
+    oneof execution_context_variable_type {
+      // an execution context dependent variable containing the current
+      // timestamp in current_timezone
+      // nullability must be NULLABILITY_REQUIRED
+      Type.PrecisionTimestampTZ current_timestamp = 1;
+
+      // an execution context dependent variable containing the current
+      // session timezone as a string defined by IANA timezone database
+      // (https://www.iana.org/time-zones).
+      // nullability must be NULLABILITY_REQUIRED
+      Type.String current_timezone = 2;
+
+      // an execution context dependent variable containing the current date
+      // nullability must be NULLABILITY_REQUIRED
+      Type.Date current_date = 3;
     }
   }
 }
