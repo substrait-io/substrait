@@ -1,6 +1,16 @@
 Release Notes
 ---
 
+## [0.83.0](https://github.com/substrait-io/substrait/compare/v0.82.0...v0.83.0) (2026-03-01)
+
+### Features
+
+* **dialect:** support specifying maximum supported subsecond precision ([#961](https://github.com/substrait-io/substrait/issues/961)) ([e559368](https://github.com/substrait-io/substrait/commit/e5593685d5c7036fe67542bf7b46e6a3ee5e4a1d))
+
+### Bug Fixes
+
+* **grammar:** add IntervalCompound to ANTLR grammar ([#963](https://github.com/substrait-io/substrait/issues/963)) ([2705258](https://github.com/substrait-io/substrait/commit/2705258137b7272830cf00680e6f3a36b8d3ed4b))
+
 ## [0.82.0](https://github.com/substrait-io/substrait/compare/v0.81.0...v0.82.0) (2026-02-22)
 
 ### ⚠ BREAKING CHANGES
