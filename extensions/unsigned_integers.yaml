@@ -4,19 +4,27 @@ urn: "extension:io.substrait:unsigned_integers"
 
 types:
   - name: u8
-    description: Unsigned 8-bit integer (0 to 255)
+    description: >
+      Unsigned 8-bit integer (0 to 255).
+      Values are encoded as decimal strings in the structure representation.
     structure:
       value: str
   - name: u16
-    description: Unsigned 16-bit integer (0 to 65535)
+    description: >
+      Unsigned 16-bit integer (0 to 65535).
+      Values are encoded as decimal strings in the structure representation.
     structure:
       value: str
   - name: u32
-    description: Unsigned 32-bit integer (0 to 4294967295)
+    description: >
+      Unsigned 32-bit integer (0 to 4294967295).
+      Values are encoded as decimal strings in the structure representation.
     structure:
       value: str
   - name: u64
-    description: Unsigned 64-bit integer (0 to 18446744073709551615)
+    description: >
+      Unsigned 64-bit integer (0 to 18446744073709551615).
+      Values are encoded as decimal strings in the structure representation.
     structure:
       value: str
 
@@ -144,7 +152,9 @@ scalar_functions:
   -
     name: "divide"
     description: >
-      Divide x by y. Partial values are truncated (rounded towards 0).
+      Divide x by y. Partial values are truncated (i.e. rounded towards 0).
+      The `on_division_by_zero` option governs behavior in cases where y is 0.
+      If either x or y are out of range, behavior will be governed by `on_domain_error`.
     impls:
       - args:
           - name: x
