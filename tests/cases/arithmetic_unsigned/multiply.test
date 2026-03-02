@@ -6,3 +6,11 @@ multiply('25'::u!u8, '5'::u!u8) = '125'::u!u8
 multiply('200'::u!u16, '100'::u!u16) = '20000'::u!u16
 multiply('300'::u!u32, '200'::u!u32) = '60000'::u!u32
 multiply('80000'::u!u64, '5000'::u!u64) = '400000000'::u!u64
+
+# overflow: Examples demonstrating overflow behavior
+multiply('200'::u!u8, '2'::u!u8) [overflow:ERROR] = <!ERROR>
+multiply('40000'::u!u16, '2'::u!u16) [overflow:ERROR] = <!ERROR>
+multiply('3000000000'::u!u32, '2'::u!u32) [overflow:ERROR] = <!ERROR>
+multiply('10000000000000000000'::u!u64, '2'::u!u64) [overflow:ERROR] = <!ERROR>
+multiply('200'::u!u8, '2'::u!u8) [overflow:SATURATE] = '255'::u!u8
+multiply('200'::u!u8, '2'::u!u8) [overflow:SILENT] = <!UNDEFINED>

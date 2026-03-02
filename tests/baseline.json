@@ -9,7 +9,7 @@
     "num_function_overloads": 561
   },
   "coverage": {
-    "total_test_count": 1172,
+    "total_test_count": 1207,
     "num_function_variants": 561,
     "num_covered_function_variants": 273
   }
