@@ -398,30 +398,60 @@ definitions:
   type_precision_time:
     type: object
     additionalProperties: false
-    required: [type]
+    required: [type, max_precision]
     properties:
       type:
         const: PRECISION_TIME
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        description: >-
+          The maximum subsecond precision for the PRECISION_TIME data type
+          supported by this dialect.
+
+          Since the maximum precision in Substrait for PRECISION_TIME is 12
+          the value must be in range: 0 <= max_precision <= 12.
+        type: integer
+        minimum: 0
+        maximum: 12
   type_precision_timestamp:
     type: object
     additionalProperties: false
-    required: [type]
+    required: [type, max_precision]
     properties:
       type:
         const: PRECISION_TIMESTAMP
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        description: >-
+          The maximum subsecond precision for the PRECISION_TIMESTAMP data type
+          supported by this dialect.
+
+          Since the maximum precision in Substrait for PRECISION_TIMESTAMP is
+          12 the value must be in range: 0 <= max_precision <= 12.
+        type: integer
+        minimum: 0
+        maximum: 12
   type_precision_timestamp_tz:
     type: object
     additionalProperties: false
-    required: [type]
+    required: [type, max_precision]
     properties:
       type:
         const: PRECISION_TIMESTAMP_TZ
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        description: >-
+          The maximum subsecond precision for the PRECISION_TIMESTAMP_TZ data
+          type supported by this dialect.
+
+          Since the maximum precision in Substrait for PRECISION_TIMESTAMP_TZ is
+          12 the value must be in range: 0 <= max_precision <= 12.
+        type: integer
+        minimum: 0
+        maximum: 12
   type_date:
     type: object
     additionalProperties: false
@@ -443,21 +473,42 @@ definitions:
   type_interval_compound:
     type: object
     additionalProperties: false
-    required: [type]
+    required: [type, max_precision]
     properties:
       type:
         const: INTERVAL_COMPOUND
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        description: >-
+          The maximum subsecond precision for the INTERVAL_COMPOUND data type
+          supported by this dialect.
+
+          Since the maximum precision in Substrait for INTERVAL_COMPOUND is 12
+          the value must be in range: 0 <= max_precision <= 12.
+        type: integer
+        minimum: 0
+        maximum: 12
   type_interval_day:
     type: object
     additionalProperties: false
-    required: [type]
+    required: [type, max_precision]
     properties:
       type:
         const: INTERVAL_DAY
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        description: >-
+          The maximum subsecond precision for the INTERVAL_DAY data type
+          supported by this dialect.
+
+
+          Since the maximum precision in Substrait for INTERVAL_DAY is 9
+          the value must be in range: 0 <= max_precision <= 9.
+        type: integer
+        minimum: 0
+        maximum: 9
   type_interval_year:
     type: object
     additionalProperties: false

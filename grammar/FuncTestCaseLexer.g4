@@ -78,7 +78,7 @@ DateLiteral
 
 PeriodPrefix: 'P';
 TimePrefix: 'T';
-YearPrefix: 'Y';
+YearSuffix: 'Y';
 MSuffix: 'M';  // used for both months and minutes
 DaySuffix: 'D';
 HourSuffix: 'H';
@@ -88,7 +88,7 @@ OAngleBracket: Lt;
 CAngleBracket: Gt;
 
 IntervalYearLiteral
-    : '\'' PeriodPrefix IntegerLiteral YearPrefix (IntegerLiteral MSuffix)? '\''
+    : '\'' PeriodPrefix IntegerLiteral YearSuffix (IntegerLiteral MSuffix)? '\''
     | '\'' PeriodPrefix IntegerLiteral MSuffix '\''
     ;
 
@@ -101,6 +101,10 @@ fragment TimeInterval
     : IntegerLiteral HourSuffix (IntegerLiteral MSuffix)? (DecimalLiteral SecondSuffix)?
     | IntegerLiteral MSuffix (DecimalLiteral SecondSuffix)?
     | DecimalLiteral SecondSuffix
+    ;
+
+IntervalCompoundLiteral
+    : '\'' PeriodPrefix (IntegerLiteral YearSuffix)? (IntegerLiteral MSuffix)? (IntegerLiteral DaySuffix)? (TimePrefix TimeInterval)? '\''
     ;
 
 NullLiteral: 'null';

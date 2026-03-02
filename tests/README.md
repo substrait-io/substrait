@@ -111,8 +111,9 @@ options     := <option>, <option>, ... <option>
 option      := <option_name>:<option_value>
 literal_value := string | integer | decimal | float | boolean | date | time | timestamp | timestamp_tz | interval year | interval days | null
 datatype    := <basic_type> | <parametrized_type> | <complex_type>
-basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | time | ts | tstz | iyear | iday | <parametrized_type>
-parametrized_type := dec<int,int> | fchar<int> | vchar<int> | vbin<int>
+basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | time | ts | tstz | iyear | vbin | <parametrized_type>
+parametrized_type := fchar<int> | vchar<int> | dec<int,int> | fbin<int> | iday<int> | icompound<int> | pt<int> | pts<int> | ptstz<int> | func<params -> datatype>
+params := datatype | (datatype(, datatype)*)
 complex_type := <struct> | <list> | <map>
 substrait_error := <!ERROR> | <!UNDEFINED>
 ```
@@ -186,6 +187,7 @@ Use short names listed in https://substrait.io/extensions/#function-signature-co
 - **tstz**: Timestamp with timezone
 - **iyear**: Interval year
 - **iday**: Interval days
+- **icompound**: Interval compound
 - **pt**: Precision Time
 - **pts**: Precision Timestamp
 - **ptstz**: Precision Timestamp with timezone

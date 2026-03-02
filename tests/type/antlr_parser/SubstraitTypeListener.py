@@ -207,6 +207,15 @@ class SubstraitTypeListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SubstraitTypeParser#precisionIntervalCompound.
+    def enterPrecisionIntervalCompound(self, ctx:SubstraitTypeParser.PrecisionIntervalCompoundContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#precisionIntervalCompound.
+    def exitPrecisionIntervalCompound(self, ctx:SubstraitTypeParser.PrecisionIntervalCompoundContext):
+        pass
+
+
     # Enter a parse tree produced by SubstraitTypeParser#precisionTime.
     def enterPrecisionTime(self, ctx:SubstraitTypeParser.PrecisionTimeContext):
         pass
