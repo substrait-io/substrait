@@ -32,6 +32,8 @@ message SimpleExtensionDeclaration {
 
   // Describes a Type
   message ExtensionType {
+    reserved 1;
+
     // references the extension_urn_anchor defined for a specific extension URN.
     uint32 extension_urn_reference = 4;
 
@@ -45,6 +47,8 @@ message SimpleExtensionDeclaration {
   }
 
   message ExtensionTypeVariation {
+    reserved 1;
+
     // references the extension_urn_anchor defined for a specific extension URN.
     uint32 extension_urn_reference = 4;
 
@@ -58,6 +62,8 @@ message SimpleExtensionDeclaration {
   }
 
   message ExtensionFunction {
+    reserved 1;
+
     // references the extension_urn_anchor defined for a specific extension URN.
     uint32 extension_urn_reference = 4;
 

@@ -25,6 +25,8 @@ message ExpressionReference {
 // Describe a set of operations to complete.
 // For compactness sake, identifiers are normalized at the plan level.
 message ExtendedExpression {
+  reserved 1;
+
   // Substrait version of the expression. Optional up to 0.17.0, required for later
   // versions.
   Version version = 7;
