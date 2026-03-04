@@ -26,3 +26,40 @@ scalar_functions:
             values: [ NAN_IS_NAN, NAN_IS_NOT_NAN ]
         nullability: DECLARED_OUTPUT
         return: i64?
+  -
+    name: "has_overlap"
+    description: >
+      Determines whether two lists share any common elements.
+
+      Returns `true` if the two lists have at least one non-null element in common,
+      `false` if they definitely do not, and the behavior when null elements are
+      present but no non-null overlap exists is controlled by the `null_handling`
+      option.
+
+      If either input list is `NULL`, returns `NULL`.
+
+      If either input list is empty, returns `false`.
+    impls:
+      - args:
+          - name: left
+            value: list<any1>
+          - name: right
+            value: list<any1>
+        options:
+          null_handling:
+            description: >
+              Controls how null elements affect the result when no non-null
+              elements overlap.
+
+              - THREE_VALUED: Returns NULL when null elements are present in
+                both lists but no non-null overlap is found.
+
+              - IGNORE_NULLS: Skips null elements entirely so the result is
+                always true or false.
+
+              - NULL_EQUALS_NULL: Treats null elements as equal to each
+                other, so if both lists contain null that counts as an
+                overlap.
+            values: [ THREE_VALUED, IGNORE_NULLS, NULL_EQUALS_NULL ]
+        nullability: DECLARED_OUTPUT
+        return: boolean?

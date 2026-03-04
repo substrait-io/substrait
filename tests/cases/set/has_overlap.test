@@ -1,0 +1,43 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_set.yaml'
+
+# basic_overlap: Non-null overlap exists
+has_overlap([1, 2, 3]::list<i32>, [3, 4, 5]::list<i32>) [null_handling:THREE_VALUED] = true::bool
+has_overlap([1, 2, 3]::list<i32>, [3, 4, 5]::list<i32>) [null_handling:IGNORE_NULLS] = true::bool
+has_overlap([1, 2, 3]::list<i32>, [3, 4, 5]::list<i32>) [null_handling:NULL_EQUALS_NULL] = true::bool
+
+# basic_no_overlap: No overlap exists
+has_overlap([1, 2, 3]::list<i32>, [4, 5, 6]::list<i32>) [null_handling:THREE_VALUED] = false::bool
+has_overlap([1, 2, 3]::list<i32>, [4, 5, 6]::list<i32>) [null_handling:IGNORE_NULLS] = false::bool
+has_overlap([1, 2, 3]::list<i32>, [4, 5, 6]::list<i32>) [null_handling:NULL_EQUALS_NULL] = false::bool
+
+# duplicates: Duplicate elements
+has_overlap([1, 1, 2]::list<i32>, [1, 3]::list<i32>) [null_handling:THREE_VALUED] = true::bool
+has_overlap([1, 1, 2]::list<i32>, [1, 3]::list<i32>) [null_handling:IGNORE_NULLS] = true::bool
+has_overlap([1, 1, 2]::list<i32>, [1, 3]::list<i32>) [null_handling:NULL_EQUALS_NULL] = true::bool
+
+# empty_right: One list is empty
+has_overlap([1, 2, 3]::list<i32>, []::list<i32>) [null_handling:THREE_VALUED] = false::bool
+has_overlap([1, 2, 3]::list<i32>, []::list<i32>) [null_handling:IGNORE_NULLS] = false::bool
+has_overlap([1, 2, 3]::list<i32>, []::list<i32>) [null_handling:NULL_EQUALS_NULL] = false::bool
+
+# both_empty: Both lists are empty
+has_overlap([]::list<i32>, []::list<i32>) [null_handling:THREE_VALUED] = false::bool
+has_overlap([]::list<i32>, []::list<i32>) [null_handling:IGNORE_NULLS] = false::bool
+has_overlap([]::list<i32>, []::list<i32>) [null_handling:NULL_EQUALS_NULL] = false::bool
+
+# null_elements_with_non_null_overlap: Null elements present with a non-null overlap
+has_overlap([1, null, 3]::list<i32?>, [3, 4]::list<i32?>) [null_handling:THREE_VALUED] = true::bool
+has_overlap([1, null, 3]::list<i32?>, [3, 4]::list<i32?>) [null_handling:IGNORE_NULLS] = true::bool
+has_overlap([1, null, 3]::list<i32?>, [3, 4]::list<i32?>) [null_handling:NULL_EQUALS_NULL] = true::bool
+
+# null_elements_no_non_null_overlap: Null elements in one list, no non-null overlap
+has_overlap([1, null, 3]::list<i32?>, [4, 5]::list<i32?>) [null_handling:THREE_VALUED] = null::bool
+has_overlap([1, null, 3]::list<i32?>, [4, 5]::list<i32?>) [null_handling:IGNORE_NULLS] = false::bool
+has_overlap([1, null, 3]::list<i32?>, [4, 5]::list<i32?>) [null_handling:NULL_EQUALS_NULL] = false::bool
+
+# null_elements_in_both: Null elements in both lists, no non-null overlap
+has_overlap([1, null]::list<i32?>, [null, 4]::list<i32?>) [null_handling:THREE_VALUED] = null::bool
+has_overlap([1, null]::list<i32?>, [null, 4]::list<i32?>) [null_handling:IGNORE_NULLS] = false::bool
+has_overlap([1, null]::list<i32?>, [null, 4]::list<i32?>) [null_handling:NULL_EQUALS_NULL] = true::bool
+
