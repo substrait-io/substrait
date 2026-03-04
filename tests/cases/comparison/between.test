@@ -18,6 +18,6 @@ between(inf::fp64, 0.00::fp64, 100.09::fp64) = false::bool
 between(-100.0011::fp64, -inf::fp64, 0.00::fp64) = true::bool
 
 # null_input: Examples with null as input
-between(null::i8, 1::i8, 10::i8) = null::bool
-between(1::i64, null::i64, 10::i64) = null::bool
-between(1::i64, 1::i64, null::i64) = null::bool
+between(null::i8?, 1::i8, 10::i8) = null::bool?
+between(1::i64, null::i64?, 10::i64) = null::bool?
+between(1::i64, 1::i64, null::i64?) = null::bool?

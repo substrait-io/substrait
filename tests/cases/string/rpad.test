@@ -9,5 +9,5 @@ rpad('abcdef'::str, 6::i32, ' '::str) = 'abcdef'::str
 rpad('abcdef'::str, 20::i32, 'aabb'::str) = 'abcdefaabbaabbaabbaa'::str
 rpad('abcdef'::str, 4::i32, ' '::str) = 'abcd'::str
 rpad('abcdef'::str, -1::i32, ' '::str) = ''::str
-rpad(null::str, 4::i32, ' '::str) = null::str
-rpad('abcdef'::str, 10::i32, null::str) = null::str
+rpad(null::str?, 4::i32, ' '::str) = null::str?
+rpad('abcdef'::str, 10::i32, null::str?) = null::str?

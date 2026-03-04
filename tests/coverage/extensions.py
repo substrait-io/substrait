@@ -281,7 +281,7 @@ class FunctionRegistry:
 
     @staticmethod
     def is_same_type(func_arg_type, arg_type):
-        arg_type_base = arg_type.split("<")[0]
+        arg_type_base = arg_type.split("<")[0].rstrip("?")
         if func_arg_type == arg_type_base:
             return True
         return FunctionRegistry.is_type_any(func_arg_type)

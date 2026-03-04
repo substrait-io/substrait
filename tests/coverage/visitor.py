@@ -326,6 +326,19 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitNullArg(self, ctx: FuncTestCaseParser.NullArgContext):
         datatype = ctx.dataType().getText()
+        # Null literals must have a nullable outer type: null::i32? not null::i32,
+        # null::list?<i32> not null::list<i32>. For scalar types the ? is at the
+        # end; for parameterized types it appears before the first <.
+        bracket_pos = datatype.find("<")
+        if bracket_pos == -1:
+            is_nullable = datatype.endswith("?")
+        else:
+            is_nullable = "?" in datatype[:bracket_pos]
+        if not is_nullable:
+            raise ParseError(
+                f"Null literal must have a nullable type (add '?'), "
+                f"got: null::{datatype}"
+            )
         return CaseLiteral(value=None, type=datatype)
 
     def visitIntArg(self, ctx: FuncTestCaseParser.IntArgContext):

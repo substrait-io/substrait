@@ -17,6 +17,6 @@ sum((2.500000715, inf, 2.500000715)::fp64) = inf::fp64
 sum((2.5000007, -inf, 2.5000007, 10.0)::fp64) = -inf::fp64
 
 # null_handling: Examples with null as input or output
-sum((Null, Null, Null)::i16) = Null::i64
-sum(()::i16) = Null::i64
+sum((Null, Null, Null)::i16) = Null::i64?
+sum(()::i16) = Null::i64?
 sum((200000, Null, 629000, -10000, 0, 987621)::i32) = 1806621::i64

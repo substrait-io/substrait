@@ -23,8 +23,7 @@ class CaseLiteral:
         type_str = self.type
         if "<" in type_str:
             type_str = type_str[: type_str.find("<")]
-        if type_str.endswith("?"):
-            return type_str[:-1]
+        type_str = type_str.rstrip("?")
         return type_str
 
 

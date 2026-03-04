@@ -11,8 +11,8 @@ min((1.5e+308, 1.5e+10, -1.5e+8, -1.5e+7, -1.5e+70)::fp64) = -1.5e+70::fp64
 
 # null_handling: Examples with null as input or output
 min((Null, inf)::fp64) = inf::fp64
-min((Null, Null, Null)::i16) = Null::i16
-min(()::i16) = Null::i16
+min((Null, Null, Null)::i16) = Null::i16?
+min(()::i16) = Null::i16?
 min((2000000000, Null, 629000000, -100000000, Null, 987654321)::i64) = -100000000::i64
 min((Null, -inf, -1.5e+8, -1.5e+7, -1.5e+70)::fp64) = -inf::fp64
 min((1.5e+308, 1.5e+10, Null, -1.5e+7, Null)::fp64) = -1.5e+7::fp64
