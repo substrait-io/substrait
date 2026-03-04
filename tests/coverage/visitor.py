@@ -416,9 +416,12 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
         values = []
-        for literal in ctx.literal():
-            value, _ = self.visitLiteral(literal)
-            values.append(value)
+        for element in ctx.listElement():
+            if element.literal() is not None:
+                value, _ = self.visitLiteral(element.literal())
+                values.append(value)
+            elif element.literalList() is not None:
+                values.append(self.visitLiteralList(element.literalList()))
         return values
 
     def visitLambdaArg(self, ctx: FuncTestCaseParser.LambdaArgContext):
