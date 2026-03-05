@@ -162,8 +162,6 @@ scalar_functions:
           - name: y
             value: u!u8
         options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
           on_domain_error:
             values: [ "NULL", ERROR ]
           on_division_by_zero:
@@ -175,8 +173,6 @@ scalar_functions:
           - name: y
             value: u!u16
         options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
           on_domain_error:
             values: [ "NULL", ERROR ]
           on_division_by_zero:
@@ -188,8 +184,6 @@ scalar_functions:
           - name: y
             value: u!u32
         options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
           on_domain_error:
             values: [ "NULL", ERROR ]
           on_division_by_zero:
@@ -201,8 +195,6 @@ scalar_functions:
           - name: y
             value: u!u64
         options:
-          overflow:
-            values: [ SILENT, SATURATE, ERROR ]
           on_domain_error:
             values: [ "NULL", ERROR ]
           on_division_by_zero:
