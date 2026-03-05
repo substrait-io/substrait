@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_set.yaml'
+### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
 
 # basic_overlap: Non-null overlap exists
 has_overlap([1, 2, 3]::list<i32>, [3, 4, 5]::list<i32>) [null_handling:THREE_VALUED] = true::bool
