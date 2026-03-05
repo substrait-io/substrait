@@ -4,13 +4,13 @@
     "dependency_count": 18,
     "function_count": 170,
     "num_aggregate_functions": 32,
-    "num_scalar_functions": 171,
+    "num_scalar_functions": 170,
     "num_window_functions": 11,
-    "num_function_overloads": 561
+    "num_function_overloads": 5013
   },
   "coverage": {
-    "total_test_count": 1207,
-    "num_function_variants": 561,
-    "num_covered_function_variants": 273
+    "total_test_count": 1198,
+    "num_function_variants": 557,
+    "num_covered_function_variants": 269
   }
 }
