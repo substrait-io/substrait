@@ -79,15 +79,22 @@ scalar_functions:
 
   - name: "any_match"
     description: >-
-      Returns true if any element of the list matches the predicate.
+      Returns true if the predicate returns true for any element of the list.
 
-      The predicate function is applied to each element using three-valued logic.
-      Returns true if the predicate returns true for at least one element.
-      Returns null if no element returns true but at least one returns null.
-      Returns false if all elements return false.
+      More precisely
+      * If the list is null, or the predicate is null, returns null.
+      * If the list is empty, returns false as no element matches the predicate.
 
-      For an empty list, returns false.
-      If the input list or predicate is null, the result is null.
+      Otherwise
+      * Returns true if the predicate returns true for at least one element.
+      * Returns false if the predicate returns false for all elements.
+      * Returns null if the predicate does not return true for any element,
+      and returns null for at least one element.
+
+      This behaviour is equivalent to applying the predicate to every element
+      of the list, and then OR-ing all of the results together. This is
+      consistent with the Kleene logic defined in
+      extension:io.substrait:functions_boolean::or
     impls:
       - args:
           - name: input
@@ -99,15 +106,22 @@ scalar_functions:
 
   - name: "all_match"
     description: >-
-      Returns true if all elements of the list match the predicate.
+      Returns true if the predicate returns true for all elements of the list.
 
-      The predicate function is applied to each element using three-valued logic.
-      Returns false if the predicate returns false for at least one element.
-      Returns null if no element returns false but at least one returns null.
-      Returns true if all elements return true.
+      More precisely
+      * If the list is null, or the predicate is null, returns null.
+      * If the list is empty, returns true as no element fails the predicate.
 
-      For an empty list, returns true (vacuously true).
-      If the input list or predicate is null, the result is null.
+      Otherwise
+      * Returns false if the predicate returns false for at least one element.
+      * Returns true if the predicate returns true for all elements.
+      * Returns null if the predicate does not return false for any element,
+      and returns null for at least one element.
+
+      This behaviour is equivalent to applying the predicate to every element
+      of the list, and then AND-ing all of the results together. This is
+      consistent with the Kleene logic defined in
+      extension:io.substrait:functions_boolean::and
     impls:
       - args:
           - name: input
