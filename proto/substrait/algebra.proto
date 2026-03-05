@@ -997,6 +997,8 @@ message Expression {
   }
 
   message Literal {
+    reserved 14, 17, 27;
+
     oneof literal_type {
       bool boolean = 1;
       int32 i8 = 2;
@@ -1007,14 +1009,8 @@ message Expression {
       double fp64 = 11;
       string string = 12;
       bytes binary = 13;
-      // Timestamp in units of microseconds since the UNIX epoch.
-      // Deprecated in favor of `precision_timestamp`.
-      int64 timestamp = 14 [deprecated = true];
       // Date in units of days since the UNIX epoch.
       int32 date = 16;
-      // Time in units of microseconds past midnight.
-      // Deprecated in favor of `precision_time`.
-      int64 time = 17 [deprecated = true];
       IntervalYearToMonth interval_year_to_month = 19;
       IntervalDayToSecond interval_day_to_second = 20;
       IntervalCompound interval_compound = 36;
@@ -1028,9 +1024,6 @@ message Expression {
       PrecisionTimestamp precision_timestamp_tz = 35;
       Struct struct = 25;
       Map map = 26;
-      // Timestamp in units of microseconds since the UNIX epoch.
-      // Deprecated in favor of `precision_timestamp_tz`
-      int64 timestamp_tz = 27 [deprecated = true];
       bytes uuid = 28;
       Type null = 29; // a typed null literal
       List list = 30;

@@ -34,7 +34,7 @@ def tokenize(data):
         ident=re.compile(r"[a-zA-Z_][a-zA-Z_0-9.]*"),
         string=re.compile(r'"(?:[^"\\]|\\.)*"'),
         number=re.compile(r"[0-9]+"),
-        symbol=re.compile(r"[=;{}\[\]]"),
+        symbol=re.compile(r"[=;,{}\[\]]"),
         comment=re.compile(r"//[^\n]*\n|/\*(?:(?!\*/).)*\*/"),
         space=re.compile(r"\s+"),
     )
