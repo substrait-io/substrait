@@ -50,7 +50,6 @@ properties:
           - PRECISION_TIMESTAMP
           - PRECISION_TIMESTAMP_TZ
           - DATE
-          - TIME
           - INTERVAL_COMPOUND
           - INTERVAL_DAY
           - INTERVAL_YEAR
@@ -75,7 +74,6 @@ properties:
         - $ref: "#/definitions/type_precision_timestamp"
         - $ref: "#/definitions/type_precision_timestamp_tz"
         - $ref: "#/definitions/type_date"
-        - $ref: "#/definitions/type_time"
         - $ref: "#/definitions/type_interval_compound"
         - $ref: "#/definitions/type_interval_day"
         - $ref: "#/definitions/type_interval_year"
@@ -513,18 +511,6 @@ definitions:
     properties:
       type:
         const: DATE
-      metadata:
-        type: object
-        description: Arbitrary data created by the dialect author.
-      system_metadata:
-        $ref: "#/definitions/system_type_metadata"
-  type_time:
-    type: object
-    additionalProperties: false
-    required: [type]
-    properties:
-      type:
-        const: TIME
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.

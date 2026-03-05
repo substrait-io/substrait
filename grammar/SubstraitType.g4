@@ -20,10 +20,7 @@ scalarType
   | FP64                    #fp64
   | String                  #string
   | Binary                  #binary
-  | Timestamp               #timestamp
-  | Timestamp_TZ            #timestampTz
   | Date                    #date
-  | Time                    #time
   | Interval_Year           #intervalYear
   | UUID                    #uuid
   ;

@@ -62,10 +62,9 @@ def test_build_type_to_short_type():
     long_to_short = build_type_to_short_type()
     assert long_to_short["i64"] == "i64"
     assert long_to_short["fp64"] == "fp64"
-    assert long_to_short["timestamp"] == "ts"
-    assert long_to_short["timestamp_tz"] == "tstz"
     assert long_to_short["precision_timestamp"] == "pts"
     assert long_to_short["precision_timestamp_tz"] == "ptstz"
+    assert long_to_short["precision_time"] == "pt"
     assert long_to_short["interval_year"] == "iyear"
     assert long_to_short["interval_day"] == "iday"
     assert long_to_short["interval_compound"] == "icompound"

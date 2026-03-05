@@ -98,10 +98,7 @@ A function signature uniquely identifies a function implementation within a sing
 | string                          | str            |
 | binary                          | vbin           |
 | boolean                         | bool           |
-| timestamp                       | ts             |
-| timestamp_tz                    | tstz           |
 | date                            | date           |
-| time                            | time           |
 | interval_year                   | iyear          |
 | interval_day                    | iday           |
 | interval_compound               | icompound      |
@@ -126,7 +123,7 @@ A function signature uniquely identifies a function implementation within a sing
 | ------------------------------------------------- | ------------------- |
 | `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`         |
 | `avg(fp32) => fp32`                               | `avg:fp32`          |
-| `extract(required enumeration, timestamp) => i64` | `extract:req_ts`    |
+| `extract(required enumeration, precision_timestamp<6>) => i64` | `extract:req_pts`    |
 | `sum(any1) => any1`                               | `sum:any`           |
 | `concat(str...) => str`                           | `concat:str`        |
 | `transform(list<any1>, func<any1 -> any2>) => list<any2>` | `transform:list_func` |
