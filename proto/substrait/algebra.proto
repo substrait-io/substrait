@@ -1690,7 +1690,7 @@ message Expression {
     }
   }
 
-  // Expression that represents execution context dependent dependent variables
+  // Expression that represents execution context dependent variables
   message ExecutionContextVariable {
     oneof execution_context_variable_type {
       // an execution context dependent variable containing the current
