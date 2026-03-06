@@ -23,7 +23,8 @@
       {
         "verifyConditionsCmd": "ci/release/verify.sh",
         "prepareCmd": "ci/release/prepare.sh",
-        "publishCmd": "ci/release/publish.sh ${nextRelease.version}"
+        "publishCmd": "ci/release/publish.sh ${nextRelease.version}",
+        "successCmd": "ci/release/notify.sh ${nextRelease.version}"
       }
     ],
     [
