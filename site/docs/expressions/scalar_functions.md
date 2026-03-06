@@ -76,14 +76,14 @@ A producer may specify multiple values for an option.  If the producer does so t
 
 ### Nullability and `any` Type Binding
 
-The nullability mode also determines how [`any` types](../extensions/index.md#any-types) bind to concrete argument types. Everything else matches structurally.
+The nullability mode also determines how [`any` types](../extensions/index.md#any-types) bind to concrete argument types. All type components except the outermost nullability must match structurally.
 
 - With `MIRROR` or `DECLARED_OUTPUT`, the outermost nullability of each argument is stripped before binding. It is only used to [determine the output nullability](#nullability-handling). These modes do not allow nullable parameters in the signature.
 - With `DISCRETE`, the outermost nullability of each argument must match the nullability declared at the corresponding position in the signature. For example, `fn(any1, any1?)` requires a non-nullable first argument and a nullable second argument.
 
 Detailed examples for both [concrete types](#concrete-types) and [`any` type binding](#any-type-binding) follow below.
 
-### Examples
+### Nullability Binding Examples
 
 #### Concrete Types
 
