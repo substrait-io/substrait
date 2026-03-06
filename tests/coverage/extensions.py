@@ -3,7 +3,7 @@ import os
 import yaml
 
 from tests.coverage.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
-from tests.coverage.nodes import SubstraitError
+from tests.coverage.nodes import SubstraitError, type_str_is_outer_nullable
 
 enable_debug = False
 
@@ -117,9 +117,18 @@ class Extension:
                             f"arg is not a value type for function: {func['name']} arg must be enum options {arg['options']}"
                         )
                         args.append("str")
+            nullability = impl.get(
+                "nullability", "MIRROR"
+            )  # MIRROR is the spec default
+            return_type_raw = str(impl["return"])
+            return_nullable = type_str_is_outer_nullable(return_type_raw)
             overloads.append(
                 FunctionOverload(
-                    args, Extension.get_short_type(impl["return"]), "variadic" in impl
+                    args,
+                    Extension.get_short_type(impl["return"]),
+                    "variadic" in impl,
+                    nullability=nullability,
+                    return_nullable=return_nullable,
                 )
             )
         return overloads
@@ -208,7 +217,18 @@ class FunctionType:
 
 
 class FunctionVariant:
-    def __init__(self, name, uri, description, args, return_type, variadic, func_type):
+    def __init__(
+        self,
+        name,
+        uri,
+        description,
+        args,
+        return_type,
+        variadic,
+        func_type,
+        nullability="MIRROR",
+        return_nullable=False,
+    ):
         self.name = name
         self.uri = uri
         self.description = description
@@ -216,6 +236,8 @@ class FunctionVariant:
         self.return_type = return_type
         self.variadic = variadic
         self.func_type = func_type
+        self.nullability = nullability
+        self.return_nullable = return_nullable
         self.test_count = 0
 
     def __str__(self):
@@ -226,13 +248,17 @@ class FunctionVariant:
 
 
 class FunctionOverload:
-    def __init__(self, args, return_type, variadic):
+    def __init__(
+        self, args, return_type, variadic, nullability="MIRROR", return_nullable=False
+    ):
         self.args = args
         self.return_type = return_type
         self.variadic = variadic
+        self.nullability = nullability
+        self.return_nullable = return_nullable
 
     def __str__(self):
-        return f"FunctionOverload(args={self.args}, result={self.return_type}, variadic={self.variadic})"
+        return f"FunctionOverload(args={self.args}, result={self.return_type}, variadic={self.variadic}, nullability={self.nullability})"
 
 
 # define function type enum
@@ -271,6 +297,8 @@ class FunctionRegistry:
                     overload.return_type,
                     overload.variadic,
                     func_type,
+                    nullability=overload.nullability,
+                    return_nullable=overload.return_nullable,
                 )
                 fun_arr.append(function)
             self.registry[f_name] = fun_arr

@@ -3,6 +3,26 @@ from dataclasses import dataclass
 from typing import List
 
 
+def type_str_is_outer_nullable(type_str):
+    """Whether a type string has a nullable outer type.
+
+    The ``?`` marker appears at the end for scalar types (e.g. ``i32?``)
+    and before ``<`` for parameterized types (e.g. ``list?<i32>``).
+    Inner element nullability (e.g. ``list<i32?>``) is not outer-nullable.
+
+    TODO: In the visitor, this should ideally come from the parse tree's
+    ``isnull`` token rather than re-parsing the string, but ``dataType``
+    is an intermediate rule and the ``isnull`` token lives on concrete
+    type contexts nested several levels deep.  Getting it would require a
+    non-trivial refactor of the visitor to propagate nullability up
+    through ``dataType``.
+    """
+    bracket_pos = type_str.find("<")
+    if bracket_pos == -1:
+        return type_str.endswith("?")
+    return "?" in type_str[:bracket_pos]
+
+
 @dataclass
 class CaseGroup:
     name: str
@@ -18,6 +38,7 @@ class SubstraitError:
 class CaseLiteral:
     value: str | int | float | list | None
     type: str
+    nullable: bool = False
 
     def get_base_type(self):
         type_str = self.type
@@ -25,6 +46,15 @@ class CaseLiteral:
             type_str = type_str[: type_str.find("<")]
         type_str = type_str.rstrip("?")
         return type_str
+
+    def is_nullable(self):
+        """Whether the outer type is nullable.
+
+        Set during parsing from the grammar's isnull token, which only
+        appears on the outermost type.  For example list?<i32> is
+        nullable but list<i32?> is not.
+        """
+        return self.nullable
 
 
 @dataclass

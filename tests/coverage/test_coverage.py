@@ -4,6 +4,7 @@ import os
 import pytest
 from antlr4 import InputStream
 from tests.coverage.case_file_parser import parse_stream, parse_one_file
+from tests.coverage.coverage import validate_nullability
 from tests.coverage.extensions import Extension
 from tests.coverage.visitor import ParseError
 from tests.coverage.nodes import CaseLiteral
@@ -594,3 +595,126 @@ def test_double_nullable_rejected():
         with pytest.raises(ParseError) as pm:
             parse_string(header + case + "\n")
         assert "?" in str(pm.value), f"Expected parse error about '?' for: {case}"
+
+
+class TestNullabilityValidation:
+    """Tests for validate_nullability covering MIRROR, DECLARED_OUTPUT, and DISCRETE rules."""
+
+    @staticmethod
+    def _registry():
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        extensions_path = os.path.join(script_dir, "../../extensions")
+        return Extension.read_substrait_extensions(extensions_path)
+
+    def test_mirror_nullable_input_requires_nullable_output(self):
+        """MIRROR: if any arg is nullable, the output must be nullable."""
+        header = make_header("v1.0", "/extensions/functions_boolean.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+and(true::bool, null::bool?) = false::bool
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert len(errors) == 1
+        assert "MIRROR" in errors[0]
+        assert "should be nullable" in errors[0]
+
+    def test_mirror_nullable_input_with_nullable_output_ok(self):
+        """MIRROR: nullable input + nullable output is correct."""
+        header = make_header("v1.0", "/extensions/functions_boolean.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+and(true::bool, null::bool?) = false::bool?
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert errors == []
+
+    def test_mirror_non_nullable_input_non_nullable_output_ok(self):
+        """MIRROR: all non-nullable inputs + non-nullable output is correct."""
+        header = make_header("v1.0", "/extensions/functions_boolean.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+and(true::bool, false::bool) = false::bool
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert errors == []
+
+    def test_declared_output_requires_nullable_when_declared(self):
+        """DECLARED_OUTPUT: bool_and declares boolean? return — output must be nullable."""
+        header = make_aggregate_test_header(
+            "v1.0", "/extensions/functions_boolean.yaml"
+        )
+        test_file = parse_string(
+            header
+            + """\
+# basic
+bool_and((true, false)::bool) = false::bool
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert len(errors) == 1
+        assert "DECLARED_OUTPUT" in errors[0]
+
+    def test_declared_output_nullable_return_ok(self):
+        """DECLARED_OUTPUT: bool_and with nullable output is correct."""
+        header = make_aggregate_test_header(
+            "v1.0", "/extensions/functions_boolean.yaml"
+        )
+        test_file = parse_string(
+            header
+            + """\
+# basic
+bool_and((true, false)::bool) = false::bool?
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert errors == []
+
+    def test_declared_output_non_nullable_when_declared_non_nullable(self):
+        """DECLARED_OUTPUT: is_null declares non-nullable boolean return — nullable output is wrong."""
+        header = make_header("v1.0", "/extensions/functions_comparison.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+is_null(null::i8?) = true::bool?
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert len(errors) == 1
+        assert "should not be nullable" in errors[0]
+
+    def test_error_results_are_skipped(self):
+        """Error results (<!ERROR>) should not be checked for nullability."""
+        header = make_header("v1.0", "/extensions/functions_arithmetic.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert errors == []
+
+    def test_mirror_options_skip_false_positive(self):
+        """MIRROR with function options: nullable output with non-nullable args is allowed
+        when options are present (e.g. on_domain_error:NONE can produce null)."""
+        header = make_header("v1.0", "/extensions/functions_arithmetic.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+divide(5::i8, 0::i8) [on_division_by_zero:NAN] = null::i8?
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert errors == []

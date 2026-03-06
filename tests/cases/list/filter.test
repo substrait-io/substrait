@@ -8,5 +8,5 @@ filter([1, 2, 3, 4, 5]::list<i32>, (x -> lt(x, 3::i32))::func<i32 -> bool>) = [1
 filter([]::list<i32>, (x -> gt(x, 0::i32))::func<i32 -> bool>) = []::list<i32>
 
 # nullable_elements: Handling nullable elements
-filter([1, null, 3]::list<i32?>, (n -> gt(n, 0::i32))::func<i32 -> bool>) = [1, 3]::list?<i32?>
-filter([1, null, 3]::list<i32?>, (e -> is_null(e))::func<i32 -> bool>) = [null]::list?<i32?>
+filter([1, null, 3]::list<i32?>, (n -> gt(n, 0::i32))::func<i32 -> bool>) = [1, 3]::list<i32?>
+filter([1, null, 3]::list<i32?>, (e -> is_null(e))::func<i32 -> bool>) = [null]::list<i32?>
