@@ -142,7 +142,7 @@ The `any` type indicates that the argument can take any possible type. In the `f
 ```yaml
 --8<-- "examples/extensions/any1_type_function.yaml"
 ```
-The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with the same numeric suffix _must_ bind to the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
+The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all `any` types with the same numeric suffix _must_ bind to the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
 
 #### Type Parameter Binding and Nullability
 
@@ -160,6 +160,9 @@ Given `f(any1, any1) -> any1` with `MIRROR` nullability:
 | `f(i32, i32)` | Yes | `i32` | `i32` | Both arguments non-nullable; MIRROR keeps output non-nullable |
 | `f(i32?, i32)` | Yes | `i32` | `i32?` | Outermost nullability stripped before binding; MIRROR propagates it to output |
 | `f(i32, i32?)` | Yes | `i32` | `i32?` | Outermost nullability stripped before binding; MIRROR propagates it to output |
+| `f(i32?, i32?)` | Yes | `i32` | `i32?` | Outermost nullability stripped from both before binding; MIRROR propagates it to output |
+
+Note that only the outermost nullability is stripped for binding; nested nullability within compound types (e.g. `list<i32?>`) is preserved and must match structurally.
 
 Given `h(list<any1>, list<any1>) -> list<any1>` with `MIRROR` nullability:
 
