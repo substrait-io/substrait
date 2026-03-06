@@ -153,6 +153,8 @@ The function's [nullability mode](../expressions/scalar_functions.md#nullability
 
 ##### Examples
 
+###### MIRROR
+
 Given `f(any1, any1) -> any1` with `MIRROR` nullability:
 
 | Invocation | Matches? | `any1` binds to | Returns | Reason |
@@ -181,6 +183,8 @@ Type variables can also bind across structurally different arguments. Given `j(a
 | `j(i32, list<i32>)` | No | | | Second arg element type `i32` doesn't match `any1?` (requires nullable element) |
 | `j(i32, list<fp64?>)` | No | | | `any1` binds to `i32` from the first arg but second arg element type `fp64?` doesn't match `i32?` |
 
+###### DECLARED_OUTPUT
+
 Given `d(any1, any1) -> any1?` with `DECLARED_OUTPUT` nullability:
 
 | Invocation | Matches? | `any1` binds to | Returns | Reason |
@@ -188,6 +192,8 @@ Given `d(any1, any1) -> any1?` with `DECLARED_OUTPUT` nullability:
 | `d(i32, i32)` | Yes | `i32` | `i32?` | Both arguments non-nullable; output nullability comes from the signature (`any1?`) |
 | `d(i32?, i32)` | Yes | `i32` | `i32?` | Outermost nullability stripped before binding; output nullability still comes from the signature |
 | `d(i32?, i32?)` | Yes | `i32` | `i32?` | Outermost nullability stripped from both before binding; output nullability still comes from the signature |
+
+###### DISCRETE
 
 Given `g(any1, any1) -> any1` with `DISCRETE` nullability:
 
