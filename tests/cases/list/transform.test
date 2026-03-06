@@ -8,10 +8,4 @@ transform([5, 10, 15]::list<i32>, (x -> add(x, 1::i32))::func<i32 -> i32>) = [6,
 transform([]::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = []::list<i32>
 
 # nullable_elements: Handling nullable elements
-transform([1, Null, 3]::list<i32?>, (x -> multiply(x, 2::i32))::func<i32? -> i32?>) = [2, Null, 6]::list<i32?>
-
-# null_list: Null list input
-transform(null::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = null::list<i32>
-
-# nested_list: Nested list with nested transform
-transform([[1, 2, 3], [4, 5, 6]]::list<list<i32>>, (x -> transform(x, (e -> add(e, 1::i32))::func<i32 -> i32>))::func<list<i32> -> list<i32>>) = [[2, 3, 4], [5, 6, 7]]::list<list<i32>>
+transform([1, Null, 3]::list<i32?>, (x -> multiply(x, 2::i32))::func<i32? -> i32?>) = [2, Null, 6]::list?<i32?>

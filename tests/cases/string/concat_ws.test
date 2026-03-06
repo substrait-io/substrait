@@ -5,5 +5,5 @@
 concat_ws(','::str, 'Banana'::str, 'Apple'::str, 'Melon'::str) = 'Banana,Apple,Melon'::str
 concat_ws(''::str, 'Banana'::str, 'Apple'::str) = 'BananaApple'::str
 concat_ws(null::str?, 'Banana'::str, 'Apple'::str, 'Melon'::str) = null::str?
-concat_ws(','::str, null::str?, 'Apple'::str, 'Melon'::str) = 'Apple,Melon'::str
-concat_ws(','::str, 'Apple'::str, null::str?, 'Melon'::str) = 'Apple,Melon'::str
+concat_ws(','::str, null::str?, 'Apple'::str, 'Melon'::str) = 'Apple,Melon'::str?
+concat_ws(','::str, 'Apple'::str, null::str?, 'Melon'::str) = 'Apple,Melon'::str?

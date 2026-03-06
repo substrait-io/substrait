@@ -6,8 +6,8 @@ concat('abcd'::str, 'efg'::str) = 'abcdefg'::str
 
 # null_input: Examples with null as input
 concat('abcd'::str, null::str?) [null_handling:ACCEPT_NULLS] = null::str?
-concat('abcd'::str, null::str?) [null_handling:IGNORE_NULLS] = 'abcd'::str
+concat('abcd'::str, null::str?) [null_handling:IGNORE_NULLS] = 'abcd'::str?
 concat(null::str?, 'abcd'::str) [null_handling:ACCEPT_NULLS] = null::str?
-concat(null::str?, 'abcd'::str) [null_handling:IGNORE_NULLS] = 'abcd'::str
+concat(null::str?, 'abcd'::str) [null_handling:IGNORE_NULLS] = 'abcd'::str?
 concat(null::str?, null::str?) [null_handling:ACCEPT_NULLS] = null::str?
-concat(null::str?, null::str?) [null_handling:IGNORE_NULLS] = ''::str
+concat(null::str?, null::str?) [null_handling:IGNORE_NULLS] = ''::str?

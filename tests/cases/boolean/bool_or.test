@@ -2,12 +2,12 @@
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_boolean.yaml'
 
 # basic: Basic examples without any special cases
-bool_or((true, true)::bool) = true::bool
-bool_or((false, false)::bool) = false::bool
-bool_or((true, false)::bool) = true::bool
-bool_or((false)::bool) = false::bool
-bool_or((true)::bool) = true::bool
-bool_or((true, null)::bool) = true::bool
+bool_or((true, true)::bool) = true::bool?
+bool_or((false, false)::bool) = false::bool?
+bool_or((true, false)::bool) = true::bool?
+bool_or((false)::bool) = false::bool?
+bool_or((true)::bool) = true::bool?
+bool_or((true, null)::bool) = true::bool?
 bool_or((null, null)::bool) = null::bool?
-bool_or((false, null)::bool) = false::bool
+bool_or((false, null)::bool) = false::bool?
 bool_or(()::bool) = null::bool?
