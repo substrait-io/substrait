@@ -26,6 +26,21 @@ has_overlap([]::list<i32>, []::list<i32>) [null_handling:THREE_VALUED] = false::
 has_overlap([]::list<i32>, []::list<i32>) [null_handling:IGNORE_NULLS] = false::bool
 has_overlap([]::list<i32>, []::list<i32>) [null_handling:NULL_EQUALS_NULL] = false::bool
 
+# null_left_list: Null left list returns null
+has_overlap(null::list<i32>, [1, 2, 3]::list<i32>) [null_handling:THREE_VALUED] = null::bool
+has_overlap(null::list<i32>, [1, 2, 3]::list<i32>) [null_handling:IGNORE_NULLS] = null::bool
+has_overlap(null::list<i32>, [1, 2, 3]::list<i32>) [null_handling:NULL_EQUALS_NULL] = null::bool
+
+# null_right_list: Null right list returns null
+has_overlap([1, 2, 3]::list<i32>, null::list<i32>) [null_handling:THREE_VALUED] = null::bool
+has_overlap([1, 2, 3]::list<i32>, null::list<i32>) [null_handling:IGNORE_NULLS] = null::bool
+has_overlap([1, 2, 3]::list<i32>, null::list<i32>) [null_handling:NULL_EQUALS_NULL] = null::bool
+
+# both_null_lists: Both lists null returns null
+has_overlap(null::list<i32>, null::list<i32>) [null_handling:THREE_VALUED] = null::bool
+has_overlap(null::list<i32>, null::list<i32>) [null_handling:IGNORE_NULLS] = null::bool
+has_overlap(null::list<i32>, null::list<i32>) [null_handling:NULL_EQUALS_NULL] = null::bool
+
 # null_elements_with_non_null_overlap: Null elements present with a non-null overlap
 has_overlap([1, null, 3]::list<i32?>, [3, 4]::list<i32?>) [null_handling:THREE_VALUED] = true::bool
 has_overlap([1, null, 3]::list<i32?>, [3, 4]::list<i32?>) [null_handling:IGNORE_NULLS] = true::bool
