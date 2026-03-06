@@ -181,19 +181,27 @@ Type variables can also bind across structurally different arguments. Given `j(a
 | `j(i32, list<i32>)` | No | | | Second arg element type `i32` doesn't match `any1?` (requires nullable element) |
 | `j(i32, list<fp64?>)` | No | | | `any1` binds to `i32` from the first arg but second arg element type `fp64?` doesn't match `i32?` |
 
+Given `d(any1, any1) -> any1?` with `DECLARED_OUTPUT` nullability:
+
+| Invocation | Matches? | `any1` binds to | Returns | Reason |
+| --- | --- | --- | --- | --- |
+| `d(i32, i32)` | Yes | `i32` | `i32?` | Both arguments non-nullable; output nullability comes from the signature (`any1?`) |
+| `d(i32?, i32)` | Yes | `i32` | `i32?` | Outermost nullability stripped before binding; output nullability still comes from the signature |
+| `d(i32?, i32?)` | Yes | `i32` | `i32?` | Outermost nullability stripped from both before binding; output nullability still comes from the signature |
+
 Given `g(any1, any1) -> any1` with `DISCRETE` nullability:
 
 | Invocation | Matches? | `any1` binds to | Returns | Reason |
 | --- | --- | --- | --- | --- |
 | `g(i32, i32)` | Yes | `i32` | `i32` | Matches signature exactly; both arguments non-nullable |
-| `g(i32?, i32?)` | No | | | Signature requires non-nullable arguments |
+| `g(i32?, i32?)` | No | | | Both arguments are nullable but signature requires non-nullable |
 | `g(i32, i32?)` | No | | | Second argument is nullable but signature requires non-nullable |
 
-Given `g2(any1, any1?) -> any1` with `DISCRETE` nullability:
+Given `g2(any1, any1?) -> any1?` with `DISCRETE` nullability:
 
 | Invocation | Matches? | `any1` binds to | Returns | Reason |
 | --- | --- | --- | --- | --- |
-| `g2(i32, i32?)` | Yes | `i32` | `i32` | Matches declared outer nullabilities (non-nullable, nullable) |
+| `g2(i32, i32?)` | Yes | `i32` | `i32?` | Matches declared outer nullabilities (non-nullable, nullable); return type is `any1?` = `i32?` |
 | `g2(i32, i32)` | No | | | Second argument is non-nullable but signature requires nullable |
 | `g2(i32?, i32?)` | No | | | First argument is nullable but signature requires non-nullable |
 
