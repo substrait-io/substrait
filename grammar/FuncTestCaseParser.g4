@@ -2,7 +2,6 @@ parser grammar FuncTestCaseParser;
 
 options {
     caseInsensitive = true;
-    tokenVocab=SubstraitLexer;
     tokenVocab=FuncTestCaseLexer;
 }
 
@@ -223,7 +222,12 @@ udtArg
     ;
 
 literalList
-    : OBracket (literal (Comma literal)*)? CBracket
+    : OBracket (listElement (Comma listElement)*)? CBracket
+    ;
+
+listElement
+    : literal
+    | literalList
     ;
 
 literalLambda
@@ -359,6 +363,7 @@ parameterizedType
     | precisionTimeType
     | precisionTimestampType
     | precisionTimestampTZType
+    | listType
     | funcType
 // TODO implement the rest of the parameterized types
 //  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct

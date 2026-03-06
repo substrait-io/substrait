@@ -29,7 +29,7 @@ message Type {
     Timestamp timestamp = 14 [deprecated = true];
     Date date = 16;
     // Deprecated in favor of `PrecisionTime precision_time`
-    Time time = 17;
+    Time time = 17 [deprecated = true];
     IntervalYear interval_year = 19;
     IntervalDay interval_day = 20;
     IntervalCompound interval_compound = 35;
