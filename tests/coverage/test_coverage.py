@@ -187,8 +187,12 @@ some_func(null::List?<i32>) = null::List?<i32>
 """
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 1
-    assert test_file.testcases[0].args[0] == CaseLiteral(None, "List?<i32>")
-    assert test_file.testcases[0].result == CaseLiteral(None, "List?<i32>")
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        None, "List?<i32>", nullable=True
+    )
+    assert test_file.testcases[0].result == CaseLiteral(
+        None, "List?<i32>", nullable=True
+    )
 
 
 def test_parse_aggregate_func_test():
