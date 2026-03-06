@@ -144,72 +144,7 @@ The `any` type indicates that the argument can take any possible type. In the `f
 ```
 The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all `any` types with the same numeric suffix _must_ bind to the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
 
-#### Type Parameter Binding and Nullability
-
-The function's [nullability mode](../expressions/scalar_functions.md#nullability-handling) determines whether the outermost nullability of each argument must match the signature for binding. Everything else matches structurally.
-
-- With `MIRROR` or `DECLARED_OUTPUT`, the outermost nullability of each argument is ignored for matching. It is only used to [determine the output nullability](../expressions/scalar_functions.md#nullability-handling). These modes do not allow nullable parameters in the signature.
-- With `DISCRETE`, the outermost nullability of each argument must match the nullability declared at the corresponding position in the signature. For example, `fn(any1, any1?)` requires a non-nullable first argument and a nullable second argument.
-
-##### Examples
-
-###### MIRROR
-
-Given `f(any1, any1) -> any1` with `MIRROR` nullability:
-
-| Invocation | Matches? | `any1` binds to | Returns | Reason |
-| --- | --- | --- | --- | --- |
-| `f(i32, i32)` | Yes | `i32` | `i32` | Both arguments non-nullable; MIRROR keeps output non-nullable |
-| `f(i32?, i32)` | Yes | `i32` | `i32?` | Outermost nullability stripped before binding; MIRROR propagates it to output |
-| `f(i32, i32?)` | Yes | `i32` | `i32?` | Outermost nullability stripped before binding; MIRROR propagates it to output |
-| `f(i32?, i32?)` | Yes | `i32` | `i32?` | Outermost nullability stripped from both before binding; MIRROR propagates it to output |
-
-Note that only the outermost nullability is stripped for binding; nested nullability within compound types (e.g. `list<i32?>`) is preserved and must match structurally.
-
-Given `h(list<any1>, list<any1>) -> list<any1>` with `MIRROR` nullability:
-
-| Invocation | Matches? | `any1` binds to | Returns | Reason |
-| --- | --- | --- | --- | --- |
-| `h(list<i32>, list<i32>)` | Yes | `i32` | `list<i32>` | Both args non-nullable; outer list stays non-nullable under MIRROR |
-| `h(list?<i32>, list<i32>)` | Yes | `i32` | `list?<i32>` | Outermost nullability stripped before binding; MIRROR propagates it to output |
-| `h(list<i32?>, list<i32?>)` | Yes | `i32?` | `list<i32?>` | Inner nullability is not stripped; both args agree so `any1` binds to `i32?` |
-| `h(list<i32>, list<i32?>)` | No | | | Inner nullability is not stripped; `list<i32>` and `list<i32?>` are structurally different |
-
-Type variables can also bind across structurally different arguments. Given `j(any1, list<any1?>) -> any1` with `MIRROR` nullability:
-
-| Invocation | Matches? | `any1` binds to | Returns | Reason |
-| --- | --- | --- | --- | --- |
-| `j(i32, list<i32?>)` | Yes | `i32` | `i32` | `any1` binds to `i32` from the first arg; second arg element type `i32?` matches `any1?` |
-| `j(i32, list<i32>)` | No | | | Second arg element type `i32` doesn't match `any1?` (requires nullable element) |
-| `j(i32, list<fp64?>)` | No | | | `any1` binds to `i32` from the first arg but second arg element type `fp64?` doesn't match `i32?` |
-
-###### DECLARED_OUTPUT
-
-Given `d(any1, any1) -> any1?` with `DECLARED_OUTPUT` nullability:
-
-| Invocation | Matches? | `any1` binds to | Returns | Reason |
-| --- | --- | --- | --- | --- |
-| `d(i32, i32)` | Yes | `i32` | `i32?` | Both arguments non-nullable; output nullability comes from the signature (`any1?`) |
-| `d(i32?, i32)` | Yes | `i32` | `i32?` | Outermost nullability stripped before binding; output nullability still comes from the signature |
-| `d(i32?, i32?)` | Yes | `i32` | `i32?` | Outermost nullability stripped from both before binding; output nullability still comes from the signature |
-
-###### DISCRETE
-
-Given `g(any1, any1) -> any1` with `DISCRETE` nullability:
-
-| Invocation | Matches? | `any1` binds to | Returns | Reason |
-| --- | --- | --- | --- | --- |
-| `g(i32, i32)` | Yes | `i32` | `i32` | Matches signature exactly; both arguments non-nullable |
-| `g(i32?, i32?)` | No | | | Both arguments are nullable but signature requires non-nullable |
-| `g(i32, i32?)` | No | | | Second argument is nullable but signature requires non-nullable |
-
-Given `g2(any1, any1?) -> any1?` with `DISCRETE` nullability:
-
-| Invocation | Matches? | `any1` binds to | Returns | Reason |
-| --- | --- | --- | --- | --- |
-| `g2(i32, i32?)` | Yes | `i32` | `i32?` | Matches declared outer nullabilities (non-nullable, nullable); return type is `any1?` = `i32?` |
-| `g2(i32, i32)` | No | | | Second argument is non-nullable but signature requires nullable |
-| `g2(i32?, i32?)` | No | | | First argument is nullable but signature requires non-nullable |
+How `any` type parameters interact with nullability during function binding depends on the function's [nullability mode](../expressions/scalar_functions.md#nullability-handling). See [Nullability and `any` Type Binding](../expressions/scalar_functions.md#nullability-and-any-type-binding) for the full rules and detailed examples.
 
 ### Extension Metadata
 
