@@ -1,6 +1,16 @@
 Release Notes
 ---
 
+## [0.85.0](https://github.com/substrait-io/substrait/compare/v0.84.0...v0.85.0) (2026-03-06)
+
+### ⚠ BREAKING CHANGES
+
+* drops uri fields from protobufs
+
+### Features
+
+* only use urns for referencing simple extensions ([#971](https://github.com/substrait-io/substrait/issues/971)) ([ada68a8](https://github.com/substrait-io/substrait/commit/ada68a84698d269040a0d365c9e6c141fc3b2c29))
+
 ## [0.84.0](https://github.com/substrait-io/substrait/compare/v0.83.0...v0.84.0) (2026-03-06)
 
 ### Features
