@@ -40,6 +40,9 @@ def test_substrait_extension_coverage():
 
 
 def test_substrait_nullability_consistency():
+    """Verify that return type nullability in .test cases is consistent with
+    the nullability handling declared in extension YAMLs.
+    """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     extensions_path = os.path.join(script_dir, "../extensions")
     registry = Extension.read_substrait_extensions(extensions_path)
