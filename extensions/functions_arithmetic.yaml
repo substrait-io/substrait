@@ -395,7 +395,7 @@ scalar_functions:
         options:
           overflow:
             values: [ SILENT, SATURATE, ERROR ]
-        return: i64
+        return: fp64
       - args:
           - name: x
             value: fp32
