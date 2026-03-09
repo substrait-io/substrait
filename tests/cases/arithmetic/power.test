@@ -3,7 +3,7 @@
 
 # basic: Basic examples without any special cases
 power(8::i64, 2::i64) = 64.0::fp64
-power(1.0::fp32, -1.0::fp32) = 1.0::fp32
+power(1.0::fp32, -1.0::fp32) = 1.0::fp64
 power(2.0::fp64, -2.0::fp64) = 0.25::fp64
 power(13::i64, 10::i64) = 137858491849.0::fp64
 
@@ -11,6 +11,8 @@ power(13::i64, 10::i64) = 137858491849.0::fp64
 power(null::i64, 2::i64) = null::fp64
 power(8::i64, null::i64) = null::fp64
 power(null::i64, null::i64) = null::fp64
+power(null::fp32, 2.0::fp32) = null::fp64
+power(2.0::fp32, null::fp32) = null::fp64
 power(null::fp64, 2.0::fp64) = null::fp64
 power(2.0::fp64, null::fp64) = null::fp64
 

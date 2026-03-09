@@ -401,7 +401,7 @@ scalar_functions:
             value: fp32
           - name: y
             value: fp32
-        return: fp32
+        return: fp64
       - args:
           - name: x
             value: fp64
