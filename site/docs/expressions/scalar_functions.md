@@ -22,7 +22,7 @@ There are three main types of arguments: value arguments, type arguments, and en
 
 * Value arguments: arguments that refer to a data value. These could be constants (literal expressions defined in the plan) or variables (a reference expression that references data being processed by the plan). This is the most common type of argument. The value of a value argument is not available in output derivation, but its type is. Value arguments can be declared in one of two ways: concrete or parameterized. Concrete types are either simple types or compound types with all parameters fully defined (without referencing any type arguments). Examples include `i32`, `fp32`, `VARCHAR<20>`, `List<fp32>`, etc. Parameterized types are discussed further below.
 * Type arguments: arguments that are used only to inform the evaluation and/or type derivation of the function. For example, you might have a function which is `truncate(<type> DECIMAL<P0,S0>, <value> DECIMAL<P1, S1>, <value> i32)`. This function declares two value arguments and a type argument. The difference between them is that the type argument has no value at runtime, while the value arguments do.
-* Enumeration: arguments that support a fixed set of declared values as constant arguments. These arguments must be specified as part of an expression. While these could also have been implemented as constant string value arguments, they are formally included to improve validation/contextual help/etc. for frontend processors and IDEs. An example might be `extract([DAY|YEAR|MONTH], <date value>)`. In this example, a producer must specify a type of date part to extract. Note, the value of a required enumeration cannot be used in type derivation.
+* Enumeration: arguments that require the caller to specify exactly one value from a fixed set of declared string values. They represent choices that are integral to the function's core semantics. An example is `extract([DAY|YEAR|MONTH], <date value>)`, where the caller must specify which date part to extract. Note, the value of an enumeration argument cannot be used in type derivation.
 
 #### Value Argument Properties
 
@@ -41,7 +41,7 @@ There are three main types of arguments: value arguments, type arguments, and en
 | Name        | A human-readable name for this argument to help clarify use.        | Optional, defaults to a name based on position (e.g. `arg0`) |
 | Description | Additional description of this argument.                            | Optional                                                   |
 
-#### Required Enumeration Properties
+#### Enumeration Argument Properties
 
 | Property    | Description                                                   | Required                                                     |
 | ----------- | ------------------------------------------------------------- | ------------------------------------------------------------ |
@@ -51,18 +51,32 @@ There are three main types of arguments: value arguments, type arguments, and en
 
 ## Options
 
-In addition to arguments each call may specify zero or more options.  These are similar to a required enumeration but more focused on supporting alternative behaviors. Options can be left unspecified and the consumer is free to choose which implementation to use. An example use case might be `OVERFLOW_BEHAVIOR:[OVERFLOW, SATURATE, ERROR]` If unspecified, an engine is free to use any of the three choices or even some alternative behavior (e.g. setting the value to null on overflow). If specified, the engine would be expected to behave as specified or fail. Note, the value of an optional enumeration cannot be used in type derivation.
+In addition to arguments, each function call may specify zero or more options. Options allow a producer to express preferences about how a consumer handles corner cases or engine-specific behavior. Unlike enumeration arguments, options are not required. If a producer omits an option, the consumer is free to choose any supported behavior. Options are named (not positional) and are not part of the function signature. See [Enumeration Arguments vs Options](#enumeration-arguments-vs-options) for a detailed comparison.
+
+An example is `OVERFLOW_BEHAVIOR:[OVERFLOW, SATURATE, ERROR]`. If unspecified, the engine is free to use any of the three choices or even some alternative behavior (e.g. setting the value to null on overflow). If specified, the engine would be expected to behave as specified or reject the plan. Note, the value of an option cannot be used in type derivation.
 
 ### Option Preference
 
 A producer may specify multiple values for an option.  If the producer does so then the consumer must deliver the first behavior in the list of values that the consumer is capable of delivering.  For example, considering overflow as defined above, if a producer specified `[ERROR, SATURATE]` then the consumer must deliver `ERROR` if it is capable of doing so.  If it is not then it may deliver `SATURATE`.  If the consumer cannot deliver either behavior then it is an error and the consumer must reject the plan.
 
-#### Optional Properties
+#### Option Properties
 
 | Property | Description                              | Required |
 | -------- | ---------------------------------------- | -------- |
 | Values   | A list of valid strings for this option. | Required |
 | Name     | A human-readable name for this option.   | Required |
+
+### Enumeration Arguments vs Options
+
+Both enumeration arguments and options accept values from a fixed set of strings, but they serve different purposes. As a general rule, prefer enumeration arguments for anything the caller must decide for the function to be meaningful. Options are best suited for engine-level behavioral properties (like overflow or rounding mode) where a reasonable default exists and the caller may not care which behavior the engine picks.
+
+| | Enumeration Argument | Option |
+| --- | --- | --- |
+| Required? | Yes, must be specified by the producer | No, may be omitted |
+| Semantics | Core to the function's operation (e.g., which date component to extract) | Behavioral preference for corner cases or engine-specific behavior (e.g., overflow handling) |
+| Position | Positional, part of the argument list | Named, separate from arguments |
+| In function signature? | Yes (as `req`) | No |
+| If omitted | Invalid plan | Consumer chooses its own behavior |
 
 
 
