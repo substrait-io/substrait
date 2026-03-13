@@ -183,6 +183,8 @@ def _validate_mirror(test_case, loc, sig):
             f"{loc}: MIRROR violation: {sig} — "
             f"output should be nullable because an input is nullable"
         )
+    # TODO(#990): options like on_domain_error:NONE can produce null from
+    # non-nullable inputs.  Skip until upstream clarifies semantics.
     if not any_nullable and result_nullable and not test_case.options:
         return (
             f"{loc}: MIRROR violation: {sig} — "
