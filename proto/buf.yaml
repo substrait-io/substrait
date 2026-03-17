@@ -1,8 +1,9 @@
 version: v1
 name: buf.build/substrait/substrait
 lint:
+  allow_comment_ignores: true
   use:
-    - DEFAULT
+    - STANDARD
   ignore_only:
     PACKAGE_VERSION_SUFFIX:
       - substrait

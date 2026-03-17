@@ -64,6 +64,9 @@ message Plan {
   // parameterized types being declared have many parameters (e.g., struct with
   // many fields, nested parameterized types, string as a type parameter).
   repeated TypeAlias type_aliases = 9;
+
+  // Optional execution behavior settings for this plan.
+  ExecutionBehavior execution_behavior = 10;
 }
 
 // This message type can be used to deserialize only the version of a Substrait
@@ -108,4 +111,23 @@ message DynamicParameterBinding {
   // The type of the literal needs to match the type of the corresponding
   // DynamicParameter expression in the plan.
   Expression.Literal value = 2;
+}
+
+// ExecutionBehavior specifies the execution behavior for plan evaluation.
+message ExecutionBehavior {
+  // Defines the scope of execution context variable evaluation during plan
+  // execution.
+  VariableEvaluationMode variable_eval_mode = 1;
+
+  // VariableEvaluationMode specifies the frequency and scope of execution
+  // context variable evaluation.
+  enum VariableEvaluationMode {
+    // Variables are evaluated once per Substrait plan execution (default).
+    // Skipping the ENUM_ZERO_VALUE_SUFFIX linting rule so we can have
+    // PER_PLAN as default.
+    // buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
+    VARIABLE_EVALUATION_MODE_PER_PLAN = 0;
+    // Variables are evaluated once per record during execution.
+    VARIABLE_EVALUATION_MODE_PER_RECORD = 1;
+  }
 }
