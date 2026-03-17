@@ -51,3 +51,30 @@
 # mixed_range: Standard deviation with mixed range values
 ((0.0, 100.0, 50.0, 25.0, 75.0)) std_dev(col0::fp32, SAMPLE::enum) = 41.010193::fp32?
 ((0.0, 100.0, 50.0, 25.0, 75.0)) std_dev(col0::fp64, POPULATION::enum) = 36.66060555964672::fp64?
+
+
+# integer_types: Standard deviation with integer input types returning fp64
+((1, 2, 3, 4, 5)) std_dev(col0::i8, SAMPLE::enum) = 1.5811388300841898::fp64?
+((1, 2, 3, 4, 5)) std_dev(col0::i8, POPULATION::enum) = 1.4142135623730951::fp64?
+((1, 2, 3, 4, 5)) std_dev(col0::i16, SAMPLE::enum) = 1.5811388300841898::fp64?
+((1, 2, 3, 4, 5)) std_dev(col0::i16, POPULATION::enum) = 1.4142135623730951::fp64?
+((1, 2, 3, 4, 5)) std_dev(col0::i32, SAMPLE::enum) = 1.5811388300841898::fp64?
+((1, 2, 3, 4, 5)) std_dev(col0::i32, POPULATION::enum) = 1.4142135623730951::fp64?
+((1, 2, 3, 4, 5)) std_dev(col0::i64, SAMPLE::enum) = 1.5811388300841898::fp64?
+((1, 2, 3, 4, 5)) std_dev(col0::i64, POPULATION::enum) = 1.4142135623730951::fp64?
+
+# integer_negative: Standard deviation with negative integer values
+((-5, -3, -1, 1, 3, 5)) std_dev(col0::i32, SAMPLE::enum) = 3.8944404818493075::fp64?
+((-10, -5, 0, 5, 10)) std_dev(col0::i64, POPULATION::enum) = 7.0710678118654755::fp64?
+
+# integer_uniform: Standard deviation with uniform integer values
+((42, 42, 42, 42)) std_dev(col0::i16, SAMPLE::enum) = 0.0::fp64?
+((100, 100, 100, 100)) std_dev(col0::i32, POPULATION::enum) = 0.0::fp64?
+
+# integer_single: Standard deviation with single integer value
+((7)) std_dev(col0::i8, SAMPLE::enum) = Null::fp64?
+((99)) std_dev(col0::i64, POPULATION::enum) = 0.0::fp64?
+
+# integer_large_values: Standard deviation with large integer values
+((1000, 2000, 3000, 4000, 5000)) std_dev(col0::i32, SAMPLE::enum) = 1581.1388300841898::fp64?
+((100, 200, 300, 400, 500)) std_dev(col0::i64, POPULATION::enum) = 141.4213562373095::fp64?
