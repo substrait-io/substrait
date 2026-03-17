@@ -59,3 +59,38 @@
 # three_values: Variance with three values
 ((10.0, 20.0, 30.0)) variance(SAMPLE::enum, col0::fp32) = 100.0::fp32?
 ((10.0, 20.0, 30.0)) variance(POPULATION::enum, col0::fp64) = 66.66666666666667::fp64?
+
+
+# integer_types: Variance with integer input types returning fp64
+((1, 2, 3, 4, 5)) variance(col0::i8, SAMPLE::enum) = 2.5::fp64?
+((1, 2, 3, 4, 5)) variance(col0::i8, POPULATION::enum) = 2.0::fp64?
+((1, 2, 3, 4, 5)) variance(col0::i16, SAMPLE::enum) = 2.5::fp64?
+((1, 2, 3, 4, 5)) variance(col0::i16, POPULATION::enum) = 2.0::fp64?
+((1, 2, 3, 4, 5)) variance(col0::i32, SAMPLE::enum) = 2.5::fp64?
+((1, 2, 3, 4, 5)) variance(col0::i32, POPULATION::enum) = 2.0::fp64?
+((1, 2, 3, 4, 5)) variance(col0::i64, SAMPLE::enum) = 2.5::fp64?
+((1, 2, 3, 4, 5)) variance(col0::i64, POPULATION::enum) = 2.0::fp64?
+
+# integer_negative: Variance with negative integer values
+((-5, -3, -1, 1, 3, 5)) variance(col0::i32, SAMPLE::enum) = 15.166666666666666::fp64?
+((-10, -5, 0, 5, 10)) variance(col0::i64, POPULATION::enum) = 50.0::fp64?
+
+# integer_uniform: Variance with uniform integer values
+((42, 42, 42, 42)) variance(col0::i16, SAMPLE::enum) = 0.0::fp64?
+((100, 100, 100, 100)) variance(col0::i32, POPULATION::enum) = 0.0::fp64?
+
+# integer_single: Variance with single integer value
+((7)) variance(col0::i8, SAMPLE::enum) = Null::fp64?
+((99)) variance(col0::i64, POPULATION::enum) = 0.0::fp64?
+
+# integer_large_values: Variance with large integer values
+((1000, 2000, 3000, 4000, 5000)) variance(col0::i32, SAMPLE::enum) = 2500000.0::fp64?
+((100, 200, 300, 400, 500)) variance(col0::i64, POPULATION::enum) = 20000.0::fp64?
+
+# integer_zero_mean: Variance with integer values around zero
+((-2, -1, 0, 1, 2)) variance(col0::i16, SAMPLE::enum) = 2.5::fp64?
+((-2, -1, 0, 1, 2)) variance(col0::i64, POPULATION::enum) = 2.0::fp64?
+
+# integer_three_values: Variance with three integer values
+((10, 20, 30)) variance(col0::i32, SAMPLE::enum) = 100.0::fp64?
+((10, 20, 30)) variance(col0::i8, POPULATION::enum) = 66.66666666666667::fp64?
