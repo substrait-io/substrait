@@ -1690,7 +1690,11 @@ message Expression {
     }
   }
 
-  // Expression that represents execution context dependent variables
+  // Expression that represents execution context dependent variables.
+  // These are modeled as expressions rather than functions because they:
+  // - Take no input arguments
+  // - Depend on execution context rather than input data
+  // - Require evaluation mode control (see ExecutionBehavior in plan.proto)
   message ExecutionContextVariable {
     oneof execution_context_variable_type {
       // an execution context dependent variable containing the current

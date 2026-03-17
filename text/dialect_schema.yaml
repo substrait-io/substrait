@@ -922,7 +922,7 @@ definitions:
         type: array
         description: The possible execution context variable types.
         items:
-          oneof:
+          oneOf:
             - enum:
               - CURRENT_TIMESTAMP
               - CURRENT_TIMEZONE
