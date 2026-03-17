@@ -1395,21 +1395,21 @@ aggregate_functions:
       - args:
           - name: x
             value: fp32
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-          distribution:
-            values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
           - name: x
             value: fp64
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-          distribution:
-            values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "variance"
@@ -1418,21 +1418,21 @@ aggregate_functions:
       - args:
           - name: x
             value: fp32
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-          distribution:
-            values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
           - name: x
             value: fp64
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-          distribution:
-            values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "corr"
