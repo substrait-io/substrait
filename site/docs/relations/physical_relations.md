@@ -144,7 +144,9 @@ A receiving operation that will merge multiple streams in an arbitrary order.
 
 ## Top-N Operation
 
-The top-N operator reorders a dataset based on one or more identified sort fields as well as a sorting function. Rather than sort the entire dataset, the top-N will only maintain the total number of records required to ensure a limited output. A top-n is a combination of a logical sort and logical fetch operations.
+The top-N operator reorders a dataset based on one or more identified sort fields as well as a sorting function. Rather than sort the entire dataset, the top-N will only maintain the total number of records required to ensure a limited output. A top-N is a combination of a logical sort and logical fetch operations.
+
+Optionally, the top-N operator supports **WITH TIES** semantics. When enabled, after returning the requested `count` rows, any additional rows that are tied with the last returned row (per the sort fields) are also included in the output.
 
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
@@ -155,12 +157,13 @@ The top-N operator reorders a dataset based on one or more identified sort field
 
 ### Top-N Properties
 
-| Property    | Description                                                  | Required                 |
-| ----------- | ------------------------------------------------------------ | ------------------------ |
-| Input       | The relational input.                                        | Required                 |
-| Sort Fields | List of one or more fields to sort by. Uses the same properties as the [orderedness](basics.md#orderedness) property. | One sort field required  |
-| Offset      | A positive integer. Declares the offset for retrieval of records. | Optional, defaults to 0. |
-| Count       | A positive integer. Declares the number of records that should be returned. | Required                 |
+| Property          | Description                                                  | Required                 |
+| ----------------- | ------------------------------------------------------------ | ------------------------ |
+| Input             | The relational input.                                        | Required                 |
+| Sort Fields       | List of one or more fields to sort by. Uses the same properties as the [orderedness](basics.md#orderedness) property. | One sort field required  |
+| Offset Expression | An expression evaluating to a non-negative integer or null. Declares the offset for retrieval of records. Null is treated as 0. | Optional, defaults to 0. |
+| Count Expression  | An expression evaluating to a non-negative integer or null. Declares the number of records to return. Null means ALL. | Required                 |
+| With Ties         | If true, rows tied with the last returned row (per the sort fields) are also included. | Optional, defaults to false. |
 
 
 

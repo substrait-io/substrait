@@ -550,6 +550,30 @@ message ExpandRel {
   }
 }
 
+// The top-N relational operator. A combination of a sort and fetch that only
+// maintains the number of records required to ensure a limited output.
+message TopNRel {
+  RelCommon common = 1;
+  Rel input = 2;
+
+  // List of one or more fields to sort by. At least one is required.
+  repeated SortField sorts = 3;
+
+  // Expression evaluating to a non-negative integer specifying the number of
+  // records to skip. Null is treated as 0. Recommended type is int64.
+  Expression offset = 4;
+
+  // Expression evaluating to a non-negative integer specifying the number of
+  // records to return. Null signals ALL. Recommended type is int64.
+  Expression count = 5;
+
+  // If true, additional rows tied with the last row (per the sort fields) are
+  // also included.
+  bool with_ties = 6;
+
+  substrait.extensions.AdvancedExtension advanced_extension = 7;
+}
+
 // A relation with output field names.
 //
 // This is for use at the root of a `Rel` tree.
@@ -586,6 +610,7 @@ message Rel {
     ConsistentPartitionWindowRel window = 17;
     ExchangeRel exchange = 15;
     ExpandRel expand = 16;
+    TopNRel top_n = 23;
   }
 }
 
