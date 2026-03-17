@@ -78,6 +78,10 @@ Both enumeration arguments and options accept values from a fixed set of strings
 | In function signature? | Yes (as `req`) | No |
 | If omitted | Invalid plan | Consumer chooses its own behavior |
 
+!!! warning "YAML keyword overlap"
+
+    In the YAML extension format, both enumeration arguments and function-level options use the keyword `options`. An enumeration argument appears inside `args` as `options: [VAL1, VAL2, ...]`, while a function-level option appears under a top-level `options` key with named sub-keys and a `values` list. Take care not to confuse the two when reading or writing extension YAML files.
+
 
 
 ## Nullability Handling
