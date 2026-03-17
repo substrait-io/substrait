@@ -401,11 +401,11 @@ def test_parse_errors_with_bad_scalar_testcases(
         ),
         (
             "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(my_col::fp32, col0::fp32) = 1::fp64",
-            "mismatched input '::'",  # Now accepts bare identifiers, type annotation is the error
+            "mismatched input 'fp32' expecting 'enum'",  # `my_col::fp32` gets recognized as enumArg which requires `::enum`
         ),
         (
             "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, column1::fp32) = 1::fp64",
-            "mismatched input '::'",  # Now accepts bare identifiers, type annotation is the error
+            "mismatched input 'fp32' expecting 'enum'",  # `column1::fp32` gets recognized as enumArg which requires `::enum`
         ),
     ],
 )
