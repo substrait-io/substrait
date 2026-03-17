@@ -1,0 +1,9 @@
+# Compound user-defined type with two data type parameters
+urn: extension:example:point_two_params
+types:
+  - name: point
+    parameters:
+      - name: LONG
+        type: dataType
+      - name: LAT
+        type: dataType

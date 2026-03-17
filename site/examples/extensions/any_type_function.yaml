@@ -1,0 +1,11 @@
+# Example showing the 'any' type - arguments can be of any type
+urn: extension:example:any_type
+scalar_functions:
+- name: foo
+  impls:
+  - args:
+    - name: a
+      value: any
+    - name: b
+      value: any
+    return: int64

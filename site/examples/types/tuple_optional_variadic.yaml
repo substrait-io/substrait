@@ -1,0 +1,9 @@
+# Tuple type with optional variadic parameter (zero or more types)
+urn: extension:example:tuple_variadic
+types:
+  - name: tuple
+    parameters:
+      - name: T
+        type: dataType
+        optional: true
+    variadic: true

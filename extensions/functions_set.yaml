@@ -1,5 +1,6 @@
 %YAML 1.2
 ---
+urn: extension:io.substrait:functions_set
 scalar_functions:
   -
     name: "index_in"

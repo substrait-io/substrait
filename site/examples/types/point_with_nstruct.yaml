@@ -1,0 +1,5 @@
+# Alternative way to define point structure using NSTRUCT syntax
+urn: extension:example:point_nstruct
+types:
+  - name: point
+    structure: "NSTRUCT<longitude: i32, latitude: i32>"

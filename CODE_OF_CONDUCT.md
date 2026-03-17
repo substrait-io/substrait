@@ -70,7 +70,7 @@ their behavior violates the code of conduct.  Often, calling attention to
 negative behavior is sufficient to resolve the issue.
 
 When a situation becomes difficult to resolve or we feel that the conversation
-is getting out of control we can email the SMC at substrait-harassment@googlegroups.com.
+is getting out of control we can email the PMC at substrait-harassment@googlegroups.com.
 
 ## Acknowledgements
 
@@ -78,4 +78,4 @@ This statement draws on the following for content and inspiration:
 
  * [The Apache Software Foundation code of conduct](https://www.apache.org/foundation/policies/conduct.html)
  * [Wikimedia's Universal Code of Conduct](https://meta.wikimedia.org/wiki/Universal_Code_of_Conduct)
- 
+

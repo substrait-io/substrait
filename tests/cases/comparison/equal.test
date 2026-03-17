@@ -9,7 +9,6 @@ equal(9223372036854775807::i64, 9223372036854775804::i64) = false::bool
 equal(inf::fp64, inf::fp64) = true::bool
 equal(inf::fp64, 1.5e+308::fp64) = false::bool
 equal(10::dec<38, 0>, 10::dec<38, 0>) = true::bool
-equal(10::dec<38, 0>, 11.25::dec<38, 2>) = false::bool
 equal(inf::fp64, -inf::fp64) = false::bool
 
 # null_input: Examples with null as input

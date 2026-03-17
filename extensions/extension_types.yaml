@@ -1,4 +1,5 @@
 ---
+urn: extension:io.substrait:extension_types
 types:
   - name: point
     structure:
@@ -6,5 +7,5 @@ types:
       longitude: i32
   - name: line
     structure:
-      start: point
-      end: point
+      start: u!point
+      end: u!point

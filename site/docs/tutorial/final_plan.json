@@ -1,51 +1,51 @@
 {
   "version": { "minorNumber": 20, "producer": "validator-test" },
-  "extensionUris": [
+  "extensionUrns": [
     {
-      "extensionUriAnchor": 1,
-      "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_set.yaml"
+      "extensionUrnAnchor": 1,
+      "urn": "extension:io.substrait:functions_set"
     },
     {
-      "extensionUriAnchor": 2,
-      "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_comparison.yaml"
+      "extensionUrnAnchor": 2,
+      "urn": "extension:io.substrait:functions_comparison"
     },
     {
-      "extensionUriAnchor": 3,
-      "uri": "https://github.com/substrait-io/substrait/blob/main/extensions/functions_arithmetic_decimal.yaml"
+      "extensionUrnAnchor": 3,
+      "urn": "extension:io.substrait:functions_arithmetic_decimal"
     }
   ],
   "extensions": [
     {
       "extensionFunction": {
-        "extensionUriReference": 1,
+        "extensionUrnReference": 1,
         "functionAnchor": 1,
         "name": "index_in"
       }
     },
     {
       "extensionFunction": {
-        "extensionUriReference": 2,
+        "extensionUrnReference": 2,
         "functionAnchor": 2,
         "name": "is_null"
       }
     },
     {
       "extensionFunction": {
-        "extensionUriReference": 2,
+        "extensionUrnReference": 2,
         "functionAnchor": 3,
         "name": "equal"
       }
     },
     {
       "extensionFunction": {
-        "extensionUriReference": 3,
+        "extensionUrnReference": 3,
         "functionAnchor": 4,
         "name": "sum"
       }
     },
     {
       "extensionFunction": {
-        "extensionUriReference": 3,
+        "extensionUrnReference": 3,
         "functionAnchor": 5,
         "name": "multiply"
       }

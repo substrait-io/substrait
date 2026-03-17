@@ -1,6 +1,182 @@
 Release Notes
 ---
 
+## [0.85.0](https://github.com/substrait-io/substrait/compare/v0.84.0...v0.85.0) (2026-03-06)
+
+### ⚠ BREAKING CHANGES
+
+* drops uri fields from protobufs
+
+### Features
+
+* only use urns for referencing simple extensions ([#971](https://github.com/substrait-io/substrait/issues/971)) ([ada68a8](https://github.com/substrait-io/substrait/commit/ada68a84698d269040a0d365c9e6c141fc3b2c29))
+
+## [0.84.0](https://github.com/substrait-io/substrait/compare/v0.83.0...v0.84.0) (2026-03-06)
+
+### Features
+
+* add common list functions to core extensions ([#969](https://github.com/substrait-io/substrait/issues/969)) ([609cad7](https://github.com/substrait-io/substrait/commit/609cad7330ea08c851e1069ba70fb56ebca19008))
+* add metadata fields to dialect schema ([#966](https://github.com/substrait-io/substrait/issues/966)) ([0fbf52e](https://github.com/substrait-io/substrait/commit/0fbf52e4623f72a7d85625a7f8e48b098447385a))
+* **proto:** deprecate time type and literal ([#985](https://github.com/substrait-io/substrait/issues/985)) ([dc27654](https://github.com/substrait-io/substrait/commit/dc276549da20d92aa83269219ae267682d55dba4))
+* support null list types and nested list literals in tests ([#991](https://github.com/substrait-io/substrait/issues/991)) ([e2dca29](https://github.com/substrait-io/substrait/commit/e2dca291fb9061a38bbd03574f11a85b56f96c28))
+
+### Bug Fixes
+
+* **grammar:** remove redundant import of SubstraitLexer in FuncTestCaseParser ([#982](https://github.com/substrait-io/substrait/issues/982)) ([9dd1f05](https://github.com/substrait-io/substrait/commit/9dd1f057392181208573edf2485a466c13a874d3))
+
+## [0.83.0](https://github.com/substrait-io/substrait/compare/v0.82.0...v0.83.0) (2026-03-01)
+
+### Features
+
+* **dialect:** support specifying maximum supported subsecond precision ([#961](https://github.com/substrait-io/substrait/issues/961)) ([e559368](https://github.com/substrait-io/substrait/commit/e5593685d5c7036fe67542bf7b46e6a3ee5e4a1d))
+
+### Bug Fixes
+
+* **grammar:** add IntervalCompound to ANTLR grammar ([#963](https://github.com/substrait-io/substrait/issues/963)) ([2705258](https://github.com/substrait-io/substrait/commit/2705258137b7272830cf00680e6f3a36b8d3ed4b))
+
+## [0.82.0](https://github.com/substrait-io/substrait/compare/v0.81.0...v0.82.0) (2026-02-22)
+
+### ⚠ BREAKING CHANGES
+
+* removes capabilities.proto and corresponding
+documentation
+
+Signed-off-by: Niels Pardon <par@zurich.ibm.com>
+
+### Features
+
+* remove capabilities.proto ([#952](https://github.com/substrait-io/substrait/issues/952)) ([23ac2f3](https://github.com/substrait-io/substrait/commit/23ac2f30e03a8d28f76e445bcd439064f3d688fd))
+
+## [0.81.0](https://github.com/substrait-io/substrait/compare/v0.80.0...v0.81.0) (2026-02-08)
+
+### ⚠ BREAKING CHANGES
+
+* I would propose to remove these proto definitions if
+they are not used / no longer part of the spec.
+
+### Features
+
+* remove unused function.proto, parameterized_types.proto, type_expressions.proto ([#940](https://github.com/substrait-io/substrait/issues/940)) ([788faab](https://github.com/substrait-io/substrait/commit/788faab7fdcc42742f5f2cb83294dd6966804109))
+
+### Bug Fixes
+
+* add missing visit methods in TestCaseVisitor ([#958](https://github.com/substrait-io/substrait/issues/958)) ([09e7c18](https://github.com/substrait-io/substrait/commit/09e7c180b32ebbd153a66e8fd78eec11d5aad386))
+
+## [0.80.0](https://github.com/substrait-io/substrait/compare/v0.79.0...v0.80.0) (2026-01-18)
+
+### Features
+
+* add optional metadata to simple extension yaml files ([#922](https://github.com/substrait-io/substrait/issues/922)) ([0ef31ac](https://github.com/substrait-io/substrait/commit/0ef31ac4572b3e03fd8ad86346db451f08ce17cd))
+
+## [0.79.0](https://github.com/substrait-io/substrait/compare/v0.78.2...v0.79.0) (2025-12-21)
+
+### Features
+
+* introduce lambda expressions ([#889](https://github.com/substrait-io/substrait/issues/889)) ([e47197c](https://github.com/substrait-io/substrait/commit/e47197c8de012ac6db4329ad7c68caeb746c5951))
+
+### Bug Fixes
+
+* remove redundant nullability markers in test case grammar ([#910](https://github.com/substrait-io/substrait/issues/910)) ([6ad9251](https://github.com/substrait-io/substrait/commit/6ad9251f27f4760936b9fb84edba8378be593ae4))
+
+## [0.78.2](https://github.com/substrait-io/substrait/compare/v0.78.1...v0.78.2) (2025-12-14)
+
+### Bug Fixes
+
+* **extensions:** nullif output should always be nullable ([#913](https://github.com/substrait-io/substrait/issues/913)) ([7e0404b](https://github.com/substrait-io/substrait/commit/7e0404ba8540bcd910bb652d67baeab86a69ccab))
+
+## [0.78.1](https://github.com/substrait-io/substrait/compare/v0.78.0...v0.78.1) (2025-11-23)
+
+### Bug Fixes
+
+* remove invalid equal function test ([#893](https://github.com/substrait-io/substrait/issues/893)) ([9533cfe](https://github.com/substrait-io/substrait/commit/9533cfe79449cb4504d934ccb76a2d6026123f43))
+
+## [0.78.0](https://github.com/substrait-io/substrait/compare/v0.77.0...v0.78.0) (2025-11-16)
+
+### ⚠ BREAKING CHANGES
+
+* `type_reference` with value **0** is encoded
+differently on wire. However, the usage of `type_reference` in generated
+consumer code does not break in practice. **New consumer should consider
+`type_reference` is set to zero when no oneof is set.** See [Wire
+
+### Features
+
+* support type alias in user defined literal ([#868](https://github.com/substrait-io/substrait/issues/868)) ([cd99f03](https://github.com/substrait-io/substrait/commit/cd99f033ec3cf8170d5e76affe31f3262f60d4e7)), closes [#Wire-Encoding-Change](https://github.com/substrait-io/substrait/issues/Wire-Encoding-Change) [#857](https://github.com/substrait-io/substrait/issues/857)
+
+## [0.77.0](https://github.com/substrait-io/substrait/compare/v0.76.0...v0.77.0) (2025-10-05)
+
+### Features
+
+* per plan type aliases ([#857](https://github.com/substrait-io/substrait/issues/857)) ([dfd04c1](https://github.com/substrait-io/substrait/commit/dfd04c15caa12845f77db50688fdc16f59fdc9d0))
+
+## [0.76.0](https://github.com/substrait-io/substrait/compare/v0.75.0...v0.76.0) (2025-09-21)
+
+### Features
+
+* codify Substrait dialects ([#816](https://github.com/substrait-io/substrait/issues/816)) ([b8090b2](https://github.com/substrait-io/substrait/commit/b8090b247eb8f9f05dcf46048f5e8145ac719318))
+
+## [0.75.0](https://github.com/substrait-io/substrait/compare/v0.74.1...v0.75.0) (2025-09-14)
+
+### Features
+
+* add AdvancedExtension to SavedComputation and LoadedComputation ([#858](https://github.com/substrait-io/substrait/issues/858)) ([9ea478a](https://github.com/substrait-io/substrait/commit/9ea478af81a6971e378afb1ba28c1151ba276bc4))
+* canonicalize extension URNs ([#859](https://github.com/substrait-io/substrait/issues/859)) ([06cadc8](https://github.com/substrait-io/substrait/commit/06cadc8bc6dc5d031083b6094b0ece479219966e))
+
+## [0.74.1](https://github.com/substrait-io/substrait/compare/v0.74.0...v0.74.1) (2025-08-10)
+
+### Bug Fixes
+
+* make simple extensions schema accessible at specified URL ([#848](https://github.com/substrait-io/substrait/issues/848)) ([c0c74ea](https://github.com/substrait-io/substrait/commit/c0c74ea7f17c2d8f5d96e24d2c0dbb664f8126f9))
+* typo on window functions site page ([#825](https://github.com/substrait-io/substrait/issues/825)) ([36c1fd8](https://github.com/substrait-io/substrait/commit/36c1fd86e8c2dbfef879e58d42e91f303e429314))
+
+## [0.74.0](https://github.com/substrait-io/substrait/compare/v0.73.0...v0.74.0) (2025-06-22)
+
+### Features
+
+* bitwise shift functions ([#799](https://github.com/substrait-io/substrait/issues/799)) ([fa53460](https://github.com/substrait-io/substrait/commit/fa534605c49a74ac82dcda7a5cdb11a3ec15dab8))
+
+## [0.73.0](https://github.com/substrait-io/substrait/compare/v0.72.0...v0.73.0) (2025-06-01)
+
+### Features
+
+* specify build input of hash join operator ([#810](https://github.com/substrait-io/substrait/issues/810)) ([0c4b658](https://github.com/substrait-io/substrait/commit/0c4b658c0ff474dfdab345ed751b94080a0cc715))
+
+## [0.72.0](https://github.com/substrait-io/substrait/compare/v0.71.0...v0.72.0) (2025-05-04)
+
+### ⚠ BREAKING CHANGES
+
+* direct output order of semi/anti/mark joins no longer
+includes invalid side (i.e., right of lefty joins, and left of righty
+joins).
+* single join raises runtime error if there more than one
+matching rows to adhere to the original proposed usage (unnesting scalar
+subqueries).
+
+# Problems
+
+1. Semi-joins and anti-joins are one-sided and fields from the other
+side of joins are not valid. The `Direct Output Order` in the document
+is okay for other types of joins but not in one-side joins.
+2. Single joins are proposed to be used unnesting scalar subqueries
+where exactly 1 row is expected. The current documentation citing the
+paper and behavior although relaxed the behavior so that the
+implementation can silently produce wrong result.
+
+# What this PR do?
+
+1. Clarify the direct output order by explicitly stating the semi, anti,
+and mark joins. Introducing `Input Order` (the previous `Direct Output
+Order`) so that all the properties referencing `Input Order` to reduce
+ambiguity.
+2. Single joins expecting at most one row for each join key. Otherwise,
+runtime error. This behavior can be extended in the future if such
+generalization is justified with correct use cases.
+
+### Features
+
+* add description field to types definition in schema ([#811](https://github.com/substrait-io/substrait/issues/811)) ([a4e3a82](https://github.com/substrait-io/substrait/commit/a4e3a82c54a153100ac6c3c9f88add78dc8cd3a8))
+* clarify behavior and direct output order of joins ([#803](https://github.com/substrait-io/substrait/issues/803)) ([fe3f1c6](https://github.com/substrait-io/substrait/commit/fe3f1c673ebdb54107dd384073de5a5816d94a44))
+
 ## [0.71.0](https://github.com/substrait-io/substrait/compare/v0.70.0...v0.71.0) (2025-04-20)
 
 ### ⚠ BREAKING CHANGES

@@ -1,0 +1,10 @@
+# Compound user-defined type with a data type parameter
+urn: extension:example:point_parameterized
+types:
+  - name: point
+    parameters:
+      - name: T
+        description: |
+          The type used for the longitude and latitude
+          components of the point.
+        type: dataType

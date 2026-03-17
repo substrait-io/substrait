@@ -1,0 +1,11 @@
+# Vector type with integer parameter constrained to 2 or 3 dimensions
+urn: extension:example:vector_constrained
+types:
+  - name: vector
+    parameters:
+      - name: T
+        type: dataType
+      - name: dimensions
+        type: integer
+        min: 2
+        max: 3

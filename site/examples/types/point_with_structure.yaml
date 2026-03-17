@@ -1,0 +1,7 @@
+# User-defined point type with structure information
+urn: extension:example:point_with_structure
+types:
+  - name: point
+    structure:
+      longitude: i32
+      latitude: i32

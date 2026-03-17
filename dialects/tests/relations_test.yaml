@@ -1,0 +1,24 @@
+name: "dialect test file for relations"
+
+metadata:
+  max_tables_per_query: 64
+
+supported_relations:
+  - AGGREGATE
+  - FETCH
+  - FILTER
+  - PROJECT
+  - SORT
+  - relation: JOIN
+    metadata:
+      supports_null_safe_equality: false
+    join_types:
+      - INNER
+      - LEFT
+      - RIGHT
+  - relation: READ
+    read_types: [ICEBERG_TABLE, VIRTUAL_TABLE]
+  - relation: EXTENSION_LEAF
+    message_types:
+      - type.googleapis.com/google.profile.Person
+

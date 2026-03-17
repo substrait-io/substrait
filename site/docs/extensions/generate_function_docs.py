@@ -21,6 +21,8 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                 mdFile.new_line(f"{key}: {value}")
 
     for function_classification, value in file_obj.items():
+        if function_classification == "urn":
+            continue
         function_classification_str = function_classification.replace("_", " ").title()
         mdFile.new_header(level=2, title=f"{function_classification_str}")
         functions_list = yaml_file_object[function_classification]
@@ -180,14 +182,17 @@ with tempfile.TemporaryDirectory() as temp_directory:
 
         mdFile = MdUtils(file_name=str(temp_directory / function_file_no_extension))
         mdFile.new_header(level=1, title=f"{function_file_name}")
-        mdFile.new_paragraph(
-            "This document file is generated for "
-            + mdFile.new_inline_link(
-                link=f"https://github.com/substrait-io/substrait/tree/main/extensions/"
-                f"{function_file_name}",
-                text=f"{function_file_name}",
-            )
+        description = "This document file is generated for " + mdFile.new_inline_link(
+            link=f"https://github.com/substrait-io/substrait/tree/main/extensions/"
+            f"{function_file_name}",
+            text=f"{function_file_name}",
         )
+
+        if "urn" in yaml_file_object:
+            urn = yaml_file_object["urn"]
+            description += f". The extension URN is `{urn}`."
+
+        mdFile.new_paragraph(description)
 
         write_markdown(yaml_file_object, function_file_name)
         mdFile.create_md_file()

@@ -38,6 +38,7 @@ def build_type_to_short_type():
         FuncTestCaseLexer.Time: FuncTestCaseLexer.Time,
         FuncTestCaseLexer.Interval_Year: FuncTestCaseLexer.IYear,
         FuncTestCaseLexer.Interval_Day: FuncTestCaseLexer.IDay,
+        FuncTestCaseLexer.Interval_Compound: FuncTestCaseLexer.ICompound,
         FuncTestCaseLexer.UUID: FuncTestCaseLexer.UUID,
         FuncTestCaseLexer.FixedChar: FuncTestCaseLexer.FChar,
         FuncTestCaseLexer.VarChar: FuncTestCaseLexer.VChar,
@@ -49,6 +50,7 @@ def build_type_to_short_type():
         FuncTestCaseLexer.List: FuncTestCaseLexer.List,
         FuncTestCaseLexer.Map: FuncTestCaseLexer.Map,
         FuncTestCaseLexer.Any: FuncTestCaseLexer.Any,
+        FuncTestCaseLexer.Func: FuncTestCaseLexer.Func,
     }
     to_short_type = {
         substrait_type_str(k): substrait_type_str(v) for k, v in rule_map.items()

@@ -3,17 +3,22 @@ $schema: https://json-schema.org/draft/2020-12/schema
 title: Simple Extensions
 additionalProperties: false
 type: object
+required: [urn]
 properties:
+  urn:
+    type: string
   dependencies:
     # For reusing type classes and type variations from other extension files.
     # The keys are namespace identifiers that you can then use as dot-separated
     # prefix for type class and type variation names in functions and the base
-    # type class for variations. The values must be extension URIs, following
+    # type class for variations. The values must be extension URNs, following
     # the same format and conventions as those used in the proto plans.
     type: object
     patternProperties:
       "^[a-zA-Z_\\$][a-zA-Z0-9_\\$]*$":
         type: string
+  metadata: # arbitrary data created by extension author
+    type: object
   types:
     type: array
     minItems: 1
@@ -24,6 +29,10 @@ properties:
       properties:
         name:
           type: string
+        description:
+          type: string
+        metadata: # arbitrary data created by extension author
+          type: object
         structure:
           $ref: "#/$defs/type"
         parameters: # parameter list for compound types
@@ -166,6 +175,19 @@ $defs:
   sessionDependent:
     type: boolean
   nullabilityHandling:
+    description: >-
+      Describes how nullability of arguments maps to nullability of output.
+
+      * MIRROR: Output is nullable if any argument is nullable; argument and return
+      types must not include nullability markers as they will be ignored for output
+      nullability derivation.
+
+      * DECLARED_OUTPUT: Output nullability matches the declared return type
+      regardless of argument nullability; argument types must not include
+      nullability markers.
+
+      * DISCRETE: Like DECLARED_OUTPUT, but arguments must also match their
+      declared nullability exactly.
     type: string
     enum: [MIRROR, DECLARED_OUTPUT, DISCRETE]
   returnValue:
@@ -192,6 +214,8 @@ $defs:
         type: string
       description:
         type: string
+      metadata: # arbitrary data created by extension author
+        type: object
       impls:
         type: array
         minItems: 1
@@ -225,6 +249,8 @@ $defs:
         type: string
       description:
         type: string
+      metadata: # arbitrary data created by extension author
+        type: object
       impls:
         type: array
         minItems: 1
@@ -257,7 +283,6 @@ $defs:
               $ref: "#/$defs/maxset"
             decomposable:
               $ref: "#/$defs/decomposable"
-
   windowFunction:
     type: object
     additionalProperties: false
@@ -267,6 +292,8 @@ $defs:
         type: string
       description:
         type: string
+      metadata: # arbitrary data created by extension author
+        type: object
       impls:
         type: array
         minItems: 1
