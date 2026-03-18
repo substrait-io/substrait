@@ -34,6 +34,7 @@ parameterizedType
   | FixedBinary isnull=QMark? Lt length=numericParameter Gt                                 #fixedBinary
   | Decimal isnull=QMark? Lt precision=numericParameter Comma scale=numericParameter Gt     #decimal
   | Interval_Day isnull=QMark? Lt precision=numericParameter Gt                             #precisionIntervalDay
+  | Interval_Compound isnull=QMark? Lt precision=numericParameter Gt                        #precisionIntervalCompound
   | Precision_Time isnull=QMark? Lt precision=numericParameter Gt                           #precisionTime
   | Precision_Timestamp isnull=QMark? Lt precision=numericParameter Gt                      #precisionTimestamp
   | Precision_Timestamp_TZ isnull=QMark? Lt precision=numericParameter Gt                   #precisionTimestampTZ
@@ -41,7 +42,13 @@ parameterizedType
   | NStruct isnull=QMark? Lt Identifier expr (Comma Identifier expr)* Gt                    #nStruct
   | List isnull=QMark? Lt expr Gt                                                           #list
   | Map isnull=QMark? Lt key=expr Comma value=expr Gt                                       #map
+  | Func isnull=QMark? Lt params=funcParams Arrow returnType=expr Gt                        #func
   | UserDefined Identifier isnull=QMark? (Lt expr (Comma expr)* Gt)?                        #userDefined
+  ;
+
+funcParams
+  : expr                                        #singleFuncParam
+  | OParen expr (Comma expr)* CParen            #funcParamsWithParens
   ;
 
 numericParameter

@@ -2,7 +2,10 @@
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_comparison.yaml'
 
 # basic: Basic examples without any special cases
+nullif(10::i8, 2::i8) = 10::i8
+nullif(3::i8, 3::i8) = null::i8
 nullif(1::i16, 5::i16) = 1::i16
+nullif(1::i16, 1::i16) = null::i16
 nullif(7.25::fp32, 1.00::fp32) = 7.25::fp32
 nullif(1.11::fp32, 1.11::fp32) = null::fp32
 nullif(false::bool, true::bool) = false::bool

@@ -1,6 +1,95 @@
 Release Notes
 ---
 
+## [0.85.0](https://github.com/substrait-io/substrait/compare/v0.84.0...v0.85.0) (2026-03-06)
+
+### ⚠ BREAKING CHANGES
+
+* drops uri fields from protobufs
+
+### Features
+
+* only use urns for referencing simple extensions ([#971](https://github.com/substrait-io/substrait/issues/971)) ([ada68a8](https://github.com/substrait-io/substrait/commit/ada68a84698d269040a0d365c9e6c141fc3b2c29))
+
+## [0.84.0](https://github.com/substrait-io/substrait/compare/v0.83.0...v0.84.0) (2026-03-06)
+
+### Features
+
+* add common list functions to core extensions ([#969](https://github.com/substrait-io/substrait/issues/969)) ([609cad7](https://github.com/substrait-io/substrait/commit/609cad7330ea08c851e1069ba70fb56ebca19008))
+* add metadata fields to dialect schema ([#966](https://github.com/substrait-io/substrait/issues/966)) ([0fbf52e](https://github.com/substrait-io/substrait/commit/0fbf52e4623f72a7d85625a7f8e48b098447385a))
+* **proto:** deprecate time type and literal ([#985](https://github.com/substrait-io/substrait/issues/985)) ([dc27654](https://github.com/substrait-io/substrait/commit/dc276549da20d92aa83269219ae267682d55dba4))
+* support null list types and nested list literals in tests ([#991](https://github.com/substrait-io/substrait/issues/991)) ([e2dca29](https://github.com/substrait-io/substrait/commit/e2dca291fb9061a38bbd03574f11a85b56f96c28))
+
+### Bug Fixes
+
+* **grammar:** remove redundant import of SubstraitLexer in FuncTestCaseParser ([#982](https://github.com/substrait-io/substrait/issues/982)) ([9dd1f05](https://github.com/substrait-io/substrait/commit/9dd1f057392181208573edf2485a466c13a874d3))
+
+## [0.83.0](https://github.com/substrait-io/substrait/compare/v0.82.0...v0.83.0) (2026-03-01)
+
+### Features
+
+* **dialect:** support specifying maximum supported subsecond precision ([#961](https://github.com/substrait-io/substrait/issues/961)) ([e559368](https://github.com/substrait-io/substrait/commit/e5593685d5c7036fe67542bf7b46e6a3ee5e4a1d))
+
+### Bug Fixes
+
+* **grammar:** add IntervalCompound to ANTLR grammar ([#963](https://github.com/substrait-io/substrait/issues/963)) ([2705258](https://github.com/substrait-io/substrait/commit/2705258137b7272830cf00680e6f3a36b8d3ed4b))
+
+## [0.82.0](https://github.com/substrait-io/substrait/compare/v0.81.0...v0.82.0) (2026-02-22)
+
+### ⚠ BREAKING CHANGES
+
+* removes capabilities.proto and corresponding
+documentation
+
+Signed-off-by: Niels Pardon <par@zurich.ibm.com>
+
+### Features
+
+* remove capabilities.proto ([#952](https://github.com/substrait-io/substrait/issues/952)) ([23ac2f3](https://github.com/substrait-io/substrait/commit/23ac2f30e03a8d28f76e445bcd439064f3d688fd))
+
+## [0.81.0](https://github.com/substrait-io/substrait/compare/v0.80.0...v0.81.0) (2026-02-08)
+
+### ⚠ BREAKING CHANGES
+
+* I would propose to remove these proto definitions if
+they are not used / no longer part of the spec.
+
+### Features
+
+* remove unused function.proto, parameterized_types.proto, type_expressions.proto ([#940](https://github.com/substrait-io/substrait/issues/940)) ([788faab](https://github.com/substrait-io/substrait/commit/788faab7fdcc42742f5f2cb83294dd6966804109))
+
+### Bug Fixes
+
+* add missing visit methods in TestCaseVisitor ([#958](https://github.com/substrait-io/substrait/issues/958)) ([09e7c18](https://github.com/substrait-io/substrait/commit/09e7c180b32ebbd153a66e8fd78eec11d5aad386))
+
+## [0.80.0](https://github.com/substrait-io/substrait/compare/v0.79.0...v0.80.0) (2026-01-18)
+
+### Features
+
+* add optional metadata to simple extension yaml files ([#922](https://github.com/substrait-io/substrait/issues/922)) ([0ef31ac](https://github.com/substrait-io/substrait/commit/0ef31ac4572b3e03fd8ad86346db451f08ce17cd))
+
+## [0.79.0](https://github.com/substrait-io/substrait/compare/v0.78.2...v0.79.0) (2025-12-21)
+
+### Features
+
+* introduce lambda expressions ([#889](https://github.com/substrait-io/substrait/issues/889)) ([e47197c](https://github.com/substrait-io/substrait/commit/e47197c8de012ac6db4329ad7c68caeb746c5951))
+
+### Bug Fixes
+
+* remove redundant nullability markers in test case grammar ([#910](https://github.com/substrait-io/substrait/issues/910)) ([6ad9251](https://github.com/substrait-io/substrait/commit/6ad9251f27f4760936b9fb84edba8378be593ae4))
+
+## [0.78.2](https://github.com/substrait-io/substrait/compare/v0.78.1...v0.78.2) (2025-12-14)
+
+### Bug Fixes
+
+* **extensions:** nullif output should always be nullable ([#913](https://github.com/substrait-io/substrait/issues/913)) ([7e0404b](https://github.com/substrait-io/substrait/commit/7e0404ba8540bcd910bb652d67baeab86a69ccab))
+
+## [0.78.1](https://github.com/substrait-io/substrait/compare/v0.78.0...v0.78.1) (2025-11-23)
+
+### Bug Fixes
+
+* remove invalid equal function test ([#893](https://github.com/substrait-io/substrait/issues/893)) ([9533cfe](https://github.com/substrait-io/substrait/commit/9533cfe79449cb4504d934ccb76a2d6026123f43))
+
 ## [0.78.0](https://github.com/substrait-io/substrait/compare/v0.77.0...v0.78.0) (2025-11-16)
 
 ### ⚠ BREAKING CHANGES

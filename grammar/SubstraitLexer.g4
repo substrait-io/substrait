@@ -15,6 +15,7 @@ fragment DIGIT: [0-9];
 If       : 'IF';
 Then     : 'THEN';
 Else     : 'ELSE';
+Func     : 'FUNC';
 
 // TYPES
 Boolean  : 'BOOLEAN';
@@ -32,6 +33,7 @@ Date     : 'DATE';
 Time     : 'TIME';
 Interval_Year: 'INTERVAL_YEAR';
 Interval_Day: 'INTERVAL_DAY';
+Interval_Compound: 'INTERVAL_COMPOUND';
 UUID     : 'UUID';
 Decimal  : 'DECIMAL';
 Precision_Time: 'PRECISION_TIME';
@@ -54,6 +56,7 @@ Ts: 'TS';
 TsTZ: 'TSTZ';
 IYear: 'IYEAR';
 IDay: 'IDAY';
+ICompound: 'ICOMPOUND';
 Dec: 'DEC';
 PT: 'PT';
 PTs: 'PTS';
@@ -101,6 +104,7 @@ Dot: '.';
 And      : 'AND';
 Or       : 'OR';
 Assign   : ':=';
+Arrow    : '->';
 
 
 

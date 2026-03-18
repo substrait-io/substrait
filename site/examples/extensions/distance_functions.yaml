@@ -7,7 +7,7 @@ scalar_functions:
   impls:
   - args:
     - name: a
-      value: ext.point
+      value: ext.u!point
     - name: b
-      value: ext.point
+      value: ext.u!point
     return: f64
