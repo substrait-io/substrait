@@ -1,6 +1,6 @@
 %YAML 1.2
 ---
-urn: extension:io.substrait:functions_geometry
+urn: urn:substrait:extension:io.substrait:functions_geometry
 types:
   - name: geometry
     structure: "BINARY"

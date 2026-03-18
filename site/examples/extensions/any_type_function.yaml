@@ -1,5 +1,5 @@
 # Example showing the 'any' type - arguments can be of any type
-urn: extension:example:any_type
+urn: urn:substrait:extension:example:any_type
 scalar_functions:
 - name: foo
   impls:

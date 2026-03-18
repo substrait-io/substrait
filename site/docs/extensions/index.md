@@ -13,14 +13,16 @@ Some kinds of primitives are so frequently extended that Substrait defines a sta
 * Window Functions
 * Table Functions
 
-To extend these items, developers can create one or more YAML files that describe the properties of each of these extensions. Each YAML file must include a required `urn` field that uniquely identifies the extension. While these identifiers are URN-like but not technically URNs (they lack the `urn:` prefix), and they will be referred to as `extension URNs` for clarity.
+To extend these items, users can create one or more YAML files that describe the properties of each of these extensions. Each YAML file must include a required `urn` field that uniquely identifies the extension.
 
-This extension URN uses the format `extension:<OWNER>:<ID>`, where:
+The canonical form of an extension URN is `urn:substrait:extension:<NAMESPACE>:<ID>`, where:
 
-- `OWNER` represents the organization or entity providing the extension and should follow [reverse domain name convention](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) (e.g., `io.substrait`, `com.example`, `org.apache.arrow`) to prevent name collisions
+- `NAMESPACE` represents the organization or entity providing the extension and should follow [reverse domain name convention](https://en.wikipedia.org/wiki/Reverse_domain_name_notation) (e.g., `io.substrait`, `com.example`, `org.apache.arrow`) to prevent name collisions
 - `ID` is the specific identifier for the extension (e.g., `functions_arithmetic`, `custom_types`)
 
-These URNs must match the regex `^extension:[a-z0-9_.-]+:[a-z0-9_.-]+$`.
+For backwards compatibility, if a URN begins with `extension:` instead of `urn:substrait:extension:`, the prefix `urn:substrait:` is prepended before validation. This means `extension:io.substrait:functions_list` is equivalent to `urn:substrait:extension:io.substrait:functions_list`.
+
+Extension URNs in canonical form must be valid [RFC 8141](https://www.rfc-editor.org/rfc/rfc8141.html) URNs (with NID `substrait`) and must match the regex `^urn:substrait:extension:[a-z0-9_.-]+:[a-z0-9_.-]+$`.
 
 The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
