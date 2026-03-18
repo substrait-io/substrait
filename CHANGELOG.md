@@ -1,6 +1,29 @@
 Release Notes
 ---
 
+## [0.85.0](https://github.com/substrait-io/substrait/compare/v0.84.0...v0.85.0) (2026-03-06)
+
+### ⚠ BREAKING CHANGES
+
+* drops uri fields from protobufs
+
+### Features
+
+* only use urns for referencing simple extensions ([#971](https://github.com/substrait-io/substrait/issues/971)) ([ada68a8](https://github.com/substrait-io/substrait/commit/ada68a84698d269040a0d365c9e6c141fc3b2c29))
+
+## [0.84.0](https://github.com/substrait-io/substrait/compare/v0.83.0...v0.84.0) (2026-03-06)
+
+### Features
+
+* add common list functions to core extensions ([#969](https://github.com/substrait-io/substrait/issues/969)) ([609cad7](https://github.com/substrait-io/substrait/commit/609cad7330ea08c851e1069ba70fb56ebca19008))
+* add metadata fields to dialect schema ([#966](https://github.com/substrait-io/substrait/issues/966)) ([0fbf52e](https://github.com/substrait-io/substrait/commit/0fbf52e4623f72a7d85625a7f8e48b098447385a))
+* **proto:** deprecate time type and literal ([#985](https://github.com/substrait-io/substrait/issues/985)) ([dc27654](https://github.com/substrait-io/substrait/commit/dc276549da20d92aa83269219ae267682d55dba4))
+* support null list types and nested list literals in tests ([#991](https://github.com/substrait-io/substrait/issues/991)) ([e2dca29](https://github.com/substrait-io/substrait/commit/e2dca291fb9061a38bbd03574f11a85b56f96c28))
+
+### Bug Fixes
+
+* **grammar:** remove redundant import of SubstraitLexer in FuncTestCaseParser ([#982](https://github.com/substrait-io/substrait/issues/982)) ([9dd1f05](https://github.com/substrait-io/substrait/commit/9dd1f057392181208573edf2485a466c13a874d3))
+
 ## [0.83.0](https://github.com/substrait-io/substrait/compare/v0.82.0...v0.83.0) (2026-03-01)
 
 ### Features
