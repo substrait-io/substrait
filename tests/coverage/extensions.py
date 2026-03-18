@@ -121,14 +121,14 @@ class Extension:
                 "nullability", "MIRROR"
             )  # MIRROR is the spec default
             return_type_raw = str(impl["return"])
-            return_nullable = type_str_is_outer_nullable(return_type_raw)
+            is_return_nullable = type_str_is_outer_nullable(return_type_raw)
             overloads.append(
                 FunctionOverload(
                     args,
                     Extension.get_short_type(impl["return"]),
                     "variadic" in impl,
                     nullability=nullability,
-                    return_nullable=return_nullable,
+                    is_return_nullable=is_return_nullable,
                 )
             )
         return overloads
@@ -227,7 +227,7 @@ class FunctionVariant:
         variadic,
         func_type,
         nullability="MIRROR",
-        return_nullable=False,
+        is_return_nullable=False,
     ):
         self.name = name
         self.uri = uri
@@ -237,7 +237,7 @@ class FunctionVariant:
         self.variadic = variadic
         self.func_type = func_type
         self.nullability = nullability
-        self.return_nullable = return_nullable
+        self.is_return_nullable = is_return_nullable
         self.test_count = 0
 
     def __str__(self):
@@ -249,16 +249,21 @@ class FunctionVariant:
 
 class FunctionOverload:
     def __init__(
-        self, args, return_type, variadic, nullability="MIRROR", return_nullable=False
+        self,
+        args,
+        return_type,
+        variadic,
+        nullability="MIRROR",
+        is_return_nullable=False,
     ):
         self.args = args
         self.return_type = return_type
         self.variadic = variadic
         self.nullability = nullability
-        self.return_nullable = return_nullable
+        self.is_return_nullable = is_return_nullable
 
     def __str__(self):
-        return f"FunctionOverload(args={self.args}, result={self.return_type}, variadic={self.variadic}, nullability={self.nullability})"
+        return f"FunctionOverload(args={self.args}, result={self.return_type}, variadic={self.variadic}, nullability={self.nullability}, is_return_nullable={self.is_return_nullable})"
 
 
 # define function type enum
@@ -298,7 +303,7 @@ class FunctionRegistry:
                     overload.variadic,
                     func_type,
                     nullability=overload.nullability,
-                    return_nullable=overload.return_nullable,
+                    is_return_nullable=overload.is_return_nullable,
                 )
                 fun_arr.append(function)
             self.registry[f_name] = fun_arr

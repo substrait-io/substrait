@@ -198,12 +198,12 @@ def _validate_declared_output(test_case, variant, loc, sig):
     type in the extension YAML.
     """
     result_nullable = _result_is_nullable(test_case)
-    if variant.return_nullable and not result_nullable:
+    if variant.is_return_nullable and not result_nullable:
         return (
             f"{loc}: DECLARED_OUTPUT violation: {sig} — "
             f"output should be nullable to match declared return type"
         )
-    if not variant.return_nullable and result_nullable:
+    if not variant.is_return_nullable and result_nullable:
         return (
             f"{loc}: DECLARED_OUTPUT violation: {sig} — "
             f"output should not be nullable; declared return type is not nullable"
@@ -220,12 +220,12 @@ def _validate_discrete(test_case, variant, loc, sig):
     validate against. Implement once a real DISCRETE function exists.
     """
     result_nullable = _result_is_nullable(test_case)
-    if variant.return_nullable and not result_nullable:
+    if variant.is_return_nullable and not result_nullable:
         return (
             f"{loc}: DISCRETE violation: {sig} — "
             f"output should be nullable to match declared return type"
         )
-    if not variant.return_nullable and result_nullable:
+    if not variant.is_return_nullable and result_nullable:
         return (
             f"{loc}: DISCRETE violation: {sig} — "
             f"output should not be nullable; declared return type is not nullable"
