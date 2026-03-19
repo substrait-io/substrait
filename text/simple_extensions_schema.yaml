@@ -29,7 +29,7 @@ properties:
       properties:
         name:
           type: string
-        deprecation:
+        deprecated:
           $ref: "#/$defs/deprecationStatus"
         description:
           type: string
@@ -53,7 +53,7 @@ properties:
           $ref: "#/$defs/type"
         name:
           type: string
-        deprecation:
+        deprecated:
           $ref: "#/$defs/deprecationStatus"
         description:
           type: string
@@ -212,11 +212,21 @@ $defs:
   deprecationStatus:
     type: object
     additionalProperties: false
+    required: [since]
     properties:
-      deprecatedSince: # Substrait version since which the function is deprecated (for documentation only)
+      since:
+        description: >-
+          Substrait version since which the function is deprecated.
+          Should follow semantic versioning format (e.g. "1.2.3").
         type: string
-      description: # description of the deprecation (for documentation only)
+      reason:
+        description: >-
+          Description of the deprecation (for documentation only).
         type: string
+      metadata:
+        description: >-
+          Arbitrary data created by extension author (for documentation only).
+        type: object
   scalarFunction:
     type: object
     additionalProperties: false
@@ -224,7 +234,7 @@ $defs:
     properties:
       name:
         type: string
-      deprecation:
+      deprecated:
         $ref: "#/$defs/deprecationStatus"
       description:
         type: string
@@ -238,7 +248,7 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
-            deprecation:
+            deprecated:
               $ref: "#/$defs/deprecationStatus"
             args:
               $ref: "#/$defs/arguments"
@@ -263,7 +273,7 @@ $defs:
     properties:
       name:
         type: string
-      deprecation:
+      deprecated:
         $ref: "#/$defs/deprecationStatus"
       description:
         type: string
@@ -277,7 +287,7 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
-            deprecation:
+            deprecated:
               $ref: "#/$defs/deprecationStatus"
             args:
               $ref: "#/$defs/arguments"
@@ -310,7 +320,7 @@ $defs:
     properties:
       name:
         type: string
-      deprecation:
+      deprecated:
         $ref: "#/$defs/deprecationStatus"
       description:
         type: string
@@ -324,7 +334,7 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
-            deprecation:
+            deprecated:
               $ref: "#/$defs/deprecationStatus"
             args:
               $ref: "#/$defs/arguments"
