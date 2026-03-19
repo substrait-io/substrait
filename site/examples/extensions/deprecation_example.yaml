@@ -12,12 +12,13 @@ types:
       x: i32
       y: i32
 
-# A deprecated scalar function using semantic version
+# A deprecated scalar function using generic version
 scalar_functions:
   - name: "old_func"
     deprecated:
       since:
-        semanticVersion: "1.2.0"
+        name: "SomeRandomOpenSourceProject"
+        version: "99.88.77"
       reason: "Use new_func instead"
     impls:
       - args:
