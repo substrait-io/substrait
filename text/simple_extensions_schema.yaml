@@ -266,7 +266,7 @@ $defs:
         type: string
       metadata:
         description: >-
-          Arbitrary data created by extension author (for documentation only).
+          Arbitrary data created by extension author.
         type: object
   scalarFunction:
     type: object
