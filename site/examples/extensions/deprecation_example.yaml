@@ -5,8 +5,7 @@ urn: extension:io.substrait:deprecation_examples
 types:
   - name: old_type
     deprecated:
-      since:
-        substraitVersion: "0.50.0"
+      since: "0.50.0"
       reason: "Replaced by new_type"
     structure:
       x: i32
@@ -16,9 +15,7 @@ types:
 scalar_functions:
   - name: "old_func"
     deprecated:
-      since:
-        name: "SomeRandomOpenSourceProject"
-        version: "99.88.77"
+      since: "0.1.1"
       reason: "Use new_func instead"
     impls:
       - args:
@@ -37,8 +34,6 @@ scalar_functions:
           - name: x
             value: i32
         deprecated:
-          since:
-            name: "MyProject"
-            version: "v3.1"
+          since: "3.1.0"
           reason: "Use the fp32 overload instead"
         return: i32

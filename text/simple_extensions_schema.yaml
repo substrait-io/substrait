@@ -209,37 +209,12 @@ $defs:
     type: number
   ordered:
     type: boolean
-  semanticVersionString:
+  coreSemanticVersionString:
     type: string
-    pattern: "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    pattern: "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
     description: >-
       Semantic version string. Should follow semantic versioning format (e.g. "1.2.3").
-  substraitVersion:
-    type: object
-    additionalProperties: false
-    properties:
-      substraitVersion:
-        $ref: "#/$defs/semanticVersionString"
-        description: >-
-          Substrait version string.
-    required: [substraitVersion]
-  genericVersion:
-    type: object
-    additionalProperties: false
-    description: >-
-      Generic versioning scheme that can be used for extensions that want to specify
-      their own version independent of Substrait versions. The interpretation of
-      the version string is up to the extension author.
-    properties:
-      name:
-        type: string
-        description: >-
-          Name of the versioning scheme.
-      version:
-        type: string
-        description: >-
-          Version string of the scheme.
-    required: [name, version]
+      We intentiaonally allow only core components (major.minor.patch) of the semantic version string.
   deprecationStatus:
     type: object
     additionalProperties: false
@@ -247,11 +222,8 @@ $defs:
     properties:
       since:
         description: >-
-          Version since when the item is deprecated. Should follow the same versioning
-          scheme as used in the extension's deprecatedSince field.
-        oneOf:
-          - $ref: "#/$defs/substraitVersion"
-          - $ref: "#/$defs/genericVersion"
+          Version since when the item is deprecated.
+        $ref: "#/$defs/coreSemanticVersionString"
       reason:
         description: >-
           Description of the deprecation (for documentation only).
