@@ -161,6 +161,25 @@ Example:
 
 Consumers of extension files are not required to understand or validate metadata fields.
 
+### Deprecation of Extensions
+
+Any extension entry can be deprecated at some point and producing a plan using deprecated extensions is **highly discouraged** for forward compatibility. The `deprecated` field can be added to types, type variations, functions (scalar, aggregate, and window), and individual function implementations.
+
+Consumers of extension files are not required to understand or validate deprecation fields.
+
+The `deprecated` field requires a `since` object that specifies the version at which the entry was deprecated. Three versioning schemes are supported:
+
+* `substraitVersion` — a [semantic version](https://semver.org) string denoting since which Substrait release the extension has been deprecated. Substrait core extensions use this scheme.
+* `semanticVersion` — a [semantic version](https://semver.org) string for extensions that maintain their own versioning independent of Substrait releases.
+* `genericVersion` — a freeform versioning scheme with `name` (the versioning scheme name) and `version` (the version string) fields. The interpretation is up to the extension authors.
+
+An optional `reason` string can describe why the entry was deprecated, and an optional `metadata` object can hold arbitrary data from the extension author.
+
+Example:
+```yaml
+--8<-- "examples/extensions/deprecation_example.yaml"
+```
+
 ## Advanced Extensions
 
 Advanced extensions provide a way to embed custom functionality that goes beyond the standard YAML-based simple extensions. Unlike simple extensions, advanced extensions allow arbitrary, custom schemas. In the Protocol Buffers implementation, the `google.protobuf.Any` type is used to embed arbitrary extension data directly into Substrait messages.

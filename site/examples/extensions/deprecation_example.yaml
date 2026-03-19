@@ -1,0 +1,43 @@
+# Example showing deprecation of extensions using different versioning schemes
+urn: extension:io.substrait:deprecation_examples
+
+# A deprecated type using Substrait version
+types:
+  - name: old_type
+    deprecated:
+      since:
+        substraitVersion: "0.50.0"
+      reason: "Replaced by new_type"
+    structure:
+      x: i32
+      y: i32
+
+# A deprecated scalar function using semantic version
+scalar_functions:
+  - name: "old_func"
+    deprecated:
+      since:
+        semanticVersion: "1.2.0"
+      reason: "Use new_func instead"
+    impls:
+      - args:
+          - name: x
+            value: i32
+        return: i32
+
+  # A function with a deprecated impl using generic version
+  - name: "evolving_func"
+    impls:
+      - args:
+          - name: x
+            value: fp32
+        return: fp32
+      - args:
+          - name: x
+            value: i32
+        deprecated:
+          since:
+            name: "MyProject"
+            version: "v3.1"
+          reason: "Use the fp32 overload instead"
+        return: i32
