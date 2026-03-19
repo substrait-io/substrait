@@ -29,6 +29,8 @@ properties:
       properties:
         name:
           type: string
+        deprecation:
+          $ref: "#/$defs/deprecationStatus"
         description:
           type: string
         metadata: # arbitrary data created by extension author
@@ -51,6 +53,8 @@ properties:
           $ref: "#/$defs/type"
         name:
           type: string
+        deprecation:
+          $ref: "#/$defs/deprecationStatus"
         description:
           type: string
         functions:
@@ -205,6 +209,14 @@ $defs:
     type: number
   ordered:
     type: boolean
+  deprecationStatus:
+    type: object
+    additionalProperties: false
+    properties:
+      deprecatedSince: # Substrait version since which the function is deprecated (for documentation only)
+        type: string
+      description: # description of the deprecation (for documentation only)
+        type: string
   scalarFunction:
     type: object
     additionalProperties: false
@@ -212,6 +224,8 @@ $defs:
     properties:
       name:
         type: string
+      deprecation:
+        $ref: "#/$defs/deprecationStatus"
       description:
         type: string
       metadata: # arbitrary data created by extension author
@@ -224,6 +238,8 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
+            deprecation:
+              $ref: "#/$defs/deprecationStatus"
             args:
               $ref: "#/$defs/arguments"
             options:
@@ -247,6 +263,8 @@ $defs:
     properties:
       name:
         type: string
+      deprecation:
+        $ref: "#/$defs/deprecationStatus"
       description:
         type: string
       metadata: # arbitrary data created by extension author
@@ -259,6 +277,8 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
+            deprecation:
+              $ref: "#/$defs/deprecationStatus"
             args:
               $ref: "#/$defs/arguments"
             options:
@@ -290,6 +310,8 @@ $defs:
     properties:
       name:
         type: string
+      deprecation:
+        $ref: "#/$defs/deprecationStatus"
       description:
         type: string
       metadata: # arbitrary data created by extension author
@@ -302,6 +324,8 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
+            deprecation:
+              $ref: "#/$defs/deprecationStatus"
             args:
               $ref: "#/$defs/arguments"
             options:
