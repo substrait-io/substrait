@@ -163,7 +163,7 @@ Consumers of extension files are not required to understand or validate metadata
 
 ### Deprecation of Extensions
 
-Any extension entry can be deprecated at some point and producing a plan using deprecated extensions is **highly discouraged** for forward compatibility. The `deprecated` field can be added to types, type variations, functions (scalar, aggregate, and window), and individual function implementations.
+An extension entry can be deprecated. Producing a plan using deprecated extensions is discouraged for forward compatibility. The `deprecated` field can be added to types, type variations, functions (scalar, aggregate, and window), and individual function implementations.
 
 Consumers of extension files are not required to understand or validate deprecation fields.
 
