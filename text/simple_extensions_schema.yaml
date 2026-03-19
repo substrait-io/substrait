@@ -223,13 +223,6 @@ $defs:
         description: >-
           Substrait version string.
     required: [substraitVersion]
-  genericSemanticVersion:
-    type: object
-    additionalProperties: false
-    properties:
-      semanticVersion:
-        $ref: "#/$defs/semanticVersionString"
-    required: [semanticVersion]
   genericVersion:
     type: object
     additionalProperties: false
@@ -258,7 +251,6 @@ $defs:
           scheme as used in the extension's deprecatedSince field.
         oneOf:
           - $ref: "#/$defs/substraitVersion"
-          - $ref: "#/$defs/genericSemanticVersion"
           - $ref: "#/$defs/genericVersion"
       reason:
         description: >-

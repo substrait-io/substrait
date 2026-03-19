@@ -167,10 +167,9 @@ An extension entry can be deprecated. Producing a plan using deprecated extensio
 
 Consumers of extension files are not required to understand or validate deprecation fields.
 
-The `deprecated` field requires a `since` object that specifies the version at which the entry was deprecated. Three versioning schemes are supported:
+The `deprecated` field requires a `since` object that specifies the version at which the entry was deprecated. Two versioning schemes are supported:
 
 * `substraitVersion` — a [semantic version](https://semver.org) string denoting since which Substrait release the extension has been deprecated. Substrait core extensions use this scheme.
-* `semanticVersion` — a [semantic version](https://semver.org) string for extensions that maintain their own versioning independent of Substrait releases.
 * `genericVersion` — a freeform versioning scheme with `name` (the versioning scheme name) and `version` (the version string) fields. The interpretation is up to the extension authors.
 
 An optional `reason` string can describe why the entry was deprecated, and an optional `metadata` object can hold arbitrary data from the extension author.
