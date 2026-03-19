@@ -216,7 +216,7 @@ $defs:
     properties:
       since:
         description: >-
-          Substrait version since which the function is deprecated.
+          Substrait version since which the extension is deprecated.
           Should follow semantic versioning format (e.g. "1.2.3").
         type: string
       reason:
