@@ -41,6 +41,11 @@ properties:
           $ref: "#/$defs/type_param_defs"
         variadic: # when set, last parameter may be specified one or more times
           type: boolean
+        deprecated:
+          type: boolean
+          description: >-
+            true if this type has been deprecated, otherwise false (default)
+          default: false
   type_variations:
     type: array
     minItems: 1
@@ -60,6 +65,12 @@ properties:
         functions:
           type: string
           enum: [INHERITS, SEPARATE]
+        deprecated:
+          type: boolean
+          description: >-
+            true if this type variation has been deprecated,
+            otherwise false (default)
+          default: false
   scalar_functions:
     type: array
     items:
@@ -273,6 +284,18 @@ $defs:
               $ref: "#/$defs/returnValue"
             implementation:
               $ref: "#/$defs/implementation"
+            deprecated:
+              type: boolean
+              description: >-
+                true if this scalar function signature has been deprecated,
+                otherwise false (default)
+              default: false
+      deprecated:
+        type: boolean
+        description: >-
+          true if this scalar function has been deprecated,
+          otherwise false (default)
+        default: false
   aggregateFunction:
     type: object
     additionalProperties: false
@@ -322,6 +345,18 @@ $defs:
               $ref: "#/$defs/maxset"
             decomposable:
               $ref: "#/$defs/decomposable"
+            deprecated:
+              type: boolean
+              description: >-
+                true if this aggregate function signature has been deprecated,
+                otherwise false (default)
+              default: false
+      deprecated:
+        type: boolean
+        description: >-
+          true if this aggregate function has been deprecated,
+          otherwise false (default)
+        default: false
   windowFunction:
     type: object
     additionalProperties: false
@@ -374,3 +409,15 @@ $defs:
             window_type:
               type: string
               enum: [STREAMING, PARTITION]
+            deprecated:
+              type: boolean
+              description: >-
+                true if this window function signature has been deprecated,
+                otherwise false (default)
+              default: false
+      deprecated:
+        type: boolean
+        description: >-
+          true if this window function has been deprecated,
+          otherwise false (default)
+        default: false
