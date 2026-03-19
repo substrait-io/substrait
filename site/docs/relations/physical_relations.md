@@ -149,13 +149,13 @@ Optionally, the top-N operator supports **WITH TIES** semantics. When enabled, a
 
 ### Top-N Properties
 
-| Property          | Description                                                                                                                     | Required                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| Input             | The relational input.                                                                                                           | Required                     |
-| Sort Fields       | List of one or more fields to sort by. Uses the same properties as the [orderedness](basics.md#orderedness) property.           | One sort field required      |
-| Offset Expression | An expression evaluating to a non-negative integer or null. Declares the offset for retrieval of records. Null is treated as 0. | Optional, defaults to 0.     |
-| Count Expression  | An expression evaluating to a non-negative integer or null. Declares the number of records to return. Null means ALL.           | Required                     |
-| With Ties         | If true, rows tied with the last returned row (per the sort fields) are also included.                                          | Optional, defaults to false. |
+| Property          | Description                                                                                                                                                                                                | Required                           |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Input             | The relational input.                                                                                                                                                                                      | Required                           |
+| Sort Fields       | List of one or more fields to sort by. Uses the same properties as the [orderedness](basics.md#orderedness) property.                                                                                      | One sort field required            |
+| Offset Expression | An expression evaluating to a non-negative integer or null. Declares the offset for retrieval of records. Null is treated as 0.                                                                            | Optional, defaults to 0.           |
+| Count Expression  | An expression evaluating to a non-negative integer or null. Declares the number of records to return. Null means ALL.                                                                                      | Required                           |
+| Mode              | Determines how to handle rows tied with the last returned row. `ROWS_ONLY` (default) returns exactly `count` rows. `WITH_TIES` also includes additional rows tied with the last row (per the sort fields). | Optional, defaults to `ROWS_ONLY`. |
 
 ## Hash Aggregate Operation
 
