@@ -69,10 +69,23 @@ Multi Value:
 For single value expressions, these are a compact equivalent of `expression = value1 OR expression = value2 OR .. OR expression = valueN`. When using an expression of this type, two things are required; the types of the test expression and all value expressions that are related must be of the same type. Additionally, a function signature for equality must be available for the expression type used.
 
 
+## Execution Context Variables
 
+Execution context variables are a special class of expressions whose behavior depends on the current execution context. The evaluation of these variables is controlled by the `execution_behavior` setting described below.
 
+| Execution Context Variables | Description | Return Type |
+| --------------------------- | ----------- | ----------- |
+| current_date | a variable containing the current date | date |
+| current_timestamp | a variable containing the current timestamp in current_timezone | PRECISION_TIMESTAMP_TZ<P> |
+| current_timezone | a variable containing the current session timezone as a string defined by IANA timezone database (https://www.iana.org/time-zones). | string |
 
+## Execution Behavior
 
+The execution behavior settings in a Substrait Plan control how execution context variables are evaluated during plan execution. This is specified in the Plan message's `execution_behavior` field.
 
+The execution behavior defines a `VariableEvaluationMode` that controls the scope and frequency of execution context variable evaluation:
 
+- **VARIABLE_EVALUATION_MODE_PER_PLAN** (default): Variables are evaluated once per Substrait plan execution. All records in a single plan execution will see the same values for execution context variables like `current_date` and `current_timestamp`.
+- **VARIABLE_EVALUATION_MODE_PER_RECORD**: Variables are evaluated once per record during execution. Each record may see different values for execution context variables if the execution context changes between records.
 
+This setting is particularly important for time-based functions where the evaluation time affects the returned value. For example, with `VARIABLE_EVALUATION_MODE_PER_PLAN` mode, all rows processed in a single plan execution will have the same `current_date` value, while with `VARIABLE_EVALUATION_MODE_PER_RECORD` mode, the date could potentially change between rows if the plan spans a date boundary during execution.

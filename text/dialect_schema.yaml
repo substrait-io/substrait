@@ -158,6 +158,7 @@ properties:
           - SUBQUERY
           - NESTED
           - DYNAMIC_PARAMETER
+          - EXECUTION_CONTEXT_VARIABLE
         - $ref: "#/definitions/literal_expression"
         - $ref: "#/definitions/selection_expression"
         - $ref: "#/definitions/scalar_function_expression"
@@ -170,6 +171,7 @@ properties:
         - $ref: "#/definitions/subquery_expression"
         - $ref: "#/definitions/nested_expression"
         - $ref: "#/definitions/dynamic_parameter_expression"
+        - $ref: "#/definitions/execution_context_variable"
 
   supported_scalar_functions:
     type: array
@@ -186,6 +188,28 @@ properties:
     description: Functions that operate over a window of rows.
     items:
       $ref: "#/definitions/dialect_function"
+
+  supported_execution_behavior:
+    type: object
+    additionalProperties: false
+    properties:
+      supported_variable_evaluation_mode:
+        type: array
+        uniqueItems: true
+        items:
+          oneOf:
+            - enum:
+              - PER_PLAN
+              - PER_RECORD
+        description: >
+          Supported execution context variable evaluation modes:
+          * PER_PLAN: Variables are evaluated once per Substrait plan
+            execution. All records in a single plan execution will see the
+            same values for execution context variables like `current_date`
+            and `current_timestamp`.
+          * PER_RECORD: Variables are evaluated once per record during
+            execution. Each record may see different values for execution
+            context variables if the execution context changes between records.
 
 definitions:
   # Definitions used for functions
@@ -1149,4 +1173,20 @@ definitions:
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.
+    required: [expression]
+  execution_context_variable:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: EXECUTION_CONTEXT_VARIABLE
+      variable_types:
+        type: array
+        description: The possible execution context variable types.
+        items:
+          oneOf:
+            - enum:
+              - CURRENT_TIMESTAMP
+              - CURRENT_TIMEZONE
+              - CURRENT_DATE
     required: [expression]

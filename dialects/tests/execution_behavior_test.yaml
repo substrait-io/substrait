@@ -1,0 +1,6 @@
+name: "dialect test file for execution behavior"
+
+supported_execution_behavior:
+  supported_variable_evaluation_mode:
+    - PER_PLAN
+    - PER_RECORD
