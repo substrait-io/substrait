@@ -14,10 +14,10 @@ regexp_count_substring('abcdefc'::str, '(.*)c'::str) = 1::i64
 regexp_count_substring('abcdefc'::str, '(.*)c?'::str) = 2::i64
 
 # null_input: Examples with null as input
-regexp_count_substring('Hello'::str, null::str, 1::i64) = null::i64
-regexp_count_substring(null::str, ' '::str, 1::i64) = null::i64
-regexp_count_substring('Hello'::str, null::str) = null::i64
-regexp_count_substring(null::str, ' '::str) = null::i64
+regexp_count_substring('Hello'::str, null::str?, 1::i64) = null::i64?
+regexp_count_substring(null::str?, ' '::str, 1::i64) = null::i64?
+regexp_count_substring('Hello'::str, null::str?) = null::i64?
+regexp_count_substring(null::str?, ' '::str) = null::i64?
 
 # metacharacters: Examples with metacharacters
 regexp_count_substring('abc1abc'::str, '\d'::str, 1::i64) = 1::i64

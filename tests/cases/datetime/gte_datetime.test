@@ -25,6 +25,6 @@ gte('P7Y'::iyear, 'P7Y'::iyear) = true::bool
 gte('P7Y'::iyear, 'P6Y'::iyear) = true::bool
 
 # null_input: examples with null args or return
-gte(null::iday, 'P5D'::iday) = null::bool
-gte(null::date, '2020-12-30'::date) = null::bool
-gte(null::ts, '2018-12-31T13:30:15'::ts) = null::bool
+gte(null::iday?, 'P5D'::iday) = null::bool?
+gte(null::date?, '2020-12-30'::date) = null::bool?
+gte(null::ts?, '2018-12-31T13:30:15'::ts) = null::bool?

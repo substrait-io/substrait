@@ -10,7 +10,7 @@ abs(2.55::fp32) = 2.55::fp32
 abs(-2.0000007152557373046875::fp64) = 2.0000007152557373046875::fp64
 
 # null_input: Examples with null as input
-abs(null::i8) = null::i8
+abs(null::i8?) = null::i8?
 
 # overflow: Examples demonstrating overflow behavior
 abs(-128::i8) [overflow:ERROR] = <!ERROR>
