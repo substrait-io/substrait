@@ -224,6 +224,8 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
+            description:
+              type: string
             args:
               $ref: "#/$defs/arguments"
             options:
@@ -259,6 +261,8 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
+            description:
+              type: string
             args:
               $ref: "#/$defs/arguments"
             options:
@@ -302,6 +306,8 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
+            description:
+              type: string
             args:
               $ref: "#/$defs/arguments"
             options:
