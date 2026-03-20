@@ -314,6 +314,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitListArg(ctx.listArg())
         if ctx.lambdaArg() is not None:
             return self.visitLambdaArg(ctx.lambdaArg())
+        if ctx.enumArg() is not None:
+            return self.visitEnumArg(ctx.enumArg())
 
         return CaseLiteral(value="unknown_value", type="unknown_type")
 
@@ -501,6 +503,13 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             type=lambda_type,
             nullable=ctx.funcType().isnull is not None,
         )
+
+    def visitEnumArg(self, ctx: FuncTestCaseParser.EnumArgContext):
+        enum_value = ctx.Identifier().getText()
+        return CaseLiteral(value=enum_value, type="enum")
+
+    def visitDataType(self, ctx: FuncTestCaseParser.DataTypeContext):
+        return ctx.getText()
 
     def visitResult(self, ctx: FuncTestCaseParser.ResultContext):
         if ctx.argument() is not None:

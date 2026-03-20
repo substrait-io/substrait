@@ -104,9 +104,10 @@ test_case   := <function>(<arguments>) ([<options>])? = <result> (#<description>
 description := string
 function    := string
 arguments   := <argument>, <argument>, ... <argument>
-argument    := <literal>
+argument    := <literal> | <enum_value>
 literal     := <literal_value>::<datatype>
-result      := <substrait_error> | <literal>
+enum_value  := <identifier>::enum
+result      := <substrait_error> | <literal> | <enum_value>
 options     := <option>, <option>, ... <option>
 option      := <option_name>:<option_value>
 literal_value := string | integer | decimal | float | boolean | date | time | timestamp | timestamp_tz | interval year | interval days | null
@@ -147,6 +148,9 @@ Integers are represented as sequences of digits. Negative numbers are preceded b
 
 #### Boolean
 - Valid values: true, false
+
+#### Enum
+- **enum**: An enumeration value represented as an identifier. Enum values are defined in extension files and are used as named constants. Example: `DISTRIBUTION_TYPE::enum` where `DISTRIBUTION_TYPE` is the enum value.
 
 #### Date and Time
 All date and time literals use ISO 8601 format:
@@ -264,3 +268,19 @@ In this example:
 - We are testing `functions_list.yaml` (specifically the `transform` function)
 - We need `functions_arithmetic.yaml` as a dependency because the lambda expressions use `multiply` and `add` from that extension
 - Test coverage counts towards `functions_list.yaml`, not `functions_arithmetic.yaml`
+
+### Example of a test file with enum arguments
+
+```code
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_datetime.yaml'
+
+# timestamps: examples using the timestamp and timestamptz types
+extract(YEAR::enum, '2016-12-31T13:30:15'::ts) = 2016::i64
+extract(ISO_YEAR::enum, '2016-01-01T13:30:15'::ts) = 2015::i64
+extract(QUARTER::enum, '2016-12-31T13:30:15'::ts) = 4::i64
+```
+
+In this example:
+- Enum values like `YEAR`, `ISO_YEAR` and `QUARTER` are used as arguments with type `enum`
+- Enum types are defined in the extension file and represent named constants for function options
