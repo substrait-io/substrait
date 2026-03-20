@@ -1,5 +1,5 @@
 # Vector type with integer parameter constrained to 2 or 3 dimensions
-urn: extension:example:vector_constrained
+urn: urn:substrait:extension:example:vector_constrained
 types:
   - name: vector
     parameters:

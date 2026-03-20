@@ -16,8 +16,11 @@ message SimpleExtensionURN {
   // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
   uint32 extension_urn_anchor = 1;
 
-  // The extension URN that uniquely identifies this extension. This must follow the
-  // format extension:<OWNER>:<ID> and serves as the "namespace" of this extension.
+  // The extension URN that uniquely identifies this extension. The canonical format
+  // is urn:substrait:extension:<NAMESPACE>:<ID>. For backwards compatibility, URNs
+  // beginning with "extension:" have "urn:substrait:" prepended before validation.
+  // The canonical form must be a valid RFC 8141 URN and conform to the regex:
+  // ^urn:substrait:extension:[a-z0-9_.-]+:[a-z0-9_.-]+$
   string urn = 2;
 }
 

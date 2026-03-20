@@ -1,4 +1,4 @@
-urn: extension:example:distance_functions
+urn: urn:substrait:extension:example:distance_functions
 dependencies:
   ext: extension:io.substrait:extension_types
 scalar_functions:
