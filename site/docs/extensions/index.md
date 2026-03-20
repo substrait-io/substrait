@@ -142,7 +142,9 @@ The `any` type indicates that the argument can take any possible type. In the `f
 ```yaml
 --8<-- "examples/extensions/any1_type_function.yaml"
 ```
-The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
+The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all `any` types with the same numeric suffix _must_ bind to the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
+
+How `any` type parameters interact with nullability during function binding depends on the function's [nullability mode](../expressions/scalar_functions.md#nullability-handling). See [Nullability and `any` Type Binding](../expressions/scalar_functions.md#nullability-and-any-type-binding) for the full rules and detailed examples.
 
 ### Extension Metadata
 
