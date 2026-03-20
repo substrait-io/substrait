@@ -11,7 +11,7 @@ negate(2.000002861022949::fp64) = -2.000002861022949::fp64
 negate(inf::fp64) = -inf::fp64
 
 # null_input: Examples with null as input
-negate(null::i8) = null::i8
+negate(null::i8?) = null::i8?
 
 # overflow: Examples demonstrating overflow behavior
 negate(-128::i8) [overflow:ERROR] = <!ERROR>

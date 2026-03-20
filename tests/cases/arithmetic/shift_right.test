@@ -10,5 +10,5 @@ shift_right(-3::i32, 1::i32) = -2::i32
 shift_right(-3::i32, 2::i32) = -1::i32
 shift_right(-3::i64, 1::i32) = -2::i64
 shift_right(-3::i64, 2::i32) = -1::i64
-shift_right(null::i64, 2::i32) = null::i64
-shift_right(127::i64, null::i32) = null::i64
+shift_right(null::i64?, 2::i32) = null::i64?
+shift_right(127::i64, null::i32?) = null::i64?

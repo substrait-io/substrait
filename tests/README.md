@@ -193,6 +193,27 @@ Use short names listed in https://substrait.io/extensions/#function-signature-co
 - **ptstz**: Precision Timestamp with timezone
 
 
+### Nullability
+
+Append `?` to a type to mark it as nullable. The `?` applies to the
+outermost type only:
+
+- `i8?` — nullable i8
+- `list?<i32>` — nullable list of non-nullable i32
+- `list<i32?>` — non-nullable list of nullable i32
+
+Null literals must always use a nullable type: `null::i8?`, not
+`null::i8`.
+
+Nullability of test case results must be consistent with the
+`nullability` handling declared in the extension YAML:
+
+- **MIRROR**: the output is nullable iff any argument is nullable.
+- **DECLARED_OUTPUT**: the output nullability matches the declared
+  return type in the extension YAML.
+- **DISCRETE**: the output nullability matches a specific return type
+  mapping (not yet fully enforced).
+
 ### Options
 
 Option names and values can be found in extension files. Example: `[overflow:ERROR]`

@@ -4,4 +4,4 @@
 # basic: Basic examples without any special cases
 is_false(true::bool) = false::bool
 is_false(false::bool) = true::bool
-is_false(null::bool) = false::bool
+is_false(null::bool?) = false::bool

@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from tests.coverage.case_file_parser import load_all_testcases
 from tests.coverage.extensions import Extension, error, FunctionRegistry
+from tests.coverage.nodes import CaseLiteral, SubstraitError, AggregateArgument
 
 
 class FunctionTestCoverage:
@@ -142,6 +143,135 @@ def get_test_coverage(test_files, function_registry):
     function_registry.fill_coverage(coverage)
     coverage.compute_coverage()
     return coverage
+
+
+def _any_arg_nullable(test_case):
+    """Whether any argument has a nullable outer type.
+
+    Only inspects top-level nullability (e.g. i32?, list?<i32>), not
+    nested element nullability (e.g. list<i32?> is not considered nullable).
+    """
+    for arg in test_case.args:
+        if isinstance(arg, CaseLiteral) and arg.is_nullable():
+            return True
+        if (
+            isinstance(arg, AggregateArgument)
+            and arg.scalar_value
+            and arg.scalar_value.is_nullable()
+        ):
+            return True
+    return False
+
+
+def _result_is_nullable(test_case):
+    """Whether the test case result has a nullable outer type."""
+    if isinstance(test_case.result, CaseLiteral):
+        return test_case.result.is_nullable()
+    return False
+
+
+def _validate_mirror(test_case, loc, sig):
+    """MIRROR: output is nullable iff any argument is nullable.
+
+    Skips cases where function options can produce null on non-nullable
+    inputs (e.g. on_domain_error:NONE) — tracked by upstream #990.
+    """
+    any_nullable = _any_arg_nullable(test_case)
+    result_nullable = _result_is_nullable(test_case)
+    if any_nullable and not result_nullable:
+        return (
+            f"{loc}: MIRROR violation: {sig} — "
+            f"output should be nullable because an input is nullable"
+        )
+    # TODO(#990): options like on_domain_error:NONE can produce null from
+    # non-nullable inputs.  Skip until upstream clarifies semantics.
+    if not any_nullable and result_nullable and not test_case.options:
+        return (
+            f"{loc}: MIRROR violation: {sig} — "
+            f"output should not be nullable because no input is nullable"
+        )
+    return None
+
+
+def _validate_declared_output(test_case, variant, loc, sig):
+    """DECLARED_OUTPUT: output nullability must match the declared return
+    type in the extension YAML.
+    """
+    result_nullable = _result_is_nullable(test_case)
+    if variant.is_return_nullable and not result_nullable:
+        return (
+            f"{loc}: DECLARED_OUTPUT violation: {sig} — "
+            f"output should be nullable to match declared return type"
+        )
+    if not variant.is_return_nullable and result_nullable:
+        return (
+            f"{loc}: DECLARED_OUTPUT violation: {sig} — "
+            f"output should not be nullable; declared return type is not nullable"
+        )
+    return None
+
+
+def _validate_discrete(test_case, variant, loc, sig):
+    """DISCRETE: like DECLARED_OUTPUT for output nullability, but arguments
+    must also match their declared nullability exactly.
+
+    TODO: Argument nullability validation is not yet implemented. No
+    extensions currently use DISCRETE, so there are no test cases to
+    validate against. Implement once a real DISCRETE function exists.
+    """
+    result_nullable = _result_is_nullable(test_case)
+    if variant.is_return_nullable and not result_nullable:
+        return (
+            f"{loc}: DISCRETE violation: {sig} — "
+            f"output should be nullable to match declared return type"
+        )
+    if not variant.is_return_nullable and result_nullable:
+        return (
+            f"{loc}: DISCRETE violation: {sig} — "
+            f"output should not be nullable; declared return type is not nullable"
+        )
+    return None
+
+
+def validate_nullability(test_file, function_registry):
+    """Validate that test case return type nullability is consistent with the
+    function's declared nullability handling.
+
+    Returns a list of error strings (empty if everything is valid).
+    """
+    errors = []
+    for test_case in test_file.testcases:
+        if test_case.is_return_type_error():
+            continue
+
+        variant = function_registry.get_function(
+            test_case.func_name,
+            test_file.include,
+            test_case.get_arg_types(),
+            test_case.get_return_type(),
+        )
+        if variant is None:
+            continue
+
+        sig = test_case.get_signature()
+        loc = test_file.path
+
+        match variant.nullability:
+            case "MIRROR":
+                error = _validate_mirror(test_case, loc, sig)
+            case "DECLARED_OUTPUT":
+                error = _validate_declared_output(test_case, variant, loc, sig)
+            case "DISCRETE":
+                error = _validate_discrete(test_case, variant, loc, sig)
+            case other:
+                error = (
+                    f"{loc}: unknown nullability handling '{other}' for {variant.name}"
+                )
+
+        if error:
+            errors.append(error)
+
+    return errors
 
 
 if __name__ == "__main__":

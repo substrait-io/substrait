@@ -9,7 +9,7 @@ char_length('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'::str) = 48::i64
 char_length('   456'::str) = 6::i64
 
 # null_input: Examples with null as input
-char_length(null::str) = null::i64
+char_length(null::str?) = null::i64?
 
 # unicode: Examples with unicode characters as input
 char_length('à'::str) = 1::i64
