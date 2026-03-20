@@ -1441,7 +1441,9 @@ aggregate_functions:
   - name: "variance"
     description: Calculates variance for a set of values.
     impls:
-      - deprecated: true
+      - deprecated:
+          since: "0.86.0"
+          reason: Use implementation with distribution enum argument instead.
         args:
           - name: x
             value: fp32
@@ -1462,7 +1464,9 @@ aggregate_functions:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: fp32?
-      - deprecated: true
+      - deprecated:
+          since: "0.86.0"
+          reason: Use implementation with distribution enum argument instead.
         args:
           - name: x
             value: fp64
