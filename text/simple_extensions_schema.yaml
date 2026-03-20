@@ -29,6 +29,8 @@ properties:
       properties:
         name:
           type: string
+        deprecated:
+          $ref: "#/$defs/deprecationStatus"
         description:
           type: string
         metadata: # arbitrary data created by extension author
@@ -51,6 +53,8 @@ properties:
           $ref: "#/$defs/type"
         name:
           type: string
+        deprecated:
+          $ref: "#/$defs/deprecationStatus"
         description:
           type: string
         functions:
@@ -205,6 +209,29 @@ $defs:
     type: number
   ordered:
     type: boolean
+  coreSemanticVersionString:
+    type: string
+    pattern: "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$"
+    description: >-
+      Semantic version string. Should follow semantic versioning format (e.g. "1.2.3").
+      We intentiaonally allow only core components (major.minor.patch) of the semantic version string.
+  deprecationStatus:
+    type: object
+    additionalProperties: false
+    required: [since]
+    properties:
+      since:
+        description: >-
+          Version since when the item is deprecated.
+        $ref: "#/$defs/coreSemanticVersionString"
+      reason:
+        description: >-
+          Description of the deprecation (for documentation only).
+        type: string
+      metadata:
+        description: >-
+          Arbitrary data created by extension author.
+        type: object
   scalarFunction:
     type: object
     additionalProperties: false
@@ -212,6 +239,8 @@ $defs:
     properties:
       name:
         type: string
+      deprecated:
+        $ref: "#/$defs/deprecationStatus"
       description:
         type: string
       metadata: # arbitrary data created by extension author
@@ -224,6 +253,8 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
+            deprecated:
+              $ref: "#/$defs/deprecationStatus"
             description:
               type: string
             args:
@@ -249,6 +280,8 @@ $defs:
     properties:
       name:
         type: string
+      deprecated:
+        $ref: "#/$defs/deprecationStatus"
       description:
         type: string
       metadata: # arbitrary data created by extension author
@@ -261,6 +294,8 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
+            deprecated:
+              $ref: "#/$defs/deprecationStatus"
             description:
               type: string
             args:
@@ -294,6 +329,8 @@ $defs:
     properties:
       name:
         type: string
+      deprecated:
+        $ref: "#/$defs/deprecationStatus"
       description:
         type: string
       metadata: # arbitrary data created by extension author
@@ -306,6 +343,8 @@ $defs:
           additionalProperties: false
           required: [return]
           properties:
+            deprecated:
+              $ref: "#/$defs/deprecationStatus"
             description:
               type: string
             args:
