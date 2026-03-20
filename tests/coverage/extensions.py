@@ -58,6 +58,8 @@ def build_type_to_short_type():
     any_type = substrait_type_str(FuncTestCaseLexer.Any)
     for i in range(1, 3):
         to_short_type[f"{any_type}{i}"] = f"{any_type}{i}"
+    # Add enum type
+    to_short_type["enum"] = "enum"
     return to_short_type
 
 
@@ -73,6 +75,11 @@ class Extension:
     @staticmethod
     def get_short_type(long_type):
         long_type = long_type.lower().rstrip("?")
+
+        # Handle "enum" type specially
+        if long_type == "enum":
+            return "enum"
+
         short_type = type_to_short_type.get(long_type, None)
 
         if short_type is None:
@@ -116,7 +123,7 @@ class Extension:
                         debug(
                             f"arg is not a value type for function: {func['name']} arg must be enum options {arg['options']}"
                         )
-                        args.append("str")
+                        args.append("enum")
             nullability = impl.get(
                 "nullability", "MIRROR"
             )  # MIRROR is the spec default

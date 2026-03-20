@@ -49,6 +49,7 @@ result
 
 argument
     : nullArg
+    | enumArg
     | intArg
     | floatArg
     | booleanArg
@@ -214,6 +215,10 @@ listArg
 
 lambdaArg
     : literalLambda DoubleColon funcType
+    ;
+
+enumArg
+    : Identifier DoubleColon EnumType
     ;
 
 literalList
