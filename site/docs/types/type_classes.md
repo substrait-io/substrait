@@ -21,10 +21,7 @@ Simple type classes are those that don't support any form of configuration. For 
 | fp64            | An 8-byte double-precision floating point number with the same range and precision as defined for the [IEEE 754 64-bit floating-point format](https://standards.ieee.org/ieee/754/6210/). | `double`
 | string          | A unicode string of text, [0..2,147,483,647] UTF-8 bytes in length. | `string`
 | binary          | A binary value, [0..2,147,483,647] bytes in length.          | `binary`
-| timestamp       | A naive timestamp with microsecond precision. Does not include timezone information and can thus not be unambiguously mapped to a moment on the timeline without context. Similar to naive datetime in Python. | `int64` microseconds since 1970-01-01 00:00:00.000000 (in an unspecified timezone)
-| timestamp_tz    | A timezone-aware timestamp with microsecond precision. Similar to timezone-aware datetime in Python. | `int64` microseconds since 1970-01-01 00:00:00.000000 UTC
 | date            | A date within [1000-01-01..9999-12-31].                      | `int32` days since `1970-01-01`
-| time            | A time since the beginning of any day. Range of [0..86,399,999,999] microseconds; leap seconds need not be supported. | `int64` microseconds past midnight
 | interval_year   | Interval year to month. Supports a range of [-10,000..10,000] years with month precision (= [-120,000..120,000] months). Usually stored as separate integers for years and months, but only the total number of months is significant, i.e. `1y 0m` is considered equal to `0y 12m` or `1001y -12000m`. | `int32` years and `int32` months, with the added constraint that each component can never independently specify more than 10,000 years, even if the components have opposite signs (e.g. `-10000y 200000m` is **not** allowed)
 | uuid            | A universally-unique identifier composed of 128 bits. Typically presented to users in the following hexadecimal format: `c48ffa9e-64f4-44cb-ae47-152b4e60e77b`. Any 128-bit value is allowed, without specific adherence to RFC4122. | 16-byte `binary`
 

@@ -45,8 +45,8 @@ add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
 
 def test_parse_date_time_example():
     header = make_header("v1.0", "/extensions/functions_datetime.yaml")
-    tests = """# timestamp examples using the timestamp type
-lt('2016-12-31T13:30:15'::ts, '2017-12-31T13:30:15'::ts) = true::bool
+    tests = """# timestamp examples using the precision_timestamp type
+lt('2016-12-31T13:30:15'::pts<6>, '2017-12-31T13:30:15'::pts<6>) = true::bool
 """
 
     test_file = parse_string(header + tests)
@@ -55,11 +55,15 @@ lt('2016-12-31T13:30:15'::ts, '2017-12-31T13:30:15'::ts) = true::bool
     assert test_file.testcases[0].base_uri == "/extensions/functions_datetime.yaml"
     assert (
         test_file.testcases[0].group.name
-        == "timestamp examples using the timestamp type"
+        == "timestamp examples using the precision_timestamp type"
     )
     assert test_file.testcases[0].result == CaseLiteral("true", "bool")
-    assert test_file.testcases[0].args[0] == CaseLiteral("2016-12-31T13:30:15", "ts")
-    assert test_file.testcases[0].args[1] == CaseLiteral("2017-12-31T13:30:15", "ts")
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        "2016-12-31T13:30:15", "pts<6>"
+    )
+    assert test_file.testcases[0].args[1] == CaseLiteral(
+        "2017-12-31T13:30:15", "pts<6>"
+    )
 
 
 def test_parse_decimal_example():
@@ -430,10 +434,10 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "f6(1.1::dec<38,10>, 2.2::dec<38,10>) = 3.3::dec<38,10>",
         "f7(1.1::dec<38,10>, 2.2::decimal<38,10>) = 3.3::decimal<38,10>",
         "f8('1991-01-01'::date) = '2001-01-01'::date",
-        "f9('13:01:01.2345678'::time) = '23:59:59.999'::time",
-        "f10('1991-01-01T01:02:03.456'::ts, '1991-01-01T00:00:00'::timestamp) = '1991-01-01T22:33:44'::ts",
-        "f11('1991-01-01T01:02:03.456+05:30'::tstz, '1991-01-01T00:00:00+15:30'::timestamp_tz) = 23::i32",
-        "f12('1991-01-01'::date, 5::i64) = '1991-01-01T00:00:00+15:30'::timestamp_tz",
+        "f9('13:01:01.2345678'::pt<6>) = '23:59:59.999'::pt<6>",
+        "f10('1991-01-01T01:02:03.456'::pts<6>, '1991-01-01T00:00:00'::pts<6>) = '1991-01-01T22:33:44'::pts<6>",
+        "f11('1991-01-01T01:02:03.456+05:30'::ptstz<6>, '1991-01-01T00:00:00+15:30'::ptstz<6>) = 23::i32",
+        "f12('1991-01-01'::date, 5::i64) = '1991-01-01T00:00:00+15:30'::ptstz<6>",
         "f13('P10Y5M'::interval_year, 5::i64) = 'P15Y5M'::interval_year",
         "f14('P10Y5M'::iyear, 5::i64) = 'P15Y5M'::iyear",
         "f15('P10DT5H6M7.2000S'::interval_day<6>, 5::i64) = 'P10DT10H6M7.2000S'::interval_day<6>",
@@ -563,9 +567,9 @@ def test_nullable_types():
         "concat([1, 2]::List?<i8>, [3]::List?<i8>) = [1, 2, 3]::List?<i8>",
         # Date and time types
         "lt('2020-01-01'::date?, '2020-01-02'::date?) = true::bool",
-        "lt('12:00:00'::time?, '13:00:00'::time?) = true::bool",
-        "lt('2020-01-01T12:00:00'::ts?, '2020-01-02T12:00:00'::ts?) = true::bool",
-        "lt('2020-01-01T12:00:00+00:00'::tstz?, '2020-01-02T12:00:00+00:00'::tstz?) = true::bool",
+        "lt('12:00:00'::pt?<6>, '13:00:00'::pt?<6>) = true::bool",
+        "lt('2020-01-01T12:00:00'::pts?<6>, '2020-01-02T12:00:00'::pts?<6>) = true::bool",
+        "lt('2020-01-01T12:00:00+00:00'::ptstz?<6>, '2020-01-02T12:00:00+00:00'::ptstz?<6>) = true::bool",
         # Interval types
         "lt('P1Y'::iyear?, 'P2Y'::iyear?) = true::bool",
         "lt('P1D'::iday?, 'P2D'::iday?) = true::bool",

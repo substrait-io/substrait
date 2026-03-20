@@ -108,39 +108,12 @@ class SubstraitTypeListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SubstraitTypeParser#timestamp.
-    def enterTimestamp(self, ctx:SubstraitTypeParser.TimestampContext):
-        pass
-
-    # Exit a parse tree produced by SubstraitTypeParser#timestamp.
-    def exitTimestamp(self, ctx:SubstraitTypeParser.TimestampContext):
-        pass
-
-
-    # Enter a parse tree produced by SubstraitTypeParser#timestampTz.
-    def enterTimestampTz(self, ctx:SubstraitTypeParser.TimestampTzContext):
-        pass
-
-    # Exit a parse tree produced by SubstraitTypeParser#timestampTz.
-    def exitTimestampTz(self, ctx:SubstraitTypeParser.TimestampTzContext):
-        pass
-
-
     # Enter a parse tree produced by SubstraitTypeParser#date.
     def enterDate(self, ctx:SubstraitTypeParser.DateContext):
         pass
 
     # Exit a parse tree produced by SubstraitTypeParser#date.
     def exitDate(self, ctx:SubstraitTypeParser.DateContext):
-        pass
-
-
-    # Enter a parse tree produced by SubstraitTypeParser#time.
-    def enterTime(self, ctx:SubstraitTypeParser.TimeContext):
-        pass
-
-    # Exit a parse tree produced by SubstraitTypeParser#time.
-    def exitTime(self, ctx:SubstraitTypeParser.TimeContext):
         pass
 
 
