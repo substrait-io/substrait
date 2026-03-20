@@ -85,10 +85,29 @@ class TestCase:
         return isinstance(self.result, SubstraitError)
 
     def get_arg_types(self):
-        return [arg.get_base_type() for arg in self.args]
+        types = []
+        for arg in self.args:
+            if isinstance(arg, CaseLiteral):
+                types.append(arg.get_base_type())
+            elif isinstance(arg, AggregateArgument):
+                # For aggregate arguments, use column_type if available, otherwise extract from scalar_value
+                if arg.column_type:
+                    types.append(arg.column_type)
+                elif arg.scalar_value:
+                    types.append(arg.scalar_value.get_base_type())
+        return types
 
     def get_signature(self):
-        return f"{self.func_name}({', '.join([arg.type for arg in self.args])}) = {self.get_return_type()}"
+        arg_types = []
+        for arg in self.args:
+            if isinstance(arg, CaseLiteral):
+                arg_types.append(arg.type)
+            elif isinstance(arg, AggregateArgument):
+                if arg.column_type:
+                    arg_types.append(arg.column_type)
+                elif arg.scalar_value:
+                    arg_types.append(arg.scalar_value.type)
+        return f"{self.func_name}({', '.join(arg_types)}) = {self.get_return_type()}"
 
 
 @dataclass

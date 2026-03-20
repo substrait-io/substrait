@@ -250,6 +250,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#enumArg.
+    def visitEnumArg(self, ctx:FuncTestCaseParser.EnumArgContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#literalList.
     def visitLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
         return self.visitChildren(ctx)
