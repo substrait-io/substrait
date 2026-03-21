@@ -245,10 +245,11 @@ The join operation will combine two separate inputs into a single output, based 
 | Property         | Description                                                  | Required                           |
 | ---------------- | ------------------------------------------------------------ | ---------------------------------- |
 | Left Input       | A relational input.                                          | Required                           |
-| Right Input      | A relational input.                                          | Required                           |
+| Right Input      | A relational input. When `lateral` is true, this input may reference the current left row using `OuterReference`. | Required                           |
 | Join Expression  | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the input order of the data. | Required. Can be the literal True. |
 | Post-Join Filter | A boolean condition to be applied to each result record after the inputs have been joined, yielding only the records that satisfied the condition. | Optional                           |
 | Join Type        | One of the join types defined below.                         | Required                           |
+| Lateral          | When true, the right input is evaluated once per row of the left input (lateral join / correlated subquery). The right input may reference fields from the current left row using `FieldReference` with `OuterReference` as the `root_type` and `steps_out = 1`. When false (default), both inputs are independent. See [Lateral Joins](#lateral-joins) for details.| Optional (default: false)          |
 
 ### Join Types
 
@@ -273,6 +274,38 @@ The join operation will combine two separate inputs into a single output, based 
     ```proto
 %%% proto.algebra.JoinRel %%%
     ```
+
+### Lateral Joins
+
+When the `lateral` flag is set to true, the join operates as a lateral (correlated) join. The right input is evaluated once per row of the left input, and the right input may reference fields from the current left row using a `FieldReference` with `OuterReference` as the `root_type` and `steps_out = 1`.
+
+For example, the SQL query:
+
+```sql
+SELECT a, (SELECT MAX(b) FROM T2 WHERE T2.x = T1.a) FROM T1
+```
+
+can be represented as an inner lateral join where `T1` is the left input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the right input. Inside the right input, `T1.a` is referenced via a `FieldReference` with `OuterReference { steps_out = 1 }` as the root.
+
+#### Permitted Join Types for Lateral
+
+Because the right input only exists in the context of a specific left row, only `INNER` and left-oriented join types (`LEFT`, `LEFT_SEMI`, `LEFT_ANTI`, `LEFT_SINGLE`, `LEFT_MARK`) are valid when `lateral` is true. Right-oriented types (`RIGHT`, `RIGHT_SEMI`, `RIGHT_ANTI`, `RIGHT_SINGLE`, `RIGHT_MARK`) and `OUTER` are invalid since the right input has no independent existence outside a left row context.
+
+#### Nested Lateral Joins
+
+Lateral joins can introduce multiple levels of correlated subqueries. All outer input fields can be referenced using appropriate `steps_out` values with `OuterReference`:
+
+```
+            Join (left, lateral=true)
+           /     \
+     Input1(a)    Join (inner, lateral=true)
+                 /     \
+           Input2(b)    Subquery
+
+OuterReference access within each scope:
+  Input2   : a [steps_out=1]
+  Subquery : a [steps_out=2], b [steps_out=1]
+```
 
 
 ## Set Operation
@@ -556,6 +589,3 @@ The operator that defines modifications of a database schema (CREATE/DROP/ALTER 
 %%% proto.algebra.DdlRel %%%
     ```
 
-???+ question "Discussion Points"
-
-    * How should correlated operations be handled?

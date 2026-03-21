@@ -265,6 +265,20 @@ message JoinRel {
 
   JoinType type = 6;
 
+  // When true, the right input is evaluated once per row of the left input
+  // (lateral join / correlated subquery). The right input may reference fields
+  // from the current left row using FieldReference with OuterReference as the
+  // root_type and steps_out = 1.
+  //
+  // When false (default), both inputs are independent.
+  //
+  // Right-oriented join types (RIGHT, RIGHT_SEMI, RIGHT_ANTI, RIGHT_SINGLE,
+  // RIGHT_MARK) and OUTER are not valid when lateral is true, because the
+  // right input has no independent existence — it is defined only in the
+  // context of a left row. Only INNER, LEFT, LEFT_SEMI, LEFT_ANTI,
+  // LEFT_SINGLE, and LEFT_MARK are permitted.
+  bool lateral = 7;
+
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;
     JOIN_TYPE_INNER = 1;
