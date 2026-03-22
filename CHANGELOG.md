@@ -1,6 +1,24 @@
 Release Notes
 ---
 
+## [0.86.0](https://github.com/substrait-io/substrait/compare/v0.85.0...v0.86.0) (2026-03-22)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** random extraneous argument for repeat varchar (#1015)
+* **extensions:** corrects the return type of the `add:date_iyear`
+
+### Features
+
+* add optional description field to function implementations ([#1013](https://github.com/substrait-io/substrait/issues/1013)) ([0f4c774](https://github.com/substrait-io/substrait/commit/0f4c774f0bca5d6476cd36aaaf1390fbc323fc13))
+* **extensions:** support deprecation info in extensions ([#1014](https://github.com/substrait-io/substrait/issues/1014)) ([25d87ef](https://github.com/substrait-io/substrait/commit/25d87ef4b9d8803bda2644eff48dfe966a6d7464))
+
+### Bug Fixes
+
+* enforce nullable types for null literals in test cases ([#989](https://github.com/substrait-io/substrait/issues/989)) ([ba9b0ff](https://github.com/substrait-io/substrait/commit/ba9b0ff98e1caf0b4f5c965a7bbc02f30021ea95))
+* **extensions:** correct return type for `add:date_iyear` operation ([#1007](https://github.com/substrait-io/substrait/issues/1007)) ([62147cf](https://github.com/substrait-io/substrait/commit/62147cf26b4020ee8433f506809f410cc40d5806))
+* **extensions:** random extraneous argument for repeat varchar ([#1015](https://github.com/substrait-io/substrait/issues/1015)) ([271d7bb](https://github.com/substrait-io/substrait/commit/271d7bbbae2dcdbdc125ff0d7e9637f318f70b59))
+
 ## [0.85.0](https://github.com/substrait-io/substrait/compare/v0.84.0...v0.85.0) (2026-03-06)
 
 ### ⚠ BREAKING CHANGES
