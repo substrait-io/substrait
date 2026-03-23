@@ -263,6 +263,10 @@ The third form of advanced extensions provides entirely new relational operation
 
 These extension relations are first-class relation types in Substrait and can be used anywhere a standard relation would be used.
 
+#### Output Schema
+
+Unlike standard relations, Substrait cannot specify how to derive the output schema of extension relations. It is up to producers and consumers to agree on how to derive the schema from the inputs and the `detail` field. This derivation should be documented in the protobuf definition (or equivalent) used for the `detail` field.
+
 ### When to Use What
 
 Custom relations are the most flexible option, but also the least interoperable. Prefer enhancements to existing relations when they can express your use case, since this preserves existing patterns and compatibility. As a general rule, choose the least powerful extension mechanism that solves the problem.

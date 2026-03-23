@@ -447,20 +447,23 @@ message SetRel {
   }
 }
 
-// Stub to support extension with a single input
+// A custom relational operator with a single input. Producers and consumers
+// must agree on how to derive the output schema of the relation.
 message ExtensionSingleRel {
   RelCommon common = 1;
   Rel input = 2;
   google.protobuf.Any detail = 3;
 }
 
-// Stub to support extension with a zero inputs
+// A custom relational operator with zero inputs. Producers and consumers
+// must agree on how to derive the output schema of the relation.
 message ExtensionLeafRel {
   RelCommon common = 1;
   google.protobuf.Any detail = 2;
 }
 
-// Stub to support extension with multiple inputs
+// A custom relational operator with multiple inputs. Producers and consumers
+// must agree on how to derive the output schema of the relation.
 message ExtensionMultiRel {
   RelCommon common = 1;
   repeated Rel inputs = 2;
