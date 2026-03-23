@@ -6,7 +6,7 @@
     "num_aggregate_functions": 28,
     "num_scalar_functions": 170,
     "num_window_functions": 11,
-    "num_function_overloads": 8466
+    "num_function_overloads": 498
   },
   "coverage": {
     "total_test_count": 1177,
