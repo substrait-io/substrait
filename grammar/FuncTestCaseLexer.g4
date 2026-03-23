@@ -113,6 +113,8 @@ StringLiteral
     : '\'' ('\\' . | '\'\'' | ~['\\])* '\''
     ;
 
+EnumType: 'enum' ;
+
 ColumnName
     : 'COL' Int
     ;
