@@ -1393,7 +1393,7 @@ aggregate_functions:
     description: Calculates standard-deviation for a set of values.
     impls:
       - deprecated:
-          since: "0.86.0"
+          since: "0.87.0"
           reason: Use implementation with distribution enum argument instead.
         args:
           - name: x
@@ -1416,7 +1416,7 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: fp32?
       - deprecated:
-          since: "0.86.0"
+          since: "0.87.0"
           reason: Use implementation with distribution enum argument instead.
         args:
           - name: x
@@ -1442,7 +1442,7 @@ aggregate_functions:
     description: Calculates variance for a set of values.
     impls:
       - deprecated:
-          since: "0.86.0"
+          since: "0.87.0"
           reason: Use implementation with distribution enum argument instead.
         args:
           - name: x
@@ -1465,7 +1465,7 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: fp32?
       - deprecated:
-          since: "0.86.0"
+          since: "0.87.0"
           reason: Use implementation with distribution enum argument instead.
         args:
           - name: x
