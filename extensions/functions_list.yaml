@@ -136,26 +136,13 @@ scalar_functions:
       Returns the element at the specified index from the list, corresponding
       to the common array subscript operator [].
 
-      Index is 1-based (i.e., the first element is at index 1). Zero and
-      negative indices are out of bounds.
-
-      If the input list is null, the result is null. If the index is null,
-      the result is null. If the element at the specified index is null,
-      the result is null.
+      Index is 1-based (i.e., the first element is at index 1). Out-of-bounds
+      access (index <= 0 or index > list length) returns null.
     impls:
       - args:
           - name: input
             value: list<any1>
           - name: index
             value: i64
-        options:
-          on_out_of_bounds:
-            description: >-
-              Behavior when the index is out of bounds (index <= 0 or index > list length).
-
-              * RETURN_NULL: Return null for out-of-bounds indices.
-
-              * ERROR: Raise an error for out-of-bounds indices.
-            values: [RETURN_NULL, ERROR]
         nullability: DECLARED_OUTPUT
         return: any1?

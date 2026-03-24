@@ -2,36 +2,30 @@
 ### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
 
 # basic: Basic positive index (1-based)
-list_subscript([10, 20, 30]::list<i32>, 1::i64) [on_out_of_bounds:RETURN_NULL] = 10::i32?
-list_subscript([10, 20, 30]::list<i32>, 2::i64) [on_out_of_bounds:RETURN_NULL] = 20::i32?
-list_subscript([10, 20, 30]::list<i32>, 3::i64) [on_out_of_bounds:RETURN_NULL] = 30::i32?
-list_subscript(['a', 'b', 'c']::list<string>, 2::i64) [on_out_of_bounds:RETURN_NULL] = 'b'::string?
+list_subscript([10, 20, 30]::list<i32>, 1::i64) = 10::i32?
+list_subscript([10, 20, 30]::list<i32>, 2::i64) = 20::i32?
+list_subscript([10, 20, 30]::list<i32>, 3::i64) = 30::i32?
+list_subscript(['a', 'b', 'c']::list<string>, 2::i64) = 'b'::string?
 
 # out_of_bounds_positive: Positive index exceeds list length
-list_subscript([10, 20, 30]::list<i32>, 5::i64) [on_out_of_bounds:RETURN_NULL] = null::i32?
-list_subscript([10, 20, 30]::list<i32>, 100::i64) [on_out_of_bounds:RETURN_NULL] = null::i32?
+list_subscript([10, 20, 30]::list<i32>, 5::i64) = null::i32?
+list_subscript([10, 20, 30]::list<i32>, 100::i64) = null::i32?
 
 # zero_out_of_bounds: Zero index is out of bounds
-list_subscript([10, 20, 30]::list<i32>, 0::i64) [on_out_of_bounds:RETURN_NULL] = null::i32?
+list_subscript([10, 20, 30]::list<i32>, 0::i64) = null::i32?
 
 # negative_out_of_bounds: Negative indices are out of bounds
-list_subscript([10, 20, 30]::list<i32>, -1::i64) [on_out_of_bounds:RETURN_NULL] = null::i32?
-list_subscript([10, 20, 30]::list<i32>, -3::i64) [on_out_of_bounds:RETURN_NULL] = null::i32?
+list_subscript([10, 20, 30]::list<i32>, -1::i64) = null::i32?
+list_subscript([10, 20, 30]::list<i32>, -3::i64) = null::i32?
 
 # null_list: Null list returns null
-list_subscript(null::list?<i32>, 1::i64) [on_out_of_bounds:RETURN_NULL] = null::i32?
+list_subscript(null::list?<i32>, 1::i64) = null::i32?
 
 # null_index: Null index returns null
-list_subscript([10, 20, 30]::list<i32>, null::i64?) [on_out_of_bounds:RETURN_NULL] = null::i32?
+list_subscript([10, 20, 30]::list<i32>, null::i64?) = null::i32?
 
 # null_element: Retrieving a null element returns null
-list_subscript([1, null, 3]::list<i32?>, 2::i64) [on_out_of_bounds:RETURN_NULL] = null::i32?
+list_subscript([1, null, 3]::list<i32?>, 2::i64) = null::i32?
 
 # empty_list: Out of bounds on empty list
-list_subscript([]::list<i32>, 1::i64) [on_out_of_bounds:RETURN_NULL] = null::i32?
-
-# error_on_out_of_bounds: ERROR option raises error for out-of-bounds indices
-list_subscript([10, 20, 30]::list<i32>, 0::i64) [on_out_of_bounds:ERROR] = <!ERROR>
-list_subscript([10, 20, 30]::list<i32>, 5::i64) [on_out_of_bounds:ERROR] = <!ERROR>
-list_subscript([10, 20, 30]::list<i32>, -1::i64) [on_out_of_bounds:ERROR] = <!ERROR>
-list_subscript([]::list<i32>, 1::i64) [on_out_of_bounds:ERROR] = <!ERROR>
+list_subscript([]::list<i32>, 1::i64) = null::i32?
