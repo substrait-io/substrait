@@ -146,3 +146,16 @@ scalar_functions:
             value: i64
         nullability: DECLARED_OUTPUT
         return: any1?
+
+  - name: "index_of"
+    description: >-
+      Returns the 1-based index of the first occurrence of the specified value
+      in the list, or null if the value is not found.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: value
+            value: any1
+        nullability: DECLARED_OUTPUT
+        return: i64?
