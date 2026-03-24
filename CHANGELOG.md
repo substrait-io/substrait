@@ -1,6 +1,47 @@
 Release Notes
 ---
 
+## [0.86.0](https://github.com/substrait-io/substrait/compare/v0.85.0...v0.86.0) (2026-03-22)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** random extraneous argument for repeat varchar (#1015)
+* **extensions:** corrects the return type of the `add:date_iyear`
+
+### Features
+
+* add optional description field to function implementations ([#1013](https://github.com/substrait-io/substrait/issues/1013)) ([0f4c774](https://github.com/substrait-io/substrait/commit/0f4c774f0bca5d6476cd36aaaf1390fbc323fc13))
+* **extensions:** support deprecation info in extensions ([#1014](https://github.com/substrait-io/substrait/issues/1014)) ([25d87ef](https://github.com/substrait-io/substrait/commit/25d87ef4b9d8803bda2644eff48dfe966a6d7464))
+
+### Bug Fixes
+
+* enforce nullable types for null literals in test cases ([#989](https://github.com/substrait-io/substrait/issues/989)) ([ba9b0ff](https://github.com/substrait-io/substrait/commit/ba9b0ff98e1caf0b4f5c965a7bbc02f30021ea95))
+* **extensions:** correct return type for `add:date_iyear` operation ([#1007](https://github.com/substrait-io/substrait/issues/1007)) ([62147cf](https://github.com/substrait-io/substrait/commit/62147cf26b4020ee8433f506809f410cc40d5806))
+* **extensions:** random extraneous argument for repeat varchar ([#1015](https://github.com/substrait-io/substrait/issues/1015)) ([271d7bb](https://github.com/substrait-io/substrait/commit/271d7bbbae2dcdbdc125ff0d7e9637f318f70b59))
+
+## [0.85.0](https://github.com/substrait-io/substrait/compare/v0.84.0...v0.85.0) (2026-03-06)
+
+### ⚠ BREAKING CHANGES
+
+* drops uri fields from protobufs
+
+### Features
+
+* only use urns for referencing simple extensions ([#971](https://github.com/substrait-io/substrait/issues/971)) ([ada68a8](https://github.com/substrait-io/substrait/commit/ada68a84698d269040a0d365c9e6c141fc3b2c29))
+
+## [0.84.0](https://github.com/substrait-io/substrait/compare/v0.83.0...v0.84.0) (2026-03-06)
+
+### Features
+
+* add common list functions to core extensions ([#969](https://github.com/substrait-io/substrait/issues/969)) ([609cad7](https://github.com/substrait-io/substrait/commit/609cad7330ea08c851e1069ba70fb56ebca19008))
+* add metadata fields to dialect schema ([#966](https://github.com/substrait-io/substrait/issues/966)) ([0fbf52e](https://github.com/substrait-io/substrait/commit/0fbf52e4623f72a7d85625a7f8e48b098447385a))
+* **proto:** deprecate time type and literal ([#985](https://github.com/substrait-io/substrait/issues/985)) ([dc27654](https://github.com/substrait-io/substrait/commit/dc276549da20d92aa83269219ae267682d55dba4))
+* support null list types and nested list literals in tests ([#991](https://github.com/substrait-io/substrait/issues/991)) ([e2dca29](https://github.com/substrait-io/substrait/commit/e2dca291fb9061a38bbd03574f11a85b56f96c28))
+
+### Bug Fixes
+
+* **grammar:** remove redundant import of SubstraitLexer in FuncTestCaseParser ([#982](https://github.com/substrait-io/substrait/issues/982)) ([9dd1f05](https://github.com/substrait-io/substrait/commit/9dd1f057392181208573edf2485a466c13a874d3))
+
 ## [0.83.0](https://github.com/substrait-io/substrait/compare/v0.82.0...v0.83.0) (2026-03-01)
 
 ### Features

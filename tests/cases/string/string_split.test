@@ -6,4 +6,4 @@ string_split('abc'::str, ' '::str) = ['abc']::list<str>
 string_split('abc abc'::str, ' '::str) = ['abc', 'abc']::list<str>
 string_split('bacad'::str, 'a'::str) = ['b', 'c', 'd']::list<str>
 string_split('a b c d'::str, ' '::str) = ['a', 'b', 'c', 'd']::list<str>
-string_split('a b c d'::str, null::str) = ['a b c d']::list<str>
+string_split('a b c d'::str, null::str?) = ['a b c d']::list?<str>

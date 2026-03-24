@@ -12,4 +12,4 @@ subtract('2020-12-31'::date, 'P5Y'::iyear) = '2015-12-31'::date
 subtract('2020-12-31'::date, 'P5M'::iyear) = '2020-07-31'::date
 
 # null_input: examples with null args or return
-subtract(null::date, 'P5D'::iday) = null::date
+subtract(null::date?, 'P5D'::iday) = null::date?

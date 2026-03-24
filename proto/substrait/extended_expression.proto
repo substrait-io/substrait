@@ -25,13 +25,11 @@ message ExpressionReference {
 // Describe a set of operations to complete.
 // For compactness sake, identifiers are normalized at the plan level.
 message ExtendedExpression {
+  reserved 1;
+
   // Substrait version of the expression. Optional up to 0.17.0, required for later
   // versions.
   Version version = 7;
-
-  // a list of yaml specifications this expression may depend on
-  // this is now deprecated and extension_urns should be used instead.
-  repeated substrait.extensions.SimpleExtensionURI extension_uris = 1 [deprecated = true];
 
   // a list of extension specifications this expression may depend on,
   // referenced by Extension URN

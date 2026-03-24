@@ -5,5 +5,5 @@
 is_null(25::i16) = false::bool
 is_null(false::bool) = false::bool
 is_null(7.823::dec<38, 3>) = false::bool
-is_null(null::i16) = true::bool
-is_null(null::dec<38, 3>) = true::bool
+is_null(null::i16?) = true::bool
+is_null(null::dec?<38, 3>) = true::bool

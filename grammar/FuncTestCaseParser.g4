@@ -48,7 +48,9 @@ result
     ;
 
 argument
-    : nullArg
+    : udtArg
+    | nullArg
+    | enumArg
     | intArg
     | floatArg
     | booleanArg
@@ -69,7 +71,6 @@ argument
     | precisionTimestampTZArg
     | listArg
     | lambdaArg
-    | udtArg
     | Identifier  // Bare identifiers (for lambda parameters)
     ;
 
@@ -219,6 +220,10 @@ lambdaArg
 
 udtArg
     : literal DoubleColon UserDefined Identifier isnull=QMark?
+    ;
+
+enumArg
+    : Identifier DoubleColon EnumType
     ;
 
 literalList

@@ -1,0 +1,52 @@
+# Example showing deprecation of extensions
+urn: extension:org.example:deprecation_examples
+
+# A deprecated type
+types:
+  - name: old_type
+    deprecated:
+      since: "0.50.0"
+      reason: "Replaced by new_type"
+    structure:
+      x: i32
+      y: i32
+
+# A deprecated scalar function
+scalar_functions:
+  - name: "old_func"
+    deprecated:
+      since: "0.1.1"
+      reason: "Use new_func instead"
+    impls:
+      - args:
+          - name: x
+            value: i32
+        return: i32
+
+  # A function with a deprecated impl
+  - name: "evolving_func"
+    impls:
+      - args:
+          - name: x
+            value: fp32
+        return: fp32
+      - args:
+          - name: x
+            value: i32
+        deprecated:
+          since: "3.1.0"
+          reason: "Use the fp32 overload instead"
+        return: i32
+
+  # A function with a deprecated impl with metadata
+  - name: "deprecated_func_with_metadata"
+    deprecated:
+      since: "2.0.0"
+      reason: "This function is deprecated for removal in a future version"
+      metadata: # any key-value pairs can be included in the metadata field
+        alternative: "func_use_this_instead"
+    impls:
+      - args:
+          - name: x
+            value: int
+        return: int

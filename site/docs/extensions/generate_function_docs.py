@@ -38,45 +38,30 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
             the argument names.  Function signature will also include optional arguments.
             """
 
-            EXAMPLE_IMPL = False
-            mdFile.new_paragraph("Implementations:")
+            if "description" in function_spec:
+                description = function_spec["description"].strip()
+                mdFile.new_paragraph(text=f"{description}", bold_italics_code="i")
+
+            mdFile.new_paragraph("Implementations:\n")
             implementations_list = function_spec["impls"]
             option_names_list = []
             document_options = []
 
-            for count, impl in enumerate(implementations_list):
-                if "args" not in impl:
-                    continue
-                args_list = impl["args"]
+            for impl in implementations_list:
+                args_list = impl.get("args", [])
                 arg_string = []
-                only_arg_names = []
-                arg_with_option_names = []
-                arg_descriptions = []
 
-                # For each function implementation, collect details on the following:
-                #
-                # Argument values:
-                #   values, value names, description
                 for arg in args_list:
                     if "value" in arg:
-                        arg_string.append(arg["value"])
-                        if "name" in arg:
-                            only_arg_names.append(arg["name"])
-                            arg_with_option_names.append(arg["name"])
-                        if "description" in arg:
-                            arg_descriptions.append(arg["description"])
+                        name = arg.get("name")
+                        if name:
+                            arg_string.append(f"{name}: {arg['value']}")
+                        else:
+                            arg_string.append(arg["value"])
                     elif "options" in arg:
                         choices = str(arg["options"])
-
-                        # enum with no defined name, will be named as the list of choices
-                        if "name" in arg:
-                            option_name = str(arg["name"])
-                        else:
-                            option_name = choices
-
-                        # Required enums will be prepended with `req_enum` inside the function
+                        option_name = str(arg["name"]) if "name" in arg else choices
                         arg_string.append(option_name)
-                        arg_with_option_names.append(option_name)
                         option_names_list.append(option_name)
                         document_options.append((option_name, choices))
                     else:
@@ -85,49 +70,28 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                             f"{file_name}:{function_name}"
                         )
 
-                opts = impl["options"] if "options" in impl else {}
+                opts = impl.get("options", {})
                 for opt_name, opt in opts.items():
                     choices = str(opt["values"])
                     document_options.append((opt_name, choices))
-                    option_name = f"option:{opt_name}"
-                    arg_string.append(option_name)
-                    arg_with_option_names.append(option_name)
-                    option_names_list.append(option_name)
+                    arg_string.append(f"option:{opt_name}")
+                    option_names_list.append(f"option:{opt_name}")
 
-                # If the implementation is variadic, the last argument will appear `min_args`,
-                # number of times in the implementation.
                 if "variadic" in impl:
                     min_args = impl["variadic"]["min"]
-                    for count in range(min_args - 1):
+                    for _ in range(min_args - 1):
                         arg_string.append(arg_string[-1])
-                        if len(only_arg_names) > 0:
-                            only_arg_names.append(only_arg_names[-1])
 
-                arg_values = [f"{x}" for x in arg_string]
-                options_and_arg_names = [f"{x}" for x in arg_with_option_names]
-                # reset the options names list for the next function implementation.
                 option_names_list = []
-                options_and_arg_names = [f"`{x}`" for x in options_and_arg_names]
-                func_concat_arg_input_names = ", ".join(options_and_arg_names)
-                arg_values = [f"`{x}`" for x in arg_values]
+                arg_values = [f"`{x}`" for x in arg_string]
                 func_concat_arg_input_values = ", ".join(arg_values)
-
-                # Only provide an example implementation using the argument names if argument
-                # names are provided and an example implementation doesn't already exist.
-                if len(only_arg_names) > 0 and not EXAMPLE_IMPL:
-                    mdFile.new_line(
-                        f"{function_name}({func_concat_arg_input_names}): -> `return_type` "
-                    )
-                    for arg_name, arg_desc in zip(only_arg_names, arg_descriptions):
-                        mdFile.new_line(f"<li>{arg_name}: {arg_desc}</li>")
-                    EXAMPLE_IMPL = True
 
                 # If the return value for the function implementation is multiple lines long,
                 # print each line separately. This is the case for some functions in
                 # functions_arithmetic_decimal.yaml
                 if "\n" in impl["return"]:
                     mdFile.new_line(
-                        f"{count}. {function_name}({func_concat_arg_input_values}): -> "
+                        f"- {function_name}({func_concat_arg_input_values}): -> "
                     )
                     multiline_return_str = "\t" + impl["return"]
                     multiline_return_str = multiline_return_str.replace("\n", "\n\t")
@@ -136,13 +100,13 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                     mdFile.new_line("\t```")
                 else:
                     mdFile.new_line(
-                        f"{count}. {function_name}({func_concat_arg_input_values}): -> "
+                        f"- {function_name}({func_concat_arg_input_values}): -> "
                         f"`{impl['return']}`"
                     )
 
-            if "description" in function_spec:
-                description = function_spec["description"]
-                mdFile.new_paragraph(text=f"{description}", bold_italics_code="i")
+                if "description" in impl:
+                    mdFile.new_line(f"  <br>*{impl['description']}*")
+
             """
             Write markdown for options.
             """

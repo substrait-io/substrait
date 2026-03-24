@@ -4,6 +4,7 @@ import os
 import pytest
 from antlr4 import InputStream
 from tests.coverage.case_file_parser import parse_stream, parse_one_file
+from tests.coverage.coverage import validate_nullability
 from tests.coverage.extensions import Extension
 from tests.coverage.visitor import ParseError
 from tests.coverage.nodes import CaseLiteral
@@ -186,8 +187,12 @@ some_func(null::List?<i32>) = null::List?<i32>
 """
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 1
-    assert test_file.testcases[0].args[0] == CaseLiteral(None, "List?<i32>")
-    assert test_file.testcases[0].result == CaseLiteral(None, "List?<i32>")
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        None, "List?<i32>", nullable=True
+    )
+    assert test_file.testcases[0].result == CaseLiteral(
+        None, "List?<i32>", nullable=True
+    )
 
 
 def test_parse_aggregate_func_test():
@@ -396,11 +401,11 @@ def test_parse_errors_with_bad_scalar_testcases(
         ),
         (
             "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(my_col::fp32, col0::fp32) = 1::fp64",
-            "mismatched input '::'",  # Now accepts bare identifiers, type annotation is the error
+            "mismatched input 'fp32' expecting 'enum'",  # `my_col::fp32` gets recognized as enumArg which requires `::enum`
         ),
         (
             "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, column1::fp32) = 1::fp64",
-            "mismatched input '::'",  # Now accepts bare identifiers, type annotation is the error
+            "mismatched input 'fp32' expecting 'enum'",  # `column1::fp32` gets recognized as enumArg which requires `::enum`
         ),
     ],
 )
@@ -439,28 +444,28 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "f17('P10Y5M10DT6M7.200S'::interval_compound<3>, 5::i64) = 'P10Y5M10DT6M7.200S'::interval_compound<3>",
         "f17('P10Y5M10DT6M0.2000S'::icompound<4>, 5::i64) = 'P10Y5M10DT6M0.2000S'::icompound<4>",
         "ltrim('abcabcdef'::str, 'abc'::str) [spaces_only:FALSE] = 'def'::str",
-        "concat('abcd'::str, Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
-        "concat('abcd'::str, Null::str) [null_handling:IGNORE_NULLS] = 'abcd'::str",
-        "concat(Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
+        "concat('abcd'::str, Null::str?) [null_handling:ACCEPT_NULLS] = Null::str?",
+        "concat('abcd'::str, Null::str?) [null_handling:IGNORE_NULLS] = 'abcd'::str",
+        "concat(Null::str?) [null_handling:ACCEPT_NULLS] = Null::str?",
         "regexp_string_split('Hello'::str, 'Hel+?'::str) = ['', 'lo']::List<str>",
         "regexp_replace('USD100'::str, '(?<=USD)\\d{3}'::str, '999'::str) [lookaround:TRUE] = 'USD999'::str",
         "divide(5::i64, 0::i64) [on_division_by_zero:LIMIT] = inf::fp64",
-        "modulus(5::i8, 0::i8) [on_domain_error:Null] = Null::i8",
+        "modulus(5::i8, 0::i8) [on_domain_error:Null] = Null::i8?",
         "modulus(8::i8, -3::i8) [division_type:TRUNCATE] = 2::i8",
         "and(true::bool, false::bool) = false::bool",
         "or(true::bool, false::boolean) = true::bool",
         "not(true::bool) = false::bool",
-        "is_null(Null::str) = true::bool",
+        "is_null(Null::str?) = true::bool",
         "logb(2.0::fp64, 0.0::fp64) [on_log_zero:MINUS_INFINITY] = -inf::fp64",
-        "logb(10::fp64, -inf::fp64) [on_domain_error:NONE] = Null::fp64",
+        "logb(10::fp64, -inf::fp64) [on_domain_error:NONE] = Null::fp64?",
         "regexp_string_split('HHHelloooo'::str, 'Hel+'::str) = ['HH', 'oooo']::List<str>",
         "octet_length(''::str) = 0::i64",
         "octet_length(' '::str) = 1::i64",
         "octet_length('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'::str) = 48::i64",
-        "concat('abcd'::varchar<9>, Null::str) [null_handling:ACCEPT_NULLS] = Null::str",
-        "concat('abcd'::vchar<9>, 'ef'::varchar<9>) = Null::vchar<9>",
-        "concat('abcd'::vchar<9>, 'ef'::fixedchar<9>) = Null::fchar<9>",
-        "concat('abcd'::fbin<9>, 'ef'::fixedbinary<9>) = Null::fbin<9>",
+        "concat('abcd'::varchar<9>, Null::str?) [null_handling:ACCEPT_NULLS] = Null::str?",
+        "concat('abcd'::vchar<9>, 'ef'::varchar<9>) = Null::vchar?<9>",
+        "concat('abcd'::vchar<9>, 'ef'::fixedchar<9>) = Null::fchar?<9>",
+        "concat('abcd'::fbin<9>, 'ef'::fixedbinary<9>) = Null::fbin?<9>",
         "f35('1991-01-01T01:02:03.456'::pts<3>) = '1991-01-01T01:02:30.123123'::precision_timestamp<3>",
         "f36('1991-01-01T01:02:03.456'::pts<3>, '1991-01-01T01:02:30.123123'::precision_timestamp<3>) = 123456::i64",
         "f37('1991-01-01T01:02:03.123456'::pts<6>, '1991-01-01T04:05:06.456'::precision_timestamp<6>) = 123456::i64",
@@ -594,3 +599,126 @@ def test_double_nullable_rejected():
         with pytest.raises(ParseError) as pm:
             parse_string(header + case + "\n")
         assert "?" in str(pm.value), f"Expected parse error about '?' for: {case}"
+
+
+class TestNullabilityValidation:
+    """Tests for validate_nullability covering MIRROR, DECLARED_OUTPUT, and DISCRETE rules."""
+
+    @staticmethod
+    def _registry():
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        extensions_path = os.path.join(script_dir, "../../extensions")
+        return Extension.read_substrait_extensions(extensions_path)
+
+    def test_mirror_nullable_input_requires_nullable_output(self):
+        """MIRROR: if any arg is nullable, the output must be nullable."""
+        header = make_header("v1.0", "/extensions/functions_boolean.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+and(true::bool, null::bool?) = false::bool
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert len(errors) == 1
+        assert "MIRROR" in errors[0]
+        assert "should be nullable" in errors[0]
+
+    def test_mirror_nullable_input_with_nullable_output_ok(self):
+        """MIRROR: nullable input + nullable output is correct."""
+        header = make_header("v1.0", "/extensions/functions_boolean.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+and(true::bool, null::bool?) = false::bool?
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert errors == []
+
+    def test_mirror_non_nullable_input_non_nullable_output_ok(self):
+        """MIRROR: all non-nullable inputs + non-nullable output is correct."""
+        header = make_header("v1.0", "/extensions/functions_boolean.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+and(true::bool, false::bool) = false::bool
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert errors == []
+
+    def test_declared_output_requires_nullable_when_declared(self):
+        """DECLARED_OUTPUT: bool_and declares boolean? return — output must be nullable."""
+        header = make_aggregate_test_header(
+            "v1.0", "/extensions/functions_boolean.yaml"
+        )
+        test_file = parse_string(
+            header
+            + """\
+# basic
+bool_and((true, false)::bool) = false::bool
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert len(errors) == 1
+        assert "DECLARED_OUTPUT" in errors[0]
+
+    def test_declared_output_nullable_return_ok(self):
+        """DECLARED_OUTPUT: bool_and with nullable output is correct."""
+        header = make_aggregate_test_header(
+            "v1.0", "/extensions/functions_boolean.yaml"
+        )
+        test_file = parse_string(
+            header
+            + """\
+# basic
+bool_and((true, false)::bool) = false::bool?
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert errors == []
+
+    def test_declared_output_non_nullable_when_declared_non_nullable(self):
+        """DECLARED_OUTPUT: is_null declares non-nullable boolean return — nullable output is wrong."""
+        header = make_header("v1.0", "/extensions/functions_comparison.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+is_null(null::i8?) = true::bool?
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert len(errors) == 1
+        assert "should not be nullable" in errors[0]
+
+    def test_error_results_are_skipped(self):
+        """Error results (<!ERROR>) should not be checked for nullability."""
+        header = make_header("v1.0", "/extensions/functions_arithmetic.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert errors == []
+
+    def test_mirror_options_skip_false_positive(self):
+        """MIRROR with function options: nullable output with non-nullable args is allowed
+        when options are present (e.g. on_domain_error:NONE can produce null)."""
+        header = make_header("v1.0", "/extensions/functions_arithmetic.yaml")
+        test_file = parse_string(
+            header
+            + """\
+# basic
+divide(5::i8, 0::i8) [on_division_by_zero:NAN] = null::i8?
+"""
+        )
+        errors = validate_nullability(test_file, self._registry())
+        assert errors == []

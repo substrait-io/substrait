@@ -18,10 +18,8 @@ See [`site/examples/README.md`](site/examples/README.md) for complete instructio
 
 Quick example:
 
-```markdown
 ```yaml
 --8<-- "examples/extensions/my_example.yaml"
-```
 ```
 
 ## Commit Conventions

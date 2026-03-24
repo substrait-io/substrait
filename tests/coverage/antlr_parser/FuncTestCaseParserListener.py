@@ -450,6 +450,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#enumArg.
+    def enterEnumArg(self, ctx:FuncTestCaseParser.EnumArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#enumArg.
+    def exitEnumArg(self, ctx:FuncTestCaseParser.EnumArgContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#literalList.
     def enterLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
         pass
