@@ -134,7 +134,7 @@ scalar_functions:
   - name: "list_subscript"
     description: >-
       Returns the element at the specified index from the list, corresponding
-      to the SQL standard array subscript operator [].
+      to the common array subscript operator [].
 
       Index is 1-based (i.e., the first element is at index 1). Zero and
       negative indices are out of bounds.
