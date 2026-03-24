@@ -24,4 +24,4 @@ pixi run mkdocs serve
 
 ### Publishing
 
-Publishing is done automatically by the `substrait-site` Github Actions workflow in the `.github/workflows` directory.
+Publishing is done automatically by the `site.yml` Github Actions workflow in the `.github/workflows` directory.
