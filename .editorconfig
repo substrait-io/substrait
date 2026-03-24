@@ -14,5 +14,30 @@ insert_final_newline = unset
 indent_style = unset
 trim_trailing_whitespace = unset
 
+# ANTLR-generated parser files (auto-generated, do not format)
+[tests/type/antlr_parser/**]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+indent_style = unset
+trim_trailing_whitespace = unset
+
+[tests/coverage/antlr_parser/**]
+charset = unset
+end_of_line = unset
+insert_final_newline = unset
+indent_style = unset
+trim_trailing_whitespace = unset
+
+# Makefiles require tabs for indentation
+[Makefile]
+indent_style = tab
+indent_size = 4
+
+# Go files use tabs for indentation (gofmt standard)
+[*.go]
+indent_style = tab
+indent_size = 4
+
 [*.{proto,yaml,yml}]
 indent_size = 2

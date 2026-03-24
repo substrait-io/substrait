@@ -71,7 +71,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
-                       MILLISECOND, MICROSECOND, SUBSECOND, PICOSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
+                        MILLISECOND, MICROSECOND, SUBSECOND, PICOSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
             description: The part of the value to extract.
           - name: x
             value: timestamp_tz
@@ -82,7 +82,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
-                       MILLISECOND, MICROSECOND, NANOSECOND, PICOSECOND, SUBSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
+                        MILLISECOND, MICROSECOND, NANOSECOND, PICOSECOND, SUBSECOND, UNIX_TIME, TIMEZONE_OFFSET ]
             description: The part of the value to extract.
           - name: x
             value: precision_timestamp_tz<P>
@@ -93,7 +93,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
-                       MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME ]
+                        MILLISECOND, MICROSECOND, SUBSECOND, UNIX_TIME ]
             description: The part of the value to extract.
           - name: x
             value: timestamp
@@ -101,7 +101,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ YEAR, ISO_YEAR, US_YEAR, HOUR, MINUTE, SECOND,
-                       MILLISECOND, MICROSECOND, NANOSECOND, SUBSECOND, UNIX_TIME ]
+                        MILLISECOND, MICROSECOND, NANOSECOND, SUBSECOND, UNIX_TIME ]
             description: The part of the value to extract.
           - name: x
             value: precision_timestamp<P>
@@ -123,7 +123,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
-                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
+                        SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
             description: The part of the value to extract.
           - name: indexing
             options: [ ONE, ZERO ]
@@ -137,7 +137,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
-                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
+                        SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
             description: The part of the value to extract.
           - name: indexing
             options: [ ONE, ZERO ]
@@ -151,7 +151,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
-                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
+                        SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
             description: The part of the value to extract.
           - name: indexing
             options: [ ONE, ZERO ]
@@ -162,7 +162,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
-                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
+                        SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
             description: The part of the value to extract.
           - name: indexing
             options: [ ONE, ZERO ]
@@ -173,7 +173,7 @@ scalar_functions:
       - args:
           - name: component
             options: [ QUARTER, MONTH, DAY, DAY_OF_YEAR, MONDAY_DAY_OF_WEEK,
-                       SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
+                        SUNDAY_DAY_OF_WEEK, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK ]
             description: The part of the value to extract.
           - name: indexing
             options: [ ONE, ZERO ]
@@ -920,7 +920,7 @@ scalar_functions:
             options: [ YEAR, MONTH, WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND, MICROSECOND ]
           - name: origin
             options: [ YEAR, MONTH, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK,
-                       US_WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND ]
+                        US_WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND ]
           - name: multiple
             value: i64
         return: timestamp
@@ -933,7 +933,7 @@ scalar_functions:
             options: [ YEAR, MONTH, WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND, MICROSECOND ]
           - name: origin
             options: [ YEAR, MONTH, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK,
-                       US_WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND ]
+                        US_WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND ]
           - name: multiple
             value: i64
         return: precision_timestamp<P>
@@ -946,7 +946,7 @@ scalar_functions:
             options: [ YEAR, MONTH, WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND, MICROSECOND ]
           - name: origin
             options: [ YEAR, MONTH, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK,
-                       US_WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND ]
+                        US_WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND ]
           - name: multiple
             value: i64
           - name: timezone
@@ -962,7 +962,7 @@ scalar_functions:
             options: [ YEAR, MONTH, WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND, MICROSECOND ]
           - name: origin
             options: [ YEAR, MONTH, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK,
-                       US_WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND ]
+                        US_WEEK, DAY, HOUR, MINUTE, SECOND, MILLISECOND ]
           - name: multiple
             value: i64
           - name: timezone
