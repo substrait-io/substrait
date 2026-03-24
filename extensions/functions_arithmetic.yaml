@@ -1403,13 +1403,33 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
+          - name: x
+            value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+        nullability: DECLARED_OUTPUT
+        return: fp32?
+      - args:
+          - name: x
+            value: fp64
+        options:
+          distribution:
+            values: [ SAMPLE, POPULATION]
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+        nullability: DECLARED_OUTPUT
+        return: fp64?
+      - args:
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
           - name: x
             value: fp64
         options:
           rounding:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
-          distribution:
-            values: [ SAMPLE, POPULATION]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "variance"
@@ -1419,20 +1439,40 @@ aggregate_functions:
           - name: x
             value: fp32
         options:
-          rounding:
-            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           distribution:
             values: [ SAMPLE, POPULATION]
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+        nullability: DECLARED_OUTPUT
+        return: fp32?
+      - args:
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
+          - name: x
+            value: fp32
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: fp32?
       - args:
           - name: x
             value: fp64
         options:
-          rounding:
-            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
           distribution:
             values: [ SAMPLE, POPULATION]
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
+        nullability: DECLARED_OUTPUT
+        return: fp64?
+      - args:
+          - name: distribution
+            options: [ SAMPLE, POPULATION]
+          - name: x
+            value: fp64
+        options:
+          rounding:
+            values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         return: fp64?
   - name: "corr"
