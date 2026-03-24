@@ -1,7 +1,0 @@
-#V2
-SELECT any_value(t) FROM VALUES((1)) as t;
-SELECT last_value(t) FROM VALUES((1)) as t;
-SELECT last_value(t) \nFROM (VALUES (1)) as v(t);
-SELECT any_value(t) \nFROM (VALUES (1)) as v(t);
-SELECT arbitrary(t) \nFROM (VALUES (1)) as v(t);
-SELECT last_value(v.t) \nFROM (VALUES (1)) as v(t);

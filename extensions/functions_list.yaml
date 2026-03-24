@@ -131,7 +131,7 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
         return: boolean?
 
-  - name: "list_subscript"
+  - name: "subscript_operator"
     description: >-
       Returns the element at the specified index from the list, corresponding
       to the common array subscript operator [].
