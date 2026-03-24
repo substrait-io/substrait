@@ -44,6 +44,9 @@ pixi run generate-antlr
 ### Validation and Linting
 
 ```bash
+# Lint protobuf files
+pixi run lint-protobuf
+
 # Check protobuf formatting
 pixi run check-protobuf
 
