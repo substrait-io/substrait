@@ -131,13 +131,13 @@ scalar_functions:
         nullability: DECLARED_OUTPUT
         return: boolean?
 
-  - name: "element_at"
+  - name: "list_subscript"
     description: >-
-      Returns the element at the specified index from the list.
+      Returns the element at the specified index from the list, corresponding
+      to the SQL standard array subscript operator [].
 
-      Index is 1-based (i.e., the first element is at index 1). Zero is not
-      a valid index. Handling of negative indices depends on the
-      negative_index_semantics argument.
+      Index is 1-based (i.e., the first element is at index 1). Zero and
+      negative indices are out of bounds.
 
       If the input list is null, the result is null. If the index is null,
       the result is null. If the element at the specified index is null,
@@ -148,30 +148,14 @@ scalar_functions:
             value: list<any1>
           - name: index
             value: i64
-          - name: negative_index_semantics
-            description: >-
-              How to interpret negative index values.
-
-              * WRAP_AROUND: -1 refers to the last element, -2 to second-to-last, etc.
-              Negative indices whose absolute value exceeds the list length are still
-              out of bounds (e.g., -6 on a 5-element list is out of bounds, not wrapped).
-
-              * OUT_OF_BOUNDS: All negative indices are treated as out of bounds.
-            options: [WRAP_AROUND, OUT_OF_BOUNDS]
         options:
           on_out_of_bounds:
             description: >-
-              Behavior when the index is out of bounds (index is 0, positive index > list length,
-              or for WRAP_AROUND negative index whose absolute value > list length,
-              or for OUT_OF_BOUNDS any negative index).
+              Behavior when the index is out of bounds (index <= 0 or index > list length).
 
               * RETURN_NULL: Return null for out-of-bounds indices.
 
               * ERROR: Raise an error for out-of-bounds indices.
-
-              * ERROR_ON_ZERO_ONLY: Raise an error if the index is 0, but return null for
-              other out-of-bounds indices. This matches Trino's behavior which treats index 0
-              as a programmer error (wrong indexing convention) rather than a simple out-of-bounds.
-            values: [RETURN_NULL, ERROR, ERROR_ON_ZERO_ONLY]
+            values: [RETURN_NULL, ERROR]
         nullability: DECLARED_OUTPUT
         return: any1?
