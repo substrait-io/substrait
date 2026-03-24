@@ -8,43 +8,20 @@ This directory contains the source for the Substrait site.
 
 ### Installation
 
-The site is built using mkdocs. To install mkdocs and the theme, run:
+The site is built using mkdocs. We are using [Pixi](https://pixi.prefix.dev) to manage the build environment.
 
 ```
-# Activate the virtual environment (if installed)
-cd site/
-. venv/bin/activate
-# Install or update the dependencies
-pip install -r ./requirements.txt
+
 ```
-
-It is easier to use `virtualenv` to keep the Python dependencies for `site/`
-separate from your other projects and/or distinct from system managed Python
-dependencies.
-
-* To use `virtualenv`, you need Python 3.7/3.8 installed locally.
-  * For Ubuntu: `apt-get install python3 virtualenv`
-  * For MacOS/brew: `brew install python pyenv-virtualenv`
-* Install the virtual environment:
-  ```
-  # cd to the site/ directory
-  cd site/
-  # setup the virtual environment (only needed once)
-  virtualenv -p $(which python3) venv
-  # activate the virtual environment
-  . venv/bin/activate
-  # Install or update the dependencies as usual
-  pip install -r ./requirements.txt
-  ```
 
 ### Local Changes
 
 To see changes locally before committing, use mkdocs to run a local server from this directory.
 
 ```
-mkdocs serve
+pixi run mkdocs serve
 ```
 
 ### Publishing
 
-TBD
+Publishing is done automatically by the `substrait-site` Github Actions workflow in the `.github/workflows` directory.

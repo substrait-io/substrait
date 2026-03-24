@@ -8,4 +8,6 @@ exclude =
     # exclude generated type parser
     tests/type/antlr_parser/*.py,
     # exclude generated files
-    gen/
+    gen/,
+    # exclude .pixi
+    .pixi

@@ -29,16 +29,13 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
 
-      - uses: actions/setup-node@v6
+      - uses: prefix-dev/setup-pixi@v0.9.4
         with:
-          node-version: "20"
-
-      - uses: bufbuild/buf-setup-action@v1.50.0
-        with:
-          github_token: ${{ github.token }}
+          pixi-version: v0.66.0
+          cache: true
 
       - name: run semantic-release
-        run: ./ci/release/run.sh
+        run: pixi run release
         env:
           BUF_TOKEN: ${{ secrets.BUF_TOKEN }}
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
