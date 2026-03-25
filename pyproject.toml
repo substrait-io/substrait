@@ -43,9 +43,6 @@ yamllint = ">=1.38,<2"
 python = ">=3.13,<3.14"
 nodejs = ">=24,<25"
 
-[tool.pixi.pypi-dependencies]
-editorconfig-checker = ">=3.6.1,<4"
-
 [tool.pixi.tasks]
 lint-protobuf = { cmd = "buf lint", description = "Check Protobuf Style" }
 check-protobuf = { cmd = "buf format --diff --exit-code", description = "Check Protobuf Style" }
@@ -53,7 +50,7 @@ generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate AN
 generate-protobuf = { cmd = "buf generate", description = "Generate protobuf Python code" }
 yamllint = { cmd = "yamllint .", description = "Run yamllint" }
 check-jsonschema = { cmd = "check-jsonschema", description = "Validate YAML extensions" }
-editorconfig-checker = { cmd = "ec", description = "Check editorconfig"}
+editorconfig-checker = { cmd = "ec", default-environment = "dev", description = "Check editorconfig"}
 mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", description = "Build Website" }
 black = { cmd = "black --diff --check .", default-environment = "dev", description = "Black" }
 flake8 = { cmd = "flake8 .", default-environment = "dev", description = "Flake8" }
@@ -68,6 +65,7 @@ dev = { features = ["dev"] }
 dev = [
   "antlr4-python3-runtime>=4.13.2,<5",
   "black==24.8.0",
+  "editorconfig-checker>=3.6.1,<4",
   "flake8==7.0.0",
   "protobuf==6.33.1",
   "pytest==8.3.4",
