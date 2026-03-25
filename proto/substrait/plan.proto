@@ -65,7 +65,7 @@ message Plan {
   // many fields, nested parameterized types, string as a type parameter).
   repeated TypeAlias type_aliases = 9;
 
-  // Optional execution behavior settings for this plan.
+  // Execution behavior settings for this plan, required.
   ExecutionBehavior execution_behavior = 10;
 }
 
@@ -122,12 +122,10 @@ message ExecutionBehavior {
   // VariableEvaluationMode specifies the frequency and scope of execution
   // context variable evaluation.
   enum VariableEvaluationMode {
-    // Variables are evaluated once per Substrait plan execution (default).
-    // Skipping the ENUM_ZERO_VALUE_SUFFIX linting rule so we can have
-    // PER_PLAN as default.
-    // buf:lint:ignore ENUM_ZERO_VALUE_SUFFIX
-    VARIABLE_EVALUATION_MODE_PER_PLAN = 0;
+    VARIABLE_EVALUATION_MODE_UNSPECIFIED = 0;
+    // Variables are evaluated once per Substrait plan execution.
+    VARIABLE_EVALUATION_MODE_PER_PLAN = 1;
     // Variables are evaluated once per record during execution.
-    VARIABLE_EVALUATION_MODE_PER_RECORD = 1;
+    VARIABLE_EVALUATION_MODE_PER_RECORD = 2;
   }
 }

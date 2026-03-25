@@ -85,7 +85,7 @@ The execution behavior settings in a Substrait Plan control how execution contex
 
 The execution behavior defines a `VariableEvaluationMode` that controls the scope and frequency of execution context variable evaluation:
 
-- **VARIABLE_EVALUATION_MODE_PER_PLAN** (default): Variables are evaluated once per Substrait plan execution. All records in a single plan execution will see the same values for execution context variables like `current_date` and `current_timestamp`.
+- **VARIABLE_EVALUATION_MODE_PER_PLAN**: Variables are evaluated once per Substrait plan execution. All records in a single plan execution will see the same values for execution context variables like `current_date` and `current_timestamp`.
 - **VARIABLE_EVALUATION_MODE_PER_RECORD**: Variables are evaluated once per record during execution. Each record may see different values for execution context variables if the execution context changes between records.
 
 This setting is particularly important for time-based functions where the evaluation time affects the returned value. For example, with `VARIABLE_EVALUATION_MODE_PER_PLAN` mode, all rows processed in a single plan execution will have the same `current_date` value, while with `VARIABLE_EVALUATION_MODE_PER_RECORD` mode, the date could potentially change between rows if the plan spans a date boundary during execution.
