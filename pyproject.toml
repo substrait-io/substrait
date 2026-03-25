@@ -1,9 +1,18 @@
+[project]
+name = "substrait-specification"
+version = "0.0.0"
+requires-python = ">=3.13,<3.14"
+# just used for development, not intended for publication to PyPI
+classifiers = ["Private :: Do Not Upload"]
+
 [tool.black]
 # exclude filters out files found by Black itself during discovery
 exclude = '''
 (
   .*/antlr_parser/.*\.py
   | gen/.*
+  | \.pixi/.*
+  | \.venv/.*
 )
 '''
 # pre-commit passes files into Black, rather than letting it discover files
@@ -12,6 +21,8 @@ force-exclude = '''
 (
   .*/antlr_parser/.*\.py
   | gen/.*
+  | \.pixi/.*
+  | \.venv/.*
 )
 '''
 
@@ -43,8 +54,8 @@ generate-protobuf = { cmd = "buf generate", description = "Generate protobuf Pyt
 yamllint = { cmd = "yamllint .", description = "Run yamllint" }
 check-jsonschema = { cmd = "check-jsonschema", description = "Validate YAML extensions" }
 editorconfig-checker = { cmd = "ec", description = "Check editorconfig"}
-mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "docs", description = "Build Website" }
-black = { cmd = "black --extend-exclude '.pixi' --diff --check .", default-environment = "dev", description = "Black" }
+mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", description = "Build Website" }
+black = { cmd = "black --diff --check .", default-environment = "dev", description = "Black" }
 flake8 = { cmd = "flake8 .", default-environment = "dev", description = "Flake8" }
 test = { cmd = "pytest .", default-environment = "dev", description = "Run tests including test_substrait_extension_coverage" }
 dry-run = { cmd = "./ci/release/dry_run.sh", default-environment = "dev", description = "dry-run release" }
@@ -52,7 +63,6 @@ release = { cmd = "./ci/release/run.sh", default-environment = "dev", descriptio
 
 [tool.pixi.environments]
 dev = { features = ["dev"] }
-docs = { features = ["docs"] }
 
 [dependency-groups]
 dev = [
@@ -61,20 +71,18 @@ dev = [
   "flake8==7.0.0",
   "protobuf==6.33.1",
   "pytest==8.3.4",
-  "pyyaml>=6.0.2,<7"
-]
-docs = [
+  "pyyaml>=6.0.2,<7",
+  "mdutils>=1.4.0,<2",
   "mkdocs>=1.4.2,<2",
-  "mkdocs-material>=9.1.5",
-  "mkdocs-minify-plugin>=0.6.1,<1",
-  "mkdocs-redirects>=1.2.0,<2",
-  "pymdown-extensions>=9.9.1,<11",
   "mkdocs-awesome-pages-plugin>=2.8.0,<3",
   "mkdocs-gen-files>=0.4.0,<1",
   "mkdocs-markdownextradata-plugin>=0.2.5,<1",
+  "mkdocs-material>=9.1.5",
+  "mkdocs-minify-plugin>=0.6.1,<1",
   "mkdocs-protobuf>=0.1.0,<1",
+  "mkdocs-redirects>=1.2.0,<2",
   "mkdocs-table-reader-plugin>=2,<4",
-  "pygments>=2.14,<3",
   "oyaml>=1.0,<2",
-  "mdutils>=1.4.0,<2"
+  "pygments>=2.14,<3",
+  "pymdown-extensions>=9.9.1,<11",
 ]

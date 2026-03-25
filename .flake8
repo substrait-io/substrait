@@ -10,4 +10,6 @@ exclude =
     # exclude generated files
     gen/,
     # exclude .pixi
-    .pixi
+    .pixi,
+    # exclude .venv
+    .venv
