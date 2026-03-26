@@ -9,7 +9,7 @@ octet_length('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'::str) = 48::i64
 octet_length('   456'::str) = 6::i64
 
 # null_input: Examples with null as input
-octet_length(null::str) = null::i64
+octet_length(null::str?) = null::i64?
 
 # unicode: Examples with unicode characters as input
 octet_length('à'::str) = 2::i64

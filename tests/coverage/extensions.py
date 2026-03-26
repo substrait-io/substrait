@@ -3,7 +3,7 @@ import os
 import yaml
 
 from tests.coverage.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
-from tests.coverage.nodes import SubstraitError
+from tests.coverage.nodes import SubstraitError, type_str_is_outer_nullable
 
 enable_debug = False
 
@@ -58,6 +58,8 @@ def build_type_to_short_type():
     any_type = substrait_type_str(FuncTestCaseLexer.Any)
     for i in range(1, 3):
         to_short_type[f"{any_type}{i}"] = f"{any_type}{i}"
+    # Add enum type
+    to_short_type["enum"] = "enum"
     return to_short_type
 
 
@@ -73,6 +75,11 @@ class Extension:
     @staticmethod
     def get_short_type(long_type):
         long_type = long_type.lower().rstrip("?")
+
+        # Handle "enum" type specially
+        if long_type == "enum":
+            return "enum"
+
         short_type = type_to_short_type.get(long_type, None)
 
         if short_type is None:
@@ -116,10 +123,19 @@ class Extension:
                         debug(
                             f"arg is not a value type for function: {func['name']} arg must be enum options {arg['options']}"
                         )
-                        args.append("str")
+                        args.append("enum")
+            nullability = impl.get(
+                "nullability", "MIRROR"
+            )  # MIRROR is the spec default
+            return_type_raw = str(impl["return"])
+            is_return_nullable = type_str_is_outer_nullable(return_type_raw)
             overloads.append(
                 FunctionOverload(
-                    args, Extension.get_short_type(impl["return"]), "variadic" in impl
+                    args,
+                    Extension.get_short_type(impl["return"]),
+                    "variadic" in impl,
+                    nullability=nullability,
+                    is_return_nullable=is_return_nullable,
                 )
             )
         return overloads
@@ -208,7 +224,18 @@ class FunctionType:
 
 
 class FunctionVariant:
-    def __init__(self, name, uri, description, args, return_type, variadic, func_type):
+    def __init__(
+        self,
+        name,
+        uri,
+        description,
+        args,
+        return_type,
+        variadic,
+        func_type,
+        nullability="MIRROR",
+        is_return_nullable=False,
+    ):
         self.name = name
         self.uri = uri
         self.description = description
@@ -216,6 +243,8 @@ class FunctionVariant:
         self.return_type = return_type
         self.variadic = variadic
         self.func_type = func_type
+        self.nullability = nullability
+        self.is_return_nullable = is_return_nullable
         self.test_count = 0
 
     def __str__(self):
@@ -226,13 +255,22 @@ class FunctionVariant:
 
 
 class FunctionOverload:
-    def __init__(self, args, return_type, variadic):
+    def __init__(
+        self,
+        args,
+        return_type,
+        variadic,
+        nullability="MIRROR",
+        is_return_nullable=False,
+    ):
         self.args = args
         self.return_type = return_type
         self.variadic = variadic
+        self.nullability = nullability
+        self.is_return_nullable = is_return_nullable
 
     def __str__(self):
-        return f"FunctionOverload(args={self.args}, result={self.return_type}, variadic={self.variadic})"
+        return f"FunctionOverload(args={self.args}, result={self.return_type}, variadic={self.variadic}, nullability={self.nullability}, is_return_nullable={self.is_return_nullable})"
 
 
 # define function type enum
@@ -271,6 +309,8 @@ class FunctionRegistry:
                     overload.return_type,
                     overload.variadic,
                     func_type,
+                    nullability=overload.nullability,
+                    is_return_nullable=overload.is_return_nullable,
                 )
                 fun_arr.append(function)
             self.registry[f_name] = fun_arr
@@ -281,7 +321,7 @@ class FunctionRegistry:
 
     @staticmethod
     def is_same_type(func_arg_type, arg_type):
-        arg_type_base = arg_type.split("<")[0]
+        arg_type_base = arg_type.split("<")[0].rstrip("?")
         if func_arg_type == arg_type_base:
             return True
         return FunctionRegistry.is_type_any(func_arg_type)

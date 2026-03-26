@@ -5,7 +5,7 @@ from dataclasses import asdict
 
 from tests.baseline import read_baseline_file, generate_baseline
 from tests.coverage.case_file_parser import load_all_testcases
-from tests.coverage.coverage import get_test_coverage
+from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import build_type_to_short_type
 from tests.coverage.extensions import Extension
 
@@ -37,6 +37,25 @@ def test_substrait_extension_coverage():
     if baseline != actual_baseline:
         print("\nBaseline has changed, updating tests/baseline.json")
         print(json.dumps(asdict(actual_baseline), indent=2))
+
+
+def test_substrait_nullability_consistency():
+    """Verify that return type nullability in .test cases is consistent with
+    the nullability handling declared in extension YAMLs.
+    """
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    extensions_path = os.path.join(script_dir, "../extensions")
+    registry = Extension.read_substrait_extensions(extensions_path)
+
+    test_case_dir = os.path.join(script_dir, "./cases")
+    all_test_files = load_all_testcases(test_case_dir)
+
+    errors = []
+    for test_file in all_test_files:
+        errors.extend(validate_nullability(test_file, registry))
+    assert not errors, f"{len(errors)} nullability violation(s) found:\n" + "\n".join(
+        errors
+    )
 
 
 def test_build_type_to_short_type():

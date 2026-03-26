@@ -8,7 +8,7 @@ upper('ABC'::str) = 'ABC'::str
 upper(''::str) = ''::str
 
 # null_input: Examples with null as input
-upper(null::str) = null::str
+upper(null::str?) = null::str?
 
 # unicode: Examples with unicode characters as input
 upper('ææããa'::str) [full_unicode:TRUE] = 'ÆÆÃÃA'::str
