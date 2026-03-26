@@ -7,6 +7,10 @@ insert_final_newline = true
 indent_style = space
 trim_trailing_whitespace = true
 
+# Markdown files - preserve formatting
+[*.md]
+trim_trailing_whitespace = false
+
 [site/**]
 charset = unset
 end_of_line = unset

@@ -633,7 +633,7 @@ SQLite returns null for some inputs such as negative infinity
 
 ### ⚠ BREAKING CHANGES
 
-* Renamed modulus to modulo.
+* Renamed modulus to modulo. 
 
 Added options and documentation for the modulo operator as defined in
 math and comp sci.
