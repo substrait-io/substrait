@@ -2,7 +2,7 @@ version: v1
 name: buf.build/substrait/substrait
 lint:
   use:
-    - DEFAULT
+    - STANDARD
   ignore_only:
     PACKAGE_VERSION_SUFFIX:
       - substrait
