@@ -1,6 +1,14 @@
 Release Notes
 ---
 
+## [0.87.0](https://github.com/substrait-io/substrait/compare/v0.86.0...v0.87.0) (2026-03-29)
+
+### Features
+
+* **extensions:** add std_dev and variance with distribution enum arg  ([#1011](https://github.com/substrait-io/substrait/issues/1011)) ([00bc3c2](https://github.com/substrait-io/substrait/commit/00bc3c24078443a23b3b4c92228fae8e2aba3778))
+* introduce ExecutionContextVariable and ExecutionBehaviour [#945](https://github.com/substrait-io/substrait/issues/945)) ([6b98c27](https://github.com/substrait-io/substrait/commit/6b98c27f10c9cefb221cd50555877597e83407aa))
+* **tests:** add enum argument support to FuncTestCase grammar ([#1010](https://github.com/substrait-io/substrait/issues/1010)) ([7b39d4c](https://github.com/substrait-io/substrait/commit/7b39d4ca8651e0ac0613efd9e72b36095dfbea99))
+
 ## [0.86.0](https://github.com/substrait-io/substrait/compare/v0.85.0...v0.86.0) (2026-03-22)
 
 ### ⚠ BREAKING CHANGES
