@@ -52,7 +52,9 @@ lt('2016-12-31T13:30:15'::ts, '2017-12-31T13:30:15'::ts) = true::bool
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 1
     assert test_file.testcases[0].func_name == "lt"
-    assert test_file.testcases[0].base_uri == "extension:io.substrait:functions_datetime"
+    assert (
+        test_file.testcases[0].base_uri == "extension:io.substrait:functions_datetime"
+    )
     assert (
         test_file.testcases[0].group.name
         == "timestamp examples using the timestamp type"
@@ -196,7 +198,9 @@ some_func(null::List?<i32>) = null::List?<i32>
 
 
 def test_parse_aggregate_func_test():
-    header = make_aggregate_test_header("v1.0", "extension:io.substrait:functions_arithmetic")
+    header = make_aggregate_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
     tests = """# basic
 avg((1,2,3)::fp32) = 2::fp64
 """
@@ -205,7 +209,9 @@ avg((1,2,3)::fp32) = 2::fp64
 
 
 def test_parse_aggregate_func_test_compact():
-    header = make_aggregate_test_header("v1.0", "extension:io.substrait:functions_arithmetic")
+    header = make_aggregate_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
     tests = """# basic
 ((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64
 """
@@ -214,7 +220,9 @@ def test_parse_aggregate_func_test_compact():
 
 
 def test_parse_aggregate_func_test_multiple_args():
-    header = make_aggregate_test_header("v1.0", "extension:io.substrait:functions_arithmetic")
+    header = make_aggregate_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
     tests = """# basic
 DEFINE t1(fp32, fp32) = ((20, 20), (-3, -3), (1, 1), (10,10), (5,5))
 corr(t1.col0, t1.col1) = 1::fp64
@@ -224,7 +232,9 @@ corr(t1.col0, t1.col1) = 1::fp64
 
 
 def test_parse_aggregate_func_test_compact_mixed_args():
-    header = make_aggregate_test_header("v1.0", "extension:io.substrait:functions_arithmetic")
+    header = make_aggregate_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
     tests = """# basic
 ((20), (-3), (1), (10)) LIST_AGG(col0::fp32, ','::string) = 1::fp64
 """
@@ -233,7 +243,9 @@ def test_parse_aggregate_func_test_compact_mixed_args():
 
 
 def test_parse_aggregate_func_test_compact_string_agg():
-    header = make_aggregate_test_header("v1.0", "extension:io.substrait:functions_arithmetic")
+    header = make_aggregate_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
     tests = """# basic
 (('ant'), ('bat'), ('cat')) string_agg(col0::str, ','::str) = 1::fp64
 (('ant'), ('bat'), ('cat')) string_agg(col0::string, ','::string) = 1::fp64
@@ -243,14 +255,18 @@ def test_parse_aggregate_func_test_compact_string_agg():
 
 
 def test_parse_aggregate_func_max():
-    header = make_aggregate_test_header("v1.0", "extension:io.substrait:functions_arithmetic")
+    header = make_aggregate_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
     tests = """# basic
 max((2.5, 0, 5.0, -2.5, -7.5)::fp32) = 5.0::fp32
 """
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 1
     assert test_file.testcases[0].func_name == "max"
-    assert test_file.testcases[0].base_uri == "extension:io.substrait:functions_arithmetic"
+    assert (
+        test_file.testcases[0].base_uri == "extension:io.substrait:functions_arithmetic"
+    )
     assert test_file.testcases[0].group.name == "basic"
     assert test_file.testcases[0].result == CaseLiteral("5.0", "fp32")
     assert test_file.testcases[0].args == [
@@ -267,7 +283,9 @@ def test_parse_file_add():
     test_file = parse_one_file(get_absolute_path("../cases/arithmetic/add.test"))
     assert len(test_file.testcases) == 15
     assert test_file.testcases[0].func_name == "add"
-    assert test_file.testcases[0].base_uri == "extension:io.substrait:functions_arithmetic"
+    assert (
+        test_file.testcases[0].base_uri == "extension:io.substrait:functions_arithmetic"
+    )
     assert test_file.include == "extension:io.substrait:functions_arithmetic"
     assert test_file.dependencies == []
 
@@ -276,7 +294,9 @@ def test_parse_file_max():
     test_file = parse_one_file(get_absolute_path("../cases/arithmetic/max.test"))
     assert len(test_file.testcases) == 12
     assert test_file.testcases[0].func_name == "max"
-    assert test_file.testcases[0].base_uri == "extension:io.substrait:functions_arithmetic"
+    assert (
+        test_file.testcases[0].base_uri == "extension:io.substrait:functions_arithmetic"
+    )
     assert test_file.include == "extension:io.substrait:functions_arithmetic"
     assert test_file.dependencies == []
 
@@ -285,7 +305,9 @@ def test_parse_file_lt_datetime():
     test_file = parse_one_file(get_absolute_path("../cases/datetime/lt_datetime.test"))
     assert len(test_file.testcases) == 13
     assert test_file.testcases[0].func_name == "lt"
-    assert test_file.testcases[0].base_uri == "extension:io.substrait:functions_datetime"
+    assert (
+        test_file.testcases[0].base_uri == "extension:io.substrait:functions_datetime"
+    )
 
 
 def test_parse_file_power_decimal():
@@ -375,7 +397,9 @@ def test_parse_file_power_decimal():
 def test_parse_errors_with_bad_scalar_testcases(
     input_func_test, position, expected_message
 ):
-    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    header = (
+        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    )
     with pytest.raises(ParseError) as pm:
         parse_string(header + input_func_test + "\n")
     assert f"Syntax error at line 5, column {position}: {expected_message}" in str(
@@ -411,7 +435,9 @@ def test_parse_errors_with_bad_scalar_testcases(
 )
 def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_message):
     header = (
-        make_aggregate_test_header("v1.0", "extension:io.substrait:functions_arithmetic")
+        make_aggregate_test_header(
+            "v1.0", "extension:io.substrait:functions_arithmetic"
+        )
         + "# basic\n"
     )
     with pytest.raises(ParseError) as pm:
@@ -478,7 +504,9 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
     ],
 )
 def test_parse_various_scalar_func_argument_types(input_func_test):
-    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    header = (
+        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    )
     test_file = parse_string(header + input_func_test + "\n")
     assert len(test_file.testcases) == 1
 
@@ -499,7 +527,9 @@ corr(t1.col0, t1.col1) = -11::fp64"
 )
 def test_parse_various_aggregate_scalar_func_argument_types(input_func_test):
     header = (
-        make_aggregate_test_header("v1.0", "extension:io.substrait:functions_arithmetic")
+        make_aggregate_test_header(
+            "v1.0", "extension:io.substrait:functions_arithmetic"
+        )
         + "# basic\n"
     )
     test_file = parse_string(header + input_func_test + "\n")
@@ -510,8 +540,20 @@ def test_parse_various_aggregate_scalar_func_argument_types(input_func_test):
     "func_name, func_args, func_ret, func_urn, expected_failure",
     [
         # lt for i8 with correct urn
-        ("lt", ["i8", "i8"], "bool", "extension:io.substrait:functions_comparison", False),
-        ("add", ["i8", "i8"], "i8", "extension:io.substrait:functions_arithmetic", False),
+        (
+            "lt",
+            ["i8", "i8"],
+            "bool",
+            "extension:io.substrait:functions_comparison",
+            False,
+        ),
+        (
+            "add",
+            ["i8", "i8"],
+            "i8",
+            "extension:io.substrait:functions_arithmetic",
+            False,
+        ),
         (
             "add",
             ["dec", "dec"],
@@ -535,8 +577,20 @@ def test_parse_various_aggregate_scalar_func_argument_types(input_func_test):
             "extension:io.substrait:functions_arithmetic_decimal",
             True,
         ),
-        ("add", ["dec", "dec"], "dec", "extension:io.substrait:functions_arithmetic", True),
-        ("max", ["dec", "dec"], "dec", "extension:io.substrait:functions_arithmetic", True),
+        (
+            "add",
+            ["dec", "dec"],
+            "dec",
+            "extension:io.substrait:functions_arithmetic",
+            True,
+        ),
+        (
+            "max",
+            ["dec", "dec"],
+            "dec",
+            "extension:io.substrait:functions_arithmetic",
+            True,
+        ),
     ],
 )
 def test_urn_match_in_get_function(
@@ -574,7 +628,9 @@ def test_nullable_types():
         "lt('2020-01-01T12:00:00.123'::pts?<3>, '2020-01-02T12:00:00.456'::pts?<3>) = true::bool",
         "lt('2020-01-01T12:00:00.123+00:00'::ptstz?<3>, '2020-01-02T12:00:00.456+00:00'::ptstz?<3>) = true::bool",
     ]
-    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    header = (
+        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    )
     for case in valid_cases:
         test_file = parse_string(header + case + "\n")
         assert len(test_file.testcases) == 1
@@ -594,7 +650,9 @@ def test_double_nullable_rejected():
         "add('2020-01-01T12:00:00'::pts?<3>?, '2020-01-02T12:00:00'::pts?<3>) = 1::i64",
         "add('2020-01-01T12:00:00+00:00'::ptstz?<3>?, '2020-01-02T12:00:00+00:00'::ptstz?<3>) = 1::i64",
     ]
-    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    header = (
+        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    )
     for case in invalid_cases:
         with pytest.raises(ParseError) as pm:
             parse_string(header + case + "\n")
