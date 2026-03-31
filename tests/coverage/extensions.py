@@ -175,6 +175,7 @@ class Extension:
         aggregate_functions = {}
         window_functions = {}
         dependencies = {}
+        urn_to_uri = {}
         # convert yaml file to a python dictionary
         for extension in extensions:
             suffix = extension[:-5]  # strip .yaml at the end of the extension
@@ -187,6 +188,9 @@ class Extension:
             dependencies[suffix] = Extension.get_base_uri() + uri
             with open(extension, "r") as fh:
                 data = yaml.load(fh, Loader=yaml.FullLoader)
+                # Build URN to URI mapping
+                if "urn" in data:
+                    urn_to_uri[data["urn"]] = uri
                 if "scalar_functions" in data:
                     Extension.add_functions_to_map(
                         data["scalar_functions"],
@@ -213,7 +217,11 @@ class Extension:
                     )
 
         return FunctionRegistry(
-            scalar_functions, aggregate_functions, window_functions, dependencies
+            scalar_functions,
+            aggregate_functions,
+            window_functions,
+            dependencies,
+            urn_to_uri,
         )
 
 
@@ -283,14 +291,23 @@ class FunctionRegistry:
     aggregate_functions = dict()
     window_functions = dict()
     extensions = set()
+    urn_to_uri = (
+        dict()
+    )  # Maps URN to internal URI (e.g., extension:io.substrait:functions_arithmetic -> /extensions/functions_arithmetic.yaml)
 
     def __init__(
-        self, scalar_functions, aggregate_functions, window_functions, dependencies
+        self,
+        scalar_functions,
+        aggregate_functions,
+        window_functions,
+        dependencies,
+        urn_to_uri=None,
     ):
         self.dependencies = dependencies
         self.scalar_functions = scalar_functions
         self.aggregate_functions = aggregate_functions
         self.window_functions = window_functions
+        self.urn_to_uri = urn_to_uri or {}
         self.add_functions(scalar_functions, FunctionType.SCALAR)
         self.add_functions(aggregate_functions, FunctionType.AGGREGATE)
         self.add_functions(window_functions, FunctionType.WINDOW)
@@ -314,6 +331,26 @@ class FunctionRegistry:
                 )
                 fun_arr.append(function)
             self.registry[f_name] = fun_arr
+
+    def resolve_uri(self, ref):
+        """Resolve an extension reference (URN or legacy path) to internal URI.
+
+        Args:
+            ref: Either a URN (e.g., 'extension:io.substrait:functions_arithmetic')
+                 or a legacy path (e.g., '/extensions/functions_arithmetic.yaml')
+
+        Returns:
+            The internal URI used for function lookup
+        """
+        if ref.startswith("extension:"):
+            # URN format
+            uri = self.urn_to_uri.get(ref)
+            if uri is None:
+                error(f"Unknown extension URN: {ref}")
+                return ref
+            return uri
+        # Legacy path format - use as-is
+        return ref
 
     @staticmethod
     def is_type_any(func_arg_type):

@@ -1,5 +1,5 @@
 ### SUBSTRAIT_AGGREGATE_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # basic: Basic examples without any special cases
 ((1.0, 2.0, 3.0, 4.0, 5.0)) std_dev(SAMPLE::enum, col0::fp32) = 1.5811388::fp32?

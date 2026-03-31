@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_logarithmic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_logarithmic
 
 # basic: Basic examples without any special cases
 ln(100000::i64) = 11.512925464970229::fp64

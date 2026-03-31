@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic_decimal.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
 
 # basic: Basic examples without any special cases
 sqrt(25::dec<2, 0>) = 5::fp64

@@ -35,6 +35,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#extensionRef.
+    def visitExtensionRef(self, ctx:FuncTestCaseParser.ExtensionRefContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#testGroupDescription.
     def visitTestGroupDescription(self, ctx:FuncTestCaseParser.TestGroupDescriptionContext):
         return self.visitChildren(ctx)

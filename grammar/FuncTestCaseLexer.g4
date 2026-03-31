@@ -14,6 +14,11 @@ SubstraitAggregateTest: 'SUBSTRAIT_AGGREGATE_TEST';
 SubstraitInclude: 'SUBSTRAIT_INCLUDE';
 SubstraitDependency: 'SUBSTRAIT_DEPENDENCY';
 
+// URN literal for extension references (e.g., extension:io.substrait:functions_arithmetic)
+UrnLiteral
+    : 'extension:' [a-z.]+ ':' [a-z_]+
+    ;
+
 FormatVersion
     : 'v' DIGIT+ ('.' DIGIT+)?
     ;
