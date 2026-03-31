@@ -45,8 +45,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return self.visitExtensionRef(ctx.extensionRef(0))
 
     def visitExtensionRef(self, ctx: FuncTestCaseParser.ExtensionRefContext):
-        if ctx.UrnLiteral() is not None:
-            return ctx.UrnLiteral().getText()
+        if ctx.ExtensionUri() is not None:
+            return ctx.ExtensionUri().getText()
         # Legacy path-based reference
         return ctx.StringLiteral().getText().strip("'")
 

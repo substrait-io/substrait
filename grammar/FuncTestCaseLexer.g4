@@ -14,9 +14,10 @@ SubstraitAggregateTest: 'SUBSTRAIT_AGGREGATE_TEST';
 SubstraitInclude: 'SUBSTRAIT_INCLUDE';
 SubstraitDependency: 'SUBSTRAIT_DEPENDENCY';
 
-// URN literal for extension references (e.g., extension:io.substrait:functions_arithmetic)
-UrnLiteral
-    : 'extension:' [a-z.]+ ':' [a-z_]+
+// Extension URN reference (must start with 'extension:')
+// Validation that this is a known URN is done in Python
+ExtensionUri
+    : 'extension:' ~[ \t\r\n,]+
     ;
 
 FormatVersion

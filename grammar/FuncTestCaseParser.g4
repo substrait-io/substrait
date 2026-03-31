@@ -26,7 +26,7 @@ dependency
     ;
 
 extensionRef
-    : UrnLiteral
+    : ExtensionUri
     | StringLiteral  // Deprecated: path-based references
     ;
 

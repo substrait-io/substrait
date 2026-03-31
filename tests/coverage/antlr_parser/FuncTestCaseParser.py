@@ -330,7 +330,7 @@ class FuncTestCaseParser ( Parser ):
 
     symbolicNames = [ "<INVALID>", "Whitespace", "TripleHash", "SubstraitScalarTest", 
                       "SubstraitAggregateTest", "SubstraitInclude", "SubstraitDependency", 
-                      "UrnLiteral", "FormatVersion", "DescriptionLine", 
+                      "ExtensionUri", "FormatVersion", "DescriptionLine", 
                       "Define", "ErrorResult", "UndefineResult", "Overflow", 
                       "Rounding", "Error", "Saturate", "Silent", "TieToEven", 
                       "NaN", "AcceptNulls", "IgnoreNulls", "NullHandling", 
@@ -475,7 +475,7 @@ class FuncTestCaseParser ( Parser ):
     SubstraitAggregateTest=4
     SubstraitInclude=5
     SubstraitDependency=6
-    UrnLiteral=7
+    ExtensionUri=7
     FormatVersion=8
     DescriptionLine=9
     Define=10
@@ -980,8 +980,8 @@ class FuncTestCaseParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def UrnLiteral(self):
-            return self.getToken(FuncTestCaseParser.UrnLiteral, 0)
+        def ExtensionUri(self):
+            return self.getToken(FuncTestCaseParser.ExtensionUri, 0)
 
         def StringLiteral(self):
             return self.getToken(FuncTestCaseParser.StringLiteral, 0)
