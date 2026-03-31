@@ -42,16 +42,10 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitInclude(self, ctx: FuncTestCaseParser.IncludeContext):
         # TODO handle multiple includes
-        return self.visitExtensionRef(ctx.extensionRef(0))
-
-    def visitExtensionRef(self, ctx: FuncTestCaseParser.ExtensionRefContext):
-        if ctx.ExtensionUri() is not None:
-            return ctx.ExtensionUri().getText()
-        # Legacy path-based reference
-        return ctx.StringLiteral().getText().strip("'")
+        return ctx.ExtensionUrn().getText()
 
     def visitDependency(self, ctx: FuncTestCaseParser.DependencyContext):
-        return [self.visitExtensionRef(ctx.extensionRef())]
+        return [ctx.ExtensionUrn().getText()]
 
     def visitTestGroupDescription(
         self, ctx: FuncTestCaseParser.TestGroupDescriptionContext

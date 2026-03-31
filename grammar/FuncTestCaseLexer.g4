@@ -14,11 +14,8 @@ SubstraitAggregateTest: 'SUBSTRAIT_AGGREGATE_TEST';
 SubstraitInclude: 'SUBSTRAIT_INCLUDE';
 SubstraitDependency: 'SUBSTRAIT_DEPENDENCY';
 
-// Extension URN reference (must start with 'extension:')
-// Validation that this is a known URN is done in Python
-ExtensionUri
-    : 'extension:' ~[ \t\r\n,]+
-    ;
+// Extension URN: extension:<any sequence of letters, numbers, colons, dots, underscores>
+ExtensionUrn: 'extension:' [a-z0-9:._]+;
 
 FormatVersion
     : 'v' DIGIT+ ('.' DIGIT+)?

@@ -18,16 +18,11 @@ version
     ;
 
 include
-    : TripleHash SubstraitInclude Colon extensionRef (Comma extensionRef)*
+    : TripleHash SubstraitInclude Colon ExtensionUrn
     ;
 
 dependency
-    : TripleHash SubstraitDependency Colon extensionRef
-    ;
-
-extensionRef
-    : ExtensionUri
-    | StringLiteral  // Deprecated: path-based references
+    : TripleHash SubstraitDependency Colon ExtensionUrn
     ;
 
 testGroupDescription

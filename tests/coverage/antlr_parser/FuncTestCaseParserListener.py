@@ -54,15 +54,6 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#extensionRef.
-    def enterExtensionRef(self, ctx:FuncTestCaseParser.ExtensionRefContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#extensionRef.
-    def exitExtensionRef(self, ctx:FuncTestCaseParser.ExtensionRefContext):
-        pass
-
-
     # Enter a parse tree produced by FuncTestCaseParser#testGroupDescription.
     def enterTestGroupDescription(self, ctx:FuncTestCaseParser.TestGroupDescriptionContext):
         pass
