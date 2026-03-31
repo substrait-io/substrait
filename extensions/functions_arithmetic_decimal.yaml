@@ -210,7 +210,7 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<DECIMAL<38,S>,i64>"
-        return: "DECIMAL<38,S>"
+        return: "DECIMAL<P,S>"
   - name: "min"
     description: Min a set of values.
     impls:
