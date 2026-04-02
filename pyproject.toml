@@ -1,9 +1,18 @@
+[project]
+name = "substrait-specification"
+version = "0.0.0"
+requires-python = ">=3.13,<3.14"
+# just used for development, not intended for publication to PyPI
+classifiers = ["Private :: Do Not Upload"]
+
 [tool.black]
 # exclude filters out files found by Black itself during discovery
 exclude = '''
 (
   .*/antlr_parser/.*\.py
   | gen/.*
+  | \.pixi/.*
+  | \.venv/.*
 )
 '''
 # pre-commit passes files into Black, rather than letting it discover files
@@ -12,8 +21,65 @@ force-exclude = '''
 (
   .*/antlr_parser/.*\.py
   | gen/.*
+  | \.pixi/.*
+  | \.venv/.*
 )
 '''
 
 [tool.pytest.ini_options]
 pythonpath = ["gen/proto/python"]
+
+[tool.pixi.workspace]
+name = "substrait"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "osx-arm64", "linux-aarch64"]
+
+[tool.pixi.dependencies]
+antlr = ">=4.13.2,<5"
+buf = ">=1.62.1,<2"
+python = ">=3.13,<3.14"
+nodejs = ">=24,<25"
+
+[tool.pixi.tasks]
+lint-protobuf = { cmd = "buf lint", description = "Check Protobuf Style" }
+check-protobuf = { cmd = "buf format --diff --exit-code", description = "Check Protobuf Style" }
+generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate ANTLR Python parsers" }
+generate-protobuf = { cmd = "buf generate", description = "Generate protobuf Python code" }
+yamllint = { cmd = "yamllint .", default-environment = "dev", description = "Run yamllint" }
+check-jsonschema = { cmd = "check-jsonschema", default-environment = "dev", description = "Validate YAML extensions" }
+editorconfig-checker = { cmd = "ec", default-environment = "dev", description = "Check editorconfig"}
+mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", description = "Build Website" }
+black = { cmd = "black --diff --check .", default-environment = "dev", description = "Black" }
+flake8 = { cmd = "flake8 .", default-environment = "dev", description = "Flake8" }
+test = { cmd = "pytest .", default-environment = "dev", description = "Run tests including test_substrait_extension_coverage" }
+dry-run = { cmd = "./ci/release/dry_run.sh", default-environment = "dev", description = "dry-run release" }
+release = { cmd = "./ci/release/run.sh", default-environment = "dev", description = "release" }
+
+[tool.pixi.environments]
+dev = { features = ["dev"] }
+
+[dependency-groups]
+dev = [
+  "antlr4-python3-runtime>=4.13.2,<5",
+  "black==24.8.0",
+  "editorconfig-checker>=3.6.1,<4",
+  "flake8==7.0.0",
+  "protobuf==6.33.1",
+  "pytest==8.3.4",
+  "pyyaml>=6.0.2,<7",
+  "mdutils>=1.4.0,<2",
+  "mkdocs>=1.4.2,<2",
+  "mkdocs-awesome-pages-plugin>=2.8.0,<3",
+  "mkdocs-gen-files>=0.4.0,<1",
+  "mkdocs-markdownextradata-plugin>=0.2.5,<1",
+  "mkdocs-material>=9.1.5",
+  "mkdocs-minify-plugin>=0.6.1,<1",
+  "mkdocs-protobuf>=0.1.0,<1",
+  "mkdocs-redirects>=1.2.0,<2",
+  "mkdocs-table-reader-plugin>=2,<4",
+  "oyaml>=1.0,<2",
+  "pygments>=2.14,<3",
+  "pymdown-extensions>=9.9.1,<11",
+  "yamllint>=1.38,<2",
+  "check-jsonschema>=0.37,<1",
+]
