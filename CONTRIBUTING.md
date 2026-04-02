@@ -11,8 +11,18 @@ If you work with this repository you should have the following tools installed:
 Pixi will set up the correct development environment for you, including:
 
 * [`buf`](https://docs.buf.build/installation) for easy generation of proto serialization/deserialization code
-* [ANTLR](https://www.antlr.org/)
-* A Python environment with the dependencies installed
+* [ANTLR](https://www.antlr.org)
+* [Node.js](https://nodejs.org)
+* A Python environment with the PyPI dev dependencies installed
+
+You can also use other Python tooling like `uv` with the PyPI dependencies declared in `pyproject.toml`. In this case you need to set up the right versions of the non-PyPI dependencies yourself.
+
+### Dependencies
+
+Pixi manages two types of dependencies:
+
+- **non-PyPI**: Includes all non-PyPI dependencies (Python itself, buf, ANTLR, Node.js, etc.) as `[tool.pixi.dependencies]` in `pyproject.toml`
+- **PyPI**: Includes all PyPI development dependencies (Black, Flake8, pytest, check-jsonschema, yamllint, etc.) and documentation dependencies (mkdocs and plugins) as a regular pyproject.toml `dev` dependency group in `pyproject.toml` which can be used with other Python package managers like `uv`
 
 ## Common Development Tasks
 
@@ -75,28 +85,7 @@ pixi run mkdocs serve
 ```bash
 # Perform a dry-run release (testing only)
 pixi run dry-run
-
-# Execute the release process (maintainers only)
-pixi run release
 ```
-
-### Environment Management
-
-Pixi manages two separate environments:
-
-- **dev**: Includes all development dependencies (Black, Flake8, pytest, etc.)
-- **docs**: Includes documentation dependencies (mkdocs and plugins)
-
-Most tasks automatically use the appropriate environment. To explicitly work in a specific environment:
-
-```bash
-# Activate the dev environment
-pixi shell -e dev
-
-# Activate the docs environment
-pixi shell -e docs
-```
-
 
 ## Documentation Examples
 
