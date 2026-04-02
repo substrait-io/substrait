@@ -1,0 +1,7 @@
+# User-defined point type with encoding information
+urn: extension:example:point
+types:
+  - name: point
+    encodings:
+      - type: "NSTRUCT<longitude: fp64, latitude: fp64>"
+        description: Longitude and latitude as 64-bit floating point numbers

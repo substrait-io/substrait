@@ -1,0 +1,8 @@
+urn: extension:example:uint
+types:
+  - name: u8
+    encodings:
+      - type: i8
+        description: "u8 encoded as i8 (i.e. 0, 42, -1)"
+      - type: str
+        description: "u8 encoded as decimal string (i.e. '0', '42', '255')"

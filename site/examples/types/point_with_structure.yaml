@@ -3,5 +3,5 @@ urn: extension:example:point_with_structure
 types:
   - name: point
     structure:
-      longitude: i32
-      latitude: i32
+      longitude: fp64
+      latitude: fp64

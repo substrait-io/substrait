@@ -3,10 +3,13 @@
 urn: extension:io.substrait:functions_geometry
 types:
   - name: geometry
+    encodings:
+      - type: binary
+        description: |
+          An opaque type that can represent one or many points, lines, or shapes encompassing
+          2, 3 or 4 dimension
+    # deprecated: structure will be removed in the future. Use encodings instead
     structure: "BINARY"
-#    description: |
-#      An opaque type that can represent one or many points, lines, or shapes encompassing
-#      2, 3 or 4 dimension.
 scalar_functions:
   -
     name: "point"

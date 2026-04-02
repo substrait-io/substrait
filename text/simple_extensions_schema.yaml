@@ -35,8 +35,20 @@ properties:
           type: string
         metadata: # arbitrary data created by extension author
           type: object
-        structure:
+        structure: # deprecated: use encodings instead
           $ref: "#/$defs/type"
+        encodings:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required: [type, description]
+            properties:
+              type:
+                $ref: "#/$defs/type"
+              description:
+                type: string
         parameters: # parameter list for compound types
           $ref: "#/$defs/type_param_defs"
         variadic: # when set, last parameter may be specified one or more times

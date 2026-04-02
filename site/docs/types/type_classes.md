@@ -73,36 +73,43 @@ Systems without support for a specific user-defined type:
 
 ### Communicating User-Defined Types
 
-Specifiers of user-defined types may provide additional structure information for the type to assist in communicating values of the type to and from systems without built-in support.
+Specifiers of user-defined types _may_ provide encoding information for the type to assist in communicating values of the type to and from systems without built-in support.
 
-For example, the following declares a `point` type with two `i32` values named longitude and latitude:
+For example, the following declares a u8 type with two encodings: a str based one and an i8 based one:
+```yaml
+--8<-- "examples/types/uint.yaml"
+```
+
+The following declares a `point` type with an encoding consisting of two `i32` values named longitude and latitude:
+```yaml
+--8<-- "examples/types/point.yaml"
+```
+
+Encodings of a type are only intended to assist with communicating values of the type. They _do not_ restrict or bind the _internal_ representation of the type in any system. It is not possible to "unpack" a user-defined type using `FieldReference`s or any other specialized record expression. If support for unpacking specific fields is desired, that can be accomplished by defining extensions functions that operate on the type.
+
+Two important notes as well:
+
+1. For a single user-defined type, all encodings must have unique types in order to be distinguishable.
+2. While NSTRUCT can be used to attach names for human-readability, types defined using them are _transmitted_ using STRUCT literals.
+
+#### structure field (deprecated, slated for removal)
+
+Before encodings were introduced, types could have up to one `structure` field associated with them. This field acted as a singular encodings. The example `point` type defined below is equivalent to the `point` type defined above.
 
 ```yaml
 --8<-- "examples/types/point_with_structure.yaml"
 ```
-
-The name-type object notation used above is syntactic sugar for `NSTRUCT<longitude: i32, latitude: i32>`. The following means the same thing:
-
-```yaml
---8<-- "examples/types/point_with_nstruct.yaml"
-```
-
-The structure field of a type is only intended to inform systems that don't have built-in support for the type about how they can create and transfer values of that type to systems that do support the type.
-
-The structure field _does not_ restrict or bind the internal representation of the type in any system.
-
-As such, it's currently not possible to "unpack" a user-defined type into its structure type or components thereof using `FieldReference`s or any other specialized record expression; if support for this is desired for a particular type, this can be accomplished with an extension function.
 
 ### Literals
 
 Literals for user-defined types can be represented in one of two ways:
 
 * Using protobuf [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) messages.
-* Using the structure representation of the type.
+* Using an encoding of the type.
 
-When using the structure representation, the literal value is encoded using `Literal.Struct`, which contains an ordered list of field values (themselves `Literal` messages). `Literal.Struct` is position-based and contains only values, not field names. For more information about how field names work with struct types, see [`NamedStruct`](named_structs.md).
+When using a representation encoding, the literal value is encoded using `Literal.Struct`, which contains an ordered list of field values (themselves `Literal` messages). `Literal.Struct` is position-based and contains only values, not field names. For more information about how field names work with struct types, see [`NamedStruct`](named_structs.md).
 
-For example, given the `point` type defined above with `structure: {longitude: i32, latitude: i32}`, a literal value representing the coordinates `{longitude=5, latitude=10}` would be encoded as:
+For example, given the `point` type defined above with an `i32_fields` encoding of `{longitude: i32, latitude: i32}`, a literal value representing the coordinates `{longitude=5, latitude=10}` would be encoded as:
 
 ```json
 {
@@ -139,7 +146,7 @@ or:
 --8<-- "examples/types/point_with_two_params.yaml"
 ```
 
-We can't specify the internal structure in this case, because there is currently no support for derived types in the structure.
+We can't specify a representation encoding in this case, because there is currently no support for derived types in the representation.
 
 The allowed range can be limited for integer parameters. For example:
 

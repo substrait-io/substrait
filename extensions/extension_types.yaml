@@ -2,10 +2,19 @@
 urn: extension:io.substrait:extension_types
 types:
   - name: point
+    encodings:
+      - type: 'NSTRUCT<longitude: i32, latitude: i32>'
+        description: latitude and longitude as 32-bit signed integers.
+    # deprecated: structure is deprecated, use encodings instead
     structure:
       latitude: i32
       longitude: i32
+
   - name: line
+    encodings:
+      - type: 'NSTRUCT<start: u!point, end: u!point>'
+        description: Start and end points using the point type.
+    # deprecated: structure is deprecated, use encodings instead
     structure:
       start: u!point
       end: u!point
