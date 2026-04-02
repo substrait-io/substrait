@@ -22,7 +22,7 @@ You can also use other Python tooling like `uv` with the PyPI dependencies decla
 Pixi manages two types of dependencies:
 
 - **non-PyPI**: Includes all non-PyPI dependencies (Python itself, buf, ANTLR, Node.js, etc.) as `[tool.pixi.dependencies]` in `pyproject.toml`
-- **PyPI**: Includes all PyPI development dependencies (Black, Flake8, pytest, check-jsonschema, yamllint, etc.) and documentation dependencies (mkdocs and plugins) as a regular pyproject.toml `dev` dependency group in `pyproject.toml` which can be used with other Python package managers like `uv`
+- **PyPI**: Includes all PyPI development dependencies (Black, Flake8, pytest, check-jsonschema, yamllint, etc.) and documentation dependencies (mkdocs and plugins) as a regular pyproject.toml `dev` dependency group in `pyproject.toml` which can be used with other Python package managers like `uv`.
 
 ## Common Development Tasks
 
