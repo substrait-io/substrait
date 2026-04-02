@@ -6,7 +6,7 @@ title: Breaking Change Policy
 
 Breaking changes proposed to the specification should include an explicit migration strategy when they are proposed.
 
-The migration strategy must be implemented in all [active libraries](../community/library_support.md) before the breaking change is implemented.
+The migration strategy must be implemented in all [active libraries](../community/active_libraries.md) before the breaking change is implemented.
 
 For the purposes of this policy, deprecations are treated as breaking changes, because they are usually the first step in implementing a breaking change.
 

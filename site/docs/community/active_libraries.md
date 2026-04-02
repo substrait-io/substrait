@@ -1,10 +1,8 @@
 ---
-title: Library Support Policy
+title: Active Libraries
 ---
 
-# Library Support Policy
-
-## Active Libraries
+# Active Libraries
 
 The following language libraries have active users, with at least one party actively working to maintain and improve each of them:
 
@@ -13,13 +11,13 @@ The following language libraries have active users, with at least one party acti
 - [substrait-python](https://github.com/substrait-io/substrait-python)
 - [substrait-rs](https://github.com/substrait-io/substrait-rs)
 
-## Inactive Libraries
+# Inactive Libraries
 
 The following libraries in the ecosystem do not currently have active users:
 
 - [substrait-cpp](https://github.com/substrait-io/substrait-cpp)
-- [substrait-ruby](https://github.com/substrait-io/substrait-ruby)
 - [substrait-csharp](https://github.com/substrait-io/substrait-csharp)
 - [substrait-js](https://github.com/substrait-io/substrait-js)
+- [substrait-ruby](https://github.com/substrait-io/substrait-ruby)
 
 The Substrait project is always open to contributions and would be happy to work with anyone seeking to improve them.
