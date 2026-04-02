@@ -24,6 +24,12 @@ message RelCommon {
   Hint hint = 3;
   substrait.extensions.AdvancedExtension advanced_extension = 4;
 
+  // Optional plan-wide unique identifier for this relation. Required when
+  // this relation is the binding point for an OuterReference using
+  // id_reference. Must be unique across all rels within a Plan.
+  // Must be > 0 when set.
+  optional uint32 id = 5;
+
   // Direct indicates no change on presence and ordering of fields in the output
   message Direct {}
 
@@ -1590,12 +1596,22 @@ message Expression {
     // incoming record type
     message RootReference {}
 
-    // A root reference for the outer relation's subquery
+    // A root reference for the outer relation's subquery.
+    //
+    // At least one of steps_out or id_reference must be set. When both are
+    // present, id_reference is authoritative and steps_out is advisory.
     message OuterReference {
-      // number of subquery boundaries to traverse up for this field's reference
-      //
-      // This value must be >= 1
+      // Number of subquery boundaries to traverse up for this field's
+      // reference. This value must be >= 1 when set. A value of 0 indicates
+      // that steps_out is not provided and id_reference must be used instead.
       uint32 steps_out = 1;
+
+      // Plan-wide unique id of the relation whose output this reference is
+      // rooted on. Must match an id defined on a RelCommon in the plan.
+      // Must be > 0 when set. Recommended when the plan contains shared
+      // subexpressions (ReferenceRel) where offset-based resolution via
+      // steps_out alone would be ambiguous.
+      optional uint32 id_reference = 2;
     }
 
     // A reference to a lambda parameter within a lambda body expression.

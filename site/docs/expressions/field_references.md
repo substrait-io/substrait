@@ -5,7 +5,7 @@ In Substrait, all fields are dealt with on a positional basis. Field names are o
 Field references can originate from different root types:
 
 - **RootReference**: References the incoming record from the relation
-- **OuterReference**: References outer query records in correlated subqueries
+- **OuterReference**: References outer query records in correlated subqueries, supporting both offset-based (`steps_out`) and id-based (`id_reference`) resolution (see [Outer References](#outer-references))
 - **Expression**: References the result of evaluating an expression
 - **LambdaParameterReference**: References lambda parameters within lambda body expressions (see [Lambda Expressions](lambda_expressions.md))
 
@@ -154,4 +154,35 @@ By default, when only a single field is selected from a struct, that struct is r
 ???+ question "Discussion Points"
 
     * Should we support column reordering/positioning using a masked complex expression? (Right now, you can only mask things out.)
+
+### Outer References
+
+Outer references allow expressions inside a subquery to access records from an enclosing relation. The `OuterReference` root type supports two resolution strategies that can be used independently or together:
+
+#### `steps_out` (offset-based)
+
+`steps_out` resolves the reference by counting subquery boundaries upward (`steps_out >= 1`). This works correctly whenever the plan is a **tree** — each relation has exactly one parent, so the path to the binding relation is unique.
+
+#### `id_reference` (id-based)
+
+When a plan contains **common subexpressions** via `ReferenceRel`, the same relation can be reached through multiple paths with different depths. In that case, offset-based resolution is ambiguous because `steps_out` depends on *which* path is followed.
+
+`id_reference` resolves this by naming the binding relation directly via its plan-wide unique `RelCommon.id`. The `id` on the referenced relation must be set (> 0) and unique across all relations in the plan.
+
+At least one of `steps_out` or `id_reference` must be set. When both are present, `id_reference` is authoritative and `steps_out` is advisory (useful for backward compatibility with consumers that only understand `steps_out`).
+
+For example, consider a plan with two nested scalar subqueries that share a common subexpression `x`. The outer reference to `tableA.a` lives inside `x`, which is reached via paths of different depth:
+
+```
+ProjectRel
+├── ReadRel(tableA)  [id=1]
+└── Subquery.Scalar ── (1)
+    └── SetRel(MINUS_PRIMARY)
+        ├── Subquery.Scalar ── (2)
+        │   └── x: FilterRel(a > outer_ref(tableA.a))  [id=2]
+        │         └── ReadRel(tableB)
+        └── x  (shared via ReferenceRel)
+```
+
+The common subexpression `x` contains an outer reference to `tableA.a`. It is reached through two paths — one via subquery (2), one directly — so `steps_out` would need a different value depending on which path is followed. With `id_reference = 1`, the reference inside `x` unambiguously names `ReadRel(tableA)` regardless of path.
 
