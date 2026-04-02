@@ -87,14 +87,11 @@ The following declares a `point` type with an encoding consisting of two `i32` v
 
 Encodings of a type are only intended to assist with communicating values of the type. They _do not_ restrict or bind the _internal_ representation of the type in any system. It is not possible to "unpack" a user-defined type using `FieldReference`s or any other specialized record expression. If support for unpacking specific fields is desired, that can be accomplished by defining extensions functions that operate on the type.
 
-Two important notes as well:
-
-1. For a single user-defined type, all encodings must have unique types in order to be distinguishable.
-2. While NSTRUCT can be used to attach names for human-readability, types defined using them are _transmitted_ using STRUCT literals.
+Note to for a single user-defined type, all encodings must have unique types in order to be distinguishable.
 
 #### structure field (deprecated, slated for removal)
 
-Before encodings were introduced, types could have up to one `structure` field associated with them. This field acted as a singular encodings. The example `point` type defined below is equivalent to the `point` type defined above.
+Before encodings were introduced, types could have up to one `structure` field associated with them. This field acted as a singular encoding. The example `point` type defined below is equivalent to the `point` type defined above.
 
 ```yaml
 --8<-- "examples/types/point_with_structure.yaml"
@@ -105,21 +102,21 @@ Before encodings were introduced, types could have up to one `structure` field a
 Literals for user-defined types can be represented in one of two ways:
 
 * Using protobuf [Any](https://developers.google.com/protocol-buffers/docs/proto3#any) messages.
-* Using an encoding of the type.
+* Using a literal value based on one of encodings present.
 
-When using a representation encoding, the literal value is encoded using `Literal.Struct`, which contains an ordered list of field values (themselves `Literal` messages). `Literal.Struct` is position-based and contains only values, not field names. For more information about how field names work with struct types, see [`NamedStruct`](named_structs.md).
-
-For example, given the `point` type defined above with an `i32_fields` encoding of `{longitude: i32, latitude: i32}`, a literal value representing the coordinates `{longitude=5, latitude=10}` would be encoded as:
+For example, given the `point` type defined above, a literal value representing the coordinates `{longitude=5, latitude=10}` would be encoded as:
 
 ```json
 {
   "userDefined": {
     "typeReference": 1,
-    "struct": {
-      "fields": [
-        { "i32": 5 },
-        { "i32": 10 }
-      ]
+    "literal": {
+      "struct": {
+        "fields": [
+          { "i32": 5 },
+          { "i32": 10 }
+        ]
+      }
     }
   }
 }
