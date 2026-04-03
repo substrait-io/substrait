@@ -275,8 +275,7 @@ message JoinRel {
   // (lateral join / correlated subquery). The right input may reference fields
   // from the current left row using FieldReference with OuterReference as the
   // root_type. This JoinRel must have RelCommon.id set so the right input can
-  // use OuterReference with id_reference pointing to that id (preferred), or
-  // steps_out = 1 for simple tree-shaped plans.
+  // use OuterReference with id_reference pointing to that id.
   //
   // The id_reference resolves against the left input's output schema.
   //
@@ -318,8 +317,7 @@ message CrossRel {
   // (lateral semantics). The right input may reference fields from the
   // current left row using FieldReference with OuterReference as the
   // root_type. This CrossRel must have RelCommon.id set so the right input
-  // can use OuterReference with id_reference pointing to that id (preferred),
-  // or steps_out = 1 for simple tree-shaped plans.
+  // can use OuterReference with id_reference pointing to that id.
   //
   // The id_reference resolves against the left input's output schema.
   //
