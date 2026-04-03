@@ -280,7 +280,11 @@ message JoinRel {
   // When true, the right input is evaluated once per row of the left input
   // (lateral join / correlated subquery). The right input may reference fields
   // from the current left row using FieldReference with OuterReference as the
-  // root_type and steps_out = 1.
+  // root_type. This JoinRel must have RelCommon.id set so the right input can
+  // use OuterReference with id_reference pointing to that id (preferred), or
+  // steps_out = 1 for simple tree-shaped plans.
+  //
+  // The id_reference resolves against the left input's output schema.
   //
   // When false (default), both inputs are independent.
   //
@@ -315,6 +319,19 @@ message CrossRel {
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
+
+  // When true, the right input is evaluated once per row of the left input
+  // (lateral semantics). The right input may reference fields from the
+  // current left row using FieldReference with OuterReference as the
+  // root_type. This CrossRel must have RelCommon.id set so the right input
+  // can use OuterReference with id_reference pointing to that id (preferred),
+  // or steps_out = 1 for simple tree-shaped plans.
+  //
+  // The id_reference resolves against the left input's output schema.
+  //
+  // When false (default), both inputs are independent and the result is the
+  // standard Cartesian product.
+  bool lateral = 4;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
