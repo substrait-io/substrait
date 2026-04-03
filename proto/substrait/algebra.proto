@@ -575,19 +575,19 @@ message TopNRel {
   Expression count = 5;
 
   // Determines how to handle rows tied with the last returned row.
-  LimitMode mode = 6;
+  FetchMode mode = 6;
 
   substrait.extensions.AdvancedExtension advanced_extension = 7;
 }
 
-// Determines how a limit operation handles rows tied with the last returned row.
-enum LimitMode {
-  // This default value implies LIMIT_MODE_ROWS_ONLY.
-  LIMIT_MODE_UNSPECIFIED = 0;
+// Determines how a fetch operation handles rows tied with the last returned row.
+enum FetchMode {
+  // Unspecified. Producers must set one of the defined modes.
+  FETCH_MODE_UNSPECIFIED = 0;
   // Only return the requested number of rows.
-  LIMIT_MODE_ROWS_ONLY = 1;
+  FETCH_MODE_ROWS_ONLY = 1;
   // Include additional rows tied with the last row (per the sort fields).
-  LIMIT_MODE_WITH_TIES = 2;
+  FETCH_MODE_WITH_TIES = 2;
 }
 
 // A relation with output field names.
