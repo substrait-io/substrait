@@ -218,7 +218,8 @@ The cross product operation will combine two separate inputs into a single outpu
 | Property        | Description                                                  | Required                           |
 | --------------- | ------------------------------------------------------------ | ---------------------------------- |
 | Left Input      | A relational input.                                          | Required                           |
-| Right Input     | A relational input.                                          | Required                           |
+| Right Input     | A relational input. When `lateral` is true, this input may reference the current left row using `OuterReference` with `id_reference` pointing to this CrossRel's `RelCommon.id`. | Required                           |
+| Lateral         | When true, the right input is evaluated once per row of the left input (lateral semantics). This CrossRel must have `RelCommon.id` set. The right input may reference fields from the current left row using `FieldReference` with `OuterReference` as the `root_type`, using `id_reference` pointing to this CrossRel's id (preferred) or `steps_out = 1` for simple tree-shaped plans. The `id_reference` resolves against the left input's output schema. When false (default), both inputs are independent and the result is the standard Cartesian product. | Optional (default: false)          |
 
 
 === "CrossRel Message"
@@ -245,11 +246,11 @@ The join operation will combine two separate inputs into a single output, based 
 | Property         | Description                                                  | Required                           |
 | ---------------- | ------------------------------------------------------------ | ---------------------------------- |
 | Left Input       | A relational input.                                          | Required                           |
-| Right Input      | A relational input. When `lateral` is true, this input may reference the current left row using `OuterReference`. | Required                           |
+| Right Input      | A relational input. When `lateral` is true, this input may reference the current left row using `OuterReference` with `id_reference` pointing to this JoinRel's `RelCommon.id`. | Required                           |
 | Join Expression  | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the input order of the data. | Required. Can be the literal True. |
 | Post-Join Filter | A boolean condition to be applied to each result record after the inputs have been joined, yielding only the records that satisfied the condition. | Optional                           |
 | Join Type        | One of the join types defined below.                         | Required                           |
-| Lateral          | When true, the right input is evaluated once per row of the left input (lateral join / correlated subquery). The right input may reference fields from the current left row using `FieldReference` with `OuterReference` as the `root_type` and `steps_out = 1`. When false (default), both inputs are independent. See [Lateral Joins](#lateral-joins) for details.| Optional (default: false)          |
+| Lateral          | When true, the right input is evaluated once per row of the left input (lateral join / correlated subquery). This JoinRel must have `RelCommon.id` set. The right input may reference fields from the current left row using `FieldReference` with `OuterReference` as the `root_type`, using `id_reference` pointing to this JoinRel's id (preferred) or `steps_out = 1` for simple tree-shaped plans. The `id_reference` resolves against the left input's output schema. When false (default), both inputs are independent. See [Lateral Joins](#lateral-joins) for details.| Optional (default: false)          |
 
 ### Join Types
 
@@ -277,7 +278,9 @@ The join operation will combine two separate inputs into a single output, based 
 
 ### Lateral Joins
 
-When the `lateral` flag is set to true, the join operates as a lateral (correlated) join. The right input is evaluated once per row of the left input, and the right input may reference fields from the current left row using a `FieldReference` with `OuterReference` as the `root_type` and `steps_out = 1`.
+When the `lateral` flag is set to true, the join operates as a lateral (correlated) join. The right input is evaluated once per row of the left input, and the right input may reference fields from the current left row using a `FieldReference` with `OuterReference` as the `root_type`.
+
+This JoinRel must have `RelCommon.id` set. The right input should use `OuterReference` with `id_reference` pointing to this JoinRel's id. The `id_reference` resolves against the left input's output schema. For simple tree-shaped plans, `steps_out = 1` may also be used. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details on `steps_out` vs `id_reference`.
 
 For example, the SQL query:
 
@@ -285,7 +288,7 @@ For example, the SQL query:
 SELECT a, (SELECT MAX(b) FROM T2 WHERE T2.x = T1.a) FROM T1
 ```
 
-can be represented as an inner lateral join where `T1` is the left input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the right input. Inside the right input, `T1.a` is referenced via a `FieldReference` with `OuterReference { steps_out = 1 }` as the root.
+can be represented as an inner lateral join where `T1` is the left input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the right input. The JoinRel has `RelCommon.id` set, and inside the right input, `T1.a` is referenced via a `FieldReference` with `OuterReference { id_reference = <JoinRel's id> }` as the root.
 
 #### Permitted Join Types for Lateral
 
@@ -293,18 +296,18 @@ Because the right input only exists in the context of a specific left row, only 
 
 #### Nested Lateral Joins
 
-Lateral joins can introduce multiple levels of correlated subqueries. All outer input fields can be referenced using appropriate `steps_out` values with `OuterReference`:
+Lateral joins can introduce multiple levels of correlated subqueries. Each JoinRel with `lateral=true` must have `RelCommon.id` set so outer references can name the binding relation via `id_reference`. The `id_reference` resolves against the left input's output schema. For simple tree-shaped plans, `steps_out` may also be used:
 
 ```
-            Join (left, lateral=true)
+            JoinRel (left, lateral=true) [id=1]
            /     \
-     Input1(a)    Join (inner, lateral=true)
+     Input1(a)    JoinRel (inner, lateral=true) [id=2]
                  /     \
            Input2(b)    Subquery
 
 OuterReference access within each scope:
-  Input2   : a [steps_out=1]
-  Subquery : a [steps_out=2], b [steps_out=1]
+  Input2   : a [id_reference=1 or steps_out=1]
+  Subquery : a [id_reference=1 or steps_out=2], b [id_reference=2 or steps_out=1]
 ```
 
 
