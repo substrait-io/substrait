@@ -88,7 +88,7 @@ A function signature uniquely identifies a function implementation within a sing
 
 | Argument Type                   | Signature Name |
 |---------------------------------|----------------|
-| Required Enumeration            | req            |
+| Enumeration                     | req            |
 | i8                              | i8             |
 | i16                             | i16            |
 | i32                             | i32            |
@@ -122,11 +122,13 @@ A function signature uniquely identifies a function implementation within a sing
 
 #### Examples
 
+Function-level [options](../expressions/scalar_functions.md#options) are not part of the function signature and do not appear here. Only enumeration arguments (which are positional and required) contribute to the signature as `req`.
+
 | Function Signature                                | Function Name       |
 | ------------------------------------------------- | ------------------- |
-| `add(optional enumeration, i8, i8) => i8`         | `add:i8_i8`         |
+| `add(i8, i8) => i8`                               | `add:i8_i8`         |
 | `avg(fp32) => fp32`                               | `avg:fp32`          |
-| `extract(required enumeration, timestamp) => i64` | `extract:req_ts`    |
+| `extract(enumeration, timestamp) => i64`          | `extract:req_ts`    |
 | `sum(any1) => any1`                               | `sum:any`           |
 | `concat(str...) => str`                           | `concat:str`        |
 | `transform(list<any1>, func<any1 -> any2>) => list<any2>` | `transform:list_func` |

@@ -942,8 +942,11 @@ message FunctionArgument {
   }
 }
 
-// An optional function argument.  Typically used for specifying behavior in
-// invalid or corner cases.
+// A named, optional behavioral preference for a function call. Options allow
+// producers to express preferences about how consumers handle corner cases or
+// engine-specific behavior (e.g. overflow or rounding mode). Unlike function
+// arguments, options are not required. If omitted, the consumer is free to
+// choose any supported behavior.
 message FunctionOption {
   // Name of the option to set. If the consumer does not recognize the
   // option, it must reject the plan. The name is matched case-insensitively
@@ -1237,9 +1240,9 @@ message Expression {
     //    matches one of the allowed options.
     repeated FunctionArgument arguments = 4;
 
-    // Options to specify behavior for corner cases, or leave behavior
-    // unspecified if the consumer does not need specific behavior in these
-    // cases.
+    // Optional behavioral preferences for the function call. Unlike
+    // arguments, these are not required and are not part of the function
+    // signature. If omitted, the consumer chooses its own behavior.
     repeated FunctionOption options = 5;
 
     // Must be set to the return type of the function, exactly as derived
@@ -1276,9 +1279,9 @@ message Expression {
     //    matches one of the allowed options.
     repeated FunctionArgument arguments = 9;
 
-    // Options to specify behavior for corner cases, or leave behavior
-    // unspecified if the consumer does not need specific behavior in these
-    // cases.
+    // Optional behavioral preferences for the function call. Unlike
+    // arguments, these are not required and are not part of the function
+    // signature. If omitted, the consumer chooses its own behavior.
     repeated FunctionOption options = 11;
 
     // Must be set to the return type of the function, exactly as derived
@@ -1797,9 +1800,9 @@ message AggregateFunction {
   //    the string must case-insensitively match one of the allowed options.
   repeated FunctionArgument arguments = 7;
 
-  // Options to specify behavior for corner cases, or leave behavior
-  // unspecified if the consumer does not need specific behavior in these
-  // cases.
+  // Optional behavioral preferences for the function call. Unlike
+  // arguments, these are not required and are not part of the function
+  // signature. If omitted, the consumer chooses its own behavior.
   repeated FunctionOption options = 8;
 
   // Must be set to the return type of the function, exactly as derived
