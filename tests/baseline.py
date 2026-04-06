@@ -121,7 +121,7 @@ def read_baseline_file(file_path: str) -> Baseline:
 
 def generate_baseline(registry: FunctionRegistry, coverage: TestCoverage):
     registry_data = Registry(
-        extension_count=len(registry.extensions),
+        extension_count=len(registry.registered_urns),
         dependency_count=len(registry.dependencies),
         function_count=len(registry.registry),
         num_aggregate_functions=len(registry.aggregate_functions),

@@ -108,6 +108,7 @@ class TestCoverage:
 def update_test_count(test_case_files: list, function_registry: FunctionRegistry):
     num_tests_with_no_matching_function = 0
     for test_file in test_case_files:
+        function_registry.validate_urn(test_file.include)
         for test_case in test_file.testcases:
             function_variant = function_registry.get_function(
                 test_case.func_name,
@@ -240,6 +241,7 @@ def validate_nullability(test_file, function_registry):
     Returns a list of error strings (empty if everything is valid).
     """
     errors = []
+    function_registry.validate_urn(test_file.include)
     for test_case in test_file.testcases:
         if test_case.is_return_type_error():
             continue

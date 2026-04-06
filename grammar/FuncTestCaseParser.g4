@@ -18,11 +18,11 @@ version
     ;
 
 include
-    : TripleHash SubstraitInclude Colon StringLiteral (Comma StringLiteral)*
+    : TripleHash SubstraitInclude Colon ExtensionUrn
     ;
 
 dependency
-    : TripleHash SubstraitDependency Colon StringLiteral
+    : TripleHash SubstraitDependency Colon ExtensionUrn
     ;
 
 testGroupDescription
