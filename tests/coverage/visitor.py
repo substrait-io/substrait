@@ -274,6 +274,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return arguments
 
     def visitArgument(self, ctx: FuncTestCaseParser.ArgumentContext):
+        if ctx.udtArg() is not None:
+            return self.visitUdtArg(ctx.udtArg())
         if ctx.intArg() is not None:
             return self.visitIntArg(ctx.intArg())
         if ctx.floatArg() is not None:
@@ -510,6 +512,15 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitDataType(self, ctx: FuncTestCaseParser.DataTypeContext):
         return ctx.getText()
+
+    def visitUdtArg(self, ctx: FuncTestCaseParser.UdtArgContext):
+        value, _ = self.visitLiteral(ctx.literal())
+        # Type is "u!" + identifier, e.g., "u!u8"
+        type_str = "u!" + ctx.Identifier().getText().lower()
+        is_nullable = ctx.isnull is not None
+        if is_nullable:
+            type_str += "?"
+        return CaseLiteral(value=value, type=type_str, nullable=is_nullable)
 
     def visitResult(self, ctx: FuncTestCaseParser.ResultContext):
         if ctx.argument() is not None:

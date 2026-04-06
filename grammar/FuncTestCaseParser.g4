@@ -48,7 +48,8 @@ result
     ;
 
 argument
-    : nullArg
+    : udtArg
+    | nullArg
     | enumArg
     | intArg
     | floatArg
@@ -215,6 +216,10 @@ listArg
 
 lambdaArg
     : literalLambda DoubleColon funcType
+    ;
+
+udtArg
+    : literal DoubleColon UserDefined Identifier isnull=QMark?
     ;
 
 enumArg
