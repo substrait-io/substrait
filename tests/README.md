@@ -33,7 +33,7 @@ or
 The include statement specifies the extension file being tested. Each test file must have exactly one include statement. This identifies which extension's functions are being tested and counted for coverage purposes.
 
 ```code
-### SUBSTRAIT_INCLUDE: /extensions/functions_aggregate_approx.yaml
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_aggregate_approx
 ```
 
 ### Dependency Statements (Optional)
@@ -97,8 +97,8 @@ doc         := <version>
                (<dependency>)*
                ((<test_group>)?(<test_case>)+\n)+
 version     := ### SUBSTRAIT_SCALAR_TEST: <test_library_version>
-include     := ### SUBSTRAIT_INCLUDE: <uri>
-dependency  := ### SUBSTRAIT_DEPENDENCY: <uri>
+include     := ### SUBSTRAIT_INCLUDE: <urn>
+dependency  := ### SUBSTRAIT_DEPENDENCY: <urn>
 test_group  := # <description>
 test_case   := <function>(<arguments>) ([<options>])? = <result> (#<description>)?
 description := string
@@ -229,7 +229,7 @@ If return type is `<!ERROR>` then the test case should fail with an error. If th
 
 ```code
 ### SUBSTRAIT_SCALAR_TEST:V1
-### SUBSTRAIT_INCLUDE: /extensions/functions_arithmetic.yaml
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # Common Maths
 add(126::i8, 1::i8) = 127::i8
@@ -244,7 +244,7 @@ The above test file has two test groups "Common Maths" and "Arithmetic Overflow 
 
 ```code
 ### SUBSTRAIT_AGGREGATE_TEST:V1
-### SUBSTRAIT_INCLUDE: /extensions/functions_arithmetic.yaml
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # Correlation Tests
 ((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64
@@ -256,8 +256,8 @@ corr(t1.col0, t1.col1) = -11::fp64
 
 ```code
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
-### SUBSTRAIT_DEPENDENCY: '/extensions/functions_arithmetic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_list
+### SUBSTRAIT_DEPENDENCY: extension:io.substrait:functions_arithmetic
 
 # basic: Basic array transforming examples
 transform([1, 2, 3]::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = [2, 4, 6]::list<i32>
@@ -273,7 +273,7 @@ In this example:
 
 ```code
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_datetime.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_datetime
 
 # timestamps: examples using the timestamp and timestamptz types
 extract(YEAR::enum, '2016-12-31T13:30:15'::ts) = 2016::i64
