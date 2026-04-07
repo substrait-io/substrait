@@ -13,7 +13,7 @@ The following language libraries have active users, with at least one party acti
 
 # Inactive Libraries
 
-The following libraries in the ecosystem do not currently have active users:
+The following libraries in the ecosystem are currently looking for active contributors:
 
 - [substrait-cpp](https://github.com/substrait-io/substrait-cpp)
 - [substrait-csharp](https://github.com/substrait-io/substrait-csharp)
