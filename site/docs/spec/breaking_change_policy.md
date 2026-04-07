@@ -10,7 +10,7 @@ The migration strategy must be implemented in all [active libraries](../communit
 
 ## Breaking Change Cookbooks
 
-#### URI to URN Migration
+### URI to URN Migration
 
 In 2025, the Substrait community noticed that the values used for `uris` were not consistent within the ecosystem.
 
