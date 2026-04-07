@@ -56,9 +56,6 @@ argument
     | stringArg
     | decimalArg
     | dateArg
-    | timeArg
-    | timestampArg
-    | timestampTzArg
     | intervalYearArg
     | intervalDayArg
     | intervalCompoundArg
@@ -161,18 +158,6 @@ dateArg
     : DateLiteral DoubleColon dateType
     ;
 
-timeArg
-    : TimeLiteral DoubleColon timeType
-    ;
-
-timestampArg
-    : TimestampLiteral DoubleColon timestampType
-    ;
-
-timestampTzArg
-    : TimestampTzLiteral DoubleColon timestampTZType
-    ;
-
 intervalYearArg
     : IntervalYearLiteral DoubleColon intervalYearType
     ;
@@ -254,10 +239,7 @@ scalarType
   | floatType                            #float
   | stringType                           #string
   | binaryType                           #binary
-  | timestampType                        #timestamp
-  | timestampTZType                      #timestampTz
   | dateType                             #date
-  | timeType                             #time
   | intervalYearType                     #intervalYear
   | UUID isnull=QMark?                   #uuid
   | UserDefined Identifier isnull=QMark? #userDefined
@@ -285,18 +267,6 @@ floatType
 
 dateType
     : Date isnull=QMark?
-    ;
-
-timeType
-    : Time isnull=QMark?
-    ;
-
-timestampType
-    : (Ts | Timestamp) isnull=QMark?
-    ;
-
-timestampTZType
-    : (TsTZ | Timestamp_TZ) isnull=QMark?
     ;
 
 intervalYearType
