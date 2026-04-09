@@ -65,7 +65,7 @@ dev = [
   "editorconfig-checker>=3.6.1,<4",
   "flake8==7.0.0",
   "protobuf==6.33.1",
-  "pytest==8.3.4",
+  "pytest>=9.0.3,<10",
   "pyyaml>=6.0.2,<7",
   "mdutils>=1.4.0,<2",
   "mkdocs>=1.4.2,<2",
