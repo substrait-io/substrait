@@ -20,7 +20,7 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
             for key, value in type.items():
                 mdFile.new_line(f"{key}: {value}")
 
-    for function_classification, value in file_obj.items():
+    for function_classification, _value in file_obj.items():
         if function_classification == "urn":
             continue
         function_classification_str = function_classification.replace("_", " ").title()
@@ -110,7 +110,7 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
             """
             Write markdown for options.
             """
-            document_options = sorted(list(set(document_options)))
+            document_options = sorted(set(document_options))
             if len(document_options) > 0:
                 mdFile.new_paragraph("<details><summary>Options:</summary>")
                 mdFile.write("\n")
