@@ -12,7 +12,7 @@ The migration strategy must be implemented in all [active libraries](../communit
 
 ### URI to URN Migration
 
-In 2025, the Substrait community noticed that the values used for `uris` were not consistent within the ecosystem.
+In [2025](https://github.com/substrait-io/substrait/issues/828), the Substrait community noticed that the values used for `uris` were not consistent within the ecosystem.
 
 To deal with this, a new URN format was [introduced](https://github.com/substrait-io/substrait/issues/856) to replace URIs. To migrate the ecosystem to use URNs, producers were updated to dual write URIs and URNs in plans, and consumers were updated to preferentially consume URNs when available.
 
