@@ -283,13 +283,6 @@ class FunctionOverload:
 
 
 class FunctionRegistry:
-    registry = dict()
-    dependencies = dict()
-    scalar_functions = dict()
-    aggregate_functions = dict()
-    window_functions = dict()
-    registered_urns = set()
-
     def __init__(
         self,
         scalar_functions,
@@ -298,6 +291,7 @@ class FunctionRegistry:
         dependencies,
         registered_urns=None,
     ):
+        self.registry = {}
         self.dependencies = dependencies
         self.scalar_functions = scalar_functions
         self.aggregate_functions = aggregate_functions
