@@ -73,10 +73,11 @@ Aggregate test cases support 3 formats:
     ```code
     sum((1, 2, 3, 4, 5)::i8) = 15::i8  # addition of two numbers
     ```
-2. **Multiple Columns Compact**: The test case for an aggregate function with on one or more columns of a table as argument. The table is defined before the function name, in the same line as the testcase.
+2. **Multiple Columns Compact**: The test case for an aggregate function with one or more columns of a table as argument. The table is defined before the function name, in the same line as the testcase. Each inner group is a row, and the literals inside are the column values for that row.
     ```code
     ((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64
     ```
+    This defines a 5-row, 2-column table where col0 = [20, -3, 1, 10, 5] and col1 = [20, -3, 1, 10, 5].
 3. **Multiple Columns Verbose**: The test case for an aggregate function with one or more columns of a table as arguments. The table is defined before the function name. The function arguments refer to the columns in a table.
     ```code
     DEFINE t1(fp32, fp32) = ((20, 20), (-3, -3), (1, 1), (10,10), (5,5))
