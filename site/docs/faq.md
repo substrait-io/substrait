@@ -6,9 +6,9 @@ title: FAQ
 
 ## What is the purpose of the post-join filter field on Join relations?
 
-The post-join filter on the various Join relations is not always equivalent to an explicit Filter relation AFTER the Join.
+`post_join_filter` is an optional filter on the records emitted by a join. It behaves like a `Filter` relation placed directly above the join and defaults to `true` when omitted.
 
-See the example [here](https://facebookincubator.github.io/velox/develop/joins.html#hash-join-implementation) that highlights how the post-join filter behaves differently than a Filter relation in the case of a left join.
+This is distinct from predicates that participate in join matching. For `JoinRel`, those belong in `expression`. For `HashJoinRel` and `MergeJoinRel`, use `residual_expression` for non-key conditions that are part of the match but are not captured by the join keys.
 
 ## Why does the project relation keep existing columns?
 

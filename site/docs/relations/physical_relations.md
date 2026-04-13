@@ -23,7 +23,8 @@ The hash equijoin join operator will build a hash table out of one input (defaul
 | Build Input         | Specifies which input is the `Build`.                                                                                                                                                                                   | Optional, defaults to build `Right`, probe `Left`. |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                  | Required                                           |
 | Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                 | Required                                           |
-| Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.                           |
+| Residual Expression | An additional predicate used during join matching for candidate key matches when the condition is not fully captured by the equijoin keys. | Optional, defaults to True. |
+| Post-Join Filter    | A boolean condition evaluated on records produced by the join. It behaves like a [Filter relation](logical_relations.md#filter-operation) placed directly above the join. | Optional, defaults to True. |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                                           |
 
 ## NLJ (Nested Loop Join) Operator
@@ -67,7 +68,8 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | Right Input         | A relational input.                                                                                                                                                                                                     | Required                 |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                  | Required                 |
 | Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                 | Required                 |
-| Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true. |
+| Residual Expression | An additional predicate used during join matching for candidate key matches when the condition is not fully captured by the equijoin keys. | Optional, defaults to True. |
+| Post-Join Filter    | A boolean condition evaluated on records produced by the join. It behaves like a [Filter relation](logical_relations.md#filter-operation) placed directly above the join. | Optional, defaults to True. |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                 |
 
 ## Exchange Operator
