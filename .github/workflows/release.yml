@@ -23,6 +23,12 @@ jobs:
         with:
           client-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          # request token for both substrait and substrait-packaging repos
+          # for ci/release/notify.sh
+          repositories: |
+            substrait
+            substrait-packaging
 
       - uses: actions/checkout@v6
         with:
