@@ -6,9 +6,12 @@ title: FAQ
 
 ## What is the purpose of the post-join filter field on Join relations?
 
-`post_join_filter` is an optional filter on the records emitted by a join. It behaves like a `Filter` relation placed directly above the join and defaults to `true` when omitted.
+`post_join_filter` is an optional filter on the output records of a join. It is applied after matching and any join-type–specific post-processing (e.g., null-padding unmatched rows for outer joins, emitting unmatched rows for anti joins) are complete. It is semantically equivalent to placing a separate `Filter` relation directly above the join. Because it does not participate in matching, it has no effect on which rows are considered matched or unmatched for the purpose of outer, anti, semi, or mark join semantics. When omitted it defaults to `true`.
 
-This is distinct from predicates that participate in join matching. For `JoinRel`, those belong in `expression`. For `HashJoinRel` and `MergeJoinRel`, use `residual_expression` for non-key conditions that are part of the match but are not captured by the join keys.
+This is distinct from predicates that *do* participate in match determination:
+
+- In `JoinRel`, all match predicates belong in `expression`.
+- In `HashJoinRel` and `MergeJoinRel`, equijoin predicates go in `keys` and any remaining match predicates go in `residual_expression`.
 
 ## Why does the project relation keep existing columns?
 
