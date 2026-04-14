@@ -97,6 +97,20 @@ class TestCase:
                     types.append(arg.scalar_value.get_base_type())
         return types
 
+    def get_full_arg_types(self):
+        # Full parameterized types (e.g. ``dec<38,2>``), as opposed to the
+        # base-only forms returned by ``get_arg_types``.
+        types = []
+        for arg in self.args:
+            if isinstance(arg, CaseLiteral):
+                types.append(arg.type)
+            elif isinstance(arg, AggregateArgument):
+                if arg.column_type:
+                    types.append(arg.column_type)
+                elif arg.scalar_value:
+                    types.append(arg.scalar_value.type)
+        return types
+
     def get_signature(self):
         arg_types = []
         for arg in self.args:
