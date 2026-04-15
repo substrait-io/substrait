@@ -71,9 +71,7 @@ jobs:
           cache: true
       - name: Validate YAML extensions
         run: |
-          pixi run check-jsonschema --schemafile text/simple_extensions_schema.yaml extensions/*.yaml
-          pixi run check-jsonschema --schemafile text/simple_extensions_schema.yaml site/examples/**/*.yaml
-          pixi run check-jsonschema --schemafile text/dialect_schema.yaml dialects/tests/*.yaml
+          pixi run check-jsonschema
   dry_run_release:
     name: Dry-run release
     runs-on: ubuntu-latest
@@ -98,10 +96,10 @@ jobs:
           cache: true
       - name: Generate protobuf bindings
         run: pixi run generate-protobuf
-      - name: Black
-        run: pixi run black
-      - name: Flake8
-        run: pixi run flake8
+      - name: Ruff format check
+        run: pixi run ruff-format-check
+      - name: Ruff lint
+        run: pixi run ruff-lint
       - name: Run tests including test_substrait_extension_coverage
         run: pixi run test
   check-proto-prefix:

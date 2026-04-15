@@ -21,9 +21,9 @@ def test_substrait_extension_coverage():
     all_test_files = load_all_testcases(test_case_dir)
     coverage = get_test_coverage(all_test_files, registry)
 
-    assert (
-        coverage.num_tests_with_no_matching_function == 0
-    ), f"{coverage.num_tests_with_no_matching_function} tests with no matching function"
+    assert coverage.num_tests_with_no_matching_function == 0, (
+        f"{coverage.num_tests_with_no_matching_function} tests with no matching function"
+    )
 
     actual_baseline = generate_baseline(registry, coverage)
     errors = actual_baseline.validate_against(baseline)

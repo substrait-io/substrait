@@ -22,7 +22,7 @@ You can also use other Python tooling like `uv` with the PyPI dependencies decla
 Pixi manages two types of dependencies:
 
 - **non-PyPI**: Includes all non-PyPI dependencies (Python itself, buf, ANTLR, Node.js, etc.) as `[tool.pixi.dependencies]` in `pyproject.toml`
-- **PyPI**: Includes all PyPI development dependencies (Black, Flake8, pytest, check-jsonschema, yamllint, etc.) and documentation dependencies (mkdocs and plugins) as a regular pyproject.toml `dev` dependency group in `pyproject.toml` which can be used with other Python package managers like `uv`.
+- **PyPI**: Includes all PyPI development dependencies (Ruff, pytest, check-jsonschema, yamllint, etc.) and documentation dependencies (mkdocs and plugins) as a regular pyproject.toml `dev` dependency group in `pyproject.toml` which can be used with other Python package managers like `uv`.
 
 ## Common Development Tasks
 
@@ -31,11 +31,11 @@ Pixi provides convenient tasks for common development operations. Here are the m
 ### Code Quality and Testing
 
 ```bash
-# Format code with Black
-pixi run black
+# Format code
+pixi run format
 
-# Lint Python code with Flake8
-pixi run flake8
+# Lint code
+pixi run lint
 
 # Run all tests
 pixi run test
@@ -44,30 +44,8 @@ pixi run test
 ### Code Generation
 
 ```bash
-# Generate protobuf Python bindings
-pixi run generate-protobuf
-
-# Generate ANTLR parsers
-pixi run generate-antlr
-```
-
-### Validation and Linting
-
-```bash
-# Lint protobuf files
-pixi run lint-protobuf
-
-# Check protobuf formatting
-pixi run check-protobuf
-
-# Lint YAML files
-pixi run yamllint
-
-# Validate YAML extensions against schemas
-pixi run check-jsonschema --schemafile text/simple_extensions_schema.yaml extensions/*.yaml
-
-# Check editorconfig compliance
-pixi run editorconfig-checker
+# Generate both protobuf Python bindings and ANTLR parsers
+pixi run generate
 ```
 
 ### Documentation
