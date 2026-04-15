@@ -6,6 +6,6 @@ updates:
       interval: "daily"
 
   - package-ecosystem: "pip"
-    directory: "/site"
+    directory: "/"
     schedule:
       interval: "daily"
