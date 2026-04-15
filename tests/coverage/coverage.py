@@ -40,7 +40,7 @@ class FileTestCoverage:
     def __init__(self, file_name):
         self.file_name = file_name
         self.test_count = 0
-        self.function_coverage = dict()
+        self.function_coverage = {}
 
     def update_coverage(self, func_name, args, count):
         key = f"{func_name}({', '.join(args)})"
@@ -68,7 +68,7 @@ class TestCoverage:
     total_function_variants: int
 
     def __init__(self, ext_uris):
-        self.file_coverage = dict()
+        self.file_coverage = {}
         self.test_count = 0
         self.num_tests_with_no_matching_function = 0
         self.num_covered_function_variants = 0

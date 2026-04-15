@@ -149,9 +149,9 @@ class Extension:
                 )
                 dup_idx += 1
                 name = f"{name}_dup{dup_idx}_{suffix}"
-                assert (
-                    name not in function_map
-                ), f"Duplicate function name: {name} renaming to {name}_{suffix} extension: {extension}"
+                assert name not in function_map, (
+                    f"Duplicate function name: {name} renaming to {name}_{suffix} extension: {extension}"
+                )
             func["overloads"] = Extension.get_supported_kernels_from_impls(func)
             func["urn"] = urn
             func.pop("description", None)
@@ -162,7 +162,7 @@ class Extension:
     def read_substrait_extensions(dir_path: str):
         # read files from extensions directory
         extensions = []
-        for root, dirs, files in os.walk(dir_path):
+        for root, _dirs, files in os.walk(dir_path):
             for file in files:
                 if file.endswith(".yaml") and file.startswith("functions_"):
                     extensions.append(os.path.join(root, file))
