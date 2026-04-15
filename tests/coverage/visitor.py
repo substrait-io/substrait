@@ -82,7 +82,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         # TODO Implement this method
         args = self.visitArguments(ctx.arguments())
         result = self.visitResult(ctx.result())
-        options = dict()
+        options = {}
         if ctx.funcOptions() is not None:
             options = self.visitFuncOptions(ctx.funcOptions())
         return TestCase(
@@ -111,7 +111,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
-            options=dict(),
+            options={},
             rows=None,
             args=[arg],
             result=SubstraitError("uninitialized"),
@@ -129,7 +129,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
-            options=dict(),
+            options={},
             rows=rows,
             args=args,
             result=SubstraitError("uninitialized"),
@@ -158,7 +158,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
-            options=dict(),
+            options={},
             rows=rows,
             args=args,
             result=SubstraitError("uninitialized"),

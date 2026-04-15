@@ -62,6 +62,7 @@ The rules require that a community member registering a negative vote must inclu
 | Process/Governance modifications & actions. This includes promoting new contributors to committer or PMC. | 3                          | PMC            | Mailing List    |
 | Management of `-contrib` repositories including adding repositories and giving write access to them       | 3                          | PMC            | Mailing List    |
 | Format/Specification Modifications (including breaking extension changes)                                 | 2                          | PMC            | Github PR       |
+| Deprecations                                                                                              | 2                          | PMC            | Github PR       |
 | Documentation Updates (formatting, moves)                                                                 | 1                          | PMC            | Github PR       |
 | Typos                                                                                                     | 1                          | Committers     | Github PR       |
 | Non-breaking function introductions                                                                       | 1 (not including proposer) | Committers     | Github PR       |
