@@ -70,7 +70,7 @@ WHERE x < ANY(SELECT y from t2)
 
 ## Outer References in Subqueries
 
-Subqueries may contain *outer references* — field references that reach
+Subqueries may contain *outer references*, which are field references that reach
 outside the subquery boundary to access records from an enclosing relation.
 The `OuterReference` root type provides two resolution fields:
 

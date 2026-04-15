@@ -161,11 +161,11 @@ Outer references allow expressions inside a subquery to access records from an e
 
 #### `steps_out` (offset-based)
 
-`steps_out` resolves the reference by counting subquery boundaries upward (`steps_out >= 1`). This works correctly whenever the plan is a **tree** — each relation has exactly one parent, so the path to the binding relation is unique.
+`steps_out` resolves the reference by counting subquery boundaries upward (`steps_out >= 1`). This works correctly whenever the plan is a **tree**, i.e when each relation has exactly one parent, the path to the binding relation can be uniquely determined via `steps_out`. 
 
 #### `id_reference` (id-based)
 
-When a plan contains **common subexpressions** via `ReferenceRel`, the same relation can be reached through multiple paths with different depths. In that case, offset-based resolution is ambiguous because `steps_out` depends on *which* path is followed.
+When a plan contains **common subrelation** via `ReferenceRel`, the same relation can be reached through multiple paths with different depths. In that case, offset-based resolution is ambiguous because `steps_out` depends on *which* path is followed.
 
 `id_reference` resolves this by naming the binding relation directly via its plan-wide unique `RelCommon.id`. The `id` on the referenced relation must be set (> 0) and unique across all relations in the plan.
 
