@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.88.1](https://github.com/substrait-io/substrait/compare/v0.88.0...v0.88.1) (2026-04-19)
+
+### Bug Fixes
+
+* **tests:** use correct compact table row format in std_dev and variance tests ([#1043](https://github.com/substrait-io/substrait/issues/1043)) ([357d639](https://github.com/substrait-io/substrait/commit/357d639591b9e7818e17b1bca5a7ede904351bd3))
+
 ## [0.88.0](https://github.com/substrait-io/substrait/compare/v0.87.0...v0.88.0) (2026-04-12)
 
 ### ⚠ BREAKING CHANGES
