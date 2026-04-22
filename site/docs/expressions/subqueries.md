@@ -79,12 +79,12 @@ The `OuterReference` root type provides two resolution fields:
   single parent).
 
 * **`id_reference`**: Resolves the reference by naming the binding relation
-  via its plan-wide unique `RelCommon.id`. This is recommended when the plan
-  contains shared subexpressions (`ReferenceRel`) because offset-based
-  resolution is ambiguous when multiple paths exist to the same relation.
+  via its plan-wide unique `RelCommon.id`. Must be used instead of
+  `steps_out` when the plan contains shared relations (`ReferenceRel`)
+  because offset-based resolution is ambiguous when multiple paths exist to
+  the same relation.
 
-At least one must be set. When both are present, `id_reference` is
-authoritative. See
+Exactly one of these fields must be set. See
 [Field References — Outer References](field_references.md#outer-references)
 for details.
 

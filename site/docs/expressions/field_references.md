@@ -5,7 +5,7 @@ In Substrait, all fields are dealt with on a positional basis. Field names are o
 Field references can originate from different root types:
 
 - **RootReference**: References the incoming record from the relation
-- **OuterReference**: References outer query records in correlated subqueries, supporting both offset-based (`steps_out`) and id-based (`id_reference`) resolution (see [Outer References](#outer-references))
+- **OuterReference**: References outer query records in correlated subqueries, supporting either offset-based (`steps_out`) or id-based (`id_reference`) resolution (see [Outer References](#outer-references))
 - **Expression**: References the result of evaluating an expression
 - **LambdaParameterReference**: References lambda parameters within lambda body expressions (see [Lambda Expressions](lambda_expressions.md))
 
@@ -157,32 +157,36 @@ By default, when only a single field is selected from a struct, that struct is r
 
 ### Outer References
 
-Outer references allow expressions inside a subquery to access records from an enclosing relation. The `OuterReference` root type supports two resolution strategies that can be used independently or together:
+Outer references allow expressions inside a subquery to access records from an enclosing relation. The `OuterReference` root type supports two mutually exclusive resolution strategies:
 
 #### `steps_out` (offset-based)
 
-`steps_out` resolves the reference by counting subquery boundaries upward (`steps_out >= 1`). This works correctly whenever the plan is a **tree**, i.e when each relation has exactly one parent, the path to the binding relation can be uniquely determined via `steps_out`. 
+`steps_out` resolves the reference by counting subquery boundaries upward (`steps_out >= 1`). This works correctly whenever the plan is a **tree**, i.e., when each relation has exactly one parent, the path to the binding relation can be uniquely determined via `steps_out`.
 
 #### `id_reference` (id-based)
 
-When a plan contains **common subrelation** via `ReferenceRel`, the same relation can be reached through multiple paths with different depths. In that case, offset-based resolution is ambiguous because `steps_out` depends on *which* path is followed.
+`id_reference` resolves the reference by referring to the binding relation via its plan-wide unique `RelCommon.id`. The `id` on the referenced relation must be set (> 0) and unique across all relations in the plan.
 
-`id_reference` resolves this by naming the binding relation directly via its plan-wide unique `RelCommon.id`. The `id` on the referenced relation must be set (> 0) and unique across all relations in the plan.
+#### When to use `id_reference`
 
-At least one of `steps_out` or `id_reference` must be set. When both are present, `id_reference` is authoritative and `steps_out` is advisory (useful for backward compatibility with consumers that only understand `steps_out`).
+`id_reference` must be used instead of `steps_out` when a plan contains **shared relations** via `ReferenceRel` with unresolved outer references. In such plans, the binding relation (i.e., the relation providing the actual value of the outer reference) can be reached through multiple paths with different depths, making offset-based resolution ambiguous because `steps_out` depends on *which* path is followed.
 
-For example, consider a plan with two nested scalar subqueries that share a common subexpression `x`. The outer reference to `tableA.a` lives inside `x`, which is reached via paths of different depth:
+For example, consider a plan with two nested scalar subqueries that share a common relation `x`. The outer reference to `tableA.a` lives inside `x`, which is reached via paths of different depth:
 
 ```
-ProjectRel
-├── ReadRel(tableA)  [id=1]
+PlanRel.relations[0].rel:  # let's call it 'x'
+FilterRel(a > outer_ref(tableA.a))
+  └── ReadRel(tableB)
+
+PlanRel.relations[1].root:
+ProjectRel [id=1]
+├── ReadRel(tableA)
 └── Subquery.Scalar ── (1)
     └── SetRel(MINUS_PRIMARY)
         ├── Subquery.Scalar ── (2)
-        │   └── x: FilterRel(a > outer_ref(tableA.a))  [id=2]
-        │         └── ReadRel(tableB)
-        └── x  (shared via ReferenceRel)
+        │   └── ReferenceRel(0)
+        └── ReferenceRel(0)
 ```
 
-The common subexpression `x` contains an outer reference to `tableA.a`. It is reached through two paths — one via subquery (2), one directly — so `steps_out` would need a different value depending on which path is followed. With `id_reference = 1`, the reference inside `x` unambiguously names `ReadRel(tableA)` regardless of path.
+The shared relation `x` contains an outer reference to `tableA.a`. It is reached through two paths — one via subquery (2), one directly — so `steps_out` would need a different value depending on which path is followed. With `id_reference = 1`, the reference inside `x` unambiguously names `ProjectRel` to resolve the outer reference regardless of path.
 
