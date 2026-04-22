@@ -165,7 +165,7 @@ Outer references allow expressions inside a subquery to access records from an e
 
 #### `id_reference` (id-based)
 
-`id_reference` resolves the reference by referring to the binding relation via its plan-wide unique `RelCommon.id`. The `id` on the referenced relation must be set (> 0) and unique across all relations in the plan.
+`id_reference` resolves the reference by referring to the binding relation via its plan-wide unique `RelCommon.id`. The `id` on the referenced relation must be set (>= 1) and unique across all relations in the plan.
 
 #### When to use `id_reference`
 
