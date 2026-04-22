@@ -33,7 +33,7 @@ or
 The include statement specifies the extension file being tested. Each test file must have exactly one include statement. This identifies which extension's functions are being tested and counted for coverage purposes.
 
 ```code
-### SUBSTRAIT_INCLUDE: /extensions/functions_aggregate_approx.yaml
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_aggregate_approx
 ```
 
 ### Dependency Statements (Optional)
@@ -73,15 +73,44 @@ Aggregate test cases support 3 formats:
     ```code
     sum((1, 2, 3, 4, 5)::i8) = 15::i8  # addition of two numbers
     ```
-2. **Multiple Columns Compact**: The test case for an aggregate function with on one or more columns of a table as argument. The table is defined before the function name, in the same line as the testcase.
+    This defines a 5-row, 1-column table:
+
+    | col0 |
+    |------|
+    | 1    |
+    | 2    |
+    | 3    |
+    | 4    |
+    | 5    |
+
+2. **Multiple Columns Compact**: The test case for an aggregate function with one or more columns of a table as argument. The table is defined before the function name, in the same line as the testcase. Each inner group is a row, and the literals inside are the column values for that row.
     ```code
     ((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64
     ```
+    This defines a 5-row, 2-column table:
+
+    | col0 | col1 |
+    |------|------|
+    | 20   | 20   |
+    | -3   | -3   |
+    | 1    | 1    |
+    | 10   | 10   |
+    | 5    | 5    |
+
 3. **Multiple Columns Verbose**: The test case for an aggregate function with one or more columns of a table as arguments. The table is defined before the function name. The function arguments refer to the columns in a table.
     ```code
     DEFINE t1(fp32, fp32) = ((20, 20), (-3, -3), (1, 1), (10,10), (5,5))
     corr(t1.col0, t1.col1) = 1::fp64
     ```
+    This defines `t1` as a 5-row, 2-column table:
+
+    | t1.col0 | t1.col1 |
+    |---------|---------|
+    | 20      | 20      |
+    | -3      | -3      |
+    | 1       | 1       |
+    | 10      | 10      |
+    | 5       | 5       |
 
 #### Example:
 A testcase with mixed arguments
@@ -97,8 +126,8 @@ doc         := <version>
                (<dependency>)*
                ((<test_group>)?(<test_case>)+\n)+
 version     := ### SUBSTRAIT_SCALAR_TEST: <test_library_version>
-include     := ### SUBSTRAIT_INCLUDE: <uri>
-dependency  := ### SUBSTRAIT_DEPENDENCY: <uri>
+include     := ### SUBSTRAIT_INCLUDE: <urn>
+dependency  := ### SUBSTRAIT_DEPENDENCY: <urn>
 test_group  := # <description>
 test_case   := <function>(<arguments>) ([<options>])? = <result> (#<description>)?
 description := string
@@ -110,9 +139,9 @@ enum_value  := <identifier>::enum
 result      := <substrait_error> | <literal> | <enum_value>
 options     := <option>, <option>, ... <option>
 option      := <option_name>:<option_value>
-literal_value := string | integer | decimal | float | boolean | date | time | timestamp | timestamp_tz | interval year | interval days | null
+literal_value := string | integer | decimal | float | boolean | date | interval year | interval days | null
 datatype    := <basic_type> | <parametrized_type> | <complex_type>
-basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | time | ts | tstz | iyear | vbin | <parametrized_type>
+basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | iyear | vbin | <parametrized_type>
 parametrized_type := fchar<int> | vchar<int> | dec<int,int> | fbin<int> | iday<int> | icompound<int> | pt<int> | pts<int> | ptstz<int> | func<params -> datatype>
 params := datatype | (datatype(, datatype)*)
 complex_type := <struct> | <list> | <map>
@@ -156,9 +185,9 @@ Integers are represented as sequences of digits. Negative numbers are preceded b
 All date and time literals use ISO 8601 format:
 
 - **date**: `YYYY-MM-DD`, example: `2021-01-01`
-- **time**: `HH:MM:SS[.fraction]`, example: `12:00:00.000`
-- **timestamp**: `YYYY-MM-DD HH:MM:SS[.fraction]`, example: `2021-01-01 12:00:00`
-- **timestamp_tz**: `YYYY-MM-DD HH:MM:SS[.fraction]±HH:MM`, example: `2021-01-01 12:00:00+05:30`
+- **precision_time**: `HH:MM:SS[.fraction]`, example: `12:00:00.000`
+- **precision_timestamp**: `YYYY-MM-DD HH:MM:SS[.fraction]`, example: `2021-01-01 12:00:00`
+- **precision_timestamp_tz**: `YYYY-MM-DD HH:MM:SS[.fraction]±HH:MM`, example: `2021-01-01 12:00:00+05:30`
 - **interval year**: `'P[n]Y[n]M'`, example: `'P2Y3M'` (2 years, 3 months)
 - **interval days**: `'P[n]DT[n]H[n]M[n]S'`, example: `'P2DT3H2M9S'` (2 days, 3 hours, 2 minutes, 9 seconds)
   ex2: 'P1DT2H3M4.45::iday<3>' (1 day, 2 hours, 3 minutes, 4 seconds, 450 milliseconds)`
@@ -186,15 +215,12 @@ Use short names listed in https://substrait.io/extensions/#function-signature-co
 - **vchar**: Variable-length string `varchar<N>`
 - **vbin**: Fixed-length binary `fixedbinary<N>`
 - **date**: Date
-- **time**: Time
-- **ts**: Timestamp
-- **tstz**: Timestamp with timezone
 - **iyear**: Interval year
-- **iday**: Interval days
+- **iday**: Interval days `interval_day<P>`
 - **icompound**: Interval compound
-- **pt**: Precision Time
-- **pts**: Precision Timestamp
-- **ptstz**: Precision Timestamp with timezone
+- **pt**: Precision Time `precision_time<P>`
+- **pts**: Precision Timestamp `precision_timestamp<P>`
+- **ptstz**: Precision Timestamp with timezone `precision_timestamp_tz<P>`
 
 
 ### Nullability
@@ -229,7 +255,7 @@ If return type is `<!ERROR>` then the test case should fail with an error. If th
 
 ```code
 ### SUBSTRAIT_SCALAR_TEST:V1
-### SUBSTRAIT_INCLUDE: /extensions/functions_arithmetic.yaml
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # Common Maths
 add(126::i8, 1::i8) = 127::i8
@@ -244,7 +270,7 @@ The above test file has two test groups "Common Maths" and "Arithmetic Overflow 
 
 ```code
 ### SUBSTRAIT_AGGREGATE_TEST:V1
-### SUBSTRAIT_INCLUDE: /extensions/functions_arithmetic.yaml
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # Correlation Tests
 ((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64
@@ -256,8 +282,8 @@ corr(t1.col0, t1.col1) = -11::fp64
 
 ```code
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
-### SUBSTRAIT_DEPENDENCY: '/extensions/functions_arithmetic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_list
+### SUBSTRAIT_DEPENDENCY: extension:io.substrait:functions_arithmetic
 
 # basic: Basic array transforming examples
 transform([1, 2, 3]::list<i32>, (x -> multiply(x, 2::i32))::func<i32 -> i32>) = [2, 4, 6]::list<i32>
@@ -273,7 +299,7 @@ In this example:
 
 ```code
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_datetime.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_datetime
 
 # timestamps: examples using the timestamp and timestamptz types
 extract(YEAR::enum, '2016-12-31T13:30:15'::ts) = 2016::i64

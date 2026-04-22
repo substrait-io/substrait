@@ -1,5 +1,5 @@
 ### SUBSTRAIT_AGGREGATE_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # basic: Basic examples without any special cases
 sum((0, -1, 2, 20)::i8) = 21::i64?

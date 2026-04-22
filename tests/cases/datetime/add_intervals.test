@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_datetime.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_datetime
 
 # basic: Basic examples without any special cases
 add_intervals('PT10H'::iday, 'PT5H'::iday) = 'P0DT15H0M0S'::iday

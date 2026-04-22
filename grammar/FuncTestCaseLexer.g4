@@ -14,6 +14,8 @@ SubstraitAggregateTest: 'SUBSTRAIT_AGGREGATE_TEST';
 SubstraitInclude: 'SUBSTRAIT_INCLUDE';
 SubstraitDependency: 'SUBSTRAIT_DEPENDENCY';
 
+ExtensionUrn: 'extension:' [a-z0-9:._]+;
+
 FormatVersion
     : 'v' DIGIT+ ('.' DIGIT+)?
     ;

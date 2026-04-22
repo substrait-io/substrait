@@ -37,7 +37,7 @@ Structs are unique from other types because they have an arbitrary number of par
 
     ```
     // Struct
-    struct?<string, i8, i32?, timestamp_tz>
+    struct?<string, i8, i32?, precision_timestamp_tz<6>>
 
     // Named structs are not yet supported in the text format.
     ```

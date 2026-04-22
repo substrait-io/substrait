@@ -2,15 +2,15 @@
   "registry": {
     "extension_count": 15,
     "dependency_count": 15,
-    "function_count": 173,
+    "function_count": 174,
     "num_aggregate_functions": 28,
     "num_scalar_functions": 170,
     "num_window_functions": 11,
-    "num_function_overloads": 533
+    "num_function_overloads": 498
   },
   "coverage": {
-    "total_test_count": 1168,
-    "num_function_variants": 533,
+    "total_test_count": 1177,
+    "num_function_variants": 498,
     "num_covered_function_variants": 245
   }
 }

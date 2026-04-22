@@ -50,7 +50,6 @@ properties:
           - PRECISION_TIMESTAMP
           - PRECISION_TIMESTAMP_TZ
           - DATE
-          - TIME
           - INTERVAL_COMPOUND
           - INTERVAL_DAY
           - INTERVAL_YEAR
@@ -75,7 +74,6 @@ properties:
         - $ref: "#/definitions/type_precision_timestamp"
         - $ref: "#/definitions/type_precision_timestamp_tz"
         - $ref: "#/definitions/type_date"
-        - $ref: "#/definitions/type_time"
         - $ref: "#/definitions/type_interval_compound"
         - $ref: "#/definitions/type_interval_day"
         - $ref: "#/definitions/type_interval_year"
@@ -428,6 +426,17 @@ definitions:
         description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_length:
+        description: >-
+          The maximum length for the FIXED_BINARY data type supported by this
+          dialect.
+
+          Since the maximum length in Substrait for FIXED_BINARY is
+          2,147,483,647 the value must be in range: 0 <= max_length <=
+          2,147,483,647.
+        type: integer
+        minimum: 0
+        maximum: 2147483647
   type_string:
     type: object
     additionalProperties: false
@@ -452,6 +461,16 @@ definitions:
         description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_length:
+        description: >-
+          The maximum length for the VARCHAR data type supported by this
+          dialect.
+
+          Since the maximum length in Substrait for VARCHAR is 2,147,483,647
+          the value must be in range: 0 <= max_length <= 2,147,483,647.
+        type: integer
+        minimum: 0
+        maximum: 2147483647
   type_fixed_char:
     type: object
     additionalProperties: false
@@ -464,6 +483,16 @@ definitions:
         description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_length:
+        description: >-
+          The maximum length for the FIXED_CHAR data type supported by this
+          dialect.
+
+          Since the maximum length in Substrait for FIXED_CHAR is 2,147,483,647
+          the value must be in range: 0 <= max_length <= 2,147,483,647.
+        type: integer
+        minimum: 0
+        maximum: 2147483647
   type_precision_time:
     type: object
     additionalProperties: false
@@ -537,18 +566,6 @@ definitions:
     properties:
       type:
         const: DATE
-      metadata:
-        type: object
-        description: Arbitrary data created by the dialect author.
-      system_metadata:
-        $ref: "#/definitions/system_type_metadata"
-  type_time:
-    type: object
-    additionalProperties: false
-    required: [type]
-    properties:
-      type:
-        const: TIME
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.
@@ -635,6 +652,22 @@ definitions:
         description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+      max_precision:
+        description: >-
+          The maximum number of digits in the integer part of the decimal type
+          where (P, number of digits) <= 38 and scale (S, number of fractional
+          digits) 0 <= S <= P.
+        type: integer
+        minimum: 0
+        maximum: 38
+      max_scale:
+        description: >-
+          The maximum number of digits after the decimal point  of the decimal
+          type where (P, number of digits) <= 38 and scale (S, number of
+          fractional digits) 0 <= S <= P.
+        type: integer
+        minimum: 0
+        maximum: 38
   type_struct:
     type: object
     additionalProperties: false

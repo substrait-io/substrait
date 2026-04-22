@@ -40,7 +40,7 @@ class FileTestCoverage:
     def __init__(self, file_name):
         self.file_name = file_name
         self.test_count = 0
-        self.function_coverage = dict()
+        self.function_coverage = {}
 
     def update_coverage(self, func_name, args, count):
         key = f"{func_name}({', '.join(args)})"
@@ -68,7 +68,7 @@ class TestCoverage:
     total_function_variants: int
 
     def __init__(self, ext_uris):
-        self.file_coverage = dict()
+        self.file_coverage = {}
         self.test_count = 0
         self.num_tests_with_no_matching_function = 0
         self.num_covered_function_variants = 0
@@ -108,6 +108,7 @@ class TestCoverage:
 def update_test_count(test_case_files: list, function_registry: FunctionRegistry):
     num_tests_with_no_matching_function = 0
     for test_file in test_case_files:
+        function_registry.validate_urn(test_file.include)
         for test_case in test_file.testcases:
             function_variant = function_registry.get_function(
                 test_case.func_name,
@@ -240,6 +241,7 @@ def validate_nullability(test_file, function_registry):
     Returns a list of error strings (empty if everything is valid).
     """
     errors = []
+    function_registry.validate_urn(test_file.include)
     for test_case in test_file.testcases:
         if test_case.is_return_type_error():
             continue

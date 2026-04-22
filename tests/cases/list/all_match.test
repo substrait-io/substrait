@@ -1,6 +1,6 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
-### SUBSTRAIT_DEPENDENCY: '/extensions/functions_comparison.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_list
+### SUBSTRAIT_DEPENDENCY: extension:io.substrait:functions_comparison
 
 # returns_true: All elements match the predicate
 all_match([1, 2, 3]::list<i32>, (x -> gt(x, 0::i32))::func<i32 -> bool?>) = true::bool?
