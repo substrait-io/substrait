@@ -37,7 +37,7 @@ jobs:
         env:
           PR: ${{ github.event.pull_request.number }}
         run: |
-          sed -i "s|^site_url:.*|site_url: \"https://substrait.io/pr-preview/pr-${PR}/\"|" site/mkdocs.yml
+          sed -i "s|^site_url:.*|site_url: \"https://substrait.io/preview/${PR}/\"|" site/mkdocs.yml
       - name: Generate Static Site
         run: pixi run mkdocs build
       - name: Deploy preview
@@ -47,7 +47,7 @@ jobs:
           publish_branch: main
           deploy_key: ${{ secrets.SUBSTRAIT_SITE_DEPLOY_KEY }}
           publish_dir: ./site/site
-          destination_dir: pr-preview/pr-${{ github.event.pull_request.number }}
+          destination_dir: preview/${{ github.event.pull_request.number }}
           keep_files: true
           commit_message: "Deploy preview for PR #${{ github.event.pull_request.number }}"
       - name: Comment preview URL on PR
@@ -55,7 +55,7 @@ jobs:
         with:
           header: pr-preview
           message: |
-            📘 Preview: https://substrait.io/pr-preview/pr-${{ github.event.pull_request.number }}/
+            📘 Preview: https://substrait.io/preview/${{ github.event.pull_request.number }}/
             _Updated for ${{ github.event.pull_request.head.sha }}_
 
   cleanup:
@@ -78,10 +78,10 @@ jobs:
           export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes"
           git clone --depth 1 git@github.com:substrait-io/substrait.io.git site-repo
           cd site-repo
-          if [ -d "pr-preview/pr-$PR" ]; then
+          if [ -d "preview/$PR" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git rm -rf "pr-preview/pr-$PR"
+            git rm -rf "preview/$PR"
             git commit -m "Remove preview for PR #$PR"
             git push origin main
           fi
