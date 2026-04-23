@@ -1,0 +1,89 @@
+name: PR Preview
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+    paths:
+      - "site/**"
+      - "extensions/**"
+      - "text/**"
+
+concurrency: preview-${{ github.ref }}
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy:
+    name: Deploy PR Preview
+    runs-on: ubuntu-latest
+    if: >-
+      github.repository == 'substrait-io/substrait' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.action != 'closed'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: prefix-dev/setup-pixi@v0.9.5
+        with:
+          pixi-version: v0.66.0
+          cache: true
+      - name: Copy schema file for website
+        run: |
+          mkdir -p ./site/docs/schemas
+          cp ./text/simple_extensions_schema.yaml ./site/docs/schemas/simple_extensions
+      - name: Rewrite site_url for preview
+        run: |
+          sed -i 's|^site_url:.*|site_url: "https://substrait.io/pr-preview/pr-${{ github.event.pull_request.number }}/"|' site/mkdocs.yml
+      - name: Generate Static Site
+        run: pixi run mkdocs build
+      - name: Deploy preview
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          external_repository: substrait-io/substrait.io
+          publish_branch: main
+          deploy_key: ${{ secrets.SUBSTRAIT_SITE_DEPLOY_KEY }}
+          publish_dir: ./site/site
+          destination_dir: pr-preview/pr-${{ github.event.pull_request.number }}
+          keep_files: true
+          commit_message: "Deploy preview for PR #${{ github.event.pull_request.number }}"
+      - name: Comment preview URL on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-preview
+          message: |
+            📘 Preview: https://substrait.io/pr-preview/pr-${{ github.event.pull_request.number }}/
+            _Updated for ${{ github.event.pull_request.head.sha }}_
+
+  cleanup:
+    name: Cleanup PR Preview
+    runs-on: ubuntu-latest
+    if: >-
+      github.repository == 'substrait-io/substrait' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.action == 'closed'
+    steps:
+      - name: Remove preview directory
+        env:
+          DEPLOY_KEY: ${{ secrets.SUBSTRAIT_SITE_DEPLOY_KEY }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes"
+          git clone --depth 1 git@github.com:substrait-io/substrait.io.git site-repo
+          cd site-repo
+          if [ -d "pr-preview/pr-$PR" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git rm -rf "pr-preview/pr-$PR"
+            git commit -m "Remove preview for PR #$PR"
+            git push origin main
+          fi
+      - name: Delete preview comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pr-preview
+          delete: true
