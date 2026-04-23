@@ -34,8 +34,10 @@ jobs:
           mkdir -p ./site/docs/schemas
           cp ./text/simple_extensions_schema.yaml ./site/docs/schemas/simple_extensions
       - name: Rewrite site_url for preview
+        env:
+          PR: ${{ github.event.pull_request.number }}
         run: |
-          sed -i 's|^site_url:.*|site_url: "https://substrait.io/pr-preview/pr-${{ github.event.pull_request.number }}/"|' site/mkdocs.yml
+          sed -i "s|^site_url:.*|site_url: \"https://substrait.io/pr-preview/pr-${PR}/\"|" site/mkdocs.yml
       - name: Generate Static Site
         run: pixi run mkdocs build
       - name: Deploy preview
