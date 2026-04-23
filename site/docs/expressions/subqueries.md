@@ -74,11 +74,11 @@ Subqueries may contain *outer references*, which are field references that reach
 outside the subquery boundary to access records from an enclosing relation.
 The `OuterReference` root type provides two resolution fields:
 
-* **`steps_out`**: Resolves the reference by counting subquery boundaries
+* `steps_out`: Resolves the reference by counting subquery boundaries
   upward. This works correctly when the plan is a tree (each relation has a
   single parent).
 
-* **`id_reference`**: Resolves the reference by naming the binding relation
+* `id_reference`: Resolves the reference by naming the binding relation
   via its plan-wide unique `RelCommon.id`. Must be used instead of
   `steps_out` when the plan contains shared relations (`ReferenceRel`)
   because offset-based resolution is ambiguous when multiple paths exist to
