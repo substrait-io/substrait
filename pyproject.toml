@@ -99,7 +99,7 @@ dev = [
   "ruff>=0.8.0,<1",
   "protobuf==6.33.1",
   "pytest>=9.0.3,<10",
-  "pyyaml>=6.0.2,<7",
+  "pyyaml>=6.0.3,<7",
   "mdutils>=1.4.0,<2",
   "mkdocs>=1.4.2,<2",
   "mkdocs-awesome-pages-plugin>=2.8.0,<3",
