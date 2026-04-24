@@ -114,5 +114,5 @@ dev = [
   "pygments>=2.14,<3",
   "pymdown-extensions>=9.9.1,<11",
   "yamllint>=1.38,<2",
-  "check-jsonschema>=0.37,<1",
+  "check-jsonschema>=0.37.1,<1",
 ]
