@@ -255,12 +255,18 @@ message ProjectRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
-// The binary JOIN relational operator left-join-right, including various join types, a join condition and post_join_filter expression
+// The binary JOIN relational operator left-join-right, including various join
+// types, a join condition, and an optional filter on the joined output.
 message JoinRel {
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
+  // A boolean condition evaluated over the left and right inputs that
+  // determines whether a pair of records is a match.
   Expression expression = 4;
+  // An optional boolean filter applied to each output record after join
+  // matching and null-padding (for outer/mark joins) are complete.
+  // Semantically equivalent to placing a FilterRel directly above this join.
   Expression post_join_filter = 5;
 
   JoinType type = 6;
@@ -828,10 +834,12 @@ message ComparisonJoinKey {
   }
 }
 
-// The hash equijoin operator will build a hash table out of one input (default `right`) based on a set of join keys.
-// It will then probe that hash table for the other input (default `left`), finding matches.
+// The hash join operator will build a hash table out of one input (default
+// `right`) based on a set of join keys. It will then probe that hash table for
+// the other input (default `left`), finding matches.
 //
-// Two rows are a match if the comparison function returns true for all keys
+// Two rows are a match if every key comparison returns true and, when
+// specified, `residual_expression` also evaluates to true.
 message HashJoinRel {
   RelCommon common = 1;
   Rel left = 2;
@@ -855,12 +863,23 @@ message HashJoinRel {
   // hash function for a given comparsion function or to reject the plan if it cannot
   // do so.
   repeated ComparisonJoinKey keys = 8;
+  // An optional boolean filter applied to each output record after join
+  // matching and null-padding (for outer/mark joins) are complete.
+  // Semantically equivalent to placing a FilterRel directly above this join.
   Expression post_join_filter = 6;
 
   JoinType type = 7;
 
-  // Specifies which side of input to build the hash table for this hash join. Default is `BUILD_INPUT_RIGHT`.
+  // Specifies which side of input to build the hash table for this hash join.
+  // Defaults to `BUILD_INPUT_RIGHT`.
   BuildInput build_input = 9;
+  // An optional boolean expression evaluated on each candidate key-match to
+  // determine whether it is a true match. A candidate is only considered a
+  // match when all `keys` comparisons AND this expression evaluate to true.
+  // This expression interacts with join-type semantics: for example, in a
+  // left outer join, a left row that has key matches but no candidate
+  // satisfying this expression will be emitted with nulls for the right side.
+  Expression residual_expression = 11;
 
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;
@@ -887,8 +906,9 @@ message HashJoinRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
-// The merge equijoin does a join by taking advantage of two sets that are sorted on the join keys.
-// This allows the join operation to be done in a streaming fashion.
+// The merge join does a join by taking advantage of two sets that are
+// sorted on the join keys. This allows the join operation to be done in a
+// streaming fashion.
 message MergeJoinRel {
   RelCommon common = 1;
   Rel left = 2;
@@ -914,9 +934,19 @@ message MergeJoinRel {
   // is free to do so as well).  If possible, the consumer should verify the sort
   // order and reject invalid plans.
   repeated ComparisonJoinKey keys = 8;
+  // An optional boolean filter applied to each output record after join
+  // matching and null-padding (for outer/mark joins) are complete.
+  // Semantically equivalent to placing a FilterRel directly above this join.
   Expression post_join_filter = 6;
 
   JoinType type = 7;
+  // An optional boolean expression evaluated on each candidate key-match to
+  // determine whether it is a true match. A candidate is only considered a
+  // match when all `keys` comparisons AND this expression evaluate to true.
+  // This expression interacts with join-type semantics: for example, in a
+  // left outer join, a left row that has key matches but no candidate
+  // satisfying this expression will be emitted with nulls for the right side.
+  Expression residual_expression = 9;
 
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;
