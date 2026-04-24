@@ -1,0 +1,27 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
+
+# basic: Find element in list (1-based index)
+index_of([10, 20, 30]::list<i32>, 10::i32) = 1::i64?
+index_of([10, 20, 30]::list<i32>, 20::i32) = 2::i64?
+index_of([10, 20, 30]::list<i32>, 30::i32) = 3::i64?
+index_of(['a', 'b', 'c']::list<string>, 'b'::string) = 2::i64?
+
+# not_found: Element not in list returns null
+index_of([10, 20, 30]::list<i32>, 5::i32) = null::i64?
+index_of([10, 20, 30]::list<i32>, 100::i32) = null::i64?
+
+# first_match: Returns index of first occurrence
+index_of([10, 20, 20, 30]::list<i32>, 20::i32) = 2::i64?
+
+# empty_list: Empty list returns null
+index_of([]::list<i32>, 1::i32) = null::i64?
+
+# null_list: Null list returns null
+index_of(null::list?<i32>, 1::i32) = null::i64?
+
+# null_value: Searching for null returns null
+index_of([10, 20, 30]::list<i32>, null::i32?) = null::i64?
+
+# find_null_element: Finding null in list with nulls
+index_of([1, null, 3]::list<i32?>, null::i32?) = 2::i64?

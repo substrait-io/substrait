@@ -1,0 +1,31 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
+
+# basic: Basic positive index (1-based)
+subscript_operator([10, 20, 30]::list<i32>, 1::i64) = 10::i32?
+subscript_operator([10, 20, 30]::list<i32>, 2::i64) = 20::i32?
+subscript_operator([10, 20, 30]::list<i32>, 3::i64) = 30::i32?
+subscript_operator(['a', 'b', 'c']::list<string>, 2::i64) = 'b'::string?
+
+# out_of_bounds_positive: Positive index exceeds list length
+subscript_operator([10, 20, 30]::list<i32>, 5::i64) = null::i32?
+subscript_operator([10, 20, 30]::list<i32>, 100::i64) = null::i32?
+
+# zero_out_of_bounds: Zero index is out of bounds
+subscript_operator([10, 20, 30]::list<i32>, 0::i64) = null::i32?
+
+# negative_out_of_bounds: Negative indices are out of bounds
+subscript_operator([10, 20, 30]::list<i32>, -1::i64) = null::i32?
+subscript_operator([10, 20, 30]::list<i32>, -3::i64) = null::i32?
+
+# null_list: Null list returns null
+subscript_operator(null::list?<i32>, 1::i64) = null::i32?
+
+# null_index: Null index returns null
+subscript_operator([10, 20, 30]::list<i32>, null::i64?) = null::i32?
+
+# null_element: Retrieving a null element returns null
+subscript_operator([1, null, 3]::list<i32?>, 2::i64) = null::i32?
+
+# empty_list: Out of bounds on empty list
+subscript_operator([]::list<i32>, 1::i64) = null::i32?
