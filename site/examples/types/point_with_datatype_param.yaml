@@ -1,5 +1,5 @@
 # Compound user-defined type with a data type parameter
-urn: extension:example:point_parameterized
+urn: urn:substrait:extension:example:point_parameterized
 types:
   - name: point
     parameters:

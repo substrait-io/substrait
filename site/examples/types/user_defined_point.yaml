@@ -1,5 +1,5 @@
 # User-defined type example: a point type with two scalar functions
-urn: extension:example:point_type
+urn: urn:substrait:extension:example:point_type
 types:
   - name: "point"
 
