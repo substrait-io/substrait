@@ -425,6 +425,112 @@ We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the t
 One expressing `A JOIN B` (in position 0 in the plan), one using reference as follows: `ReferenceRel(0) JOIN C` and a third one
 doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B`.
 
+### Parameterized Common Subexpressions (Outer Reference Bindings)
+
+When a common subexpression `Rel` (at some plan position) contains `OuterReference` field references — for example, from
+a correlated subquery — those outer references become free variables once the `Rel` is extracted to the plan level.
+Each `ReferenceRel` that references such a `Rel` must supply **outer reference bindings** — a list of `FieldReference`
+values evaluated in the `ReferenceRel`'s local relational context — to resolve those free variables.
+
+The `PlanRel` holding the common subexpression must include `OuterReferenceDeclaration` entries that declare each
+outer-reference-rooted `FieldReference` and its expected type. Bindings in `ReferenceRel` are positionally matched:
+`outer_reference_bindings[i]` provides the value for `outer_reference_declarations[i]`.
+
+#### Example: Shared Correlated Subquery with Different Scope Levels and Field Indices
+
+Consider three tables:
+
+- `departments(dept_id: i64, budget_limit: i32)` — fields `[0: dept_id, 1: budget_limit]`
+- `employees(emp_id: i64, dept_id: i64, salary: i32)` — fields `[0: emp_id, 1: dept_id, 2: salary]`
+- `projects(proj_id: i64, dept_id: i64, cost: i32)` — fields `[0: proj_id, 1: dept_id, 2: cost]`
+- `audit_records(record_id: i64, entity_id: i64, amount: i32)` — fields `[0: record_id, 1: entity_id, 2: amount]`
+
+The following single query finds departments where **both** employees and projects have audit records
+under the department's budget limit:
+
+```sql
+SELECT * FROM departments d
+WHERE
+  -- Part 1: employees with audit records under budget
+  EXISTS (
+    SELECT 1 FROM employees e
+    WHERE e.dept_id = d.dept_id
+      AND EXISTS (
+        SELECT 1 FROM audit_records a
+        WHERE a.entity_id = e.emp_id       -- references e.emp_id:       1 scope out, field 0
+          AND a.amount < d.budget_limit    -- references d.budget_limit: 2 scopes out, field 1
+      )
+  )
+  AND
+  -- Part 2: projects with audit records under budget
+  EXISTS (
+    SELECT 1 FROM projects p
+    WHERE p.dept_id = d.dept_id
+      AND EXISTS (
+        SELECT 1 FROM audit_records a
+        WHERE a.entity_id = p.proj_id      -- references p.proj_id:     1 scope out, field 0
+          AND a.amount < d.budget_limit    -- references d.budget_limit: 2 scopes out, field 1
+      )
+  )
+```
+
+The two innermost `EXISTS` subqueries are structurally identical — both filter `audit_records` using:
+
+- `OuterRef(steps_out=1, field=0)` — an entity id from the immediate parent (1 scope out, field index 0)
+- `OuterRef(steps_out=2, field=1)` — a budget limit from the grandparent (2 scopes out, field index 1)
+
+These outer references use **different `steps_out`** values (1 vs 2) and **different `field_index`** values (0 vs 1).
+
+We extract the common subexpression to `PlanRel[0]`:
+
+```
+PlanRel[0]:
+  Rel: FilterRel(
+    input: ReadRel("audit_records"),
+    condition: AND(
+      a.entity_id = OuterRef(steps_out=1, field=0),   // i64 — entity id from parent
+      a.amount    < OuterRef(steps_out=2, field=1)     // i32 — budget limit from grandparent
+    )
+  )
+  outer_reference_declarations: [
+    { outer_reference: FieldRef(outer_reference(steps_out=1), field=0),
+      type: i64 },
+    { outer_reference: FieldRef(outer_reference(steps_out=2), field=1),
+      type: i32 }
+  ]
+```
+
+**Usage 1** — inside the employees subquery, the innermost `EXISTS` is replaced with:
+
+```
+ReferenceRel {
+  subtree_ordinal: 0,
+  outer_reference_bindings: [
+    // [0] → e.emp_id: field 0 of the enclosing employees scan
+    FieldRef(root_reference, field=0),
+    // [1] → d.budget_limit: field 1 of the departments scan
+    FieldRef(outer_reference(steps_out=1), field=1)
+  ]
+}
+```
+
+**Usage 2** — inside the projects subquery, the innermost `EXISTS` is replaced with:
+
+```
+ReferenceRel {
+  subtree_ordinal: 0,
+  outer_reference_bindings: [
+    // [0] → p.proj_id: field 0 of the enclosing projects scan
+    FieldRef(root_reference, field=0),
+    // [1] → d.budget_limit: field 1 of the departments scan
+    FieldRef(outer_reference(steps_out=1), field=1)
+  ]
+}
+```
+
+Both usages bind `OuterRef(steps_out=1).field[0]` to different entity id columns (`e.emp_id` vs `p.proj_id`),
+while `OuterRef(steps_out=2).field[1]` resolves to the same `d.budget_limit` in both cases.
+
 | Signature            | Value                                 |
 | -------------------- |---------------------------------------|
 | Inputs               | 1                                     |
@@ -438,11 +544,18 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 | Property                    | Description                                                                    | Required                    |
 |-----------------------------|--------------------------------------------------------------------------------| --------------------------- |
 | Referred Rel                | A zero-indexed positional reference to a `Rel` defined within the same `Plan`. | Required                    |
+| Outer Reference Bindings    | A positionally-ordered list of `FieldReference` values that resolve outer references in the referenced `Rel`. Each entry corresponds to the declaration at the same index in the referenced `PlanRel`'s `outer_reference_declarations`. | Required if referenced Rel contains outer references |
 
 === "ReferenceRel Message"
 
     ```proto
 %%% proto.algebra.ReferenceRel %%%
+    ```
+
+=== "PlanRel Message"
+
+    ```proto
+%%% proto.plan.PlanRel %%%
     ```
 
 ## Write Operator
