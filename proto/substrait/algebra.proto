@@ -353,8 +353,7 @@ message AggregateRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
   message Grouping {
-    // Deprecated in favor of `expression_references` below.
-    repeated Expression grouping_expressions = 1 [deprecated = true];
+    reserved 1;
 
     // A list of zero or more references to grouping expressions, i.e., indices
     // into the `grouping_expression` list.
@@ -388,6 +387,7 @@ message ConsistentPartitionWindowRel {
   // sorts, and bounds, since those must be consistent across the various functions in this rel.  Refer
   // to the `WindowFunction` message for a description of these fields.
   message WindowRelFunction {
+    // References a function_anchor defined in this plan.
     uint32 function_reference = 1;
 
     repeated FunctionArgument arguments = 9;
@@ -556,6 +556,39 @@ message ExpandRel {
   }
 }
 
+// The top-N relational operator. A combination of a sort and fetch that only
+// maintains the number of records required to ensure a limited output.
+message TopNRel {
+  RelCommon common = 1;
+  Rel input = 2;
+
+  // List of one or more fields to sort by. At least one is required.
+  repeated SortField sorts = 3;
+
+  // Expression evaluating to a non-negative integer specifying the number of
+  // records to skip. Null is treated as 0. Recommended type is int64.
+  Expression offset = 4;
+
+  // Expression evaluating to a non-negative integer specifying the number of
+  // records to return. Null signals ALL. Recommended type is int64.
+  Expression count = 5;
+
+  // Determines how to handle rows tied with the last returned row.
+  FetchMode mode = 6;
+
+  substrait.extensions.AdvancedExtension advanced_extension = 7;
+}
+
+// Determines how a fetch operation handles rows tied with the last returned row.
+enum FetchMode {
+  // Unspecified. Producers must set one of the defined modes.
+  FETCH_MODE_UNSPECIFIED = 0;
+  // Only return the requested number of rows.
+  FETCH_MODE_ROWS_ONLY = 1;
+  // Include additional rows tied with the last row (per the sort fields).
+  FETCH_MODE_WITH_TIES = 2;
+}
+
 // A relation with output field names.
 //
 // This is for use at the root of a `Rel` tree.
@@ -592,6 +625,7 @@ message Rel {
     ConsistentPartitionWindowRel window = 17;
     ExchangeRel exchange = 15;
     ExpandRel expand = 16;
+    TopNRel top_n = 23;
   }
 }
 
@@ -788,7 +822,7 @@ message ComparisonJoinKey {
       // A custom comparison behavior is used.  This can happen, for example, when using
       // collations, where we might want to do something like a case-insensitive comparison.
       //
-      // This must be a binary function with a boolean return type
+      // This must be a binary function with a boolean return type.
       uint32 custom_function_reference = 2;
     }
   }
@@ -975,6 +1009,7 @@ message Expression {
     DynamicParameter dynamic_parameter = 14;
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
+    ExecutionContextVariable execution_context_variable = 17;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -996,6 +1031,8 @@ message Expression {
   }
 
   message Literal {
+    reserved 14, 17, 27;
+
     oneof literal_type {
       bool boolean = 1;
       int32 i8 = 2;
@@ -1006,14 +1043,8 @@ message Expression {
       double fp64 = 11;
       string string = 12;
       bytes binary = 13;
-      // Timestamp in units of microseconds since the UNIX epoch.
-      // Deprecated in favor of `precision_timestamp`.
-      int64 timestamp = 14 [deprecated = true];
       // Date in units of days since the UNIX epoch.
       int32 date = 16;
-      // Time in units of microseconds past midnight.
-      // Deprecated in favor of `precision_time`.
-      int64 time = 17;
       IntervalYearToMonth interval_year_to_month = 19;
       IntervalDayToSecond interval_day_to_second = 20;
       IntervalCompound interval_compound = 36;
@@ -1027,9 +1058,6 @@ message Expression {
       PrecisionTimestamp precision_timestamp_tz = 35;
       Struct struct = 25;
       Map map = 26;
-      // Timestamp in units of microseconds since the UNIX epoch.
-      // Deprecated in favor of `precision_timestamp_tz`
-      int64 timestamp_tz = 27 [deprecated = true];
       bytes uuid = 28;
       Type null = 29; // a typed null literal
       List list = 30;
@@ -1220,8 +1248,7 @@ message Expression {
   // A scalar function call.
   message ScalarFunction {
     // Points to a function_anchor defined in this plan, which must refer
-    // to a scalar function in the associated YAML file. Required; avoid
-    // using anchor/reference zero.
+    // to a scalar function in the associated YAML file. Required.
     uint32 function_reference = 1;
 
     // The arguments to be bound to the function. This must have exactly the
@@ -1259,7 +1286,7 @@ message Expression {
     // An aggregate function referenced here should be treated as a window
     // function with Window Type STREAMING
     //
-    // Required; 0 is considered to be a valid anchor/reference.
+    // Required.
     uint32 function_reference = 1;
 
     // The arguments to be bound to the function. This must have exactly the
@@ -1688,6 +1715,30 @@ message Expression {
       Rel right = 4;
     }
   }
+
+  // Expression that represents execution context dependent variables.
+  // These are modeled as expressions rather than functions because they:
+  // - Take no input arguments
+  // - Depend on execution context rather than input data
+  // - Require evaluation mode control (see ExecutionBehavior in plan.proto)
+  message ExecutionContextVariable {
+    oneof execution_context_variable_type {
+      // an execution context dependent variable containing the current
+      // timestamp in current_timezone
+      // nullability must be NULLABILITY_REQUIRED
+      Type.PrecisionTimestampTZ current_timestamp = 1;
+
+      // an execution context dependent variable containing the current
+      // session timezone as a string defined by IANA timezone database
+      // (https://www.iana.org/time-zones).
+      // nullability must be NULLABILITY_REQUIRED
+      Type.String current_timezone = 2;
+
+      // an execution context dependent variable containing the current date
+      // nullability must be NULLABILITY_REQUIRED
+      Type.Date current_date = 3;
+    }
+  }
 }
 
 // Expression that represents a dynamic parameter.
@@ -1697,6 +1748,7 @@ message DynamicParameter {
   Type type = 1;
 
   // The surrogate key used within a plan to reference a specific parameter binding.
+  // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
   uint32 parameter_reference = 2;
 }
 
@@ -1706,6 +1758,7 @@ message SortField {
 
   oneof sort_kind {
     SortDirection direction = 2;
+    // References a function_anchor defined in this plan.
     uint32 comparison_function_reference = 3;
   }
   enum SortDirection {
@@ -1751,8 +1804,7 @@ enum AggregationPhase {
 // An aggregate function.
 message AggregateFunction {
   // Points to a function_anchor defined in this plan, which must refer
-  // to an aggregate function in the associated YAML file. Required; 0 is
-  // considered to be a valid anchor/reference.
+  // to an aggregate function in the associated YAML file. Required.
   uint32 function_reference = 1;
 
   // The arguments to be bound to the function. This must have exactly the

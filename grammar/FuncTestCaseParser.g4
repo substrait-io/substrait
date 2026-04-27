@@ -2,7 +2,6 @@ parser grammar FuncTestCaseParser;
 
 options {
     caseInsensitive = true;
-    tokenVocab=SubstraitLexer;
     tokenVocab=FuncTestCaseLexer;
 }
 
@@ -19,11 +18,11 @@ version
     ;
 
 include
-    : TripleHash SubstraitInclude Colon StringLiteral (Comma StringLiteral)*
+    : TripleHash SubstraitInclude Colon ExtensionUrn
     ;
 
 dependency
-    : TripleHash SubstraitDependency Colon StringLiteral
+    : TripleHash SubstraitDependency Colon ExtensionUrn
     ;
 
 testGroupDescription
@@ -50,17 +49,16 @@ result
 
 argument
     : nullArg
+    | enumArg
     | intArg
     | floatArg
     | booleanArg
     | stringArg
     | decimalArg
     | dateArg
-    | timeArg
-    | timestampArg
-    | timestampTzArg
     | intervalYearArg
     | intervalDayArg
+    | intervalCompoundArg
     | fixedCharArg
     | varCharArg
     | fixedBinaryArg
@@ -109,6 +107,7 @@ literal
     | TimestampTzLiteral
     | IntervalYearLiteral
     | IntervalDayLiteral
+    | IntervalCompoundLiteral
     ;
 
 qualifiedAggregateFuncArgs
@@ -159,24 +158,16 @@ dateArg
     : DateLiteral DoubleColon dateType
     ;
 
-timeArg
-    : TimeLiteral DoubleColon timeType
-    ;
-
-timestampArg
-    : TimestampLiteral DoubleColon timestampType
-    ;
-
-timestampTzArg
-    : TimestampTzLiteral DoubleColon timestampTZType
-    ;
-
 intervalYearArg
     : IntervalYearLiteral DoubleColon intervalYearType
     ;
 
 intervalDayArg
     : IntervalDayLiteral DoubleColon intervalDayType
+    ;
+
+intervalCompoundArg
+    : IntervalCompoundLiteral DoubleColon intervalCompoundType
     ;
 
 fixedCharArg
@@ -211,8 +202,17 @@ lambdaArg
     : literalLambda DoubleColon funcType
     ;
 
+enumArg
+    : Identifier DoubleColon EnumType
+    ;
+
 literalList
-    : OBracket (literal (Comma literal)*)? CBracket
+    : OBracket (listElement (Comma listElement)*)? CBracket
+    ;
+
+listElement
+    : literal
+    | literalList
     ;
 
 literalLambda
@@ -239,10 +239,7 @@ scalarType
   | floatType                            #float
   | stringType                           #string
   | binaryType                           #binary
-  | timestampType                        #timestamp
-  | timestampTZType                      #timestampTz
   | dateType                             #date
-  | timeType                             #time
   | intervalYearType                     #intervalYear
   | UUID isnull=QMark?                   #uuid
   | UserDefined Identifier isnull=QMark? #userDefined
@@ -272,24 +269,16 @@ dateType
     : Date isnull=QMark?
     ;
 
-timeType
-    : Time isnull=QMark?
-    ;
-
-timestampType
-    : (Ts | Timestamp) isnull=QMark?
-    ;
-
-timestampTZType
-    : (TsTZ | Timestamp_TZ) isnull=QMark?
-    ;
-
 intervalYearType
     : (IYear | Interval_Year) isnull=QMark?
     ;
 
 intervalDayType
     : (IDay | Interval_Day) isnull=QMark? (OAngleBracket len=numericParameter CAngleBracket)?
+    ;
+
+intervalCompoundType
+    : (ICompound | Interval_Compound) isnull=QMark? (OAngleBracket len=numericParameter CAngleBracket)?
     ;
 
 fixedCharType
@@ -340,9 +329,11 @@ parameterizedType
     | fixedBinaryType
     | decimalType
     | intervalDayType
+    | intervalCompoundType
     | precisionTimeType
     | precisionTimestampType
     | precisionTimestampTZType
+    | listType
     | funcType
 // TODO implement the rest of the parameterized types
 //  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct

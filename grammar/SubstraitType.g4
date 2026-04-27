@@ -20,10 +20,7 @@ scalarType
   | FP64                    #fp64
   | String                  #string
   | Binary                  #binary
-  | Timestamp               #timestamp
-  | Timestamp_TZ            #timestampTz
   | Date                    #date
-  | Time                    #time
   | Interval_Year           #intervalYear
   | UUID                    #uuid
   ;
@@ -34,6 +31,7 @@ parameterizedType
   | FixedBinary isnull=QMark? Lt length=numericParameter Gt                                 #fixedBinary
   | Decimal isnull=QMark? Lt precision=numericParameter Comma scale=numericParameter Gt     #decimal
   | Interval_Day isnull=QMark? Lt precision=numericParameter Gt                             #precisionIntervalDay
+  | Interval_Compound isnull=QMark? Lt precision=numericParameter Gt                        #precisionIntervalCompound
   | Precision_Time isnull=QMark? Lt precision=numericParameter Gt                           #precisionTime
   | Precision_Timestamp isnull=QMark? Lt precision=numericParameter Gt                      #precisionTimestamp
   | Precision_Timestamp_TZ isnull=QMark? Lt precision=numericParameter Gt                   #precisionTimestampTZ

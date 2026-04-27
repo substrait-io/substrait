@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_string
 
 # basic: Basic examples without any special cases
 regexp_replace('test@test.com'::str, '^\S+@\S+$'::str, 'email_found'::str, 1::i64, 0::i64) = 'email_found'::str
@@ -20,10 +20,10 @@ regexp_replace('Hello'::str, 'Hel+'::str, '1'::str) = '1o'::str
 regexp_replace('Helo'::str, 'Hel+'::str, '1'::str) = '1o'::str
 
 # null_input: Examples with null as input
-regexp_replace('Hello'::str, null::str, '1'::str, 1::i64, 0::i64) = null::str
-regexp_replace(null::str, ' '::str, '1'::str, 1::i64, 0::i64) = null::str
-regexp_replace('Hello'::str, null::str, '1'::str) = null::str
-regexp_replace(null::str, ' '::str, '1'::str) = null::str
+regexp_replace('Hello'::str, null::str?, '1'::str, 1::i64, 0::i64) = null::str?
+regexp_replace(null::str?, ' '::str, '1'::str, 1::i64, 0::i64) = null::str?
+regexp_replace('Hello'::str, null::str?, '1'::str) = null::str?
+regexp_replace(null::str?, ' '::str, '1'::str) = null::str?
 
 # position_anchors: Examples with position anchors
 regexp_replace('abcdefg'::str, '\Aabc'::str, '111'::str, 1::i64, 0::i64) = '111defg'::str

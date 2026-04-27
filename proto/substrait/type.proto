@@ -10,7 +10,13 @@ option go_package = "github.com/substrait-io/substrait-protobuf/go/substraitpb";
 option java_multiple_files = true;
 option java_package = "io.substrait.proto";
 
+// Note: type_variation_reference fields within Type messages reference a
+// type_variation_anchor defined in the plan's extension declarations.
+//
+// The value 0 represents the system-preferred variation and is a valid reference value.
 message Type {
+  reserved 14, 17, 29;
+
   oneof kind {
     Boolean bool = 1;
     I8 i8 = 2;
@@ -21,16 +27,10 @@ message Type {
     FP64 fp64 = 11;
     String string = 12;
     Binary binary = 13;
-    // Deprecated in favor of `PrecisionTimestamp precision_timestamp`
-    Timestamp timestamp = 14 [deprecated = true];
     Date date = 16;
-    // Deprecated in favor of `PrecisionTime precision_time`
-    Time time = 17;
     IntervalYear interval_year = 19;
     IntervalDay interval_day = 20;
     IntervalCompound interval_compound = 35;
-    // Deprecated in favor of `PrecisionTimestampTZ precision_timestamp_tz`
-    TimestampTZ timestamp_tz = 29 [deprecated = true];
     UUID uuid = 32;
 
     FixedChar fixed_char = 21;
@@ -109,22 +109,7 @@ message Type {
     Nullability nullability = 2;
   }
 
-  message Timestamp {
-    uint32 type_variation_reference = 1;
-    Nullability nullability = 2;
-  }
-
   message Date {
-    uint32 type_variation_reference = 1;
-    Nullability nullability = 2;
-  }
-
-  message Time {
-    uint32 type_variation_reference = 1;
-    Nullability nullability = 2;
-  }
-
-  message TimestampTZ {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
   }
@@ -145,7 +130,7 @@ message Type {
     optional int32 precision = 3;
   }
 
-  // An interval consisting of the components of both IntervalMonth and IntervalDay
+  // An interval consisting of the components of both IntervalYear and IntervalDay
   message IntervalCompound {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
@@ -241,6 +226,7 @@ message Type {
   }
 
   message UserDefined {
+    // References a type_anchor defined in the plan's extension declarations.
     uint32 type_reference = 1;
     uint32 type_variation_reference = 2;
     Nullability nullability = 3;
@@ -274,6 +260,7 @@ message Type {
 message TypeAlias {
   // A surrogate key used in the context of a single plan to reference a
   // specific type alias.
+  // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
   uint32 type_alias_anchor = 1;
 
   // A concrete type to be aliased.

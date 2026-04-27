@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_string
 
 # basic: Basic examples without any special cases
 regexp_match_substring('foobarboopzoo'::str, 'o{1,}'::str, 1::i64, 1::i64, 0::i64) = 'oo'::str
@@ -14,10 +14,10 @@ regexp_match_substring('abcdefghi'::str, '(.*)c'::str) = 'abc'::str
 regexp_match_substring('abcdefghi'::str, '(.*)c?'::str) = 'abcdefghi'::str
 
 # null_input: Examples with null as input
-regexp_match_substring('Hello'::str, null::str, 1::i64, 1::i64, 0::i64) = null::str
-regexp_match_substring(null::str, ' '::str, 1::i64, 1::i64, 0::i64) = null::str
-regexp_match_substring('Hello'::str, null::str) = null::str
-regexp_match_substring(null::str, ' '::str) = null::str
+regexp_match_substring('Hello'::str, null::str?, 1::i64, 1::i64, 0::i64) = null::str?
+regexp_match_substring(null::str?, ' '::str, 1::i64, 1::i64, 0::i64) = null::str?
+regexp_match_substring('Hello'::str, null::str?) = null::str?
+regexp_match_substring(null::str?, ' '::str) = null::str?
 
 # metacharacters: Examples with metacharacters
 regexp_match_substring('abc1abc'::str, '\d'::str, 1::i64, 1::i64, 0::i64) = '1'::str

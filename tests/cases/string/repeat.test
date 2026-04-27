@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_string
 
 # basic: Basic examples without any special cases
 repeat('abc'::str, 2::i64) = 'abcabc'::str
@@ -9,4 +9,4 @@ repeat(' '::str, 5::i64) = '     '::str
 repeat(''::str, 2::i64) = ''::str
 
 # null_input: Examples with null as input
-repeat(null::str, 2::i64) = null::str
+repeat(null::str?, 2::i64) = null::str?

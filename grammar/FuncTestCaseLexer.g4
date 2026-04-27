@@ -14,6 +14,8 @@ SubstraitAggregateTest: 'SUBSTRAIT_AGGREGATE_TEST';
 SubstraitInclude: 'SUBSTRAIT_INCLUDE';
 SubstraitDependency: 'SUBSTRAIT_DEPENDENCY';
 
+ExtensionUrn: 'extension:' [a-z0-9:._]+;
+
 FormatVersion
     : 'v' DIGIT+ ('.' DIGIT+)?
     ;
@@ -78,7 +80,7 @@ DateLiteral
 
 PeriodPrefix: 'P';
 TimePrefix: 'T';
-YearPrefix: 'Y';
+YearSuffix: 'Y';
 MSuffix: 'M';  // used for both months and minutes
 DaySuffix: 'D';
 HourSuffix: 'H';
@@ -88,7 +90,7 @@ OAngleBracket: Lt;
 CAngleBracket: Gt;
 
 IntervalYearLiteral
-    : '\'' PeriodPrefix IntegerLiteral YearPrefix (IntegerLiteral MSuffix)? '\''
+    : '\'' PeriodPrefix IntegerLiteral YearSuffix (IntegerLiteral MSuffix)? '\''
     | '\'' PeriodPrefix IntegerLiteral MSuffix '\''
     ;
 
@@ -103,11 +105,17 @@ fragment TimeInterval
     | DecimalLiteral SecondSuffix
     ;
 
+IntervalCompoundLiteral
+    : '\'' PeriodPrefix (IntegerLiteral YearSuffix)? (IntegerLiteral MSuffix)? (IntegerLiteral DaySuffix)? (TimePrefix TimeInterval)? '\''
+    ;
+
 NullLiteral: 'null';
 
 StringLiteral
     : '\'' ('\\' . | '\'\'' | ~['\\])* '\''
     ;
+
+EnumType: 'enum' ;
 
 ColumnName
     : 'COL' Int

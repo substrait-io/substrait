@@ -1,19 +1,118 @@
-[tool.black]
-# exclude filters out files found by Black itself during discovery
-exclude = '''
-(
-  .*/antlr_parser/.*\.py
-  | gen/.*
-)
-'''
-# pre-commit passes files into Black, rather than letting it discover files
-# force-exclude can be used to filter out these files from formatting
-force-exclude = '''
-(
-  .*/antlr_parser/.*\.py
-  | gen/.*
-)
-'''
+[project]
+name = "substrait-specification"
+version = "0.0.0"
+requires-python = ">=3.13,<3.14"
+# just used for development, not intended for publication to PyPI
+classifiers = ["Private :: Do Not Upload"]
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".git",
+    ".pixi",
+    ".venv",
+    "gen",
+    "**/antlr_parser/**/*.py",
+]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+# Enable the same rule sets as the previous flake8 configuration
+# B = flake8-bugbear, C = flake8-comprehensions, E = pycodestyle errors,
+# F = pyflakes, W = pycodestyle warnings, B9 = flake8-bugbear opinionated
+select = ["B", "C", "E", "F", "W", "B9"]
+# Ignore rules that were ignored in flake8 config
+# E203: whitespace before ':' (conflicts with black/ruff formatter)
+# E266: too many leading '#' for block comment
+# E501: line too long (handled by formatter)
+# F403: 'from module import *' used; unable to detect undefined names
+# F401: module imported but unused
+# C901: function is too complex (McCabe complexity)
+ignore = ["E203", "E266", "E501", "F403", "F401", "C901"]
+
+[tool.ruff.format]
+# Use double quotes for strings (Black default)
+quote-style = "double"
+# Indent with spaces, rather than tabs
+indent-style = "space"
+# Respect magic trailing commas
+skip-magic-trailing-comma = false
+# Automatically detect the appropriate line ending
+line-ending = "auto"
 
 [tool.pytest.ini_options]
 pythonpath = ["gen/proto/python"]
+
+[tool.pixi.workspace]
+name = "substrait"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "osx-arm64", "linux-aarch64"]
+
+[tool.pixi.dependencies]
+antlr = ">=4.13.2,<5"
+buf = ">=1.62.1,<2"
+python = ">=3.13,<3.14"
+nodejs = ">=24,<25"
+
+[tool.pixi.tasks]
+# code generation
+generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate ANTLR Python parsers", inputs = ["grammar/*.g4"] }
+generate-protobuf = { cmd = "buf generate", description = "Generate protobuf Python code", inputs = ["proto/**/*.proto"], outputs = ["gen/proto/python/substrait/*.py"] }
+generate = { depends-on = ["generate-antlr", "generate-protobuf"] }
+
+# linting & format checking
+lint-protobuf = { cmd = "buf lint", description = "Lint Protobuf files" }
+check-protobuf = { cmd = "buf format --diff --exit-code", description = "Check Protobuf file format" }
+yamllint = { cmd = "yamllint .", default-environment = "dev", description = "Run yamllint" }
+check-jsonschema = [{ task = "check-examples" }, { task = "check-extensions" }, { task = "check-dialects" }]
+check-examples = { cmd = "check-jsonschema --schemafile text/simple_extensions_schema.yaml site/examples/**/*.yaml", default-environment = "dev", description = "Validate example YAML files" }
+check-extensions = { cmd = "check-jsonschema --schemafile text/simple_extensions_schema.yaml extensions/*.yaml", default-environment = "dev", description = "Validate extension YAML files" }
+check-dialects = { cmd = "check-jsonschema --schemafile text/dialect_schema.yaml dialects/tests/*.yaml", default-environment = "dev", description = "Validate dialect YAML files" }
+editorconfig-checker = { cmd = "ec", default-environment = "dev", description = "Check editorconfig"}
+ruff-lint = { cmd = "ruff check .", default-environment = "dev", description = "Ruff linting" }
+ruff-format-check = { cmd = "ruff format --diff .", default-environment = "dev", description = "Ruff formatting check" }
+lint = { depends-on = ["lint-protobuf", "check-protobuf", "ruff-lint", "ruff-format-check", "editorconfig-checker", "yamllint", "check-examples", "check-extensions", "check-dialects" ] }
+
+# formatting
+format-protobuf = { cmd = "buf format -w", description = "Format Protobuf files" }
+ruff-format = { cmd = "ruff format .", default-environment = "dev", description = "Ruff formatting" }
+format = { depends-on = ["ruff-format", "format-protobuf"], description = "Format code" }
+
+# testing
+test = { cmd = "pytest .", default-environment = "dev", depends-on = ["generate-protobuf"], description = "Run tests including test_substrait_extension_coverage" }
+
+# docs
+mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", description = "Build Website" }
+
+# release
+dry-run = { cmd = "./ci/release/dry_run.sh", default-environment = "dev", description = "dry-run release" }
+release = { cmd = "./ci/release/run.sh", default-environment = "dev", description = "release" }
+
+[tool.pixi.environments]
+dev = { features = ["dev"] }
+
+[dependency-groups]
+dev = [
+  "antlr4-python3-runtime>=4.13.2,<5",
+  "editorconfig-checker>=3.6.1,<4",
+  "ruff>=0.8.0,<1",
+  "protobuf==6.33.1",
+  "pytest>=9.0.3,<10",
+  "pyyaml>=6.0.2,<7",
+  "mdutils>=1.4.0,<2",
+  "mkdocs>=1.4.2,<2",
+  "mkdocs-awesome-pages-plugin>=2.8.0,<3",
+  "mkdocs-gen-files>=0.4.0,<1",
+  "mkdocs-markdownextradata-plugin>=0.2.5,<1",
+  "mkdocs-material>=9.1.5",
+  "mkdocs-minify-plugin>=0.6.1,<1",
+  "mkdocs-protobuf>=0.1.0,<1",
+  "mkdocs-redirects>=1.2.0,<2",
+  "mkdocs-table-reader-plugin>=2,<4",
+  "oyaml>=1.0,<2",
+  "pygments>=2.14,<3",
+  "pymdown-extensions>=9.9.1,<11",
+  "yamllint>=1.38,<2",
+  "check-jsonschema>=0.37,<1",
+]

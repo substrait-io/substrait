@@ -180,21 +180,6 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#timeArg.
-    def visitTimeArg(self, ctx:FuncTestCaseParser.TimeArgContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timestampArg.
-    def visitTimestampArg(self, ctx:FuncTestCaseParser.TimestampArgContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timestampTzArg.
-    def visitTimestampTzArg(self, ctx:FuncTestCaseParser.TimestampTzArgContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by FuncTestCaseParser#intervalYearArg.
     def visitIntervalYearArg(self, ctx:FuncTestCaseParser.IntervalYearArgContext):
         return self.visitChildren(ctx)
@@ -202,6 +187,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#intervalDayArg.
     def visitIntervalDayArg(self, ctx:FuncTestCaseParser.IntervalDayArgContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#intervalCompoundArg.
+    def visitIntervalCompoundArg(self, ctx:FuncTestCaseParser.IntervalCompoundArgContext):
         return self.visitChildren(ctx)
 
 
@@ -245,8 +235,18 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#enumArg.
+    def visitEnumArg(self, ctx:FuncTestCaseParser.EnumArgContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#literalList.
     def visitLiteralList(self, ctx:FuncTestCaseParser.LiteralListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#listElement.
+    def visitListElement(self, ctx:FuncTestCaseParser.ListElementContext):
         return self.visitChildren(ctx)
 
 
@@ -300,23 +300,8 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#timestamp.
-    def visitTimestamp(self, ctx:FuncTestCaseParser.TimestampContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timestampTz.
-    def visitTimestampTz(self, ctx:FuncTestCaseParser.TimestampTzContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by FuncTestCaseParser#date.
     def visitDate(self, ctx:FuncTestCaseParser.DateContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#time.
-    def visitTime(self, ctx:FuncTestCaseParser.TimeContext):
         return self.visitChildren(ctx)
 
 
@@ -365,21 +350,6 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#timeType.
-    def visitTimeType(self, ctx:FuncTestCaseParser.TimeTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timestampType.
-    def visitTimestampType(self, ctx:FuncTestCaseParser.TimestampTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timestampTZType.
-    def visitTimestampTZType(self, ctx:FuncTestCaseParser.TimestampTZTypeContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by FuncTestCaseParser#intervalYearType.
     def visitIntervalYearType(self, ctx:FuncTestCaseParser.IntervalYearTypeContext):
         return self.visitChildren(ctx)
@@ -387,6 +357,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#intervalDayType.
     def visitIntervalDayType(self, ctx:FuncTestCaseParser.IntervalDayTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#intervalCompoundType.
+    def visitIntervalCompoundType(self, ctx:FuncTestCaseParser.IntervalCompoundTypeContext):
         return self.visitChildren(ctx)
 
 

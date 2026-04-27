@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # basic: Basic examples without any special cases
 bitwise_and(0::i8, 1::i8) = 0::i8
@@ -11,5 +11,5 @@ bitwise_and(2147483647::i32, 1234567::i32) = 1234567::i32
 bitwise_and(2147483647::i32, 1234567::i32) = 1234567::i32
 bitwise_and(9223372036854775807::i64, 127::i64) = 127::i64
 bitwise_and(-9223372036854775807::i64, 127::i64) = 1::i64
-bitwise_and(null::i64, 127::i64) = null::i64
-bitwise_and(127::i64, null::i64) = null::i64
+bitwise_and(null::i64?, 127::i64) = null::i64?
+bitwise_and(127::i64, null::i64?) = null::i64?

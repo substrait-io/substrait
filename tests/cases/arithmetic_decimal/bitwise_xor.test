@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic_decimal.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
 
 # basic: Basic examples without any special cases
 bitwise_xor(0::dec<1, 0>, 1::dec<1, 0>) = 1::dec<1, 0>
@@ -18,5 +18,5 @@ bitwise_xor(99999999999999999999999999999999999999::dec<38, 0>, 0000000000000000
 bitwise_xor(-99999999999999999999999999999999999999::dec<38, 0>, -99999999999999999999999999999999999999::dec<38, 0>) = 0::dec<38, 0>
 
 # null_values: test with null values
-bitwise_xor(null::dec<1, 0>, 127::dec<3, 0>) = null::dec<3, 0>
-bitwise_xor(null::dec<1, 0>, null::dec<1, 0>) = null::dec<1, 0>
+bitwise_xor(null::dec?<1, 0>, 127::dec<3, 0>) = null::dec?<3, 0>
+bitwise_xor(null::dec?<1, 0>, null::dec?<1, 0>) = null::dec?<1, 0>

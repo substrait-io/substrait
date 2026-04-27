@@ -4,8 +4,12 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "build(deps): "
 
   - package-ecosystem: "pip"
-    directory: "/site"
+    directory: "/"
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "build(deps): "

@@ -65,23 +65,8 @@ class SubstraitTypeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by SubstraitTypeParser#timestamp.
-    def visitTimestamp(self, ctx:SubstraitTypeParser.TimestampContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by SubstraitTypeParser#timestampTz.
-    def visitTimestampTz(self, ctx:SubstraitTypeParser.TimestampTzContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by SubstraitTypeParser#date.
     def visitDate(self, ctx:SubstraitTypeParser.DateContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by SubstraitTypeParser#time.
-    def visitTime(self, ctx:SubstraitTypeParser.TimeContext):
         return self.visitChildren(ctx)
 
 
@@ -117,6 +102,11 @@ class SubstraitTypeVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by SubstraitTypeParser#precisionIntervalDay.
     def visitPrecisionIntervalDay(self, ctx:SubstraitTypeParser.PrecisionIntervalDayContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by SubstraitTypeParser#precisionIntervalCompound.
+    def visitPrecisionIntervalCompound(self, ctx:SubstraitTypeParser.PrecisionIntervalCompoundContext):
         return self.visitChildren(ctx)
 
 

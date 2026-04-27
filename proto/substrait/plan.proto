@@ -25,13 +25,11 @@ message PlanRel {
 // Describe a set of operations to complete.
 // For compactness sake, identifiers are normalized at the plan level.
 message Plan {
+  reserved 1;
+
   // Substrait version of the plan. Optional up to 0.17.0, required for later
   // versions.
   Version version = 6;
-
-  // a list of yaml specifications this plan may depend on
-  // this is now deprecated and extension_urns should be used instead.
-  repeated substrait.extensions.SimpleExtensionURI extension_uris = 1 [deprecated = true];
 
   // a list of extension URNs this plan may depend on
   repeated substrait.extensions.SimpleExtensionURN extension_urns = 8;
@@ -64,6 +62,9 @@ message Plan {
   // parameterized types being declared have many parameters (e.g., struct with
   // many fields, nested parameterized types, string as a type parameter).
   repeated TypeAlias type_aliases = 9;
+
+  // Execution behavior settings for this plan, required.
+  ExecutionBehavior execution_behavior = 10;
 }
 
 // This message type can be used to deserialize only the version of a Substrait
@@ -102,10 +103,28 @@ message Version {
 // Represents a binding for a dynamic parameter.
 message DynamicParameterBinding {
   // The parameter anchor that identifies the dynamic parameter reference.
+  // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
   uint32 parameter_anchor = 1;
 
   // The literal value assigned to the parameter at runtime.
   // The type of the literal needs to match the type of the corresponding
   // DynamicParameter expression in the plan.
   Expression.Literal value = 2;
+}
+
+// ExecutionBehavior specifies the execution behavior for plan evaluation.
+message ExecutionBehavior {
+  // Defines the scope of execution context variable evaluation during plan
+  // execution.
+  VariableEvaluationMode variable_eval_mode = 1;
+
+  // VariableEvaluationMode specifies the frequency and scope of execution
+  // context variable evaluation.
+  enum VariableEvaluationMode {
+    VARIABLE_EVALUATION_MODE_UNSPECIFIED = 0;
+    // Variables are evaluated once per Substrait plan execution.
+    VARIABLE_EVALUATION_MODE_PER_PLAN = 1;
+    // Variables are evaluated once per record during execution.
+    VARIABLE_EVALUATION_MODE_PER_RECORD = 2;
+  }
 }

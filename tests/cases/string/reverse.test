@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_string
 
 # basic: Basic examples without any special cases
 reverse('abc'::str) = 'cba'::str
@@ -8,7 +8,7 @@ reverse('   123'::str) = '321   '::str
 reverse(''::str) = ''::str
 
 # null_input: Examples with null as input
-reverse(null::str) = null::str
+reverse(null::str?) = null::str?
 
 # unicode: Examples with unicode characters as input
 reverse('ææããa'::str) = 'aããææ'::str

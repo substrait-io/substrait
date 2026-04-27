@@ -1,5 +1,5 @@
 ### SUBSTRAIT_AGGREGATE_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_aggregate_generic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_aggregate_generic
 
 # basic: Basic examples without any special cases
 count((100, -200, 300, -400, 5, 6)::i16) = 6::i64

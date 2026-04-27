@@ -3,7 +3,7 @@ import os
 import yaml
 
 from tests.coverage.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
-from tests.coverage.nodes import SubstraitError
+from tests.coverage.nodes import SubstraitError, type_str_is_outer_nullable
 
 enable_debug = False
 
@@ -32,17 +32,16 @@ def build_type_to_short_type():
         FuncTestCaseLexer.String: FuncTestCaseLexer.Str,
         FuncTestCaseLexer.Binary: FuncTestCaseLexer.VBin,
         FuncTestCaseLexer.Boolean: FuncTestCaseLexer.Bool,
-        FuncTestCaseLexer.Timestamp: FuncTestCaseLexer.Ts,
-        FuncTestCaseLexer.Timestamp_TZ: FuncTestCaseLexer.TsTZ,
         FuncTestCaseLexer.Date: FuncTestCaseLexer.Date,
-        FuncTestCaseLexer.Time: FuncTestCaseLexer.Time,
         FuncTestCaseLexer.Interval_Year: FuncTestCaseLexer.IYear,
         FuncTestCaseLexer.Interval_Day: FuncTestCaseLexer.IDay,
+        FuncTestCaseLexer.Interval_Compound: FuncTestCaseLexer.ICompound,
         FuncTestCaseLexer.UUID: FuncTestCaseLexer.UUID,
         FuncTestCaseLexer.FixedChar: FuncTestCaseLexer.FChar,
         FuncTestCaseLexer.VarChar: FuncTestCaseLexer.VChar,
         FuncTestCaseLexer.FixedBinary: FuncTestCaseLexer.FBin,
         FuncTestCaseLexer.Decimal: FuncTestCaseLexer.Dec,
+        FuncTestCaseLexer.Precision_Time: FuncTestCaseLexer.PT,
         FuncTestCaseLexer.Precision_Timestamp: FuncTestCaseLexer.PTs,
         FuncTestCaseLexer.Precision_Timestamp_TZ: FuncTestCaseLexer.PTsTZ,
         FuncTestCaseLexer.Struct: FuncTestCaseLexer.Struct,
@@ -57,6 +56,8 @@ def build_type_to_short_type():
     any_type = substrait_type_str(FuncTestCaseLexer.Any)
     for i in range(1, 3):
         to_short_type[f"{any_type}{i}"] = f"{any_type}{i}"
+    # Add enum type
+    to_short_type["enum"] = "enum"
     return to_short_type
 
 
@@ -72,6 +73,11 @@ class Extension:
     @staticmethod
     def get_short_type(long_type):
         long_type = long_type.lower().rstrip("?")
+
+        # Handle "enum" type specially
+        if long_type == "enum":
+            return "enum"
+
         short_type = type_to_short_type.get(long_type, None)
 
         if short_type is None:
@@ -115,16 +121,25 @@ class Extension:
                         debug(
                             f"arg is not a value type for function: {func['name']} arg must be enum options {arg['options']}"
                         )
-                        args.append("str")
+                        args.append("enum")
+            nullability = impl.get(
+                "nullability", "MIRROR"
+            )  # MIRROR is the spec default
+            return_type_raw = str(impl["return"])
+            is_return_nullable = type_str_is_outer_nullable(return_type_raw)
             overloads.append(
                 FunctionOverload(
-                    args, Extension.get_short_type(impl["return"]), "variadic" in impl
+                    args,
+                    Extension.get_short_type(impl["return"]),
+                    "variadic" in impl,
+                    nullability=nullability,
+                    is_return_nullable=is_return_nullable,
                 )
             )
         return overloads
 
     @staticmethod
-    def add_functions_to_map(func_list, function_map, suffix, extension, uri):
+    def add_functions_to_map(func_list, function_map, suffix, extension, urn):
         dup_idx = 0
         for func in func_list:
             name = func["name"]
@@ -134,11 +149,11 @@ class Extension:
                 )
                 dup_idx += 1
                 name = f"{name}_dup{dup_idx}_{suffix}"
-                assert (
-                    name not in function_map
-                ), f"Duplicate function name: {name} renaming to {name}_{suffix} extension: {extension}"
+                assert name not in function_map, (
+                    f"Duplicate function name: {name} renaming to {name}_{suffix} extension: {extension}"
+                )
             func["overloads"] = Extension.get_supported_kernels_from_impls(func)
-            func["uri"] = uri
+            func["urn"] = urn
             func.pop("description", None)
             func.pop("impls", None)
             function_map[name] = func
@@ -147,7 +162,7 @@ class Extension:
     def read_substrait_extensions(dir_path: str):
         # read files from extensions directory
         extensions = []
-        for root, dirs, files in os.walk(dir_path):
+        for root, _dirs, files in os.walk(dir_path):
             for file in files:
                 if file.endswith(".yaml") and file.startswith("functions_"):
                     extensions.append(os.path.join(root, file))
@@ -158,6 +173,7 @@ class Extension:
         aggregate_functions = {}
         window_functions = {}
         dependencies = {}
+        registered_urns = set()
         # convert yaml file to a python dictionary
         for extension in extensions:
             suffix = extension[:-5]  # strip .yaml at the end of the extension
@@ -170,13 +186,16 @@ class Extension:
             dependencies[suffix] = Extension.get_base_uri() + uri
             with open(extension, "r") as fh:
                 data = yaml.load(fh, Loader=yaml.FullLoader)
+                urn = data.get("urn")
+                if urn:
+                    registered_urns.add(urn)
                 if "scalar_functions" in data:
                     Extension.add_functions_to_map(
                         data["scalar_functions"],
                         scalar_functions,
                         suffix,
                         extension,
-                        uri,
+                        urn,
                     )
                 if "aggregate_functions" in data:
                     Extension.add_functions_to_map(
@@ -184,7 +203,7 @@ class Extension:
                         aggregate_functions,
                         suffix,
                         extension,
-                        uri,
+                        urn,
                     )
                 if "window_functions" in data:
                     Extension.add_functions_to_map(
@@ -192,11 +211,15 @@ class Extension:
                         window_functions,
                         suffix,
                         extension,
-                        uri,
+                        urn,
                     )
 
         return FunctionRegistry(
-            scalar_functions, aggregate_functions, window_functions, dependencies
+            scalar_functions,
+            aggregate_functions,
+            window_functions,
+            dependencies,
+            registered_urns,
         )
 
 
@@ -207,72 +230,110 @@ class FunctionType:
 
 
 class FunctionVariant:
-    def __init__(self, name, uri, description, args, return_type, variadic, func_type):
+    def __init__(
+        self,
+        name,
+        urn,
+        description,
+        args,
+        return_type,
+        variadic,
+        func_type,
+        nullability="MIRROR",
+        is_return_nullable=False,
+    ):
         self.name = name
-        self.uri = uri
+        self.urn = urn
         self.description = description
         self.args = args
         self.return_type = return_type
         self.variadic = variadic
         self.func_type = func_type
+        self.nullability = nullability
+        self.is_return_nullable = is_return_nullable
         self.test_count = 0
 
     def __str__(self):
-        return f"Function(name={self.name}, uri={self.uri}, description={self.description}, overloads={self.overload}, args={self.args}, result={self.result})"
+        return f"Function(name={self.name}, urn={self.urn}, description={self.description}, overloads={self.overload}, args={self.args}, result={self.result})"
 
     def increment_test_count(self, count=1):
         self.test_count += count
 
 
 class FunctionOverload:
-    def __init__(self, args, return_type, variadic):
+    def __init__(
+        self,
+        args,
+        return_type,
+        variadic,
+        nullability="MIRROR",
+        is_return_nullable=False,
+    ):
         self.args = args
         self.return_type = return_type
         self.variadic = variadic
+        self.nullability = nullability
+        self.is_return_nullable = is_return_nullable
 
     def __str__(self):
-        return f"FunctionOverload(args={self.args}, result={self.return_type}, variadic={self.variadic})"
+        return f"FunctionOverload(args={self.args}, result={self.return_type}, variadic={self.variadic}, nullability={self.nullability}, is_return_nullable={self.is_return_nullable})"
 
 
 # define function type enum
 
 
 class FunctionRegistry:
-    registry = dict()
-    dependencies = dict()
-    scalar_functions = dict()
-    aggregate_functions = dict()
-    window_functions = dict()
-    extensions = set()
-
     def __init__(
-        self, scalar_functions, aggregate_functions, window_functions, dependencies
+        self,
+        scalar_functions,
+        aggregate_functions,
+        window_functions,
+        dependencies,
+        registered_urns=None,
     ):
+        self.registry = {}
         self.dependencies = dependencies
         self.scalar_functions = scalar_functions
         self.aggregate_functions = aggregate_functions
         self.window_functions = window_functions
+        self.registered_urns = registered_urns or set()
         self.add_functions(scalar_functions, FunctionType.SCALAR)
         self.add_functions(aggregate_functions, FunctionType.AGGREGATE)
         self.add_functions(window_functions, FunctionType.WINDOW)
 
     def add_functions(self, functions, func_type):
         for func in functions.values():
-            self.extensions.add(func["uri"])
             f_name = func["name"]
             fun_arr = self.registry.get(f_name, [])
             for overload in func["overloads"]:
                 function = FunctionVariant(
                     func["name"],
-                    func["uri"],
+                    func["urn"],
                     "",
                     overload.args,
                     overload.return_type,
                     overload.variadic,
                     func_type,
+                    nullability=overload.nullability,
+                    is_return_nullable=overload.is_return_nullable,
                 )
                 fun_arr.append(function)
             self.registry[f_name] = fun_arr
+
+    def validate_urn(self, urn):
+        """Validate that an extension URN is registered.
+
+        Args:
+            urn: A URN (e.g., 'extension:io.substrait:functions_arithmetic')
+
+        Raises:
+            ValueError: If the URN is not registered
+        """
+        if urn not in self.registered_urns:
+            raise ValueError(
+                f"Unknown extension URN: {urn}. "
+                f"Valid URNs are: {', '.join(sorted(self.registered_urns))}"
+            )
 
     @staticmethod
     def is_type_any(func_arg_type):
@@ -280,19 +341,19 @@ class FunctionRegistry:
 
     @staticmethod
     def is_same_type(func_arg_type, arg_type):
-        arg_type_base = arg_type.split("<")[0]
+        arg_type_base = arg_type.split("<")[0].rstrip("?")
         if func_arg_type == arg_type_base:
             return True
         return FunctionRegistry.is_type_any(func_arg_type)
 
     def get_function(
-        self, name: str, uri: str, args: object, return_type
+        self, name: str, urn: str, args: object, return_type
     ) -> [FunctionVariant]:
         functions = self.registry.get(name, None)
         if functions is None:
             return None
         for function in functions:
-            if uri != function.uri:
+            if urn != function.urn:
                 continue
             if not isinstance(return_type, SubstraitError) and not self.is_same_type(
                 function.return_type, return_type
@@ -315,11 +376,11 @@ class FunctionRegistry:
         return None
 
     def get_extension_list(self):
-        return list(self.extensions)
+        return list(self.registered_urns)
 
     def fill_coverage(self, coverage):
         for func_name, functions in self.registry.items():
             for function in functions:
                 coverage.update_coverage(
-                    function.uri, func_name, function.args, function.test_count
+                    function.urn, func_name, function.args, function.test_count
                 )

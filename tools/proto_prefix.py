@@ -30,14 +30,14 @@ def tokenize(data):
     'ident', 'string', 'number', 'symbol', 'comment', or 'space', and match is
     the matched string. All characters will be made part of a token, so joining
     all matches yields exactly the original string."""
-    tokens = dict(
-        ident=re.compile(r"[a-zA-Z_][a-zA-Z_0-9.]*"),
-        string=re.compile(r'"(?:[^"\\]|\\.)*"'),
-        number=re.compile(r"[0-9]+"),
-        symbol=re.compile(r"[=;{}\[\]]"),
-        comment=re.compile(r"//[^\n]*\n|/\*(?:(?!\*/).)*\*/"),
-        space=re.compile(r"\s+"),
-    )
+    tokens = {
+        "ident": re.compile(r"[a-zA-Z_][a-zA-Z_0-9.]*"),
+        "string": re.compile(r'"(?:[^"\\]|\\.)*"'),
+        "number": re.compile(r"[0-9]+"),
+        "symbol": re.compile(r"[=;,{}\[\]]"),
+        "comment": re.compile(r"//[^\n]*\n|/\*(?:(?!\*/).)*\*/"),
+        "space": re.compile(r"\s+"),
+    }
 
     while data:
         longest_match = ""
@@ -92,7 +92,7 @@ class Group:
         return self.tokens[self.indices[idx]][0]
 
     def __str__(self):
-        return "".join(map(lambda x: x[1], self.tokens))
+        return "".join(x[1] for x in self.tokens)
 
 
 def group_tokens(tokens):
@@ -182,9 +182,7 @@ def make_group_converter(prefix_from, prefix_to, **options):
     prefix_to = preprocess_prefix(prefix_to)
 
     def format_inner_namespace(inner_namespace, separator, case):
-        return "".join(
-            map(lambda el: separator + convert_case(el, case), inner_namespace)
-        )
+        return "".join(separator + convert_case(el, case) for el in inner_namespace)
 
     def generate_options(inner_namespace):
         first = True
@@ -369,14 +367,14 @@ def cmd_line():
     # specific to compute from just a prefix.
     lower_prefix = positional[1]
     csharp_prefix = ".".join(
-        map(lambda el: convert_case(el, "Pascal"), lower_prefix.split("."))
+        convert_case(el, "Pascal") for el in lower_prefix.split(".")
     )
     java_prefix = lower_prefix
-    default_options = dict(
-        csharp_namespace=f"{csharp_prefix}.Protobuf",
-        java_multiple_files=True,
-        java_package=f"io.{java_prefix}.proto",
-    )
+    default_options = {
+        "csharp_namespace": f"{csharp_prefix}.Protobuf",
+        "java_multiple_files": True,
+        "java_package": f"io.{java_prefix}.proto",
+    }
     default_options.update(options)
     options = dict(filter(lambda x: x[1] is not None, default_options.items()))
 

@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_string
 
 # basic: Basic examples without any special cases
 lower('ABC'::str) = 'abc'::str
@@ -8,7 +8,7 @@ lower('abc'::str) = 'abc'::str
 lower(''::str) = ''::str
 
 # null_input: Examples with null as input
-lower(null::str) = null::str
+lower(null::str?) = null::str?
 
 # unicode: Examples with unicode characters as input
 lower('ÆÆÃÃA'::str) [full_unicode:TRUE] = 'ææããa'::str
