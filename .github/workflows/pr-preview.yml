@@ -9,7 +9,9 @@ on:
       - "text/**"
       - ".github/workflows/pr-preview.yml"
 
-concurrency: preview-${{ github.ref }}
+concurrency:
+  group: preview-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -55,7 +57,7 @@ jobs:
         with:
           header: pr-preview
           message: |
-            📘 Preview: https://substrait.io/preview/${{ github.event.pull_request.number }}/
+            Preview: https://substrait.io/preview/${{ github.event.pull_request.number }}/
             _Updated for ${{ github.event.pull_request.head.sha }}_
 
   cleanup:
