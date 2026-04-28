@@ -558,6 +558,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#unknown.
+    def enterUnknown(self, ctx:FuncTestCaseParser.UnknownContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#unknown.
+    def exitUnknown(self, ctx:FuncTestCaseParser.UnknownContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#userDefined.
     def enterUserDefined(self, ctx:FuncTestCaseParser.UserDefinedContext):
         pass

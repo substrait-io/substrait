@@ -315,6 +315,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#unknown.
+    def visitUnknown(self, ctx:FuncTestCaseParser.UnknownContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#userDefined.
     def visitUserDefined(self, ctx:FuncTestCaseParser.UserDefinedContext):
         return self.visitChildren(ctx)

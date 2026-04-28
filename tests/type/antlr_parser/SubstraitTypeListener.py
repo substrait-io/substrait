@@ -135,6 +135,15 @@ class SubstraitTypeListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SubstraitTypeParser#unknown.
+    def enterUnknown(self, ctx:SubstraitTypeParser.UnknownContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#unknown.
+    def exitUnknown(self, ctx:SubstraitTypeParser.UnknownContext):
+        pass
+
+
     # Enter a parse tree produced by SubstraitTypeParser#fixedChar.
     def enterFixedChar(self, ctx:SubstraitTypeParser.FixedCharContext):
         pass

@@ -9,6 +9,7 @@ By storing examples as separate files instead of inline in markdown, we can easi
 ```
 examples/
 ├── extensions/     # Extension function examples (e.g., any types)
+├── proto-textformat/ # Protobuf text format examples
 ├── types/          # User-defined type examples
 └── README.md       # This file
 ```
