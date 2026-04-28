@@ -66,24 +66,22 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.event.action == 'closed'
     steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: substrait-io/substrait.io
+          ssh-key: ${{ secrets.SUBSTRAIT_SITE_DEPLOY_KEY }}
+          path: site-repo
       - name: Remove preview directory
+        working-directory: site-repo
         env:
-          DEPLOY_KEY: ${{ secrets.SUBSTRAIT_SITE_DEPLOY_KEY }}
           PR: ${{ github.event.pull_request.number }}
         run: |
-          mkdir -p ~/.ssh
-          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
-          export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes"
-          git clone --depth 1 git@github.com:substrait-io/substrait.io.git site-repo
-          cd site-repo
           if [ -d "preview/$PR" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git rm -rf "preview/$PR"
             git commit -m "Remove preview for PR #$PR"
-            git push origin main
+            git push
           fi
       - name: Delete preview comment
         uses: marocchino/sticky-pull-request-comment@v2
