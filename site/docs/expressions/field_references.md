@@ -167,26 +167,48 @@ Outer references allow expressions inside a subquery to access records from an e
 
 `id_reference` resolves the reference by referring to the binding relation via its plan-wide unique `RelCommon.id`. The `id` on the referenced relation must be set (>= 1) and unique across all relations in the plan.
 
+#### Coexistence rules
+
+Exactly one of `steps_out` or `id_reference` must be set on each `OuterReference`. A single plan may contain outer references using different strategies (e.g., some using `steps_out` and others using `id_reference`), as long as every individual reference is unambiguous. However, if any shared relation (via `ReferenceRel`) contains an unresolved outer reference, that reference **must** use `id_reference`.
+
 #### When to use `id_reference`
 
-`id_reference` must be used instead of `steps_out` when a plan contains **shared relations** via `ReferenceRel` with unresolved outer references. In such plans, the binding relation (i.e., the relation providing the actual value of the outer reference) can be reached through multiple paths with different depths, making offset-based resolution ambiguous because `steps_out` depends on *which* path is followed.
+`id_reference` must be used instead of `steps_out` when a plan contains **shared relations** via `ReferenceRel` with unresolved outer references in the shared relations. In such plans, the binding relation (i.e., the relation providing the actual value of the outer reference) can be reached through multiple paths with different depths, making offset-based resolution ambiguous because `steps_out` depends on *which* path is followed.
 
 For example, consider a plan with two nested scalar subqueries that share a common relation `x`. The outer reference to `tableA.a` lives inside `x`, which is reached via paths of different depth:
 
 ```
 PlanRel.relations[0].rel:  # let's call it 'x'
-FilterRel(a > outer_ref(tableA.a))
+FilterRel(a > outer_ref(steps_out=1, tableA.a)) # steps_out 1 or 2?
   └── ReadRel(tableB)
 
 PlanRel.relations[1].root:
-ProjectRel [id=1]
+ProjectRel # Correct binding for tableA.a for the outer reference tableA.a in x.
 ├── ReadRel(tableA)
-└── Subquery.Scalar ── (1)
+└── Subquery.Scalar # Subquery (1)
     └── SetRel(MINUS_PRIMARY)
-        ├── Subquery.Scalar ── (2)
-        │   └── ReferenceRel(0)
-        └── ReferenceRel(0)
+        ├── ProjectRel
+        |   └── Subquery.Scalar # Subquery (2)
+        │       └── ReferenceRel(0) # Reference 1: correct steps_out = 2
+        └── ReferenceRel(0) # Reference 2: correct steps_out = 1
 ```
 
-The shared relation `x` contains an outer reference to `tableA.a`. It is reached through two paths — one via subquery (2), one directly — so `steps_out` would need a different value depending on which path is followed. With `id_reference = 1`, the reference inside `x` unambiguously names `ProjectRel` to resolve the outer reference regardless of path.
+From the reference 1, the correct `steps_out` is 2 because it needs to go through 2 subqueries to reach the ProjectRel. From the reference 2, the correct `steps_out` is 1 because it only needs to go over 1 subquery. Thus, the outer reference is malformed.
 
+With `id_reference`, both reference rels can unambiguously refer to the correct binding.
+
+```
+PlanRel.relations[0].rel:  # let's call it 'x'
+FilterRel(a > outer_ref(id_reference=7, tableA.a))
+  └── ReadRel(tableB)
+
+PlanRel.relations[1].root:
+ProjectRel [id=7] # Correct binding for tableA.a for the outer reference tableA.a in x.
+├── ReadRel(tableA)
+└── Subquery.Scalar # Subquery (1)
+    └── SetRel(MINUS_PRIMARY)
+        ├── ProjectRel
+        |   └── Subquery.Scalar # Subquery (2)
+        │       └── ReferenceRel(0) # Reference 1: id_reference = 7
+        └── ReferenceRel(0) # Reference 2: id_reference = 7
+```

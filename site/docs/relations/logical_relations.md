@@ -425,6 +425,10 @@ We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the t
 One expressing `A JOIN B` (in position 0 in the plan), one using reference as follows: `ReferenceRel(0) JOIN C` and a third one
 doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B`.
 
+!!! note "Outer references in shared relations"
+
+    When a shared relation contains an unresolved outer reference, the reference must use `id_reference` instead of `steps_out`, because a `ReferenceRel` can be reached through multiple paths of different depths, making offset-based resolution ambiguous. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
+
 | Signature            | Value                                 |
 | -------------------- |---------------------------------------|
 | Inputs               | 1                                     |

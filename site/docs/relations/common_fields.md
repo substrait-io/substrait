@@ -12,6 +12,10 @@ A relation which has a direct emit kind outputs the relation's output without re
     * Many relations (such as Project) by default provide as their output the list of all their input columns plus any generated columns as its output columns.  Review each relation to understand its specific output default.
 
 
+## Relation ID
+
+A relation may carry an optional plan-wide unique identifier (`id`). When set, the value must be >= 1 and unique across all relations in the plan. This identifier is required when the relation is the binding point for an `OuterReference` that uses `id_reference` resolution. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
+
 ## Hints
 
 Hints provide information that can improve performance but cannot be used to control the behavior.  Table statistics, runtime constraints, name hints, and saved computations all fall into this category.
