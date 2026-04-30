@@ -170,11 +170,6 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#quotedLiteral.
-    def visitQuotedLiteral(self, ctx:FuncTestCaseParser.QuotedLiteralContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by FuncTestCaseParser#stringArg.
     def visitStringArg(self, ctx:FuncTestCaseParser.StringArgContext):
         return self.visitChildren(ctx)

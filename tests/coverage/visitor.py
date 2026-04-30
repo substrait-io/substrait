@@ -361,7 +361,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitStringArg(self, ctx: FuncTestCaseParser.StringArgContext):
         type_str = ctx.stringType().getText().lower()
         return CaseLiteral(
-            value=ctx.quotedLiteral().getText(),
+            value=ctx.StringLiteral().getText(),
             type=type_str,
             nullable=ctx.stringType().isnull is not None,
         )
@@ -376,7 +376,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitDateArg(self, ctx: FuncTestCaseParser.DateArgContext):
         type_str = ctx.dateType().getText().lower()
         return CaseLiteral(
-            value=ctx.quotedLiteral().getText().strip("'"),
+            value=ctx.DateLiteral().getText(),
             type=type_str,
             nullable=ctx.dateType().isnull is not None,
         )
@@ -384,7 +384,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitIntervalDayArg(self, ctx: FuncTestCaseParser.IntervalDayArgContext):
         type_str = ctx.intervalDayType().getText().lower()
         return CaseLiteral(
-            value=ctx.quotedLiteral().getText().strip("'"),
+            value=ctx.IntervalDayLiteral().getText(),
             type=type_str,
             nullable=ctx.intervalDayType().isnull is not None,
         )
@@ -392,7 +392,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitIntervalYearArg(self, ctx: FuncTestCaseParser.IntervalYearArgContext):
         type_str = ctx.intervalYearType().getText().lower()
         return CaseLiteral(
-            value=ctx.quotedLiteral().getText().strip("'"),
+            value=ctx.IntervalYearLiteral().getText(),
             type=type_str,
             nullable=ctx.intervalYearType().isnull is not None,
         )
@@ -400,7 +400,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitFixedCharArg(self, ctx: FuncTestCaseParser.FixedCharArgContext):
         type_str = ctx.fixedCharType().getText().lower()
         return CaseLiteral(
-            value=ctx.quotedLiteral().getText(),
+            value=ctx.StringLiteral().getText(),
             type=type_str,
             nullable=ctx.fixedCharType().isnull is not None,
         )
@@ -408,7 +408,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitVarCharArg(self, ctx: FuncTestCaseParser.VarCharArgContext):
         type_str = ctx.varCharType().getText().lower()
         return CaseLiteral(
-            value=ctx.quotedLiteral().getText(),
+            value=ctx.StringLiteral().getText(),
             type=type_str,
             nullable=ctx.varCharType().isnull is not None,
         )
@@ -416,7 +416,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitFixedBinaryArg(self, ctx: FuncTestCaseParser.FixedBinaryArgContext):
         type_str = ctx.fixedBinaryType().getText().lower()
         return CaseLiteral(
-            value=ctx.quotedLiteral().getText(),
+            value=ctx.StringLiteral().getText(),
             type=type_str,
             nullable=ctx.fixedBinaryType().isnull is not None,
         )
@@ -424,7 +424,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitPrecisionTimeArg(self, ctx: FuncTestCaseParser.PrecisionTimeArgContext):
         type_str = ctx.precisionTimeType().getText().lower()
         return CaseLiteral(
-            value=ctx.quotedLiteral().getText().strip("'"),
+            value=ctx.TimeLiteral().getText(),
             type=type_str,
             nullable=ctx.precisionTimeType().isnull is not None,
         )
@@ -434,7 +434,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     ):
         type_str = ctx.precisionTimestampType().getText().lower()
         return CaseLiteral(
-            value=ctx.quotedLiteral().getText().strip("'"),
+            value=ctx.TimestampLiteral().getText(),
             type=type_str,
             nullable=ctx.precisionTimestampType().isnull is not None,
         )
@@ -444,7 +444,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     ):
         type_str = ctx.precisionTimestampTZType().getText().lower()
         return CaseLiteral(
-            value=ctx.quotedLiteral().getText().strip("'"),
+            value=ctx.TimestampTzLiteral().getText(),
             type=type_str,
             nullable=ctx.precisionTimestampTZType().isnull is not None,
         )

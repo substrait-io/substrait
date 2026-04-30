@@ -46,7 +46,7 @@ add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
 def test_parse_date_time_example():
     header = make_header("v1.0", "extension:io.substrait:functions_datetime")
     tests = """# timestamp examples using the precision_timestamp type
-lt('2016-12-31T13:30:15'::pts<6>, '2017-12-31T13:30:15'::pts<6>) = true::bool
+lt(2016-12-31T13:30:15::pts<6>, 2017-12-31T13:30:15::pts<6>) = true::bool
 """
 
     test_file = parse_string(header + tests)
@@ -492,20 +492,20 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "f5(1.1::dec, 2.2::decimal) = 3.3::dec",
         "f6(1.1::dec<38,10>, 2.2::dec<38,10>) = 3.3::dec<38,10>",
         "f7(1.1::dec<38,10>, 2.2::decimal<38,10>) = 3.3::decimal<38,10>",
-        "f8('1991-01-01'::date) = '2001-01-01'::date",
-        "f9('13:01:01.2345678'::pt<6>) = '23:59:59.999'::pt<6>",
-        "f10('1991-01-01T01:02:03.456'::pts<6>, '1991-01-01T00:00:00'::pts<6>) = '1991-01-01T22:33:44'::pts<6>",
-        "f11('1991-01-01T01:02:03.456+05:30'::ptstz<6>, '1991-01-01T00:00:00+15:30'::ptstz<6>) = 23::i32",
-        "f12('1991-01-01'::date, 5::i64) = '1991-01-01T00:00:00+15:30'::ptstz<6>",
-        "f13('P10Y5M'::interval_year, 5::i64) = 'P15Y5M'::interval_year",
-        "f14('P10Y5M'::iyear, 5::i64) = 'P15Y5M'::iyear",
-        "f15('P10DT5H6M7.2000S'::interval_day<6>, 5::i64) = 'P10DT10H6M7.2000S'::interval_day<6>",
-        "f16('P10DT6M7.200S'::interval_day<3>, 5::i64) = 'P10DT11M7.200S'::interval_day<3>",
-        "f16('P10DT6M0.2000S'::iday<4>, 5::i64) = 'P10DT11M5.2000S'::iday<4>",
-        "f16('P10DT6M7S'::interval_day, 5::i64) = 'P10DT11M7S'::interval_day",
-        "f17('P10Y5M10DT6M7S'::interval_compound, 5::i64) = 'P10Y5M10DT6M7S'::interval_compound",
-        "f17('P10Y5M10DT6M7.200S'::interval_compound<3>, 5::i64) = 'P10Y5M10DT6M7.200S'::interval_compound<3>",
-        "f17('P10Y5M10DT6M0.2000S'::icompound<4>, 5::i64) = 'P10Y5M10DT6M0.2000S'::icompound<4>",
+        "f8(1991-01-01::date) = 2001-01-01::date",
+        "f9(13:01:01.2345678::pt<6>) = 23:59:59.999::pt<6>",
+        "f10(1991-01-01T01:02:03.456::pts<6>, 1991-01-01T00:00:00::pts<6>) = 1991-01-01T22:33:44::pts<6>",
+        "f11(1991-01-01T01:02:03.456+05:30::ptstz<6>, 1991-01-01T00:00:00+15:30::ptstz<6>) = 23::i32",
+        "f12(1991-01-01::date, 5::i64) = 1991-01-01T00:00:00+15:30::ptstz<6>",
+        "f13(P10Y5M::interval_year, 5::i64) = P15Y5M::interval_year",
+        "f14(P10Y5M::iyear, 5::i64) = P15Y5M::iyear",
+        "f15(P10DT5H6M7.2000S::interval_day<6>, 5::i64) = P10DT10H6M7.2000S::interval_day<6>",
+        "f16(P10DT6M7.200S::interval_day<3>, 5::i64) = P10DT11M7.200S::interval_day<3>",
+        "f16(P10DT6M0.2000S::iday<4>, 5::i64) = P10DT11M5.2000S::iday<4>",
+        "f16(P10DT6M7S::interval_day, 5::i64) = P10DT11M7S::interval_day",
+        "f17(P10Y5M10DT6M7S::interval_compound, 5::i64) = P10Y5M10DT6M7S::interval_compound",
+        "f17(P10Y5M10DT6M7.200S::interval_compound<3>, 5::i64) = P10Y5M10DT6M7.200S::interval_compound<3>",
+        "f17(P10Y5M10DT6M0.2000S::icompound<4>, 5::i64) = P10Y5M10DT6M0.2000S::icompound<4>",
         "ltrim('abcabcdef'::str, 'abc'::str) [spaces_only:FALSE] = 'def'::str",
         "concat('abcd'::str, Null::str?) [null_handling:ACCEPT_NULLS] = Null::str?",
         "concat('abcd'::str, Null::str?) [null_handling:IGNORE_NULLS] = 'abcd'::str",
@@ -529,11 +529,11 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         "concat('abcd'::vchar<9>, 'ef'::varchar<9>) = Null::vchar?<9>",
         "concat('abcd'::vchar<9>, 'ef'::fixedchar<9>) = Null::fchar?<9>",
         "concat('abcd'::fbin<9>, 'ef'::fixedbinary<9>) = Null::fbin?<9>",
-        "f35('1991-01-01T01:02:03.456'::pts<3>) = '1991-01-01T01:02:30.123123'::precision_timestamp<3>",
-        "f36('1991-01-01T01:02:03.456'::pts<3>, '1991-01-01T01:02:30.123123'::precision_timestamp<3>) = 123456::i64",
-        "f37('1991-01-01T01:02:03.123456'::pts<6>, '1991-01-01T04:05:06.456'::precision_timestamp<6>) = 123456::i64",
-        "f38('1991-01-01T01:02:03.456+05:30'::ptstz<3>) = '1991-01-01T00:00:00+15:30'::precision_timestamp_tz<3>",
-        "f39('1991-01-01T01:02:03.123456+05:30'::ptstz<6>) = '1991-01-01T00:00:00+15:30'::precision_timestamp_tz<6>",
+        "f35(1991-01-01T01:02:03.456::pts<3>) = 1991-01-01T01:02:30.123123::precision_timestamp<3>",
+        "f36(1991-01-01T01:02:03.456::pts<3>, 1991-01-01T01:02:30.123123::precision_timestamp<3>) = 123456::i64",
+        "f37(1991-01-01T01:02:03.123456::pts<6>, 1991-01-01T04:05:06.456::precision_timestamp<6>) = 123456::i64",
+        "f38(1991-01-01T01:02:03.456+05:30::ptstz<3>) = 1991-01-01T00:00:00+15:30::precision_timestamp_tz<3>",
+        "f39(1991-01-01T01:02:03.123456+05:30::ptstz<6>) = 1991-01-01T00:00:00+15:30::precision_timestamp_tz<6>",
         "logb(10::fp64, -inf::fp64) [on_domain_error:ERROR] = <!ERROR>",
         "bitwise_and(-31766::dec<5, 0>, 900::dec<3, 0>) = 896::dec<5, 0>",
         "or(true::bool, true::bool) = true::bool",
@@ -653,17 +653,17 @@ def test_nullable_types():
         # List
         "concat([1, 2]::List?<i8>, [3]::List?<i8>) = [1, 2, 3]::List?<i8>",
         # Date and time types
-        "lt('2020-01-01'::date?, '2020-01-02'::date?) = true::bool",
-        "lt('12:00:00'::pt?<6>, '13:00:00'::pt?<6>) = true::bool",
-        "lt('2020-01-01T12:00:00'::pts?<6>, '2020-01-02T12:00:00'::pts?<6>) = true::bool",
-        "lt('2020-01-01T12:00:00+00:00'::ptstz?<6>, '2020-01-02T12:00:00+00:00'::ptstz?<6>) = true::bool",
+        "lt(2020-01-01::date?, 2020-01-02::date?) = true::bool",
+        "lt(12:00:00::pt?<6>, 13:00:00::pt?<6>) = true::bool",
+        "lt(2020-01-01T12:00:00::pts?<6>, 2020-01-02T12:00:00::pts?<6>) = true::bool",
+        "lt(2020-01-01T12:00:00+00:00::ptstz?<6>, 2020-01-02T12:00:00+00:00::ptstz?<6>) = true::bool",
         # Interval types
-        "lt('P1Y'::iyear?, 'P2Y'::iyear?) = true::bool",
-        "lt('P1D'::iday?, 'P2D'::iday?) = true::bool",
+        "lt(P1Y::iyear?, P2Y::iyear?) = true::bool",
+        "lt(P1D::iday?, P2D::iday?) = true::bool",
         # Precision time types
-        "lt('12:00:00.123'::pt?<3>, '13:00:00.456'::pt?<3>) = true::bool",
-        "lt('2020-01-01T12:00:00.123'::pts?<3>, '2020-01-02T12:00:00.456'::pts?<3>) = true::bool",
-        "lt('2020-01-01T12:00:00.123+00:00'::ptstz?<3>, '2020-01-02T12:00:00.456+00:00'::ptstz?<3>) = true::bool",
+        "lt(12:00:00.123::pt?<3>, 13:00:00.456::pt?<3>) = true::bool",
+        "lt(2020-01-01T12:00:00.123::pts?<3>, 2020-01-02T12:00:00.456::pts?<3>) = true::bool",
+        "lt(2020-01-01T12:00:00.123+00:00::ptstz?<3>, 2020-01-02T12:00:00.456+00:00::ptstz?<3>) = true::bool",
     ]
     header = (
         make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
@@ -682,10 +682,10 @@ def test_double_nullable_rejected():
         "add('abc'::fchar?<3>?, 'def'::fchar?<3>) = 'abcdef'::fchar?<6>",
         "add('abc'::vchar?<10>?, 'def'::vchar?<10>) = 'abcdef'::vchar?<10>",
         "add('abc'::fbin?<3>?, 'def'::fbin?<3>) = 'abcdef'::fbin?<6>",
-        "add('P1D'::iday??, 'P2D'::iday?) = 'P3D'::iday?",
-        "add('12:00:00'::pt?<3>?, '13:00:00'::pt?<3>) = '01:00:00'::pt?<3>",
-        "add('2020-01-01T12:00:00'::pts?<3>?, '2020-01-02T12:00:00'::pts?<3>) = 1::i64",
-        "add('2020-01-01T12:00:00+00:00'::ptstz?<3>?, '2020-01-02T12:00:00+00:00'::ptstz?<3>) = 1::i64",
+        "add(P1D::iday??, P2D::iday?) = P3D::iday?",
+        "add(12:00:00::pt?<3>?, 13:00:00::pt?<3>) = 01:00:00::pt?<3>",
+        "add(2020-01-01T12:00:00::pts?<3>?, 2020-01-02T12:00:00::pts?<3>) = 1::i64",
+        "add(2020-01-01T12:00:00+00:00::ptstz?<3>?, 2020-01-02T12:00:00+00:00::ptstz?<3>) = 1::i64",
     ]
     header = (
         make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
