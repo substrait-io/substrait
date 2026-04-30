@@ -14,7 +14,7 @@ A relation which has a direct emit kind outputs the relation's output without re
 
 ## Relation ID
 
-A relation may carry an optional plan-wide unique identifier (`id`). When set, the value must be >= 1 and unique across all relations in the plan. This identifier is required when the relation is the binding point for an `OuterReference` that uses `id_reference` resolution. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
+A relation may carry an optional plan-wide unique identifier (`rel_anchor`). When set, the value must be >= 1 and unique across all relations in the plan. This identifier is required when the relation is the binding point for an `OuterReference` that uses `rel_reference` resolution. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
 
 ## Hints
 

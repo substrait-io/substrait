@@ -1,19 +1,19 @@
-# Outer reference using id_reference (id-based resolution)
+# Outer reference using rel_reference (id-based resolution)
 #
 # Scenario: A shared relation (via ReferenceRel) contains a correlated
 # filter that references a column from an enclosing relation. Because the
 # shared relation can be reached through multiple paths of different
 # depths, offset-based resolution (steps_out) would be ambiguous.
-# id_reference resolves this by naming the binding relation directly.
+# rel_reference resolves this by naming the binding relation directly.
 #
 # Plan structure:
 #
 #   PlanRel.relations[0].rel:          (shared relation "x")
-#     FilterRel(col > outer_ref(id_reference=7, position 0))
+#     FilterRel(col > outer_ref(rel_reference=7, position 0))
 #       └── ReadRel(tableB)
 #
 #   PlanRel.relations[1].root:
-#     ProjectRel [id=7]               <-- binding relation
+#     ProjectRel [rel_anchor=7]        <-- binding relation
 #       ├── ReadRel(tableA)
 #       └── Subquery.Scalar
 #           └── SetRel(MINUS_PRIMARY)
@@ -23,17 +23,17 @@
 #               └── ReferenceRel(0)           (depth 1 from binding)
 #
 # Both ReferenceRel nodes point to the same shared relation, but they
-# sit at different depths. id_reference = 7 unambiguously resolves
-# to the ProjectRel whose RelCommon.id = 7, regardless of which path
-# is taken.
+# sit at different depths. rel_reference = 7 unambiguously resolves
+# to the ProjectRel whose RelCommon.rel_anchor = 7, regardless of which
+# path is taken.
 #
 # message Expression.FieldReference
 
 outer_reference: {
-  id_reference: 7  # Refers to the relation with RelCommon.id = 7
+  rel_reference: 7  # Refers to the relation with RelCommon.rel_anchor = 7
 }
 direct_reference: {
   struct_field: {
-    field: 0       # First column of the binding relation (tableA.a)
+    field: 0        # First column of the binding relation (tableA.a)
   }
 }

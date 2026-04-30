@@ -427,7 +427,7 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 
 !!! note "Outer references in shared relations"
 
-    When a shared relation contains an unresolved outer reference, the reference must use `id_reference` instead of `steps_out`, because a `ReferenceRel` can be reached through multiple paths of different depths, making offset-based resolution ambiguous. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
+    When a shared relation contains an unresolved outer reference, the reference must use `rel_reference` instead of `steps_out`, because a `ReferenceRel` can be reached through multiple paths of different depths, making offset-based resolution ambiguous. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
 
 | Signature            | Value                                 |
 | -------------------- |---------------------------------------|

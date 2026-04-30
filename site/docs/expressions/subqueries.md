@@ -78,11 +78,14 @@ The `OuterReference` root type provides two resolution fields:
   upward. This works correctly when the plan is a tree (each relation has a
   single parent).
 
-* `id_reference`: Resolves the reference by naming the binding relation
-  via its plan-wide unique `RelCommon.id`. Must be used instead of
-  `steps_out` when an outer reference appears inside a relation shared via
-  `ReferenceRel` and that shared relation can be reached through multiple
-  paths with different subquery depths, making `steps_out` ambiguous.
+* `rel_reference`: Resolves the reference by naming the binding relation
+  via its plan-wide unique `RelCommon.rel_anchor`. Must be used instead of
+  `steps_out` when an outer reference appears inside a relation shared via
+
+  `ReferenceRel` and that shared relation can be reached through multiple
+
+  paths with different subquery depths, making `steps_out` ambiguous.
+
 
 Exactly one of these fields must be set. See
 [Field References — Outer References](field_references.md#outer-references)
