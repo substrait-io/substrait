@@ -173,7 +173,7 @@ Exactly one of `steps_out` or `id_reference` must be set on each `OuterReference
 
 #### When to use `id_reference`
 
-`id_reference` must be used instead of `steps_out` when a plan contains **shared relations** via `ReferenceRel` with unresolved outer references in the shared relations. In such plans, the binding relation (i.e., the relation providing the actual value of the outer reference) can be reached through multiple paths with different depths, making offset-based resolution ambiguous because `steps_out` depends on *which* path is followed.
+`id_reference` must be used instead of `steps_out` when an outer reference appears inside a relation shared via `ReferenceRel` and the shared relation can be reached through multiple paths with different subquery depths, making `steps_out` ambiguous. In this case, the same outer reference could require different `steps_out` values depending on which path is followed.
 
 For example, consider a plan with two nested scalar subqueries that share a common relation `x`. The outer reference to `tableA.a` lives inside `x`, which is reached via paths of different depth:
 
@@ -189,11 +189,11 @@ ProjectRel # Correct binding for tableA.a for the outer reference tableA.a in x.
     └── SetRel(MINUS_PRIMARY)
         ├── ProjectRel
         |   └── Subquery.Scalar # Subquery (2)
-        │       └── ReferenceRel(0) # Reference 1: correct steps_out = 2
-        └── ReferenceRel(0) # Reference 2: correct steps_out = 1
+        │       └── ReferenceRel(0) # Here steps_out=1 binds incorrectly, because tableA.a is actually two subquery boundaries out.
+        └── ReferenceRel(0) # Here steps_out=1 binds correctly, because tableA.a is one subquery boundary out.
 ```
 
-From the reference 1, the correct `steps_out` is 2 because it needs to go through 2 subqueries to reach the ProjectRel. From the reference 2, the correct `steps_out` is 1 because it only needs to go over 1 subquery. Thus, the outer reference is malformed.
+The same shared relation `x` contains a single stored `steps_out=1` outer reference, but that value is only correct for one of its uses. The other use would need `steps_out=2`, so offset-based resolution is ambiguous.
 
 With `id_reference`, both reference rels can unambiguously refer to the correct binding.
 

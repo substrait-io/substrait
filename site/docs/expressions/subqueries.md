@@ -80,9 +80,9 @@ The `OuterReference` root type provides two resolution fields:
 
 * `id_reference`: Resolves the reference by naming the binding relation
   via its plan-wide unique `RelCommon.id`. Must be used instead of
-  `steps_out` when the plan contains shared relations (`ReferenceRel`)
-  because offset-based resolution is ambiguous when multiple paths exist to
-  the same relation.
+  `steps_out` when an outer reference appears inside a relation shared via
+  `ReferenceRel` and that shared relation can be reached through multiple
+  paths with different subquery depths, making `steps_out` ambiguous.
 
 Exactly one of these fields must be set. See
 [Field References — Outer References](field_references.md#outer-references)

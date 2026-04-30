@@ -1629,11 +1629,11 @@ message Expression {
         // reference. Must be >= 1.
         uint32 steps_out = 1;
 
-        // Plan-wide unique id of the relation whose input order this reference is
-        // rooted on. Must match an id defined on a RelCommon in the plan.
-        // Must be >= 1. Must be used instead of steps_out when the plan
-        // contains shared relations (ReferenceRel) and offset-based
-        // resolution via steps_out would be ambiguous.
+        // References the plan-wide unique id of the relation that this field reference
+        // is rooted on. Must match an id defined on a RelCommon in the plan.
+        // Must be >= 1. Must be used instead of steps_out when this outer reference
+        // appears inside a relation shared via ReferenceRel and offset-based resolution
+        // via steps_out would be ambiguous.
         uint32 id_reference = 2;
       }
     }
