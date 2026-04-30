@@ -150,48 +150,59 @@ booleanArg
     : BooleanLiteral DoubleColon booleanType
     ;
 
+quotedLiteral
+    : StringLiteral
+    | DateLiteral
+    | TimeLiteral
+    | TimestampLiteral
+    | TimestampTzLiteral
+    | IntervalYearLiteral
+    | IntervalDayLiteral
+    | IntervalCompoundLiteral
+    ;
+
 stringArg
-    : StringLiteral DoubleColon stringType
+    : quotedLiteral DoubleColon stringType
     ;
 
 dateArg
-    : DateLiteral DoubleColon dateType
+    : quotedLiteral DoubleColon dateType
     ;
 
 intervalYearArg
-    : IntervalYearLiteral DoubleColon intervalYearType
+    : quotedLiteral DoubleColon intervalYearType
     ;
 
 intervalDayArg
-    : IntervalDayLiteral DoubleColon intervalDayType
+    : quotedLiteral DoubleColon intervalDayType
     ;
 
 intervalCompoundArg
-    : IntervalCompoundLiteral DoubleColon intervalCompoundType
+    : quotedLiteral DoubleColon intervalCompoundType
     ;
 
 fixedCharArg
-    : StringLiteral DoubleColon fixedCharType
+    : quotedLiteral DoubleColon fixedCharType
     ;
 
 varCharArg
-    : StringLiteral DoubleColon varCharType
+    : quotedLiteral DoubleColon varCharType
     ;
 
 fixedBinaryArg
-    : StringLiteral DoubleColon fixedBinaryType
+    : quotedLiteral DoubleColon fixedBinaryType
     ;
 
 precisionTimeArg
-    : TimeLiteral DoubleColon precisionTimeType
+    : quotedLiteral DoubleColon precisionTimeType
     ;
 
 precisionTimestampArg
-    : TimestampLiteral DoubleColon precisionTimestampType
+    : quotedLiteral DoubleColon precisionTimestampType
     ;
 
 precisionTimestampTZArg
-    : TimestampTzLiteral DoubleColon precisionTimestampTZType
+    : quotedLiteral DoubleColon precisionTimestampTZType
     ;
 
 listArg

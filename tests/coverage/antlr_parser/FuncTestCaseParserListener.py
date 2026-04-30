@@ -297,6 +297,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#quotedLiteral.
+    def enterQuotedLiteral(self, ctx:FuncTestCaseParser.QuotedLiteralContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#quotedLiteral.
+    def exitQuotedLiteral(self, ctx:FuncTestCaseParser.QuotedLiteralContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#stringArg.
     def enterStringArg(self, ctx:FuncTestCaseParser.StringArgContext):
         pass

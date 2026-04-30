@@ -141,6 +141,39 @@ octet_length('😄'::str) = 4::i64
     assert test_file.testcases[3].args[0] == CaseLiteral("'😄'", "str")
 
 
+def test_parse_type_shaped_string_literals():
+    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    tests = """# basic
+identity('2020-05-10'::str) = '2020-05-10'::str
+identity('12:00:00'::str) = '12:00:00'::str
+identity('2020-05-10T01:02:03'::str) = '2020-05-10T01:02:03'::str
+identity('2020-05-10T01:02:03.123'::str) = '2020-05-10T01:02:03.123'::str
+identity('2020-05-10T01:02:03+01:00'::str) = '2020-05-10T01:02:03+01:00'::str
+identity('2020-05-10T01:02:03Z'::str) = '2020-05-10T01:02:03Z'::str
+identity('P1Y'::str) = 'P1Y'::str
+identity('P1D'::str) = 'P1D'::str
+identity('P1Y2M3DT4H5M6S'::str) = 'P1Y2M3DT4H5M6S'::str
+"""
+
+    test_file = parse_string(header + tests)
+
+    values = [
+        "'2020-05-10'",
+        "'12:00:00'",
+        "'2020-05-10T01:02:03'",
+        "'2020-05-10T01:02:03.123'",
+        "'2020-05-10T01:02:03+01:00'",
+        "'2020-05-10T01:02:03Z'",
+        "'P1Y'",
+        "'P1D'",
+        "'P1Y2M3DT4H5M6S'",
+    ]
+    assert len(test_file.testcases) == len(values)
+    for test_case, value in zip(test_file.testcases, values):
+        assert test_case.args[0] == CaseLiteral(value, "str")
+        assert test_case.result == CaseLiteral(value, "str")
+
+
 def test_parse_string_list_example():
     header = make_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
