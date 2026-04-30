@@ -169,7 +169,7 @@ identity('P1Y2M3DT4H5M6S'::str) = 'P1Y2M3DT4H5M6S'::str
         "'P1Y2M3DT4H5M6S'",
     ]
     assert len(test_file.testcases) == len(values)
-    for test_case, value in zip(test_file.testcases, values):
+    for test_case, value in zip(test_file.testcases, values, strict=True):
         assert test_case.args[0] == CaseLiteral(value, "str")
         assert test_case.result == CaseLiteral(value, "str")
 
