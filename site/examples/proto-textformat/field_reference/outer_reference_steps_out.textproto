@@ -1,0 +1,31 @@
+# Outer reference using steps_out (offset-based resolution)
+#
+# Scenario: A correlated scalar subquery where the inner filter references
+# a column from the outer query.
+#
+# SQL equivalent:
+#   SELECT *
+#   FROM orders                     -- outer relation
+#   WHERE amount > (
+#     SELECT AVG(amount)            -- scalar subquery
+#     FROM orders AS o2
+#     WHERE o2.customer_id = orders.customer_id  -- outer reference
+#   )
+#
+# The outer reference `orders.customer_id` is one subquery boundary up,
+# so steps_out = 1. The referenced field is at position 0 (customer_id)
+# in the outer relation's output.
+#
+# steps_out works here because the plan is a tree (each relation has
+# exactly one parent), so the path to the binding relation is unambiguous.
+#
+# message Expression.FieldReference
+
+outer_reference: {
+  steps_out: 1  # One subquery boundary up to the enclosing relation
+}
+direct_reference: {
+  struct_field: {
+    field: 0    # First column of the outer relation (customer_id)
+  }
+}
