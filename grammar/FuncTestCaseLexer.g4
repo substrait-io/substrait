@@ -62,20 +62,20 @@ fragment FourDigits: [0-9][0-9][0-9][0-9];
 fragment TwoDigits: [0-9][0-9];
 
 TimestampTzLiteral
-    : '\'' FourDigits '-' TwoDigits '-' TwoDigits 'T' TwoDigits ':' TwoDigits ':' TwoDigits ( '.' [0-9]+ )?
-        [+-] TwoDigits ':' TwoDigits '\''
+    : FourDigits '-' TwoDigits '-' TwoDigits 'T' TwoDigits ':' TwoDigits ':' TwoDigits ( '.' [0-9]+ )?
+        [+-] TwoDigits ':' TwoDigits
     ;
 
 TimestampLiteral
-    : '\'' FourDigits '-' TwoDigits '-' TwoDigits 'T' TwoDigits ':' TwoDigits ':' TwoDigits ( '.' [0-9]+ )? '\''
+    : FourDigits '-' TwoDigits '-' TwoDigits 'T' TwoDigits ':' TwoDigits ':' TwoDigits ( '.' [0-9]+ )?
     ;
 
 TimeLiteral
-    : '\'' TwoDigits ':' TwoDigits ':' TwoDigits ( '.' [0-9]+ )? '\''
+    : TwoDigits ':' TwoDigits ':' TwoDigits ( '.' [0-9]+ )?
     ;
 
 DateLiteral
-    : '\'' FourDigits '-' TwoDigits '-' TwoDigits '\''
+    : FourDigits '-' TwoDigits '-' TwoDigits
     ;
 
 PeriodPrefix: 'P';
@@ -90,13 +90,13 @@ OAngleBracket: Lt;
 CAngleBracket: Gt;
 
 IntervalYearLiteral
-    : '\'' PeriodPrefix IntegerLiteral YearSuffix (IntegerLiteral MSuffix)? '\''
-    | '\'' PeriodPrefix IntegerLiteral MSuffix '\''
+    : PeriodPrefix IntegerLiteral YearSuffix (IntegerLiteral MSuffix)?
+    | PeriodPrefix IntegerLiteral MSuffix
     ;
 
 IntervalDayLiteral
-    : '\'' PeriodPrefix IntegerLiteral DaySuffix (TimePrefix TimeInterval)? '\''
-    | '\'' PeriodPrefix TimePrefix TimeInterval '\''
+    : PeriodPrefix IntegerLiteral DaySuffix (TimePrefix TimeInterval)?
+    | PeriodPrefix TimePrefix TimeInterval
     ;
 
 fragment TimeInterval
@@ -106,7 +106,7 @@ fragment TimeInterval
     ;
 
 IntervalCompoundLiteral
-    : '\'' PeriodPrefix (IntegerLiteral YearSuffix)? (IntegerLiteral MSuffix)? (IntegerLiteral DaySuffix)? (TimePrefix TimeInterval)? '\''
+    : PeriodPrefix (IntegerLiteral YearSuffix)? (IntegerLiteral MSuffix)? (IntegerLiteral DaySuffix)? (TimePrefix TimeInterval)?
     ;
 
 NullLiteral: 'null';
