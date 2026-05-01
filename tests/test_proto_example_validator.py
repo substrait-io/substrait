@@ -10,7 +10,7 @@ from google.protobuf.message import Message
 import pytest
 
 try:
-    from substrait import algebra_pb2
+    from substrait import algebra_pb2, extended_expression_pb2
 except ImportError as err:
     raise ImportError(
         "Protobuf bindings not found. Run 'buf generate' to generate them."
@@ -63,4 +63,20 @@ def test_validate_field_references():
     for textproto_file in examples_dir.glob("*.textproto"):
         validate_example(
             textproto_file.read_text(), algebra_pb2.Expression.FieldReference
+        )
+
+
+def test_validate_unbound_expressions():
+    """Validate unbound expression examples."""
+    examples_dir = Path("site/examples/proto-textformat/unbound_expression")
+    for textproto_file in examples_dir.glob("*.textproto"):
+        validate_example(textproto_file.read_text(), algebra_pb2.Expression)
+
+
+def test_validate_extended_expressions():
+    """Validate extended expression examples."""
+    examples_dir = Path("site/examples/proto-textformat/extended_expression")
+    for textproto_file in examples_dir.glob("*.textproto"):
+        validate_example(
+            textproto_file.read_text(), extended_expression_pb2.ExtendedExpression
         )

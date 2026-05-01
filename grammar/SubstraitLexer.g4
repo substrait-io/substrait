@@ -116,6 +116,8 @@ Number
   : '-'? Int
   ;
 
+Unknown: 'UNKNOWN';
+
 Identifier
   : ('A'..'Z' | '_' | '$') ('A'..'Z' | '_' | '$' | Digit)*
   ;

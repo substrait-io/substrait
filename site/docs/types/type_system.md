@@ -15,3 +15,5 @@ Refer to [Type Parsing](type_parsing.md) for a description of the syntax used to
 
 !!! note "Note"
     Substrait employs a strict type system without any coercion rules. All changes in types must be made explicit via [cast expressions](../expressions/specialized_record_expressions.md).
+
+    Partially bound expressions may use the [`unknown`](type_classes.md#unknown-type) type as a placeholder until a downstream binder resolves the concrete type.

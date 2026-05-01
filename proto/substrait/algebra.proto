@@ -1016,6 +1016,7 @@ message Expression {
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
     ExecutionContextVariable execution_context_variable = 17;
+    NamedExpression named_expression = 18;
 
     // deprecated: enum literals are only sensible in the context of
     // function arguments, for which FunctionArgument should now be
@@ -1251,6 +1252,17 @@ message Expression {
     Nested.Struct arguments = 2;
   }
 
+  // A named expression that is not yet resolved to a positional reference or
+  // concrete expression. The names field is used to represent namespacing
+  // (e.g. qualifier and field name). Producers and consumers must share enough
+  // external context to resolve this expression before execution unless the
+  // consumer defines semantics for unresolved named expressions. Until
+  // resolved, a NamedExpression's type is Type.Unknown.
+  message NamedExpression {
+    repeated string names = 1;
+    substrait.extensions.AdvancedExtension advanced_extension = 10;
+  }
+
   // A scalar function call.
   message ScalarFunction {
     // Points to a function_anchor defined in this plan, which must refer
@@ -1268,6 +1280,9 @@ message Expression {
     //  - Enum arguments must be bound using FunctionArgument.enum
     //    followed by Enum.specified, with a string that case-insensitively
     //    matches one of the allowed options.
+    //
+    // In a partially bound expression, Type.Unknown may stand in for any
+    // concrete type while binding value or type arguments.
     repeated FunctionArgument arguments = 4;
 
     // Options to specify behavior for corner cases, or leave behavior
@@ -1276,7 +1291,8 @@ message Expression {
     repeated FunctionOption options = 5;
 
     // Must be set to the return type of the function, exactly as derived
-    // using the declaration in the extension.
+    // using the declaration in the extension. In a partially bound expression,
+    // this may be Type.Unknown if the concrete return type is unresolved.
     Type output_type = 3;
 
     // Deprecated; use arguments instead.
@@ -1307,6 +1323,9 @@ message Expression {
     //  - Enum arguments must be bound using FunctionArgument.enum
     //    followed by Enum.specified, with a string that case-insensitively
     //    matches one of the allowed options.
+    //
+    // In a partially bound expression, Type.Unknown may stand in for any
+    // concrete type while binding value or type arguments.
     repeated FunctionArgument arguments = 9;
 
     // Options to specify behavior for corner cases, or leave behavior
@@ -1315,7 +1334,8 @@ message Expression {
     repeated FunctionOption options = 11;
 
     // Must be set to the return type of the function, exactly as derived
-    // using the declaration in the extension.
+    // using the declaration in the extension. In a partially bound expression,
+    // this may be Type.Unknown if the concrete return type is unresolved.
     Type output_type = 7;
 
     // Describes which part of the window function to perform within the
@@ -1836,6 +1856,9 @@ message AggregateFunction {
   //  - Optional enum arguments must be bound using FunctionArgument.enum
   //    followed by either Enum.specified or Enum.unspecified. If specified,
   //    the string must case-insensitively match one of the allowed options.
+  //
+  // In a partially bound expression, Type.Unknown may stand in for any
+  // concrete type while binding value or type arguments.
   repeated FunctionArgument arguments = 7;
 
   // Options to specify behavior for corner cases, or leave behavior
@@ -1844,7 +1867,8 @@ message AggregateFunction {
   repeated FunctionOption options = 8;
 
   // Must be set to the return type of the function, exactly as derived
-  // using the declaration in the extension.
+  // using the declaration in the extension. In a partially bound expression,
+  // this may be Type.Unknown if the concrete return type is unresolved.
   Type output_type = 5;
 
   // Describes which part of the aggregation to perform within the context of

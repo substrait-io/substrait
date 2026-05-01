@@ -107,3 +107,12 @@ func<(any1, any2, any3) -> any4>
 ```
 
 Function types use the arrow syntax (`->`) to separate parameter types from the return type. For multiple parameters, use parentheses to group the parameter types. See [Lambda Expressions](../expressions/lambda_expressions.md) for more details on lambda expressions and their usage.
+
+### Unknown Type
+
+The `unknown` type is written as `unknown` and may include the normal nullability marker:
+
+```
+unknown
+unknown?
+```
