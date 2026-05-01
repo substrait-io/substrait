@@ -2,9 +2,9 @@
 
 There is no true distinction between logical and physical operations in Substrait. By convention, certain operations are classified as physical, but all operations can be potentially used in any kind of plan. A particular set of transformations or target operators may (by convention) be considered the "physical plan" but this is a characteristic of the system consuming substrait as opposed to a definition within Substrait.
 
-## Hash Equijoin Operator
+## Hash Join Operator
 
-The hash equijoin join operator will build a hash table out of one input (default `right`) based on a set of join keys. It will then probe that hash table for the other input (default `left`), finding matches.
+The hash join operator will build a hash table out of one input (default `right`) based on a set of join keys. It will then probe that hash table for the other input (default `left`), finding matches, then use `residual_expression` to determine whether the matches are true matches.
 
 | Signature            | Value                                                             |
 | -------------------- | ----------------------------------------------------------------- |
@@ -14,7 +14,7 @@ The hash equijoin join operator will build a hash table out of one input (defaul
 | Input Order          | Same as the [Join](logical_relations.md#join-operation) operator. |
 | Direct Output Order  | Same as the [Join](logical_relations.md#join-operation) operator. |
 
-### Hash Equijoin Properties
+### Hash Join Properties
 
 | Property            | Description                                                                                                                                                                                                             | Required                                           |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
@@ -23,7 +23,8 @@ The hash equijoin join operator will build a hash table out of one input (defaul
 | Build Input         | Specifies which input is the `Build`.                                                                                                                                                                                   | Optional, defaults to build `Right`, probe `Left`. |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                  | Required                                           |
 | Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                 | Required                                           |
-| Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.                           |
+| Residual Expression | An optional boolean expression evaluated on each candidate key-match to determine whether it is a true match. Use this for join predicates that cannot be expressed as equijoin keys (e.g., range or inequality conditions). This expression participates in join-type semantics (outer, anti, mark, etc.). | Optional, defaults to True. |
+| Post-Join Filter    | An optional boolean condition applied to the output of the join. Semantically equivalent to placing a [Filter](logical_relations.md#filter-operation) directly above the join. Does not influence which rows are considered matches. | Optional, defaults to True. |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                                           |
 
 ## NLJ (Nested Loop Join) Operator
@@ -47,9 +48,9 @@ The nested loop join operator does a join by holding the entire right input and 
 | Join Expression | A boolean condition that describes whether each record from the left set "match" the record from the right set. | Optional. Defaults to true (a Cartesian join). |
 | Join Type       | One of the join types defined in the Join operator.                                                             | Required                                       |
 
-## Merge Equijoin Operator
+## Merge Join Operator
 
-The merge equijoin does a join by taking advantage of two sets that are sorted on the join keys. This allows the join operation to be done in a streaming fashion.
+The merge join does a join by taking advantage of two sets that are sorted on the join keys. This allows the join operation to be done in a streaming fashion. Once the join keys are matched, then use `residual_expression` to determine whether the matches are true matches.
 
 | Signature            | Value                                                             |
 | -------------------- | ----------------------------------------------------------------- |
@@ -67,7 +68,8 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | Right Input         | A relational input.                                                                                                                                                                                                     | Required                 |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                  | Required                 |
 | Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                 | Required                 |
-| Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true. |
+| Residual Expression | An optional boolean expression evaluated on each candidate key-match to determine whether it is a true match. Use this for join predicates that cannot be expressed as equijoin keys (e.g., range or inequality conditions). This expression participates in join-type semantics (outer, anti, mark, etc.). | Optional, defaults to True. |
+| Post-Join Filter    | An optional boolean condition applied to the output of the join. Semantically equivalent to placing a [Filter](logical_relations.md#filter-operation) directly above the join. Does not influence which rows are considered matches. | Optional, defaults to True. |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                 |
 
 ## Exchange Operator
