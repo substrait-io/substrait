@@ -407,6 +407,27 @@ If at least one grouping expression is present, the aggregation is allowed to no
 | Per Grouping Set | A list of expression grouping that the aggregation measured should be calculated for. | Optional.      |
 | Measures         | A list of one or more aggregate expressions along with an optional filter. | Optional, required if no grouping sets. |
 
+### Aggregate Compatibility
+
+The aggregate operation is one of the most complex operations in the spec. Although implementations mostly agree on behaviors, there may be gaps in corner cases. Those behavioral differences are captured in compatibility.
+
+NOTE: The compatibility is meant to address gaps in the core implementation of aggregation such as grouping sets. For custom aggregations, consider using aggregate extension functions. If you want to introduce a new compatibility mode, reach out Substrait PMC to discuss.
+
+#### Empty Grouping Set on Empty Input
+
+This compatibility mode defines how the AggregateRel behaves with empty grouping set on an empty input. Default is `EMPTY_GROUPING_SET_ON_EMPTY_INPUT_YIELDS_ROWS`.
+
+| Mode                                             | Behavior                      | Example Systems |
+| -------------------------------------------------|-------------------------------|-----------------|
+| EMPTY_GROUPING_SET_ON_EMPTY_INPUT_YIELDS_ROWS    | A row for empty grouping set  | PostgreSQL      |
+| EMPTY_GROUPING_SET_ON_EMPTY_INPUT_YIELDS_NO_ROWS | No row for empty grouping set | Microsoft SQL Sever family, Oracle |
+
+**Example:**
+```sql
+-- The following two SQL statements yields a single row with value 0 in the systems DO NOT require this compatibility.
+SELECT COUNT(*) FROM T -- [(0)] when T is empty.
+SELECT COUNT(*) FROM T GROUP BY GROUNPING SETS (()) -- [] when T is empty in systems requiring this compatibility.
+```
 
 === "AggregateRel Message"
 
