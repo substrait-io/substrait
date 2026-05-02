@@ -26,3 +26,4 @@ scalar_functions:
             values: [ NAN_IS_NAN, NAN_IS_NOT_NAN ]
         nullability: DECLARED_OUTPUT
         return: i64?
+
