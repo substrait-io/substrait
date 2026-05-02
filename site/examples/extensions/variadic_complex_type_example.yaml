@@ -1,0 +1,14 @@
+urn: extension:example:variadic_complex_type
+scalar_functions:
+- name: all_pairs_equal
+  description: >-
+    Returns true if all pairs are equal. Within each pair, both elements must
+    be the same type. Across pairs, all must use the same type.
+  impls:
+  - args:
+    - name: first
+      value: struct<any1, any1>
+    variadic:
+      min: 1
+      parameterConsistency: CONSISTENT
+    return: boolean
