@@ -130,3 +130,32 @@ scalar_functions:
             value: func<any1 -> boolean?>
         nullability: DECLARED_OUTPUT
         return: boolean?
+
+  - name: "subscript_operator"
+    description: >-
+      Returns the element at the specified index from the list, corresponding
+      to the common array subscript operator [].
+
+      Index is 1-based (i.e., the first element is at index 1). Out-of-bounds
+      access (index <= 0 or index > list length) returns null.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: index
+            value: i64
+        nullability: DECLARED_OUTPUT
+        return: any1?
+
+  - name: "index_of"
+    description: >-
+      Returns the 1-based index of the first occurrence of the specified value
+      in the list, or null if the value is not found.
+    impls:
+      - args:
+          - name: input
+            value: list<any1>
+          - name: value
+            value: any1
+        nullability: DECLARED_OUTPUT
+        return: i64?
