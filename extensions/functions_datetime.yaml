@@ -342,7 +342,7 @@ scalar_functions:
             value: date
           - name: y
             value: interval_day<P>
-        return: date
+        return: precision_timestamp<P>
   -
     name: "lte"
     description: less than or equal to
