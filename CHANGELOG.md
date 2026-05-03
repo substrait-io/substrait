@@ -1,6 +1,27 @@
 Release Notes
 ---
 
+## [0.89.0](https://github.com/substrait-io/substrait/compare/v0.88.1...v0.89.0) (2026-05-03)
+
+### ⚠ BREAKING CHANGES
+
+* NOT A REAL BREAKING CHANGE. OuterReference.steps_out
+field is now under oneof -- implicit optional to explicit optional. This
+is not a real breaking change as Substrait always required non-zero
+value.
+
+Add optional RelCommon.id field and OuterReference.id_reference to
+support unambiguous outer reference resolution in plans with common
+subexpressions (ReferenceRel). The existing steps_out offset-based
+mechanism remains for backward compatibility with tree-shaped plans.
+
+The `RelCommon.rel_anchor` can be used for other purpose but for now
+only required when it is used to resolve outer reference.
+
+### Features
+
+* add id-based outer reference resolution for DAG plans ([#1031](https://github.com/substrait-io/substrait/issues/1031)) ([ad664dc](https://github.com/substrait-io/substrait/commit/ad664dc9a4bc1a368ab8d2940084c77cdb7d9213)), closes [#1024](https://github.com/substrait-io/substrait/issues/1024)
+
 ## [0.88.1](https://github.com/substrait-io/substrait/compare/v0.88.0...v0.88.1) (2026-04-19)
 
 ### Bug Fixes
