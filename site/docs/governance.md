@@ -70,8 +70,8 @@ The rules require that a community member registering a negative vote must inclu
 | Typos (no format/specification changes)                                                                   | 1                 | Committers     | Github PR       |
 | Non-breaking function introductions                                                                       | 1                 | Committers     | Github PR       |
 | Non-breaking extension additions & non-format code modifications                                          | 1                 | Committers     | Github PR       |
-| Changes (non-breaking or breaking) to a Substrait *library* (i.e. substrait-java, substrait-validator)    | 1                 | Committers     | Github PR       |
-| Changes to a Substrait `-contrib` repository                                                              | 1                 | Contributors   | Github PR       |
+| Any changes to a Substrait *library* (i.e. substrait-java, substrait-validator)                           | 1                 | Committers     | Github PR       |
+| Any changes to a Substrait `-contrib` repository                                                          | 1                 | Contributors   | Github PR       |
 
 ^ For these votes, if it is a PMC proposing the change they count as a +1
 
