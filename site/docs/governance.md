@@ -59,13 +59,14 @@ The rules require that a community member registering a negative vote must inclu
 
 |                                                                                                           | +1 votes required          | Binding voters | Voting Location |
 | --------------------------------------------------------------------------------------------------------- | -------------------------- | -------------- | --------------- |
-| Process/Governance Modifications & Actions                                                                | 3                          | PMC            | Mailing List    |
+| Process/Governance Modifications & Actions                                                                | 3                         | PMC            | Mailing List    |
 | Contributor Promotions to Committer or PMC                                                                | 3                          | PMC            | Mailing List    |
 | Management of `-contrib` repositories including adding repositories and giving write access to them       | 3                          | PMC            | Mailing List    |
 | Format/Specification Modifications (including breaking *extension* changes)                               | 2                          | PMC            | Github PR       |
 | Format/Specification Deprecations                                                                         | 2                          | PMC            | Github PR       |
 | Documentation Updates w/ no format/specification changes (i.e formatting, moves)                          | 1                          | PMC            | Github PR       |
 | Dependency Bumps (no format/specification changes)                                                        | 1                          | Committers     | Github PR       |
+| CI Modifications (no format/specification changes)                                                        | 1                          | Committers     | Github PR       |
 | Typos (no format/specification changes)                                                                   | 1                          | Committers     | Github PR       |
 | Non-breaking function introductions                                                                       | 1 (not including proposer) | Committers     | Github PR       |
 | Non-breaking extension additions & non-format code modifications                                          | 1 (not including proposer) | Committers     | Github PR       |
