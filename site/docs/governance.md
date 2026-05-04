@@ -64,6 +64,7 @@ The rules require that a community member registering a negative vote must inclu
 | Format/Specification Modifications (including breaking extension changes)                                 | 2                          | PMC            | Github PR       |
 | Deprecations                                                                                              | 2                          | PMC            | Github PR       |
 | Documentation Updates (formatting, moves)                                                                 | 1                          | PMC            | Github PR       |
+| Dependency bumps that do not modify the format/specification                                              | 1                          | PMC            | Github PR       |
 | Typos                                                                                                     | 1                          | Committers     | Github PR       |
 | Non-breaking function introductions                                                                       | 1 (not including proposer) | Committers     | Github PR       |
 | Non-breaking extension additions & non-format code modifications                                          | 1 (not including proposer) | Committers     | Github PR       |
