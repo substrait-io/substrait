@@ -270,8 +270,8 @@ message JoinRel {
   // A boolean condition evaluated over the left and right inputs that
   // determines whether a pair of records is a match.
   Expression expression = 4;
-  // An optional boolean filter applied to each output record after join
-  // matching and null-padding (for outer/mark joins) are complete.
+  // An optional boolean filter applied to each output record after
+  // join-type-specific output formation is complete.
   // Semantically equivalent to placing a FilterRel directly above this join.
   Expression post_join_filter = 5;
 
@@ -869,8 +869,8 @@ message HashJoinRel {
   // hash function for a given comparsion function or to reject the plan if it cannot
   // do so.
   repeated ComparisonJoinKey keys = 8;
-  // An optional boolean filter applied to each output record after join
-  // matching and null-padding (for outer/mark joins) are complete.
+  // An optional boolean filter applied to each output record after
+  // join-type-specific output formation is complete.
   // Semantically equivalent to placing a FilterRel directly above this join.
   Expression post_join_filter = 6;
 
@@ -940,8 +940,8 @@ message MergeJoinRel {
   // is free to do so as well).  If possible, the consumer should verify the sort
   // order and reject invalid plans.
   repeated ComparisonJoinKey keys = 8;
-  // An optional boolean filter applied to each output record after join
-  // matching and null-padding (for outer/mark joins) are complete.
+  // An optional boolean filter applied to each output record after
+  // join-type-specific output formation is complete.
   // Semantically equivalent to placing a FilterRel directly above this join.
   Expression post_join_filter = 6;
 
