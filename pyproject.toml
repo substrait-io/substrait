@@ -100,7 +100,7 @@ dev = [
   "protobuf==6.33.1",
   "pytest>=9.0.3,<10",
   "pyyaml>=6.0.3,<7",
-  "mdutils>=1.4.0,<2",
+  "mdutils>=1.8.1,<2",
   "mkdocs>=1.4.2,<2",
   "mkdocs-awesome-pages-plugin>=2.8.0,<3",
   "mkdocs-gen-files>=0.6.1,<1",
