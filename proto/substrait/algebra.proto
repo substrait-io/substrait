@@ -280,10 +280,10 @@ message JoinRel {
   // When true, the right input is evaluated once per row of the left input
   // (lateral join / correlated subquery). The right input may reference fields
   // from the current left row using FieldReference with OuterReference as the
-  // root_type. This JoinRel must have RelCommon.id set so the right input can
-  // use OuterReference with id_reference pointing to that id.
+  // root_type. This JoinRel must have RelCommon.rel_anchor set so the right input can
+  // use OuterReference with rel_reference pointing to that anchor.
   //
-  // The id_reference resolves against the left input's output schema.
+  // The rel_reference resolves against the left input's output schema.
   //
   // When false (default), both inputs are independent.
   //
@@ -322,10 +322,10 @@ message CrossRel {
   // When true, the right input is evaluated once per row of the left input
   // (lateral semantics). The right input may reference fields from the
   // current left row using FieldReference with OuterReference as the
-  // root_type. This CrossRel must have RelCommon.id set so the right input
-  // can use OuterReference with id_reference pointing to that id.
+  // root_type. This CrossRel must have RelCommon.rel_anchor set so the right input
+  // can use OuterReference with rel_reference pointing to that anchor.
   //
-  // The id_reference resolves against the left input's output schema.
+  // The rel_reference resolves against the left input's output schema.
   //
   // When false (default), both inputs are independent and the result is the
   // standard Cartesian product.
