@@ -280,60 +280,60 @@ class FuncTestCaseParser ( Parser ):
 
     sharedContextCache = PredictionContextCache()
 
-    literalNames = [ "<INVALID>", "<INVALID>", "'###'", "'SUBSTRAIT_SCALAR_TEST'", 
-                     "'SUBSTRAIT_AGGREGATE_TEST'", "'SUBSTRAIT_INCLUDE'", 
-                     "'SUBSTRAIT_DEPENDENCY'", "<INVALID>", "<INVALID>", 
-                     "<INVALID>", "'DEFINE'", "'<!ERROR>'", "'<!UNDEFINED>'", 
-                     "'OVERFLOW'", "'ROUNDING'", "'ERROR'", "'SATURATE'", 
-                     "'SILENT'", "'TIE_TO_EVEN'", "'NAN'", "'ACCEPT_NULLS'", 
-                     "'IGNORE_NULLS'", "'NULL_HANDLING'", "'SPACES_ONLY'", 
-                     "'TRUNCATE'", "<INVALID>", "<INVALID>", "<INVALID>", 
-                     "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>", 
-                     "<INVALID>", "'P'", "'T'", "'Y'", "'M'", "'D'", "'H'", 
-                     "'S'", "'F'", "<INVALID>", "<INVALID>", "<INVALID>", 
-                     "<INVALID>", "<INVALID>", "'null'", "<INVALID>", "'enum'", 
-                     "<INVALID>", "<INVALID>", "<INVALID>", "'IF'", "'THEN'", 
-                     "'ELSE'", "'FUNC'", "'BOOLEAN'", "'I8'", "'I16'", "'I32'", 
-                     "'I64'", "'FP32'", "'FP64'", "'STRING'", "'BINARY'", 
-                     "'DATE'", "'INTERVAL_YEAR'", "'INTERVAL_DAY'", "'INTERVAL_COMPOUND'", 
-                     "'UUID'", "'DECIMAL'", "'PRECISION_TIME'", "'PRECISION_TIMESTAMP'", 
-                     "'PRECISION_TIMESTAMP_TZ'", "'FIXEDCHAR'", "'VARCHAR'", 
-                     "'FIXEDBINARY'", "'STRUCT'", "'NSTRUCT'", "'LIST'", 
-                     "'MAP'", "'U!'", "'BOOL'", "'STR'", "'VBIN'", "'IYEAR'", 
-                     "'IDAY'", "'ICOMPOUND'", "'DEC'", "'PT'", "'PTS'", 
-                     "'PTSTZ'", "'FCHAR'", "'VCHAR'", "'FBIN'", "'ANY'", 
-                     "<INVALID>", "'::'", "'+'", "'-'", "'*'", "'/'", "'%'", 
-                     "'='", "'!='", "'>='", "'<='", "'>'", "'<'", "'!'", 
-                     "'('", "')'", "'['", "']'", "','", "':'", "'?'", "'#'", 
+    literalNames = [ "<INVALID>", "<INVALID>", "'###'", "'SUBSTRAIT_SCALAR_TEST'",
+                     "'SUBSTRAIT_AGGREGATE_TEST'", "'SUBSTRAIT_INCLUDE'",
+                     "'SUBSTRAIT_DEPENDENCY'", "<INVALID>", "<INVALID>",
+                     "<INVALID>", "'DEFINE'", "'<!ERROR>'", "'<!UNDEFINED>'",
+                     "'OVERFLOW'", "'ROUNDING'", "'ERROR'", "'SATURATE'",
+                     "'SILENT'", "'TIE_TO_EVEN'", "'NAN'", "'ACCEPT_NULLS'",
+                     "'IGNORE_NULLS'", "'NULL_HANDLING'", "'SPACES_ONLY'",
+                     "'TRUNCATE'", "<INVALID>", "<INVALID>", "<INVALID>",
+                     "<INVALID>", "<INVALID>", "<INVALID>", "<INVALID>",
+                     "<INVALID>", "'P'", "'T'", "'Y'", "'M'", "'D'", "'H'",
+                     "'S'", "'F'", "<INVALID>", "<INVALID>", "<INVALID>",
+                     "<INVALID>", "<INVALID>", "'null'", "<INVALID>", "'enum'",
+                     "<INVALID>", "<INVALID>", "<INVALID>", "'IF'", "'THEN'",
+                     "'ELSE'", "'FUNC'", "'BOOLEAN'", "'I8'", "'I16'", "'I32'",
+                     "'I64'", "'FP32'", "'FP64'", "'STRING'", "'BINARY'",
+                     "'DATE'", "'INTERVAL_YEAR'", "'INTERVAL_DAY'", "'INTERVAL_COMPOUND'",
+                     "'UUID'", "'DECIMAL'", "'PRECISION_TIME'", "'PRECISION_TIMESTAMP'",
+                     "'PRECISION_TIMESTAMP_TZ'", "'FIXEDCHAR'", "'VARCHAR'",
+                     "'FIXEDBINARY'", "'STRUCT'", "'NSTRUCT'", "'LIST'",
+                     "'MAP'", "'U!'", "'BOOL'", "'STR'", "'VBIN'", "'IYEAR'",
+                     "'IDAY'", "'ICOMPOUND'", "'DEC'", "'PT'", "'PTS'",
+                     "'PTSTZ'", "'FCHAR'", "'VCHAR'", "'FBIN'", "'ANY'",
+                     "<INVALID>", "'::'", "'+'", "'-'", "'*'", "'/'", "'%'",
+                     "'='", "'!='", "'>='", "'<='", "'>'", "'<'", "'!'",
+                     "'('", "')'", "'['", "']'", "','", "':'", "'?'", "'#'",
                      "'.'", "'AND'", "'OR'", "':='", "'->'" ]
 
-    symbolicNames = [ "<INVALID>", "Whitespace", "TripleHash", "SubstraitScalarTest", 
-                      "SubstraitAggregateTest", "SubstraitInclude", "SubstraitDependency", 
-                      "ExtensionUrn", "FormatVersion", "DescriptionLine", 
-                      "Define", "ErrorResult", "UndefineResult", "Overflow", 
-                      "Rounding", "Error", "Saturate", "Silent", "TieToEven", 
-                      "NaN", "AcceptNulls", "IgnoreNulls", "NullHandling", 
-                      "SpacesOnly", "Truncate", "IntegerLiteral", "DecimalLiteral", 
-                      "FloatLiteral", "BooleanLiteral", "TimestampTzLiteral", 
-                      "TimestampLiteral", "TimeLiteral", "DateLiteral", 
-                      "PeriodPrefix", "TimePrefix", "YearSuffix", "MSuffix", 
-                      "DaySuffix", "HourSuffix", "SecondSuffix", "FractionalSecondSuffix", 
-                      "OAngleBracket", "CAngleBracket", "IntervalYearLiteral", 
-                      "IntervalDayLiteral", "IntervalCompoundLiteral", "NullLiteral", 
-                      "StringLiteral", "EnumType", "ColumnName", "LineComment", 
-                      "BlockComment", "If", "Then", "Else", "Func", "Boolean", 
-                      "I8", "I16", "I32", "I64", "FP32", "FP64", "String", 
-                      "Binary", "Date", "Interval_Year", "Interval_Day", 
-                      "Interval_Compound", "UUID", "Decimal", "Precision_Time", 
-                      "Precision_Timestamp", "Precision_Timestamp_TZ", "FixedChar", 
-                      "VarChar", "FixedBinary", "Struct", "NStruct", "List", 
-                      "Map", "UserDefined", "Bool", "Str", "VBin", "IYear", 
-                      "IDay", "ICompound", "Dec", "PT", "PTs", "PTsTZ", 
-                      "FChar", "VChar", "FBin", "Any", "AnyVar", "DoubleColon", 
-                      "Plus", "Minus", "Asterisk", "ForwardSlash", "Percent", 
-                      "Eq", "Ne", "Gte", "Lte", "Gt", "Lt", "Bang", "OParen", 
-                      "CParen", "OBracket", "CBracket", "Comma", "Colon", 
-                      "QMark", "Hash", "Dot", "And", "Or", "Assign", "Arrow", 
+    symbolicNames = [ "<INVALID>", "Whitespace", "TripleHash", "SubstraitScalarTest",
+                      "SubstraitAggregateTest", "SubstraitInclude", "SubstraitDependency",
+                      "ExtensionUrn", "FormatVersion", "DescriptionLine",
+                      "Define", "ErrorResult", "UndefineResult", "Overflow",
+                      "Rounding", "Error", "Saturate", "Silent", "TieToEven",
+                      "NaN", "AcceptNulls", "IgnoreNulls", "NullHandling",
+                      "SpacesOnly", "Truncate", "IntegerLiteral", "DecimalLiteral",
+                      "FloatLiteral", "BooleanLiteral", "TimestampTzLiteral",
+                      "TimestampLiteral", "TimeLiteral", "DateLiteral",
+                      "PeriodPrefix", "TimePrefix", "YearSuffix", "MSuffix",
+                      "DaySuffix", "HourSuffix", "SecondSuffix", "FractionalSecondSuffix",
+                      "OAngleBracket", "CAngleBracket", "IntervalYearLiteral",
+                      "IntervalDayLiteral", "IntervalCompoundLiteral", "NullLiteral",
+                      "StringLiteral", "EnumType", "ColumnName", "LineComment",
+                      "BlockComment", "If", "Then", "Else", "Func", "Boolean",
+                      "I8", "I16", "I32", "I64", "FP32", "FP64", "String",
+                      "Binary", "Date", "Interval_Year", "Interval_Day",
+                      "Interval_Compound", "UUID", "Decimal", "Precision_Time",
+                      "Precision_Timestamp", "Precision_Timestamp_TZ", "FixedChar",
+                      "VarChar", "FixedBinary", "Struct", "NStruct", "List",
+                      "Map", "UserDefined", "Bool", "Str", "VBin", "IYear",
+                      "IDay", "ICompound", "Dec", "PT", "PTs", "PTsTZ",
+                      "FChar", "VChar", "FBin", "Any", "AnyVar", "DoubleColon",
+                      "Plus", "Minus", "Asterisk", "ForwardSlash", "Percent",
+                      "Eq", "Ne", "Gte", "Lte", "Gt", "Lt", "Bang", "OParen",
+                      "CParen", "OBracket", "CBracket", "Comma", "Colon",
+                      "QMark", "Hash", "Dot", "And", "Or", "Assign", "Arrow",
                       "Number", "Identifier", "Newline" ]
 
     RULE_doc = 0
@@ -415,25 +415,25 @@ class FuncTestCaseParser ( Parser ):
     RULE_nonReserved = 76
     RULE_identifier = 77
 
-    ruleNames =  [ "doc", "header", "version", "include", "dependency", 
-                   "testGroupDescription", "testCase", "testGroup", "arguments", 
-                   "result", "argument", "aggFuncTestCase", "aggFuncCall", 
-                   "tableData", "tableRows", "dataColumn", "columnValues", 
-                   "literal", "qualifiedAggregateFuncArgs", "aggregateFuncArgs", 
-                   "qualifiedAggregateFuncArg", "aggregateFuncArg", "numericLiteral", 
-                   "floatLiteral", "nullArg", "intArg", "floatArg", "decimalArg", 
-                   "booleanArg", "stringArg", "dateArg", "intervalYearArg", 
-                   "intervalDayArg", "intervalCompoundArg", "fixedCharArg", 
-                   "varCharArg", "fixedBinaryArg", "precisionTimeArg", "precisionTimestampArg", 
-                   "precisionTimestampTZArg", "listArg", "lambdaArg", "enumArg", 
-                   "literalList", "listElement", "literalLambda", "lambdaParameters", 
-                   "lambdaBody", "dataType", "scalarType", "booleanType", 
-                   "stringType", "binaryType", "intType", "floatType", "dateType", 
-                   "intervalYearType", "intervalDayType", "intervalCompoundType", 
-                   "fixedCharType", "varCharType", "fixedBinaryType", "decimalType", 
-                   "precisionTimeType", "precisionTimestampType", "precisionTimestampTZType", 
-                   "listType", "funcType", "funcParameters", "parameterizedType", 
-                   "numericParameter", "substraitError", "funcOption", "optionName", 
+    ruleNames =  [ "doc", "header", "version", "include", "dependency",
+                   "testGroupDescription", "testCase", "testGroup", "arguments",
+                   "result", "argument", "aggFuncTestCase", "aggFuncCall",
+                   "tableData", "tableRows", "dataColumn", "columnValues",
+                   "literal", "qualifiedAggregateFuncArgs", "aggregateFuncArgs",
+                   "qualifiedAggregateFuncArg", "aggregateFuncArg", "numericLiteral",
+                   "floatLiteral", "nullArg", "intArg", "floatArg", "decimalArg",
+                   "booleanArg", "stringArg", "dateArg", "intervalYearArg",
+                   "intervalDayArg", "intervalCompoundArg", "fixedCharArg",
+                   "varCharArg", "fixedBinaryArg", "precisionTimeArg", "precisionTimestampArg",
+                   "precisionTimestampTZArg", "listArg", "lambdaArg", "enumArg",
+                   "literalList", "listElement", "literalLambda", "lambdaParameters",
+                   "lambdaBody", "dataType", "scalarType", "booleanType",
+                   "stringType", "binaryType", "intType", "floatType", "dateType",
+                   "intervalYearType", "intervalDayType", "intervalCompoundType",
+                   "fixedCharType", "varCharType", "fixedBinaryType", "decimalType",
+                   "precisionTimeType", "precisionTimestampType", "precisionTimestampTZType",
+                   "listType", "funcType", "funcParameters", "parameterizedType",
+                   "numericParameter", "substraitError", "funcOption", "optionName",
                    "optionValue", "funcOptions", "nonReserved", "identifier" ]
 
     EOF = Token.EOF
@@ -622,13 +622,13 @@ class FuncTestCaseParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 156
             self.header()
-            self.state = 158 
+            self.state = 158
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
                 self.state = 157
                 self.testGroup()
-                self.state = 160 
+                self.state = 160
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & 16778752) != 0) or ((((_la - 110)) & ~0x3f) == 0 and ((1 << (_la - 110)) & 17921) != 0)):
@@ -1069,7 +1069,7 @@ class FuncTestCaseParser ( Parser ):
         def getRuleIndex(self):
             return FuncTestCaseParser.RULE_testGroup
 
-     
+
         def copyFrom(self, ctx:ParserRuleContext):
             super().copyFrom(ctx)
 
@@ -1158,7 +1158,7 @@ class FuncTestCaseParser ( Parser ):
                     self.testGroupDescription()
 
 
-                self.state = 206 
+                self.state = 206
                 self._errHandler.sync(self)
                 _alt = 1
                 while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -1168,7 +1168,7 @@ class FuncTestCaseParser ( Parser ):
 
                     else:
                         raise NoViableAltException(self)
-                    self.state = 208 
+                    self.state = 208
                     self._errHandler.sync(self)
                     _alt = self._interp.adaptivePredict(self._input,4,self._ctx)
 
@@ -1185,7 +1185,7 @@ class FuncTestCaseParser ( Parser ):
                     self.testGroupDescription()
 
 
-                self.state = 214 
+                self.state = 214
                 self._errHandler.sync(self)
                 _alt = 1
                 while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -1195,7 +1195,7 @@ class FuncTestCaseParser ( Parser ):
 
                     else:
                         raise NoViableAltException(self)
-                    self.state = 216 
+                    self.state = 216
                     self._errHandler.sync(self)
                     _alt = self._interp.adaptivePredict(self._input,6,self._ctx)
 
@@ -1683,7 +1683,7 @@ class FuncTestCaseParser ( Parser ):
         def getRuleIndex(self):
             return FuncTestCaseParser.RULE_aggFuncCall
 
-     
+
         def copyFrom(self, ctx:ParserRuleContext):
             super().copyFrom(ctx)
 
@@ -4091,7 +4091,7 @@ class FuncTestCaseParser ( Parser ):
         def getRuleIndex(self):
             return FuncTestCaseParser.RULE_lambdaParameters
 
-     
+
         def copyFrom(self, ctx:ParserRuleContext):
             super().copyFrom(ctx)
 
@@ -4180,7 +4180,7 @@ class FuncTestCaseParser ( Parser ):
                 self.match(FuncTestCaseParser.OParen)
                 self.state = 481
                 self.match(FuncTestCaseParser.Identifier)
-                self.state = 484 
+                self.state = 484
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 while True:
@@ -4188,7 +4188,7 @@ class FuncTestCaseParser ( Parser ):
                     self.match(FuncTestCaseParser.Comma)
                     self.state = 483
                     self.match(FuncTestCaseParser.Identifier)
-                    self.state = 486 
+                    self.state = 486
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
                     if not (_la==114):
@@ -4349,7 +4349,7 @@ class FuncTestCaseParser ( Parser ):
         def getRuleIndex(self):
             return FuncTestCaseParser.RULE_scalarType
 
-     
+
         def copyFrom(self, ctx:ParserRuleContext):
             super().copyFrom(ctx)
 
@@ -5959,7 +5959,7 @@ class FuncTestCaseParser ( Parser ):
         def getRuleIndex(self):
             return FuncTestCaseParser.RULE_listType
 
-     
+
         def copyFrom(self, ctx:ParserRuleContext):
             super().copyFrom(ctx)
 
@@ -6134,7 +6134,7 @@ class FuncTestCaseParser ( Parser ):
         def getRuleIndex(self):
             return FuncTestCaseParser.RULE_funcParameters
 
-     
+
         def copyFrom(self, ctx:ParserRuleContext):
             super().copyFrom(ctx)
 
@@ -6409,7 +6409,7 @@ class FuncTestCaseParser ( Parser ):
         def getRuleIndex(self):
             return FuncTestCaseParser.RULE_numericParameter
 
-     
+
         def copyFrom(self, ctx:ParserRuleContext):
             super().copyFrom(ctx)
 
