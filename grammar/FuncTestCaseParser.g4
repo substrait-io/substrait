@@ -66,6 +66,8 @@ argument
     | precisionTimestampArg
     | precisionTimestampTZArg
     | listArg
+    | structArg
+    | mapArg
     | lambdaArg
     | Identifier  // Bare identifiers (for lambda parameters)
     ;
@@ -198,6 +200,14 @@ listArg
     : literalList DoubleColon listType
     ;
 
+structArg
+    : literalStruct DoubleColon structType
+    ;
+
+mapArg
+    : literalMap DoubleColon mapType
+    ;
+
 lambdaArg
     : literalLambda DoubleColon funcType
     ;
@@ -211,8 +221,26 @@ literalList
     ;
 
 listElement
+    : complexLiteral
+    ;
+
+literalStruct
+    : OParen complexLiteral (Comma complexLiteral)* CParen
+    ;
+
+literalMap
+    : OBrace (mapEntry (Comma mapEntry)*)? CBrace
+    ;
+
+mapEntry
+    : key=complexLiteral Colon value=complexLiteral
+    ;
+
+complexLiteral
     : literal
     | literalList
+    | literalStruct
+    | literalMap
     ;
 
 literalLambda
@@ -314,6 +342,14 @@ listType
     : List isnull=QMark? OAngleBracket elemType=dataType CAngleBracket #list
     ;
 
+structType
+    : Struct isnull=QMark? OAngleBracket dataType (Comma dataType)* CAngleBracket
+    ;
+
+mapType
+    : Map isnull=QMark? OAngleBracket keyType=dataType Comma valueType=dataType CAngleBracket
+    ;
+
 funcType
     : Func isnull=QMark? OAngleBracket params=funcParameters Arrow returnType=dataType CAngleBracket
     ;
@@ -334,11 +370,11 @@ parameterizedType
     | precisionTimestampType
     | precisionTimestampTZType
     | listType
+    | structType
+    | mapType
     | funcType
 // TODO implement the rest of the parameterized types
-//  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct
-//  | Map isnull='?'? Lt key=expr Comma value=expr Gt #map
   ;
 
 numericParameter

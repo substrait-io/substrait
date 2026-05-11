@@ -117,6 +117,9 @@ StringLiteral
 
 EnumType: 'enum' ;
 
+OBrace: '{';
+CBrace: '}';
+
 ColumnName
     : 'COL' Int
     ;

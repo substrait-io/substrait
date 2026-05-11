@@ -306,6 +306,10 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitNullArg(ctx.nullArg())
         if ctx.listArg() is not None:
             return self.visitListArg(ctx.listArg())
+        if ctx.structArg() is not None:
+            return self.visitStructArg(ctx.structArg())
+        if ctx.mapArg() is not None:
+            return self.visitMapArg(ctx.mapArg())
         if ctx.lambdaArg() is not None:
             return self.visitLambdaArg(ctx.lambdaArg())
         if ctx.enumArg() is not None:
@@ -456,15 +460,49 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             nullable=ctx.listType().isnull is not None,
         )
 
+    def visitStructArg(self, ctx: FuncTestCaseParser.StructArgContext):
+        return CaseLiteral(
+            value=self.visitLiteralStruct(ctx.literalStruct()),
+            type=ctx.structType().getText(),
+            nullable=ctx.structType().isnull is not None,
+        )
+
+    def visitMapArg(self, ctx: FuncTestCaseParser.MapArgContext):
+        return CaseLiteral(
+            value=self.visitLiteralMap(ctx.literalMap()),
+            type=ctx.mapType().getText(),
+            nullable=ctx.mapType().isnull is not None,
+        )
+
     def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
-        values = []
-        for element in ctx.listElement():
-            if element.literal() is not None:
-                value, _ = self.visitLiteral(element.literal())
-                values.append(value)
-            elif element.literalList() is not None:
-                values.append(self.visitLiteralList(element.literalList()))
-        return values
+        return [
+            self.visitComplexLiteral(element.complexLiteral())
+            for element in ctx.listElement()
+        ]
+
+    def visitLiteralStruct(self, ctx: FuncTestCaseParser.LiteralStructContext):
+        return [self.visitComplexLiteral(element) for element in ctx.complexLiteral()]
+
+    def visitLiteralMap(self, ctx: FuncTestCaseParser.LiteralMapContext):
+        return [
+            {
+                "key": self.visitComplexLiteral(entry.key),
+                "value": self.visitComplexLiteral(entry.value),
+            }
+            for entry in ctx.mapEntry()
+        ]
+
+    def visitComplexLiteral(self, ctx: FuncTestCaseParser.ComplexLiteralContext):
+        if ctx.literal() is not None:
+            value, _ = self.visitLiteral(ctx.literal())
+            return value
+        if ctx.literalList() is not None:
+            return self.visitLiteralList(ctx.literalList())
+        if ctx.literalStruct() is not None:
+            return self.visitLiteralStruct(ctx.literalStruct())
+        if ctx.literalMap() is not None:
+            return self.visitLiteralMap(ctx.literalMap())
+        raise ParseError("Unknown complex literal")
 
     def visitLambdaArg(self, ctx: FuncTestCaseParser.LambdaArgContext):
         lambda_type = ctx.funcType().getText()
