@@ -1,0 +1,67 @@
+name: Renovate
+
+on:
+  schedule:
+    # Every 3 hours, off the top of the hour. Renovate is idempotent, so the
+    # cadence only affects how quickly it reacts to new releases and to
+    # Dependency Dashboard checkboxes.
+    - cron: '23 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: 'Dry-run mode (no branches, PRs or issues are written)'
+        type: choice
+        default: disabled
+        options: [disabled, extract, lookup, full]
+      logLevel:
+        description: 'Renovate log level'
+        type: choice
+        default: info
+        options: [info, debug]
+
+# Renovate authenticates as a GitHub App, so it never uses GITHUB_TOKEN.
+permissions: {}
+
+# Two Renovate runs against the same repository would fight over branches.
+concurrency:
+  group: renovate
+  cancel-in-progress: false
+
+env:
+  # Renovate >= 44.0.0 is required: it is the first release that regenerates
+  # pixi.lock after bumping dependencies declared in pyproject.toml.
+  # See https://github.com/renovatebot/renovate/pull/44004
+  # renovate: datasource=docker depName=ghcr.io/renovatebot/renovate
+  RENOVATE_VERSION: 44.3.3
+
+jobs:
+  renovate:
+    name: Renovate
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # As in release.yml, don't run the schedule on forks - but still let a fork
+    # owner dispatch a run manually to test their own setup.
+    if: github.event_name == 'workflow_dispatch' || github.repository == 'substrait-io/substrait'
+    steps:
+      - uses: actions/create-github-app-token@v3
+        id: generate-token
+        with:
+          client-id: ${{ secrets.RENOVATE_APP_CLIENT_ID }}
+          private-key: ${{ secrets.RENOVATE_APP_PRIVATE_KEY }}
+
+      - name: Self-hosted Renovate
+        uses: renovatebot/github-action@v46.2.0
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          renovate-version: ${{ env.RENOVATE_VERSION }}
+        env:
+          LOG_LEVEL: ${{ inputs.logLevel || 'info' }}
+          # `pixi lock` can execute arbitrary code from conda package hooks, so
+          # Renovate requires it to be allow-listed. This option is self-hosted
+          # only, which is why the hosted Renovate App cannot keep pixi.lock in
+          # sync and why this workflow exists.
+          RENOVATE_ALLOWED_UNSAFE_EXECUTIONS: pixi
+          RENOVATE_REPOSITORIES: ${{ github.repository }}
+          RENOVATE_ONBOARDING: 'false'
+          # Renovate only accepts extract/lookup/full; `null` means "off".
+          RENOVATE_DRY_RUN: ${{ inputs.dryRun == 'disabled' && 'null' || inputs.dryRun }}
