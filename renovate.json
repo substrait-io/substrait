@@ -1,0 +1,31 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommitTypeAll(build)",
+    ":maintainLockFilesWeekly"
+  ],
+  "semanticCommits": "enabled",
+  "semanticCommitType": "build",
+  "semanticCommitScope": "deps",
+  "pre-commit": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "Group pyproject.toml dependency bumps so pixi.lock is regenerated once",
+      "matchManagers": ["pep621", "pixi"],
+      "groupName": "all pixi deps"
+    },
+    {
+      "description": "Changing the supported Python version is a project decision, not a routine bump. Covers both requires-python and the pixi python pin",
+      "matchPackageNames": ["python"],
+      "enabled": false
+    },
+    {
+      "description": "Hold new releases for 14 days so a compromised or broken release has time to be caught. The conda datasource provides no release timestamps, and minimumReleaseAgeBehaviour defaults to timestamp-required, so including it would suppress conda updates indefinitely rather than delay them. A cooldown for conda packages and for the transitive pins in pixi.lock has to come from pixi's own exclude-newer instead",
+      "matchDatasources": ["!conda"],
+      "minimumReleaseAge": "14 days"
+    }
+  ]
+}
