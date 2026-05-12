@@ -1,6 +1,16 @@
 Release Notes
 ---
 
+## [0.90.0](https://github.com/substrait-io/substrait/compare/v0.89.0...v0.90.0) (2026-05-11)
+
+### Features
+
+* clarify interaction between nullability binding and any type parameters ([#960](https://github.com/substrait-io/substrait/issues/960)) ([a9a0c95](https://github.com/substrait-io/substrait/commit/a9a0c95228fa38ac9dede123e7cfa409d1f864a5))
+
+### Bug Fixes
+
+* **tests:** make typed temporal test literals unquoted ([#1064](https://github.com/substrait-io/substrait/issues/1064)) ([d752b32](https://github.com/substrait-io/substrait/commit/d752b32dae2aa2f5f16e081937c440520bbf884a))
+
 ## [0.89.0](https://github.com/substrait-io/substrait/compare/v0.88.1...v0.89.0) (2026-05-03)
 
 ### ⚠ BREAKING CHANGES
