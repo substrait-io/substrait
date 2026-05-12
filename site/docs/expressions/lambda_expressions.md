@@ -25,7 +25,7 @@ A lambda expression consists of:
 
 ### Type Derivation
 
-The type of a lambda expression is a `func` type. The parameters of the `func` are the parameters of the lambda. The return type of the the `func` is determined by the type of the expression comprising the body of the lambda. 
+The type of a lambda expression is a `func` type. The parameters of the `func` are the parameters of the lambda. The return type of the `func` is determined by the type of the expression comprising the body of the lambda. 
 
 ## Parameter References
 

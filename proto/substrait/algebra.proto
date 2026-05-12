@@ -1561,7 +1561,7 @@ message Expression {
 
   // A reference that takes an existing subtype and selectively removes fields
   // from it. For example, one might initially have an inner struct with 100
-  // fields but a a particular operation only needs to interact with only 2 of
+  // fields but a particular operation only needs to interact with 2 of
   // those 100 fields. In this situation, one would use a mask expression to
   // eliminate the 98 fields that are not relevant to the rest of the operation
   // pipeline.
