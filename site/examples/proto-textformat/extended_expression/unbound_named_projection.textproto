@@ -1,0 +1,58 @@
+# message ExtendedExpression
+# Arrow-style expression protocols should use ExtendedExpression so the message
+# carries expression names and extension declarations with the expression tree.
+version {
+  major_number: 0
+  minor_number: 0
+  patch_number: 0
+  producer: "substrait"
+}
+extension_urns {
+  extension_urn_anchor: 1
+  urn: "extension:io.substrait:unknown"
+}
+extensions {
+  extension_function {
+    extension_urn_reference: 1
+    function_anchor: 1
+    name: "add:unknown_unknown"
+  }
+}
+base_schema {
+  names: "a"
+  names: "b"
+  struct {
+    types {
+      unknown {}
+    }
+    types {
+      unknown {}
+    }
+    nullability: NULLABILITY_REQUIRED
+  }
+}
+referred_expr {
+  expression {
+    scalar_function {
+      function_reference: 1
+      arguments {
+        value {
+          named_expression {
+            names: "a"
+          }
+        }
+      }
+      arguments {
+        value {
+          named_expression {
+            names: "b"
+          }
+        }
+      }
+      output_type {
+        unknown {}
+      }
+    }
+  }
+  output_names: "sum"
+}

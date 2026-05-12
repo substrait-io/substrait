@@ -1,0 +1,25 @@
+# message Expression
+# A partially bound scalar function over unresolved named expressions. The
+# function_reference is still plan-local and must be declared by the enclosing
+# Plan or ExtendedExpression. The unknown output type records that concrete
+# type derivation has not completed.
+scalar_function {
+  function_reference: 1
+  arguments {
+    value {
+      named_expression {
+        names: "a"
+      }
+    }
+  }
+  arguments {
+    value {
+      named_expression {
+        names: "b"
+      }
+    }
+  }
+  output_type {
+    unknown {}
+  }
+}

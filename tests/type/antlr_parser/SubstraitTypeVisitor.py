@@ -80,6 +80,11 @@ class SubstraitTypeVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by SubstraitTypeParser#unknown.
+    def visitUnknown(self, ctx:SubstraitTypeParser.UnknownContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by SubstraitTypeParser#fixedChar.
     def visitFixedChar(self, ctx:SubstraitTypeParser.FixedCharContext):
         return self.visitChildren(ctx)
