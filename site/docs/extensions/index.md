@@ -82,7 +82,7 @@ For variadic functions, the variadic argument is included *once* in the argument
 
 #### Uniqueness Constraint
 
-A function signature uniquely identifies a function implementation within a single YAML file. As such, every function implementation within a YAML **must** have a distinct function signature in order for references to the implementation to remain unambiguous. A YAML file in which this is not the case is invalid.
+A function signature uniquely identifies a function implementation within a single YAML file. As such, every function implementation within a YAML **must** have a distinct function signature in order for references to the implementation to remain unambiguous. This uniqueness constraint applies across all function types in the YAML file, not separately within scalar functions, aggregate functions, and window functions. Extension declarations in plans identify functions by signature only, rather than by a combination of signature and function type, so this avoids requiring consumers to infer function type from invocation context, such as when an aggregate function is used in a window context. A YAML file in which this is not the case is invalid.
 
 #### Type Short Names
 
