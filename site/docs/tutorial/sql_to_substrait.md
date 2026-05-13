@@ -289,7 +289,7 @@ to the second field of `products`.
 
 !!! note
     Protobuf may not serialize fields with integer type and value 0, since 0 is the default.
-    So if you instead saw `"structField": {}`, know that is is equivalent to
+    So if you instead saw `"structField": {}`, know that is equivalent to
     `"structField": { "field": 0 }`.
 
 `"Computers"` will be translated to a literal expression:
