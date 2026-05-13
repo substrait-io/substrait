@@ -82,6 +82,20 @@ Both enumeration arguments and options accept values from a fixed set of strings
 
     In the YAML extension format, both enumeration arguments and function-level options use the keyword `options`. An enumeration argument appears inside `args` as `options: [VAL1, VAL2, ...]`, while a function-level option appears under a top-level `options` key with named sub-keys and a `values` list. Take care not to confuse the two when reading or writing extension YAML files.
 
+    ```yaml
+    args:
+      - name: component
+        options: [YEAR, MONTH, DAY] # enumeration argument
+      - name: x
+        value: precision_timestamp<6>
+    ```
+
+    ```yaml
+    options: # function-level options
+      overflow:
+        values: [SILENT, SATURATE, ERROR]
+    ```
+
 
 
 ## Nullability Handling
