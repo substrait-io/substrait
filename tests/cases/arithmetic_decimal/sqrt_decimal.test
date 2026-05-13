@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic_decimal.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
 
 # basic: Basic examples without any special cases
 sqrt(25::dec<2, 0>) = 5::fp64
@@ -24,5 +24,5 @@ sqrt(-9223372036854775800::dec<19, 0>) = <!ERROR>
 sqrt(-2.5::dec<2, 1>) = <!ERROR>
 
 # null_values: test with null values
-sqrt(null::dec<38, 0>) = null::fp64
-sqrt(null::dec<1, 0>) = null::fp64
+sqrt(null::dec?<38, 0>) = null::fp64?
+sqrt(null::dec?<1, 0>) = null::fp64?

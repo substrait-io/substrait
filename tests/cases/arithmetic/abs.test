@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # basic: Basic examples without any special cases
 abs(25::i8) = 25::i8
@@ -10,7 +10,7 @@ abs(2.55::fp32) = 2.55::fp32
 abs(-2.0000007152557373046875::fp64) = 2.0000007152557373046875::fp64
 
 # null_input: Examples with null as input
-abs(null::i8) = null::i8
+abs(null::i8?) = null::i8?
 
 # overflow: Examples demonstrating overflow behavior
 abs(-128::i8) [overflow:ERROR] = <!ERROR>

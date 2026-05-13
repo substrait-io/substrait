@@ -3,6 +3,7 @@
 
 Ensures examples are valid and use no unknown fields.
 """
+
 from pathlib import Path
 from google.protobuf import text_format
 from google.protobuf.message import Message
@@ -10,10 +11,10 @@ import pytest
 
 try:
     from substrait import algebra_pb2
-except ImportError:
+except ImportError as err:
     raise ImportError(
         "Protobuf bindings not found. Run 'buf generate' to generate them."
-    )
+    ) from err
 
 
 def validate_example(textproto: str, message_class: type[Message]) -> None:

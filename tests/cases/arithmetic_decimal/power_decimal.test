@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic_decimal.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
 
 # basic: Basic examples without any special cases
 power(8::dec, 2::dec<38, 0>) = 64::fp64
@@ -19,5 +19,5 @@ power(-1::dec, 0.5::dec<38, 1>) [complex_number_result:NAN] = nan::fp64
 power(-1::dec, 0.5::dec<38, 1>) [complex_number_result:ERROR] = <!ERROR>
 
 # null_values: test with null values
-power(null::dec<38, 0>, 127::dec<38, 0>) = null::fp64
-power(null::dec<38, 0>, null::dec<38, 0>) = null::fp64
+power(null::dec?<38, 0>, 127::dec<38, 0>) = null::fp64?
+power(null::dec?<38, 0>, null::dec?<38, 0>) = null::fp64?

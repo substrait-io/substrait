@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_list.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_list
 
 # basic: Basic cardinality examples
 cardinality([1, 2, 3]::list<i32>) = 3::i64

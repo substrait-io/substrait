@@ -2,9 +2,9 @@
 
 There is no true distinction between logical and physical operations in Substrait. By convention, certain operations are classified as physical, but all operations can be potentially used in any kind of plan. A particular set of transformations or target operators may (by convention) be considered the "physical plan" but this is a characteristic of the system consuming substrait as opposed to a definition within Substrait.
 
-## Hash Equijoin Operator
+## Hash Join Operator
 
-The hash equijoin join operator will build a hash table out of one input (default `right`) based on a set of join keys. It will then probe that hash table for the other input (default `left`), finding matches.
+The hash join operator will build a hash table out of one input (default `right`) based on a set of join keys. It will then probe that hash table for the other input (default `left`), finding matches, then use `residual_expression` to determine whether the matches are true matches.
 
 | Signature            | Value                                                             |
 | -------------------- | ----------------------------------------------------------------- |
@@ -14,7 +14,7 @@ The hash equijoin join operator will build a hash table out of one input (defaul
 | Input Order          | Same as the [Join](logical_relations.md#join-operation) operator. |
 | Direct Output Order  | Same as the [Join](logical_relations.md#join-operation) operator. |
 
-### Hash Equijoin Properties
+### Hash Join Properties
 
 | Property            | Description                                                                                                                                                                                                             | Required                                           |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
@@ -23,7 +23,8 @@ The hash equijoin join operator will build a hash table out of one input (defaul
 | Build Input         | Specifies which input is the `Build`.                                                                                                                                                                                   | Optional, defaults to build `Right`, probe `Left`. |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                  | Required                                           |
 | Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                 | Required                                           |
-| Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true.                           |
+| Residual Expression | An optional boolean expression evaluated on each candidate key-match to determine whether it is a true match. Use this for join predicates that cannot be expressed as equijoin keys (e.g., range or inequality conditions). This expression participates in join-type semantics (outer, anti, mark, etc.). | Optional, defaults to True. |
+| Post-Join Filter    | An optional boolean condition applied to the output of the join. Semantically equivalent to placing a [Filter](logical_relations.md#filter-operation) directly above the join. Does not influence which rows are considered matches. All field references are over direct output order. | Optional, defaults to True. |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                                           |
 
 ## NLJ (Nested Loop Join) Operator
@@ -47,9 +48,9 @@ The nested loop join operator does a join by holding the entire right input and 
 | Join Expression | A boolean condition that describes whether each record from the left set "match" the record from the right set. | Optional. Defaults to true (a Cartesian join). |
 | Join Type       | One of the join types defined in the Join operator.                                                             | Required                                       |
 
-## Merge Equijoin Operator
+## Merge Join Operator
 
-The merge equijoin does a join by taking advantage of two sets that are sorted on the join keys. This allows the join operation to be done in a streaming fashion.
+The merge join does a join by taking advantage of two sets that are sorted on the join keys. This allows the join operation to be done in a streaming fashion. Once the join keys are matched, then use `residual_expression` to determine whether the matches are true matches.
 
 | Signature            | Value                                                             |
 | -------------------- | ----------------------------------------------------------------- |
@@ -67,7 +68,8 @@ The merge equijoin does a join by taking advantage of two sets that are sorted o
 | Right Input         | A relational input.                                                                                                                                                                                                     | Required                 |
 | Left Keys           | References to the fields to join on in the left input.                                                                                                                                                                  | Required                 |
 | Right Keys          | References to the fields to join on in the right input.                                                                                                                                                                 | Required                 |
-| Post Join Predicate | An additional expression that can be used to reduce the output of the join operation post the equality condition. Minimizes the overhead of secondary join conditions that cannot be evaluated using the equijoin keys. | Optional, defaults true. |
+| Residual Expression | An optional boolean expression evaluated on each candidate key-match to determine whether it is a true match. Use this for join predicates that cannot be expressed as equijoin keys (e.g., range or inequality conditions). This expression participates in join-type semantics (outer, anti, mark, etc.). | Optional, defaults to True. |
+| Post-Join Filter    | An optional boolean condition applied to the output of the join. Semantically equivalent to placing a [Filter](logical_relations.md#filter-operation) directly above the join. Does not influence which rows are considered matches. All field references are over direct output order. | Optional, defaults to True. |
 | Join Type           | One of the join types defined in the Join operator.                                                                                                                                                                     | Required                 |
 
 ## Exchange Operator
@@ -136,7 +138,9 @@ A receiving operation that will merge multiple streams in an arbitrary order.
 
 ## Top-N Operation
 
-The top-N operator reorders a dataset based on one or more identified sort fields as well as a sorting function. Rather than sort the entire dataset, the top-N will only maintain the total number of records required to ensure a limited output. A top-n is a combination of a logical sort and logical fetch operations.
+The top-N operator reorders a dataset based on one or more identified sort fields as well as a sorting function. Rather than sort the entire dataset, the top-N will only maintain the total number of records required to ensure a limited output. A top-N is a combination of a logical sort and logical fetch operations.
+
+Optionally, the top-N operator supports **WITH TIES** semantics. When enabled, after returning the requested `count` rows, any additional rows that are tied with the last returned row (per the sort fields) are also included in the output.
 
 | Signature            | Value                                                                                                                    |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -147,12 +151,13 @@ The top-N operator reorders a dataset based on one or more identified sort field
 
 ### Top-N Properties
 
-| Property    | Description                                                                                                           | Required                 |
-| ----------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| Input       | The relational input.                                                                                                 | Required                 |
-| Sort Fields | List of one or more fields to sort by. Uses the same properties as the [orderedness](basics.md#orderedness) property. | One sort field required  |
-| Offset      | A positive integer. Declares the offset for retrieval of records.                                                     | Optional, defaults to 0. |
-| Count       | A positive integer. Declares the number of records that should be returned.                                           | Required                 |
+| Property          | Description                                                                                                                                                                                                | Required                           |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Input             | The relational input.                                                                                                                                                                                      | Required                           |
+| Sort Fields       | List of one or more fields to sort by. Uses the same properties as the [orderedness](basics.md#orderedness) property.                                                                                      | At least one field is required     |
+| Offset Expression | An expression evaluating to a non-negative integer or null. Declares the offset for retrieval of records. Null is treated as 0.                                                                            | Optional, defaults to 0.           |
+| Count Expression  | An expression evaluating to a non-negative integer or null. Declares the number of records to return. Null means ALL.                                                                                      | Required                           |
+| Mode              | Determines how to handle rows tied with the last returned row. `ROWS_ONLY` (default) returns exactly `count` rows. `WITH_TIES` also includes additional rows tied with the last row (per the sort fields). | Optional, defaults to `ROWS_ONLY`. |
 
 ## Hash Aggregate Operation
 

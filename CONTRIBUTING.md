@@ -2,13 +2,68 @@
 
 Welcome!
 
-## Dependencies
+## Prerequisites
 
-There's no formal set of dependencies for Substrait, but here are some that are useful to have:
+If you work with this repository you should have the following tools installed:
+
+* [Pixi](https://pixi.prefix.dev)
+
+Pixi will set up the correct development environment for you, including:
 
 * [`buf`](https://docs.buf.build/installation) for easy generation of proto serialization/deserialization code
-* [`protoc`](https://grpc.io/docs/protoc-installation/), used by `buf` and usable independent of `buf`
-* A Python environment with [the website's `requirements.txt`](https://github.com/substrait-io/substrait/blob/main/site/requirements.txt) dependencies installed if you want to see changes to the website locally
+* [ANTLR](https://www.antlr.org)
+* [Node.js](https://nodejs.org)
+* A Python environment with the PyPI dev dependencies installed
+
+You can also use other Python tooling like `uv` with the PyPI dependencies declared in `pyproject.toml`. In this case you need to set up the right versions of the non-PyPI dependencies yourself.
+
+### Dependencies
+
+Pixi manages two types of dependencies:
+
+- **non-PyPI**: Includes all non-PyPI dependencies (Python itself, buf, ANTLR, Node.js, etc.) as `[tool.pixi.dependencies]` in `pyproject.toml`
+- **PyPI**: Includes all PyPI development dependencies (Ruff, pytest, check-jsonschema, yamllint, etc.) and documentation dependencies (mkdocs and plugins) as a regular pyproject.toml `dev` dependency group in `pyproject.toml` which can be used with other Python package managers like `uv`.
+
+## Common Development Tasks
+
+Pixi provides convenient tasks for common development operations. Here are the most frequently used commands:
+
+### Code Quality and Testing
+
+```bash
+# Format code
+pixi run format
+
+# Lint code
+pixi run lint
+
+# Run all tests
+pixi run test
+```
+
+### Code Generation
+
+```bash
+# Generate both protobuf Python bindings and ANTLR parsers
+pixi run generate
+```
+
+### Documentation
+
+```bash
+# Build the documentation website
+pixi run mkdocs build
+
+# Serve documentation locally with live reload
+pixi run mkdocs serve
+```
+
+### Release Management
+
+```bash
+# Perform a dry-run release (testing only)
+pixi run dry-run
+```
 
 ## Documentation Examples
 
@@ -18,10 +73,8 @@ See [`site/examples/README.md`](site/examples/README.md) for complete instructio
 
 Quick example:
 
-```markdown
 ```yaml
 --8<-- "examples/extensions/my_example.yaml"
-```
 ```
 
 ## Commit Conventions

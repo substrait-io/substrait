@@ -15,7 +15,10 @@ jobs:
       - run: >
           echo 'module.exports = {
             // Workaround for https://github.com/dependabot/dependabot-core/issues/5923
-            "ignores": [(message) => /^Bumps \[.+]\(.+\) from .+ to .+\.$/m.test(message)],
+            "ignores": [
+              (message) => /^Bumps \[.+]\(.+\) from .+ to .+\.$/m.test(message),
+              (message) => /^Updates the requirements on .+ to permit the latest version\.$/m.test(message)
+            ],
             "rules": {
               "body-max-line-length": [0, "always", Infinity],
               "footer-max-line-length": [0, "always", Infinity],
@@ -29,11 +32,11 @@ jobs:
 
             ${{ github.event.pull_request.body }}
       - if: failure()
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const message = `**ACTION NEEDED**
-              
+
               Substrait follows the [Conventional Commits
               specification](https://www.conventionalcommits.org/en/v1.0.0/) for
               release automation.

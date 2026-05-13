@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_comparison.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_comparison
 
 # basic: Basic examples without any special cases
 equal(1::i8, 1::i8) = true::bool
@@ -12,7 +12,7 @@ equal(10::dec<38, 0>, 10::dec<38, 0>) = true::bool
 equal(inf::fp64, -inf::fp64) = false::bool
 
 # null_input: Examples with null as input
-equal(null::i16, 1::i16) = null::bool
-equal(null::i16, null::i16) = null::bool
-equal(7::dec<38, 0>, null::dec<38, 0>) = null::bool
-equal(null::dec<38, 0>, null::dec<38, 0>) = null::bool
+equal(null::i16?, 1::i16) = null::bool?
+equal(null::i16?, null::i16?) = null::bool?
+equal(7::dec<38, 0>, null::dec?<38, 0>) = null::bool?
+equal(null::dec?<38, 0>, null::dec?<38, 0>) = null::bool?

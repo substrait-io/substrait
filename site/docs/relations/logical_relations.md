@@ -210,7 +210,7 @@ The cross product operation will combine two separate inputs into a single outpu
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is empty post operation. |
-| Input Order          | The input order is the left input followed by the the right input. All field references of [Cross Product Properties](#cross-product-properties) are over this order. |
+| Input Order          | The input order is the left input followed by the right input. All field references of [Cross Product Properties](#cross-product-properties) are over this order. |
 | Direct Output Order  | Same as the `Input Order`. |
 
 ### Cross Product Properties
@@ -237,8 +237,8 @@ The join operation will combine two separate inputs into a single output, based 
 | Inputs               | 2                                                            |
 | Outputs              | 1                                                            |
 | Property Maintenance | Distribution is maintained. Orderedness is empty post operation. Physical relations may provide better property maintenance. |
-| Input Order          | The input order is the left input followed by the right input. All field references of [Join Properties](#join-properties) are over this order. |
-| Direct Output Order  | For semi joins and anti joins, the emit order is either left or right only. For mark joins, the emit order is either left or right with a "mark" column appended at the end. See [Join Types](#join-types) for detail. Otherwise, the same as `Input Order`. |
+| Input Order          | The input order is the left input followed by the right input. All field references of [Join Properties](#join-properties) except Post-Join Filter are over this order. |
+| Direct Output Order  | For semi joins and anti joins, the emit order is either left or right only. For mark joins, the emit order is either left or right with a "mark" column appended at the end. See [Join Types](#join-types) for detail. Otherwise, the same as `Input Order`. All field references of Post-Join Filter are over this order. |
 
 ### Join Properties
 
@@ -247,7 +247,7 @@ The join operation will combine two separate inputs into a single output, based 
 | Left Input       | A relational input.                                          | Required                           |
 | Right Input      | A relational input.                                          | Required                           |
 | Join Expression  | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the input order of the data. | Required. Can be the literal True. |
-| Post-Join Filter | A boolean condition to be applied to each result record after the inputs have been joined, yielding only the records that satisfied the condition. | Optional                           |
+| Post-Join Filter | An optional boolean condition applied to the output of the join. Semantically equivalent to placing a [Filter](#filter-operation) directly above the join. Does not influence which rows are considered matches. Field references correspond to the direct output order of the join operation. | Optional, defaults to True.        |
 | Join Type        | One of the join types defined below.                         | Required                           |
 
 ### Join Types
@@ -424,6 +424,10 @@ As a concrete example think about two queries `SELECT * FROM A JOIN B JOIN C` an
 We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the two queries, by creating a plan with 3 `Rel`.
 One expressing `A JOIN B` (in position 0 in the plan), one using reference as follows: `ReferenceRel(0) JOIN C` and a third one
 doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B`.
+
+!!! note "Outer references in shared relations"
+
+    When a shared relation contains an unresolved outer reference, the reference must use `rel_reference` instead of `steps_out`, because a `ReferenceRel` can be reached through multiple paths of different depths, making offset-based resolution ambiguous. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
 
 | Signature            | Value                                 |
 | -------------------- |---------------------------------------|

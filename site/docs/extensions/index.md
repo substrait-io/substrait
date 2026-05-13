@@ -82,7 +82,7 @@ For variadic functions, the variadic argument is included *once* in the argument
 
 #### Uniqueness Constraint
 
-A function signature uniquely identifies a function implementation within a single YAML file. As such, every function implementation within a YAML **must** have a distinct function signature in order for references to the implementation to remain unambiguous. A YAML file in which this is not the case is invalid.
+A function signature uniquely identifies a function implementation within a single YAML file. As such, every function implementation within a YAML **must** have a distinct function signature in order for references to the implementation to remain unambiguous. This uniqueness constraint applies across all function types in the YAML file, not separately within scalar functions, aggregate functions, and window functions. Extension declarations in plans identify functions by signature only, rather than by a combination of signature and function type, so this avoids requiring consumers to infer function type from invocation context, such as when an aggregate function is used in a window context. A YAML file in which this is not the case is invalid.
 
 #### Type Short Names
 
@@ -98,10 +98,7 @@ A function signature uniquely identifies a function implementation within a sing
 | string                          | str            |
 | binary                          | vbin           |
 | boolean                         | bool           |
-| timestamp                       | ts             |
-| timestamp_tz                    | tstz           |
 | date                            | date           |
-| time                            | time           |
 | interval_year                   | iyear          |
 | interval_day                    | iday           |
 | interval_compound               | icompound      |
@@ -128,7 +125,7 @@ Function-level [options](../expressions/scalar_functions.md#options) are not par
 | ------------------------------------------------- | ------------------- |
 | `add(i8, i8) => i8`                               | `add:i8_i8`         |
 | `avg(fp32) => fp32`                               | `avg:fp32`          |
-| `extract(enumeration, timestamp) => i64`          | `extract:req_ts`    |
+| `extract(required enumeration, precision_timestamp<6>) => i64` | `extract:req_pts`    |
 | `sum(any1) => any1`                               | `sum:any`           |
 | `concat(str...) => str`                           | `concat:str`        |
 | `transform(list<any1>, func<any1 -> any2>) => list<any2>` | `transform:list_func` |
@@ -144,7 +141,9 @@ The `any` type indicates that the argument can take any possible type. In the `f
 ```yaml
 --8<-- "examples/extensions/any1_type_function.yaml"
 ```
-The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all any types with same numeric suffix _must_ be of the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
+The `any[\d]` types (i.e. `any1`, `any2`, ..., `any9`) impose an additional restriction. Within a single function invocation, all `any` types with the same numeric suffix _must_ bind to the same type. In the `bar` function above, arguments `a` and `b` can have any type as long as both types are the same.
+
+How `any` type parameters interact with nullability during function binding depends on the function's [nullability mode](../expressions/scalar_functions.md#nullability-handling). See [Nullability and `any` Type Binding](../expressions/scalar_functions.md#nullability-and-any-type-binding) for the full rules and detailed examples.
 
 ### Extension Metadata
 
@@ -162,6 +161,24 @@ Example:
 ```
 
 Consumers of extension files are not required to understand or validate metadata fields.
+
+### Deprecation of Extensions
+
+An extension entry can be deprecated. Producing a plan using deprecated extensions is discouraged for forward compatibility. The `deprecated` field can be added to types, type variations, functions (scalar, aggregate, and window), and individual function implementations.
+
+Consumers of extension files are not required to understand or validate deprecation fields.
+
+The `deprecated` field requires a `since` field — a [semantic version](https://semver.org) string (e.g. `"1.2.0"`) using only the core `major.minor.patch` components, specifying the version at which the entry was deprecated.
+
+* For Substrait core extensions, `since` follows the Substrait release version.
+* For third-party extensions, extension authors may use `since` to indicate a deprecation version, but there is no official behavior defined.
+
+An optional `reason` string can describe why the entry was deprecated, and an optional `metadata` object can hold arbitrary data from the extension author.
+
+Example:
+```yaml
+--8<-- "examples/extensions/deprecation_example.yaml"
+```
 
 ## Advanced Extensions
 
@@ -246,6 +263,10 @@ The third form of advanced extensions provides entirely new relational operation
 | **`ExtensionMultiRel`**  | Custom relations with multiple inputs | Custom joins                      |
 
 These extension relations are first-class relation types in Substrait and can be used anywhere a standard relation would be used.
+
+#### Output Schema
+
+Unlike standard relations, Substrait cannot specify how to derive the output schema of extension relations. It is up to producers and consumers to agree on how to derive the schema from the inputs and the `detail` field. This derivation should be documented in the protobuf definition (or equivalent) used for the `detail` field.
 
 ### When to Use What
 

@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_comparison.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_comparison
 
 # basic: Basic examples without any special cases
 lt(1::i8, 2::i8) = true::bool
@@ -14,8 +14,8 @@ lt(1.5e+308::fp64, inf::fp64) = true::bool
 lt(-1.5e+308::fp64, -inf::fp64) = false::bool
 
 # null_input: Examples with null as input
-lt(null::dec<38, 2>, 2.50::dec<38, 2>) = null::bool
-lt(null::dec<38, 2>, null::dec<38, 2>) = null::bool
-lt(null::i16, 1::i16) = null::bool
-lt(2::i16, null::i16) = null::bool
-lt(null::i16, null::i16) = null::bool
+lt(null::dec?<38, 2>, 2.50::dec<38, 2>) = null::bool?
+lt(null::dec?<38, 2>, null::dec?<38, 2>) = null::bool?
+lt(null::i16?, 1::i16) = null::bool?
+lt(2::i16, null::i16?) = null::bool?
+lt(null::i16?, null::i16?) = null::bool?

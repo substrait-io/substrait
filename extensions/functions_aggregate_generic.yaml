@@ -3,9 +3,10 @@
 urn: extension:io.substrait:functions_aggregate_generic
 aggregate_functions:
   - name: "count"
-    description: Count a set of values
+    description: Count the number of values or records.
     impls:
-      - args:
+      - description: Count the non-null values in a set of values.
+        args:
           - name: x
             value: any
         options:
@@ -15,10 +16,8 @@ aggregate_functions:
         decomposable: MANY
         intermediate: i64
         return: i64
-  - name: "count"
-    description: "Count a set of records (not field referenced)"
-    impls:
-      - options:
+      - description: Count the number of records (not field-referenced).
+        options:
           overflow:
             values: [SILENT, SATURATE, ERROR]
         nullability: DECLARED_OUTPUT

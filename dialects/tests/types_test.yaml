@@ -32,3 +32,12 @@ supported_types:
     max_precision: 0
   - type: INTERVAL_DAY
     max_precision: 9
+  - type: FIXED_BINARY
+    max_length: 1000000
+  - type: VARCHAR
+    max_length: 255
+  - type: FIXED_CHAR
+    max_length: 42
+  - type: DECIMAL
+    max_precision: 27
+    max_scale: 5

@@ -68,6 +68,29 @@ WHERE x < ANY(SELECT y from t2)
 
 
 
+## Outer References in Subqueries
+
+Subqueries may contain *outer references*, which are field references that reach
+outside the subquery boundary to access records from an enclosing relation.
+The `OuterReference` root type provides two resolution fields:
+
+* `steps_out`: Resolves the reference by counting subquery boundaries
+  upward. This works correctly when the plan is a tree (each relation has a
+  single parent).
+
+* `rel_reference`: Resolves the reference by naming the binding relation
+  via its plan-wide unique `RelCommon.rel_anchor`. Must be used instead of
+  `steps_out` when an outer reference appears inside a relation shared via
+
+  `ReferenceRel` and that shared relation can be reached through multiple
+
+  paths with different subquery depths, making `steps_out` ambiguous.
+
+
+Exactly one of these fields must be set. See
+[Field References — Outer References](field_references.md#outer-references)
+for details.
+
 === "Protobuf Representation"
 
     ```proto

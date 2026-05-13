@@ -15,6 +15,8 @@ option java_package = "io.substrait.proto";
 //
 // The value 0 represents the system-preferred variation and is a valid reference value.
 message Type {
+  reserved 14, 17, 29;
+
   oneof kind {
     Boolean bool = 1;
     I8 i8 = 2;
@@ -25,16 +27,10 @@ message Type {
     FP64 fp64 = 11;
     String string = 12;
     Binary binary = 13;
-    // Deprecated in favor of `PrecisionTimestamp precision_timestamp`
-    Timestamp timestamp = 14 [deprecated = true];
     Date date = 16;
-    // Deprecated in favor of `PrecisionTime precision_time`
-    Time time = 17 [deprecated = true];
     IntervalYear interval_year = 19;
     IntervalDay interval_day = 20;
     IntervalCompound interval_compound = 35;
-    // Deprecated in favor of `PrecisionTimestampTZ precision_timestamp_tz`
-    TimestampTZ timestamp_tz = 29 [deprecated = true];
     UUID uuid = 32;
 
     FixedChar fixed_char = 21;
@@ -113,22 +109,7 @@ message Type {
     Nullability nullability = 2;
   }
 
-  message Timestamp {
-    uint32 type_variation_reference = 1;
-    Nullability nullability = 2;
-  }
-
   message Date {
-    uint32 type_variation_reference = 1;
-    Nullability nullability = 2;
-  }
-
-  message Time {
-    uint32 type_variation_reference = 1;
-    Nullability nullability = 2;
-  }
-
-  message TimestampTZ {
     uint32 type_variation_reference = 1;
     Nullability nullability = 2;
   }

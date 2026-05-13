@@ -909,7 +909,6 @@ scalar_functions:
         return: "string"
       - args:
           - value: "varchar<L1>"
-          - value: i64
             name: "input"
           - value: i64
             name: "count"

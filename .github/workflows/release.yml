@@ -18,27 +18,30 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'substrait-io/substrait'
     steps:
-      - uses: tibdex/github-app-token@v2
+      - uses: actions/create-github-app-token@v3
         id: generate-token
         with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          client-id: ${{ secrets.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          # request token for both substrait and substrait-packaging repos
+          # for ci/release/notify.sh
+          repositories: |
+            substrait
+            substrait-packaging
 
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
 
-      - uses: actions/setup-node@v6
+      - uses: prefix-dev/setup-pixi@v0.9.5
         with:
-          node-version: "20"
-
-      - uses: bufbuild/buf-setup-action@v1.50.0
-        with:
-          github_token: ${{ github.token }}
+          pixi-version: v0.66.0
+          cache: true
 
       - name: run semantic-release
-        run: ./ci/release/run.sh
+        run: pixi run release
         env:
           BUF_TOKEN: ${{ secrets.BUF_TOKEN }}
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}

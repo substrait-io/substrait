@@ -4,3 +4,10 @@
 **/build
 gen
 __pycache__
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# uv virtual environment
+.venv

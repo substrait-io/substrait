@@ -18,11 +18,11 @@ version
     ;
 
 include
-    : TripleHash SubstraitInclude Colon StringLiteral (Comma StringLiteral)*
+    : TripleHash SubstraitInclude Colon ExtensionUrn
     ;
 
 dependency
-    : TripleHash SubstraitDependency Colon StringLiteral
+    : TripleHash SubstraitDependency Colon ExtensionUrn
     ;
 
 testGroupDescription
@@ -49,15 +49,13 @@ result
 
 argument
     : nullArg
+    | enumArg
     | intArg
     | floatArg
     | booleanArg
     | stringArg
     | decimalArg
     | dateArg
-    | timeArg
-    | timestampArg
-    | timestampTzArg
     | intervalYearArg
     | intervalDayArg
     | intervalCompoundArg
@@ -160,18 +158,6 @@ dateArg
     : DateLiteral DoubleColon dateType
     ;
 
-timeArg
-    : TimeLiteral DoubleColon timeType
-    ;
-
-timestampArg
-    : TimestampLiteral DoubleColon timestampType
-    ;
-
-timestampTzArg
-    : TimestampTzLiteral DoubleColon timestampTZType
-    ;
-
 intervalYearArg
     : IntervalYearLiteral DoubleColon intervalYearType
     ;
@@ -216,6 +202,10 @@ lambdaArg
     : literalLambda DoubleColon funcType
     ;
 
+enumArg
+    : Identifier DoubleColon EnumType
+    ;
+
 literalList
     : OBracket (listElement (Comma listElement)*)? CBracket
     ;
@@ -249,10 +239,7 @@ scalarType
   | floatType                            #float
   | stringType                           #string
   | binaryType                           #binary
-  | timestampType                        #timestamp
-  | timestampTZType                      #timestampTz
   | dateType                             #date
-  | timeType                             #time
   | intervalYearType                     #intervalYear
   | UUID isnull=QMark?                   #uuid
   | UserDefined Identifier isnull=QMark? #userDefined
@@ -280,18 +267,6 @@ floatType
 
 dateType
     : Date isnull=QMark?
-    ;
-
-timeType
-    : Time isnull=QMark?
-    ;
-
-timestampType
-    : (Ts | Timestamp) isnull=QMark?
-    ;
-
-timestampTZType
-    : (TsTZ | Timestamp_TZ) isnull=QMark?
     ;
 
 intervalYearType

@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_string
 
 # basic: Basic examples without any special cases
 replace('abcabcabc'::str, 'bc'::str, 'dd'::str) = 'addaddadd'::str
@@ -7,6 +7,6 @@ replace('abcabcabc'::str, ' '::str, 'dd'::str) = 'abcabcabc'::str
 replace('abc def ghi'::str, ' '::str, ','::str) = 'abc,def,ghi'::str
 
 # null_input: Examples with null as input
-replace('abcd'::str, null::str, ','::str) = null::str
-replace('abcd'::str, ' '::str, null::str) = null::str
-replace(null::str, ' '::str, ','::str) = null::str
+replace('abcd'::str, null::str?, ','::str) = null::str?
+replace('abcd'::str, ' '::str, null::str?) = null::str?
+replace(null::str?, ' '::str, ','::str) = null::str?
