@@ -69,6 +69,7 @@ argument
     | structArg
     | mapArg
     | lambdaArg
+    | funcCallArg
     | Identifier  // Bare identifiers (for lambda parameters)
     ;
 
@@ -210,6 +211,10 @@ mapArg
 
 lambdaArg
     : literalLambda DoubleColon funcType
+    ;
+
+funcCallArg
+    : identifier OParen arguments CParen
     ;
 
 enumArg
