@@ -6,6 +6,7 @@ from tests.coverage.antlr_parser.FuncTestCaseParserVisitor import (
 from tests.coverage.nodes import (
     AggregateArgument,
     CaseGroup,
+    FuncCallArg,
     TestFile,
     TestCase,
     CaseLiteral,
@@ -312,6 +313,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitMapArg(ctx.mapArg())
         if ctx.lambdaArg() is not None:
             return self.visitLambdaArg(ctx.lambdaArg())
+        if ctx.funcCallArg() is not None:
+            return self.visitFuncCallArg(ctx.funcCallArg())
         if ctx.enumArg() is not None:
             return self.visitEnumArg(ctx.enumArg())
 
@@ -507,6 +510,12 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             value="lambda",
             type=lambda_type,
             nullable=ctx.funcType().isnull is not None,
+        )
+
+    def visitFuncCallArg(self, ctx: FuncTestCaseParser.FuncCallArgContext):
+        return FuncCallArg(
+            func_name=ctx.identifier().getText(),
+            args=self.visitArguments(ctx.arguments()),
         )
 
     def visitEnumArg(self, ctx: FuncTestCaseParser.EnumArgContext):
