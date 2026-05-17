@@ -115,7 +115,10 @@ A function signature uniquely identifies a function implementation within a sing
 | map&lt;K,V&gt;                  | map            |
 | func&lt;T-&gt;R&gt;, func&lt;(T1,...,TN)-&gt;R&gt; | func |
 | any[\d]?                        | any            |
+| unknown                         | unknown        |
 | user-defined type &lt;name&gt;  | u!&lt;name&gt; |
+
+The `unknown` short type is reserved for partially bound expressions. When a producer does not yet know the concrete overload of a function, it may use a placeholder signature such as `add:unknown_unknown` until a downstream binder resolves the argument and return types.
 
 #### Examples
 

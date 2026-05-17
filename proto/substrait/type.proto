@@ -46,6 +46,13 @@ message Type {
     Map map = 28;
     Func func = 38;
 
+    // A placeholder type whose concrete type has not yet been resolved.
+    // Unknown may be used where a concrete type would normally appear in
+    // partially bound plans and expressions, and must be resolved to a
+    // concrete type before execution unless the consumer defines semantics for
+    // unknown-typed values.
+    Unknown unknown = 39;
+
     UserDefined user_defined = 30;
 
     // Deprecated in favor of user_defined, which allows nullability and
@@ -223,6 +230,12 @@ message Type {
     // nullability (e.g., func<i32 -> i32?> where the function always exists
     // but may return null).
     Nullability nullability = 3;
+  }
+
+  message Unknown {
+    // Optional nullability constraint for this unknown type. If unspecified,
+    // both the concrete type and its nullability are unresolved.
+    Nullability nullability = 1;
   }
 
   message UserDefined {

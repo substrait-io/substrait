@@ -23,3 +23,11 @@ For a message with multiple expressions, users may produce each Extended Express
 ## Function extensions
 
 Function extensions work the same for both Extended Expression and the original Expression defined in the Substrait protocol.
+
+## Partially Bound Expressions
+
+Extended Expression can also carry partially bound expressions for producers that do not yet know the full input schema. In this form, field-like references can be represented as `NamedExpression`, and any known-but-unresolved schema or expression types can use `unknown`. A consumer must bind these names and types before execution unless it defines its own unresolved-expression semantics.
+
+```protobuf
+--8<-- "examples/proto-textformat/extended_expression/unbound_named_projection.textproto"
+```

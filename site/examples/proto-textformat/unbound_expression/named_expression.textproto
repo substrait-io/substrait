@@ -1,0 +1,6 @@
+# message Expression
+# An unresolved reference to a named expression, such as a column name entered
+# before a schema has been bound.
+named_expression {
+  names: "foo"
+}

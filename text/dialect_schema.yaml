@@ -58,6 +58,7 @@ properties:
           - STRUCT
           - LIST
           - MAP
+          - UNKNOWN
         - $ref: "#/definitions/type_bool"
         - $ref: "#/definitions/type_i8"
         - $ref: "#/definitions/type_i16"
@@ -82,6 +83,7 @@ properties:
         - $ref: "#/definitions/type_struct"
         - $ref: "#/definitions/type_list"
         - $ref: "#/definitions/type_map"
+        - $ref: "#/definitions/type_unknown"
         - $ref: "#/definitions/type_user_defined"
 
   supported_relations:
@@ -156,6 +158,7 @@ properties:
           - SUBQUERY
           - NESTED
           - DYNAMIC_PARAMETER
+          - NAMED_EXPRESSION
           - EXECUTION_CONTEXT_VARIABLE
         - $ref: "#/definitions/literal_expression"
         - $ref: "#/definitions/selection_expression"
@@ -169,6 +172,7 @@ properties:
         - $ref: "#/definitions/subquery_expression"
         - $ref: "#/definitions/nested_expression"
         - $ref: "#/definitions/dynamic_parameter_expression"
+        - $ref: "#/definitions/named_expression_expression"
         - $ref: "#/definitions/execution_context_variable"
 
   supported_scalar_functions:
@@ -704,6 +708,18 @@ definitions:
         description: Arbitrary data created by the dialect author.
       system_metadata:
         $ref: "#/definitions/system_type_metadata"
+  type_unknown:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: UNKNOWN
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
   type_user_defined:
     type: object
     additionalProperties: false
@@ -1203,6 +1219,16 @@ definitions:
     properties:
       expression:
         const: DYNAMIC_PARAMETER
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
+    required: [expression]
+  named_expression_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: NAMED_EXPRESSION
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.

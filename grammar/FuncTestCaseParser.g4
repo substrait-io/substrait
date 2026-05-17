@@ -242,6 +242,7 @@ scalarType
   | dateType                             #date
   | intervalYearType                     #intervalYear
   | UUID isnull=QMark?                   #uuid
+  | Unknown isnull=QMark?                #unknown
   | UserDefined Identifier isnull=QMark? #userDefined
   ;
 
