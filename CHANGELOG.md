@@ -1,6 +1,22 @@
 Release Notes
 ---
 
+## [0.91.0](https://github.com/substrait-io/substrait/compare/v0.90.0...v0.91.0) (2026-05-17)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** changes the return type of the `subtract:date_iday`
+function from `date` to `precision_timestamp`
+
+### Features
+
+* clarify post_join_filter. add residual_expressions to hash join and merge join ([#1044](https://github.com/substrait-io/substrait/issues/1044)) ([f7b939c](https://github.com/substrait-io/substrait/commit/f7b939cd687cde40ae6cd5d495880a6050d451b0)), closes [#807](https://github.com/substrait-io/substrait/issues/807)
+* **docs:** clarify distinction between enumeration arguments and options ([#1005](https://github.com/substrait-io/substrait/issues/1005)) ([51ff9fa](https://github.com/substrait-io/substrait/commit/51ff9fa72212f38abf330a2d8922f3ad2a7ea093))
+
+### Bug Fixes
+
+* **extensions:** correct return type for subtract:date_iday operation ([#1029](https://github.com/substrait-io/substrait/issues/1029)) ([26fbd04](https://github.com/substrait-io/substrait/commit/26fbd041ebf1f688c28ef9a66a50583dc71aaecd))
+
 ## [0.90.0](https://github.com/substrait-io/substrait/compare/v0.89.0...v0.90.0) (2026-05-11)
 
 ### Features
