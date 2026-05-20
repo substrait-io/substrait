@@ -225,7 +225,7 @@ listElement
     ;
 
 literalStruct
-    : OParen complexLiteral (Comma complexLiteral)* CParen
+    : OParen (complexLiteral (Comma complexLiteral)*)? CParen
     ;
 
 literalMap
@@ -343,7 +343,7 @@ listType
     ;
 
 structType
-    : Struct isnull=QMark? OAngleBracket dataType (Comma dataType)* CAngleBracket
+    : Struct isnull=QMark? OAngleBracket (dataType (Comma dataType)*)? CAngleBracket
     ;
 
 mapType
