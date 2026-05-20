@@ -221,11 +221,11 @@ literalList
     ;
 
 listElement
-    : complexLiteral
+    : compoundLiteral
     ;
 
 literalStruct
-    : OParen (complexLiteral (Comma complexLiteral)*)? CParen
+    : OParen (compoundLiteral (Comma compoundLiteral)*)? CParen
     ;
 
 literalMap
@@ -233,10 +233,10 @@ literalMap
     ;
 
 mapEntry
-    : key=complexLiteral Colon value=complexLiteral
+    : key=compoundLiteral Colon value=compoundLiteral
     ;
 
-complexLiteral
+compoundLiteral
     : literal
     | literalList
     | literalStruct

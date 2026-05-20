@@ -476,23 +476,23 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
         return [
-            self.visitComplexLiteral(element.complexLiteral())
+            self.visitCompoundLiteral(element.compoundLiteral())
             for element in ctx.listElement()
         ]
 
     def visitLiteralStruct(self, ctx: FuncTestCaseParser.LiteralStructContext):
-        return [self.visitComplexLiteral(element) for element in ctx.complexLiteral()]
+        return [self.visitCompoundLiteral(element) for element in ctx.compoundLiteral()]
 
     def visitLiteralMap(self, ctx: FuncTestCaseParser.LiteralMapContext):
         return [
             {
-                "key": self.visitComplexLiteral(entry.key),
-                "value": self.visitComplexLiteral(entry.value),
+                "key": self.visitCompoundLiteral(entry.key),
+                "value": self.visitCompoundLiteral(entry.value),
             }
             for entry in ctx.mapEntry()
         ]
 
-    def visitComplexLiteral(self, ctx: FuncTestCaseParser.ComplexLiteralContext):
+    def visitCompoundLiteral(self, ctx: FuncTestCaseParser.CompoundLiteralContext):
         if ctx.literal() is not None:
             value, _ = self.visitLiteral(ctx.literal())
             return value
@@ -502,7 +502,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitLiteralStruct(ctx.literalStruct())
         if ctx.literalMap() is not None:
             return self.visitLiteralMap(ctx.literalMap())
-        raise ParseError("Unknown complex literal")
+        raise ParseError("Unknown compound literal")
 
     def visitLambdaArg(self, ctx: FuncTestCaseParser.LambdaArgContext):
         lambda_type = ctx.funcType().getText()

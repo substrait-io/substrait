@@ -275,8 +275,8 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#complexLiteral.
-    def visitComplexLiteral(self, ctx:FuncTestCaseParser.ComplexLiteralContext):
+    # Visit a parse tree produced by FuncTestCaseParser#compoundLiteral.
+    def visitCompoundLiteral(self, ctx:FuncTestCaseParser.CompoundLiteralContext):
         return self.visitChildren(ctx)
 
 

@@ -486,12 +486,12 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#complexLiteral.
-    def enterComplexLiteral(self, ctx:FuncTestCaseParser.ComplexLiteralContext):
+    # Enter a parse tree produced by FuncTestCaseParser#compoundLiteral.
+    def enterCompoundLiteral(self, ctx:FuncTestCaseParser.CompoundLiteralContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#complexLiteral.
-    def exitComplexLiteral(self, ctx:FuncTestCaseParser.ComplexLiteralContext):
+    # Exit a parse tree produced by FuncTestCaseParser#compoundLiteral.
+    def exitCompoundLiteral(self, ctx:FuncTestCaseParser.CompoundLiteralContext):
         pass
 
 

@@ -421,7 +421,7 @@ class FuncTestCaseParser ( Parser ):
     RULE_literalStruct = 47
     RULE_literalMap = 48
     RULE_mapEntry = 49
-    RULE_complexLiteral = 50
+    RULE_compoundLiteral = 50
     RULE_literalLambda = 51
     RULE_lambdaParameters = 52
     RULE_lambdaBody = 53
@@ -470,7 +470,7 @@ class FuncTestCaseParser ( Parser ):
                    "varCharArg", "fixedBinaryArg", "precisionTimeArg", "precisionTimestampArg", 
                    "precisionTimestampTZArg", "listArg", "structArg", "mapArg", 
                    "lambdaArg", "enumArg", "literalList", "listElement", 
-                   "literalStruct", "literalMap", "mapEntry", "complexLiteral", 
+                   "literalStruct", "literalMap", "mapEntry", "compoundLiteral", 
                    "literalLambda", "lambdaParameters", "lambdaBody", "dataType", 
                    "scalarType", "booleanType", "stringType", "binaryType", 
                    "intType", "floatType", "dateType", "intervalYearType", 
@@ -4139,8 +4139,8 @@ class FuncTestCaseParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def complexLiteral(self):
-            return self.getTypedRuleContext(FuncTestCaseParser.ComplexLiteralContext,0)
+        def compoundLiteral(self):
+            return self.getTypedRuleContext(FuncTestCaseParser.CompoundLiteralContext,0)
 
 
         def getRuleIndex(self):
@@ -4170,7 +4170,7 @@ class FuncTestCaseParser ( Parser ):
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 495
-            self.complexLiteral()
+            self.compoundLiteral()
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -4193,11 +4193,11 @@ class FuncTestCaseParser ( Parser ):
         def CParen(self):
             return self.getToken(FuncTestCaseParser.CParen, 0)
 
-        def complexLiteral(self, i:int=None):
+        def compoundLiteral(self, i:int=None):
             if i is None:
-                return self.getTypedRuleContexts(FuncTestCaseParser.ComplexLiteralContext)
+                return self.getTypedRuleContexts(FuncTestCaseParser.CompoundLiteralContext)
             else:
-                return self.getTypedRuleContext(FuncTestCaseParser.ComplexLiteralContext,i)
+                return self.getTypedRuleContext(FuncTestCaseParser.CompoundLiteralContext,i)
 
 
         def Comma(self, i:int=None):
@@ -4240,7 +4240,7 @@ class FuncTestCaseParser ( Parser ):
             _la = self._input.LA(1)
             if (((_la) & ~0x3f) == 0 and ((1 << _la) & 835637394014208) != 0) or _la==112 or _la==114:
                 self.state = 498
-                self.complexLiteral()
+                self.compoundLiteral()
                 self.state = 503
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
@@ -4248,7 +4248,7 @@ class FuncTestCaseParser ( Parser ):
                     self.state = 499
                     self.match(FuncTestCaseParser.Comma)
                     self.state = 500
-                    self.complexLiteral()
+                    self.compoundLiteral()
                     self.state = 505
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
@@ -4358,17 +4358,17 @@ class FuncTestCaseParser ( Parser ):
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
             super().__init__(parent, invokingState)
             self.parser = parser
-            self.key = None # ComplexLiteralContext
-            self.value = None # ComplexLiteralContext
+            self.key = None # CompoundLiteralContext
+            self.value = None # CompoundLiteralContext
 
         def Colon(self):
             return self.getToken(FuncTestCaseParser.Colon, 0)
 
-        def complexLiteral(self, i:int=None):
+        def compoundLiteral(self, i:int=None):
             if i is None:
-                return self.getTypedRuleContexts(FuncTestCaseParser.ComplexLiteralContext)
+                return self.getTypedRuleContexts(FuncTestCaseParser.CompoundLiteralContext)
             else:
-                return self.getTypedRuleContext(FuncTestCaseParser.ComplexLiteralContext,i)
+                return self.getTypedRuleContext(FuncTestCaseParser.CompoundLiteralContext,i)
 
 
         def getRuleIndex(self):
@@ -4398,11 +4398,11 @@ class FuncTestCaseParser ( Parser ):
         try:
             self.enterOuterAlt(localctx, 1)
             self.state = 523
-            localctx.key = self.complexLiteral()
+            localctx.key = self.compoundLiteral()
             self.state = 524
             self.match(FuncTestCaseParser.Colon)
             self.state = 525
-            localctx.value = self.complexLiteral()
+            localctx.value = self.compoundLiteral()
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)
@@ -4412,7 +4412,7 @@ class FuncTestCaseParser ( Parser ):
         return localctx
 
 
-    class ComplexLiteralContext(ParserRuleContext):
+    class CompoundLiteralContext(ParserRuleContext):
         __slots__ = 'parser'
 
         def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
@@ -4436,29 +4436,29 @@ class FuncTestCaseParser ( Parser ):
 
 
         def getRuleIndex(self):
-            return FuncTestCaseParser.RULE_complexLiteral
+            return FuncTestCaseParser.RULE_compoundLiteral
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterComplexLiteral" ):
-                listener.enterComplexLiteral(self)
+            if hasattr( listener, "enterCompoundLiteral" ):
+                listener.enterCompoundLiteral(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitComplexLiteral" ):
-                listener.exitComplexLiteral(self)
+            if hasattr( listener, "exitCompoundLiteral" ):
+                listener.exitCompoundLiteral(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitComplexLiteral" ):
-                return visitor.visitComplexLiteral(self)
+            if hasattr( visitor, "visitCompoundLiteral" ):
+                return visitor.visitCompoundLiteral(self)
             else:
                 return visitor.visitChildren(self)
 
 
 
 
-    def complexLiteral(self):
+    def compoundLiteral(self):
 
-        localctx = FuncTestCaseParser.ComplexLiteralContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 100, self.RULE_complexLiteral)
+        localctx = FuncTestCaseParser.CompoundLiteralContext(self, self._ctx, self.state)
+        self.enterRule(localctx, 100, self.RULE_compoundLiteral)
         try:
             self.state = 531
             self._errHandler.sync(self)
