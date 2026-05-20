@@ -475,10 +475,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         )
 
     def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
-        return [
-            self.visitCompoundLiteral(element.compoundLiteral())
-            for element in ctx.listElement()
-        ]
+        return [self.visitCompoundLiteral(element) for element in ctx.compoundLiteral()]
 
     def visitLiteralStruct(self, ctx: FuncTestCaseParser.LiteralStructContext):
         return [self.visitCompoundLiteral(element) for element in ctx.compoundLiteral()]

@@ -255,11 +255,6 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#listElement.
-    def visitListElement(self, ctx:FuncTestCaseParser.ListElementContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by FuncTestCaseParser#literalStruct.
     def visitLiteralStruct(self, ctx:FuncTestCaseParser.LiteralStructContext):
         return self.visitChildren(ctx)

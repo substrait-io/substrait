@@ -217,11 +217,7 @@ enumArg
     ;
 
 literalList
-    : OBracket (listElement (Comma listElement)*)? CBracket
-    ;
-
-listElement
-    : compoundLiteral
+    : OBracket (compoundLiteral (Comma compoundLiteral)*)? CBracket
     ;
 
 literalStruct

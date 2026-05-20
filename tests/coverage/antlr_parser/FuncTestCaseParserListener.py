@@ -450,15 +450,6 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#listElement.
-    def enterListElement(self, ctx:FuncTestCaseParser.ListElementContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#listElement.
-    def exitListElement(self, ctx:FuncTestCaseParser.ListElementContext):
-        pass
-
-
     # Enter a parse tree produced by FuncTestCaseParser#literalStruct.
     def enterLiteralStruct(self, ctx:FuncTestCaseParser.LiteralStructContext):
         pass
