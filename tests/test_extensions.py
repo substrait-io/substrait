@@ -78,3 +78,4 @@ def test_build_type_to_short_type():
     assert long_to_short["list"] == "list"
     assert long_to_short["map"] == "map"
     assert long_to_short["struct"] == "struct"
+    assert long_to_short["unknown"] == "unknown"

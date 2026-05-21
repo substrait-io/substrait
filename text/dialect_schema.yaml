@@ -54,6 +54,7 @@ properties:
           - INTERVAL_DAY
           - INTERVAL_YEAR
           - UUID
+          - UNKNOWN
           - DECIMAL
           - STRUCT
           - LIST
@@ -78,6 +79,7 @@ properties:
         - $ref: "#/definitions/type_interval_day"
         - $ref: "#/definitions/type_interval_year"
         - $ref: "#/definitions/type_uuid"
+        - $ref: "#/definitions/type_unknown"
         - $ref: "#/definitions/type_decimal"
         - $ref: "#/definitions/type_struct"
         - $ref: "#/definitions/type_list"
@@ -635,6 +637,18 @@ definitions:
     properties:
       type:
         const: UUID
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_unknown:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: UNKNOWN
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.
