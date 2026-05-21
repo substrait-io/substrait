@@ -143,6 +143,7 @@ $defs:
       description:
         type: string
       type:
+        description: Type arguments are Substrait type expressions parsed by grammar/SubstraitType.g4.
         type: string
   arguments: # an array of arguments
     type: array
