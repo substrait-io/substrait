@@ -35,19 +35,19 @@ def parse_type_expression(value: str):
     return tree
 
 
+def iter_structure_type_expressions(structure):
+    """Yield type expressions from structure's NSTRUCT syntactic sugar form."""
+    if isinstance(structure, str):
+        yield structure
+    elif isinstance(structure, dict):
+        for value in structure.values():
+            yield from iter_structure_type_expressions(value)
+
+
 def iter_type_expressions(extension):
     """Yield type expression strings from a simple extension YAML document."""
-
-    def walk_structure(structure):
-        """Unpack the object form that is syntactic sugar for NSTRUCT fields."""
-        if isinstance(structure, str):
-            yield structure
-        elif isinstance(structure, dict):
-            for value in structure.values():
-                yield from walk_structure(value)
-
     for typ in extension.get("types", []):
-        yield from walk_structure(typ.get("structure"))
+        yield from iter_structure_type_expressions(typ.get("structure"))
 
     for functions in (
         extension.get("scalar_functions"),
@@ -72,6 +72,19 @@ def extension_yaml_files():
     repo_root = Path(__file__).parents[2]
     yield from sorted((repo_root / "extensions").glob("*.yaml"))
     yield from sorted((repo_root / "site" / "examples").glob("**/*.yaml"))
+
+
+def test_iter_structure_type_expressions():
+    """Structure syntactic sugar is reduced to the type strings it contains."""
+    cases = [
+        ("NSTRUCT<longitude: i32, latitude: i32>", ["NSTRUCT<longitude: i32, latitude: i32>"]),
+        ({"longitude": "i32", "latitude": "i32"}, ["i32", "i32"]),
+        ({"start": {"x": "fp64", "y": "fp64"}, "end": "u!point"}, ["fp64", "fp64", "u!point"]),
+        (None, []),
+    ]
+
+    for structure, expected in cases:
+        assert list(iter_structure_type_expressions(structure)) == expected
 
 
 def test_parse_valid_type_expressions():
