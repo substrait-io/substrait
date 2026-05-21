@@ -90,6 +90,28 @@ Similar to structs, maps and lists can also have a type as one of their paramete
             return: fp64
     ```
 
+In simple extension YAML, user-defined types from another extension may be referenced by prefixing the `u!` reference with a dependency alias declared in the file's `dependencies` map:
+
+=== "YAML"
+
+    ```
+    dependency_alias.u!typename
+    ```
+
+=== "Example"
+
+    ```yaml
+    dependencies:
+      ext: extension:io.substrait:extension_types
+    scalar_functions:
+      - name: distance
+        impls:
+          - args:
+            - name: p
+              value: ext.u!point
+            return: fp64
+    ```
+
 ### Function Types
 
 Function types represent anonymous functions with typed parameters and return values. They are used in higher-order functions that operate on collections.
