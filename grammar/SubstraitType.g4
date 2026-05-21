@@ -62,6 +62,7 @@ anyType
 
 typeDef
   : scalarType isnull=QMark?
+  | Unbound
   | parameterizedType
   | anyType
   ;

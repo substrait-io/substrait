@@ -116,6 +116,8 @@ Number
   : '-'? Int
   ;
 
+Unbound: 'UNBOUND';
+
 Identifier
   : ('A'..'Z' | '_' | '$') ('A'..'Z' | '_' | '$' | Digit)*
   ;

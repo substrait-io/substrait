@@ -603,6 +603,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#unbound.
+    def enterUnbound(self, ctx:FuncTestCaseParser.UnboundContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#unbound.
+    def exitUnbound(self, ctx:FuncTestCaseParser.UnboundContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#uuid.
     def enterUuid(self, ctx:FuncTestCaseParser.UuidContext):
         pass

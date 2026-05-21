@@ -37,6 +37,7 @@ def build_type_to_short_type():
         FuncTestCaseLexer.Interval_Day: FuncTestCaseLexer.IDay,
         FuncTestCaseLexer.Interval_Compound: FuncTestCaseLexer.ICompound,
         FuncTestCaseLexer.UUID: FuncTestCaseLexer.UUID,
+        FuncTestCaseLexer.Unbound: FuncTestCaseLexer.Unbound,
         FuncTestCaseLexer.FixedChar: FuncTestCaseLexer.FChar,
         FuncTestCaseLexer.VarChar: FuncTestCaseLexer.VChar,
         FuncTestCaseLexer.FixedBinary: FuncTestCaseLexer.FBin,

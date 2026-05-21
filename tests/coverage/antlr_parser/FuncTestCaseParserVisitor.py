@@ -340,6 +340,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#unbound.
+    def visitUnbound(self, ctx:FuncTestCaseParser.UnboundContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#uuid.
     def visitUuid(self, ctx:FuncTestCaseParser.UuidContext):
         return self.visitChildren(ctx)
