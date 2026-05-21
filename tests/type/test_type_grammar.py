@@ -48,9 +48,6 @@ def iter_type_expressions(extension):
     for typ in extension.get("types", []):
         yield from walk_structure(typ.get("structure"))
 
-    for variation in extension.get("type_variations", []):
-        yield variation["parent"]
-
     for functions in (
         extension.get("scalar_functions"),
         extension.get("aggregate_functions"),
