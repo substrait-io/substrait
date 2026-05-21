@@ -34,39 +34,36 @@ def parse_type_expression(value: str):
     return tree
 
 
-def collect_structure_type_expressions(structure):
-    if isinstance(structure, str):
-        yield structure
-    elif isinstance(structure, dict):
-        for value in structure.values():
-            yield from collect_structure_type_expressions(value)
+def iter_type_expressions(extension):
+    def walk_structure(structure):
+        if isinstance(structure, str):
+            yield structure
+        elif isinstance(structure, dict):
+            for value in structure.values():
+                yield from walk_structure(value)
 
-
-def collect_function_type_expressions(functions):
-    for function in functions or []:
-        for impl in function.get("impls", []):
-            for arg in impl.get("args", []):
-                if "value" in arg:
-                    yield arg["value"]
-                if "type" in arg:
-                    yield arg["type"]
-            if "return" in impl:
-                yield impl["return"]
-            if "intermediate" in impl:
-                yield impl["intermediate"]
-
-
-def collect_extension_type_expressions(extension):
     for typ in extension.get("types", []):
-        if "structure" in typ:
-            yield from collect_structure_type_expressions(typ["structure"])
+        yield from walk_structure(typ.get("structure"))
 
     for variation in extension.get("type_variations", []):
         yield variation["parent"]
 
-    yield from collect_function_type_expressions(extension.get("scalar_functions"))
-    yield from collect_function_type_expressions(extension.get("aggregate_functions"))
-    yield from collect_function_type_expressions(extension.get("window_functions"))
+    for functions in (
+        extension.get("scalar_functions"),
+        extension.get("aggregate_functions"),
+        extension.get("window_functions"),
+    ):
+        for function in functions or []:
+            for impl in function.get("impls", []):
+                for arg in impl.get("args", []):
+                    if "value" in arg:
+                        yield arg["value"]
+                    if "type" in arg:
+                        yield arg["type"]
+                if "return" in impl:
+                    yield impl["return"]
+                if "intermediate" in impl:
+                    yield impl["intermediate"]
 
 
 def extension_yaml_files():
@@ -102,7 +99,7 @@ def test_extension_yaml_type_expressions_are_grammar_compliant():
         with path.open() as f:
             extension = yaml.load(f, Loader=yaml.FullLoader)
 
-        for expression in collect_extension_type_expressions(extension):
+        for expression in iter_type_expressions(extension):
             try:
                 parse_type_expression(expression)
             except AssertionError as err:
