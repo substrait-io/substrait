@@ -77,9 +77,15 @@ def extension_yaml_files():
 def test_iter_structure_type_expressions():
     """Structure syntactic sugar is reduced to the type strings it contains."""
     cases = [
-        ("NSTRUCT<longitude: i32, latitude: i32>", ["NSTRUCT<longitude: i32, latitude: i32>"]),
+        (
+            "NSTRUCT<longitude: i32, latitude: i32>",
+            ["NSTRUCT<longitude: i32, latitude: i32>"],
+        ),
         ({"longitude": "i32", "latitude": "i32"}, ["i32", "i32"]),
-        ({"start": {"x": "fp64", "y": "fp64"}, "end": "u!point"}, ["fp64", "fp64", "u!point"]),
+        (
+            {"start": {"x": "fp64", "y": "fp64"}, "end": "u!point"},
+            ["fp64", "fp64", "u!point"],
+        ),
         (None, []),
     ]
 
