@@ -46,6 +46,13 @@ message Type {
     Map map = 28;
     Func func = 38;
 
+    // A placeholder type whose concrete type has not yet been bound.
+    // Unbound may be used where a concrete type would normally appear in
+    // partially bound plans and expressions, and must be bound to a
+    // concrete type before execution. Substrait defines no runtime semantics
+    // for values whose type is unbound.
+    Unbound unbound = 39;
+
     UserDefined user_defined = 30;
 
     // Reference an aliased type in `Plan.type_aliases`.
@@ -202,6 +209,8 @@ message Type {
     uint32 type_variation_reference = 3;
     Nullability nullability = 4;
   }
+
+  message Unbound {}
 
   // A function type for higher-order functions.
   // Represents a function that takes parameters of specified types and
