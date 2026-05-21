@@ -3,8 +3,8 @@
 from antlr4 import CommonTokenStream, InputStream
 from antlr4.error.ErrorListener import ErrorListener
 
-from tests.type.antlr_parser.SubstraitTypeLexer import SubstraitTypeLexer
-from tests.type.antlr_parser.SubstraitTypeParser import SubstraitTypeParser
+from antlr_parser.SubstraitTypeLexer import SubstraitTypeLexer
+from antlr_parser.SubstraitTypeParser import SubstraitTypeParser
 
 
 class ErrorCollector(ErrorListener):
