@@ -20,6 +20,7 @@ class ErrorCollector(ErrorListener):
 
 
 def parse_type_expression(value: str):
+    """Parse a single Substrait type expression with the generated grammar."""
     lexer = SubstraitTypeLexer(InputStream(value))
     token_stream = CommonTokenStream(lexer)
     parser = SubstraitTypeParser(token_stream)
@@ -35,6 +36,8 @@ def parse_type_expression(value: str):
 
 
 def iter_type_expressions(extension):
+    """Yield type expression strings from a simple extension YAML document."""
+
     def walk_structure(structure):
         if isinstance(structure, str):
             yield structure
@@ -67,12 +70,14 @@ def iter_type_expressions(extension):
 
 
 def extension_yaml_files():
+    """Yield extension YAML files whose type strings should match the grammar."""
     repo_root = Path(__file__).parents[2]
     yield from sorted((repo_root / "extensions").glob("*.yaml"))
     yield from sorted((repo_root / "site" / "examples").glob("**/*.yaml"))
 
 
 def test_parse_valid_type_expressions():
+    """Type grammar accepts representative valid type expressions."""
     valid_cases = [
         "u!point",
         "u!point?",
@@ -94,6 +99,7 @@ def test_parse_valid_type_expressions():
 
 
 def test_extension_yaml_type_expressions_are_grammar_compliant():
+    """All type expressions in checked-in extension YAML parse successfully."""
     failures = []
     for path in extension_yaml_files():
         with path.open() as f:
