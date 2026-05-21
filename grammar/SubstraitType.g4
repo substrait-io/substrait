@@ -40,7 +40,8 @@ parameterizedType
   | List isnull=QMark? Lt expr Gt                                                           #list
   | Map isnull=QMark? Lt key=expr Comma value=expr Gt                                       #map
   | Func isnull=QMark? Lt params=funcParams Arrow returnType=expr Gt                        #func
-  | UserDefined Identifier isnull=QMark? (Lt expr (Comma expr)* Gt)?                        #userDefined
+  | (dependencyAlias=Identifier Dot)? UserDefined Identifier isnull=QMark?
+      (Lt expr (Comma expr)* Gt)?                                                        #userDefined
   ;
 
 funcParams
