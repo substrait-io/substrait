@@ -1,5 +1,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
+from pathlib import Path
+
+import yaml
 from antlr4 import CommonTokenStream, InputStream
 from antlr4.error.ErrorListener import ErrorListener
 
@@ -31,13 +34,78 @@ def parse_type_expression(value: str):
     return tree
 
 
-def test_dependency_qualified_udt_reference():
-    parse_type_expression("ext.u!point")
+def collect_structure_type_expressions(structure):
+    if isinstance(structure, str):
+        yield structure
+    elif isinstance(structure, dict):
+        for value in structure.values():
+            yield from collect_structure_type_expressions(value)
 
 
-def test_dependency_qualified_udt_reference_in_parameterized_type():
-    parse_type_expression("list<ext.u!point>")
+def collect_function_type_expressions(functions):
+    for function in functions or []:
+        for impl in function.get("impls", []):
+            for arg in impl.get("args", []):
+                if "value" in arg:
+                    yield arg["value"]
+                if "type" in arg:
+                    yield arg["type"]
+            if "return" in impl:
+                yield impl["return"]
+            if "intermediate" in impl:
+                yield impl["intermediate"]
 
 
-def test_dependency_qualified_udt_reference_with_parameters():
-    parse_type_expression("ext.u!wrapper<other.u!point>")
+def collect_extension_type_expressions(extension):
+    for typ in extension.get("types", []):
+        if "structure" in typ:
+            yield from collect_structure_type_expressions(typ["structure"])
+
+    for variation in extension.get("type_variations", []):
+        yield variation["parent"]
+
+    yield from collect_function_type_expressions(extension.get("scalar_functions"))
+    yield from collect_function_type_expressions(extension.get("aggregate_functions"))
+    yield from collect_function_type_expressions(extension.get("window_functions"))
+
+
+def extension_yaml_files():
+    repo_root = Path(__file__).parents[2]
+    yield from sorted((repo_root / "extensions").glob("*.yaml"))
+    yield from sorted((repo_root / "site" / "examples").glob("**/*.yaml"))
+
+
+def test_parse_valid_type_expressions():
+    valid_cases = [
+        "u!point",
+        "u!point?",
+        "u!wrapper<i32>",
+        "ext.u!point",
+        "ext.u!point?",
+        "list<ext.u!point>",
+        "map<string, ext.u!point>",
+        "struct<ext.u!point, i32>",
+        "func<ext.u!point -> fp64>",
+        "func<(ext.u!point, other.u!point) -> fp64>",
+        "ext.u!wrapper<other.u!point>",
+        "ext.u!wrapper<list<other.u!point>, decimal<P,S>>",
+        "$ext.u!point",
+    ]
+
+    for case in valid_cases:
+        parse_type_expression(case)
+
+
+def test_extension_yaml_type_expressions_are_grammar_compliant():
+    failures = []
+    for path in extension_yaml_files():
+        with path.open() as f:
+            extension = yaml.load(f, Loader=yaml.FullLoader)
+
+        for expression in collect_extension_type_expressions(extension):
+            try:
+                parse_type_expression(expression)
+            except AssertionError as err:
+                failures.append(f"{path}: {expression}: {err}")
+
+    assert failures == []

@@ -23,6 +23,7 @@ scalarType
   | Date                    #date
   | Interval_Year           #intervalYear
   | UUID                    #uuid
+  | Struct                  #structType
   ;
 
 parameterizedType
@@ -36,7 +37,7 @@ parameterizedType
   | Precision_Timestamp isnull=QMark? Lt precision=numericParameter Gt                      #precisionTimestamp
   | Precision_Timestamp_TZ isnull=QMark? Lt precision=numericParameter Gt                   #precisionTimestampTZ
   | Struct isnull=QMark? Lt expr (Comma expr)* Gt                                           #struct
-  | NStruct isnull=QMark? Lt Identifier expr (Comma Identifier expr)* Gt                    #nStruct
+  | NStruct isnull=QMark? Lt Identifier Colon expr (Comma Identifier Colon expr)* Gt        #nStruct
   | List isnull=QMark? Lt expr Gt                                                           #list
   | Map isnull=QMark? Lt key=expr Comma value=expr Gt                                       #map
   | Func isnull=QMark? Lt params=funcParams Arrow returnType=expr Gt                        #func
