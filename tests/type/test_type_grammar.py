@@ -39,7 +39,7 @@ def iter_type_expressions(extension):
     """Yield type expression strings from a simple extension YAML document."""
 
     def walk_structure(structure):
-        """Yield leaf type expression strings from a type structure definition."""
+        """Unpack the object form that is syntactic sugar for NSTRUCT fields."""
         if isinstance(structure, str):
             yield structure
         elif isinstance(structure, dict):
