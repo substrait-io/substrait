@@ -405,6 +405,24 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#structArg.
+    def enterStructArg(self, ctx:FuncTestCaseParser.StructArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#structArg.
+    def exitStructArg(self, ctx:FuncTestCaseParser.StructArgContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#mapArg.
+    def enterMapArg(self, ctx:FuncTestCaseParser.MapArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#mapArg.
+    def exitMapArg(self, ctx:FuncTestCaseParser.MapArgContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#lambdaArg.
     def enterLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
         pass
@@ -432,12 +450,39 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#listElement.
-    def enterListElement(self, ctx:FuncTestCaseParser.ListElementContext):
+    # Enter a parse tree produced by FuncTestCaseParser#literalStruct.
+    def enterLiteralStruct(self, ctx:FuncTestCaseParser.LiteralStructContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#listElement.
-    def exitListElement(self, ctx:FuncTestCaseParser.ListElementContext):
+    # Exit a parse tree produced by FuncTestCaseParser#literalStruct.
+    def exitLiteralStruct(self, ctx:FuncTestCaseParser.LiteralStructContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#literalMap.
+    def enterLiteralMap(self, ctx:FuncTestCaseParser.LiteralMapContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#literalMap.
+    def exitLiteralMap(self, ctx:FuncTestCaseParser.LiteralMapContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#mapEntry.
+    def enterMapEntry(self, ctx:FuncTestCaseParser.MapEntryContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#mapEntry.
+    def exitMapEntry(self, ctx:FuncTestCaseParser.MapEntryContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#compoundLiteral.
+    def enterCompoundLiteral(self, ctx:FuncTestCaseParser.CompoundLiteralContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#compoundLiteral.
+    def exitCompoundLiteral(self, ctx:FuncTestCaseParser.CompoundLiteralContext):
         pass
 
 
@@ -717,6 +762,24 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#list.
     def exitList(self, ctx:FuncTestCaseParser.ListContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#structType.
+    def enterStructType(self, ctx:FuncTestCaseParser.StructTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#structType.
+    def exitStructType(self, ctx:FuncTestCaseParser.StructTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#mapType.
+    def enterMapType(self, ctx:FuncTestCaseParser.MapTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#mapType.
+    def exitMapType(self, ctx:FuncTestCaseParser.MapTypeContext):
         pass
 
 

@@ -36,7 +36,7 @@ class SubstraitError:
 
 @dataclass
 class CaseLiteral:
-    value: str | int | float | list | None
+    value: str | int | float | list | dict | None
     type: str
     nullable: bool = False
 

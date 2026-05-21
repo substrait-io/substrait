@@ -139,12 +139,12 @@ enum_value  := <identifier>::enum
 result      := <substrait_error> | <literal> | <enum_value>
 options     := <option>, <option>, ... <option>
 option      := <option_name>:<option_value>
-literal_value := string | integer | decimal | float | boolean | date | interval year | interval days | null
-datatype    := <basic_type> | <parametrized_type> | <complex_type>
+literal_value := string | integer | decimal | float | boolean | date | interval year | interval days | null | list | struct | map
+datatype    := <basic_type> | <parametrized_type> | <compound_type>
 basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | iyear | vbin | <parametrized_type>
 parametrized_type := fchar<int> | vchar<int> | dec<int,int> | fbin<int> | iday<int> | icompound<int> | pt<int> | pts<int> | ptstz<int> | func<params -> datatype>
 params := datatype | (datatype(, datatype)*)
-complex_type := <struct> | <list> | <map>
+compound_type := list<datatype> | struct<datatype...> | map<datatype, datatype>
 substrait_error := <!ERROR> | <!UNDEFINED>
 ```
 
@@ -194,9 +194,9 @@ All date and time literals use ISO 8601 format:
 
 #### Other complex types
 
-- **list**: A list of values enclosed in brackets and separated by commas. Example: `[1, 2, 3]::list<i8>`, `['a', 'b', 'c']::list<str>`
-
-**TODO** Add support for complex types like structs, maps etc.
+- Lists use bracketed, comma-separated values. Example: `[1, 2, 3]::list<i8>`, `['a', 'b', 'c']::list<str>`
+- Structs use parenthesized, comma-separated positional fields. Example: `(1, 'a')::struct<i8, str>`, `(1, [2, 3])::struct<i8, list<i8>>`
+- Maps use braces with colon-separated key/value pairs. Example: `{'a': 1, 'b': 2}::map<str, i8>`, `{}::map<str, i8>`
 
 ### Data Types
 
