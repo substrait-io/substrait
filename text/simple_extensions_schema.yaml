@@ -75,7 +75,7 @@ properties:
 
 $defs:
   type:
-    # String values are Substrait type expressions parsed by grammar/SubstraitType.g4.
+    description: String values are Substrait type expressions parsed by grammar/SubstraitType.g4.
     oneOf:
       - type: string # any data type
       - type: object # syntactic sugar for a non-nullable named struct
