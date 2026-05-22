@@ -290,6 +290,12 @@ SELECT a, (SELECT MAX(b) FROM T2 WHERE T2.x = T1.a) FROM T1
 
 can be represented as an inner lateral join where `T1` is the left input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the right input. The JoinRel has `RelCommon.rel_anchor` set, and inside the right input, `T1.a` is referenced via a `FieldReference` with `OuterReference { rel_reference = <JoinRel's id> }` as the root.
 
+Here is a concrete `FieldReference` example for a lateral join's outer reference:
+
+```
+--8<-- "examples/proto-textformat/field_reference/outer_reference_lateral_join.textproto"
+```
+
 #### Permitted Join Types for Lateral
 
 Because the right input only exists in the context of a specific left row, only `INNER` and left-oriented join types (`LEFT`, `LEFT_SEMI`, `LEFT_ANTI`, `LEFT_SINGLE`, `LEFT_MARK`) are valid when `lateral` is true. Right-oriented types (`RIGHT`, `RIGHT_SEMI`, `RIGHT_ANTI`, `RIGHT_SINGLE`, `RIGHT_MARK`) and `OUTER` are invalid since the right input has no independent existence outside a left row context.
