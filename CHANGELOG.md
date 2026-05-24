@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.92.0](https://github.com/substrait-io/substrait/compare/v0.91.0...v0.92.0) (2026-05-24)
+
+### Features
+
+* **tests:** support map and struct literals ([#1077](https://github.com/substrait-io/substrait/issues/1077)) ([21ab33c](https://github.com/substrait-io/substrait/commit/21ab33c24057ccaf4b4101f9ceefdee14222f46d))
+
 ## [0.91.0](https://github.com/substrait-io/substrait/compare/v0.90.0...v0.91.0) (2026-05-17)
 
 ### ⚠ BREAKING CHANGES
