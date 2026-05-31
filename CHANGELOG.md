@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.92.1](https://github.com/substrait-io/substrait/compare/v0.92.0...v0.92.1) (2026-05-31)
+
+### Bug Fixes
+
+* **grammar:** align type expressions with extension YAML ([#1082](https://github.com/substrait-io/substrait/issues/1082)) ([254a482](https://github.com/substrait-io/substrait/commit/254a48247296e90f576a778696431d606a1ec4e1))
+
 ## [0.92.0](https://github.com/substrait-io/substrait/compare/v0.91.0...v0.92.0) (2026-05-24)
 
 ### Features
