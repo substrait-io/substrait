@@ -89,6 +89,8 @@ A function signature uniquely identifies a function implementation within a sing
 
 #### Type Short Names
 
+The first column lists the type expression used in extension YAML. The second column lists the corresponding short name used in function signatures.
+
 | YAML Type Expression            | Signature Short Name |
 |---------------------------------|----------------------|
 | Enumeration                     | req            |
