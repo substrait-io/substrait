@@ -74,10 +74,7 @@ The resulting function signatures look like: `<function_name>:<short_arg_type0>_
     argument-signature = short-arg-type *("_" short-arg-type)
     ```
 
-Argument types (`short_arg_type`) are encoded using the Type Short Names given below.
-
-!!! note "Type expressions vs. signature short names"
-    Type-valued fields in extension YAML use [type expressions](../types/type_parsing.md), such as `string`, `binary`, and `fixedbinary<16>`. Signature short names are only used when constructing function signatures, such as `concat:str` or `hash:vbin`.
+Argument types (`short_arg_type`) are encoded using the [Type Short Names](#type-short-names) given below.
 
 #### Variadic Functions
 
@@ -88,6 +85,9 @@ For variadic functions, the variadic argument is included *once* in the argument
 A function signature uniquely identifies a function implementation within a single YAML file. As such, every function implementation within a YAML **must** have a distinct function signature in order for references to the implementation to remain unambiguous. This uniqueness constraint applies across all function types in the YAML file, not separately within scalar functions, aggregate functions, and window functions. Extension declarations in plans identify functions by signature only, rather than by a combination of signature and function type, so this avoids requiring consumers to infer function type from invocation context, such as when an aggregate function is used in a window context. A YAML file in which this is not the case is invalid.
 
 #### Type Short Names
+
+!!! note "Type expressions vs. signature short names"
+    Type-valued fields in extension YAML use [type expressions](../types/type_parsing.md), such as `string`, `binary`, and `fixedbinary<16>`. Signature short names are only used when constructing function signatures, such as `concat:str` or `hash:vbin`.
 
 The first column lists the type expression used in extension YAML. The second column lists the corresponding short name used in function signatures.
 
