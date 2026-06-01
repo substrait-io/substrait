@@ -58,9 +58,7 @@ Here, the choice for the name `ext` is arbitrary, as long as it does not conflic
 
 ### Function Signature
 
-A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). Function arguments, return values, intermediate aggregate values, and type structures in the YAML file are written as [type expressions](../types/type_parsing.md), such as `string`, `binary`, or `fixedbinary<16>`.
-
-A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components:
+A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components:
 
 * Function Name: the name of the function
 * Argument Signature: the short type names of each argument joined with underscores
