@@ -75,10 +75,7 @@ properties:
 
 $defs:
   type:
-    description: >-
-      String values are Substrait type expressions parsed by grammar/SubstraitType.g4.
-      Use type expression names here, such as string, binary, or fixedbinary<16>.
-      Do not use function signature short names such as str, vbin, or fbin.
+    description: String values are Substrait type expressions parsed by grammar/SubstraitType.g4.
     oneOf:
       - type: string # any data type
       - type: object # syntactic sugar for a non-nullable named struct
