@@ -58,7 +58,9 @@ Here, the choice for the name `ext` is arbitrary, as long as it does not conflic
 
 ### Function Signature
 
-A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components:
+A YAML file may contain one or more functions with the same name, each with one or more implementations (impls). Function arguments, return values, intermediate aggregate values, and type structures in the YAML file are written as [type expressions](../types/type_parsing.md), such as `string`, `binary`, or `fixedbinary<16>`.
+
+A specific function implementation within a YAML file can be identified using a Function Signature which consists of two components:
 
 * Function Name: the name of the function
 * Argument Signature: the short type names of each argument joined with underscores
@@ -74,7 +76,7 @@ The resulting function signatures look like: `<function_name>:<short_arg_type0>_
     argument-signature = short-arg-type *("_" short-arg-type)
     ```
 
-Argument types (`short_arg_type`) are encoded using the Type Short Names given below.
+Argument types (`short_arg_type`) are encoded using the Type Short Names given below. These short names are only used in function signatures; the YAML function definition itself continues to use type expressions. For example, a YAML argument or return type uses `binary`, while the corresponding function signature uses `vbin`.
 
 #### Variadic Functions
 
@@ -86,8 +88,8 @@ A function signature uniquely identifies a function implementation within a sing
 
 #### Type Short Names
 
-| Argument Type                   | Signature Name |
-|---------------------------------|----------------|
+| YAML Type Expression            | Signature Short Name |
+|---------------------------------|----------------------|
 | Enumeration                     | req            |
 | i8                              | i8             |
 | i16                             | i16            |
