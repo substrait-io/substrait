@@ -86,8 +86,8 @@ A function signature uniquely identifies a function implementation within a sing
 
 #### Type Short Names
 
-| Argument Type                   | Signature Name |
-|---------------------------------|----------------|
+| YAML Type Expression            | Signature Short Name |
+|---------------------------------|----------------------|
 | Enumeration                     | req            |
 | i8                              | i8             |
 | i16                             | i16            |
