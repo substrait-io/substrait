@@ -1289,6 +1289,9 @@ message Expression {
 
   // A scalar function call.
   message ScalarFunction {
+    reserved 2;
+    reserved "args";
+
     // Points to a function_anchor defined in this plan, which must refer
     // to a scalar function in the associated YAML file. Required.
     uint32 function_reference = 1;
@@ -1314,13 +1317,13 @@ message Expression {
     // Must be set to the return type of the function, exactly as derived
     // using the declaration in the extension.
     Type output_type = 3;
-
-    // Deprecated; use arguments instead.
-    repeated Expression args = 2 [deprecated = true];
   }
 
   // A window function call.
   message WindowFunction {
+    reserved 8;
+    reserved "args";
+
     // Points to a function_anchor defined in this plan. The function must be:
     //  - a window function
     //  - an aggregate function
@@ -1394,9 +1397,6 @@ message Expression {
     // wrapping around as if lower/upper were swapped? error? null?).
     // Optional; defaults to the end of the partition.
     Bound upper_bound = 4;
-
-    // Deprecated; use arguments instead.
-    repeated Expression args = 8 [deprecated = true];
 
     enum BoundsType {
       BOUNDS_TYPE_UNSPECIFIED = 0;
@@ -1853,6 +1853,9 @@ enum AggregationPhase {
 
 // An aggregate function.
 message AggregateFunction {
+  reserved 2;
+  reserved "args";
+
   // Points to a function_anchor defined in this plan, which must refer
   // to an aggregate function in the associated YAML file. Required.
   uint32 function_reference = 1;
@@ -1897,9 +1900,6 @@ message AggregateFunction {
   // Specifies whether equivalent records are merged before being aggregated.
   // Optional, defaults to AGGREGATION_INVOCATION_ALL.
   AggregationInvocation invocation = 6;
-
-  // deprecated; use arguments instead
-  repeated Expression args = 2 [deprecated = true];
 
   // Method in which equivalent records are merged before being aggregated.
   enum AggregationInvocation {
