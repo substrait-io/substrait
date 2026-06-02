@@ -24,5 +24,5 @@ done
 
 gh workflow run spec_released.yml \
   --repo substrait-io/substrait-packaging \
-  --field substrait_version="${VERSION}" \
+  --field substrait_version="v${VERSION}" \
   || echo "Warning: failed to trigger release workflow in substrait-packaging"
