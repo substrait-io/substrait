@@ -24,11 +24,16 @@ jobs:
           client-id: ${{ secrets.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          # request token for both substrait and substrait-packaging repos
-          # for ci/release/notify.sh
+          # request a token scoped to every repo ci/release/notify.sh touches:
+          # substrait (tag lookup), substrait-packaging (build trigger), and the
+          # downstream implementation repos (release notification issues)
           repositories: |
             substrait
             substrait-packaging
+            substrait-java
+            substrait-python
+            substrait-go
+            substrait-rs
 
       - uses: actions/checkout@v6
         with:
