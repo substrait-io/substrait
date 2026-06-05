@@ -1,4 +1,4 @@
-# Outer reference in a lateral join (correlated subquery via JoinRel)
+# Outer reference in a lateral join (correlated subquery via LateralJoinRel)
 #
 # Scenario: For each customer, retrieve their matching orders. The right
 # side of the lateral join is evaluated once per left row, referencing
@@ -15,20 +15,20 @@
 #
 # Plan structure:
 #
-#   JoinRel [lateral=true, rel_anchor=5, type=LEFT]
+#   LateralJoinRel [rel_anchor=5, type=LEFT]
 #     ├── left:  ReadRel(customers)          -- output: (customer_id, name, ...)
 #     └── right: FilterRel
 #                  condition: orders.customer_id = outer_ref(rel_reference=5, field 0)
 #                  └── ReadRel(orders)
 #
-# The JoinRel has lateral=true and RelCommon.rel_anchor = 5. The right
+# The LateralJoinRel has RelCommon.rel_anchor = 5. The right
 # input's filter uses an OuterReference with rel_reference = 5 to access
 # the left input's schema. Field 0 of the left input is customer_id.
 #
 # message Expression.FieldReference
 
 outer_reference: {
-  rel_reference: 5  # Refers to the JoinRel whose RelCommon.rel_anchor = 5
+  rel_reference: 5  # Refers to the LateralJoinRel whose RelCommon.rel_anchor = 5
 }
 direct_reference: {
   struct_field: {

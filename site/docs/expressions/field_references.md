@@ -215,10 +215,10 @@ ProjectRel [rel_anchor=7] # Correct binding for tableA.a for the outer reference
 
 #### Lateral Join Example
 
-`rel_reference` is also the mechanism used in lateral joins. When `JoinRel` has `lateral=true`, its right input is evaluated per left row and can reference the left row's fields via `rel_reference` pointing to the JoinRel's `rel_anchor`:
+`rel_reference` is also the mechanism used in lateral joins. In `LateralJoinRel`, the right input is evaluated per left row and can reference the left row's fields via `rel_reference` pointing to the `LateralJoinRel`'s `rel_anchor`:
 
 ```
 --8<-- "examples/proto-textformat/field_reference/outer_reference_lateral_join.textproto"
 ```
 
-See [Lateral Joins](../relations/logical_relations.md#lateral-joins) for more details on the relation-level semantics.
+See [Lateral Join Operation](../relations/logical_relations.md#lateral-join-operation) for more details on the relation-level semantics.

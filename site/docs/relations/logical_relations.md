@@ -218,8 +218,7 @@ The cross product operation will combine two separate inputs into a single outpu
 | Property        | Description                                                  | Required                           |
 | --------------- | ------------------------------------------------------------ | ---------------------------------- |
 | Left Input      | A relational input.                                          | Required                           |
-| Right Input     | A relational input. When `lateral` is true, this input may reference the current left row using `OuterReference` with `rel_reference` pointing to this CrossRel's `RelCommon.rel_anchor`. | Required                           |
-| Lateral         | When true, the right input is evaluated once per row of the left input (lateral semantics). This CrossRel must have `RelCommon.rel_anchor` set. The right input may reference fields from the current left row using `FieldReference` with `OuterReference` as the `root_type`, using `rel_reference` pointing to this CrossRel's `rel_anchor`. The `rel_reference` resolves against the left input's output schema. When false (default), both inputs are independent and the result is the standard Cartesian product. | Optional (default: false)          |
+| Right Input     | A relational input.                                          | Required                           |
 
 
 === "CrossRel Message"
@@ -246,11 +245,10 @@ The join operation will combine two separate inputs into a single output, based 
 | Property         | Description                                                  | Required                           |
 | ---------------- | ------------------------------------------------------------ | ---------------------------------- |
 | Left Input       | A relational input.                                          | Required                           |
-| Right Input      | A relational input. When `lateral` is true, this input may reference the current left row using `OuterReference` with `rel_reference` pointing to this JoinRel's `RelCommon.rel_anchor`. | Required                           |
+| Right Input      | A relational input.                                          | Required                           |
 | Join Expression  | A boolean condition that describes whether each record from the left set "match" the record from the right set. Field references correspond to the input order of the data. | Required. Can be the literal True. |
 | Post-Join Filter | An optional boolean condition applied to the output of the join. Semantically equivalent to placing a [Filter](#filter-operation) directly above the join. Does not influence which rows are considered matches. Field references correspond to the direct output order of the join operation. | Optional, defaults to True.        |
 | Join Type        | One of the join types defined below.                         | Required                           |
-| Lateral          | When true, the right input is evaluated once per row of the left input (lateral join / correlated subquery). This JoinRel must have `RelCommon.rel_anchor` set. The right input may reference fields from the current left row using `FieldReference` with `OuterReference` as the `root_type`, using `rel_reference` pointing to this JoinRel's id. The `rel_reference` resolves against the left input's output schema. When false (default), both inputs are independent. See [Lateral Joins](#lateral-joins) for details.| Optional (default: false)          |
 
 ### Join Types
 
@@ -276,11 +274,26 @@ The join operation will combine two separate inputs into a single output, based 
 %%% proto.algebra.JoinRel %%%
     ```
 
-### Lateral Joins
+## Lateral Join Operation
 
-When the `lateral` flag is set to true, the join operates as a lateral (correlated) join. The right input is evaluated once per row of the left input, and the right input may reference fields from the current left row using a `FieldReference` with `OuterReference` as the `root_type`.
+The lateral join operation is represented by `LateralJoinRel`.
 
-This JoinRel must have `RelCommon.rel_anchor` set. The right input should use `OuterReference` with `rel_reference` pointing to this JoinRel's `rel_anchor`. The `rel_reference` resolves against the left input's output schema. See [Field References — Outer References](../expressions/field_references.md#outer-references) for more on outer references in correlated plans.
+`LateralJoinRel` uses the same fields and `JoinRel.JoinType` enum as [Join Operation](#join-operation). For field meanings and join-type behavior, refer to the `JoinRel` documentation above.
+
+In `LateralJoinRel`, the right input is evaluated once per row of the left input and may reference fields of the current left row via `OuterReference.rel_reference`. `LateralJoinRel` must set `RelCommon.rel_anchor`; when the right input references the current left row, `rel_reference` points to that anchor. Right-input outer references may also point to other outer roots when applicable. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
+
+### Valid Join Types for LateralJoinRel
+
+Supported join types:
+
+- `INNER`
+- `LEFT`
+- `LEFT_SEMI`
+- `LEFT_ANTI`
+- `LEFT_SINGLE`
+- `LEFT_MARK`
+
+All other join types are invalid for `LateralJoinRel`.
 
 For example, the SQL query:
 
@@ -288,7 +301,7 @@ For example, the SQL query:
 SELECT a, (SELECT MAX(b) FROM T2 WHERE T2.x = T1.a) FROM T1
 ```
 
-can be represented as an inner lateral join where `T1` is the left input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the right input. The JoinRel has `RelCommon.rel_anchor` set, and inside the right input, `T1.a` is referenced via a `FieldReference` with `OuterReference { rel_reference = <JoinRel's id> }` as the root.
+can be represented as an inner lateral join where `T1` is the left input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the right input.
 
 Here is a concrete `FieldReference` example for a lateral join's outer reference:
 
@@ -296,25 +309,11 @@ Here is a concrete `FieldReference` example for a lateral join's outer reference
 --8<-- "examples/proto-textformat/field_reference/outer_reference_lateral_join.textproto"
 ```
 
-#### Permitted Join Types for Lateral
+=== "LateralJoinRel Message"
 
-Because the right input only exists in the context of a specific left row, only `INNER` and left-oriented join types (`LEFT`, `LEFT_SEMI`, `LEFT_ANTI`, `LEFT_SINGLE`, `LEFT_MARK`) are valid when `lateral` is true. Right-oriented types (`RIGHT`, `RIGHT_SEMI`, `RIGHT_ANTI`, `RIGHT_SINGLE`, `RIGHT_MARK`) and `OUTER` are invalid since the right input has no independent existence outside a left row context.
-
-#### Nested Lateral Joins
-
-Lateral joins can introduce multiple levels of correlated subqueries. Each JoinRel with `lateral=true` must have `RelCommon.rel_anchor` set so outer references can name the binding relation via `rel_reference`. The `rel_reference` resolves against the left input's output schema:
-
-```
-            JoinRel (left, lateral=true) [rel_anchor=1]
-           /     \
-     Input1(a)    JoinRel (inner, lateral=true) [rel_anchor=2]
-                 /     \
-           Input2(b)    Subquery
-
-OuterReference access within each scope:
-  Input2   : a [rel_reference=1]
-  Subquery : a [rel_reference=1], b [rel_reference=2]
-```
+        ```proto
+%%% proto.algebra.LateralJoinRel %%%
+        ```
 
 
 ## Set Operation
