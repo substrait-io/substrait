@@ -16,8 +16,11 @@ jobs:
           echo 'module.exports = {
             // Workaround for https://github.com/dependabot/dependabot-core/issues/5923
             "ignores": [
+              // Dependabot PR descriptions
               (message) => /^Bumps \[.+]\(.+\) from .+ to .+\.$/m.test(message),
-              (message) => /^Updates the requirements on .+ to permit the latest version\.$/m.test(message)
+              (message) => /^Updates the requirements on .+ to permit the latest version\.$/m.test(message),
+              // Renovate PR descriptions
+              (message) => /^This PR contains the following updates:$/m.test(message),
             ],
             "rules": {
               "body-max-line-length": [0, "always", Infinity],
