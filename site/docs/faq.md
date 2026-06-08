@@ -52,5 +52,4 @@ There are a few places where Substrait DOES define field names:
 - The root relation has field names. This is because the root relation is the final output of the plan and
   it is useful to have names for the fields in the final output. The number of names must match the number
   of named fields in the output type, using the same depth-first ordering as [`NamedStruct`](types/named_structs.md)
-  names. Relations with zero named output fields have zero root relation names. For DML or DDL relations,
-  target object names and target field names are carried by the relation itself, such as in `table_schema`.
+  names.
