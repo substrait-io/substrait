@@ -4,7 +4,8 @@
 
 set -euo pipefail
 
-npx --yes \
+# .releaserc.mjs defaults to a dry run; opt in to a real release here.
+RELEASE_DRY_RUN=false npx --yes \
   -p "semantic-release@24.1.2" \
   -p "@semantic-release/commit-analyzer" \
   -p "@semantic-release/release-notes-generator" \

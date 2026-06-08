@@ -23,22 +23,20 @@ cd "$worktree" || exit 1
 
 export GITHUB_REF="$branch"
 
+# Use the committed .releaserc.mjs so the dry run previews the real changelog
+# (including the writerOpts that strip git trailers). The config defaults to a
+# dry run -- omitting the GitHub/git/publish/notify plugins, which semantic-release
+# would otherwise still invoke in dry-run mode (it only skips tag and push) -- so
+# no env var is needed here.
 npx --yes \
   -p "semantic-release@24.1.2" \
   -p "@semantic-release/commit-analyzer" \
   -p "@semantic-release/release-notes-generator" \
   -p "@semantic-release/changelog" \
   -p "@semantic-release/exec" \
-  -p "@semantic-release/git" \
   -p "conventional-changelog-conventionalcommits@8.0.0" \
   semantic-release \
   --ci false \
   --dry-run \
-  --preset conventionalcommits \
-  --plugins \
-  --analyze-commits "@semantic-release/commit-analyzer" \
-  --generate-notes "@semantic-release/release-notes-generator" \
-  --verify-conditions "@semantic-release/changelog,@semantic-release/exec,@semantic-release/git" \
-  --prepare "@semantic-release/changelog,@semantic-release/exec" \
   --branches "$branch" \
   --repository-url "file://$PWD"
