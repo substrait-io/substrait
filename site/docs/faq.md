@@ -50,4 +50,6 @@ There are a few places where Substrait DOES define field names:
 - Read relations have field names in the base schema. This is because it is quite common for reads to do a
   name-based lookup to determine the columns that need to be read from source files.
 - The root relation has field names. This is because the root relation is the final output of the plan and
-  it is useful to have names for the fields in the final output.
+  it is useful to have names for the fields in the final output. Root relation names are required. The number
+  of names must match the number of named fields in the output type, using the same depth-first ordering as
+  [`NamedStruct`](types/named_structs.md) names.

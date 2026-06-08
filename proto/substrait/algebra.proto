@@ -610,7 +610,8 @@ enum FetchMode {
 message RelRoot {
   // A relation
   Rel input = 1;
-  // Field names in depth-first order
+  // Required field names in depth-first order. The number of names must match
+  // the number of named fields in the output type.
   repeated string names = 2;
 }
 
