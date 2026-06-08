@@ -49,8 +49,8 @@ There are a few places where Substrait DOES define field names:
 
 - Read relations have field names in the base schema. This is because it is quite common for reads to do a
   name-based lookup to determine the columns that need to be read from source files.
-- The root relation can provide field names. This is because the root relation is the final output of the plan and
-  it is useful to have names for the fields in the final output. Root relation names are optional. If they are
-  provided, the number of names must match the number of named fields in the output type, using the same
-  depth-first ordering as [`NamedStruct`](types/named_structs.md) names. Some root relations, such as DML or
-  DDL relations, carry target field names elsewhere and do not need to duplicate them in `RelRoot.names`.
+- The root relation has field names. This is because the root relation is the final output of the plan and
+  it is useful to have names for the fields in the final output. The number of names must match the number
+  of named fields in the output type, using the same depth-first ordering as [`NamedStruct`](types/named_structs.md)
+  names. Relations with zero named output fields have zero root relation names. For DML or DDL relations,
+  target object names and target field names are carried by the relation itself, such as in `table_schema`.
