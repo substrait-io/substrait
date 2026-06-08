@@ -611,8 +611,7 @@ message RelRoot {
   // A relation
   Rel input = 1;
   // Field names in depth-first order. The number of names must match the number
-  // of named fields in the output type. Relations with zero named output fields
-  // must have zero names.
+  // of named fields in the output type.
   repeated string names = 2;
 }
 
