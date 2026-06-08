@@ -16,7 +16,28 @@
 // skips tag and push), so the side-effecting plugins must be omitted entirely,
 // not merely guarded by --dry-run.
 
-import conventionalcommits from "conventional-changelog-conventionalcommits";
+import { createRequire } from "node:module";
+import { pathToFileURL } from "node:url";
+
+// Load the conventionalcommits preset. The release scripts run semantic-release
+// via `npx -p ...`, which installs the preset as a sibling of semantic-release
+// in a temporary node_modules. A bare `import` here would resolve relative to
+// this config file's directory (the repo, which has no node_modules) and fail,
+// so fall back to resolving the preset relative to the running semantic-release
+// binary (process.argv[1]). The plain import path still covers local dev where
+// the preset is installed alongside the project.
+const loadPreset = async () => {
+  try {
+    return (await import("conventional-changelog-conventionalcommits")).default;
+  } catch {
+    const require = createRequire(pathToFileURL(process.argv[1]));
+    const resolved = pathToFileURL(
+      require.resolve("conventional-changelog-conventionalcommits"),
+    ).href;
+    return (await import(resolved)).default;
+  }
+};
+const conventionalcommits = await loadPreset();
 
 // Git trailers that should never appear in the changelog or release notes.
 const TRAILER_KEYS = [
