@@ -604,14 +604,14 @@ enum FetchMode {
   FETCH_MODE_WITH_TIES = 2;
 }
 
-// A relation with output field names.
+// A relation that may provide output field names.
 //
 // This is for use at the root of a `Rel` tree.
 message RelRoot {
   // A relation
   Rel input = 1;
-  // Required field names in depth-first order. The number of names must match
-  // the number of named fields in the output type.
+  // Optional field names in depth-first order. If non-empty, the number of names
+  // must match the number of named fields in the output type.
   repeated string names = 2;
 }
 

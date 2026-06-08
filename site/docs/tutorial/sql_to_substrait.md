@@ -870,10 +870,10 @@ The overall layout for a plan is
 The `relations` field is a list of Root relations. Most queries only have one
 root relation, but the spec allows for multiple so a common plan could be
 referenced by other plans, sort of like a CTE (Common Table Expression) from SQL.
-The root relation provides the final column names for our query. Root relation
-names are required, and their length must match the number of named fields in the
-output type. The input to this relation is our aggregate relation (which contains
-all the other relations as children).
+The root relation can provide the final column names for our query. Root relation
+names are optional, but when present their length must match the number of named
+fields in the output type. The input to this relation is our aggregate relation
+(which contains all the other relations as children).
 
 For extensions, we need to provide `extensionUrns` with the URN identifiers of the
 YAML files we used and `extensions` with the list of functions we used and which
