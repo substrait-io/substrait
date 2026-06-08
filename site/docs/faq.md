@@ -52,4 +52,4 @@ There are a few places where Substrait DOES define field names:
 - The root relation has field names. This is because the root relation is the final output of the plan and
   it is useful to have names for the fields in the final output. The number of names must match the number
   of named fields in the output type, using the same depth-first ordering as [`NamedStruct`](types/named_structs.md)
-  names.
+  names. For extension relations, the output type is determined by the extension relation contract.

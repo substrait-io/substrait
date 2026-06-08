@@ -611,7 +611,8 @@ message RelRoot {
   // A relation
   Rel input = 1;
   // Field names in depth-first order. The number of names must match the number
-  // of named fields in the output type.
+  // of named fields in the output type. For extension relations, the output type
+  // is determined by the extension relation contract.
   repeated string names = 2;
 }
 
