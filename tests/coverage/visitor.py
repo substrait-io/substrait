@@ -310,6 +310,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitStructArg(ctx.structArg())
         if ctx.mapArg() is not None:
             return self.visitMapArg(ctx.mapArg())
+        if ctx.userDefinedArg() is not None:
+            return self.visitUserDefinedArg(ctx.userDefinedArg())
         if ctx.lambdaArg() is not None:
             return self.visitLambdaArg(ctx.lambdaArg())
         if ctx.enumArg() is not None:
@@ -472,6 +474,13 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             value=self.visitLiteralMap(ctx.literalMap()),
             type=ctx.mapType().getText(),
             nullable=ctx.mapType().isnull is not None,
+        )
+
+    def visitUserDefinedArg(self, ctx: FuncTestCaseParser.UserDefinedArgContext):
+        return CaseLiteral(
+            value=self.visitLiteralStruct(ctx.literalStruct()),
+            type=ctx.userDefinedType().getText(),
+            nullable=ctx.userDefinedType().isnull is not None,
         )
 
     def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
