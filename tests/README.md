@@ -145,12 +145,13 @@ func_call   := <function>(<arguments>)
 result      := <substrait_error> | <literal> | <enum_value> | <func_call>
 options     := <option>, <option>, ... <option>
 option      := <option_name>:<option_value>
-literal_value := string | integer | decimal | float | boolean | date | interval year | interval days | null | list | struct | map
+literal_value := string | integer | decimal | float | boolean | date | interval year | interval days | null | list | struct | map | udt
 datatype    := <basic_type> | <parametrized_type> | <compound_type>
 basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | iyear | vbin | <parametrized_type>
 parametrized_type := fchar<int> | vchar<int> | dec<int,int> | fbin<int> | iday<int> | icompound<int> | pt<int> | pts<int> | ptstz<int> | func<params -> datatype>
 params := datatype | (datatype(, datatype)*)
 compound_type := list<datatype> | struct<datatype...> | map<datatype, datatype>
+udt_type      := u!<identifier> | u!<identifier>?
 substrait_error := <!ERROR> | <!UNDEFINED>
 ```
 
@@ -203,6 +204,7 @@ All date and time literals use ISO 8601 format:
 - Lists use bracketed, comma-separated values. Example: `[1, 2, 3]::list<i8>`, `['a', 'b', 'c']::list<str>`
 - Structs use parenthesized, comma-separated positional fields. Example: `(1, 'a')::struct<i8, str>`, `(1, [2, 3])::struct<i8, list<i8>>`
 - Maps use braces with colon-separated key/value pairs. Example: `{'a': 1, 'b': 2}::map<str, i8>`, `{}::map<str, i8>`
+- User-defined types (UDTs) use the same parenthesized form as structs, annotated with the UDT name. The literal encodes the UDT via its `structure` field — positional values matching the fields of the underlying struct. The extension that defines the UDT must be listed as a dependency. Example: `(4, 2)::u!point` where `u!point` has structure `struct<i32, i32>`. Nested UDTs are written as nested parenthesized literals: `((4, 2), (1, 1))::u!line` where `u!line` has structure `struct<u!point, u!point>`.
 
 ### Data Types
 
@@ -227,6 +229,7 @@ Use short names listed in https://substrait.io/extensions/#function-signature-co
 - **pt**: Precision Time `precision_time<P>`
 - **pts**: Precision Timestamp `precision_timestamp<P>`
 - **ptstz**: Precision Timestamp with timezone `precision_timestamp_tz<P>`
+- **u!\<name\>**: User-defined type, e.g. `u!point`. The type name must match a type defined in the included or dependency extension YAML.
 
 
 ### Nullability

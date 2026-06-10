@@ -240,6 +240,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#userDefinedArg.
+    def visitUserDefinedArg(self, ctx:FuncTestCaseParser.UserDefinedArgContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#lambdaArg.
     def visitLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
         return self.visitChildren(ctx)
@@ -347,6 +352,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#userDefined.
     def visitUserDefined(self, ctx:FuncTestCaseParser.UserDefinedContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#userDefinedType.
+    def visitUserDefinedType(self, ctx:FuncTestCaseParser.UserDefinedTypeContext):
         return self.visitChildren(ctx)
 
 

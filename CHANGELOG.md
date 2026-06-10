@@ -1,6 +1,20 @@
 Release Notes
 ---
 
+## [0.93.0](https://github.com/substrait-io/substrait/compare/v0.92.1...v0.93.0) (2026-06-07)
+
+### ⚠ BREAKING CHANGES
+
+* **protos:** removes deprecated Expression.Enum message
+* **protos:** removed args field from ScalarFunction
+* **protos:** removed args field from AggregateFunction
+* **protos:** removed args field from WindowFunction
+
+### Features
+
+* **protos:** remove deprecated args fields ([#1085](https://github.com/substrait-io/substrait/issues/1085)) ([d90dfcb](https://github.com/substrait-io/substrait/commit/d90dfcbc84c02f3c7359f70291130d13be4bd9ec))
+* **protos:** remove deprecated Expression.Enum message ([#1086](https://github.com/substrait-io/substrait/issues/1086)) ([f149482](https://github.com/substrait-io/substrait/commit/f14948240c9150708334673de2dfc3643ef3f03b))
+
 ## [0.92.1](https://github.com/substrait-io/substrait/compare/v0.92.0...v0.92.1) (2026-05-31)
 
 ### Bug Fixes
