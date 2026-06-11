@@ -441,6 +441,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#funcCallArg.
+    def enterFuncCallArg(self, ctx:FuncTestCaseParser.FuncCallArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#funcCallArg.
+    def exitFuncCallArg(self, ctx:FuncTestCaseParser.FuncCallArgContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#enumArg.
     def enterEnumArg(self, ctx:FuncTestCaseParser.EnumArgContext):
         pass

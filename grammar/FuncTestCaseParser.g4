@@ -70,6 +70,7 @@ argument
     | mapArg
     | userDefinedArg
     | lambdaArg
+    | funcCallArg
     | Identifier  // Bare identifiers (for lambda parameters)
     ;
 
@@ -215,6 +216,10 @@ userDefinedArg
 
 lambdaArg
     : literalLambda DoubleColon funcType
+    ;
+
+funcCallArg
+    : identifier OParen arguments CParen
     ;
 
 enumArg
