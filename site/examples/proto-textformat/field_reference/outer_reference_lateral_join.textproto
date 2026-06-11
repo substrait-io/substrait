@@ -16,6 +16,7 @@
 # Plan structure:
 #
 #   LateralJoinRel [rel_anchor=5, type=LEFT]
+#     ├── expression: { literal: { boolean: true } }
 #     ├── left:  ReadRel(customers)          -- output: (customer_id, name, ...)
 #     └── right: FilterRel
 #                  condition: orders.customer_id = outer_ref(rel_reference=5, field 0)
