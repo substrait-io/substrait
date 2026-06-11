@@ -1,6 +1,6 @@
 %YAML 1.2
 ---
-urn: extension:io.substrait:unknown
+urn: urn:substrait:extension:io.substrait:unknown
 types:
   - name: unknown
 scalar_functions:
