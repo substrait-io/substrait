@@ -99,6 +99,7 @@ properties:
           - AGGREGATE
           - SORT
           - JOIN
+          - LATERAL_JOIN
           - PROJECT
           - SET
           - CROSS
@@ -118,6 +119,7 @@ properties:
         - $ref: "#/definitions/aggregate_relation"
         - $ref: "#/definitions/sort_relation"
         - $ref: "#/definitions/join_relation"
+        - $ref: "#/definitions/lateral_join_relation"
         - $ref: "#/definitions/project_relation"
         - $ref: "#/definitions/set_relation"
         - $ref: "#/definitions/extension_single_relation"
@@ -743,6 +745,18 @@ definitions:
         - RIGHT_SINGLE
         - LEFT_MARK
         - RIGHT_MARK
+  lateral_join_types:
+    type: array
+    uniqueItems: true
+    description: The list of possible join types used by lateral join relations.
+    items:
+      enum:
+        - INNER
+        - LEFT
+        - LEFT_SEMI
+        - LEFT_ANTI
+        - LEFT_SINGLE
+        - LEFT_MARK
   read_relation:
     type: object
     additionalProperties: false
@@ -815,6 +829,18 @@ definitions:
         description: Arbitrary data created by the dialect author.
       join_types:
         $ref: "#/definitions/join_types"
+    required: [relation]
+  lateral_join_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: LATERAL_JOIN
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
+      join_types:
+        $ref: "#/definitions/lateral_join_types"
     required: [relation]
   project_relation:
     type: object

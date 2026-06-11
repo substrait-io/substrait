@@ -274,6 +274,47 @@ The join operation will combine two separate inputs into a single output, based 
 %%% proto.algebra.JoinRel %%%
     ```
 
+## Lateral Join Operation
+
+The lateral join operation is represented by `LateralJoinRel`.
+
+`LateralJoinRel` uses the same fields and `JoinRel.JoinType` enum as [Join Operation](#join-operation). For field meanings and join-type behavior, refer to the `JoinRel` documentation above.
+
+In `LateralJoinRel`, the right input is evaluated once per row of the left input and may reference fields of the current left row via `OuterReference.rel_reference`. `LateralJoinRel` must set `RelCommon.rel_anchor`; when the right input references the current left row, `rel_reference` points to that anchor. Right-input outer references may also point to other outer roots when applicable. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
+
+### Valid Join Types for LateralJoinRel
+
+Supported join types:
+
+- `INNER`
+- `LEFT`
+- `LEFT_SEMI`
+- `LEFT_ANTI`
+- `LEFT_SINGLE`
+- `LEFT_MARK`
+
+All other join types are invalid for `LateralJoinRel`.
+
+For example, the SQL query:
+
+```sql
+SELECT a, (SELECT MAX(b) FROM T2 WHERE T2.x = T1.a) FROM T1
+```
+
+can be represented as an inner lateral join where `T1` is the left input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the right input.
+
+Here is a concrete `FieldReference` example for a lateral join's outer reference:
+
+```
+--8<-- "examples/proto-textformat/field_reference/outer_reference_lateral_join.textproto"
+```
+
+=== "LateralJoinRel Message"
+
+        ```proto
+%%% proto.algebra.LateralJoinRel %%%
+        ```
+
 
 ## Set Operation
 
@@ -560,6 +601,3 @@ The operator that defines modifications of a database schema (CREATE/DROP/ALTER 
 %%% proto.algebra.DdlRel %%%
     ```
 
-???+ question "Discussion Points"
-
-    * How should correlated operations be handled?
