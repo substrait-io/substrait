@@ -270,6 +270,7 @@ scalarType
   | binaryType                           #binary
   | dateType                             #date
   | intervalYearType                     #intervalYear
+  | Unbound                              #unbound
   | UUID isnull=QMark?                   #uuid
   | userDefinedType                      #userDefined
   ;
