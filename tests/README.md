@@ -221,7 +221,7 @@ Use short names listed in https://substrait.io/extensions/#function-signature-co
 - **str**: Variable-length string
 - **fchar**: Fixed-length string `fixedchar<N>`
 - **vchar**: Variable-length string `varchar<N>`
-- **vbin**: Fixed-length binary `fixedbinary<N>`
+- **vbin**: Variable-length binary `binary`
 - **date**: Date
 - **iyear**: Interval year
 - **iday**: Interval days `interval_day<P>`
