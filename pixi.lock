@@ -318,7 +318,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/9d/2a/9186535ce58db529927f6cf5990a849aa9e052eea3e2cfefe20b9e1802da/bracex-2.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/9a/3c/c17fb3ca2d9c3acff52e30b309f538586f9f5b9c9cf454f3845fc9af4881/certifi-2026.2.25-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/fa/07/330e3a0dda4c404d6da83b327270906e9654a24f6c546dc886a0eb0ffb23/charset_normalizer-3.4.7-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl
-      - pypi: https://files.pythonhosted.org/packages/6c/cc/bfa3f5c4b8fdc05956a9426f4d7a9a85c6d6d68c8096722f612bf4db5d08/check_jsonschema-0.37.1-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/5f/89/0c8eebd5d9439abb38a79edca7a93c96e67e0d1e14ab1f6db016d27b15ad/check_jsonschema-0.37.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/98/78/01c019cdb5d6498122777c1a43056ebb3ebfeef2076d9d026bfe15583b2b/click-8.3.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/f1/2a/8c3ac3d8bc94e6de8d7ae270bb5bc437b210bb9d6d9e46630c98f4abd20c/csscompressor-0.9.5.tar.gz
@@ -461,7 +461,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/9d/2a/9186535ce58db529927f6cf5990a849aa9e052eea3e2cfefe20b9e1802da/bracex-2.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/9a/3c/c17fb3ca2d9c3acff52e30b309f538586f9f5b9c9cf454f3845fc9af4881/certifi-2026.2.25-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/2e/4e/b7f84e617b4854ade48a1b7915c8ccfadeba444d2a18c291f696e37f0d3b/charset_normalizer-3.4.7-cp313-cp313-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl
-      - pypi: https://files.pythonhosted.org/packages/6c/cc/bfa3f5c4b8fdc05956a9426f4d7a9a85c6d6d68c8096722f612bf4db5d08/check_jsonschema-0.37.1-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/5f/89/0c8eebd5d9439abb38a79edca7a93c96e67e0d1e14ab1f6db016d27b15ad/check_jsonschema-0.37.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/98/78/01c019cdb5d6498122777c1a43056ebb3ebfeef2076d9d026bfe15583b2b/click-8.3.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/f1/2a/8c3ac3d8bc94e6de8d7ae270bb5bc437b210bb9d6d9e46630c98f4abd20c/csscompressor-0.9.5.tar.gz
@@ -555,7 +555,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/9d/2a/9186535ce58db529927f6cf5990a849aa9e052eea3e2cfefe20b9e1802da/bracex-2.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/9a/3c/c17fb3ca2d9c3acff52e30b309f538586f9f5b9c9cf454f3845fc9af4881/certifi-2026.2.25-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c1/3b/66777e39d3ae1ddc77ee606be4ec6d8cbd4c801f65e5a1b6f2b11b8346dd/charset_normalizer-3.4.7-cp313-cp313-macosx_10_13_universal2.whl
-      - pypi: https://files.pythonhosted.org/packages/6c/cc/bfa3f5c4b8fdc05956a9426f4d7a9a85c6d6d68c8096722f612bf4db5d08/check_jsonschema-0.37.1-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/5f/89/0c8eebd5d9439abb38a79edca7a93c96e67e0d1e14ab1f6db016d27b15ad/check_jsonschema-0.37.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/98/78/01c019cdb5d6498122777c1a43056ebb3ebfeef2076d9d026bfe15583b2b/click-8.3.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/f1/2a/8c3ac3d8bc94e6de8d7ae270bb5bc437b210bb9d6d9e46630c98f4abd20c/csscompressor-0.9.5.tar.gz
@@ -649,7 +649,7 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/9d/2a/9186535ce58db529927f6cf5990a849aa9e052eea3e2cfefe20b9e1802da/bracex-2.6-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/9a/3c/c17fb3ca2d9c3acff52e30b309f538586f9f5b9c9cf454f3845fc9af4881/certifi-2026.2.25-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/c1/3b/66777e39d3ae1ddc77ee606be4ec6d8cbd4c801f65e5a1b6f2b11b8346dd/charset_normalizer-3.4.7-cp313-cp313-macosx_10_13_universal2.whl
-      - pypi: https://files.pythonhosted.org/packages/6c/cc/bfa3f5c4b8fdc05956a9426f4d7a9a85c6d6d68c8096722f612bf4db5d08/check_jsonschema-0.37.1-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/5f/89/0c8eebd5d9439abb38a79edca7a93c96e67e0d1e14ab1f6db016d27b15ad/check_jsonschema-0.37.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/98/78/01c019cdb5d6498122777c1a43056ebb3ebfeef2076d9d026bfe15583b2b/click-8.3.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d1/d6/3965ed04c63042e047cb6a3e6ed1a63a35087b6a609aa3a15ed8ac56c221/colorama-0.4.6-py2.py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/f1/2a/8c3ac3d8bc94e6de8d7ae270bb5bc437b210bb9d6d9e46630c98f4abd20c/csscompressor-0.9.5.tar.gz
@@ -1031,10 +1031,10 @@ packages:
   version: 3.4.7
   sha256: e044c39e41b92c845bc815e5ae4230804e8e7bc29e399b0437d64222d92809dd
   requires_python: '>=3.7'
-- pypi: https://files.pythonhosted.org/packages/6c/cc/bfa3f5c4b8fdc05956a9426f4d7a9a85c6d6d68c8096722f612bf4db5d08/check_jsonschema-0.37.1-py3-none-any.whl
+- pypi: https://files.pythonhosted.org/packages/5f/89/0c8eebd5d9439abb38a79edca7a93c96e67e0d1e14ab1f6db016d27b15ad/check_jsonschema-0.37.2-py3-none-any.whl
   name: check-jsonschema
-  version: 0.37.1
-  sha256: cf672ef4ccd62f9512ac40d28dde135108799ee8d749095ac72b62ecdb796d2e
+  version: 0.37.2
+  sha256: 0840dc56219922f7a34d4e4a4364f96bbf05983850dbb64149f4c6f17b3affd1
   requires_dist:
   - tomli>=2.0 ; python_full_version < '3.11'
   - ruamel-yaml>=0.18.10,<0.20.0
