@@ -4,6 +4,7 @@ import yaml
 
 from tests.coverage.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
 from tests.coverage.nodes import SubstraitError, type_str_is_outer_nullable
+from tests.coverage import type_checker
 
 enable_debug = False
 
@@ -110,10 +111,12 @@ class Extension:
         overloads = []
         for impl in func["impls"]:
             args = []
+            raw_args = []
             if "args" in impl:
                 for arg in impl["args"]:
                     if "value" in arg:
                         arg_type = arg["value"]
+                        raw_args.append(arg_type)
                         if arg_type.endswith("?"):
                             arg_type = arg_type[:-1]
                         args.append(Extension.get_short_type(arg_type))
@@ -122,6 +125,7 @@ class Extension:
                             f"arg is not a value type for function: {func['name']} arg must be enum options {arg['options']}"
                         )
                         args.append("enum")
+                        raw_args.append(None)
             nullability = impl.get(
                 "nullability", "MIRROR"
             )  # MIRROR is the spec default
@@ -134,6 +138,8 @@ class Extension:
                     "variadic" in impl,
                     nullability=nullability,
                     is_return_nullable=is_return_nullable,
+                    raw_args=raw_args,
+                    raw_return=return_type_raw,
                 )
             )
         return overloads
@@ -241,6 +247,8 @@ class FunctionVariant:
         func_type,
         nullability="MIRROR",
         is_return_nullable=False,
+        raw_args=None,
+        raw_return=None,
     ):
         self.name = name
         self.urn = urn
@@ -251,6 +259,8 @@ class FunctionVariant:
         self.func_type = func_type
         self.nullability = nullability
         self.is_return_nullable = is_return_nullable
+        self.raw_args = raw_args if raw_args is not None else []
+        self.raw_return = raw_return
         self.test_count = 0
 
     def __str__(self):
@@ -268,12 +278,16 @@ class FunctionOverload:
         variadic,
         nullability="MIRROR",
         is_return_nullable=False,
+        raw_args=None,
+        raw_return=None,
     ):
         self.args = args
         self.return_type = return_type
         self.variadic = variadic
         self.nullability = nullability
         self.is_return_nullable = is_return_nullable
+        self.raw_args = raw_args if raw_args is not None else []
+        self.raw_return = raw_return
 
     def __str__(self):
         return f"FunctionOverload(args={self.args}, result={self.return_type}, variadic={self.variadic}, nullability={self.nullability}, is_return_nullable={self.is_return_nullable})"
@@ -316,6 +330,8 @@ class FunctionRegistry:
                     func_type,
                     nullability=overload.nullability,
                     is_return_nullable=overload.is_return_nullable,
+                    raw_args=overload.raw_args,
+                    raw_return=overload.raw_return,
                 )
                 fun_arr.append(function)
             self.registry[f_name] = fun_arr
@@ -346,12 +362,32 @@ class FunctionRegistry:
             return True
         return FunctionRegistry.is_type_any(func_arg_type)
 
+    def _strict_signature_check(self, function, full_arg_types, full_return_type):
+        # Variadic impls apply their last declared arg to trailing test args.
+        impl_args = list(function.raw_args)
+        if function.variadic and impl_args:
+            while len(impl_args) < len(full_arg_types):
+                impl_args.append(impl_args[-1])
+        return type_checker.check_signature(
+            impl_args,
+            function.raw_return,
+            list(full_arg_types),
+            full_return_type,
+        )
+
     def get_function(
-        self, name: str, urn: str, args: object, return_type
-    ) -> [FunctionVariant]:
+        self,
+        name: str,
+        urn: str,
+        args,
+        return_type,
+        full_arg_types=None,
+        full_return_type=None,
+    ):
         functions = self.registry.get(name, None)
         if functions is None:
             return None
+        strict_failures = []
         for function in functions:
             if urn != function.urn:
                 continue
@@ -359,20 +395,42 @@ class FunctionRegistry:
                 function.return_type, return_type
             ):
                 continue
+            # Loose base-type match (legacy fast path).
+            base_match = False
             if function.args == args:
-                return function
-            if len(function.args) != len(args) and not (
+                base_match = True
+            elif len(function.args) == len(args) or (
                 function.variadic and len(args) >= len(function.args)
             ):
+                base_match = True
+                for i, arg in enumerate(args):
+                    j = i if i < len(function.args) else len(function.args) - 1
+                    if not self.is_same_type(function.args[j], arg):
+                        base_match = False
+                        break
+            if not base_match:
                 continue
-            is_match = True
-            for i, arg in enumerate(args):
-                j = i if i < len(function.args) else len(function.args) - 1
-                if not self.is_same_type(function.args[j], arg):
-                    is_match = False
-                    break
-            if is_match:
-                return function
+
+            if (
+                full_arg_types is not None
+                and full_return_type is not None
+                and not isinstance(return_type, SubstraitError)
+            ):
+                ok, reason = self._strict_signature_check(
+                    function, full_arg_types, full_return_type
+                )
+                if not ok:
+                    strict_failures.append((function, reason))
+                    continue
+
+            return function
+
+        if strict_failures:
+            _, reason = strict_failures[0]
+            error(
+                f"Strict parameter check failed for {name}"
+                f"({', '.join(full_arg_types or [])}) -> {full_return_type}: {reason}"
+            )
         return None
 
     def get_extension_list(self):
