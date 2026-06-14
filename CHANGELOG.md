@@ -1,6 +1,13 @@
 Release Notes
 ---
 
+## [0.94.0](https://github.com/substrait-io/substrait/compare/v0.93.0...v0.94.0) (2026-06-14)
+
+### Features
+
+* allow for function composition in test cases ([#1088](https://github.com/substrait-io/substrait/issues/1088)) ([4e1ee3e](https://github.com/substrait-io/substrait/commit/4e1ee3ebb886a5c239dfa9804cd0917f1407de8c))
+* **tests:** support user-defined type literals in test cases ([#1098](https://github.com/substrait-io/substrait/issues/1098)) ([5ff4dc4](https://github.com/substrait-io/substrait/commit/5ff4dc4aa4c06f7a551e44ea026ad2f300b56629))
+
 ## [0.93.0](https://github.com/substrait-io/substrait/compare/v0.92.1...v0.93.0) (2026-06-07)
 
 ### ⚠ BREAKING CHANGES
