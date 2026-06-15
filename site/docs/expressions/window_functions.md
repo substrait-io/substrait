@@ -18,8 +18,10 @@ When binding a window function, the binding must include the following additiona
 | Property    | Description                                                  | Required                                                     |
 | ----------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Partition   | A list of partitioning expressions.                          | False, defaults to a single partition for the entire dataset |
-| Lower Bound | Bound Following(int64), Bound Trailing(int64) or CurrentRow. | False, defaults to start of partition                        |
-| Upper Bound | Bound Following(int64), Bound Trailing(int64) or CurrentRow. | False, defaults to end of partition                          |
+| Lower Bound | Preceding, Following, CurrentRow, or Unbounded.               | False, defaults to start of partition                        |
+| Upper Bound | Preceding, Following, CurrentRow, or Unbounded.               | False, defaults to end of partition                          |
+
+`Preceding` and `Following` define offsets relative to the current record. Exactly one offset mode must be provided: a literal integer (`offset`) or an expression that evaluates to a strictly positive integer (`offset_expr`). `offset_expr` should use type `int64`; evaluating to null, zero, or a negative integer should result in an error. Use `CurrentRow` for offset zero, and use the opposite bound direction for negative offsets.
 
 ## Aggregate Functions as Window Functions
 
