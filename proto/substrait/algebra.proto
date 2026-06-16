@@ -24,6 +24,12 @@ message RelCommon {
   Hint hint = 3;
   substrait.extensions.AdvancedExtension advanced_extension = 4;
 
+  // Optional plan-wide unique identifier for this relation. Required when
+  // this relation is the binding point for an OuterReference using
+  // rel_reference. Must be unique across all rels within a Plan.
+  // Must be >= 1 when set.
+  optional uint32 rel_anchor = 5;
+
   // Direct indicates no change on presence and ordering of fields in the output
   message Direct {}
 
@@ -255,12 +261,18 @@ message ProjectRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
-// The binary JOIN relational operator left-join-right, including various join types, a join condition and post_join_filter expression
+// The binary JOIN relational operator left-join-right, including various join
+// types, a join condition, and an optional filter on the joined output.
 message JoinRel {
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
+  // A boolean condition evaluated over the left and right inputs that
+  // determines whether a pair of records is a match.
   Expression expression = 4;
+  // An optional boolean filter applied to each output record after
+  // join-type-specific output formation is complete.
+  // Semantically equivalent to placing a FilterRel directly above this join.
   Expression post_join_filter = 5;
 
   JoinType type = 6;
@@ -353,8 +365,7 @@ message AggregateRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
   message Grouping {
-    // Deprecated in favor of `expression_references` below.
-    repeated Expression grouping_expressions = 1 [deprecated = true];
+    reserved 1;
 
     // A list of zero or more references to grouping expressions, i.e., indices
     // into the `grouping_expression` list.
@@ -447,20 +458,23 @@ message SetRel {
   }
 }
 
-// Stub to support extension with a single input
+// A custom relational operator with a single input. Producers and consumers
+// must agree on how to derive the output schema of the relation.
 message ExtensionSingleRel {
   RelCommon common = 1;
   Rel input = 2;
   google.protobuf.Any detail = 3;
 }
 
-// Stub to support extension with a zero inputs
+// A custom relational operator with zero inputs. Producers and consumers
+// must agree on how to derive the output schema of the relation.
 message ExtensionLeafRel {
   RelCommon common = 1;
   google.protobuf.Any detail = 2;
 }
 
-// Stub to support extension with multiple inputs
+// A custom relational operator with multiple inputs. Producers and consumers
+// must agree on how to derive the output schema of the relation.
 message ExtensionMultiRel {
   RelCommon common = 1;
   repeated Rel inputs = 2;
@@ -557,13 +571,48 @@ message ExpandRel {
   }
 }
 
+// The top-N relational operator. A combination of a sort and fetch that only
+// maintains the number of records required to ensure a limited output.
+message TopNRel {
+  RelCommon common = 1;
+  Rel input = 2;
+
+  // List of one or more fields to sort by. At least one is required.
+  repeated SortField sorts = 3;
+
+  // Expression evaluating to a non-negative integer specifying the number of
+  // records to skip. Null is treated as 0. Recommended type is int64.
+  Expression offset = 4;
+
+  // Expression evaluating to a non-negative integer specifying the number of
+  // records to return. Null signals ALL. Recommended type is int64.
+  Expression count = 5;
+
+  // Determines how to handle rows tied with the last returned row.
+  FetchMode mode = 6;
+
+  substrait.extensions.AdvancedExtension advanced_extension = 7;
+}
+
+// Determines how a fetch operation handles rows tied with the last returned row.
+enum FetchMode {
+  // Unspecified. Producers must set one of the defined modes.
+  FETCH_MODE_UNSPECIFIED = 0;
+  // Only return the requested number of rows.
+  FETCH_MODE_ROWS_ONLY = 1;
+  // Include additional rows tied with the last row (per the sort fields).
+  FETCH_MODE_WITH_TIES = 2;
+}
+
 // A relation with output field names.
 //
 // This is for use at the root of a `Rel` tree.
 message RelRoot {
   // A relation
   Rel input = 1;
-  // Field names in depth-first order
+  // Field names in depth-first order. The number of names must match the number
+  // of named fields in the output type. For extension relations, the output type
+  // is determined by the extension relation contract.
   repeated string names = 2;
 }
 
@@ -593,6 +642,7 @@ message Rel {
     ConsistentPartitionWindowRel window = 17;
     ExchangeRel exchange = 15;
     ExpandRel expand = 16;
+    TopNRel top_n = 23;
   }
 }
 
@@ -795,10 +845,12 @@ message ComparisonJoinKey {
   }
 }
 
-// The hash equijoin operator will build a hash table out of one input (default `right`) based on a set of join keys.
-// It will then probe that hash table for the other input (default `left`), finding matches.
+// The hash join operator will build a hash table out of one input (default
+// `right`) based on a set of join keys. It will then probe that hash table for
+// the other input (default `left`), finding matches.
 //
-// Two rows are a match if the comparison function returns true for all keys
+// Two rows are a match if every key comparison returns true and, when
+// specified, `residual_expression` also evaluates to true.
 message HashJoinRel {
   RelCommon common = 1;
   Rel left = 2;
@@ -822,12 +874,23 @@ message HashJoinRel {
   // hash function for a given comparsion function or to reject the plan if it cannot
   // do so.
   repeated ComparisonJoinKey keys = 8;
+  // An optional boolean filter applied to each output record after
+  // join-type-specific output formation is complete.
+  // Semantically equivalent to placing a FilterRel directly above this join.
   Expression post_join_filter = 6;
 
   JoinType type = 7;
 
-  // Specifies which side of input to build the hash table for this hash join. Default is `BUILD_INPUT_RIGHT`.
+  // Specifies which side of input to build the hash table for this hash join.
+  // Defaults to `BUILD_INPUT_RIGHT`.
   BuildInput build_input = 9;
+  // An optional boolean expression evaluated on each candidate key-match to
+  // determine whether it is a true match. A candidate is only considered a
+  // match when all `keys` comparisons AND this expression evaluate to true.
+  // This expression interacts with join-type semantics: for example, in a
+  // left outer join, a left row that has key matches but no candidate
+  // satisfying this expression will be emitted with nulls for the right side.
+  Expression residual_expression = 11;
 
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;
@@ -854,8 +917,9 @@ message HashJoinRel {
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
-// The merge equijoin does a join by taking advantage of two sets that are sorted on the join keys.
-// This allows the join operation to be done in a streaming fashion.
+// The merge join does a join by taking advantage of two sets that are
+// sorted on the join keys. This allows the join operation to be done in a
+// streaming fashion.
 message MergeJoinRel {
   RelCommon common = 1;
   Rel left = 2;
@@ -881,9 +945,19 @@ message MergeJoinRel {
   // is free to do so as well).  If possible, the consumer should verify the sort
   // order and reject invalid plans.
   repeated ComparisonJoinKey keys = 8;
+  // An optional boolean filter applied to each output record after
+  // join-type-specific output formation is complete.
+  // Semantically equivalent to placing a FilterRel directly above this join.
   Expression post_join_filter = 6;
 
   JoinType type = 7;
+  // An optional boolean expression evaluated on each candidate key-match to
+  // determine whether it is a true match. A candidate is only considered a
+  // match when all `keys` comparisons AND this expression evaluate to true.
+  // This expression interacts with join-type semantics: for example, in a
+  // left outer join, a left row that has key matches but no candidate
+  // satisfying this expression will be emitted with nulls for the right side.
+  Expression residual_expression = 9;
 
   enum JoinType {
     JOIN_TYPE_UNSPECIFIED = 0;
@@ -943,8 +1017,11 @@ message FunctionArgument {
   }
 }
 
-// An optional function argument.  Typically used for specifying behavior in
-// invalid or corner cases.
+// A named, optional behavioral preference for a function call. Options allow
+// producers to express preferences about how consumers handle corner cases or
+// engine-specific behavior (e.g. overflow or rounding mode). Unlike function
+// arguments, options are not required. If omitted, the consumer is free to
+// choose any supported behavior.
 message FunctionOption {
   // Name of the option to set. If the consumer does not recognize the
   // option, it must reject the plan. The name is matched case-insensitively
@@ -961,6 +1038,9 @@ message FunctionOption {
 }
 
 message Expression {
+  reserved 10;
+  reserved "enum";
+
   oneof rex_type {
     Literal literal = 1;
     FieldReference selection = 2;
@@ -976,27 +1056,12 @@ message Expression {
     DynamicParameter dynamic_parameter = 14;
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
-
-    // deprecated: enum literals are only sensible in the context of
-    // function arguments, for which FunctionArgument should now be
-    // used
-    Enum enum = 10 [deprecated = true];
-  }
-
-  message Enum {
-    option deprecated = true;
-
-    oneof enum_kind {
-      string specified = 1;
-      Empty unspecified = 2;
-    }
-
-    message Empty {
-      option deprecated = true;
-    }
+    ExecutionContextVariable execution_context_variable = 17;
   }
 
   message Literal {
+    reserved 14, 17, 27;
+
     oneof literal_type {
       bool boolean = 1;
       int32 i8 = 2;
@@ -1007,14 +1072,8 @@ message Expression {
       double fp64 = 11;
       string string = 12;
       bytes binary = 13;
-      // Timestamp in units of microseconds since the UNIX epoch.
-      // Deprecated in favor of `precision_timestamp`.
-      int64 timestamp = 14 [deprecated = true];
       // Date in units of days since the UNIX epoch.
       int32 date = 16;
-      // Time in units of microseconds past midnight.
-      // Deprecated in favor of `precision_time`.
-      int64 time = 17 [deprecated = true];
       IntervalYearToMonth interval_year_to_month = 19;
       IntervalDayToSecond interval_day_to_second = 20;
       IntervalCompound interval_compound = 36;
@@ -1028,9 +1087,6 @@ message Expression {
       PrecisionTimestamp precision_timestamp_tz = 35;
       Struct struct = 25;
       Map map = 26;
-      // Timestamp in units of microseconds since the UNIX epoch.
-      // Deprecated in favor of `precision_timestamp_tz`
-      int64 timestamp_tz = 27 [deprecated = true];
       bytes uuid = 28;
       Type null = 29; // a typed null literal
       List list = 30;
@@ -1220,6 +1276,9 @@ message Expression {
 
   // A scalar function call.
   message ScalarFunction {
+    reserved 2;
+    reserved "args";
+
     // Points to a function_anchor defined in this plan, which must refer
     // to a scalar function in the associated YAML file. Required.
     uint32 function_reference = 1;
@@ -1237,21 +1296,21 @@ message Expression {
     //    matches one of the allowed options.
     repeated FunctionArgument arguments = 4;
 
-    // Options to specify behavior for corner cases, or leave behavior
-    // unspecified if the consumer does not need specific behavior in these
-    // cases.
+    // Optional behavioral preferences for the function call. Unlike
+    // arguments, these are not required and are not part of the function
+    // signature. If omitted, the consumer chooses its own behavior.
     repeated FunctionOption options = 5;
 
     // Must be set to the return type of the function, exactly as derived
     // using the declaration in the extension.
     Type output_type = 3;
-
-    // Deprecated; use arguments instead.
-    repeated Expression args = 2 [deprecated = true];
   }
 
   // A window function call.
   message WindowFunction {
+    reserved 8;
+    reserved "args";
+
     // Points to a function_anchor defined in this plan. The function must be:
     //  - a window function
     //  - an aggregate function
@@ -1276,9 +1335,9 @@ message Expression {
     //    matches one of the allowed options.
     repeated FunctionArgument arguments = 9;
 
-    // Options to specify behavior for corner cases, or leave behavior
-    // unspecified if the consumer does not need specific behavior in these
-    // cases.
+    // Optional behavioral preferences for the function call. Unlike
+    // arguments, these are not required and are not part of the function
+    // signature. If omitted, the consumer chooses its own behavior.
     repeated FunctionOption options = 11;
 
     // Must be set to the return type of the function, exactly as derived
@@ -1325,9 +1384,6 @@ message Expression {
     // wrapping around as if lower/upper were swapped? error? null?).
     // Optional; defaults to the end of the partition.
     Bound upper_bound = 4;
-
-    // Deprecated; use arguments instead.
-    repeated Expression args = 8 [deprecated = true];
 
     enum BoundsType {
       BOUNDS_TYPE_UNSPECIFIED = 0;
@@ -1495,7 +1551,7 @@ message Expression {
 
   // A reference that takes an existing subtype and selectively removes fields
   // from it. For example, one might initially have an inner struct with 100
-  // fields but a a particular operation only needs to interact with only 2 of
+  // fields but a particular operation only needs to interact with 2 of
   // those 100 fields. In this situation, one would use a mask expression to
   // eliminate the 98 fields that are not relevant to the rest of the operation
   // pipeline.
@@ -1589,12 +1645,20 @@ message Expression {
     // incoming record type
     message RootReference {}
 
-    // A root reference for the outer relation's subquery
+    // A root reference for the outer relation's subquery.
     message OuterReference {
-      // number of subquery boundaries to traverse up for this field's reference
-      //
-      // This value must be >= 1
-      uint32 steps_out = 1;
+      oneof outer_reference_type {
+        // Number of subquery boundaries to traverse up for this field's
+        // reference. Must be >= 1.
+        uint32 steps_out = 1;
+
+        // References the plan-wide unique rel_anchor of the relation that this
+        // field reference is rooted on. Must match a rel_anchor defined on a
+        // RelCommon in the plan. Must be >= 1. Must be used instead of steps_out
+        // when this outer reference appears inside a relation shared via
+        // ReferenceRel and offset-based resolution via steps_out would be ambiguous.
+        uint32 rel_reference = 2;
+      }
     }
 
     // A reference to a lambda parameter within a lambda body expression.
@@ -1688,6 +1752,30 @@ message Expression {
       Rel right = 4;
     }
   }
+
+  // Expression that represents execution context dependent variables.
+  // These are modeled as expressions rather than functions because they:
+  // - Take no input arguments
+  // - Depend on execution context rather than input data
+  // - Require evaluation mode control (see ExecutionBehavior in plan.proto)
+  message ExecutionContextVariable {
+    oneof execution_context_variable_type {
+      // an execution context dependent variable containing the current
+      // timestamp in current_timezone
+      // nullability must be NULLABILITY_REQUIRED
+      Type.PrecisionTimestampTZ current_timestamp = 1;
+
+      // an execution context dependent variable containing the current
+      // session timezone as a string defined by IANA timezone database
+      // (https://www.iana.org/time-zones).
+      // nullability must be NULLABILITY_REQUIRED
+      Type.String current_timezone = 2;
+
+      // an execution context dependent variable containing the current date
+      // nullability must be NULLABILITY_REQUIRED
+      Type.Date current_date = 3;
+    }
+  }
 }
 
 // Expression that represents a dynamic parameter.
@@ -1752,6 +1840,9 @@ enum AggregationPhase {
 
 // An aggregate function.
 message AggregateFunction {
+  reserved 2;
+  reserved "args";
+
   // Points to a function_anchor defined in this plan, which must refer
   // to an aggregate function in the associated YAML file. Required.
   uint32 function_reference = 1;
@@ -1773,9 +1864,9 @@ message AggregateFunction {
   //    the string must case-insensitively match one of the allowed options.
   repeated FunctionArgument arguments = 7;
 
-  // Options to specify behavior for corner cases, or leave behavior
-  // unspecified if the consumer does not need specific behavior in these
-  // cases.
+  // Optional behavioral preferences for the function call. Unlike
+  // arguments, these are not required and are not part of the function
+  // signature. If omitted, the consumer chooses its own behavior.
   repeated FunctionOption options = 8;
 
   // Must be set to the return type of the function, exactly as derived
@@ -1796,9 +1887,6 @@ message AggregateFunction {
   // Specifies whether equivalent records are merged before being aggregated.
   // Optional, defaults to AGGREGATION_INVOCATION_ALL.
   AggregationInvocation invocation = 6;
-
-  // deprecated; use arguments instead
-  repeated Expression args = 2 [deprecated = true];
 
   // Method in which equivalent records are merged before being aggregated.
   enum AggregationInvocation {

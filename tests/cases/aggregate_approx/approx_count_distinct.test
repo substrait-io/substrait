@@ -1,5 +1,5 @@
 ### SUBSTRAIT_AGGREGATE_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_aggregate_approx.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_aggregate_approx
 
 # basic: Basic examples without any special cases
 approx_count_distinct((1, -2, 3, -4, 5, 6)::i8) = 6::i64

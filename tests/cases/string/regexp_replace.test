@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_string
 
 # basic: Basic examples without any special cases
 regexp_replace('test@test.com'::str, '^\S+@\S+$'::str, 'email_found'::str, 1::i64, 0::i64) = 'email_found'::str

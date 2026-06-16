@@ -8,32 +8,25 @@ jobs:
     name: PR title / description conforms to semantic-release
     runs-on: ubuntu-latest
     steps:
+      # Check out the base ref (trusted, not the PR head) so the committed
+      # commitlint.config.js cannot be weakened by the PR being validated.
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
       - run: npm install @commitlint/config-conventional
-      - run: >
-          echo 'module.exports = {
-            // Workaround for https://github.com/dependabot/dependabot-core/issues/5923
-            "ignores": [(message) => /^Bumps \[.+]\(.+\) from .+ to .+\.$/m.test(message)],
-            "rules": {
-              "body-max-line-length": [0, "always", Infinity],
-              "footer-max-line-length": [0, "always", Infinity],
-              "body-leading-blank": [0, "always"]
-            }
-          }' > .commitlintrc.js
-      - run: npx commitlint --extends @commitlint/config-conventional --verbose <<< $COMMIT_MSG
+      - run: npx commitlint --verbose <<< $COMMIT_MSG
         env:
           COMMIT_MSG: >
             ${{ github.event.pull_request.title }}
 
             ${{ github.event.pull_request.body }}
       - if: failure()
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const message = `**ACTION NEEDED**
-              
+
               Substrait follows the [Conventional Commits
               specification](https://www.conventionalcommits.org/en/v1.0.0/) for
               release automation.

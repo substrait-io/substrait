@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_rounding_decimal.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_rounding_decimal
 
 # basic: Basic examples without any special cases
 floor(2.25::dec<3,2>) = 2::dec<2,0>

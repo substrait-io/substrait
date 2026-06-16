@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_string
 
 # basic: Basic examples without any special cases
 bit_length('abc'::str) = 24::i64

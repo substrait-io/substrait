@@ -6,6 +6,7 @@ from tests.coverage.antlr_parser.FuncTestCaseParserVisitor import (
 from tests.coverage.nodes import (
     AggregateArgument,
     CaseGroup,
+    FuncCallArg,
     TestFile,
     TestCase,
     CaseLiteral,
@@ -42,10 +43,10 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitInclude(self, ctx: FuncTestCaseParser.IncludeContext):
         # TODO handle multiple includes
-        return ctx.StringLiteral(0).getText().strip("'")
+        return ctx.ExtensionUrn().getText()
 
     def visitDependency(self, ctx: FuncTestCaseParser.DependencyContext):
-        return [ctx.StringLiteral().getText().strip("'")]
+        return [ctx.ExtensionUrn().getText()]
 
     def visitTestGroupDescription(
         self, ctx: FuncTestCaseParser.TestGroupDescriptionContext
@@ -82,7 +83,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         # TODO Implement this method
         args = self.visitArguments(ctx.arguments())
         result = self.visitResult(ctx.result())
-        options = dict()
+        options = {}
         if ctx.funcOptions() is not None:
             options = self.visitFuncOptions(ctx.funcOptions())
         return TestCase(
@@ -111,7 +112,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
-            options=dict(),
+            options={},
             rows=None,
             args=[arg],
             result=SubstraitError("uninitialized"),
@@ -129,7 +130,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
-            options=dict(),
+            options={},
             rows=rows,
             args=args,
             result=SubstraitError("uninitialized"),
@@ -158,7 +159,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             func_name=ctx.identifier().getText(),
             base_uri="",
             group=None,
-            options=dict(),
+            options={},
             rows=rows,
             args=args,
             result=SubstraitError("uninitialized"),
@@ -243,11 +244,11 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.DateLiteral() is not None:
             return ctx.getText(), "date"
         if ctx.TimeLiteral() is not None:
-            return ctx.getText(), "time"
+            return ctx.getText(), "pt"
         if ctx.TimestampLiteral() is not None:
-            return ctx.getText(), "ts"
+            return ctx.getText(), "pts"
         if ctx.TimestampTzLiteral() is not None:
-            return ctx.getText(), "tstz"
+            return ctx.getText(), "ptstz"
         if ctx.IntervalDayLiteral() is not None:
             return ctx.getText(), "iday"
         if ctx.IntervalYearLiteral() is not None:
@@ -288,12 +289,6 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitDecimalArg(ctx.decimalArg())
         if ctx.dateArg() is not None:
             return self.visitDateArg(ctx.dateArg())
-        if ctx.timeArg() is not None:
-            return self.visitTimeArg(ctx.timeArg())
-        if ctx.timestampArg() is not None:
-            return self.visitTimestampArg(ctx.timestampArg())
-        if ctx.timestampTzArg() is not None:
-            return self.visitTimestampTzArg(ctx.timestampTzArg())
         if ctx.intervalDayArg() is not None:
             return self.visitIntervalDayArg(ctx.intervalDayArg())
         if ctx.intervalYearArg() is not None:
@@ -314,8 +309,16 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitNullArg(ctx.nullArg())
         if ctx.listArg() is not None:
             return self.visitListArg(ctx.listArg())
+        if ctx.structArg() is not None:
+            return self.visitStructArg(ctx.structArg())
+        if ctx.mapArg() is not None:
+            return self.visitMapArg(ctx.mapArg())
+        if ctx.userDefinedArg() is not None:
+            return self.visitUserDefinedArg(ctx.userDefinedArg())
         if ctx.lambdaArg() is not None:
             return self.visitLambdaArg(ctx.lambdaArg())
+        if ctx.funcCallArg() is not None:
+            return self.visitFuncCallArg(ctx.funcCallArg())
         if ctx.enumArg() is not None:
             return self.visitEnumArg(ctx.enumArg())
 
@@ -384,39 +387,15 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitDateArg(self, ctx: FuncTestCaseParser.DateArgContext):
         type_str = ctx.dateType().getText().lower()
         return CaseLiteral(
-            value=ctx.DateLiteral().getText().strip("'"),
+            value=ctx.DateLiteral().getText(),
             type=type_str,
             nullable=ctx.dateType().isnull is not None,
-        )
-
-    def visitTimeArg(self, ctx: FuncTestCaseParser.TimeArgContext):
-        type_str = ctx.timeType().getText().lower()
-        return CaseLiteral(
-            value=ctx.TimeLiteral().getText().strip("'"),
-            type=type_str,
-            nullable=ctx.timeType().isnull is not None,
-        )
-
-    def visitTimestampArg(self, ctx: FuncTestCaseParser.TimestampArgContext):
-        type_str = ctx.timestampType().getText().lower()
-        return CaseLiteral(
-            value=ctx.TimestampLiteral().getText().strip("'"),
-            type=type_str,
-            nullable=ctx.timestampType().isnull is not None,
-        )
-
-    def visitTimestampTzArg(self, ctx: FuncTestCaseParser.TimestampTzArgContext):
-        type_str = ctx.timestampTZType().getText().lower()
-        return CaseLiteral(
-            value=ctx.TimestampTzLiteral().getText().strip("'"),
-            type=type_str,
-            nullable=ctx.timestampTZType().isnull is not None,
         )
 
     def visitIntervalDayArg(self, ctx: FuncTestCaseParser.IntervalDayArgContext):
         type_str = ctx.intervalDayType().getText().lower()
         return CaseLiteral(
-            value=ctx.IntervalDayLiteral().getText().strip("'"),
+            value=ctx.IntervalDayLiteral().getText(),
             type=type_str,
             nullable=ctx.intervalDayType().isnull is not None,
         )
@@ -424,7 +403,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitIntervalYearArg(self, ctx: FuncTestCaseParser.IntervalYearArgContext):
         type_str = ctx.intervalYearType().getText().lower()
         return CaseLiteral(
-            value=ctx.IntervalYearLiteral().getText().strip("'"),
+            value=ctx.IntervalYearLiteral().getText(),
             type=type_str,
             nullable=ctx.intervalYearType().isnull is not None,
         )
@@ -456,7 +435,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitPrecisionTimeArg(self, ctx: FuncTestCaseParser.PrecisionTimeArgContext):
         type_str = ctx.precisionTimeType().getText().lower()
         return CaseLiteral(
-            value=ctx.TimeLiteral().getText().strip("'"),
+            value=ctx.TimeLiteral().getText(),
             type=type_str,
             nullable=ctx.precisionTimeType().isnull is not None,
         )
@@ -466,7 +445,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     ):
         type_str = ctx.precisionTimestampType().getText().lower()
         return CaseLiteral(
-            value=ctx.TimestampLiteral().getText().strip("'"),
+            value=ctx.TimestampLiteral().getText(),
             type=type_str,
             nullable=ctx.precisionTimestampType().isnull is not None,
         )
@@ -476,7 +455,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     ):
         type_str = ctx.precisionTimestampTZType().getText().lower()
         return CaseLiteral(
-            value=ctx.TimestampTzLiteral().getText().strip("'"),
+            value=ctx.TimestampTzLiteral().getText(),
             type=type_str,
             nullable=ctx.precisionTimestampTZType().isnull is not None,
         )
@@ -488,15 +467,53 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             nullable=ctx.listType().isnull is not None,
         )
 
+    def visitStructArg(self, ctx: FuncTestCaseParser.StructArgContext):
+        return CaseLiteral(
+            value=self.visitLiteralStruct(ctx.literalStruct()),
+            type=ctx.structType().getText(),
+            nullable=ctx.structType().isnull is not None,
+        )
+
+    def visitMapArg(self, ctx: FuncTestCaseParser.MapArgContext):
+        return CaseLiteral(
+            value=self.visitLiteralMap(ctx.literalMap()),
+            type=ctx.mapType().getText(),
+            nullable=ctx.mapType().isnull is not None,
+        )
+
+    def visitUserDefinedArg(self, ctx: FuncTestCaseParser.UserDefinedArgContext):
+        return CaseLiteral(
+            value=self.visitLiteralStruct(ctx.literalStruct()),
+            type=ctx.userDefinedType().getText(),
+            nullable=ctx.userDefinedType().isnull is not None,
+        )
+
     def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
-        values = []
-        for element in ctx.listElement():
-            if element.literal() is not None:
-                value, _ = self.visitLiteral(element.literal())
-                values.append(value)
-            elif element.literalList() is not None:
-                values.append(self.visitLiteralList(element.literalList()))
-        return values
+        return [self.visitCompoundLiteral(element) for element in ctx.compoundLiteral()]
+
+    def visitLiteralStruct(self, ctx: FuncTestCaseParser.LiteralStructContext):
+        return [self.visitCompoundLiteral(element) for element in ctx.compoundLiteral()]
+
+    def visitLiteralMap(self, ctx: FuncTestCaseParser.LiteralMapContext):
+        return [
+            {
+                "key": self.visitCompoundLiteral(entry.key),
+                "value": self.visitCompoundLiteral(entry.value),
+            }
+            for entry in ctx.mapEntry()
+        ]
+
+    def visitCompoundLiteral(self, ctx: FuncTestCaseParser.CompoundLiteralContext):
+        if ctx.literal() is not None:
+            value, _ = self.visitLiteral(ctx.literal())
+            return value
+        if ctx.literalList() is not None:
+            return self.visitLiteralList(ctx.literalList())
+        if ctx.literalStruct() is not None:
+            return self.visitLiteralStruct(ctx.literalStruct())
+        if ctx.literalMap() is not None:
+            return self.visitLiteralMap(ctx.literalMap())
+        raise ParseError("Unknown compound literal")
 
     def visitLambdaArg(self, ctx: FuncTestCaseParser.LambdaArgContext):
         lambda_type = ctx.funcType().getText()
@@ -504,6 +521,12 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             value="lambda",
             type=lambda_type,
             nullable=ctx.funcType().isnull is not None,
+        )
+
+    def visitFuncCallArg(self, ctx: FuncTestCaseParser.FuncCallArgContext):
+        return FuncCallArg(
+            func_name=ctx.identifier().getText(),
+            args=self.visitArguments(ctx.arguments()),
         )
 
     def visitEnumArg(self, ctx: FuncTestCaseParser.EnumArgContext):

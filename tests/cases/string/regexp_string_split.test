@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_string
 
 # lazy_matching: Examples with lazy matching
 regexp_string_split('Hello'::str, 'Hel+?'::str) = ['', 'lo']::list<str>

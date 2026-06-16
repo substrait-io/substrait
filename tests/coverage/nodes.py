@@ -36,7 +36,7 @@ class SubstraitError:
 
 @dataclass
 class CaseLiteral:
-    value: str | int | float | list | None
+    value: str | int | float | list | dict | None
     type: str
     nullable: bool = False
 
@@ -58,6 +58,12 @@ class CaseLiteral:
 
 
 @dataclass
+class FuncCallArg:
+    func_name: str
+    args: List
+
+
+@dataclass
 class AggregateArgument:
     column_name: str
     column_type: str
@@ -72,8 +78,8 @@ class TestCase:
     group: CaseGroup | None
     options: dict
     rows: List[List] | None
-    args: List[CaseLiteral] | List[AggregateArgument]
-    result: CaseLiteral | str | SubstraitError
+    args: List[CaseLiteral | FuncCallArg] | List[AggregateArgument]
+    result: CaseLiteral | FuncCallArg | str | SubstraitError
     comment: str
 
     def get_return_type(self):

@@ -1,5 +1,5 @@
 ### SUBSTRAIT_AGGREGATE_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic_decimal.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
 
 # basic: Basic examples without any special cases
 sum((0, -1, 2, 20)::dec<2, 0>) = 21::dec?<38, 0>

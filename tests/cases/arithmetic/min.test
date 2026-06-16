@@ -1,5 +1,5 @@
 ### SUBSTRAIT_AGGREGATE_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # basic: Basic examples without any special cases
 min((20, -3, 1, -10, 0, 5)::i8) = -10::i8?

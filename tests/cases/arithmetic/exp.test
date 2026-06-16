@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # basic: Basic examples without any special cases
 exp(100::i64) = 2.6881171418161356e+43::fp64

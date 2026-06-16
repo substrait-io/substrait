@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_rounding.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_rounding
 
 # basic: Basic examples without any special cases
 ceil(2.25::fp32) = 3::fp32

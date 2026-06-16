@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_logarithmic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_logarithmic
 
 # basic: Basic examples without any special cases
 log10(100000::i64) = 5.0::fp64

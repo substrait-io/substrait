@@ -6,9 +6,12 @@ title: FAQ
 
 ## What is the purpose of the post-join filter field on Join relations?
 
-The post-join filter on the various Join relations is not always equivalent to an explicit Filter relation AFTER the Join.
+`post_join_filter` is an optional filter on the output records of a join. It is applied after matching and any join-type–specific post-processing (e.g., null-padding unmatched rows for outer joins, emitting unmatched rows for anti joins) are complete. It is semantically equivalent to placing a separate `Filter` relation directly above the join. Because it does not participate in matching, it has no effect on which rows are considered matched or unmatched for the purpose of outer, anti, semi, or mark join semantics. When omitted it defaults to `true`.
 
-See the example [here](https://facebookincubator.github.io/velox/develop/joins.html#hash-join-implementation) that highlights how the post-join filter behaves differently than a Filter relation in the case of a left join.
+This is distinct from predicates that *do* participate in match determination:
+
+- In `JoinRel`, all match predicates belong in `expression`.
+- In `HashJoinRel` and `MergeJoinRel`, equijoin predicates go in `keys` and any remaining match predicates go in `residual_expression`.
 
 ## Why does the project relation keep existing columns?
 
@@ -47,4 +50,6 @@ There are a few places where Substrait DOES define field names:
 - Read relations have field names in the base schema. This is because it is quite common for reads to do a
   name-based lookup to determine the columns that need to be read from source files.
 - The root relation has field names. This is because the root relation is the final output of the plan and
-  it is useful to have names for the fields in the final output.
+  it is useful to have names for the fields in the final output. The number of names must match the number
+  of named fields in the output type, using the same depth-first ordering as [`NamedStruct`](types/named_structs.md)
+  names. For extension relations, the output type is determined by the extension relation contract.

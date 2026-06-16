@@ -5,7 +5,7 @@ In Substrait, all fields are dealt with on a positional basis. Field names are o
 Field references can originate from different root types:
 
 - **RootReference**: References the incoming record from the relation
-- **OuterReference**: References outer query records in correlated subqueries
+- **OuterReference**: References outer query records in correlated subqueries, supporting either offset-based (`steps_out`) or id-based (`rel_reference`) resolution (see [Outer References](#outer-references))
 - **Expression**: References the result of evaluating an expression
 - **LambdaParameterReference**: References lambda parameters within lambda body expressions (see [Lambda Expressions](lambda_expressions.md))
 
@@ -155,3 +155,60 @@ By default, when only a single field is selected from a struct, that struct is r
 
     * Should we support column reordering/positioning using a masked complex expression? (Right now, you can only mask things out.)
 
+### Outer References
+
+Outer references allow expressions inside a subquery to access records from an enclosing relation. The `OuterReference` root type supports two mutually exclusive resolution strategies:
+
+#### `steps_out` (offset-based)
+
+`steps_out` resolves the reference by counting subquery boundaries upward (`steps_out >= 1`). This works correctly whenever the plan is a **tree**, i.e., when each relation has exactly one parent, the path to the binding relation can be uniquely determined via `steps_out`.
+
+#### `rel_reference` (id-based)
+
+`rel_reference` resolves the reference by referring to the binding relation via its plan-wide unique `RelCommon.rel_anchor`. The `rel_anchor` on the referenced relation must be set (>= 1) and unique across all relations in the plan.
+
+#### Coexistence rules
+
+Exactly one of `steps_out` or `rel_reference` must be set on each `OuterReference`. A single plan may contain outer references using different strategies (e.g., some using `steps_out` and others using `rel_reference`), as long as every individual reference is unambiguous. However, if any shared relation (via `ReferenceRel`) contains an unresolved outer reference, that reference **must** use `rel_reference`.
+
+#### When to use `rel_reference`
+
+`rel_reference` must be used instead of `steps_out` when an outer reference appears inside a relation shared via `ReferenceRel` and the shared relation can be reached through multiple paths with different subquery depths, making `steps_out` ambiguous. In this case, the same outer reference could require different `steps_out` values depending on which path is followed.
+
+For example, consider a plan with two nested scalar subqueries that share a common relation `x`. The outer reference to `tableA.a` lives inside `x`, which is reached via paths of different depth:
+
+```
+PlanRel.relations[0].rel:  # let's call it 'x'
+FilterRel(a > outer_ref(steps_out=1, tableA.a)) # steps_out 1 or 2?
+  └── ReadRel(tableB)
+
+PlanRel.relations[1].root:
+ProjectRel # Correct binding for tableA.a for the outer reference tableA.a in x.
+├── ReadRel(tableA)
+└── Subquery.Scalar # Subquery (1)
+    └── SetRel(MINUS_PRIMARY)
+        ├── ProjectRel
+        |   └── Subquery.Scalar # Subquery (2)
+        │       └── ReferenceRel(0) # Here steps_out=1 binds incorrectly, because tableA.a is actually two subquery boundaries out.
+        └── ReferenceRel(0) # Here steps_out=1 binds correctly, because tableA.a is one subquery boundary out.
+```
+
+The same shared relation `x` contains a single stored `steps_out=1` outer reference, but that value is only correct for one of its uses. The other use would need `steps_out=2`, so offset-based resolution is ambiguous.
+
+With `rel_reference`, both reference rels can unambiguously refer to the correct binding.
+
+```
+PlanRel.relations[0].rel:  # let's call it 'x'
+FilterRel(a > outer_ref(rel_reference=7, tableA.a))
+  └── ReadRel(tableB)
+
+PlanRel.relations[1].root:
+ProjectRel [rel_anchor=7] # Correct binding for tableA.a for the outer reference tableA.a in x.
+├── ReadRel(tableA)
+└── Subquery.Scalar # Subquery (1)
+    └── SetRel(MINUS_PRIMARY)
+        ├── ProjectRel
+        |   └── Subquery.Scalar # Subquery (2)
+        │       └── ReferenceRel(0) # Reference 1: rel_reference = 7
+        └── ReferenceRel(0) # Reference 2: rel_reference = 7
+```

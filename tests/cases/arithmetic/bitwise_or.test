@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_arithmetic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 
 # basic: Basic examples without any special cases
 bitwise_or(0::i8, 1::i8) = 1::i8

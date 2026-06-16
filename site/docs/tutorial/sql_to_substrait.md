@@ -289,7 +289,7 @@ to the second field of `products`.
 
 !!! note
     Protobuf may not serialize fields with integer type and value 0, since 0 is the default.
-    So if you instead saw `"structField": {}`, know that is is equivalent to
+    So if you instead saw `"structField": {}`, know that is equivalent to
     `"structField": { "field": 0 }`.
 
 `"Computers"` will be translated to a literal expression:
@@ -870,9 +870,11 @@ The overall layout for a plan is
 The `relations` field is a list of Root relations. Most queries only have one
 root relation, but the spec allows for multiple so a common plan could be
 referenced by other plans, sort of like a CTE (Common Table Expression) from SQL.
-The root relation provides the final column names for our query. The input to
-this relation is our aggregate relation (which contains all the other relations
-as children).
+The root relation provides the final column names for our query. The number of
+root relation names must match the number of named fields in the output type,
+using the same depth-first ordering as [`NamedStruct`](../types/named_structs.md)
+names.. The input to this relation is our aggregate relation
+(which contains all the other relations as children).
 
 For extensions, we need to provide `extensionUrns` with the URN identifiers of the
 YAML files we used and `extensions` with the list of functions we used and which

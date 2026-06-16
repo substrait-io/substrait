@@ -37,7 +37,7 @@ Structs are unique from other types because they have an arbitrary number of par
 
     ```
     // Struct
-    struct?<string, i8, i32?, timestamp_tz>
+    struct?<string, i8, i32?, precision_timestamp_tz<6>>
 
     // Named structs are not yet supported in the text format.
     ```
@@ -87,6 +87,28 @@ Similar to structs, maps and lists can also have a type as one of their paramete
           - args:
             - name: p
               value: u!point
+            return: fp64
+    ```
+
+In simple extension YAML, user-defined types from another extension may be referenced by prefixing the `u!` reference with a dependency alias declared in the file's `dependencies` map:
+
+=== "YAML"
+
+    ```
+    dependency_alias.u!typename
+    ```
+
+=== "Example"
+
+    ```yaml
+    dependencies:
+      ext: extension:io.substrait:extension_types
+    scalar_functions:
+      - name: distance
+        impls:
+          - args:
+            - name: p
+              value: ext.u!point
             return: fp64
     ```
 

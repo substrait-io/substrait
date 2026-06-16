@@ -180,21 +180,6 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#timeArg.
-    def visitTimeArg(self, ctx:FuncTestCaseParser.TimeArgContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timestampArg.
-    def visitTimestampArg(self, ctx:FuncTestCaseParser.TimestampArgContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timestampTzArg.
-    def visitTimestampTzArg(self, ctx:FuncTestCaseParser.TimestampTzArgContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by FuncTestCaseParser#intervalYearArg.
     def visitIntervalYearArg(self, ctx:FuncTestCaseParser.IntervalYearArgContext):
         return self.visitChildren(ctx)
@@ -245,6 +230,21 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#structArg.
+    def visitStructArg(self, ctx:FuncTestCaseParser.StructArgContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#mapArg.
+    def visitMapArg(self, ctx:FuncTestCaseParser.MapArgContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#userDefinedArg.
+    def visitUserDefinedArg(self, ctx:FuncTestCaseParser.UserDefinedArgContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#lambdaArg.
     def visitLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
         return self.visitChildren(ctx)
@@ -252,6 +252,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#udtArg.
     def visitUdtArg(self, ctx:FuncTestCaseParser.UdtArgContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#funcCallArg.
+    def visitFuncCallArg(self, ctx:FuncTestCaseParser.FuncCallArgContext):
         return self.visitChildren(ctx)
 
 
@@ -265,8 +270,23 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#listElement.
-    def visitListElement(self, ctx:FuncTestCaseParser.ListElementContext):
+    # Visit a parse tree produced by FuncTestCaseParser#literalStruct.
+    def visitLiteralStruct(self, ctx:FuncTestCaseParser.LiteralStructContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#literalMap.
+    def visitLiteralMap(self, ctx:FuncTestCaseParser.LiteralMapContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#mapEntry.
+    def visitMapEntry(self, ctx:FuncTestCaseParser.MapEntryContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#compoundLiteral.
+    def visitCompoundLiteral(self, ctx:FuncTestCaseParser.CompoundLiteralContext):
         return self.visitChildren(ctx)
 
 
@@ -320,23 +340,8 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by FuncTestCaseParser#timestamp.
-    def visitTimestamp(self, ctx:FuncTestCaseParser.TimestampContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timestampTz.
-    def visitTimestampTz(self, ctx:FuncTestCaseParser.TimestampTzContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by FuncTestCaseParser#date.
     def visitDate(self, ctx:FuncTestCaseParser.DateContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#time.
-    def visitTime(self, ctx:FuncTestCaseParser.TimeContext):
         return self.visitChildren(ctx)
 
 
@@ -352,6 +357,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#userDefined.
     def visitUserDefined(self, ctx:FuncTestCaseParser.UserDefinedContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#userDefinedType.
+    def visitUserDefinedType(self, ctx:FuncTestCaseParser.UserDefinedTypeContext):
         return self.visitChildren(ctx)
 
 
@@ -382,21 +392,6 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#dateType.
     def visitDateType(self, ctx:FuncTestCaseParser.DateTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timeType.
-    def visitTimeType(self, ctx:FuncTestCaseParser.TimeTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timestampType.
-    def visitTimestampType(self, ctx:FuncTestCaseParser.TimestampTypeContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by FuncTestCaseParser#timestampTZType.
-    def visitTimestampTZType(self, ctx:FuncTestCaseParser.TimestampTZTypeContext):
         return self.visitChildren(ctx)
 
 
@@ -452,6 +447,16 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#list.
     def visitList(self, ctx:FuncTestCaseParser.ListContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#structType.
+    def visitStructType(self, ctx:FuncTestCaseParser.StructTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#mapType.
+    def visitMapType(self, ctx:FuncTestCaseParser.MapTypeContext):
         return self.visitChildren(ctx)
 
 

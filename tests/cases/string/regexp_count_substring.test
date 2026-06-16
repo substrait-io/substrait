@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_string.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_string
 
 # basic: Basic examples without any special cases
 regexp_count_substring('foobarboopzoo'::str, 'o{1,}'::str, 1::i64) = 3::i64

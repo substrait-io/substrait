@@ -110,7 +110,7 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
             """
             Write markdown for options.
             """
-            document_options = sorted(list(set(document_options)))
+            document_options = sorted(set(document_options))
             if len(document_options) > 0:
                 mdFile.new_paragraph("<details><summary>Options:</summary>")
                 mdFile.write("\n")

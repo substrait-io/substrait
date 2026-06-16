@@ -18,11 +18,11 @@ version
     ;
 
 include
-    : TripleHash SubstraitInclude Colon StringLiteral (Comma StringLiteral)*
+    : TripleHash SubstraitInclude Colon ExtensionUrn
     ;
 
 dependency
-    : TripleHash SubstraitDependency Colon StringLiteral
+    : TripleHash SubstraitDependency Colon ExtensionUrn
     ;
 
 testGroupDescription
@@ -57,9 +57,6 @@ argument
     | stringArg
     | decimalArg
     | dateArg
-    | timeArg
-    | timestampArg
-    | timestampTzArg
     | intervalYearArg
     | intervalDayArg
     | intervalCompoundArg
@@ -70,7 +67,11 @@ argument
     | precisionTimestampArg
     | precisionTimestampTZArg
     | listArg
+    | structArg
+    | mapArg
+    | userDefinedArg
     | lambdaArg
+    | funcCallArg
     | Identifier  // Bare identifiers (for lambda parameters)
     ;
 
@@ -162,18 +163,6 @@ dateArg
     : DateLiteral DoubleColon dateType
     ;
 
-timeArg
-    : TimeLiteral DoubleColon timeType
-    ;
-
-timestampArg
-    : TimestampLiteral DoubleColon timestampType
-    ;
-
-timestampTzArg
-    : TimestampTzLiteral DoubleColon timestampTZType
-    ;
-
 intervalYearArg
     : IntervalYearLiteral DoubleColon intervalYearType
     ;
@@ -214,6 +203,18 @@ listArg
     : literalList DoubleColon listType
     ;
 
+structArg
+    : literalStruct DoubleColon structType
+    ;
+
+mapArg
+    : literalMap DoubleColon mapType
+    ;
+
+userDefinedArg
+    : literalStruct DoubleColon userDefinedType
+    ;
+
 lambdaArg
     : literalLambda DoubleColon funcType
     ;
@@ -222,17 +223,35 @@ udtArg
     : literal DoubleColon UserDefined Identifier isnull=QMark?
     ;
 
+funcCallArg
+    : identifier OParen arguments CParen
+    ;
+
 enumArg
     : Identifier DoubleColon EnumType
     ;
 
 literalList
-    : OBracket (listElement (Comma listElement)*)? CBracket
+    : OBracket (compoundLiteral (Comma compoundLiteral)*)? CBracket
     ;
 
-listElement
+literalStruct
+    : OParen (compoundLiteral (Comma compoundLiteral)*)? CParen
+    ;
+
+literalMap
+    : OBrace (mapEntry (Comma mapEntry)*)? CBrace
+    ;
+
+mapEntry
+    : key=compoundLiteral Colon value=compoundLiteral
+    ;
+
+compoundLiteral
     : literal
     | literalList
+    | literalStruct
+    | literalMap
     ;
 
 literalLambda
@@ -259,14 +278,15 @@ scalarType
   | floatType                            #float
   | stringType                           #string
   | binaryType                           #binary
-  | timestampType                        #timestamp
-  | timestampTZType                      #timestampTz
   | dateType                             #date
-  | timeType                             #time
   | intervalYearType                     #intervalYear
   | UUID isnull=QMark?                   #uuid
-  | UserDefined Identifier isnull=QMark? #userDefined
+  | userDefinedType                      #userDefined
   ;
+
+userDefinedType
+    : UserDefined Identifier isnull=QMark?
+    ;
 
 booleanType
     : (Bool | Boolean) isnull=QMark?
@@ -290,18 +310,6 @@ floatType
 
 dateType
     : Date isnull=QMark?
-    ;
-
-timeType
-    : Time isnull=QMark?
-    ;
-
-timestampType
-    : (Ts | Timestamp) isnull=QMark?
-    ;
-
-timestampTZType
-    : (TsTZ | Timestamp_TZ) isnull=QMark?
     ;
 
 intervalYearType
@@ -349,6 +357,14 @@ listType
     : List isnull=QMark? OAngleBracket elemType=dataType CAngleBracket #list
     ;
 
+structType
+    : Struct isnull=QMark? OAngleBracket (dataType (Comma dataType)*)? CAngleBracket
+    ;
+
+mapType
+    : Map isnull=QMark? OAngleBracket keyType=dataType Comma valueType=dataType CAngleBracket
+    ;
+
 funcType
     : Func isnull=QMark? OAngleBracket params=funcParameters Arrow returnType=dataType CAngleBracket
     ;
@@ -369,11 +385,11 @@ parameterizedType
     | precisionTimestampType
     | precisionTimestampTZType
     | listType
+    | structType
+    | mapType
     | funcType
 // TODO implement the rest of the parameterized types
-//  | Struct isnull='?'? Lt expr (Comma expr)* Gt #struct
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct
-//  | Map isnull='?'? Lt key=expr Comma value=expr Gt #map
   ;
 
 numericParameter

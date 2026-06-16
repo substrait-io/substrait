@@ -315,33 +315,6 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#timeArg.
-    def enterTimeArg(self, ctx:FuncTestCaseParser.TimeArgContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#timeArg.
-    def exitTimeArg(self, ctx:FuncTestCaseParser.TimeArgContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#timestampArg.
-    def enterTimestampArg(self, ctx:FuncTestCaseParser.TimestampArgContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#timestampArg.
-    def exitTimestampArg(self, ctx:FuncTestCaseParser.TimestampArgContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#timestampTzArg.
-    def enterTimestampTzArg(self, ctx:FuncTestCaseParser.TimestampTzArgContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#timestampTzArg.
-    def exitTimestampTzArg(self, ctx:FuncTestCaseParser.TimestampTzArgContext):
-        pass
-
-
     # Enter a parse tree produced by FuncTestCaseParser#intervalYearArg.
     def enterIntervalYearArg(self, ctx:FuncTestCaseParser.IntervalYearArgContext):
         pass
@@ -432,6 +405,33 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#structArg.
+    def enterStructArg(self, ctx:FuncTestCaseParser.StructArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#structArg.
+    def exitStructArg(self, ctx:FuncTestCaseParser.StructArgContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#mapArg.
+    def enterMapArg(self, ctx:FuncTestCaseParser.MapArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#mapArg.
+    def exitMapArg(self, ctx:FuncTestCaseParser.MapArgContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#userDefinedArg.
+    def enterUserDefinedArg(self, ctx:FuncTestCaseParser.UserDefinedArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#userDefinedArg.
+    def exitUserDefinedArg(self, ctx:FuncTestCaseParser.UserDefinedArgContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#lambdaArg.
     def enterLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
         pass
@@ -447,6 +447,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#udtArg.
     def exitUdtArg(self, ctx:FuncTestCaseParser.UdtArgContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#funcCallArg.
+    def enterFuncCallArg(self, ctx:FuncTestCaseParser.FuncCallArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#funcCallArg.
+    def exitFuncCallArg(self, ctx:FuncTestCaseParser.FuncCallArgContext):
         pass
 
 
@@ -468,12 +477,39 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#listElement.
-    def enterListElement(self, ctx:FuncTestCaseParser.ListElementContext):
+    # Enter a parse tree produced by FuncTestCaseParser#literalStruct.
+    def enterLiteralStruct(self, ctx:FuncTestCaseParser.LiteralStructContext):
         pass
 
-    # Exit a parse tree produced by FuncTestCaseParser#listElement.
-    def exitListElement(self, ctx:FuncTestCaseParser.ListElementContext):
+    # Exit a parse tree produced by FuncTestCaseParser#literalStruct.
+    def exitLiteralStruct(self, ctx:FuncTestCaseParser.LiteralStructContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#literalMap.
+    def enterLiteralMap(self, ctx:FuncTestCaseParser.LiteralMapContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#literalMap.
+    def exitLiteralMap(self, ctx:FuncTestCaseParser.LiteralMapContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#mapEntry.
+    def enterMapEntry(self, ctx:FuncTestCaseParser.MapEntryContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#mapEntry.
+    def exitMapEntry(self, ctx:FuncTestCaseParser.MapEntryContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#compoundLiteral.
+    def enterCompoundLiteral(self, ctx:FuncTestCaseParser.CompoundLiteralContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#compoundLiteral.
+    def exitCompoundLiteral(self, ctx:FuncTestCaseParser.CompoundLiteralContext):
         pass
 
 
@@ -567,39 +603,12 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#timestamp.
-    def enterTimestamp(self, ctx:FuncTestCaseParser.TimestampContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#timestamp.
-    def exitTimestamp(self, ctx:FuncTestCaseParser.TimestampContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#timestampTz.
-    def enterTimestampTz(self, ctx:FuncTestCaseParser.TimestampTzContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#timestampTz.
-    def exitTimestampTz(self, ctx:FuncTestCaseParser.TimestampTzContext):
-        pass
-
-
     # Enter a parse tree produced by FuncTestCaseParser#date.
     def enterDate(self, ctx:FuncTestCaseParser.DateContext):
         pass
 
     # Exit a parse tree produced by FuncTestCaseParser#date.
     def exitDate(self, ctx:FuncTestCaseParser.DateContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#time.
-    def enterTime(self, ctx:FuncTestCaseParser.TimeContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#time.
-    def exitTime(self, ctx:FuncTestCaseParser.TimeContext):
         pass
 
 
@@ -627,6 +636,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#userDefined.
     def exitUserDefined(self, ctx:FuncTestCaseParser.UserDefinedContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#userDefinedType.
+    def enterUserDefinedType(self, ctx:FuncTestCaseParser.UserDefinedTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#userDefinedType.
+    def exitUserDefinedType(self, ctx:FuncTestCaseParser.UserDefinedTypeContext):
         pass
 
 
@@ -681,33 +699,6 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#dateType.
     def exitDateType(self, ctx:FuncTestCaseParser.DateTypeContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#timeType.
-    def enterTimeType(self, ctx:FuncTestCaseParser.TimeTypeContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#timeType.
-    def exitTimeType(self, ctx:FuncTestCaseParser.TimeTypeContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#timestampType.
-    def enterTimestampType(self, ctx:FuncTestCaseParser.TimestampTypeContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#timestampType.
-    def exitTimestampType(self, ctx:FuncTestCaseParser.TimestampTypeContext):
-        pass
-
-
-    # Enter a parse tree produced by FuncTestCaseParser#timestampTZType.
-    def enterTimestampTZType(self, ctx:FuncTestCaseParser.TimestampTZTypeContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#timestampTZType.
-    def exitTimestampTZType(self, ctx:FuncTestCaseParser.TimestampTZTypeContext):
         pass
 
 
@@ -807,6 +798,24 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#list.
     def exitList(self, ctx:FuncTestCaseParser.ListContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#structType.
+    def enterStructType(self, ctx:FuncTestCaseParser.StructTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#structType.
+    def exitStructType(self, ctx:FuncTestCaseParser.StructTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#mapType.
+    def enterMapType(self, ctx:FuncTestCaseParser.MapTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#mapType.
+    def exitMapType(self, ctx:FuncTestCaseParser.MapTypeContext):
         pass
 
 
