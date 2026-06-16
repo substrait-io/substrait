@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/unsigned_integers.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:unsigned_integers
 
 # basic: Basic unsigned integer examples
 multiply('25'::u!u8, '5'::u!u8) = '125'::u!u8

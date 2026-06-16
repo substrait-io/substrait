@@ -1,5 +1,5 @@
 ### SUBSTRAIT_AGGREGATE_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/unsigned_integers.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:unsigned_integers
 
 # basic: Basic unsigned integer examples
 min(('20', '3', '1', '10', '0', '5')::u!u8) = '0'::u!u8?

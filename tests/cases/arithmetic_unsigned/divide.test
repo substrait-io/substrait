@@ -1,5 +1,5 @@
 ### SUBSTRAIT_SCALAR_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/unsigned_integers.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:unsigned_integers
 
 # basic: Basic unsigned integer examples
 divide('250'::u!u8, '5'::u!u8) = '50'::u!u8
