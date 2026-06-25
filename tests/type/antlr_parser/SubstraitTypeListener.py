@@ -342,12 +342,12 @@ class SubstraitTypeListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SubstraitTypeParser#TypeLiteral.
-    def enterTypeLiteral(self, ctx:SubstraitTypeParser.TypeLiteralContext):
+    # Enter a parse tree produced by SubstraitTypeParser#Or.
+    def enterOr(self, ctx:SubstraitTypeParser.OrContext):
         pass
 
-    # Exit a parse tree produced by SubstraitTypeParser#TypeLiteral.
-    def exitTypeLiteral(self, ctx:SubstraitTypeParser.TypeLiteralContext):
+    # Exit a parse tree produced by SubstraitTypeParser#Or.
+    def exitOr(self, ctx:SubstraitTypeParser.OrContext):
         pass
 
 
@@ -360,6 +360,24 @@ class SubstraitTypeListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SubstraitTypeParser#MulDiv.
+    def enterMulDiv(self, ctx:SubstraitTypeParser.MulDivContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#MulDiv.
+    def exitMulDiv(self, ctx:SubstraitTypeParser.MulDivContext):
+        pass
+
+
+    # Enter a parse tree produced by SubstraitTypeParser#AddSub.
+    def enterAddSub(self, ctx:SubstraitTypeParser.AddSubContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#AddSub.
+    def exitAddSub(self, ctx:SubstraitTypeParser.AddSubContext):
+        pass
+
+
     # Enter a parse tree produced by SubstraitTypeParser#Ternary.
     def enterTernary(self, ctx:SubstraitTypeParser.TernaryContext):
         pass
@@ -369,12 +387,39 @@ class SubstraitTypeListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by SubstraitTypeParser#BinaryExpr.
-    def enterBinaryExpr(self, ctx:SubstraitTypeParser.BinaryExprContext):
+    # Enter a parse tree produced by SubstraitTypeParser#ParameterName.
+    def enterParameterName(self, ctx:SubstraitTypeParser.ParameterNameContext):
         pass
 
-    # Exit a parse tree produced by SubstraitTypeParser#BinaryExpr.
-    def exitBinaryExpr(self, ctx:SubstraitTypeParser.BinaryExprContext):
+    # Exit a parse tree produced by SubstraitTypeParser#ParameterName.
+    def exitParameterName(self, ctx:SubstraitTypeParser.ParameterNameContext):
+        pass
+
+
+    # Enter a parse tree produced by SubstraitTypeParser#TypeLiteral.
+    def enterTypeLiteral(self, ctx:SubstraitTypeParser.TypeLiteralContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#TypeLiteral.
+    def exitTypeLiteral(self, ctx:SubstraitTypeParser.TypeLiteralContext):
+        pass
+
+
+    # Enter a parse tree produced by SubstraitTypeParser#Comparison.
+    def enterComparison(self, ctx:SubstraitTypeParser.ComparisonContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#Comparison.
+    def exitComparison(self, ctx:SubstraitTypeParser.ComparisonContext):
+        pass
+
+
+    # Enter a parse tree produced by SubstraitTypeParser#And.
+    def enterAnd(self, ctx:SubstraitTypeParser.AndContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#And.
+    def exitAnd(self, ctx:SubstraitTypeParser.AndContext):
         pass
 
 
@@ -384,15 +429,6 @@ class SubstraitTypeListener(ParseTreeListener):
 
     # Exit a parse tree produced by SubstraitTypeParser#ParenExpression.
     def exitParenExpression(self, ctx:SubstraitTypeParser.ParenExpressionContext):
-        pass
-
-
-    # Enter a parse tree produced by SubstraitTypeParser#ParameterName.
-    def enterParameterName(self, ctx:SubstraitTypeParser.ParameterNameContext):
-        pass
-
-    # Exit a parse tree produced by SubstraitTypeParser#ParameterName.
-    def exitParameterName(self, ctx:SubstraitTypeParser.ParameterNameContext):
         pass
 
 
@@ -411,6 +447,15 @@ class SubstraitTypeListener(ParseTreeListener):
 
     # Exit a parse tree produced by SubstraitTypeParser#NotExpr.
     def exitNotExpr(self, ctx:SubstraitTypeParser.NotExprContext):
+        pass
+
+
+    # Enter a parse tree produced by SubstraitTypeParser#Equality.
+    def enterEquality(self, ctx:SubstraitTypeParser.EqualityContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#Equality.
+    def exitEquality(self, ctx:SubstraitTypeParser.EqualityContext):
         pass
 
 
