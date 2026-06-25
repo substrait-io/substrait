@@ -15,7 +15,7 @@ option java_package = "io.substrait.proto";
 //
 // The value 0 represents the system-preferred variation and is a valid reference value.
 message Type {
-  reserved 14, 17, 29;
+  reserved 14, 17, 29, 31;
 
   oneof kind {
     Boolean bool = 1;
@@ -47,12 +47,6 @@ message Type {
     Func func = 38;
 
     UserDefined user_defined = 30;
-
-    // Deprecated in favor of user_defined, which allows nullability and
-    // variations to be specified. If user_defined_type_reference is
-    // encountered, treat it as being non-nullable and having the default
-    // variation.
-    uint32 user_defined_type_reference = 31 [deprecated = true];
 
     // Reference an aliased type in `Plan.type_aliases`.
     TypeAliasReference alias = 37;
