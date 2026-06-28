@@ -1,6 +1,21 @@
 Release Notes
 ---
 
+## [0.95.0](https://github.com/substrait-io/substrait/compare/v0.94.0...v0.95.0) (2026-06-28)
+
+### ⚠ BREAKING CHANGES
+
+* **grammar:** Fixes operator precedence when parsing return type expressions from extension YAMLs. This can be breaking for user defined extensions YAMLs which may have relied on the faulty operator precedence parsing behavior which is now fixed to use conventional operator precedence.
+* **protos:** removes deprecated Type.user_defined_type_reference field
+
+### Features
+
+* **protos:** remove deprecated Type.user_defined_type_reference field ([#1095](https://github.com/substrait-io/substrait/issues/1095)) ([0cdad6d](https://github.com/substrait-io/substrait/commit/0cdad6dedee6623ac778a67e5be520fc9bc5f06c))
+
+### Bug Fixes
+
+* **grammar:** give binary operators conventional precedence ([#1107](https://github.com/substrait-io/substrait/issues/1107)) ([d4eee3d](https://github.com/substrait-io/substrait/commit/d4eee3dad3702d4e767fe32b987777fb1aac8eb5))
+
 ## [0.94.0](https://github.com/substrait-io/substrait/compare/v0.93.0...v0.94.0) (2026-06-14)
 
 ### Features
