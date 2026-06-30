@@ -21,3 +21,5 @@ supported_expressions:
       - CURRENT_DATE
       - CURRENT_TIMESTAMP
       - CURRENT_TIMEZONE
+  - expression: WINDOW_FUNCTION
+    supports_offset_expr: false
