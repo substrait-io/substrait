@@ -18,4 +18,4 @@ nullif(null::bool?, true::bool) = null::bool?
 nullif(true::bool, null::bool?) = true::bool?
 nullif(null::bool?, null::bool?) = null::bool?
 nullif(10::dec<38, 0>, null::dec?<38, 0>) = 10::dec?<38, 0>
-nullif(null::dec?<38, 0>, null::dec?<38, 0>) = null::bool?
+nullif(null::dec?<38, 0>, null::dec?<38, 0>) = null::dec?<38, 0>
