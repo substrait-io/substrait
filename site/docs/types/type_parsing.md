@@ -17,7 +17,7 @@ The components of this expression are:
 
 ### Grammars
 
-It is relatively easy in most languages to produce simple parser & emitters for the type syntax. To make that easier, Substrait also includes an [ANTLR grammar](https://github.com/substrait-io/substrait-cpp/blob/main/src/substrait/textplan/parser/grammar/SubstraitPlanParser.g4#L108) to ease consumption and production of types.  (The grammar also supports an entire language for representing plans as text.)
+It is relatively easy in most languages to produce simple parser & emitters for the type syntax. To make that easier, Substrait also includes an [ANTLR grammar](https://github.com/substrait-io/substrait/blob/main/grammar/SubstraitType.g4) to ease consumption and production of types.
 
 ### Structs & Named Structs
 
