@@ -1,5 +1,5 @@
 # Compound user-defined type with two data type parameters
-urn: extension:example:point_two_params
+urn: urn:substrait:extension:example:point_two_params
 types:
   - name: point
     parameters:

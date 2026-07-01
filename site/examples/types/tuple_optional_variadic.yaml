@@ -1,5 +1,5 @@
 # Tuple type with optional variadic parameter (zero or more types)
-urn: extension:example:tuple_variadic
+urn: urn:substrait:extension:example:tuple_variadic
 types:
   - name: tuple
     parameters:
