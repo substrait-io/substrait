@@ -280,7 +280,7 @@ The lateral join operation is represented by `LateralJoinRel`.
 
 `LateralJoinRel` uses the same fields and `JoinRel.JoinType` enum as [Join Operation](#join-operation). For field meanings and join-type behavior, refer to the `JoinRel` documentation above.
 
-In `LateralJoinRel`, the right input is evaluated once per row of the left input and may reference fields of the current left row via `OuterReference.rel_reference`. `LateralJoinRel` must set `RelCommon.rel_anchor`; when the right input references the current left row, `rel_reference` points to that anchor. Right-input outer references may also point to other outer roots when applicable. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
+In `LateralJoinRel`, the right input is evaluated once per row of the left input and may reference fields of the current left row via `OuterReference.rel_reference`. `LateralJoinRel` must set `RelCommon.rel_anchor` when the right input references the current left row, `rel_reference` points to that anchor. Right-input outer references may also point to other outer roots when applicable. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
 
 ### Valid Join Types for LateralJoinRel
 
@@ -311,9 +311,7 @@ Here is a concrete `FieldReference` example for a lateral join's outer reference
 
 === "LateralJoinRel Message"
 
-        ```proto
-%%% proto.algebra.LateralJoinRel %%%
-        ```
+    
 
 
 ## Set Operation
