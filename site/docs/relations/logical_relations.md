@@ -282,6 +282,14 @@ The lateral join operation is represented by `LateralJoinRel`.
 
 In `LateralJoinRel`, the right input is evaluated once per row of the left input and may reference fields of the current left row via `OuterReference.rel_reference`. When the right input references the current left row, `LateralJoinRel` must set `RelCommon.rel_anchor`, and `rel_reference` points to that anchor. Right-input outer references may also point to other outer roots when applicable. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
 
+For example, the SQL query:
+
+```sql
+SELECT a, (SELECT MAX(b) FROM T2 WHERE T2.x = T1.a) FROM T1
+```
+
+can be represented as an inner lateral join where `T1` is the left input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the right input. Semantically, the scalar subquery is evaluated for each row in the T1 and references the value of column `a` using outer reference.
+
 ### Valid Join Types for LateralJoinRel
 
 Supported join types:
@@ -295,24 +303,11 @@ Supported join types:
 
 All other join types are invalid for `LateralJoinRel`.
 
-For example, the SQL query:
-
-```sql
-SELECT a, (SELECT MAX(b) FROM T2 WHERE T2.x = T1.a) FROM T1
-```
-
-can be represented as an inner lateral join where `T1` is the left input and the scalar subquery `SELECT MAX(b) FROM T2 WHERE T2.x = T1.a` is the right input.
-
-Here is a concrete `FieldReference` example for a lateral join's outer reference:
-
-```
---8<-- "examples/proto-textformat/field_reference/outer_reference_lateral_join.textproto"
-```
-
 === "LateralJoinRel Message"
 
-    
-
+    ```proto
+%%% proto.algebra.LateralJoinRel %%%
+    ```
 
 ## Set Operation
 
