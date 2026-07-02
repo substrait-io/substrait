@@ -16,6 +16,14 @@ supported_relations:
       - INNER
       - LEFT
       - RIGHT
+  - relation: LATERAL_JOIN
+    join_types:
+      - INNER
+      - LEFT
+      - LEFT_SEMI
+      - LEFT_ANTI
+      - LEFT_SINGLE
+      - LEFT_MARK
   - relation: READ
     read_types: [ICEBERG_TABLE, VIRTUAL_TABLE]
   - relation: EXTENSION_LEAF
