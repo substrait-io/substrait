@@ -305,7 +305,12 @@ message JoinRel {
 // reference fields of the current left row.
 message LateralJoinRel {
   RelCommon common = 1;
+  // The independent input whose rows drive evaluation of the lateral join.
   Rel left = 2;
+
+  // The dependent input evaluated once per left row. It may reference fields
+  // from the current left row using OuterReference.rel_reference pointing to
+  // this LateralJoinRel's RelCommon.rel_anchor.
   Rel right = 3;
   // A boolean condition evaluated over the left and right inputs that
   // determines whether a pair of records is a match.
