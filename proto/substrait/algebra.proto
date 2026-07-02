@@ -1152,17 +1152,16 @@ message Expression {
     }
 
     message IntervalDayToSecond {
+      reserved 3; // formerly the deprecated microseconds field, replaced by precision and subseconds
+      reserved "microseconds";
+
       int32 days = 1;
       int32 seconds = 2;
 
-      // Consumers should expect either (miroseconds) to be set or (precision and subseconds) to be set
-      oneof precision_mode {
-        int32 microseconds = 3 [deprecated = true]; // use precision and subseconds below, they cover and replace microseconds.
-        // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds. Should be used with subseconds below.
-        int32 precision = 4;
-      }
+      // Sub-second precision, 0 means the value given is in seconds, 3 is milliseconds, 6 microseconds, 9 is nanoseconds. Should be used with subseconds below.
+      int32 precision = 4;
 
-      // the number of fractional seconds using 1e(-precision) units. Should only be used with precision field, not microseconds.
+      // the number of fractional seconds using 1e(-precision) units. Should only be used with precision field.
       int64 subseconds = 5;
     }
 
