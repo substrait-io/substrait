@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.96.0](https://github.com/substrait-io/substrait/compare/v0.95.0...v0.96.0) (2026-07-05)
+
+### Features
+
+* introduce LateralJoinRel for a correlated subquery evaluation ([#973](https://github.com/substrait-io/substrait/issues/973)) ([3ae33e7](https://github.com/substrait-io/substrait/commit/3ae33e7a46bfcda61d1c9acb11c88e0094e5d5c0)), closes [#1031](https://github.com/substrait-io/substrait/issues/1031)
+
 ## [0.95.0](https://github.com/substrait-io/substrait/compare/v0.94.0...v0.95.0) (2026-06-28)
 
 ### ⚠ BREAKING CHANGES
