@@ -613,11 +613,11 @@ definitions:
           supported by this dialect.
 
 
-          Since the maximum precision in Substrait for INTERVAL_DAY is 9
-          the value must be in range: 0 <= max_precision <= 9.
+          Since the maximum precision in Substrait for INTERVAL_DAY is 12
+          the value must be in range: 0 <= max_precision <= 12.
         type: integer
         minimum: 0
-        maximum: 9
+        maximum: 12
   type_interval_year:
     type: object
     additionalProperties: false
