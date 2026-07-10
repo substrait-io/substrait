@@ -49,6 +49,19 @@ jobs:
           cache: true
       - name: Compile protobuf
         run: pixi run generate-protobuf
+  antlr:
+    name: Check ANTLR Parsers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.0
+        with:
+          pixi-version: v0.66.0
+          cache: true
+      - name: Generate ANTLR parsers
+        run: pixi run generate-antlr
+      - name: Check generated ANTLR parsers
+        run: git diff --exit-code -- tests/coverage/antlr_parser tests/type/antlr_parser
   yamllint:
     name: Lint YAML extensions
     runs-on: ubuntu-latest

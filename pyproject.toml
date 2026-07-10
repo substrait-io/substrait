@@ -57,7 +57,7 @@ nodejs = ">=24,<25"
 
 [tool.pixi.tasks]
 # code generation
-generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate ANTLR Python parsers", inputs = ["grammar/*.g4"] }
+generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate ANTLR Python parsers", inputs = ["grammar/*.g4"], outputs = ["tests/type/antlr_parser/*.py", "tests/coverage/antlr_parser/*.py"] }
 generate-protobuf = { cmd = "buf generate", description = "Generate protobuf Python code", inputs = ["proto/**/*.proto"], outputs = ["gen/proto/python/substrait/*.py"] }
 generate = { depends-on = ["generate-antlr", "generate-protobuf"] }
 
