@@ -115,12 +115,6 @@ def update_test_count(test_case_files: list, function_registry: FunctionRegistry
                 test_file.include,
                 test_case.get_arg_types(),
                 test_case.get_return_type(),
-                full_arg_types=test_case.get_full_arg_types(),
-                full_return_type=(
-                    None
-                    if test_case.is_return_type_error()
-                    else test_case.get_return_type()
-                ),
             )
             if function_variant:
                 if (
@@ -257,8 +251,6 @@ def validate_nullability(test_file, function_registry):
             test_file.include,
             test_case.get_arg_types(),
             test_case.get_return_type(),
-            full_arg_types=test_case.get_full_arg_types(),
-            full_return_type=test_case.get_return_type(),
         )
         if variant is None:
             continue
