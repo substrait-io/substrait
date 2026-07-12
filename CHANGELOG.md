@@ -1,6 +1,20 @@
 Release Notes
 ---
 
+## [0.97.0](https://github.com/substrait-io/substrait/compare/v0.96.0...v0.97.0) (2026-07-12)
+
+### ⚠ BREAKING CHANGES
+
+* **protos:** An unset `IntervalDay.precision` no longer has a
+defined meaning. Previously an unset precision was treated as `6`
+(microseconds); implementations should now reject an unset precision
+instead of applying a default. Producers must set `precision`
+explicitly.
+
+### Features
+
+* **protos:** require explicit interval precision and allow picoseconds ([#1110](https://github.com/substrait-io/substrait/issues/1110)) ([858397d](https://github.com/substrait-io/substrait/commit/858397de179721218bb5ca4a329121ee053e9cab))
+
 ## [0.96.0](https://github.com/substrait-io/substrait/compare/v0.95.0...v0.96.0) (2026-07-05)
 
 ### Features
