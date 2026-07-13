@@ -1187,7 +1187,7 @@ message Expression {
     }
 
     message IntervalDayToSecond {
-      reserved 3; // formerly the deprecated microseconds field, replaced by precision and subseconds
+      reserved 3;
       reserved "microseconds";
 
       int32 days = 1;
