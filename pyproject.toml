@@ -112,7 +112,7 @@ dev = [
   "mkdocs-table-reader-plugin>=3.1.0,<4",
   "oyaml>=1.0,<2",
   "pygments>=2.14,<3",
-  "pymdown-extensions>=9.9.1,<11",
+  "pymdown-extensions>=11.0.1,<12",
   "yamllint>=1.38,<2",
   "check-jsonschema>=0.37.1,<1",
 ]
