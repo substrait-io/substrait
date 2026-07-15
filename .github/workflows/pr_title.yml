@@ -11,7 +11,7 @@ jobs:
       # Check out the base ref (trusted, not the PR head) so the committed
       # commitlint.config.js cannot be weakened by the PR being validated.
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "24"
       - run: npm install @commitlint/config-conventional
