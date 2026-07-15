@@ -21,7 +21,7 @@ When binding a window function, the binding must include the following additiona
 | Lower Bound | Preceding, Following, CurrentRow, or Unbounded.               | False, defaults to start of partition                        |
 | Upper Bound | Preceding, Following, CurrentRow, or Unbounded.               | False, defaults to end of partition                          |
 
-`Preceding` and `Following` define offsets relative to the current record. Exactly one offset mode must be provided: a literal integer (`offset`) or an expression that evaluates to a strictly positive integer (`offset_expr`). `offset_expr` should use type `int64`; evaluating to null, zero, or a negative integer should result in an error. Use `CurrentRow` for offset zero, and use the opposite bound direction for negative offsets.
+`Preceding` and `Following` define offsets relative to the current record. `offset_expr` is the recommended way to specify the offset; it should evaluate to a strictly positive integer and should use type `int64`. A literal integer `offset` is still accepted for compatibility but is deprecated. Evaluating `offset_expr` to null, zero, or a negative integer should result in an error. Use `CurrentRow` for offset zero, and use the opposite bound direction for negative offsets.
 
 ## Aggregate Functions as Window Functions
 
