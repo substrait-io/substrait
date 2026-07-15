@@ -157,7 +157,9 @@ message ReadRel {
 
   // A table composed of expressions.
   message VirtualTable {
-    repeated Expression.Literal.Struct values = 1 [deprecated = true];
+    reserved 1;
+    reserved "values";
+
     repeated Expression.Nested.Struct expressions = 2;
   }
 
