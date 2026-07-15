@@ -887,16 +887,13 @@ message ComparisonJoinKey {
 // Two rows are a match if every key comparison returns true and, when
 // specified, `residual_expression` also evaluates to true.
 message HashJoinRel {
+  reserved 4, 5;
+  reserved "left_keys", "right_keys";
+
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
-  // These fields are deprecated in favor of `keys`.  If they are set then
-  // the two lists (left_keys and right_keys) must have the same length and
-  // the comparion function is considered to be SimpleEqualityType::EQ
-  repeated Expression.FieldReference left_keys = 4 [deprecated = true];
-  repeated Expression.FieldReference right_keys = 5 [deprecated = true];
-  // One or more keys to join on.  The relation is invalid if this is empty
-  // (unless the deprecated left_keys/right_keys fields are being used).
+  // One or more keys to join on.  The relation is invalid if this is empty.
   //
   // If a custom comparison function is used then it must be consistent with
   // the hash function used for the keys.
@@ -956,16 +953,13 @@ message HashJoinRel {
 // sorted on the join keys. This allows the join operation to be done in a
 // streaming fashion.
 message MergeJoinRel {
+  reserved 4, 5;
+  reserved "left_keys", "right_keys";
+
   RelCommon common = 1;
   Rel left = 2;
   Rel right = 3;
-  // These fields are deprecated in favor of `keys`.  If they are set then
-  // the two lists (left_keys and right_keys) must have the same length and
-  // the comparion function is considered to be SimpleEqualityType::EQ
-  repeated Expression.FieldReference left_keys = 4 [deprecated = true];
-  repeated Expression.FieldReference right_keys = 5 [deprecated = true];
-  // One or more keys to join on.  The relation is invalid if this is empty
-  // (unless the deprecated left_keys/right_keys fields are being used).
+  // One or more keys to join on.  The relation is invalid if this is empty.
   //
   // If a custom comparison function is used then it must be consistent with
   // the ordering of the input data.  For example, if the comparison function
