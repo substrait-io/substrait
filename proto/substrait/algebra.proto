@@ -1670,7 +1670,10 @@ message Expression {
       oneof outer_reference_type {
         // Number of subquery boundaries to traverse up for this field's
         // reference. Must be >= 1.
-        uint32 steps_out = 1;
+        // Deprecated: use `rel_reference` instead, which resolves the outer
+        // reference via the target relation's `RelCommon.rel_anchor` and is
+        // unambiguous even in plans with shared relations (`ReferenceRel`).
+        uint32 steps_out = 1 [deprecated = true];
 
         // References the plan-wide unique rel_anchor of the relation that this
         // field reference is rooted on. Must match a rel_anchor defined on a
