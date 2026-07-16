@@ -22,32 +22,42 @@ change as an API change to an ecosystem, not a local edit.
 
 ## The downstream SDKs (critical context)
 
-Any change to `proto/` affects four independent implementations:
+Any change to `proto/` affects the SDKs that implement the spec. The maintained
+list is [`active_libraries.md`](site/docs/community/active_libraries.md), which
+separates **active libraries** (currently substrait-go, -java, -python, -rs) from
+inactive ones — treat that doc as the source of truth rather than hardcoding the
+set here. External projects also consume Substrait directly (e.g. Apache
+DataFusion, DuckDB's substrait extension); they are useful *usage signal* when
+gauging a change's blast radius, but they are not release-blocking — the active
+libraries are the gate.
 
-- `substrait-io/substrait-java`
-- `substrait-io/substrait-go`
-- `substrait-io/substrait-python`
-- `substrait-io/substrait-rs`
+### Removing or changing a deprecated field
 
-**Before removing or changing a deprecated proto field, analyze whether each SDK
-still uses it.** This is the single most common task in this repo's history. The
-expected workflow:
+This is the single most common task in this repo's history, and it is governed by
+the **[breaking-change policy](site/docs/spec/breaking_change_policy.md)** and the
+**[versioning policy](site/docs/spec/versioning.md)**: compatibility is maintained
+via deprecation, and a breaking change must ship an explicit **migration strategy
+that is implemented in all active libraries before the breaking change lands**.
+(Format/specification deprecations also require PMC votes — see
+[`governance.md`](site/docs/governance.md).) The expected workflow:
 
-1. Determine whether each SDK still *produces* the old field, and whether it has
-   migrated to *consuming* the new field. Search the repos with whatever GitHub
-   access is available — the `gh` CLI or a GitHub MCP server — or clone them
-   locally if the user has them checked out (they often do, as sibling dirs like
-   `../substrait-go`).
-2. Summarize impact per SDK (e.g. "read-path fallback only", "N/A — regenerates
-   from proto") and classify the change: *wire-compatible*, *source-breaking*,
-   and/or *semantically breaking*.
-3. Only then propose the change, often as a **draft PR** pending community
-   discussion, with companion PRs to the SDKs where needed.
+1. Propose the change with an explicit migration strategy. The canonical pattern
+   is dual-write → prefer-consume-new → remove after a reasonable soak — see the
+   **URI→URN cookbook** in the breaking-change policy for a worked example.
+2. Determine whether each active library still *produces* the old field and
+   whether it has migrated to *consuming* the new one. Search the repos with
+   whatever GitHub access is available — the `gh` CLI or a GitHub MCP server — or
+   clone them locally if the user has them checked out (often sibling dirs like
+   `../substrait-go`). Classify the change per library: *wire-compatible*,
+   *source-breaking*, and/or *semantically breaking*.
+3. Land the migration in the active libraries (companion PRs), then remove the
+   field here — often proposed as a **draft PR** pending community discussion.
 
-Wire-compatibility details matter and are expected in PR descriptions: reserve
-removed field numbers and names (`reserved 3; reserved "microseconds";`), note
-that a dissolved single-member `oneof` is wire-identical to a plain field, and
-note that old plans become *unknown fields* rather than parse failures.
+Proto mechanics: reserve removed field numbers and names
+(`reserved 3; reserved "microseconds";`) — `buf breaking` enforces this, and old
+plans then carry *unknown fields* rather than failing to parse. See protobuf's
+[updating message types](https://protobuf.dev/programming-guides/proto3/#updating)
+guide for the general wire-compatibility rules.
 
 ## Environment & tooling
 
@@ -112,8 +122,11 @@ Keep descriptions high-signal. The maintainer has repeatedly asked to remove:
 - **Obvious process notes** — e.g. "draft pending review", "coordinating
   companion PRs" once that's implicit in the PR being a draft.
 
-Do include: the rationale, the SDK impact analysis, and wire/source/semantic
-compatibility analysis for proto changes.
+Do include: the rationale, the migration strategy, and the per-library plus
+wire/source/semantic compatibility analysis for proto changes. This analysis
+belongs in the PR (or draft PR) body — there is no requirement to open a separate
+issue per PR. Issues are for surfacing design discussion on larger or contentious
+changes before a design is settled (see *When in doubt*).
 
 ### Commit hygiene
 
