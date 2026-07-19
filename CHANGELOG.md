@@ -1,6 +1,30 @@
 Release Notes
 ---
 
+## [0.98.0](https://github.com/substrait-io/substrait/compare/v0.97.0...v0.98.0) (2026-07-19)
+
+### ⚠ BREAKING CHANGES
+
+* **protos:** The deprecated `left_keys` and `right_keys` fields have
+been removed from `HashJoinRel` and `MergeJoinRel`. Producers must use
+the `keys` field instead.
+* **protos:** The deprecated `offset` and `count` fields have been
+removed from `FetchRel`. Producers must use `offset_expr` and
+`count_expr` instead.
+* **protos:** remove deprecated VirtualTable.values field (#1131)
+* **protos:** remove deprecated IntervalDayToSecond.microseconds field (#1116)
+
+### Features
+
+* **protos:** remove deprecated IntervalDayToSecond.microseconds field ([#1116](https://github.com/substrait-io/substrait/issues/1116)) ([a4ad9f4](https://github.com/substrait-io/substrait/commit/a4ad9f4208e827be845ecf3e307f58277e2cfc0f))
+* **protos:** remove deprecated left_keys/right_keys from join rels ([#1129](https://github.com/substrait-io/substrait/issues/1129)) ([08b2736](https://github.com/substrait-io/substrait/commit/08b27364728822bf00bf13a82998f09f1c4b96d7))
+* **protos:** remove deprecated offset/count from FetchRel ([#1130](https://github.com/substrait-io/substrait/issues/1130)) ([b7e8d02](https://github.com/substrait-io/substrait/commit/b7e8d027e01e21656ab498d23db4335098f50745))
+* **protos:** remove deprecated VirtualTable.values field ([#1131](https://github.com/substrait-io/substrait/issues/1131)) ([7b0bd66](https://github.com/substrait-io/substrait/commit/7b0bd664b5e09bf6a230742b17511716040a9d21))
+
+### Bug Fixes
+
+* **tests:** correct decimal sum and nullif results ([#1048](https://github.com/substrait-io/substrait/issues/1048)) ([a750c25](https://github.com/substrait-io/substrait/commit/a750c25c3bd3c9e82fb10f1c1bbf3d0a273a0f46))
+
 ## [0.97.0](https://github.com/substrait-io/substrait/compare/v0.96.0...v0.97.0) (2026-07-12)
 
 ### ⚠ BREAKING CHANGES
