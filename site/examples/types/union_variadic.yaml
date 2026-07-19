@@ -1,5 +1,5 @@
 # Union type with variadic parameter (one or more types)
-urn: extension:example:union_variadic
+urn: urn:substrait:extension:example:union_variadic
 types:
   - name: union
     parameters:
