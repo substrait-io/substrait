@@ -1,6 +1,6 @@
 urn: extension:example:distance_functions
 dependencies:
-  ext: extension:io.substrait:extension_types
+  ext: extension:example:extension_types
 scalar_functions:
 - name: distance
   description: The distance between two points.

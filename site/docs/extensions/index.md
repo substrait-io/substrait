@@ -48,7 +48,7 @@ A YAML file can also reference types and type variations defined in another YAML
     udt-reference = [dependency-alias "."] "u!" type-name
     ```
 
-For example, if the extension with extension URN `extension:io.substrait:extension_types` defines a user-defined type called `point`, a different YAML file can use the type in a function declaration as follows:
+For example, if the extension with extension URN `extension:example:extension_types` defines a user-defined type called `point`, a different YAML file can use the type in a function declaration as follows:
 
 ```yaml
 --8<-- "examples/extensions/distance_functions.yaml"
