@@ -645,7 +645,7 @@ message GenerateRel {
   // Required.
   TableExpression generator = 3;
 
-  // Controls behavior when the generator produces zero rows for an input record.
+  // Controls behavior when the generator produces zero rows for an input row.
   //
   // When false (default):
   //   Input rows that produce zero output rows are excluded from the result.

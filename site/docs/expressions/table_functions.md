@@ -9,7 +9,7 @@ Table functions are similar to scalar functions in their definition and referenc
 - **Scalar functions:** Produce exactly one value per input row
 - **Window functions:** Produce one value per input row (with access to window of rows)
 - **Aggregate functions:** Produce one value per group of input rows
-- **Table functions:** Produce zero or more rows per input record
+- **Table functions:** Produce zero or more rows per input row
 
 ## TableFunction Message
 
@@ -18,7 +18,7 @@ The `TableFunction` message is used to invoke table functions within relational 
 | Field | Type | Description | Required |
 |-------|------|-------------|----------|
 | function_reference | uint32 | Points to a function_anchor in the plan that references a table function in the extension YAML. 0 is a valid anchor/reference. | Required |
-| arguments | repeated FunctionArgument | Arguments bound to the table function (value, type, or enum arguments) | Required |
+| arguments | repeated FunctionArgument | Arguments bound to the table function (value, type, or enum arguments). May be empty for functions that take no arguments. | Optional |
 | options | repeated FunctionOption | Behavior options for corner cases | Optional |
 | output_type | Type | The output type of the table function (must be a Struct type where each field is a generated column) | Required |
 

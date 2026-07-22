@@ -611,7 +611,7 @@ Unlike ExpandRel which duplicates input rows a fixed number of times known at pl
 |----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Inputs               | 1                                                                                                                                                              |
 | Outputs              | 1                                                                                                                                                              |
-| Property Maintenance | Distribution and orderedness are not maintained. The variable number of output rows per input breaks distribution properties, and row multiplication breaks ordering. |
+| Property Maintenance | Distribution is maintained, since the input fields are preserved unchanged on every output row. Orderedness is not maintained, because emitting a variable number of rows per input row breaks any ordering. |
 | Direct Output Order  | Input fields followed by generated fields. The output schema is: `[input_field_1, ..., input_field_N, generated_field_1, ..., generated_field_M]` where generated fields come from the table function's output type. Unlike ExpandRel which appends an i32 ordinal column, GenerateRel does NOT automatically add an ordinal column. Table functions that need position information (like posexplode) include it explicitly in their output_type. The RelCommon.emit field can be used to reorder columns or project out unwanted fields. |
 
 ### Generate Properties
@@ -688,7 +688,7 @@ Output schema: {user_id: i64, properties: map<string, string>, key: string, valu
 | Output Cardinality | Fixed at plan time (N duplicates per input) | Variable at runtime (depends on data) |
 | Use Case | SQL GROUPING SETS, CUBE, ROLLUP | SQL LATERAL VIEW, UNNEST, EXPLODE |
 | Extra Column | Appends i32 ordinal (which duplicate) | No automatic ordinal (posexplode includes position explicitly) |
-| Property Maintenance | Can maintain distribution under certain conditions | Cannot maintain distribution (variable cardinality) |
+| Property Maintenance | Can maintain distribution under certain conditions | Maintains distribution (input fields preserved); does not maintain orderedness |
 
 === "GenerateRel Message"
 
