@@ -420,13 +420,8 @@ parameterizedType
     | structType
     | mapType
     | funcType
-    | structType
 // TODO implement the rest of the parameterized types
 //  | NStruct isnull='?'? Lt Identifier expr (Comma Identifier expr)* Gt #nStruct
-  ;
-
-structType
-    : Struct isnull=QMark? OAngleBracket dataType (Comma dataType)* CAngleBracket
   ;
 
 numericParameter

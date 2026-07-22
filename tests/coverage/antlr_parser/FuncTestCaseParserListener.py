@@ -918,15 +918,6 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by FuncTestCaseParser#structType.
-    def enterStructType(self, ctx:FuncTestCaseParser.StructTypeContext):
-        pass
-
-    # Exit a parse tree produced by FuncTestCaseParser#structType.
-    def exitStructType(self, ctx:FuncTestCaseParser.StructTypeContext):
-        pass
-
-
     # Enter a parse tree produced by FuncTestCaseParser#integerLiteral.
     def enterIntegerLiteral(self, ctx:FuncTestCaseParser.IntegerLiteralContext):
         pass

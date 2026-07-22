@@ -1,5 +1,5 @@
 ### SUBSTRAIT_TABLE_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_table_generic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_table_generic
 
 # single_list_int: Single list unnest (same as explode)
 unnest([1, 2, 3]::list<i32>) = [(1), (2), (3)]::struct<i32>

@@ -1,5 +1,5 @@
 ### SUBSTRAIT_TABLE_TEST: v1.0
-### SUBSTRAIT_INCLUDE: '/extensions/functions_table_generic.yaml'
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_table_generic
 
 # basic_int: Basic integer array with positions
 posexplode([10, 20, 30]::list<i32>) = [(0, 10), (1, 20), (2, 30)]::struct<i64,i32>

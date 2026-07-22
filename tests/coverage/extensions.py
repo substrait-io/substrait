@@ -223,7 +223,7 @@ class Extension:
                         table_functions,
                         suffix,
                         extension,
-                        uri,
+                        urn,
                     )
 
         return FunctionRegistry(

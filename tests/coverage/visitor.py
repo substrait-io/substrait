@@ -158,7 +158,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     def visitTableFuncTestCase(self, ctx: FuncTestCaseParser.TableFuncTestCaseContext):
         args = self.visitArguments(ctx.arguments())
         result = self.visitMultiRowResult(ctx.multiRowResult())
-        options = dict()
+        options = {}
         if ctx.funcOptions() is not None:
             options = self.visitFuncOptions(ctx.funcOptions())
         return TestCase(
@@ -629,10 +629,6 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             value, _ = self.visitLiteral(literal)
             values.append(value)
         return values
-
-    def visitDataType(self, ctx):
-        """Visit a dataType context and return its text representation."""
-        return ctx.getText()
 
 
 class ParseError(Exception):
