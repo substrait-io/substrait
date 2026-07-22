@@ -169,8 +169,9 @@ scalar_functions:
         return: "DECIMAL<38,0>"
   -
     name: "power"
-    description: "Take the power with x as the base and y as exponent.
-    Behavior for complex number result is indicated by option complex_number_result"
+    description: >-
+      Take the power with x as the base and y as exponent.
+      Behavior for complex number result is indicated by option complex_number_result
     impls:
       - args:
           - name: x
