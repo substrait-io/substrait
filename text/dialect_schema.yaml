@@ -1140,6 +1140,13 @@ definitions:
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.
+      supports_offset_expr:
+        type: boolean
+        default: false
+        description: >
+          Whether this dialect supports expression-based offsets for window
+          function bounds. If false, only literal offsets are supported for
+          Preceding and Following bounds. Defaults to false.
     required: [expression]
   if_then_expression:
     type: object
