@@ -11,3 +11,6 @@ __pycache__
 
 # uv virtual environment
 .venv
+
+# macOS
+.DS_Store

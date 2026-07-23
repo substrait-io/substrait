@@ -1,6 +1,9 @@
 %YAML 1.2
 ---
-urn: extension:io.substrait:type_variations
+# Example: extension showing type variations (e.g. dictionary-encoded strings,
+# large-offset strings, avro/cstruct-encoded structs). This is an example, not an
+# official extension.
+urn: extension:example:type_variations
 type_variations:
   - parent: string
     name: dict4

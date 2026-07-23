@@ -102,7 +102,7 @@ In simple extension YAML, user-defined types from another extension may be refer
 
     ```yaml
     dependencies:
-      ext: extension:io.substrait:extension_types
+      ext: extension:example:extension_types
     scalar_functions:
       - name: distance
         impls:

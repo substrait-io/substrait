@@ -323,7 +323,7 @@ some_func(([1, 2], {'x': (3, null)})::struct<list<i32>, map<str, struct<i32, str
 
 
 def test_parse_user_defined_type_literal():
-    header = make_header("v1.0", "extension:io.substrait:extension_types")
+    header = make_header("v1.0", "extension:example:extension_types")
     tests = """# basic
 some_func((4, 2)::u!point) = (1, 1)::u!point
 """
@@ -334,7 +334,7 @@ some_func((4, 2)::u!point) = (1, 1)::u!point
 
 
 def test_parse_nullable_user_defined_type_literal():
-    header = make_header("v1.0", "extension:io.substrait:extension_types")
+    header = make_header("v1.0", "extension:example:extension_types")
     tests = """# basic
 some_func((4, 2)::u!point?) = (1, 1)::u!point?
 """
@@ -349,7 +349,7 @@ some_func((4, 2)::u!point?) = (1, 1)::u!point?
 
 
 def test_parse_nested_user_defined_type_literal():
-    header = make_header("v1.0", "extension:io.substrait:extension_types")
+    header = make_header("v1.0", "extension:example:extension_types")
     tests = """# basic
 some_func(((4, 2), (1, 1))::u!line) = ((0, 0), (3, 3))::u!line
 """
