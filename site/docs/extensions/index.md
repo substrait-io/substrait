@@ -74,7 +74,7 @@ The resulting function signatures look like: `<function_name>:<short_arg_type0>_
     argument-signature = short-arg-type *("_" short-arg-type)
     ```
 
-Argument types (`short_arg_type`) are encoded using the Type Short Names given below.
+Argument types (`short_arg_type`) are encoded using the [Type Short Names](#type-short-names) given below.
 
 #### Variadic Functions
 
@@ -86,8 +86,13 @@ A function signature uniquely identifies a function implementation within a sing
 
 #### Type Short Names
 
-| Argument Type                   | Signature Name |
-|---------------------------------|----------------|
+!!! note "Type expressions vs. signature short names"
+    Type-valued fields in extension YAML use [type expressions](../types/type_parsing.md), such as `string`, `binary`, and `fixedbinary<16>`. Signature short names are only used when constructing function signatures, such as `concat:str` or `hash:vbin`.
+
+The first column lists the type expression used in extension YAML. The second column lists the corresponding short name used in function signatures.
+
+| YAML Type Expression            | Signature Short Name |
+|---------------------------------|----------------------|
 | Enumeration                     | req            |
 | i8                              | i8             |
 | i16                             | i16            |
