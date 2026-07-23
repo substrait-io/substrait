@@ -241,6 +241,29 @@ message ReadRel {
         // made up of non-nullable strings.
         optional string value_treated_as_null = 6;
       }
+      message JsonReadOptions {
+        // JSON files may be compressed.  The reader should autodetect this and
+        // decompress as needed.
+
+        // Describes how JSON records are laid out within the file.
+        enum Structure {
+          // The record layout is unspecified.  Consumers should default to a
+          // line-delimited (NDJSON) interpretation unless they are able to
+          // autodetect otherwise.
+          STRUCTURE_UNSPECIFIED = 0;
+          // Each line holds a single, self-contained JSON value
+          // (newline-delimited JSON, also known as JSON Lines / NDJSON).
+          STRUCTURE_LINE_DELIMITED = 1;
+          // The file holds a single top-level JSON array whose elements are
+          // the records.
+          STRUCTURE_ARRAY = 2;
+        }
+        Structure structure = 1;
+        // The maximum number of bytes in a single record.  If a record
+        // exceeds this limit the resulting behavior is undefined.  Optional;
+        // if unset the consumer chooses an appropriate limit.
+        optional uint64 max_record_size = 2;
+      }
 
       // The format of the files along with options for reading those files.
       oneof file_format {
@@ -250,6 +273,7 @@ message ReadRel {
         google.protobuf.Any extension = 12;
         DwrfReadOptions dwrf = 13;
         DelimiterSeparatedTextReadOptions text = 14;
+        JsonReadOptions json = 15;
       }
     }
   }
