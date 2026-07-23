@@ -251,6 +251,31 @@ message ReadRel {
         DwrfReadOptions dwrf = 13;
         DelimiterSeparatedTextReadOptions text = 14;
       }
+
+      // A partition field and its constant value for this item.  Partitioned
+      // datasets commonly encode some field values in the file path (e.g.
+      // `.../year=2024/month=03/...`) rather than in the file contents.  Each
+      // entry supplies the constant value of one field for every record
+      // produced from this item; the remaining fields are read from the file
+      // itself.
+      message PartitionField {
+        // Reference to the (possibly nested) field in base_schema whose value
+        // is supplied by this partition rather than stored in the file.  Field
+        // positions are ordinal, with optional child segments for nested
+        // structs -- the same addressing the read `projection`
+        // (Expression.MaskExpression) uses.
+        Expression.ReferenceSegment field = 1;
+        // The constant value of that field for this item.
+        Expression.Literal value = 2;
+      }
+
+      // Partition fields (commonly called partition columns) whose values are
+      // constant for this item and are not stored in the file contents.  This
+      // describes value-based (identity) partitioning; it does not describe
+      // hash, range, or bucket partitioning schemes (a hash/bucket
+      // redistribution is expressed with ExchangeRel).  Optional; empty for
+      // non-partitioned data.
+      repeated PartitionField partition_fields = 16;
     }
   }
 }
