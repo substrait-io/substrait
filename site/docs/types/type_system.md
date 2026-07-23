@@ -17,3 +17,8 @@ Refer to [Type Parsing](type_parsing.md) for a description of the syntax used to
     Substrait employs a strict type system without any coercion rules. All changes in types must be made explicit via [cast expressions](../expressions/specialized_record_expressions.md).
 
     Partially bound plans and expressions may use the [`unbound`](type_classes.md#unbound-type) type as a placeholder until a downstream binder assigns a concrete type.
+
+!!! note "Untyped nulls and empty collections"
+    Substrait has no dedicated null or "bottom" type: a null is a value of a nullable concrete type, and an empty list or map carries a concrete element type. This is distinct from the [`unbound`](type_classes.md#unbound-type) type, which marks a type that is *not yet known* in a partially bound plan; here the value is fully resolved, but its source system left it untyped.
+
+    When a producer encounters such a value — for example a bare `NULL` literal, or an empty array or map originating from a source that models these with a null or unknown type — it must still assign a concrete type. Resolve the type from surrounding context where possible; where no context is available, a widely-supported type such as `i32` is a reasonable default for portability. This is guidance, not a requirement: any concrete type is valid.
