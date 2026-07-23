@@ -11,6 +11,7 @@ Whitespace    : [ \t\n\r]+ -> channel(HIDDEN) ;
 TripleHash: '###';
 SubstraitScalarTest: 'SUBSTRAIT_SCALAR_TEST';
 SubstraitAggregateTest: 'SUBSTRAIT_AGGREGATE_TEST';
+SubstraitTableTest: 'SUBSTRAIT_TABLE_TEST';
 SubstraitInclude: 'SUBSTRAIT_INCLUDE';
 SubstraitDependency: 'SUBSTRAIT_DEPENDENCY';
 
