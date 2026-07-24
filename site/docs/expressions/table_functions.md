@@ -31,6 +31,8 @@ The `output_type` field must be a non-nullable `Struct` type where each field re
 - `posexplode(array<string>)` → `Struct{pos: i64, value: string}`
 - `explode(map<string, i32>)` → `Struct{key: string, value: i32}`
 
+Substrait structs are positional, not named. The field names shown above (`value`, `pos`, `key`) are illustrative only and are not part of the type — generated columns are matched to the output schema by position. If a consumer wants names, it can attach them as [name hints](../types/named_structs.md) or via `RelCommon.emit`; they carry no semantic meaning.
+
 ### Arguments
 
 Table function arguments work the same way as scalar function arguments:
