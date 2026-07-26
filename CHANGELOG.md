@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.99.0](https://github.com/substrait-io/substrait/compare/v0.98.0...v0.99.0) (2026-07-26)
+
+### Features
+
+* add unbound type for partially bound plans ([#1081](https://github.com/substrait-io/substrait/issues/1081)) ([5153493](https://github.com/substrait-io/substrait/commit/5153493472805c4b07f1cb835c304b72805914ad))
+
 ## [0.98.0](https://github.com/substrait-io/substrait/compare/v0.97.0...v0.98.0) (2026-07-19)
 
 ### ⚠ BREAKING CHANGES
