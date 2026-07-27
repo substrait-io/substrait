@@ -14,6 +14,10 @@ option java_package = "io.substrait.proto";
 
 // Common fields for all relational operators
 message RelCommon {
+  // Controls which of the relation's columns are output and in what order.
+  // Leaving emit_kind unset is equivalent to setting Direct: the relation's
+  // columns are output as is. An absent RelCommon on a relation is likewise
+  // treated as Direct.
   oneof emit_kind {
     // The underlying relation is output as is (no reordering or projection of columns)
     Direct direct = 1;
@@ -30,7 +34,8 @@ message RelCommon {
   // Must be >= 1 when set.
   optional uint32 rel_anchor = 5;
 
-  // Direct indicates no change on presence and ordering of fields in the output
+  // Direct indicates no change on presence and ordering of fields in the output.
+  // This is also the behavior when emit_kind is left unset.
   message Direct {}
 
   // Remap which fields are output and in which order
