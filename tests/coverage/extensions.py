@@ -164,7 +164,7 @@ class Extension:
         extensions = []
         for root, _dirs, files in os.walk(dir_path):
             for file in files:
-                if file.endswith(".yaml") and file != "unknown.yaml":
+                if file.endswith(".yaml"):
                     extensions.append(os.path.join(root, file))
 
         extensions.sort()
