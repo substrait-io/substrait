@@ -1410,7 +1410,7 @@ message Expression {
         // Expression evaluated into a strictly positive integer specifying
         // the offset from the current record. Evaluating to null, zero, or
         // a negative integer should result in an error.
-        // Recommended type for offset is int64.
+        // Expression must have type int64.
         Expression offset_expr = 2;
       }
 
