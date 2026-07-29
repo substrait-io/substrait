@@ -1387,45 +1387,56 @@ message Expression {
 
     enum BoundsType {
       BOUNDS_TYPE_UNSPECIFIED = 0;
-      // The lower and upper bound specify how many rows before and after the current row
-      // the window should extend.
+      // Bounds are physical row offsets in the declared ordering.
       BOUNDS_TYPE_ROWS = 1;
-      // The lower and upper bound describe a range of values.  The window should include all rows
-      // where the value of the ordering column is greater than or equal to (current_value - lower bound)
-      // and less than or equal to (current_value + upper bound).  This bounds type is only valid if there
-      // is a single ordering column.
+      // Bounds are value offsets from the current row's ordering value. This
+      // bounds type requires exactly one ordering expression. Preceding moves
+      // toward values earlier in the declared ordering; Following moves toward
+      // values later in the declared ordering. Bounds are inclusive.
       BOUNDS_TYPE_RANGE = 2;
     }
 
     // Defines one of the two boundaries for the window of a window function.
     message Bound {
-      // Defines that the bound extends this far back from the current record.
+      // Defines a bound earlier than the current record in the declared ordering.
       message Preceding {
-        // A strictly positive integer specifying the number of records that
-        // the window extends back from the current record. Required.
+        // A strictly positive integer specifying the offset of this bound.
         // Use CurrentRow for offset zero and Following for negative offsets.
         // Deprecated: use `offset_expr` instead.
         int64 offset = 1 [deprecated = true];
 
-        // Expression evaluated into a strictly positive integer specifying
-        // the offset from the current record. Evaluating to null, zero, or
-        // a negative integer should result in an error.
-        // Expression must have type int64.
+        // Expression specifying the distance of this bound from the current
+        // row. Its interpretation depends on `WindowFunction.bounds_type`:
+        //
+        // * BOUNDS_TYPE_ROWS: evaluates to a strictly positive integer number
+        //   of rows. The recommended type is int64.
+        // * BOUNDS_TYPE_RANGE: evaluates to a strictly positive distance
+        //   compatible with the single ordering expression and applies that
+        //   distance toward values earlier in the declared ordering.
+        //
+        // A null, zero, or negative result is invalid. Use CurrentRow for zero
+        // and Following for a negative distance.
         Expression offset_expr = 2;
       }
 
-      // Defines that the bound extends this far ahead of the current record.
+      // Defines a bound later than the current record in the declared ordering.
       message Following {
-        // A strictly positive integer specifying the number of records that
-        // the window extends ahead of the current record. Required.
+        // A strictly positive integer specifying the offset of this bound.
         // Use CurrentRow for offset zero and Preceding for negative offsets.
         // Deprecated: use `offset_expr` instead.
         int64 offset = 1 [deprecated = true];
 
-        // Expression evaluated into a strictly positive integer specifying
-        // the offset from the current record. Evaluating to null, zero, or
-        // a negative integer should result in an error.
-        // Recommended type for offset is int64.
+        // Expression specifying the distance of this bound from the current
+        // row. Its interpretation depends on `WindowFunction.bounds_type`:
+        //
+        // * BOUNDS_TYPE_ROWS: evaluates to a strictly positive integer number
+        //   of rows. The recommended type is int64.
+        // * BOUNDS_TYPE_RANGE: evaluates to a strictly positive distance
+        //   compatible with the single ordering expression and applies that
+        //   distance toward values later in the declared ordering.
+        //
+        // A null, zero, or negative result is invalid. Use CurrentRow for zero
+        // and Preceding for a negative distance.
         Expression offset_expr = 2;
       }
 
@@ -1438,11 +1449,10 @@ message Expression {
       message Unbounded {}
 
       oneof kind {
-        // The bound extends some number of records behind the current record.
+        // The bound is earlier than the current record in the declared ordering.
         Preceding preceding = 1;
 
-        // The bound extends some number of records ahead of the current
-        // record.
+        // The bound is later than the current record in the declared ordering.
         Following following = 2;
 
         // The bound extends to the current record.

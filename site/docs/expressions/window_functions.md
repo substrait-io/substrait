@@ -21,7 +21,19 @@ When binding a window function, the binding must include the following additiona
 | Lower Bound | Preceding, Following, CurrentRow, or Unbounded.               | False, defaults to start of partition                        |
 | Upper Bound | Preceding, Following, CurrentRow, or Unbounded.               | False, defaults to end of partition                          |
 
-`Preceding` and `Following` define offsets relative to the current record. `offset_expr` is the recommended way to specify the offset; it should evaluate to a strictly positive integer and should use type `int64`. A literal integer `offset` is still accepted for compatibility but is deprecated. Evaluating `offset_expr` to null, zero, or a negative integer should result in an error. Use `CurrentRow` for offset zero, and use the opposite bound direction for negative offsets.
+`Preceding` and `Following` define offsets relative to the current record and with respect to the declared ordering. `Preceding` moves toward records or values earlier in that ordering, while `Following` moves toward records or values later in that ordering. They therefore apply in opposite value directions for ascending and descending sorts:
+
+| Sort direction | `Preceding` boundary              | `Following` boundary            |
+| -------------- | --------------------------------- | ------------------------------- |
+| Ascending      | Toward lower ordering values      | Toward higher ordering values   |
+| Descending     | Toward higher ordering values     | Toward lower ordering values    |
+
+The interpretation of an offset depends on `BoundsType`:
+
+* `BOUNDS_TYPE_ROWS` defines physical row offsets in the declared ordering. `offset_expr` must evaluate to a strictly positive integer number of rows; `int64` is the recommended type.
+* `BOUNDS_TYPE_RANGE` defines value offsets from the current row's ordering value and requires exactly one ordering expression. `offset_expr` must evaluate to a strictly positive distance compatible with that ordering expression. A range boundary is inclusive.
+
+`offset_expr` is the recommended way to specify an offset. A literal integer `offset` is still accepted for compatibility but is deprecated. Evaluating `offset_expr` to null, zero, or a negative value should result in an error. Use `CurrentRow` for zero and the opposite bound direction for a negative distance.
 
 ## Aggregate Functions as Window Functions
 
