@@ -24,7 +24,52 @@ Simple type classes are those that don't support any form of configuration. For 
 | date            | A date within [1000-01-01..9999-12-31].                      | `int32` days since `1970-01-01`
 | interval_year   | Interval year to month. Supports a range of [-10,000..10,000] years with month precision (= [-120,000..120,000] months). Usually stored as separate integers for years and months, but only the total number of months is significant, i.e. `1y 0m` is considered equal to `0y 12m` or `1001y -12000m`. | `int32` years and `int32` months, with the added constraint that each component can never independently specify more than 10,000 years, even if the components have opposite signs (e.g. `-10000y 200000m` is **not** allowed)
 | uuid            | A universally-unique identifier composed of 128 bits. Typically presented to users in the following hexadecimal format: `c48ffa9e-64f4-44cb-ae47-152b4e60e77b`. Any 128-bit value is allowed, without specific adherence to RFC4122. | 16-byte `binary`
+| null            | A type whose only value is null. Describes a null that carries no type information of its own, and the element type of an empty list or map whose element types are unknown. | `Type null`, the typed null literal, whose type is the `null` type
 | unbound         | A placeholder for a type that has not yet been bound to a concrete type. May only appear in partially bound plans, which must be bound before execution. | n/a
+
+### Null Type
+
+The `null` type class has exactly one value, null; its set of non-null values is empty.
+
+It exists to type a null that carries no type information of its own. Producers encounter such values when the source system models untyped nulls with a dedicated type — for example Spark's `NullType`, Apache Arrow's `null`, or ClickHouse's `Nothing` — or when a query contains a construct that supplies no type at all, such as a bare `SELECT NULL`, an empty array constructor (`array()`), or an empty map constructor (`map()`).
+
+Because every value of the type is null, the type is always nullable: its nullability must be set to `NULLABILITY_NULLABLE`, and any other value must be rejected. In the [type syntax](type_parsing.md) it is written with the nullability suffix, as `null?`.
+
+The `null` type is a fully resolved, executable type, not a placeholder. This distinguishes it from the [`unbound`](#unbound-type) type, which marks a type that is *not yet known* in a partially bound plan and must be bound before the plan can be executed.
+
+#### Literals and Empty Collections
+
+A null of the `null` type is expressed using the ordinary typed null literal, with the `null` type as its type:
+
+```protobuf
+--8<-- "examples/proto-textformat/null_type/bare_null_literal.textproto"
+```
+
+An empty list or map whose element types are unknown uses the `null` type as its element type:
+
+```protobuf
+--8<-- "examples/proto-textformat/null_type/empty_list_literal.textproto"
+```
+
+#### The Null Type Does Not Coerce
+
+Substrait's [strict type system](type_system.md) applies to the `null` type unchanged. The `null` type is not a bottom type: it is not a subtype of any other type, and no implicit widening to another type takes place. Specifically:
+
+- The `null` type is distinct from every other type, including nullable ones: `null?` and `i32?` are different types, as are `LIST<null?>` and `LIST<i32?>`.
+- A value of the `null` type may be used only where the `null` type is expected. To use it anywhere else, convert it with an explicit [cast](../expressions/specialized_record_expressions.md#cast-expression): casting a null-typed value to a nullable type produces a null of that type. Casting it to a non-nullable type always fails, and is handled according to the cast's declared failure behavior.
+
+  ```protobuf
+  --8<-- "examples/proto-textformat/null_type/cast_to_concrete_type.textproto"
+  ```
+
+- Casting *to* the `null` type succeeds only if the input value is null; a non-null input always fails, and is handled according to the cast's declared failure behavior.
+- In function signature matching the `null` type behaves like any other type: it matches a parameter declared as `null` and binds to a wildcard (`any`) parameter, but it never matches a parameter of a different concrete type. No core function declares a `null` parameter, so a null-typed argument generally has to be cast before it can be passed to a function.
+
+#### Guidance for Producers
+
+The `null` type records what the source system expressed, but it tells a consumer very little: because it does not coerce and no core function accepts it, most uses of a null-typed value require a cast. Where a producer can determine a concrete type from the surrounding context — the other branches of a `CASE`, the target column of an `INSERT`, the other side of a comparison — it should emit a typed null of that concrete type instead, and reserve the `null` type for values that genuinely carry no type.
+
+Consumers that do not support the `null` type should reject any plan containing it.
 
 ### Unbound Type
 
@@ -33,6 +78,7 @@ The `unbound` type class is a placeholder for a type that has not yet been bound
 A plan that contains the `unbound` type anywhere within it is *partially bound*. Partially bound plans may be serialized and exchanged, but they are not executable, and Substrait defines no runtime semantics for values of the `unbound` type. Specifically:
 
 - The `unbound` type is not a wildcard: it does not unify with, or implicitly coerce to, any other type. In particular, it is distinct from `any`: `any` is a function-signature wildcard that participates in overload matching, while the `unbound` type is a plan-level placeholder for a type that is not yet known.
+- The `unbound` type is also distinct from the [`null`](#null-type) type: a type that is not yet known is not the same as a fully resolved type whose only value is null.
 - The `unbound` type carries no nullability and accepts no parameters; those properties are determined when it is bound to a concrete type.
 - There is no literal of the `unbound` type.
 - Substrait prescribes no resolution policy for the `unbound` type. A function invocation whose argument types are unbound is part of a partially bound plan; how a binder assigns concrete types, and how it subsequently resolves function bindings, is left entirely to the system performing the binding.

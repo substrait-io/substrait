@@ -53,6 +53,21 @@ message Type {
     // for values whose type is unbound.
     Unbound unbound = 39;
 
+    // A type whose only value is null.
+    //
+    // Null is the type of a null that carries no type information of its own,
+    // such as a bare SQL `NULL` literal, or a value taken from a system that
+    // models untyped nulls with a dedicated type (for example Spark's
+    // `NullType`, Apache Arrow's `null`, or ClickHouse's `Nothing`). It is
+    // also the element type of an empty list or map whose element types are
+    // unknown.
+    //
+    // Null is a fully resolved, executable type; unlike unbound it needs no
+    // further binding. Substrait's strict type system applies to it as to
+    // every other type: null does not coerce, so an explicit cast is required
+    // to use a null-typed value where another type is expected.
+    Null null = 40;
+
     UserDefined user_defined = 30;
 
     // Reference an aliased type in `Plan.type_aliases`.
@@ -211,6 +226,15 @@ message Type {
   }
 
   message Unbound {}
+
+  // A type whose only value is null. See `Type.null`.
+  message Null {
+    uint32 type_variation_reference = 1;
+
+    // Every value of this type is null, so this must always be set to
+    // NULLABILITY_NULLABLE. Implementations should reject any other value.
+    Nullability nullability = 2;
+  }
 
   // A function type for higher-order functions.
   // Represents a function that takes parameters of specified types and

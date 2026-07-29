@@ -57,6 +57,13 @@ def test_validate_lambda_invocations():
         )
 
 
+def test_validate_null_type_expressions():
+    """Validate null type examples."""
+    examples_dir = Path("site/examples/proto-textformat/null_type")
+    for textproto_file in examples_dir.glob("*.textproto"):
+        validate_example(textproto_file.read_text(), algebra_pb2.Expression)
+
+
 def test_validate_field_references():
     """Validate field reference examples."""
     examples_dir = Path("site/examples/proto-textformat/field_reference")

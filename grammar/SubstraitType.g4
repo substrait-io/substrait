@@ -23,6 +23,7 @@ scalarType
   | Date                    #date
   | Interval_Year           #intervalYear
   | UUID                    #uuid
+  | Null                    #null
   ;
 
 parameterizedType

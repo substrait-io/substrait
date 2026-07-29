@@ -32,6 +32,7 @@ Interval_Year: 'INTERVAL_YEAR';
 Interval_Day: 'INTERVAL_DAY';
 Interval_Compound: 'INTERVAL_COMPOUND';
 UUID     : 'UUID';
+Null     : 'NULL';
 Decimal  : 'DECIMAL';
 Precision_Time: 'PRECISION_TIME';
 Precision_Timestamp: 'PRECISION_TIMESTAMP';

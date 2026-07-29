@@ -1106,7 +1106,9 @@ message Expression {
       Struct struct = 25;
       Map map = 26;
       bytes uuid = 28;
-      Type null = 29; // a typed null literal
+      // A typed null literal. Set this to the `null` type (`Type.Null`) for a
+      // null that carries no type information of its own.
+      Type null = 29;
       List list = 30;
       Type.List empty_list = 31;
       Type.Map empty_map = 32;
