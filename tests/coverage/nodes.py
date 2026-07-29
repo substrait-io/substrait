@@ -64,6 +64,22 @@ class FuncCallArg:
 
 
 @dataclass
+class MultiRowResult:
+    """Represents the result of a table function: a list of rows (tuples)."""
+
+    rows: List[List]  # List of rows, each row is a list of values
+    type: str  # The struct type, e.g., "struct<i32>" or "struct<i64, str>"
+
+    def get_base_type(self):
+        type_str = self.type
+        if "<" in type_str:
+            type_str = type_str[: type_str.find("<")]
+        if type_str.endswith("?"):
+            return type_str[:-1]
+        return type_str
+
+
+@dataclass
 class AggregateArgument:
     column_name: str
     column_type: str
@@ -79,11 +95,11 @@ class TestCase:
     options: dict
     rows: List[List] | None
     args: List[CaseLiteral | FuncCallArg] | List[AggregateArgument]
-    result: CaseLiteral | FuncCallArg | str | SubstraitError
+    result: CaseLiteral | FuncCallArg | str | SubstraitError | MultiRowResult
     comment: str
 
     def get_return_type(self):
-        if isinstance(self.result, CaseLiteral):
+        if isinstance(self.result, (CaseLiteral, MultiRowResult)):
             return self.result.type
         return self.result
 

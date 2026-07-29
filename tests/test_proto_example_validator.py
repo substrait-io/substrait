@@ -64,3 +64,18 @@ def test_validate_field_references():
         validate_example(
             textproto_file.read_text(), algebra_pb2.Expression.FieldReference
         )
+
+
+def test_validate_table_functions():
+    """Validate table function examples used by GenerateRel."""
+    examples_dir = Path("site/examples/proto-textformat/table_function")
+    # Examples are named after the message they represent: the GenerateRel
+    # wrapper or the bare TableExpression.TableFunction generator.
+    message_by_file = {
+        "generate_rel_explode.textproto": algebra_pb2.GenerateRel,
+        "posexplode.textproto": algebra_pb2.TableExpression.TableFunction,
+        "simple_explode.textproto": algebra_pb2.TableExpression.TableFunction,
+    }
+    for textproto_file in examples_dir.glob("*.textproto"):
+        message_class = message_by_file[textproto_file.name]
+        validate_example(textproto_file.read_text(), message_class)

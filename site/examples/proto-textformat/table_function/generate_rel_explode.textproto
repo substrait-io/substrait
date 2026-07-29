@@ -1,0 +1,76 @@
+# Example GenerateRel using explode to flatten an array field
+# Input: {user_id: i64, tags: list<string>}
+# Output: {user_id: i64, tags: list<string>, value: string}
+#
+# message GenerateRel
+
+common: {
+  direct: {}
+}
+
+input: {
+  # Input relation (e.g., a read or project)
+  read: {
+    base_schema: {
+      names: ["user_id", "tags"]
+      struct: {
+        types: [
+          {
+            i64: {
+              nullability: NULLABILITY_REQUIRED
+            }
+          },
+          {
+            list: {
+              type: {
+                string: {
+                  nullability: NULLABILITY_NULLABLE
+                }
+              }
+              nullability: NULLABILITY_NULLABLE
+            }
+          }
+        ]
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+    # ... (rest of read definition omitted for brevity)
+  }
+}
+
+generator: {
+  table_function: {
+    function_reference: 1  # Reference to explode function
+
+    arguments: [
+      {
+        # Explode the 'tags' field (field 1 of input)
+        value: {
+          selection: {
+            direct_reference: {
+              struct_field: {
+                field: 1
+              }
+            }
+          }
+        }
+      }
+    ]
+
+    output_type: {
+      struct: {
+        types: [
+          {
+            # Output field: value
+            string: {
+              nullability: NULLABILITY_NULLABLE
+            }
+          }
+        ]
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+  }
+}
+
+preserve_on_empty: false  # Default: filter out rows with empty arrays
