@@ -182,13 +182,19 @@ scalar_functions:
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
     impls:
-      - args:
+      - description: >-
+          Add a year/month interval using calendar arithmetic, clamping the day of month to
+          the last valid day of the target month when necessary.
+        args:
           - name: x
             value: precision_timestamp<P>
           - name: y
             value: interval_year
         return: precision_timestamp<P>
-      - args:
+      - description: >-
+          Add a year/month interval after converting the UTC instant to civil time in the
+          supplied timezone, then convert the result back to UTC. The timezone is not retained.
+        args:
           - name: x
             value: precision_timestamp_tz<P>
           - name: y
@@ -197,25 +203,33 @@ scalar_functions:
             description: Timezone string from IANA tzdb.
             value: string
         return: precision_timestamp_tz<P>
-      - args:
+      - description: >-
+          Add a year/month interval using calendar arithmetic, clamping the day of month to
+          the last valid day of the target month when necessary.
+        args:
           - name: x
             value: date
           - name: y
             value: interval_year
         return: date
-      - args:
+      - description: Add an elapsed-time interval.
+        args:
           - name: x
             value: precision_timestamp<P>
           - name: y
             value: interval_day<P>
         return: precision_timestamp<P>
-      - args:
+      - description: Add an elapsed-time interval. No timezone is required because interval_day denotes elapsed time.
+        args:
           - name: x
             value: precision_timestamp_tz<P>
           - name: y
             value: interval_day<P>
         return: precision_timestamp_tz<P>
-      - args:
+      - description: >-
+          Add an elapsed-time interval. The result is a timestamp because interval_day can
+          contain sub-day components.
+        args:
           - name: x
             value: date
           - name: y
@@ -298,19 +312,26 @@ scalar_functions:
       Examples: "Pacific/Marquesas", "Etc/GMT+1".
       If timezone is invalid an error is thrown.
     impls:
-      - args:
+      - description: >-
+          Subtract a year/month interval using calendar arithmetic, clamping the day of month
+          to the last valid day of the target month when necessary.
+        args:
           - name: x
             value: precision_timestamp<P>
           - name: y
             value: interval_year
         return: precision_timestamp<P>
-      - args:
+      - description: Subtract a year/month interval using calendar arithmetic.
+        args:
           - name: x
             value: precision_timestamp_tz<P>
           - name: y
             value: interval_year
         return: precision_timestamp_tz<P>
-      - args:
+      - description: >-
+          Subtract a year/month interval after converting the UTC instant to civil time in the
+          supplied timezone, then convert the result back to UTC. The timezone is not retained.
+        args:
           - name: x
             value: precision_timestamp_tz<P>
           - name: y
@@ -319,25 +340,35 @@ scalar_functions:
             description: Timezone string from IANA tzdb.
             value: string
         return: precision_timestamp_tz<P>
-      - args:
+      - description: >-
+          Subtract a year/month interval using calendar arithmetic, clamping the day of month
+          to the last valid day of the target month when necessary.
+        args:
           - name: x
             value: date
           - name: y
             value: interval_year
         return: date
-      - args:
+      - description: Subtract an elapsed-time interval.
+        args:
           - name: x
             value: precision_timestamp<P>
           - name: y
             value: interval_day<P>
         return: precision_timestamp<P>
-      - args:
+      - description: >-
+          Subtract an elapsed-time interval. No timezone is required because interval_day denotes
+          elapsed time.
+        args:
           - name: x
             value: precision_timestamp_tz<P>
           - name: y
             value: interval_day<P>
         return: precision_timestamp_tz<P>
-      - args:
+      - description: >-
+          Subtract an elapsed-time interval. The result is a timestamp because interval_day can
+          contain sub-day components.
+        args:
           - name: x
             value: date
           - name: y
