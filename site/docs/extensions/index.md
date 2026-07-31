@@ -40,7 +40,7 @@ Within YAML extension files, [user-defined types](../types/type_classes.md#user-
 
 [Built-in types](../types/type_classes.md#built-in-types) like `i32`, `string`, or `list` (as in `list<fp64>`) do not use any prefix.
 
-A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the extension it depends on using a key-value pair in the `dependencies` key, where the value is the extension URN, and the key is a valid identifier that can then be used as an identifier-safe alias for the extension URN. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected. Note that user-defined types still require the `u!` prefix when referenced via namespace aliases (e.g., `ext.u!point`).
+A YAML file can also reference type classes defined in another YAML file. To do this, it must declare the extension it depends on using a key-value pair in the `dependencies` key, where the value is the extension URN, and the key is a valid identifier that can then be used as an identifier-safe alias for the extension URN. This alias can then be used as a `.`-separated namespace prefix wherever a type class name is expected, including the `parent` of a type variation. Note that user-defined types still require the `u!` prefix when referenced via namespace aliases (e.g., `ext.u!point`).
 
 !!! note "Grammar"
     The grammar for referencing [user-defined types](../types/type_classes.md#user-defined-types) is (in [ABNF](https://datatracker.ietf.org/doc/html/rfc5234)):
