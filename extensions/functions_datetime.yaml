@@ -309,6 +309,9 @@ scalar_functions:
             value: precision_timestamp_tz<P>
           - name: y
             value: interval_year
+        deprecated:
+          since: "0.99.0"
+          reason: "Use the three-argument overload with an explicit timezone."
         return: precision_timestamp_tz<P>
       - args:
           - name: x
