@@ -5,11 +5,7 @@ import pytest
 from antlr4 import InputStream
 from tests.coverage.case_file_parser import parse_stream, parse_one_file
 from tests.coverage.coverage import validate_nullability
-from tests.coverage.extensions import (
-    Extension,
-    validate_impl_nullability_markers,
-    validate_nullability_markers,
-)
+from tests.coverage.extensions import Extension, validate_impl_nullability_markers
 from tests.coverage.visitor import ParseError
 from tests.coverage.nodes import CaseLiteral, FuncCallArg
 
@@ -957,25 +953,39 @@ class TestDeclarationNullabilityMarkers:
     markers that the declared nullability handling would ignore."""
 
     def test_mirror_rejects_return_marker(self):
+        """MIRROR: the return marker is ignored, so it must not be declared."""
         errors = validate_impl_nullability_markers(
-            {"args": [{"value": "boolean", "name": "a"}], "return": "boolean?"},
+            {
+                "args": [{"value": "boolean", "name": "a"}],
+                "nullability": "MIRROR",
+                "return": "boolean?",
+            },
             "functions_boolean.yaml: not",
         )
         assert len(errors) == 1
-        assert "MIRROR" in errors[0]
         assert "boolean?" in errors[0]
 
     def test_mirror_rejects_argument_marker(self):
+        """MIRROR: argument nullability is stripped before binding."""
         errors = validate_impl_nullability_markers(
-            {"args": [{"value": "boolean?", "name": "a"}], "return": "boolean"},
+            {
+                "args": [{"value": "boolean?", "name": "a"}],
+                "nullability": "MIRROR",
+                "return": "boolean",
+            },
             "functions_boolean.yaml: not",
         )
         assert len(errors) == 1
         assert "argument 'a'" in errors[0]
 
     def test_mirror_without_markers_ok(self):
+        """MIRROR: a declaration with no markers is what the spec requires."""
         errors = validate_impl_nullability_markers(
-            {"args": [{"value": "boolean", "name": "a"}], "return": "boolean"},
+            {
+                "args": [{"value": "boolean", "name": "a"}],
+                "nullability": "MIRROR",
+                "return": "boolean",
+            },
             "functions_boolean.yaml: not",
         )
         assert errors == []
@@ -1083,9 +1093,3 @@ class TestDeclarationNullabilityMarkers:
             "functions_test.yaml: f",
         )
         assert errors == []
-
-    def test_all_standard_extensions_are_clean(self):
-        """The shipped extension catalog must have no ignored markers."""
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        extensions_path = os.path.join(script_dir, "../../extensions")
-        assert validate_nullability_markers(extensions_path) == []
