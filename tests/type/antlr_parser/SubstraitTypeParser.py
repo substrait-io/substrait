@@ -11,7 +11,7 @@ else:
 
 def serializedATN():
     return [
-        4,1,79,313,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
+        4,1,79,328,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
         6,2,7,7,7,2,8,7,8,1,0,1,0,1,0,1,1,1,1,1,1,1,2,1,2,1,2,1,2,1,2,1,
         2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,37,8,2,1,3,1,3,3,3,41,8,3,1,3,1,3,
         1,3,1,3,1,3,1,3,3,3,49,8,3,1,3,1,3,1,3,1,3,1,3,1,3,3,3,57,8,3,1,
@@ -33,78 +33,79 @@ def serializedATN():
         8,1,8,5,8,264,8,8,10,8,12,8,267,9,8,1,8,1,8,1,8,1,8,3,8,273,8,8,
         1,8,1,8,1,8,1,8,1,8,5,8,280,8,8,10,8,12,8,283,9,8,3,8,285,8,8,1,
         8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,297,8,8,1,8,1,8,1,8,1,
-        8,1,8,1,8,1,8,1,8,1,8,5,8,308,8,8,10,8,12,8,311,9,8,1,8,0,1,16,9,
-        0,2,4,6,8,10,12,14,16,0,1,3,0,50,53,55,60,73,74,374,0,18,1,0,0,0,
-        2,21,1,0,0,0,4,36,1,0,0,0,6,196,1,0,0,0,8,210,1,0,0,0,10,215,1,0,
-        0,0,12,225,1,0,0,0,14,233,1,0,0,0,16,296,1,0,0,0,18,19,3,16,8,0,
-        19,20,5,0,0,1,20,1,1,0,0,0,21,22,3,14,7,0,22,23,5,0,0,1,23,3,1,0,
-        0,0,24,37,5,8,0,0,25,37,5,9,0,0,26,37,5,10,0,0,27,37,5,11,0,0,28,
-        37,5,12,0,0,29,37,5,13,0,0,30,37,5,14,0,0,31,37,5,15,0,0,32,37,5,
-        16,0,0,33,37,5,17,0,0,34,37,5,18,0,0,35,37,5,21,0,0,36,24,1,0,0,
-        0,36,25,1,0,0,0,36,26,1,0,0,0,36,27,1,0,0,0,36,28,1,0,0,0,36,29,
-        1,0,0,0,36,30,1,0,0,0,36,31,1,0,0,0,36,32,1,0,0,0,36,33,1,0,0,0,
-        36,34,1,0,0,0,36,35,1,0,0,0,37,5,1,0,0,0,38,40,5,26,0,0,39,41,5,
-        70,0,0,40,39,1,0,0,0,40,41,1,0,0,0,41,42,1,0,0,0,42,43,5,60,0,0,
-        43,44,3,10,5,0,44,45,5,59,0,0,45,197,1,0,0,0,46,48,5,27,0,0,47,49,
-        5,70,0,0,48,47,1,0,0,0,48,49,1,0,0,0,49,50,1,0,0,0,50,51,5,60,0,
-        0,51,52,3,10,5,0,52,53,5,59,0,0,53,197,1,0,0,0,54,56,5,28,0,0,55,
-        57,5,70,0,0,56,55,1,0,0,0,56,57,1,0,0,0,57,58,1,0,0,0,58,59,5,60,
-        0,0,59,60,3,10,5,0,60,61,5,59,0,0,61,197,1,0,0,0,62,64,5,22,0,0,
-        63,65,5,70,0,0,64,63,1,0,0,0,64,65,1,0,0,0,65,66,1,0,0,0,66,67,5,
-        60,0,0,67,68,3,10,5,0,68,69,5,68,0,0,69,70,3,10,5,0,70,71,5,59,0,
-        0,71,197,1,0,0,0,72,74,5,19,0,0,73,75,5,70,0,0,74,73,1,0,0,0,74,
-        75,1,0,0,0,75,76,1,0,0,0,76,77,5,60,0,0,77,78,3,10,5,0,78,79,5,59,
-        0,0,79,197,1,0,0,0,80,82,5,20,0,0,81,83,5,70,0,0,82,81,1,0,0,0,82,
-        83,1,0,0,0,83,84,1,0,0,0,84,85,5,60,0,0,85,86,3,10,5,0,86,87,5,59,
-        0,0,87,197,1,0,0,0,88,90,5,23,0,0,89,91,5,70,0,0,90,89,1,0,0,0,90,
-        91,1,0,0,0,91,92,1,0,0,0,92,93,5,60,0,0,93,94,3,10,5,0,94,95,5,59,
-        0,0,95,197,1,0,0,0,96,98,5,24,0,0,97,99,5,70,0,0,98,97,1,0,0,0,98,
-        99,1,0,0,0,99,100,1,0,0,0,100,101,5,60,0,0,101,102,3,10,5,0,102,
-        103,5,59,0,0,103,197,1,0,0,0,104,106,5,25,0,0,105,107,5,70,0,0,106,
-        105,1,0,0,0,106,107,1,0,0,0,107,108,1,0,0,0,108,109,5,60,0,0,109,
-        110,3,10,5,0,110,111,5,59,0,0,111,197,1,0,0,0,112,114,5,29,0,0,113,
-        115,5,70,0,0,114,113,1,0,0,0,114,115,1,0,0,0,115,116,1,0,0,0,116,
-        117,5,60,0,0,117,122,3,16,8,0,118,119,5,68,0,0,119,121,3,16,8,0,
-        120,118,1,0,0,0,121,124,1,0,0,0,122,120,1,0,0,0,122,123,1,0,0,0,
-        123,125,1,0,0,0,124,122,1,0,0,0,125,126,5,59,0,0,126,197,1,0,0,0,
-        127,129,5,30,0,0,128,130,5,70,0,0,129,128,1,0,0,0,129,130,1,0,0,
-        0,130,131,1,0,0,0,131,132,5,60,0,0,132,133,5,78,0,0,133,134,5,69,
-        0,0,134,141,3,16,8,0,135,136,5,68,0,0,136,137,5,78,0,0,137,138,5,
-        69,0,0,138,140,3,16,8,0,139,135,1,0,0,0,140,143,1,0,0,0,141,139,
-        1,0,0,0,141,142,1,0,0,0,142,144,1,0,0,0,143,141,1,0,0,0,144,145,
-        5,59,0,0,145,197,1,0,0,0,146,148,5,31,0,0,147,149,5,70,0,0,148,147,
-        1,0,0,0,148,149,1,0,0,0,149,150,1,0,0,0,150,151,5,60,0,0,151,152,
-        3,16,8,0,152,153,5,59,0,0,153,197,1,0,0,0,154,156,5,32,0,0,155,157,
-        5,70,0,0,156,155,1,0,0,0,156,157,1,0,0,0,157,158,1,0,0,0,158,159,
-        5,60,0,0,159,160,3,16,8,0,160,161,5,68,0,0,161,162,3,16,8,0,162,
-        163,5,59,0,0,163,197,1,0,0,0,164,166,5,7,0,0,165,167,5,70,0,0,166,
-        165,1,0,0,0,166,167,1,0,0,0,167,168,1,0,0,0,168,169,5,60,0,0,169,
-        170,3,8,4,0,170,171,5,76,0,0,171,172,3,16,8,0,172,173,5,59,0,0,173,
-        197,1,0,0,0,174,175,5,78,0,0,175,177,5,72,0,0,176,174,1,0,0,0,176,
-        177,1,0,0,0,177,178,1,0,0,0,178,179,5,33,0,0,179,181,5,78,0,0,180,
-        182,5,70,0,0,181,180,1,0,0,0,181,182,1,0,0,0,182,194,1,0,0,0,183,
-        184,5,60,0,0,184,189,3,16,8,0,185,186,5,68,0,0,186,188,3,16,8,0,
-        187,185,1,0,0,0,188,191,1,0,0,0,189,187,1,0,0,0,189,190,1,0,0,0,
-        190,192,1,0,0,0,191,189,1,0,0,0,192,193,5,59,0,0,193,195,1,0,0,0,
-        194,183,1,0,0,0,194,195,1,0,0,0,195,197,1,0,0,0,196,38,1,0,0,0,196,
-        46,1,0,0,0,196,54,1,0,0,0,196,62,1,0,0,0,196,72,1,0,0,0,196,80,1,
-        0,0,0,196,88,1,0,0,0,196,96,1,0,0,0,196,104,1,0,0,0,196,112,1,0,
-        0,0,196,127,1,0,0,0,196,146,1,0,0,0,196,154,1,0,0,0,196,164,1,0,
-        0,0,196,176,1,0,0,0,197,7,1,0,0,0,198,211,3,16,8,0,199,200,5,64,
-        0,0,200,205,3,16,8,0,201,202,5,68,0,0,202,204,3,16,8,0,203,201,1,
-        0,0,0,204,207,1,0,0,0,205,203,1,0,0,0,205,206,1,0,0,0,206,208,1,
-        0,0,0,207,205,1,0,0,0,208,209,5,65,0,0,209,211,1,0,0,0,210,198,1,
-        0,0,0,210,199,1,0,0,0,211,9,1,0,0,0,212,216,5,77,0,0,213,216,5,78,
-        0,0,214,216,3,16,8,0,215,212,1,0,0,0,215,213,1,0,0,0,215,214,1,0,
-        0,0,216,11,1,0,0,0,217,219,5,47,0,0,218,220,5,70,0,0,219,218,1,0,
-        0,0,219,220,1,0,0,0,220,226,1,0,0,0,221,223,5,48,0,0,222,224,5,70,
-        0,0,223,222,1,0,0,0,223,224,1,0,0,0,224,226,1,0,0,0,225,217,1,0,
-        0,0,225,221,1,0,0,0,226,13,1,0,0,0,227,229,3,4,2,0,228,230,5,70,
-        0,0,229,228,1,0,0,0,229,230,1,0,0,0,230,234,1,0,0,0,231,234,3,6,
-        3,0,232,234,3,12,6,0,233,227,1,0,0,0,233,231,1,0,0,0,233,232,1,0,
-        0,0,234,15,1,0,0,0,235,236,6,8,-1,0,236,237,5,64,0,0,237,238,3,16,
-        8,0,238,239,5,65,0,0,239,297,1,0,0,0,240,241,5,78,0,0,241,242,5,
-        55,0,0,242,244,3,16,8,0,243,245,5,79,0,0,244,243,1,0,0,0,245,246,
+        8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,
+        8,1,8,1,8,1,8,1,8,5,8,323,8,8,10,8,12,8,326,9,8,1,8,0,1,16,9,0,2,
+        4,6,8,10,12,14,16,0,4,1,0,52,53,1,0,50,51,1,0,57,60,1,0,55,56,394,
+        0,18,1,0,0,0,2,21,1,0,0,0,4,36,1,0,0,0,6,196,1,0,0,0,8,210,1,0,0,
+        0,10,215,1,0,0,0,12,225,1,0,0,0,14,233,1,0,0,0,16,296,1,0,0,0,18,
+        19,3,16,8,0,19,20,5,0,0,1,20,1,1,0,0,0,21,22,3,14,7,0,22,23,5,0,
+        0,1,23,3,1,0,0,0,24,37,5,8,0,0,25,37,5,9,0,0,26,37,5,10,0,0,27,37,
+        5,11,0,0,28,37,5,12,0,0,29,37,5,13,0,0,30,37,5,14,0,0,31,37,5,15,
+        0,0,32,37,5,16,0,0,33,37,5,17,0,0,34,37,5,18,0,0,35,37,5,21,0,0,
+        36,24,1,0,0,0,36,25,1,0,0,0,36,26,1,0,0,0,36,27,1,0,0,0,36,28,1,
+        0,0,0,36,29,1,0,0,0,36,30,1,0,0,0,36,31,1,0,0,0,36,32,1,0,0,0,36,
+        33,1,0,0,0,36,34,1,0,0,0,36,35,1,0,0,0,37,5,1,0,0,0,38,40,5,26,0,
+        0,39,41,5,70,0,0,40,39,1,0,0,0,40,41,1,0,0,0,41,42,1,0,0,0,42,43,
+        5,60,0,0,43,44,3,10,5,0,44,45,5,59,0,0,45,197,1,0,0,0,46,48,5,27,
+        0,0,47,49,5,70,0,0,48,47,1,0,0,0,48,49,1,0,0,0,49,50,1,0,0,0,50,
+        51,5,60,0,0,51,52,3,10,5,0,52,53,5,59,0,0,53,197,1,0,0,0,54,56,5,
+        28,0,0,55,57,5,70,0,0,56,55,1,0,0,0,56,57,1,0,0,0,57,58,1,0,0,0,
+        58,59,5,60,0,0,59,60,3,10,5,0,60,61,5,59,0,0,61,197,1,0,0,0,62,64,
+        5,22,0,0,63,65,5,70,0,0,64,63,1,0,0,0,64,65,1,0,0,0,65,66,1,0,0,
+        0,66,67,5,60,0,0,67,68,3,10,5,0,68,69,5,68,0,0,69,70,3,10,5,0,70,
+        71,5,59,0,0,71,197,1,0,0,0,72,74,5,19,0,0,73,75,5,70,0,0,74,73,1,
+        0,0,0,74,75,1,0,0,0,75,76,1,0,0,0,76,77,5,60,0,0,77,78,3,10,5,0,
+        78,79,5,59,0,0,79,197,1,0,0,0,80,82,5,20,0,0,81,83,5,70,0,0,82,81,
+        1,0,0,0,82,83,1,0,0,0,83,84,1,0,0,0,84,85,5,60,0,0,85,86,3,10,5,
+        0,86,87,5,59,0,0,87,197,1,0,0,0,88,90,5,23,0,0,89,91,5,70,0,0,90,
+        89,1,0,0,0,90,91,1,0,0,0,91,92,1,0,0,0,92,93,5,60,0,0,93,94,3,10,
+        5,0,94,95,5,59,0,0,95,197,1,0,0,0,96,98,5,24,0,0,97,99,5,70,0,0,
+        98,97,1,0,0,0,98,99,1,0,0,0,99,100,1,0,0,0,100,101,5,60,0,0,101,
+        102,3,10,5,0,102,103,5,59,0,0,103,197,1,0,0,0,104,106,5,25,0,0,105,
+        107,5,70,0,0,106,105,1,0,0,0,106,107,1,0,0,0,107,108,1,0,0,0,108,
+        109,5,60,0,0,109,110,3,10,5,0,110,111,5,59,0,0,111,197,1,0,0,0,112,
+        114,5,29,0,0,113,115,5,70,0,0,114,113,1,0,0,0,114,115,1,0,0,0,115,
+        116,1,0,0,0,116,117,5,60,0,0,117,122,3,16,8,0,118,119,5,68,0,0,119,
+        121,3,16,8,0,120,118,1,0,0,0,121,124,1,0,0,0,122,120,1,0,0,0,122,
+        123,1,0,0,0,123,125,1,0,0,0,124,122,1,0,0,0,125,126,5,59,0,0,126,
+        197,1,0,0,0,127,129,5,30,0,0,128,130,5,70,0,0,129,128,1,0,0,0,129,
+        130,1,0,0,0,130,131,1,0,0,0,131,132,5,60,0,0,132,133,5,78,0,0,133,
+        134,5,69,0,0,134,141,3,16,8,0,135,136,5,68,0,0,136,137,5,78,0,0,
+        137,138,5,69,0,0,138,140,3,16,8,0,139,135,1,0,0,0,140,143,1,0,0,
+        0,141,139,1,0,0,0,141,142,1,0,0,0,142,144,1,0,0,0,143,141,1,0,0,
+        0,144,145,5,59,0,0,145,197,1,0,0,0,146,148,5,31,0,0,147,149,5,70,
+        0,0,148,147,1,0,0,0,148,149,1,0,0,0,149,150,1,0,0,0,150,151,5,60,
+        0,0,151,152,3,16,8,0,152,153,5,59,0,0,153,197,1,0,0,0,154,156,5,
+        32,0,0,155,157,5,70,0,0,156,155,1,0,0,0,156,157,1,0,0,0,157,158,
+        1,0,0,0,158,159,5,60,0,0,159,160,3,16,8,0,160,161,5,68,0,0,161,162,
+        3,16,8,0,162,163,5,59,0,0,163,197,1,0,0,0,164,166,5,7,0,0,165,167,
+        5,70,0,0,166,165,1,0,0,0,166,167,1,0,0,0,167,168,1,0,0,0,168,169,
+        5,60,0,0,169,170,3,8,4,0,170,171,5,76,0,0,171,172,3,16,8,0,172,173,
+        5,59,0,0,173,197,1,0,0,0,174,175,5,78,0,0,175,177,5,72,0,0,176,174,
+        1,0,0,0,176,177,1,0,0,0,177,178,1,0,0,0,178,179,5,33,0,0,179,181,
+        5,78,0,0,180,182,5,70,0,0,181,180,1,0,0,0,181,182,1,0,0,0,182,194,
+        1,0,0,0,183,184,5,60,0,0,184,189,3,16,8,0,185,186,5,68,0,0,186,188,
+        3,16,8,0,187,185,1,0,0,0,188,191,1,0,0,0,189,187,1,0,0,0,189,190,
+        1,0,0,0,190,192,1,0,0,0,191,189,1,0,0,0,192,193,5,59,0,0,193,195,
+        1,0,0,0,194,183,1,0,0,0,194,195,1,0,0,0,195,197,1,0,0,0,196,38,1,
+        0,0,0,196,46,1,0,0,0,196,54,1,0,0,0,196,62,1,0,0,0,196,72,1,0,0,
+        0,196,80,1,0,0,0,196,88,1,0,0,0,196,96,1,0,0,0,196,104,1,0,0,0,196,
+        112,1,0,0,0,196,127,1,0,0,0,196,146,1,0,0,0,196,154,1,0,0,0,196,
+        164,1,0,0,0,196,176,1,0,0,0,197,7,1,0,0,0,198,211,3,16,8,0,199,200,
+        5,64,0,0,200,205,3,16,8,0,201,202,5,68,0,0,202,204,3,16,8,0,203,
+        201,1,0,0,0,204,207,1,0,0,0,205,203,1,0,0,0,205,206,1,0,0,0,206,
+        208,1,0,0,0,207,205,1,0,0,0,208,209,5,65,0,0,209,211,1,0,0,0,210,
+        198,1,0,0,0,210,199,1,0,0,0,211,9,1,0,0,0,212,216,5,77,0,0,213,216,
+        5,78,0,0,214,216,3,16,8,0,215,212,1,0,0,0,215,213,1,0,0,0,215,214,
+        1,0,0,0,216,11,1,0,0,0,217,219,5,47,0,0,218,220,5,70,0,0,219,218,
+        1,0,0,0,219,220,1,0,0,0,220,226,1,0,0,0,221,223,5,48,0,0,222,224,
+        5,70,0,0,223,222,1,0,0,0,223,224,1,0,0,0,224,226,1,0,0,0,225,217,
+        1,0,0,0,225,221,1,0,0,0,226,13,1,0,0,0,227,229,3,4,2,0,228,230,5,
+        70,0,0,229,228,1,0,0,0,229,230,1,0,0,0,230,234,1,0,0,0,231,234,3,
+        6,3,0,232,234,3,12,6,0,233,227,1,0,0,0,233,231,1,0,0,0,233,232,1,
+        0,0,0,234,15,1,0,0,0,235,236,6,8,-1,0,236,237,5,64,0,0,237,238,3,
+        16,8,0,238,239,5,65,0,0,239,297,1,0,0,0,240,241,5,78,0,0,241,242,
+        5,55,0,0,242,244,3,16,8,0,243,245,5,79,0,0,244,243,1,0,0,0,245,246,
         1,0,0,0,246,244,1,0,0,0,246,247,1,0,0,0,247,258,1,0,0,0,248,249,
         5,78,0,0,249,250,5,55,0,0,250,252,3,16,8,0,251,253,5,79,0,0,252,
         251,1,0,0,0,253,254,1,0,0,0,254,252,1,0,0,0,254,255,1,0,0,0,255,
@@ -121,14 +122,19 @@ def serializedATN():
         291,3,16,8,0,291,292,5,6,0,0,292,293,3,16,8,3,293,297,1,0,0,0,294,
         295,5,61,0,0,295,297,3,16,8,2,296,235,1,0,0,0,296,240,1,0,0,0,296,
         268,1,0,0,0,296,269,1,0,0,0,296,270,1,0,0,0,296,274,1,0,0,0,296,
-        287,1,0,0,0,296,294,1,0,0,0,297,309,1,0,0,0,298,299,10,4,0,0,299,
-        300,7,0,0,0,300,308,3,16,8,5,301,302,10,1,0,0,302,303,5,70,0,0,303,
-        304,3,16,8,0,304,305,5,69,0,0,305,306,3,16,8,2,306,308,1,0,0,0,307,
-        298,1,0,0,0,307,301,1,0,0,0,308,311,1,0,0,0,309,307,1,0,0,0,309,
-        310,1,0,0,0,310,17,1,0,0,0,311,309,1,0,0,0,40,36,40,48,56,64,74,
-        82,90,98,106,114,122,129,141,148,156,166,176,181,189,194,196,205,
-        210,215,219,223,225,229,233,246,254,258,265,272,281,284,296,307,
-        309
+        287,1,0,0,0,296,294,1,0,0,0,297,324,1,0,0,0,298,299,10,9,0,0,299,
+        300,7,0,0,0,300,323,3,16,8,10,301,302,10,8,0,0,302,303,7,1,0,0,303,
+        323,3,16,8,9,304,305,10,7,0,0,305,306,7,2,0,0,306,323,3,16,8,8,307,
+        308,10,6,0,0,308,309,7,3,0,0,309,323,3,16,8,7,310,311,10,5,0,0,311,
+        312,5,73,0,0,312,323,3,16,8,6,313,314,10,4,0,0,314,315,5,74,0,0,
+        315,323,3,16,8,5,316,317,10,1,0,0,317,318,5,70,0,0,318,319,3,16,
+        8,0,319,320,5,69,0,0,320,321,3,16,8,2,321,323,1,0,0,0,322,298,1,
+        0,0,0,322,301,1,0,0,0,322,304,1,0,0,0,322,307,1,0,0,0,322,310,1,
+        0,0,0,322,313,1,0,0,0,322,316,1,0,0,0,323,326,1,0,0,0,324,322,1,
+        0,0,0,324,325,1,0,0,0,325,17,1,0,0,0,326,324,1,0,0,0,40,36,40,48,
+        56,64,74,82,90,98,106,114,122,129,141,148,156,166,176,181,189,194,
+        196,205,210,215,219,223,225,229,233,246,254,258,265,272,281,284,
+        296,322,324
     ]
 
 class SubstraitTypeParser ( Parser ):
@@ -2257,27 +2263,35 @@ class SubstraitTypeParser ( Parser ):
                 return visitor.visitChildren(self)
 
 
-    class TypeLiteralContext(ExprContext):
+    class OrContext(ExprContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ExprContext
             super().__init__(parser)
+            self.left = None # ExprContext
+            self.op = None # Token
+            self.right = None # ExprContext
             self.copyFrom(ctx)
 
-        def typeDef(self):
-            return self.getTypedRuleContext(SubstraitTypeParser.TypeDefContext,0)
+        def expr(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(SubstraitTypeParser.ExprContext)
+            else:
+                return self.getTypedRuleContext(SubstraitTypeParser.ExprContext,i)
 
+        def Or(self):
+            return self.getToken(SubstraitTypeParser.Or, 0)
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterTypeLiteral" ):
-                listener.enterTypeLiteral(self)
+            if hasattr( listener, "enterOr" ):
+                listener.enterOr(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitTypeLiteral" ):
-                listener.exitTypeLiteral(self)
+            if hasattr( listener, "exitOr" ):
+                listener.exitOr(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitTypeLiteral" ):
-                return visitor.visitTypeLiteral(self)
+            if hasattr( visitor, "visitOr" ):
+                return visitor.visitOr(self)
             else:
                 return visitor.visitChildren(self)
 
@@ -2329,6 +2343,76 @@ class SubstraitTypeParser ( Parser ):
                 return visitor.visitChildren(self)
 
 
+    class MulDivContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ExprContext
+            super().__init__(parser)
+            self.left = None # ExprContext
+            self.op = None # Token
+            self.right = None # ExprContext
+            self.copyFrom(ctx)
+
+        def expr(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(SubstraitTypeParser.ExprContext)
+            else:
+                return self.getTypedRuleContext(SubstraitTypeParser.ExprContext,i)
+
+        def Asterisk(self):
+            return self.getToken(SubstraitTypeParser.Asterisk, 0)
+        def ForwardSlash(self):
+            return self.getToken(SubstraitTypeParser.ForwardSlash, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterMulDiv" ):
+                listener.enterMulDiv(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitMulDiv" ):
+                listener.exitMulDiv(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitMulDiv" ):
+                return visitor.visitMulDiv(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class AddSubContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ExprContext
+            super().__init__(parser)
+            self.left = None # ExprContext
+            self.op = None # Token
+            self.right = None # ExprContext
+            self.copyFrom(ctx)
+
+        def expr(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(SubstraitTypeParser.ExprContext)
+            else:
+                return self.getTypedRuleContext(SubstraitTypeParser.ExprContext,i)
+
+        def Plus(self):
+            return self.getToken(SubstraitTypeParser.Plus, 0)
+        def Minus(self):
+            return self.getToken(SubstraitTypeParser.Minus, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterAddSub" ):
+                listener.enterAddSub(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitAddSub" ):
+                listener.exitAddSub(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitAddSub" ):
+                return visitor.visitAddSub(self)
+            else:
+                return visitor.visitChildren(self)
+
+
     class TernaryContext(ExprContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ExprContext
@@ -2364,7 +2448,98 @@ class SubstraitTypeParser ( Parser ):
                 return visitor.visitChildren(self)
 
 
-    class BinaryExprContext(ExprContext):
+    class ParameterNameContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ExprContext
+            super().__init__(parser)
+            self.isnull = None # Token
+            self.copyFrom(ctx)
+
+        def Identifier(self):
+            return self.getToken(SubstraitTypeParser.Identifier, 0)
+        def QMark(self):
+            return self.getToken(SubstraitTypeParser.QMark, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterParameterName" ):
+                listener.enterParameterName(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitParameterName" ):
+                listener.exitParameterName(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitParameterName" ):
+                return visitor.visitParameterName(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class TypeLiteralContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ExprContext
+            super().__init__(parser)
+            self.copyFrom(ctx)
+
+        def typeDef(self):
+            return self.getTypedRuleContext(SubstraitTypeParser.TypeDefContext,0)
+
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterTypeLiteral" ):
+                listener.enterTypeLiteral(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitTypeLiteral" ):
+                listener.exitTypeLiteral(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitTypeLiteral" ):
+                return visitor.visitTypeLiteral(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class ComparisonContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ExprContext
+            super().__init__(parser)
+            self.left = None # ExprContext
+            self.op = None # Token
+            self.right = None # ExprContext
+            self.copyFrom(ctx)
+
+        def expr(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(SubstraitTypeParser.ExprContext)
+            else:
+                return self.getTypedRuleContext(SubstraitTypeParser.ExprContext,i)
+
+        def Lt(self):
+            return self.getToken(SubstraitTypeParser.Lt, 0)
+        def Gt(self):
+            return self.getToken(SubstraitTypeParser.Gt, 0)
+        def Lte(self):
+            return self.getToken(SubstraitTypeParser.Lte, 0)
+        def Gte(self):
+            return self.getToken(SubstraitTypeParser.Gte, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterComparison" ):
+                listener.enterComparison(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitComparison" ):
+                listener.exitComparison(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitComparison" ):
+                return visitor.visitComparison(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class AndContext(ExprContext):
 
         def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ExprContext
             super().__init__(parser)
@@ -2381,40 +2556,18 @@ class SubstraitTypeParser ( Parser ):
 
         def And(self):
             return self.getToken(SubstraitTypeParser.And, 0)
-        def Or(self):
-            return self.getToken(SubstraitTypeParser.Or, 0)
-        def Plus(self):
-            return self.getToken(SubstraitTypeParser.Plus, 0)
-        def Minus(self):
-            return self.getToken(SubstraitTypeParser.Minus, 0)
-        def Lt(self):
-            return self.getToken(SubstraitTypeParser.Lt, 0)
-        def Gt(self):
-            return self.getToken(SubstraitTypeParser.Gt, 0)
-        def Eq(self):
-            return self.getToken(SubstraitTypeParser.Eq, 0)
-        def Ne(self):
-            return self.getToken(SubstraitTypeParser.Ne, 0)
-        def Lte(self):
-            return self.getToken(SubstraitTypeParser.Lte, 0)
-        def Gte(self):
-            return self.getToken(SubstraitTypeParser.Gte, 0)
-        def Asterisk(self):
-            return self.getToken(SubstraitTypeParser.Asterisk, 0)
-        def ForwardSlash(self):
-            return self.getToken(SubstraitTypeParser.ForwardSlash, 0)
 
         def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterBinaryExpr" ):
-                listener.enterBinaryExpr(self)
+            if hasattr( listener, "enterAnd" ):
+                listener.enterAnd(self)
 
         def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitBinaryExpr" ):
-                listener.exitBinaryExpr(self)
+            if hasattr( listener, "exitAnd" ):
+                listener.exitAnd(self)
 
         def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitBinaryExpr" ):
-                return visitor.visitBinaryExpr(self)
+            if hasattr( visitor, "visitAnd" ):
+                return visitor.visitAnd(self)
             else:
                 return visitor.visitChildren(self)
 
@@ -2444,33 +2597,6 @@ class SubstraitTypeParser ( Parser ):
         def accept(self, visitor:ParseTreeVisitor):
             if hasattr( visitor, "visitParenExpression" ):
                 return visitor.visitParenExpression(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-    class ParameterNameContext(ExprContext):
-
-        def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ExprContext
-            super().__init__(parser)
-            self.isnull = None # Token
-            self.copyFrom(ctx)
-
-        def Identifier(self):
-            return self.getToken(SubstraitTypeParser.Identifier, 0)
-        def QMark(self):
-            return self.getToken(SubstraitTypeParser.QMark, 0)
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterParameterName" ):
-                listener.enterParameterName(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitParameterName" ):
-                listener.exitParameterName(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitParameterName" ):
-                return visitor.visitParameterName(self)
             else:
                 return visitor.visitChildren(self)
 
@@ -2537,6 +2663,41 @@ class SubstraitTypeParser ( Parser ):
         def accept(self, visitor:ParseTreeVisitor):
             if hasattr( visitor, "visitNotExpr" ):
                 return visitor.visitNotExpr(self)
+            else:
+                return visitor.visitChildren(self)
+
+
+    class EqualityContext(ExprContext):
+
+        def __init__(self, parser, ctx:ParserRuleContext): # actually a SubstraitTypeParser.ExprContext
+            super().__init__(parser)
+            self.left = None # ExprContext
+            self.op = None # Token
+            self.right = None # ExprContext
+            self.copyFrom(ctx)
+
+        def expr(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(SubstraitTypeParser.ExprContext)
+            else:
+                return self.getTypedRuleContext(SubstraitTypeParser.ExprContext,i)
+
+        def Eq(self):
+            return self.getToken(SubstraitTypeParser.Eq, 0)
+        def Ne(self):
+            return self.getToken(SubstraitTypeParser.Ne, 0)
+
+        def enterRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "enterEquality" ):
+                listener.enterEquality(self)
+
+        def exitRule(self, listener:ParseTreeListener):
+            if hasattr( listener, "exitEquality" ):
+                listener.exitEquality(self)
+
+        def accept(self, visitor:ParseTreeVisitor):
+            if hasattr( visitor, "visitEquality" ):
+                return visitor.visitEquality(self)
             else:
                 return visitor.visitChildren(self)
 
@@ -2751,7 +2912,7 @@ class SubstraitTypeParser ( Parser ):
 
 
             self._ctx.stop = self._input.LT(-1)
-            self.state = 309
+            self.state = 324
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,39,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
@@ -2759,49 +2920,137 @@ class SubstraitTypeParser ( Parser ):
                     if self._parseListeners is not None:
                         self.triggerExitRuleEvent()
                     _prevctx = localctx
-                    self.state = 307
+                    self.state = 322
                     self._errHandler.sync(self)
                     la_ = self._interp.adaptivePredict(self._input,38,self._ctx)
                     if la_ == 1:
-                        localctx = SubstraitTypeParser.BinaryExprContext(self, SubstraitTypeParser.ExprContext(self, _parentctx, _parentState))
+                        localctx = SubstraitTypeParser.MulDivContext(self, SubstraitTypeParser.ExprContext(self, _parentctx, _parentState))
                         localctx.left = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 298
-                        if not self.precpred(self._ctx, 4):
+                        if not self.precpred(self._ctx, 9):
                             from antlr4.error.Errors import FailedPredicateException
-                            raise FailedPredicateException(self, "self.precpred(self._ctx, 4)")
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 9)")
                         self.state = 299
                         localctx.op = self._input.LT(1)
                         _la = self._input.LA(1)
-                        if not(((((_la - 50)) & ~0x3f) == 0 and ((1 << (_la - 50)) & 25167855) != 0)):
+                        if not(_la==52 or _la==53):
                             localctx.op = self._errHandler.recoverInline(self)
                         else:
                             self._errHandler.reportMatch(self)
                             self.consume()
                         self.state = 300
-                        localctx.right = self.expr(5)
+                        localctx.right = self.expr(10)
                         pass
 
                     elif la_ == 2:
+                        localctx = SubstraitTypeParser.AddSubContext(self, SubstraitTypeParser.ExprContext(self, _parentctx, _parentState))
+                        localctx.left = _prevctx
+                        self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
+                        self.state = 301
+                        if not self.precpred(self._ctx, 8):
+                            from antlr4.error.Errors import FailedPredicateException
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 8)")
+                        self.state = 302
+                        localctx.op = self._input.LT(1)
+                        _la = self._input.LA(1)
+                        if not(_la==50 or _la==51):
+                            localctx.op = self._errHandler.recoverInline(self)
+                        else:
+                            self._errHandler.reportMatch(self)
+                            self.consume()
+                        self.state = 303
+                        localctx.right = self.expr(9)
+                        pass
+
+                    elif la_ == 3:
+                        localctx = SubstraitTypeParser.ComparisonContext(self, SubstraitTypeParser.ExprContext(self, _parentctx, _parentState))
+                        localctx.left = _prevctx
+                        self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
+                        self.state = 304
+                        if not self.precpred(self._ctx, 7):
+                            from antlr4.error.Errors import FailedPredicateException
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 7)")
+                        self.state = 305
+                        localctx.op = self._input.LT(1)
+                        _la = self._input.LA(1)
+                        if not((((_la) & ~0x3f) == 0 and ((1 << _la) & 2161727821137838080) != 0)):
+                            localctx.op = self._errHandler.recoverInline(self)
+                        else:
+                            self._errHandler.reportMatch(self)
+                            self.consume()
+                        self.state = 306
+                        localctx.right = self.expr(8)
+                        pass
+
+                    elif la_ == 4:
+                        localctx = SubstraitTypeParser.EqualityContext(self, SubstraitTypeParser.ExprContext(self, _parentctx, _parentState))
+                        localctx.left = _prevctx
+                        self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
+                        self.state = 307
+                        if not self.precpred(self._ctx, 6):
+                            from antlr4.error.Errors import FailedPredicateException
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 6)")
+                        self.state = 308
+                        localctx.op = self._input.LT(1)
+                        _la = self._input.LA(1)
+                        if not(_la==55 or _la==56):
+                            localctx.op = self._errHandler.recoverInline(self)
+                        else:
+                            self._errHandler.reportMatch(self)
+                            self.consume()
+                        self.state = 309
+                        localctx.right = self.expr(7)
+                        pass
+
+                    elif la_ == 5:
+                        localctx = SubstraitTypeParser.AndContext(self, SubstraitTypeParser.ExprContext(self, _parentctx, _parentState))
+                        localctx.left = _prevctx
+                        self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
+                        self.state = 310
+                        if not self.precpred(self._ctx, 5):
+                            from antlr4.error.Errors import FailedPredicateException
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 5)")
+                        self.state = 311
+                        localctx.op = self.match(SubstraitTypeParser.And)
+                        self.state = 312
+                        localctx.right = self.expr(6)
+                        pass
+
+                    elif la_ == 6:
+                        localctx = SubstraitTypeParser.OrContext(self, SubstraitTypeParser.ExprContext(self, _parentctx, _parentState))
+                        localctx.left = _prevctx
+                        self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
+                        self.state = 313
+                        if not self.precpred(self._ctx, 4):
+                            from antlr4.error.Errors import FailedPredicateException
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 4)")
+                        self.state = 314
+                        localctx.op = self.match(SubstraitTypeParser.Or)
+                        self.state = 315
+                        localctx.right = self.expr(5)
+                        pass
+
+                    elif la_ == 7:
                         localctx = SubstraitTypeParser.TernaryContext(self, SubstraitTypeParser.ExprContext(self, _parentctx, _parentState))
                         localctx.ifExpr = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
-                        self.state = 301
+                        self.state = 316
                         if not self.precpred(self._ctx, 1):
                             from antlr4.error.Errors import FailedPredicateException
                             raise FailedPredicateException(self, "self.precpred(self._ctx, 1)")
-                        self.state = 302
+                        self.state = 317
                         self.match(SubstraitTypeParser.QMark)
-                        self.state = 303
+                        self.state = 318
                         localctx.thenExpr = self.expr(0)
-                        self.state = 304
+                        self.state = 319
                         self.match(SubstraitTypeParser.Colon)
-                        self.state = 305
+                        self.state = 320
                         localctx.elseExpr = self.expr(2)
                         pass
 
              
-                self.state = 311
+                self.state = 326
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,39,self._ctx)
 
@@ -2827,10 +3076,30 @@ class SubstraitTypeParser ( Parser ):
 
     def expr_sempred(self, localctx:ExprContext, predIndex:int):
             if predIndex == 0:
-                return self.precpred(self._ctx, 4)
+                return self.precpred(self._ctx, 9)
          
 
             if predIndex == 1:
+                return self.precpred(self._ctx, 8)
+         
+
+            if predIndex == 2:
+                return self.precpred(self._ctx, 7)
+         
+
+            if predIndex == 3:
+                return self.precpred(self._ctx, 6)
+         
+
+            if predIndex == 4:
+                return self.precpred(self._ctx, 5)
+         
+
+            if predIndex == 5:
+                return self.precpred(self._ctx, 4)
+         
+
+            if predIndex == 6:
                 return self.precpred(self._ctx, 1)
          
 

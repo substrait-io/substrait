@@ -39,6 +39,11 @@ The include statement specifies the extension file being tested. Each test file 
 ### Dependency Statements (Optional)
 Dependency statements specify additional extension files needed to run the tests, but which are not themselves being tested. These are typically used when test cases need helper functions from other extensions (e.g., lambda expressions that call arithmetic functions while testing list functions). Provide one extension per dependency line; include multiple lines if more than one helper extension is required.
 
+#### Function Signature Collisions
+When a function exists in more than one loaded extension (include or dependency), it should be resolved in the following order:
+1. From the include statement extension
+2. From the dependency statements extension(s), in order.
+
 ### Test Groups
 A test group is a collection of test cases that are logically related. Test groups are purely for categorization purposes and do not affect the execution or meaning of tests.
 - **description**: A string describing the test group or case. The description must start with a `#` character.
@@ -49,9 +54,9 @@ A test group is a collection of test cases that are logically related. Test grou
 A test case consists of the following elements:
 
 - **function**: The name of the function being tested. The function name must be an identifier alphanumeric string.
-- **arguments**: Comma-separated list of arguments to the function. The arguments must be literals.
+- **arguments**: Comma-separated list of arguments to the function. Arguments can be literals, enum values, or nested function calls.
 - **options**: Optional comma-separated list of options in `key:value` format. The options describe the behavior of the function. The test should be run only on dialects that support the options. If options are not specified, the test should be run for all permutations of the options.
-- **result**: The expected result of the function. Either `SUBSTRAIT_ERROR` or a literal value.
+- **result**: The expected result of the function. Either `SUBSTRAIT_ERROR`, a literal value, or a function call.
 - **literal**: In the format `<literal_value>::<datatype>`
 - **description**: A string describing the test case
 
@@ -133,18 +138,20 @@ test_case   := <function>(<arguments>) ([<options>])? = <result> (#<description>
 description := string
 function    := string
 arguments   := <argument>, <argument>, ... <argument>
-argument    := <literal> | <enum_value>
+argument    := <literal> | <enum_value> | <func_call>
 literal     := <literal_value>::<datatype>
 enum_value  := <identifier>::enum
-result      := <substrait_error> | <literal> | <enum_value>
+func_call   := <function>(<arguments>)
+result      := <substrait_error> | <literal> | <enum_value> | <func_call>
 options     := <option>, <option>, ... <option>
 option      := <option_name>:<option_value>
-literal_value := string | integer | decimal | float | boolean | date | interval year | interval days | null | list | struct | map
+literal_value := string | integer | decimal | float | boolean | date | interval year | interval days | null | list | struct | map | udt
 datatype    := <basic_type> | <parametrized_type> | <compound_type>
 basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | iyear | vbin | <parametrized_type>
 parametrized_type := fchar<int> | vchar<int> | dec<int,int> | fbin<int> | iday<int> | icompound<int> | pt<int> | pts<int> | ptstz<int> | func<params -> datatype>
 params := datatype | (datatype(, datatype)*)
 compound_type := list<datatype> | struct<datatype...> | map<datatype, datatype>
+udt_type      := u!<identifier> | u!<identifier>?
 substrait_error := <!ERROR> | <!UNDEFINED>
 ```
 
@@ -197,6 +204,7 @@ All date and time literals use ISO 8601 format:
 - Lists use bracketed, comma-separated values. Example: `[1, 2, 3]::list<i8>`, `['a', 'b', 'c']::list<str>`
 - Structs use parenthesized, comma-separated positional fields. Example: `(1, 'a')::struct<i8, str>`, `(1, [2, 3])::struct<i8, list<i8>>`
 - Maps use braces with colon-separated key/value pairs. Example: `{'a': 1, 'b': 2}::map<str, i8>`, `{}::map<str, i8>`
+- User-defined types (UDTs) use the same parenthesized form as structs, annotated with the UDT name. The literal encodes the UDT via its `structure` field — positional values matching the fields of the underlying struct. The extension that defines the UDT must be listed as a dependency. Example: `(4, 2)::u!point` where `u!point` has structure `struct<i32, i32>`. Nested UDTs are written as nested parenthesized literals: `((4, 2), (1, 1))::u!line` where `u!line` has structure `struct<u!point, u!point>`.
 
 ### Data Types
 
@@ -221,6 +229,7 @@ Use short names listed in https://substrait.io/extensions/#function-signature-co
 - **pt**: Precision Time `precision_time<P>`
 - **pts**: Precision Timestamp `precision_timestamp<P>`
 - **ptstz**: Precision Timestamp with timezone `precision_timestamp_tz<P>`
+- **u!\<name\>**: User-defined type, e.g. `u!point`. The type name must match a type defined in the included or dependency extension YAML.
 
 
 ### Nullability
@@ -310,3 +319,23 @@ extract(QUARTER::enum, '2016-12-31T13:30:15'::ts) = 4::i64
 In this example:
 - Enum values like `YEAR`, `ISO_YEAR` and `QUARTER` are used as arguments with type `enum`
 - Enum types are defined in the extension file and represent named constants for function options
+
+### Example of a test file with function composition
+
+Function calls can appear as arguments and as the expected result, allowing test cases to express properties such as associativity, commutativity, or identities without hardcoding intermediate values.
+
+```code
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
+
+# associativity
+add(1::i32, add(2::i32, 3::i32)) = add(add(1::i32, 2::i32), 3::i32)
+
+# identity
+add(multiply(2::i32, 3::i32), 0::i32) = multiply(2::i32, 3::i32)
+```
+
+In this example:
+- `add(2::i32, 3::i32)` is a nested function call used as an argument
+- The result side can also be a function call, not just a literal
+- Both sides of `=` are evaluated; the test asserts they produce the same value

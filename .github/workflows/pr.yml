@@ -7,10 +7,10 @@ jobs:
     name: Build Website
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
       - name: Generate Static Site
         run: pixi run mkdocs build
@@ -18,10 +18,10 @@ jobs:
     name: Check editorconfig
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
       - name: Run editorconfig-checker
         run: pixi run editorconfig-checker
@@ -29,10 +29,10 @@ jobs:
     name: Check Protobuf Style
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
       - name: Lint Protobuf
         run: pixi run lint-protobuf
@@ -42,21 +42,34 @@ jobs:
     name: Check Protobuf
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
       - name: Compile protobuf
         run: pixi run generate-protobuf
+  antlr:
+    name: Check ANTLR Parsers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.0
+        with:
+          pixi-version: v0.73.0
+          cache: true
+      - name: Generate ANTLR parsers
+        run: pixi run generate-antlr
+      - name: Check generated ANTLR parsers
+        run: git diff --exit-code -- tests/coverage/antlr_parser tests/type/antlr_parser
   yamllint:
     name: Lint YAML extensions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
       - name: Run yamllint
         run: pixi run yamllint
@@ -64,10 +77,10 @@ jobs:
     name: Validate YAML extensions
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
       - name: Validate YAML extensions
         run: |
@@ -76,12 +89,12 @@ jobs:
     name: Dry-run release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
       - name: Dry-run release
         run: pixi run dry-run
@@ -89,10 +102,10 @@ jobs:
     name: Style-check and lint Python files, and run tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
       - name: Generate protobuf bindings
         run: pixi run generate-protobuf
@@ -106,10 +119,10 @@ jobs:
     name: Check proto-prefix.py
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
       - name: Run proto-prefix.py
         run: pixi run tools/proto_prefix.py output test proto go_package=github.com/test/proto

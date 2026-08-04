@@ -7,7 +7,7 @@ from tests.coverage.case_file_parser import parse_stream, parse_one_file
 from tests.coverage.coverage import validate_nullability
 from tests.coverage.extensions import Extension
 from tests.coverage.visitor import ParseError
-from tests.coverage.nodes import CaseLiteral
+from tests.coverage.nodes import CaseLiteral, FuncCallArg
 
 
 def parse_string(input_string):
@@ -41,6 +41,32 @@ add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
 
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 4
+
+
+def test_parse_func_call_arg():
+    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic")
+    tests = """# associativity
+add(1::i32, add(2::i32, 3::i32)) = add(add(1::i32, 2::i32), 3::i32)
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    tc = test_file.testcases[0]
+    assert tc.func_name == "add"
+    assert tc.args[0] == CaseLiteral("1", "i32")
+    assert tc.args[1] == FuncCallArg(
+        func_name="add",
+        args=[CaseLiteral("2", "i32"), CaseLiteral("3", "i32")],
+    )
+    assert tc.result == FuncCallArg(
+        func_name="add",
+        args=[
+            FuncCallArg(
+                func_name="add",
+                args=[CaseLiteral("1", "i32"), CaseLiteral("2", "i32")],
+            ),
+            CaseLiteral("3", "i32"),
+        ],
+    )
 
 
 def test_parse_date_time_example():
@@ -293,6 +319,47 @@ some_func(([1, 2], {'x': (3, null)})::struct<list<i32>, map<str, struct<i32, str
     )
     assert test_file.testcases[0].result == CaseLiteral(
         None, "map?<str,i32>", nullable=True
+    )
+
+
+def test_parse_user_defined_type_literal():
+    header = make_header("v1.0", "extension:io.substrait:extension_types")
+    tests = """# basic
+some_func((4, 2)::u!point) = (1, 1)::u!point
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].args[0] == CaseLiteral(["4", "2"], "u!point")
+    assert test_file.testcases[0].result == CaseLiteral(["1", "1"], "u!point")
+
+
+def test_parse_nullable_user_defined_type_literal():
+    header = make_header("v1.0", "extension:io.substrait:extension_types")
+    tests = """# basic
+some_func((4, 2)::u!point?) = (1, 1)::u!point?
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        ["4", "2"], "u!point?", nullable=True
+    )
+    assert test_file.testcases[0].result == CaseLiteral(
+        ["1", "1"], "u!point?", nullable=True
+    )
+
+
+def test_parse_nested_user_defined_type_literal():
+    header = make_header("v1.0", "extension:io.substrait:extension_types")
+    tests = """# basic
+some_func(((4, 2), (1, 1))::u!line) = ((0, 0), (3, 3))::u!line
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        [["4", "2"], ["1", "1"]], "u!line"
+    )
+    assert test_file.testcases[0].result == CaseLiteral(
+        [["0", "0"], ["3", "3"]], "u!line"
     )
 
 

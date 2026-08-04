@@ -24,20 +24,25 @@ jobs:
           client-id: ${{ secrets.APP_CLIENT_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
-          # request token for both substrait and substrait-packaging repos
-          # for ci/release/notify.sh
+          # request a token scoped to every repo ci/release/notify.sh touches:
+          # substrait (tag lookup), substrait-packaging (build trigger), and the
+          # downstream implementation repos (release notification issues)
           repositories: |
             substrait
             substrait-packaging
+            substrait-java
+            substrait-python
+            substrait-go
+            substrait-rs
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
 
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: prefix-dev/setup-pixi@v0.10.0
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
 
       - name: run semantic-release
