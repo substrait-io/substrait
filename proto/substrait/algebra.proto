@@ -36,8 +36,6 @@ message RelCommon {
   optional uint32 rel_anchor = 5;
 
   // Direct indicates no change on presence and ordering of fields in the output.
-  // This is also the behavior when emit_kind is left unset, though setting
-  // Direct explicitly is preferred.
   message Direct {}
 
   // Remap which fields are output and in which order
