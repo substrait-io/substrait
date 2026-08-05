@@ -22,11 +22,11 @@ def substrait_type_str(rule_num):
 
 
 def find_extension_files(dir_path: str):
-    """Paths of the function extension YAML files under dir_path, sorted."""
+    """Paths of the extension YAML files under dir_path, sorted."""
     extensions = []
     for root, _dirs, files in os.walk(dir_path):
         for file in files:
-            if file.endswith(".yaml") and file.startswith("functions_"):
+            if file.endswith(".yaml"):
                 extensions.append(os.path.join(root, file))
 
     extensions.sort()
