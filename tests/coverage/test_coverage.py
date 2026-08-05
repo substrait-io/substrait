@@ -5,7 +5,7 @@ import pytest
 from antlr4 import InputStream
 from tests.coverage.case_file_parser import parse_stream, parse_one_file
 from tests.coverage.coverage import validate_nullability
-from tests.coverage.extensions import Extension
+from tests.coverage.extensions import Extension, validate_impl_nullability_markers
 from tests.coverage.visitor import ParseError
 from tests.coverage.nodes import CaseLiteral, FuncCallArg
 
@@ -945,4 +945,151 @@ divide(5::i8, 0::i8) [on_division_by_zero:NAN] = null::i8?
 """
         )
         errors = validate_nullability(test_file, self._registry())
+        assert errors == []
+
+
+class TestDeclarationNullabilityMarkers:
+    """Tests for validate_impl_nullability_markers, which rejects nullability
+    markers that the declared nullability handling would ignore."""
+
+    def test_mirror_rejects_return_marker(self):
+        """MIRROR: the return marker is ignored, so it must not be declared."""
+        errors = validate_impl_nullability_markers(
+            {
+                "args": [{"value": "boolean", "name": "a"}],
+                "nullability": "MIRROR",
+                "return": "boolean?",
+            },
+            "functions_boolean.yaml: not",
+        )
+        assert len(errors) == 1
+        assert "boolean?" in errors[0]
+
+    def test_mirror_rejects_argument_marker(self):
+        """MIRROR: argument nullability is stripped before binding."""
+        errors = validate_impl_nullability_markers(
+            {
+                "args": [{"value": "boolean?", "name": "a"}],
+                "nullability": "MIRROR",
+                "return": "boolean",
+            },
+            "functions_boolean.yaml: not",
+        )
+        assert len(errors) == 1
+        assert "argument 'a'" in errors[0]
+
+    def test_mirror_without_markers_ok(self):
+        """MIRROR: a declaration with no markers is what the spec requires."""
+        errors = validate_impl_nullability_markers(
+            {
+                "args": [{"value": "boolean", "name": "a"}],
+                "nullability": "MIRROR",
+                "return": "boolean",
+            },
+            "functions_boolean.yaml: not",
+        )
+        assert errors == []
+
+    def test_nullability_defaults_to_mirror(self):
+        """An impl with no nullability key is MIRROR, so the return marker is ignored."""
+        errors = validate_impl_nullability_markers(
+            {"args": [{"value": "i8", "name": "x"}], "return": "i8?"},
+            "functions_test.yaml: f",
+        )
+        assert len(errors) == 1
+        assert "MIRROR" in errors[0]
+
+    def test_declared_output_allows_return_marker(self):
+        """DECLARED_OUTPUT: the return marker is authoritative, not ignored."""
+        errors = validate_impl_nullability_markers(
+            {
+                "args": [{"value": "boolean", "name": "a"}],
+                "nullability": "DECLARED_OUTPUT",
+                "return": "boolean?",
+            },
+            "functions_boolean.yaml: bool_and",
+        )
+        assert errors == []
+
+    def test_declared_output_rejects_argument_marker(self):
+        """DECLARED_OUTPUT: argument nullability is still stripped before binding."""
+        errors = validate_impl_nullability_markers(
+            {
+                "args": [{"value": "boolean?", "name": "a"}],
+                "nullability": "DECLARED_OUTPUT",
+                "return": "boolean?",
+            },
+            "functions_boolean.yaml: bool_and",
+        )
+        assert len(errors) == 1
+        assert "DECLARED_OUTPUT" in errors[0]
+
+    def test_discrete_is_exempt(self):
+        """DISCRETE: markers are meaningful on both sides."""
+        errors = validate_impl_nullability_markers(
+            {
+                "args": [{"value": "boolean?", "name": "a"}],
+                "nullability": "DISCRETE",
+                "return": "boolean?",
+            },
+            "functions_test.yaml: f",
+        )
+        assert errors == []
+
+    def test_ternary_in_derivation_expression_is_not_a_marker(self):
+        """A '?' in a derivation expression's intermediate lines is a ternary
+        operator, not a nullability marker."""
+        errors = validate_impl_nullability_markers(
+            {
+                "args": [
+                    {"value": "decimal<P1,S1>", "name": "x"},
+                    {"value": "decimal<P2,S2>", "name": "y"},
+                ],
+                "return": (
+                    "init_scale = max(S1,S2)\n"
+                    "init_prec = init_scale + max(P1 - S1, P2 - S2) + 1\n"
+                    "delta = init_prec - 38\n"
+                    "scale = init_prec > 38 ? scale_after_borrow : init_scale\n"
+                    "DECIMAL<prec, scale>"
+                ),
+            },
+            "functions_arithmetic_decimal.yaml: add",
+        )
+        assert errors == []
+
+    def test_derivation_expression_return_marker_is_rejected(self):
+        """The final line of a derivation expression is still checked."""
+        errors = validate_impl_nullability_markers(
+            {
+                "args": [{"value": "decimal<P,S>", "name": "x"}],
+                "return": ("precision = min(P - S + 1, 38)\ndecimal?<precision, 0>"),
+            },
+            "functions_rounding_decimal.yaml: ceil",
+        )
+        assert len(errors) == 1
+        assert "decimal?<precision, 0>" in errors[0]
+
+    def test_nested_markers_are_allowed(self):
+        """Only outermost nullability is ignored; nested markers are meaningful."""
+        errors = validate_impl_nullability_markers(
+            {
+                "args": [
+                    {"value": "list<any1>", "name": "x"},
+                    {"value": "func<any1 -> boolean?>", "name": "p"},
+                ],
+                "return": "list<any1>",
+            },
+            "functions_list.yaml: filter",
+        )
+        assert errors == []
+
+    def test_option_arguments_are_skipped(self):
+        """An option (enum) argument has no 'value' key."""
+        errors = validate_impl_nullability_markers(
+            {
+                "args": [{"value": "i8", "name": "x"}, {"options": ["A", "B"]}],
+                "return": "i8",
+            },
+            "functions_test.yaml: f",
+        )
         assert errors == []
