@@ -578,6 +578,8 @@ message ExpandRel {
   // expression was provided).
   repeated ExpandField fields = 4;
 
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+
   message ExpandField {
     oneof field_type {
       // Field that switches output based on which duplicate is being output.  Every
