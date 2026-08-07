@@ -815,6 +815,8 @@ message UpdateRel {
   // The list of transformations to apply to the columns of the named_table
   repeated TransformExpression transformations = 4;
 
+  RelCommon common = 6;
+
   message TransformExpression {
     Expression transformation = 1; // the transformation to apply
     int32 column_target = 2; // index of the column to apply the transformation to
