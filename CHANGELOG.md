@@ -1,6 +1,34 @@
 Release Notes
 ---
 
+## [0.100.0](https://github.com/substrait-io/substrait/compare/v0.99.0...v0.100.0) (2026-08-09)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** the two-argument `subtract:ptstz_iyear` overload,
+`subtract(precision_timestamp_tz<P>, interval_year)`, is deprecated as of
+0.100.0. Use the three-argument `subtract:ptstz_iyear_str` overload,
+`subtract(precision_timestamp_tz<P>, interval_year, string)`, and pass an
+explicit IANA timezone instead. `interval_year` carries a number of months,
+and month arithmetic on an instant is only definable as field arithmetic on
+a civil datetime; the timezone is what maps the instant to that calendar,
+so the two-argument form has no well-defined result. This also aligns
+`subtract` with `add`, which offers only the three-argument form for this
+type combination. Nothing is removed by this change: the deprecation is
+metadata only, consumers are not required to understand or validate it, and
+no existing plan changes meaning. The overload is scheduled for removal in
+a later release.
+
+### Features
+
+* add advanced_extension to ExpandRel ([#1167](https://github.com/substrait-io/substrait/issues/1167)) ([4d5d57a](https://github.com/substrait-io/substrait/commit/4d5d57a1918edaacef529845dcc1d9664aa6068d))
+* **extensions:** add unsigned integer extension types (u8, u16, u32, u64) ([#953](https://github.com/substrait-io/substrait/issues/953)) ([f5e0715](https://github.com/substrait-io/substrait/commit/f5e0715454c4a7b54ed13efe018f590d1618623d))
+* **extensions:** deprecate subtract(precision_timestamp_tz, interval_year) overload ([#1160](https://github.com/substrait-io/substrait/issues/1160)) ([993ad15](https://github.com/substrait-io/substrait/commit/993ad15ca6c8b0dbcafef7316f48d83e20902dd2))
+
+### Bug Fixes
+
+* remove ignored nullability markers from MIRROR declarations ([#1148](https://github.com/substrait-io/substrait/issues/1148)) ([f77d2d4](https://github.com/substrait-io/substrait/commit/f77d2d4b0e0a1640fa323c7370ccfab8c15877ef))
+
 ## [0.99.0](https://github.com/substrait-io/substrait/compare/v0.98.0...v0.99.0) (2026-07-26)
 
 ### Features
