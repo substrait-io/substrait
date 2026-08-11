@@ -1386,8 +1386,11 @@ message Expression {
     Bound upper_bound = 4;
 
     enum BoundsType {
+      // Unspecified. Producers must set one of the defined bounds types when
+      // either bound is Preceding or Following.
       BOUNDS_TYPE_UNSPECIFIED = 0;
-      // Bounds are physical row offsets in the declared ordering.
+      // Bounds are physical row offsets in the declared ordering. If no
+      // ordering is declared, the row order is implementation-defined.
       BOUNDS_TYPE_ROWS = 1;
       // Bounds are value offsets from the current row's ordering value. This
       // bounds type requires exactly one ordering expression. Preceding moves
@@ -1402,6 +1405,15 @@ message Expression {
       message Preceding {
         // A strictly positive integer specifying the offset of this bound.
         // Use CurrentRow for offset zero and Following for negative offsets.
+        //
+        // At least one of `offset` and `offset_expr` must be set; setting
+        // neither is invalid. Consumers must use `offset_expr` when it is set
+        // and ignore `offset`. Producers may set both during migration, in
+        // which case `offset` must be the int64-literal equivalent of
+        // `offset_expr` -- possible only for BOUNDS_TYPE_ROWS with a literal
+        // offset -- so that consumers which do not yet read `offset_expr` can
+        // still execute the plan.
+        //
         // Deprecated: use `offset_expr` instead.
         int64 offset = 1 [deprecated = true];
 
@@ -1409,13 +1421,20 @@ message Expression {
         // row. Its interpretation depends on `WindowFunction.bounds_type`:
         //
         // * BOUNDS_TYPE_ROWS: evaluates to a strictly positive integer number
-        //   of rows. The recommended type is int64.
+        //   of rows. The type must be int64.
         // * BOUNDS_TYPE_RANGE: evaluates to a strictly positive distance
-        //   compatible with the single ordering expression and applies that
-        //   distance toward values earlier in the declared ordering.
+        //   applied toward values earlier in the declared ordering. Its type D
+        //   must be compatible with the type T of the single ordering
+        //   expression, i.e. `add(T, D) -> T` and `subtract(T, D) -> T` must
+        //   be defined (e.g. timestamp/interval_day, decimal/decimal,
+        //   i64/i64).
         //
-        // A null, zero, or negative result is invalid. Use CurrentRow for zero
-        // and Following for a negative distance.
+        // A null or negative result is invalid; a zero result is equivalent
+        // to CurrentRow. Use Following for a negative distance.
+        //
+        // Field references resolve against the input schema of the relation
+        // containing this window function; the expression is evaluated once
+        // per input record. It must not contain window or aggregate functions.
         Expression offset_expr = 2;
       }
 
@@ -1423,6 +1442,15 @@ message Expression {
       message Following {
         // A strictly positive integer specifying the offset of this bound.
         // Use CurrentRow for offset zero and Preceding for negative offsets.
+        //
+        // At least one of `offset` and `offset_expr` must be set; setting
+        // neither is invalid. Consumers must use `offset_expr` when it is set
+        // and ignore `offset`. Producers may set both during migration, in
+        // which case `offset` must be the int64-literal equivalent of
+        // `offset_expr` -- possible only for BOUNDS_TYPE_ROWS with a literal
+        // offset -- so that consumers which do not yet read `offset_expr` can
+        // still execute the plan.
+        //
         // Deprecated: use `offset_expr` instead.
         int64 offset = 1 [deprecated = true];
 
@@ -1430,13 +1458,20 @@ message Expression {
         // row. Its interpretation depends on `WindowFunction.bounds_type`:
         //
         // * BOUNDS_TYPE_ROWS: evaluates to a strictly positive integer number
-        //   of rows. The recommended type is int64.
+        //   of rows. The type must be int64.
         // * BOUNDS_TYPE_RANGE: evaluates to a strictly positive distance
-        //   compatible with the single ordering expression and applies that
-        //   distance toward values later in the declared ordering.
+        //   applied toward values later in the declared ordering. Its type D
+        //   must be compatible with the type T of the single ordering
+        //   expression, i.e. `add(T, D) -> T` and `subtract(T, D) -> T` must
+        //   be defined (e.g. timestamp/interval_day, decimal/decimal,
+        //   i64/i64).
         //
-        // A null, zero, or negative result is invalid. Use CurrentRow for zero
-        // and Preceding for a negative distance.
+        // A null or negative result is invalid; a zero result is equivalent
+        // to CurrentRow. Use Preceding for a negative distance.
+        //
+        // Field references resolve against the input schema of the relation
+        // containing this window function; the expression is evaluated once
+        // per input record. It must not contain window or aggregate functions.
         Expression offset_expr = 2;
       }
 

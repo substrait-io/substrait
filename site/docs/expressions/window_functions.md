@@ -30,10 +30,12 @@ When binding a window function, the binding must include the following additiona
 
 The interpretation of an offset depends on `BoundsType`:
 
-* `BOUNDS_TYPE_ROWS` defines physical row offsets in the declared ordering. `offset_expr` must evaluate to a strictly positive integer number of rows; `int64` is the recommended type.
-* `BOUNDS_TYPE_RANGE` defines value offsets from the current row's ordering value and requires exactly one ordering expression. `offset_expr` must evaluate to a strictly positive distance compatible with that ordering expression. A range boundary is inclusive.
+* `BOUNDS_TYPE_ROWS` defines physical row offsets in the declared ordering. `offset_expr` must evaluate to a strictly positive number of rows and must have type `int64`. If no ordering is declared, the row order is implementation-defined.
+* `BOUNDS_TYPE_RANGE` defines value offsets from the current row's ordering value and requires exactly one ordering expression. `offset_expr` must evaluate to a strictly positive distance whose type `D` is compatible with the ordering expression's type `T` — that is, `add(T, D) -> T` and `subtract(T, D) -> T` must be defined (for example `timestamp`/`interval_day`, `decimal`/`decimal`, `i64`/`i64`). For a `Preceding` bound the boundary value is `subtract(current, offset)` under an ascending ordering and `add(current, offset)` under a descending ordering; `Following` is the mirror. A range boundary is inclusive.
 
-`offset_expr` is the recommended way to specify an offset. A literal integer `offset` is still accepted for compatibility but is deprecated. Evaluating `offset_expr` to null, zero, or a negative value should result in an error. Use `CurrentRow` for zero and the opposite bound direction for a negative distance.
+`offset_expr` is the recommended way to specify an offset. A literal integer `offset` is still accepted for compatibility but is deprecated and will be removed in a future release. At least one of the two must be set; consumers must use `offset_expr` when it is set and ignore `offset`. During migration a producer may set both, with `offset` carrying the int64-literal equivalent — possible only for `BOUNDS_TYPE_ROWS` with a literal offset — so that consumers which do not yet read `offset_expr` can still execute the plan.
+
+`offset_expr` is evaluated once per input record and may reference the input's fields, but must not contain window or aggregate functions. Evaluating it to null or a negative value should result in an error; evaluating it to zero is equivalent to `CurrentRow`.
 
 ## Aggregate Functions as Window Functions
 
