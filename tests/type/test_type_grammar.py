@@ -115,6 +115,39 @@ def test_parse_valid_type_expressions():
         parse_type_expression(case)
 
 
+def render_precedence(ctx):
+    """Render an expr parse tree as a fully-parenthesized string.
+
+    Binary operators all expose ``left``/``op``/``right``; parenthesized
+    expressions pass through to their inner expr so the rendered structure
+    reflects grammar-derived precedence rather than the source parentheses.
+    """
+    paren = SubstraitTypeParser.ParenExpressionContext
+    if isinstance(ctx, paren):
+        return render_precedence(ctx.expr())
+    if getattr(ctx, "op", None) is not None:
+        left = render_precedence(ctx.left)
+        right = render_precedence(ctx.right)
+        return f"({left} {ctx.op.text} {right})"
+    return ctx.getText()
+
+
+def test_operator_precedence():
+    """Binary operators bind with conventional precedence."""
+    cases = [
+        ("1 + 2 * 3", "(1 + (2 * 3))"),
+        ("1 + 2 * 3 - 4 / 5", "((1 + (2 * 3)) - (4 / 5))"),
+        ("1 * 2 + 3", "((1 * 2) + 3)"),
+        ("(1 + 2) * 3", "((1 + 2) * 3)"),
+        ("1 + 2 < 3 * 4", "((1 + 2) < (3 * 4))"),
+        ("a and b or c", "((a and b) or c)"),
+    ]
+
+    for expression, expected in cases:
+        tree = parse_type_expression(expression)
+        assert render_precedence(tree.expr()) == expected, expression
+
+
 def test_extension_yaml_type_expressions_are_grammar_compliant():
     """All type expressions in checked-in extension YAML parse successfully."""
     failures = []

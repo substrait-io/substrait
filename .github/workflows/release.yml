@@ -35,14 +35,14 @@ jobs:
             substrait-go
             substrait-rs
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
 
-      - uses: prefix-dev/setup-pixi@v0.9.6
+      - uses: prefix-dev/setup-pixi@v0.10.1
         with:
-          pixi-version: v0.66.0
+          pixi-version: v0.73.0
           cache: true
 
       - name: run semantic-release

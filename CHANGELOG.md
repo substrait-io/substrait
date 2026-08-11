@@ -1,6 +1,99 @@
 Release Notes
 ---
 
+## [0.100.0](https://github.com/substrait-io/substrait/compare/v0.99.0...v0.100.0) (2026-08-09)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** the two-argument `subtract:ptstz_iyear` overload,
+`subtract(precision_timestamp_tz<P>, interval_year)`, is deprecated as of
+0.100.0. Use the three-argument `subtract:ptstz_iyear_str` overload,
+`subtract(precision_timestamp_tz<P>, interval_year, string)`, and pass an
+explicit IANA timezone instead. `interval_year` carries a number of months,
+and month arithmetic on an instant is only definable as field arithmetic on
+a civil datetime; the timezone is what maps the instant to that calendar,
+so the two-argument form has no well-defined result. This also aligns
+`subtract` with `add`, which offers only the three-argument form for this
+type combination. Nothing is removed by this change: the deprecation is
+metadata only, consumers are not required to understand or validate it, and
+no existing plan changes meaning. The overload is scheduled for removal in
+a later release.
+
+### Features
+
+* add advanced_extension to ExpandRel ([#1167](https://github.com/substrait-io/substrait/issues/1167)) ([4d5d57a](https://github.com/substrait-io/substrait/commit/4d5d57a1918edaacef529845dcc1d9664aa6068d))
+* **extensions:** add unsigned integer extension types (u8, u16, u32, u64) ([#953](https://github.com/substrait-io/substrait/issues/953)) ([f5e0715](https://github.com/substrait-io/substrait/commit/f5e0715454c4a7b54ed13efe018f590d1618623d))
+* **extensions:** deprecate subtract(precision_timestamp_tz, interval_year) overload ([#1160](https://github.com/substrait-io/substrait/issues/1160)) ([993ad15](https://github.com/substrait-io/substrait/commit/993ad15ca6c8b0dbcafef7316f48d83e20902dd2))
+
+### Bug Fixes
+
+* remove ignored nullability markers from MIRROR declarations ([#1148](https://github.com/substrait-io/substrait/issues/1148)) ([f77d2d4](https://github.com/substrait-io/substrait/commit/f77d2d4b0e0a1640fa323c7370ccfab8c15877ef))
+
+## [0.99.0](https://github.com/substrait-io/substrait/compare/v0.98.0...v0.99.0) (2026-07-26)
+
+### Features
+
+* add unbound type for partially bound plans ([#1081](https://github.com/substrait-io/substrait/issues/1081)) ([5153493](https://github.com/substrait-io/substrait/commit/5153493472805c4b07f1cb835c304b72805914ad))
+
+## [0.98.0](https://github.com/substrait-io/substrait/compare/v0.97.0...v0.98.0) (2026-07-19)
+
+### ⚠ BREAKING CHANGES
+
+* **protos:** The deprecated `left_keys` and `right_keys` fields have
+been removed from `HashJoinRel` and `MergeJoinRel`. Producers must use
+the `keys` field instead.
+* **protos:** The deprecated `offset` and `count` fields have been
+removed from `FetchRel`. Producers must use `offset_expr` and
+`count_expr` instead.
+* **protos:** remove deprecated VirtualTable.values field (#1131)
+* **protos:** remove deprecated IntervalDayToSecond.microseconds field (#1116)
+
+### Features
+
+* **protos:** remove deprecated IntervalDayToSecond.microseconds field ([#1116](https://github.com/substrait-io/substrait/issues/1116)) ([a4ad9f4](https://github.com/substrait-io/substrait/commit/a4ad9f4208e827be845ecf3e307f58277e2cfc0f))
+* **protos:** remove deprecated left_keys/right_keys from join rels ([#1129](https://github.com/substrait-io/substrait/issues/1129)) ([08b2736](https://github.com/substrait-io/substrait/commit/08b27364728822bf00bf13a82998f09f1c4b96d7))
+* **protos:** remove deprecated offset/count from FetchRel ([#1130](https://github.com/substrait-io/substrait/issues/1130)) ([b7e8d02](https://github.com/substrait-io/substrait/commit/b7e8d027e01e21656ab498d23db4335098f50745))
+* **protos:** remove deprecated VirtualTable.values field ([#1131](https://github.com/substrait-io/substrait/issues/1131)) ([7b0bd66](https://github.com/substrait-io/substrait/commit/7b0bd664b5e09bf6a230742b17511716040a9d21))
+
+### Bug Fixes
+
+* **tests:** correct decimal sum and nullif results ([#1048](https://github.com/substrait-io/substrait/issues/1048)) ([a750c25](https://github.com/substrait-io/substrait/commit/a750c25c3bd3c9e82fb10f1c1bbf3d0a273a0f46))
+
+## [0.97.0](https://github.com/substrait-io/substrait/compare/v0.96.0...v0.97.0) (2026-07-12)
+
+### ⚠ BREAKING CHANGES
+
+* **protos:** An unset `IntervalDay.precision` no longer has a
+defined meaning. Previously an unset precision was treated as `6`
+(microseconds); implementations should now reject an unset precision
+instead of applying a default. Producers must set `precision`
+explicitly.
+
+### Features
+
+* **protos:** require explicit interval precision and allow picoseconds ([#1110](https://github.com/substrait-io/substrait/issues/1110)) ([858397d](https://github.com/substrait-io/substrait/commit/858397de179721218bb5ca4a329121ee053e9cab))
+
+## [0.96.0](https://github.com/substrait-io/substrait/compare/v0.95.0...v0.96.0) (2026-07-05)
+
+### Features
+
+* introduce LateralJoinRel for a correlated subquery evaluation ([#973](https://github.com/substrait-io/substrait/issues/973)) ([3ae33e7](https://github.com/substrait-io/substrait/commit/3ae33e7a46bfcda61d1c9acb11c88e0094e5d5c0)), closes [#1031](https://github.com/substrait-io/substrait/issues/1031)
+
+## [0.95.0](https://github.com/substrait-io/substrait/compare/v0.94.0...v0.95.0) (2026-06-28)
+
+### ⚠ BREAKING CHANGES
+
+* **grammar:** Fixes operator precedence when parsing return type expressions from extension YAMLs. This can be breaking for user defined extensions YAMLs which may have relied on the faulty operator precedence parsing behavior which is now fixed to use conventional operator precedence.
+* **protos:** removes deprecated Type.user_defined_type_reference field
+
+### Features
+
+* **protos:** remove deprecated Type.user_defined_type_reference field ([#1095](https://github.com/substrait-io/substrait/issues/1095)) ([0cdad6d](https://github.com/substrait-io/substrait/commit/0cdad6dedee6623ac778a67e5be520fc9bc5f06c))
+
+### Bug Fixes
+
+* **grammar:** give binary operators conventional precedence ([#1107](https://github.com/substrait-io/substrait/issues/1107)) ([d4eee3d](https://github.com/substrait-io/substrait/commit/d4eee3dad3702d4e767fe32b987777fb1aac8eb5))
+
 ## [0.94.0](https://github.com/substrait-io/substrait/compare/v0.93.0...v0.94.0) (2026-06-14)
 
 ### Features

@@ -32,8 +32,10 @@ extra:
     provider: google
     property: G-57ZX8S93Q5
   social:
-    - icon: fontawesome/brands/twitter
+    - icon: fontawesome/brands/x-twitter
       link: https://twitter.com/substrait_io
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/substrait/
 repo_url: https://github.com/substrait-io/substrait
 plugins:
   - table-reader
