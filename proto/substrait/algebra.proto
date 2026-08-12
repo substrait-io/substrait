@@ -1390,9 +1390,10 @@ message Expression {
 
     // When one or more partition expressions are specified, two records are
     // considered to be in the same partition if and only if these expressions
-    // yield an equal record of values for both. When computing the window
-    // function, only the subset of records within the bounds that are also in
-    // the same partition as the current record are aggregated.
+    // yield an equal record of values for both (NULLs are considered equal).
+    // When computing the window function, only the subset of records within
+    // the bounds that are also in the same partition as the current record
+    // are aggregated.
     repeated Expression partitions = 2;
 
     // Defines the bounds type: ROWS, RANGE
@@ -1400,15 +1401,15 @@ message Expression {
 
     // Defines the record relative to the current record from which the window
     // extends. The bound is inclusive. If the lower bound indexes a record
-    // greater than the upper bound, TODO (null range/no records passed?
-    // wrapping around as if lower/upper were swapped? error? null?).
+    // greater than the upper bound (i.e., empty partition), then the behavior
+    // follows the semantics of the window function over the empty partition.
     // Optional; defaults to the start of the partition.
     Bound lower_bound = 5;
 
     // Defines the record relative to the current record up to which the window
     // extends. The bound is inclusive. If the upper bound indexes a record
-    // less than the lower bound, TODO (null range/no records passed?
-    // wrapping around as if lower/upper were swapped? error? null?).
+    // less than the lower bound (i.e., empty partition), then the behavior
+    // follows the semantics of the window function over the empty partition.
     // Optional; defaults to the end of the partition.
     Bound upper_bound = 4;
 
@@ -1417,11 +1418,11 @@ message Expression {
       // either bound is Preceding or Following.
       BOUNDS_TYPE_UNSPECIFIED = 0;
       // Bounds are physical row offsets in the declared ordering. If no
-      // ordering is declared, the row order is implementation-defined.
+      // ordering is declared, the row order is undefined (i.e., no order).
       BOUNDS_TYPE_ROWS = 1;
       // Bounds are value offsets from the current row's ordering value. This
-      // bounds type requires exactly one ordering expression. Preceding moves
-      // toward values earlier in the declared ordering; Following moves toward
+      // bounds type requires exactly one ordering expression if Preceding or Following is used.
+      // Preceding moves toward values earlier in the declared ordering; Following moves toward
       // values later in the declared ordering. Bounds are inclusive.
       BOUNDS_TYPE_RANGE = 2;
     }
