@@ -1468,7 +1468,7 @@ message Expression {
         // A null result is invalid. When the current row's ordering value is null,
         // a RANGE offset bound is equivalent to CurrentRow.
         // A negative result is invalid; a zero result is equivalent
-        // to CurrentRow. Use Preceding for a negative distance.
+        // to CurrentRow. Use Following for a bound after the current row.
         //
         // Field references resolve against the input schema of the relation
         // containing this window function; the expression must behave
@@ -1509,7 +1509,7 @@ message Expression {
         // A null result is invalid. When the current row's ordering value is null,
         // a RANGE offset bound is equivalent to CurrentRow.
         // A negative result is invalid; a zero result is equivalent
-        // to CurrentRow. Use Preceding for a negative distance.
+        // to CurrentRow. Use Preceding for a bound before the current row.
         //
         // Field references resolve against the input schema of the relation
         // containing this window function; the expression must behave
