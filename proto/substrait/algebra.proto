@@ -1382,6 +1382,10 @@ message Expression {
     // priority; only if a sort field determines two records to be equivalent
     // is the next field queried. This field is optional, and is only allowed
     // if the window function is defined to support sorting.
+    //
+    // For RANGE bounds type, SORT_DIRECTION_CLUSTERED and custom comparison
+    // functions are not allowed in any of the sorts if either bound is Preceding
+    // or Following.
     repeated SortField sorts = 3;
 
     // Specifies whether equivalent records are merged before being aggregated.
@@ -1390,7 +1394,7 @@ message Expression {
 
     // When one or more partition expressions are specified, two records are
     // considered to be in the same partition if and only if these expressions
-    // yield an equal record of values for both (NULLs are considered equal).
+    // yield an equal record of values for both (nulls are considered equal).
     // When computing the window function, only the subset of records within
     // the bounds that are also in the same partition as the current record
     // are aggregated.
@@ -1401,35 +1405,38 @@ message Expression {
 
     // Defines the record relative to the current record from which the window
     // extends. The bound is inclusive. If the lower bound indexes a record
-    // greater than the upper bound (i.e., empty partition), then the behavior
-    // follows the semantics of the window function over the empty partition.
+    // greater than the upper bound (i.e., empty frame due to contradiction),
+    // then the behavior follows the semantics of the window function over
+    // the empty frame (e.g., SUM yields NULL, COUNT(*) yields 0).
     // Optional; defaults to the start of the partition.
     Bound lower_bound = 5;
 
     // Defines the record relative to the current record up to which the window
     // extends. The bound is inclusive. If the upper bound indexes a record
-    // less than the lower bound (i.e., empty partition), then the behavior
-    // follows the semantics of the window function over the empty partition.
+    // less than the lower bound (i.e., empty frame due to contradiction),
+    // then the behavior follows the semantics of the window function over
+    // the empty frame (e.g., SUM yields NULL, COUNT(*) yields 0).
     // Optional; defaults to the end of the partition.
     Bound upper_bound = 4;
 
     enum BoundsType {
-      // Unspecified. Producers must set one of the defined bounds types when
-      // either bound is Preceding or Following.
+      // Unspecified. Producers must set one of the defined bounds types
+      // when either bound is CurrentRow, Preceding or Following.
       BOUNDS_TYPE_UNSPECIFIED = 0;
-      // Bounds are physical row offsets in the declared ordering. If no
-      // ordering is declared, the row order is undefined (i.e., no order).
+      // Bounds are physical row offsets in the declared ordering in 'sorts'.
+      // If no ordering is declared, no order is guaranteed.
       BOUNDS_TYPE_ROWS = 1;
-      // Bounds are value offsets from the current row's ordering value. This
-      // bounds type requires exactly one ordering expression if Preceding or Following is used.
-      // Preceding moves toward values earlier in the declared ordering; Following moves toward
-      // values later in the declared ordering. Bounds are inclusive.
+      // Bounds are value offsets from the current row's ordering value.
+      // This bounds type requires exactly one ordering expression if Preceding or Following is used.
+      // Preceding moves toward values earlier in the declared ordering in 'sorts';
+      // Following moves toward values later in the declared ordering in 'sorts'.
+      // Bounds are inclusive.
       BOUNDS_TYPE_RANGE = 2;
     }
 
     // Defines one of the two boundaries for the window of a window function.
     message Bound {
-      // Defines a bound earlier than the current record in the declared ordering.
+      // Defines a bound earlier than the current record in the declared ordering in 'sorts'.
       message Preceding {
         // A strictly positive integer specifying the offset of this bound.
         // Use CurrentRow for offset zero and Following for negative offsets.
@@ -1449,25 +1456,28 @@ message Expression {
         // Expression specifying the distance of this bound from the current
         // row. Its interpretation depends on `WindowFunction.bounds_type`:
         //
-        // * BOUNDS_TYPE_ROWS: evaluates to a strictly positive integer number
+        // * BOUNDS_TYPE_ROWS: evaluates to a non-negative integer number
         //   of rows. The type must be int64.
-        // * BOUNDS_TYPE_RANGE: evaluates to a strictly positive distance
-        //   applied toward values earlier in the declared ordering. Its type D
-        //   must be compatible with the type T of the single ordering
+        // * BOUNDS_TYPE_RANGE: evaluates to a non-negative distance
+        //   applied toward values earlier in the declared ordering in 'sorts'.
+        //   Its type D must be compatible with the type T of the single ordering
         //   expression, i.e. `add(T, D) -> T` and `subtract(T, D) -> T` must
         //   be defined (e.g. timestamp/interval_day, decimal/decimal,
         //   i64/i64).
         //
-        // A null or negative result is invalid; a zero result is equivalent
-        // to CurrentRow. Use Following for a negative distance.
+        // A null result is invalid. When the current row's ordering value is null,
+        // a RANGE offset bound is equivalent to CurrentRow.
+        // A negative result is invalid; a zero result is equivalent
+        // to CurrentRow. Use Preceding for a negative distance.
         //
         // Field references resolve against the input schema of the relation
-        // containing this window function; the expression is evaluated once
-        // per input record. It must not contain window or aggregate functions.
+        // containing this window function; the expression must behave
+        // as if evaluated once per input record.
+        // It must not contain window or aggregate functions.
         Expression offset_expr = 2;
       }
 
-      // Defines a bound later than the current record in the declared ordering.
+      // Defines a bound later than the current record in the declared ordering in 'sorts'.
       message Following {
         // A strictly positive integer specifying the offset of this bound.
         // Use CurrentRow for offset zero and Preceding for negative offsets.
@@ -1487,25 +1497,29 @@ message Expression {
         // Expression specifying the distance of this bound from the current
         // row. Its interpretation depends on `WindowFunction.bounds_type`:
         //
-        // * BOUNDS_TYPE_ROWS: evaluates to a strictly positive integer number
+        // * BOUNDS_TYPE_ROWS: evaluates to a non-negative integer number
         //   of rows. The type must be int64.
-        // * BOUNDS_TYPE_RANGE: evaluates to a strictly positive distance
-        //   applied toward values later in the declared ordering. Its type D
-        //   must be compatible with the type T of the single ordering
+        // * BOUNDS_TYPE_RANGE: evaluates to a non-negative distance
+        //   applied toward values later in the declared ordering in 'sorts'.
+        //   Its type D must be compatible with the type T of the single ordering
         //   expression, i.e. `add(T, D) -> T` and `subtract(T, D) -> T` must
         //   be defined (e.g. timestamp/interval_day, decimal/decimal,
         //   i64/i64).
         //
-        // A null or negative result is invalid; a zero result is equivalent
+        // A null result is invalid. When the current row's ordering value is null,
+        // a RANGE offset bound is equivalent to CurrentRow.
+        // A negative result is invalid; a zero result is equivalent
         // to CurrentRow. Use Preceding for a negative distance.
         //
         // Field references resolve against the input schema of the relation
-        // containing this window function; the expression is evaluated once
-        // per input record. It must not contain window or aggregate functions.
+        // containing this window function; the expression must behave
+        // as if evaluated once per input record.
+        // It must not contain window or aggregate functions.
         Expression offset_expr = 2;
       }
 
-      // Defines that the bound extends to or from the current record.
+      // Defines that the bound extends to or from the current record with ROWS bound,
+      // or peer records (i.e., the set of records with equal sort key values) with RANGE bound.
       message CurrentRow {}
 
       // Defines an "unbounded bound": for lower bounds this means the start
@@ -1514,10 +1528,10 @@ message Expression {
       message Unbounded {}
 
       oneof kind {
-        // The bound is earlier than the current record in the declared ordering.
+        // The bound is earlier than the current record in the declared ordering in 'sorts'.
         Preceding preceding = 1;
 
-        // The bound is later than the current record in the declared ordering.
+        // The bound is later than the current record in the declared ordering in 'sorts'.
         Following following = 2;
 
         // The bound extends to the current record.
