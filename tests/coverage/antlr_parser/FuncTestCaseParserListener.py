@@ -423,12 +423,30 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#userDefinedArg.
+    def enterUserDefinedArg(self, ctx:FuncTestCaseParser.UserDefinedArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#userDefinedArg.
+    def exitUserDefinedArg(self, ctx:FuncTestCaseParser.UserDefinedArgContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#lambdaArg.
     def enterLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
         pass
 
     # Exit a parse tree produced by FuncTestCaseParser#lambdaArg.
     def exitLambdaArg(self, ctx:FuncTestCaseParser.LambdaArgContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#funcCallArg.
+    def enterFuncCallArg(self, ctx:FuncTestCaseParser.FuncCallArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#funcCallArg.
+    def exitFuncCallArg(self, ctx:FuncTestCaseParser.FuncCallArgContext):
         pass
 
 
@@ -609,6 +627,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#userDefined.
     def exitUserDefined(self, ctx:FuncTestCaseParser.UserDefinedContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#userDefinedType.
+    def enterUserDefinedType(self, ctx:FuncTestCaseParser.UserDefinedTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#userDefinedType.
+    def exitUserDefinedType(self, ctx:FuncTestCaseParser.UserDefinedTypeContext):
         pass
 
 

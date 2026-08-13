@@ -13,7 +13,7 @@ scalar_functions:
         return: |-
           integral_least_num_digits = P - S + 1
           precision = min(integral_least_num_digits, 38)
-          decimal?<precision, 0>
+          decimal<precision, 0>
   -
     name: "floor"
     description: >
@@ -25,7 +25,7 @@ scalar_functions:
         return: |-
           integral_least_num_digits = P - S + 1
           precision = min(integral_least_num_digits, 38)
-          decimal?<precision, 0>
+          decimal<precision, 0>
   -
     name: "round"
     description: >

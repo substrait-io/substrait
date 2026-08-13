@@ -6,6 +6,7 @@ from tests.coverage.antlr_parser.FuncTestCaseParserVisitor import (
 from tests.coverage.nodes import (
     AggregateArgument,
     CaseGroup,
+    FuncCallArg,
     TestFile,
     TestCase,
     CaseLiteral,
@@ -310,8 +311,12 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitStructArg(ctx.structArg())
         if ctx.mapArg() is not None:
             return self.visitMapArg(ctx.mapArg())
+        if ctx.userDefinedArg() is not None:
+            return self.visitUserDefinedArg(ctx.userDefinedArg())
         if ctx.lambdaArg() is not None:
             return self.visitLambdaArg(ctx.lambdaArg())
+        if ctx.funcCallArg() is not None:
+            return self.visitFuncCallArg(ctx.funcCallArg())
         if ctx.enumArg() is not None:
             return self.visitEnumArg(ctx.enumArg())
 
@@ -474,6 +479,13 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             nullable=ctx.mapType().isnull is not None,
         )
 
+    def visitUserDefinedArg(self, ctx: FuncTestCaseParser.UserDefinedArgContext):
+        return CaseLiteral(
+            value=self.visitLiteralStruct(ctx.literalStruct()),
+            type=ctx.userDefinedType().getText(),
+            nullable=ctx.userDefinedType().isnull is not None,
+        )
+
     def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
         return [self.visitCompoundLiteral(element) for element in ctx.compoundLiteral()]
 
@@ -507,6 +519,12 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             value="lambda",
             type=lambda_type,
             nullable=ctx.funcType().isnull is not None,
+        )
+
+    def visitFuncCallArg(self, ctx: FuncTestCaseParser.FuncCallArgContext):
+        return FuncCallArg(
+            func_name=ctx.identifier().getText(),
+            args=self.visitArguments(ctx.arguments()),
         )
 
     def visitEnumArg(self, ctx: FuncTestCaseParser.EnumArgContext):

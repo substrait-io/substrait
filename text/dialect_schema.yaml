@@ -54,6 +54,7 @@ properties:
           - INTERVAL_DAY
           - INTERVAL_YEAR
           - UUID
+          - UNBOUND
           - DECIMAL
           - STRUCT
           - LIST
@@ -78,6 +79,7 @@ properties:
         - $ref: "#/definitions/type_interval_day"
         - $ref: "#/definitions/type_interval_year"
         - $ref: "#/definitions/type_uuid"
+        - $ref: "#/definitions/type_unbound"
         - $ref: "#/definitions/type_decimal"
         - $ref: "#/definitions/type_struct"
         - $ref: "#/definitions/type_list"
@@ -99,6 +101,7 @@ properties:
           - AGGREGATE
           - SORT
           - JOIN
+          - LATERAL_JOIN
           - PROJECT
           - SET
           - CROSS
@@ -118,6 +121,7 @@ properties:
         - $ref: "#/definitions/aggregate_relation"
         - $ref: "#/definitions/sort_relation"
         - $ref: "#/definitions/join_relation"
+        - $ref: "#/definitions/lateral_join_relation"
         - $ref: "#/definitions/project_relation"
         - $ref: "#/definitions/set_relation"
         - $ref: "#/definitions/extension_single_relation"
@@ -611,11 +615,11 @@ definitions:
           supported by this dialect.
 
 
-          Since the maximum precision in Substrait for INTERVAL_DAY is 9
-          the value must be in range: 0 <= max_precision <= 9.
+          Since the maximum precision in Substrait for INTERVAL_DAY is 12
+          the value must be in range: 0 <= max_precision <= 12.
         type: integer
         minimum: 0
-        maximum: 9
+        maximum: 12
   type_interval_year:
     type: object
     additionalProperties: false
@@ -635,6 +639,18 @@ definitions:
     properties:
       type:
         const: UUID
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
+      system_metadata:
+        $ref: "#/definitions/system_type_metadata"
+  type_unbound:
+    type: object
+    additionalProperties: false
+    required: [type]
+    properties:
+      type:
+        const: UNBOUND
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.
@@ -743,6 +759,18 @@ definitions:
         - RIGHT_SINGLE
         - LEFT_MARK
         - RIGHT_MARK
+  lateral_join_types:
+    type: array
+    uniqueItems: true
+    description: The list of possible join types used by lateral join relations.
+    items:
+      enum:
+        - INNER
+        - LEFT
+        - LEFT_SEMI
+        - LEFT_ANTI
+        - LEFT_SINGLE
+        - LEFT_MARK
   read_relation:
     type: object
     additionalProperties: false
@@ -815,6 +843,18 @@ definitions:
         description: Arbitrary data created by the dialect author.
       join_types:
         $ref: "#/definitions/join_types"
+    required: [relation]
+  lateral_join_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: LATERAL_JOIN
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
+      join_types:
+        $ref: "#/definitions/lateral_join_types"
     required: [relation]
   project_relation:
     type: object

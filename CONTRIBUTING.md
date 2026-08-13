@@ -2,6 +2,10 @@
 
 Welcome!
 
+## Contributor License Agreement
+
+Substrait requires all contributors to sign the [Contributor License Agreement (CLA)](https://cla-assistant.io/substrait-io/substrait) before their contributions can be merged. A GitHub app checks this on every pull request and guides new contributors through signing it.
+
 ## Prerequisites
 
 If you work with this repository you should have the following tools installed:

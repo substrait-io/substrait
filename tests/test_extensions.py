@@ -7,7 +7,7 @@ from tests.baseline import read_baseline_file, generate_baseline
 from tests.coverage.case_file_parser import load_all_testcases
 from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import build_type_to_short_type
-from tests.coverage.extensions import Extension
+from tests.coverage.extensions import Extension, validate_nullability_markers
 
 
 # NOTE: this test is run as part of pre-commit hook
@@ -55,6 +55,19 @@ def test_substrait_nullability_consistency():
         errors.extend(validate_nullability(test_file, registry))
     assert not errors, f"{len(errors)} nullability violation(s) found:\n" + "\n".join(
         errors
+    )
+
+
+def test_no_ignored_nullability_markers_in_declarations():
+    """Verify that extension YAMLs declare no nullability markers that the
+    nullability handling would ignore.
+    """
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    extensions_path = os.path.join(script_dir, "../extensions")
+
+    errors = validate_nullability_markers(extensions_path)
+    assert not errors, (
+        f"{len(errors)} ignored nullability marker(s) found:\n" + "\n".join(errors)
     )
 
 

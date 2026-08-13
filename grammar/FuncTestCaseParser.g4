@@ -68,7 +68,9 @@ argument
     | listArg
     | structArg
     | mapArg
+    | userDefinedArg
     | lambdaArg
+    | funcCallArg
     | Identifier  // Bare identifiers (for lambda parameters)
     ;
 
@@ -208,8 +210,16 @@ mapArg
     : literalMap DoubleColon mapType
     ;
 
+userDefinedArg
+    : literalStruct DoubleColon userDefinedType
+    ;
+
 lambdaArg
     : literalLambda DoubleColon funcType
+    ;
+
+funcCallArg
+    : identifier OParen arguments CParen
     ;
 
 enumArg
@@ -266,8 +276,12 @@ scalarType
   | dateType                             #date
   | intervalYearType                     #intervalYear
   | UUID isnull=QMark?                   #uuid
-  | UserDefined Identifier isnull=QMark? #userDefined
+  | userDefinedType                      #userDefined
   ;
+
+userDefinedType
+    : UserDefined Identifier isnull=QMark?
+    ;
 
 booleanType
     : (Bool | Boolean) isnull=QMark?
