@@ -57,7 +57,7 @@ nodejs = ">=24,<25"
 
 [tool.pixi.tasks]
 # code generation
-generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate ANTLR Python parsers", inputs = ["grammar/*.g4"], outputs = ["tests/type/antlr_parser/*.py", "tests/coverage/antlr_parser/*.py"] }
+generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate ANTLR Python parsers", inputs = ["grammar/*.g4"] }
 generate-protobuf = { cmd = "buf generate", description = "Generate protobuf Python code", inputs = ["proto/**/*.proto"], outputs = ["gen/proto/python/substrait/*.py"] }
 generate = { depends-on = ["generate-antlr", "generate-protobuf"] }
 
@@ -70,8 +70,8 @@ check-examples = { cmd = "check-jsonschema --schemafile text/simple_extensions_s
 check-extensions = { cmd = "check-jsonschema --schemafile text/simple_extensions_schema.yaml extensions/*.yaml", default-environment = "dev", description = "Validate extension YAML files" }
 check-dialects = { cmd = "check-jsonschema --schemafile text/dialect_schema.yaml dialects/tests/*.yaml", default-environment = "dev", description = "Validate dialect YAML files" }
 editorconfig-checker = { cmd = "ec", default-environment = "dev", description = "Check editorconfig"}
-ruff-lint = { cmd = "ruff check .", default-environment = "python-style", description = "Ruff linting" }
-ruff-format-check = { cmd = "ruff format --diff .", default-environment = "python-style", description = "Ruff formatting check" }
+ruff-lint = { cmd = "ruff check .", default-environment = "dev", description = "Ruff linting" }
+ruff-format-check = { cmd = "ruff format --diff .", default-environment = "dev", description = "Ruff formatting check" }
 lint = { depends-on = ["lint-protobuf", "check-protobuf", "ruff-lint", "ruff-format-check", "editorconfig-checker", "yamllint", "check-examples", "check-extensions", "check-dialects" ] }
 
 # formatting
@@ -80,7 +80,7 @@ ruff-format = { cmd = "ruff format .", default-environment = "dev", description 
 format = { depends-on = ["ruff-format", "format-protobuf"], description = "Format code" }
 
 # testing
-test = { cmd = "pytest .", default-environment = "python-style", depends-on = ["generate-protobuf"], description = "Run tests including test_substrait_extension_coverage" }
+test = { cmd = "pytest .", default-environment = "dev", depends-on = ["generate-protobuf"], description = "Run tests including test_substrait_extension_coverage" }
 
 # docs
 mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", description = "Build Website" }
@@ -91,19 +91,15 @@ release = { cmd = "./ci/release/run.sh", default-environment = "dev", descriptio
 
 [tool.pixi.environments]
 dev = { features = ["dev"] }
-python-style = { features = ["python-style"] }
 
 [dependency-groups]
-python-style = [
+dev = [
   "antlr4-python3-runtime>=4.13.2,<5",
-  "ruff>=0.15.22,<1",
+  "editorconfig-checker>=3.6.1,<4",
+  "ruff>=0.8.0,<1",
   "protobuf==6.33.1",
   "pytest>=9.0.3,<10",
   "pyyaml>=6.0.3,<7",
-]
-dev = [
-  { include-group = "python-style" },
-  "editorconfig-checker>=3.6.1,<4",
   "mdutils>=1.8.1,<2",
   "mkdocs>=1.4.2,<2",
   "mkdocs-awesome-pages-plugin>=2.10.1,<3",
@@ -118,5 +114,5 @@ dev = [
   "pygments>=2.14,<3",
   "pymdown-extensions>=9.9.1,<11",
   "yamllint>=1.38,<2",
-  "check-jsonschema>=0.37.4,<1",
+  "check-jsonschema>=0.37.1,<1",
 ]
