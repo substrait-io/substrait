@@ -450,8 +450,8 @@ message ConsistentPartitionWindowRel {
     // See `Expression.WindowFunction.Bound`.
     Expression.WindowFunction.Bound upper_bound = 4;
 
-    // Defines the boudns type: ROWS, RANGE.
-    // The producer obligations documented on `Experssion.WindowFunction.BoundsType` apply here as well;
+    // Defines the bounds type: ROWS, RANGE.
+    // The producer obligations documented on `Expression.WindowFunction.BoundsType` apply here as well;
     // the ordering restrictions for BOUNDS_TYPE_RANGE apply to `sorts` on the enclosing `ConsistentPartitionWindowRel`.
     Expression.WindowFunction.BoundsType bounds_type = 12;
   }
