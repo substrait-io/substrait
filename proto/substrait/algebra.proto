@@ -1411,7 +1411,8 @@ message Expression {
     // are aggregated.
     repeated Expression partitions = 2;
 
-    // Defines the bounds type: ROWS, RANGE
+    // Defines how the window bounds are interpreted.
+    // Required when either bound is CurrentRow, Preceding, or Following
     BoundsType bounds_type = 12;
 
     // Defines the record relative to the current record from which the window
@@ -1431,11 +1432,8 @@ message Expression {
     Bound upper_bound = 4;
 
     enum BoundsType {
-      // Unspecified. Producers must set one of the defined bounds types when
-      // either bound is CurrentRow, Preceding or Following. Consumers must
-      // reject such plans rather than assuming a bounds type, since the two
-      // types disagree whenever the ordering has ties, including when no
-      // ordering is declared and every record is a peer.
+      // Valid only when the frame is unbounded in both directions and therefore
+      // spans the entire partition.
       BOUNDS_TYPE_UNSPECIFIED = 0;
       // Bounds are physical row offsets in the declared ordering in `sorts`.
       // If no ordering is declared, no order is guaranteed.
