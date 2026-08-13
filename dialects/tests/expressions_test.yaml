@@ -16,6 +16,8 @@ supported_expressions:
   - expression: NESTED
     nested_types:
       - LIST
+  - LAMBDA
+  - expression: LAMBDA_INVOCATION
   - expression: EXECUTION_CONTEXT_VARIABLE
     variable_types:
       - CURRENT_DATE

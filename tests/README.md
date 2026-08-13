@@ -4,6 +4,28 @@
 
 Validates protobuf textformat examples in `site/examples/proto-textformat/`.
 
+## Dialect Schema Validator
+
+Validates that `text/dialect_schema.yaml` still describes the protobuf
+definitions.  Dialects declare which relations, expressions and types they
+support, and which enum values (join types, set operations, ...) they accept for
+them, so every relation, expression, type or enum value added to, removed from
+or renamed in the protos has to be reflected in the dialect schema.
+
+`tests/test_dialect_schema.py` reports what is out of sync.  Where the dialect
+schema deliberately deviates from the protos, the deviation is recorded in that
+file together with the reason for it:
+
+- `not_declarable` lists protobuf members dialects cannot declare support for.
+- `long_form_only` lists declarations that need properties, and therefore cannot
+  be written as a bare name.
+- `excluded` lists the protobuf values an enum list deliberately does not offer.
+- `DIALECT_ONLY_ENUM_LISTS` lists the enums that describe the dialect itself and
+  have no protobuf counterpart.
+
+Each record names the value it is about, so a record that outlives the protobuf
+member it excuses is reported as stale.
+
 ## Substrait Test Format
 
 This document describes the format for Substrait scalar test files.
