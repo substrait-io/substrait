@@ -56,6 +56,10 @@ If you use Substrait in your research, please cite it using the following BibTeX
 
 All contributors are welcome to Substrait. If you want to join the project, open a PR or get in touch with us as [above](#get-in-touch).
 
+### Contributor License Agreement
+
+Substrait requires all contributors to sign the [Contributor License Agreement (CLA)](https://cla-assistant.io/substrait-io/substrait) before their contributions can be merged. A GitHub app checks this on every pull request and guides you through signing it, so there is nothing you need to do before opening one.
+
 ### AI Contribution Policy
 
 The Substrait project is open to AI-assisted contributions.
