@@ -244,7 +244,9 @@ definitions:
         type: array
         description: >
           List of one or more implementations supported by this function. Use
-          argument signatures to identify the implementations.
+          argument signatures to identify the implementations. An implementation
+          that takes no arguments has an empty argument signature and is
+          identified by the empty string.
         minItems: 1
         items:
           type: string
