@@ -1,7 +1,7 @@
 {
   "registry": {
     "extension_count": 16,
-    "dependency_count": 18,
+    "dependency_count": 16,
     "function_count": 174,
     "num_aggregate_functions": 31,
     "num_scalar_functions": 174,
