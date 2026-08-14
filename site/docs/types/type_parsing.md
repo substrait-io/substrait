@@ -101,15 +101,7 @@ In simple extension YAML, user-defined types from another extension may be refer
 === "Example"
 
     ```yaml
-    dependencies:
-      ext: extension:io.substrait:extension_types
-    scalar_functions:
-      - name: distance
-        impls:
-          - args:
-            - name: p
-              value: ext.u!point
-            return: fp64
+    --8<-- "examples/extensions/distance_functions.yaml"
     ```
 
 ### Function Types
