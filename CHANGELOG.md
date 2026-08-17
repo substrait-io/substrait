@@ -1,6 +1,59 @@
 Release Notes
 ---
 
+## [0.101.0](https://github.com/substrait-io/substrait/compare/v0.100.0...v0.101.0) (2026-08-16)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** `extensions/extension_types.yaml` and
+`extensions/type_variations.yaml` are no longer part of the extension
+catalog. They move to `site/examples/extensions/`, and their URNs change
+from `extension:io.substrait:extension_types` and
+`extension:io.substrait:type_variations` to
+`extension:org.example:extension_types` and
+`extension:org.example:type_variations`.
+
+Consumers that resolve `extension:io.substrait:extension_types` — the
+`point`/`line` user-defined types, which substrait-java and substrait-go
+both register today — will no longer find it in the catalog, and should
+either define those types locally or load the example explicitly under
+its new URN.
+
+The remaining example files keep their location but also move to the
+`extension:org.example:` owner, including
+`lambda_function_example.yaml`, which previously duplicated the official
+`extension:io.substrait:functions_list` URN.
+
+Nothing in the `extension:org.example:` namespace carries a
+compatibility guarantee: those files exist to illustrate the extension
+schema and to serve as parser fixtures, and may change without a
+deprecation cycle.
+* **protos:** `Expression.FieldReference.OuterReference.steps_out`
+is deprecated in favor of `rel_reference`, which names the binding
+relation via its plan-wide unique `RelCommon.rel_anchor` and therefore
+resolves unambiguously in DAG-shaped plans with shared relations
+(`ReferenceRel`), where counting subquery boundaries upward does not.
+Consumers should add `rel_reference` support before producers switch to
+it. Note that both fields are members of the same `outer_reference_type`
+oneof, so a plan cannot carry both forms at once: the migration is
+consumer-first rather than dual-write. Nothing is removed by this
+change: the deprecation is metadata only, consumers are not required to
+understand or validate it, and no existing plan changes meaning.
+`steps_out` remains fully functional and is scheduled for removal in a
+later release.
+
+### Features
+
+* **protos:** deprecate OuterReference.steps_out in favor of rel_reference ([#1132](https://github.com/substrait-io/substrait/issues/1132)) ([25940fb](https://github.com/substrait-io/substrait/commit/25940fb57d57dd8970112bc7d4b611012998eb52))
+
+### Bug Fixes
+
+* add missing RelCommon field to UpdateRel ([#1168](https://github.com/substrait-io/substrait/issues/1168)) ([cdf0102](https://github.com/substrait-io/substrait/commit/cdf0102f0d45e044cfa08a9a81174c5892f72f6a))
+
+### Code Refactoring
+
+* **extensions:** move example YAML files out of the extensions folder ([#1136](https://github.com/substrait-io/substrait/issues/1136)) ([c9f697e](https://github.com/substrait-io/substrait/commit/c9f697e6a1773e9d1248e87a2bd0fabe0c0e7906))
+
 ## [0.100.0](https://github.com/substrait-io/substrait/compare/v0.99.0...v0.100.0) (2026-08-09)
 
 ### ⚠ BREAKING CHANGES
