@@ -450,13 +450,13 @@ message ConsistentPartitionWindowRel {
     // See `Expression.WindowFunction.Bound`.
     Expression.WindowFunction.Bound upper_bound = 4;
 
-   // Defines how this function's window bounds are interpreted.
-   // Must be ROWS or RANGE when either bound is CurrentRow, Preceding, or
-   // Following.
-   //
-   // For RANGE with a Preceding or Following bound, `sorts` on the enclosing
-   // ConsistentPartitionWindowRel must contain exactly one ordering expression
-   // and must not use SORT_DIRECTION_CLUSTERED or a custom comparison function.
+    // Defines how this function's window bounds are interpreted.
+    // Must be ROWS or RANGE when either bound is CurrentRow, Preceding, or
+    // Following.
+    //
+    // For RANGE with a Preceding or Following bound, `sorts` on the enclosing
+    // ConsistentPartitionWindowRel must contain exactly one ordering expression
+    // and must not use SORT_DIRECTION_CLUSTERED or a custom comparison function.
     Expression.WindowFunction.BoundsType bounds_type = 12;
   }
 }
@@ -1411,7 +1411,7 @@ message Expression {
     // considered to be in the same partition if and only if these expressions
     // yield an equal record of values for both (nulls are considered equal).
     // When computing the window function, only the subset of records within
-    // the inclusive frame bounds that are also in the same partition as the current record
+    // the inclusive frame bounds that are also in the same partition as the current record
     // are aggregated.
     repeated Expression partitions = 2;
 
@@ -1436,8 +1436,7 @@ message Expression {
     Bound upper_bound = 4;
 
     enum BoundsType {
-      // Valid only when the frame is unbounded in both directions and therefore
-      // spans the entire partition.
+      // Unspecified. Producers must set one of the defined bounds type.
       BOUNDS_TYPE_UNSPECIFIED = 0;
       // Bounds are physical row offsets in the declared ordering in `sorts`.
       // If no ordering is declared, no order is guaranteed.
