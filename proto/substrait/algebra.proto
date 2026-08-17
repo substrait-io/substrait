@@ -450,9 +450,13 @@ message ConsistentPartitionWindowRel {
     // See `Expression.WindowFunction.Bound`.
     Expression.WindowFunction.Bound upper_bound = 4;
 
-    // Defines the bounds type: ROWS, RANGE.
-    // The producer obligations documented on `Expression.WindowFunction.BoundsType` apply here as well;
-    // the ordering restrictions for BOUNDS_TYPE_RANGE apply to `sorts` on the enclosing `ConsistentPartitionWindowRel`.
+   // Defines how this function's window bounds are interpreted.
+   // Must be ROWS or RANGE when either bound is CurrentRow, Preceding, or
+   // Following.
+   //
+   // For RANGE with a Preceding or Following bound, `sorts` on the enclosing
+   // ConsistentPartitionWindowRel must contain exactly one ordering expression
+   // and must not use SORT_DIRECTION_CLUSTERED or a custom comparison function.
     Expression.WindowFunction.BoundsType bounds_type = 12;
   }
 }
@@ -1407,7 +1411,7 @@ message Expression {
     // considered to be in the same partition if and only if these expressions
     // yield an equal record of values for both (nulls are considered equal).
     // When computing the window function, only the subset of records within
-    // the bounds that are also in the same partition as the current record
+    // the inclusive frame bounds that are also in the same partition as the current record
     // are aggregated.
     repeated Expression partitions = 2;
 
