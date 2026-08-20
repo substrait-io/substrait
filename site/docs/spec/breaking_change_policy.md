@@ -12,7 +12,7 @@ The migration strategy must be implemented in all [active libraries](../communit
 
 ### Replacing a Protobuf Field
 
-Replacing a protobuf field requires a staged migration so that producers and consumers can be updated independently:
+Replacing a protobuf field requires a staged migration so that producers and consumers can be updated independently. Do not use a `oneof` solely for migration because it prevents producers from writing both representations and may change field-presence semantics. Use a `oneof` only when mutual exclusivity is part of the final schema and the proposal explains why the standard migration is insufficient.
 
 1. Add the replacement using a new field number and deprecate the old field.
 2. Update consumers to accept both representations. When the replacement is present, consumers must use it and ignore the deprecated field.

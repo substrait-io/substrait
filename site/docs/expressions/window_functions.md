@@ -35,7 +35,7 @@ The interpretation of an offset depends on `BoundsType`:
 
 Producers must set `BoundsType` to `BOUNDS_TYPE_ROWS` or `BOUNDS_TYPE_RANGE`. Consumers must reject such plans when `BoundsType` is unspecified. `CurrentRow` identifies the current record for ROWS bounds and the current peer group, whose records have equal sort key values, for RANGE bounds; two null sort key values are considered equal. Bounds are inclusive. Contradictory lower and upper bounds produce an empty frame, and the window function follows its empty-frame semantics, such as `SUM` yielding null and `COUNT(*)` yielding zero.
 
-`offset_expr` is the recommended way to specify an offset. The strictly positive integer `offset` is deprecated and will be removed in a future release. At least one of the two fields must be set.
+`offset_expr` is the recommended way to specify an offset. The strictly positive integer `offset` is deprecated and will be removed in a future release. At least one of the two fields must be set. The migration requirements are defined in [Replacing a Protobuf Field](../spec/breaking_change_policy.md#replacing-a-protobuf-field).
 
 `offset_expr` may reference the input's fields and must behave as if evaluated once per input record, but it must not contain window or aggregate functions. A null or negative result is invalid. A statically-known zero offset must be expressed as `CurrentRow` rather than as a zero `offset_expr`. When a non-literal `offset_expr` evaluates to zero for a record, the bound is equivalent to `CurrentRow` for that record.
 
