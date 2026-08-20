@@ -1456,14 +1456,7 @@ message Expression {
         // A strictly positive integer specifying the offset of this bound.
         // Use CurrentRow for offset zero and Following for negative offsets.
         //
-        // At least one of `offset` and `offset_expr` must be set; setting
-        // neither is invalid. Because `offset` has no explicit presence, it is
-        // considered set when it is non-zero; zero was never a valid offset.
-        // Consumers must use `offset_expr` when it is set and ignore `offset`.
-        // Producers may set both during migration, in which case `offset` must
-        // be the int64-literal equivalent of `offset_expr` -- possible only
-        // when the distance is a positive int64 literal -- so that consumers
-        // which do not yet read `offset_expr` can still execute the plan.
+        // At least one of `offset` and `offset_expr` must be set.
         //
         // Deprecated: use `offset_expr` instead.
         int64 offset = 1 [deprecated = true];
@@ -1500,14 +1493,7 @@ message Expression {
         // A strictly positive integer specifying the offset of this bound.
         // Use CurrentRow for offset zero and Preceding for negative offsets.
         //
-        // At least one of `offset` and `offset_expr` must be set; setting
-        // neither is invalid. Because `offset` has no explicit presence, it is
-        // considered set when it is non-zero; zero was never a valid offset.
-        // Consumers must use `offset_expr` when it is set and ignore `offset`.
-        // Producers may set both during migration, in which case `offset` must
-        // be the int64-literal equivalent of `offset_expr` -- possible only
-        // when the distance is a positive int64 literal -- so that consumers
-        // which do not yet read `offset_expr` can still execute the plan.
+        // At least one of `offset` and `offset_expr` must be set.
         //
         // Deprecated: use `offset_expr` instead.
         int64 offset = 1 [deprecated = true];
