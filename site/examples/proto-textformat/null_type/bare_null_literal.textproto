@@ -1,0 +1,15 @@
+# A null that carries no type information of its own, such as the bare NULL in
+# `SELECT NULL`.
+#
+# Expressed with the ordinary typed null literal, using the null type as its
+# type. The nullability of the null type is always NULLABILITY_NULLABLE.
+#
+# message Expression
+
+literal: {
+  null: {
+    null: {
+      nullability: NULLABILITY_NULLABLE
+    }
+  }
+}

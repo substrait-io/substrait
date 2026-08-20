@@ -1,0 +1,24 @@
+# The null type does not coerce, so an explicit cast is required to use a
+# null-typed value where another type is expected.
+#
+# This casts a bare NULL to `i32?`, producing a null of type `i32?`.
+#
+# message Expression
+
+cast: {
+  type: {
+    i32: {
+      nullability: NULLABILITY_NULLABLE
+    }
+  }
+  input: {
+    literal: {
+      null: {
+        null: {
+          nullability: NULLABILITY_NULLABLE
+        }
+      }
+    }
+  }
+  failure_behavior: FAILURE_BEHAVIOR_THROW_EXCEPTION
+}
