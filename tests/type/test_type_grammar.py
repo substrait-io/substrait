@@ -74,6 +74,40 @@ def extension_yaml_files():
     yield from sorted((repo_root / "site" / "examples").glob("**/*.yaml"))
 
 
+def undefined_type_names(expression: str):
+    """Identifiers in ``expression`` that sit where a type name belongs.
+
+    The grammar has to accept an arbitrary identifier in a type position,
+    because that is how a signature names a parameter (``decimal<P, S>``) or a
+    derivation expression names an intermediate value.  A misspelled built-in
+    therefore parses cleanly: ``f64`` is not a Substrait type, but it is a
+    perfectly good identifier, so it reaches the ``ParameterName`` alternative
+    instead of ``scalarType``.
+
+    Numeric parameter slots reduce to ``NumericParameterName``, a different
+    node, so a ``ParameterName`` means an identifier landed where the grammar
+    expected a *type*.  Outside a derivation expression nothing legitimately
+    introduces such a name, so it is a type that does not exist.
+
+    Derivation expressions are exempt: ``MultilineDefinition`` binds its own
+    identifiers by assignment and freely references signature parameters, and
+    those are resolved by the type system rather than by this grammar.
+    """
+    tree = parse_type_expression(expression)
+    if isinstance(tree.getChild(0), SubstraitTypeParser.MultilineDefinitionContext):
+        return []
+
+    names = []
+    stack = [tree]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, SubstraitTypeParser.ParameterNameContext):
+            names.append(node.getText())
+        for index in range(node.getChildCount()):
+            stack.append(node.getChild(index))
+    return names
+
+
 def test_iter_structure_type_expressions():
     """Structure syntactic sugar is reduced to the type strings it contains."""
     cases = [
@@ -162,3 +196,53 @@ def test_extension_yaml_type_expressions_are_grammar_compliant():
                 failures.append(f"{path}: {expression}: {err}")
 
     assert failures == []
+
+
+def test_undefined_type_names():
+    """Identifiers standing in for a type are reported, parameters are not."""
+    assert undefined_type_names("f64") == ["f64"]
+    assert undefined_type_names("list<f64>") == ["f64"]
+    assert undefined_type_names("int64") == ["int64"]
+    assert undefined_type_names("func<i32 -> int>") == ["int"]
+
+    for valid in [
+        "i64",
+        "fp64",
+        "any1",
+        "u!point",
+        "ext.u!point",
+        "list<i32>",
+        "decimal<P, S>",
+        "varchar<L>",
+        "precision_timestamp<P>",
+        # A derivation expression binds its own names and reads signature
+        # parameters, so its identifiers are not type names.
+        "init_scale = max(S1, S2)\nDECIMAL<init_scale, 0>",
+    ]:
+        assert undefined_type_names(valid) == [], valid
+
+
+def test_extension_yaml_type_names_are_defined():
+    """No checked-in extension YAML names a type that does not exist.
+
+    ``simple_extensions_schema.yaml`` types every argument and return as an
+    opaque string, and the grammar accepts any identifier in a type position,
+    so a misspelled built-in passes both the schema check and the grammar walk
+    above.  Five such names (``f64`` for ``fp64``, ``int64`` and ``int`` for
+    ``i64``) shipped in example files embedded in the published documentation
+    before this check existed.
+    """
+    repo_root = Path(__file__).parents[2]
+    failures = []
+    for path in extension_yaml_files():
+        with path.open() as f:
+            extension = yaml.load(f, Loader=yaml.FullLoader)
+
+        for expression in iter_type_expressions(extension):
+            for name in undefined_type_names(expression):
+                failures.append(
+                    f"{path.relative_to(repo_root)}: {expression!r} names "
+                    f"'{name}', which is not a Substrait type"
+                )
+
+    assert failures == [], "\n".join(failures)
