@@ -1,0 +1,20 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
+
+# basic: Basic examples without any special cases
+negate(25::dec<2, 0>) = -25::dec<2, 0>
+negate(-25::dec<2, 0>) = 25::dec<2, 0>
+negate(1.23::dec<3, 2>) = -1.23::dec<3, 2>
+negate(-0.001::dec<4, 3>) = 0.001::dec<4, 3>
+
+# zero: Zero has no signed counterpart, so it negates to itself
+negate(0::dec<1, 0>) = 0::dec<1, 0>
+negate(0.00::dec<3, 2>) = 0.00::dec<3, 2>
+
+# max_input: The range of decimal<P, S> is symmetric, so negation never overflows
+negate(99999999999999999999999999999999999999::dec<38, 0>) = -99999999999999999999999999999999999999::dec<38, 0>
+negate(-99999999999999999999999999999999999999::dec<38, 0>) = 99999999999999999999999999999999999999::dec<38, 0>
+
+# null_input: Examples with null as input
+negate(null::dec?<38, 0>) = null::dec?<38, 0>
+negate(null::dec?<3, 2>) = null::dec?<3, 2>

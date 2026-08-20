@@ -84,6 +84,14 @@ scalar_functions:
           scale = init_prec > 38 ? scale_after_borrow : init_scale
           DECIMAL<prec, scale>
   -
+    name: "negate"
+    description: "Negation of the value"
+    impls:
+      - args:
+          - name: x
+            value: decimal<P,S>
+        return: decimal<P,S>
+  -
     name: "modulus"
     impls:
       - args:
