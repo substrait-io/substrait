@@ -1,6 +1,25 @@
 Release Notes
 ---
 
+## [0.102.0](https://github.com/substrait-io/substrait/compare/v0.101.0...v0.102.0) (2026-08-23)
+
+### ⚠ BREAKING CHANGES
+
+* **protos:** deprecates the `offset` field of the `Preceding` and
+`Following` window bounds in favor of the new `offset_expr` field, which
+accepts an arbitrary expression instead of an integer literal. Consumers
+should add `offset_expr` support before producers switch to it. The PR
+also requires explicit window frame bounds type. Producers should set
+the bounds type and Consumers should reject `BOUNDS_TYPE_UNSPECIFIED` in
+such cases.
+ 
+<!-- Reviewable:start -->
+
+### Features
+
+* **extensions:** add a decimal overload for negate ([#1177](https://github.com/substrait-io/substrait/issues/1177)) ([6092523](https://github.com/substrait-io/substrait/commit/60925234a0a2c02a41400df349b0bad1e674581b))
+* **protos:** support expression in window aggregate bounds ([#1105](https://github.com/substrait-io/substrait/issues/1105)) ([6706015](https://github.com/substrait-io/substrait/commit/6706015ffdb19345fef399ef8238e3e6269cb380)), closes [#748](https://github.com/substrait-io/substrait/issues/748) [#617](https://github.com/substrait-io/substrait/issues/617) [#930](https://github.com/substrait-io/substrait/issues/930)
+
 ## [0.101.0](https://github.com/substrait-io/substrait/compare/v0.100.0...v0.101.0) (2026-08-16)
 
 ### ⚠ BREAKING CHANGES
