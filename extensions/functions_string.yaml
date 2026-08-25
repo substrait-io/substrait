@@ -628,7 +628,7 @@ scalar_functions:
           - value: "varchar<L1>"
             name: "input"
             description: The input string.
-          - value: "varchar<L1>"
+          - value: "varchar<L2>"
             name: "substring"
             description: The substring to search for.
         options:

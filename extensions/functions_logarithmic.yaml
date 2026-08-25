@@ -202,7 +202,7 @@ scalar_functions:
           - value: decimal<P1,S1>
             name: "x"
             description: "The number `x` to compute the logarithm of"
-          - value: decimal<P1,S1>
+          - value: decimal<P2,S2>
             name: "base"
             description: "The logarithm base `b` to use"
         options:
