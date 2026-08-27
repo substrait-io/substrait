@@ -86,7 +86,7 @@ An implementation that declares no arguments has an empty argument signature. Th
 
 A function can have at most one zero-argument implementation, since a second one would produce the same signature and violate the [Uniqueness Constraint](#uniqueness-constraint).
 
-Because there are no arguments to bind against, the return type must be fully concrete: neither the `any` and `any[\d]` placeholders nor a type expression with unresolved type parameters has anything to resolve against. A parameterized type with concrete parameter values, such as `decimal<38,0>`, is unaffected.
+Because there are no arguments to bind against, the return type must be concrete: neither the `any` and `any[\d]` placeholders nor a type expression with unresolved type parameters has anything to resolve against. A parameterized type with concrete parameter values, such as `decimal<38,0>`, is unaffected.
 
 #### Uniqueness Constraint
 
