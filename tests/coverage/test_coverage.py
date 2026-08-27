@@ -1093,3 +1093,21 @@ class TestDeclarationNullabilityMarkers:
             "functions_test.yaml: f",
         )
         assert errors == []
+
+    def test_zero_argument_mirror_rejects_return_marker(self):
+        """MIRROR with no arguments derives a non-nullable return type, so a
+        return marker is ignored and must not be declared."""
+        errors = validate_impl_nullability_markers(
+            {"args": [], "nullability": "MIRROR", "return": "i64?"},
+            "functions_test.yaml: count",
+        )
+        assert len(errors) == 1
+        assert "i64?" in errors[0]
+
+    def test_zero_argument_without_args_key(self):
+        """An impl that declares no arguments may omit the 'args' key."""
+        errors = validate_impl_nullability_markers(
+            {"nullability": "MIRROR", "return": "i64"},
+            "functions_test.yaml: count",
+        )
+        assert errors == []
