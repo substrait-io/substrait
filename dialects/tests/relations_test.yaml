@@ -29,4 +29,5 @@ supported_relations:
   - relation: EXTENSION_LEAF
     message_types:
       - type.googleapis.com/google.profile.Person
+  - TOP_N
 
