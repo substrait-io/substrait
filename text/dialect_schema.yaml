@@ -246,7 +246,9 @@ definitions:
           List of one or more implementations supported by this function. Use
           argument signatures to identify the implementations. An implementation
           that takes no arguments has an empty argument signature and is
-          identified by the empty string.
+          identified by the empty string. For example, ["i64", ""] identifies
+          two implementations: one taking a single i64 argument, and one taking
+          no arguments.
         minItems: 1
         items:
           type: string

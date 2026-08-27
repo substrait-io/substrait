@@ -84,7 +84,9 @@ For variadic functions, the variadic argument is included *once* in the argument
 
 An implementation that declares no arguments has an empty argument signature. The colon separator is still required, so such an implementation is referenced by its function name followed by a trailing colon: `count:` for the record-counting implementation of `count`, or `rank:` for `rank`. A bare function name with no colon is not a function signature and cannot be used to reference an implementation.
 
-A function can have at most one zero-argument implementation, since a second one would produce the same signature and violate the Uniqueness Constraint below.
+A function can have at most one zero-argument implementation, since a second one would produce the same signature and violate the [Uniqueness Constraint](#uniqueness-constraint).
+
+Because there are no arguments to bind against, the return type must be fully concrete: neither the `any` and `any[\d]` placeholders nor a type expression over argument type parameters has anything to resolve against. A parameterized type with concrete parameter values, such as `decimal<38,0>`, is unaffected.
 
 #### Uniqueness Constraint
 
