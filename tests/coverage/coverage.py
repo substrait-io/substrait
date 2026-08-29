@@ -109,6 +109,8 @@ def update_test_count(test_case_files: list, function_registry: FunctionRegistry
     num_tests_with_no_matching_function = 0
     for test_file in test_case_files:
         function_registry.validate_urn(test_file.include)
+        for dependency in test_file.dependencies:
+            function_registry.validate_urn(dependency)
         for test_case in test_file.testcases:
             function_variant = function_registry.get_function(
                 test_case.func_name,
