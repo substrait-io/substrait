@@ -132,4 +132,4 @@ jobs:
           echo "directories:" >> buf.work.yaml
           echo "  - output" >> buf.work.yaml
       - name: Compile rewritten proto files
-        run: pixi run generate-protobuf
+        run: pixi run buf generate
