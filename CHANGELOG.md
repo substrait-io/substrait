@@ -1,6 +1,24 @@
 Release Notes
 ---
 
+## [0.103.0](https://github.com/substrait-io/substrait/compare/v0.102.0...v0.103.0) (2026-08-30)
+
+### ⚠ BREAKING CHANGES
+
+* **dialect:** dialect files declaring `EXTENSION_SINGLE`,
+`EXTENSION_MULTI` or `EXTENSION_LEAF` must now list the `message_types`
+they support, the same way `USER_DEFINED` types have to name their
+extension. `ExpandRel` support is declared with `CONSISTENT_FIELD`
+rather than `CONSTANT_FIELD`, which never named a protobuf member.
+
+### Features
+
+* **dialect:** check the dialect schema against the protos ([#1173](https://github.com/substrait-io/substrait/issues/1173)) ([b92e97c](https://github.com/substrait-io/substrait/commit/b92e97c3ca1a7f4b3f4c2f10295b7e842548027d))
+
+### Bug Fixes
+
+* **extensions:** split shared type parameters in strpos and logb ([#1186](https://github.com/substrait-io/substrait/issues/1186)) ([5a189e7](https://github.com/substrait-io/substrait/commit/5a189e7b86d7f017c1a31483d0d983bd7bfc3880))
+
 ## [0.102.0](https://github.com/substrait-io/substrait/compare/v0.101.0...v0.102.0) (2026-08-23)
 
 ### ⚠ BREAKING CHANGES
