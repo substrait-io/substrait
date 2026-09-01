@@ -4,7 +4,7 @@ import os
 import pytest
 from antlr4 import InputStream
 from tests.coverage.case_file_parser import parse_stream, parse_one_file
-from tests.coverage.coverage import validate_nullability
+from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import Extension, validate_impl_nullability_markers
 from tests.coverage.visitor import ParseError
 from tests.coverage.nodes import CaseLiteral, FuncCallArg
@@ -465,6 +465,41 @@ def test_parse_file_max():
     )
     assert test_file.include == "extension:io.substrait:functions_arithmetic"
     assert test_file.dependencies == []
+
+
+def test_coverage_accepts_multiple_known_dependencies():
+    header = """### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
+### SUBSTRAIT_DEPENDENCY: extension:io.substrait:functions_comparison
+### SUBSTRAIT_DEPENDENCY: extension:io.substrait:functions_boolean
+
+"""
+    test_file = parse_string(header + "# basic\nadd(1::i8, 2::i8) = 3::i8\n")
+    registry = Extension.read_substrait_extensions(
+        get_absolute_path("../../extensions")
+    )
+
+    coverage = get_test_coverage([test_file], registry)
+
+    assert coverage.num_tests_with_no_matching_function == 0
+
+
+def test_coverage_rejects_unknown_dependency():
+    header = """### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
+### SUBSTRAIT_DEPENDENCY: extension:io.substrait:functions_does_not_exist
+
+"""
+    test_file = parse_string(header + "# basic\nadd(1::i8, 2::i8) = 3::i8\n")
+    registry = Extension.read_substrait_extensions(
+        get_absolute_path("../../extensions")
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="Unknown extension URN: extension:io.substrait:functions_does_not_exist",
+    ):
+        get_test_coverage([test_file], registry)
 
 
 def test_parse_file_lt_datetime():
