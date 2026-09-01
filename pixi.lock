@@ -357,9 +357,9 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7e/eb/7daecbea84ec935b7fc732e18f532073064a3816f0932a40a17f3349185f/numpy-2.4.3-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/88/29/744136411e785c4b0b744d5413e56555265939ab3a104c6a4b719dad33fd/mkdocs_get_deps-0.2.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/89/03/a851e84fcbb85214dc637b6378121ef9a0dd61b4c65264675d8a5c9b1ae7/antlr4_python3_runtime-4.13.2-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/8d/8b/810a6d7048cfc3db2804b36ed6ff8e8cd0855a88b9a205752f27a4521f85/check_jsonschema-0.38.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/8d/c0/44142a174310c63f2e36ec288fc02df3d1572e00ed1bb87de7d49d65e412/editorconfig_checker-3.6.1.tar.gz
       - pypi: https://files.pythonhosted.org/packages/90/96/04b8e52da071d28f5e21a805b19cb9390aa17a47462ac87f5e2696b9566d/paginate-0.5.7-py2.py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/92/82/6a929238ec352eadd4f4ce6e1be98c575fa8cbebe45b7c519f8016ad2860/check_jsonschema-0.37.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/98/78/01c019cdb5d6498122777c1a43056ebb3ebfeef2076d9d026bfe15583b2b/click-8.3.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/99/55/db07de81b5c630da5cbf5c7df646580ca26dfaefa593667fc6f2fe016d2e/tabulate-0.10.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/9a/3c/c17fb3ca2d9c3acff52e30b309f538586f9f5b9c9cf454f3845fc9af4881/certifi-2026.2.25-py3-none-any.whl
@@ -503,9 +503,9 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/7c/8f/c16f8936514c0f0b53e177410a5864cc38fd5a184c34bb08b07f19b52f80/mkdocs_protobuf-0.1.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/88/29/744136411e785c4b0b744d5413e56555265939ab3a104c6a4b719dad33fd/mkdocs_get_deps-0.2.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/89/03/a851e84fcbb85214dc637b6378121ef9a0dd61b4c65264675d8a5c9b1ae7/antlr4_python3_runtime-4.13.2-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/8d/8b/810a6d7048cfc3db2804b36ed6ff8e8cd0855a88b9a205752f27a4521f85/check_jsonschema-0.38.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/8d/c0/44142a174310c63f2e36ec288fc02df3d1572e00ed1bb87de7d49d65e412/editorconfig_checker-3.6.1.tar.gz
       - pypi: https://files.pythonhosted.org/packages/90/96/04b8e52da071d28f5e21a805b19cb9390aa17a47462ac87f5e2696b9566d/paginate-0.5.7-py2.py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/92/82/6a929238ec352eadd4f4ce6e1be98c575fa8cbebe45b7c519f8016ad2860/check_jsonschema-0.37.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/98/78/01c019cdb5d6498122777c1a43056ebb3ebfeef2076d9d026bfe15583b2b/click-8.3.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/99/55/db07de81b5c630da5cbf5c7df646580ca26dfaefa593667fc6f2fe016d2e/tabulate-0.10.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/9a/3c/c17fb3ca2d9c3acff52e30b309f538586f9f5b9c9cf454f3845fc9af4881/certifi-2026.2.25-py3-none-any.whl
@@ -595,9 +595,9 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/85/83/cdf13902c626b28eedef7ec4f10745c52aad8a8fe7eb04ed7b1f111ca20e/watchdog-6.0.0-cp313-cp313-macosx_10_13_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/88/29/744136411e785c4b0b744d5413e56555265939ab3a104c6a4b719dad33fd/mkdocs_get_deps-0.2.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/89/03/a851e84fcbb85214dc637b6378121ef9a0dd61b4c65264675d8a5c9b1ae7/antlr4_python3_runtime-4.13.2-py3-none-any.whl
+      - pypi: https://files.pythonhosted.org/packages/8d/8b/810a6d7048cfc3db2804b36ed6ff8e8cd0855a88b9a205752f27a4521f85/check_jsonschema-0.38.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/8d/c0/44142a174310c63f2e36ec288fc02df3d1572e00ed1bb87de7d49d65e412/editorconfig_checker-3.6.1.tar.gz
       - pypi: https://files.pythonhosted.org/packages/90/96/04b8e52da071d28f5e21a805b19cb9390aa17a47462ac87f5e2696b9566d/paginate-0.5.7-py2.py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/92/82/6a929238ec352eadd4f4ce6e1be98c575fa8cbebe45b7c519f8016ad2860/check_jsonschema-0.37.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/98/78/01c019cdb5d6498122777c1a43056ebb3ebfeef2076d9d026bfe15583b2b/click-8.3.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/99/55/db07de81b5c630da5cbf5c7df646580ca26dfaefa593667fc6f2fe016d2e/tabulate-0.10.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/9a/3c/c17fb3ca2d9c3acff52e30b309f538586f9f5b9c9cf454f3845fc9af4881/certifi-2026.2.25-py3-none-any.whl
@@ -687,9 +687,9 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/88/29/744136411e785c4b0b744d5413e56555265939ab3a104c6a4b719dad33fd/mkdocs_get_deps-0.2.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/89/03/a851e84fcbb85214dc637b6378121ef9a0dd61b4c65264675d8a5c9b1ae7/antlr4_python3_runtime-4.13.2-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/89/3d/e8fc72e7424c168dfc4cdf3a864f189f6d3afbb6e3ed66455774d1f5e2ba/regress-2025.10.1-cp313-cp313-macosx_11_0_arm64.whl
+      - pypi: https://files.pythonhosted.org/packages/8d/8b/810a6d7048cfc3db2804b36ed6ff8e8cd0855a88b9a205752f27a4521f85/check_jsonschema-0.38.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/8d/c0/44142a174310c63f2e36ec288fc02df3d1572e00ed1bb87de7d49d65e412/editorconfig_checker-3.6.1.tar.gz
       - pypi: https://files.pythonhosted.org/packages/90/96/04b8e52da071d28f5e21a805b19cb9390aa17a47462ac87f5e2696b9566d/paginate-0.5.7-py2.py3-none-any.whl
-      - pypi: https://files.pythonhosted.org/packages/92/82/6a929238ec352eadd4f4ce6e1be98c575fa8cbebe45b7c519f8016ad2860/check_jsonschema-0.37.4-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/98/78/01c019cdb5d6498122777c1a43056ebb3ebfeef2076d9d026bfe15583b2b/click-8.3.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/99/55/db07de81b5c630da5cbf5c7df646580ca26dfaefa593667fc6f2fe016d2e/tabulate-0.10.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/9a/3c/c17fb3ca2d9c3acff52e30b309f538586f9f5b9c9cf454f3845fc9af4881/certifi-2026.2.25-py3-none-any.whl
@@ -3592,6 +3592,18 @@ packages:
   version: 2025.10.1
   sha256: 9e25096697b034848d8fc7910cdb38b7abc2bd2d7ade8767893359918ed4efd0
   requires_python: '>=3.10'
+- pypi: https://files.pythonhosted.org/packages/8d/8b/810a6d7048cfc3db2804b36ed6ff8e8cd0855a88b9a205752f27a4521f85/check_jsonschema-0.38.0-py3-none-any.whl
+  name: check-jsonschema
+  version: 0.38.0
+  sha256: a4fa877ae92b1df812c601b68fec75fe10d1f7d827a7e7f6b218f6712deead2d
+  requires_dist:
+  - tomli>=2.0 ; python_full_version < '3.11'
+  - ruamel-yaml>=0.18.10,<0.20.0
+  - jsonschema>=4.18.0,<5.0
+  - regress>=2024.11.1
+  - requests<3.0
+  - click>=8,<9
+  requires_python: '>=3.10'
 - pypi: https://files.pythonhosted.org/packages/8d/c0/44142a174310c63f2e36ec288fc02df3d1572e00ed1bb87de7d49d65e412/editorconfig_checker-3.6.1.tar.gz
   name: editorconfig-checker
   version: 3.6.1
@@ -3605,18 +3617,6 @@ packages:
   - pytest ; extra == 'dev'
   - tox ; extra == 'dev'
   - black ; extra == 'lint'
-- pypi: https://files.pythonhosted.org/packages/92/82/6a929238ec352eadd4f4ce6e1be98c575fa8cbebe45b7c519f8016ad2860/check_jsonschema-0.37.4-py3-none-any.whl
-  name: check-jsonschema
-  version: 0.37.4
-  sha256: e4d1647992674d6b1ed2ca46eee6697760d17a5cc0c167ba09c5b503b883d041
-  requires_dist:
-  - tomli>=2.0 ; python_full_version < '3.11'
-  - ruamel-yaml>=0.18.10,<0.20.0
-  - jsonschema>=4.18.0,<5.0
-  - regress>=2024.11.1
-  - requests<3.0
-  - click>=8,<9
-  requires_python: '>=3.10'
 - pypi: https://files.pythonhosted.org/packages/98/78/01c019cdb5d6498122777c1a43056ebb3ebfeef2076d9d026bfe15583b2b/click-8.3.1-py3-none-any.whl
   name: click
   version: 8.3.1
