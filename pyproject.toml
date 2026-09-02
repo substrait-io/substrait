@@ -85,12 +85,27 @@ test = { cmd = "pytest .", default-environment = "dev", depends-on = ["generate-
 # docs
 mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", description = "Build Website" }
 
+# dependency review -- the task lives in [tool.pixi.feature.lock-diff.tasks]
+# because its environment deliberately excludes the default feature
+
 # release
 dry-run = { cmd = "./ci/release/dry_run.sh", default-environment = "dev", description = "dry-run release" }
 release = { cmd = "./ci/release/run.sh", default-environment = "dev", description = "release" }
 
+# Renders the pixi.lock changes in a pull request. Kept out of the default
+# feature -- and out of `dev` -- so the tooling is pinned in pixi.lock without
+# adding it to every developer environment, and so that rendering a lock diff
+# does not have to install the whole toolchain.
+[tool.pixi.feature.lock-diff.dependencies]
+pixi-diff = ">=0.1.8,<0.2"
+pixi-diff-to-markdown = ">=0.3.9,<0.4"
+
+[tool.pixi.feature.lock-diff.tasks]
+lock-diff = { cmd = "./ci/lock_diff.sh", description = "Render pixi.lock changes against a base revision as markdown" }
+
 [tool.pixi.environments]
 dev = { features = ["dev"] }
+lock-diff = { features = ["lock-diff"], no-default-feature = true }
 
 [dependency-groups]
 dev = [
