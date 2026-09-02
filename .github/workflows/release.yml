@@ -44,6 +44,10 @@ jobs:
         with:
           pixi-version: v0.73.0
           cache: true
+          # the release only needs buf and Node.js; installing the full dev
+          # environment would put the tokens below within reach of the
+          # activation scripts of every package in it
+          environments: release
 
       - name: run semantic-release
         run: pixi run release

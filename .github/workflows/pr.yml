@@ -96,6 +96,8 @@ jobs:
         with:
           pixi-version: v0.73.0
           cache: true
+          # exercise the same slim environment the real release runs in
+          environments: release
       - name: Dry-run release
         run: pixi run dry-run
   python-style:
