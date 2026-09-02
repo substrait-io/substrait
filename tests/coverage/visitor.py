@@ -79,6 +79,17 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             test_cases.append(testcase)
         return group, test_cases
 
+    def visitWindowFuncTestGroup(
+        self, ctx: FuncTestCaseParser.WindowFuncTestGroupContext
+    ):
+        group = self.visitTestGroupDescription(ctx.testGroupDescription())
+        test_cases = []
+        for test_case in ctx.windowFuncTestCase():
+            testcase = self.visitWindowFuncTestCase(test_case)
+            testcase.group = group
+            test_cases.append(testcase)
+        return group, test_cases
+
     def visitTestCase(self, ctx: FuncTestCaseParser.TestCaseContext):
         # TODO Implement this method
         args = self.visitArguments(ctx.arguments())
@@ -103,6 +114,27 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         if ctx.funcOptions() is not None:
             testcase.options = self.visitFuncOptions(ctx.funcOptions())
         return testcase
+
+    def visitWindowFuncTestCase(
+        self, ctx: FuncTestCaseParser.WindowFuncTestCaseContext
+    ):
+        testcase = self.visitWindowFuncCall(ctx.windowFuncCall())
+        testcase.result = self.visitWindowResult(ctx.windowResult())
+        if isinstance(testcase.result, CaseLiteral) and len(
+            testcase.result.value
+        ) != len(testcase.rows):
+            raise ParseError(
+                f"Window result has {len(testcase.result.value)} value(s) but frame "
+                f"'{ctx.windowFuncCall().frameRef.text}' has {len(testcase.rows)} row(s)"
+            )
+        if ctx.funcOptions() is not None:
+            testcase.options = self.visitFuncOptions(ctx.funcOptions())
+        return testcase
+
+    def visitWindowResult(self, ctx: FuncTestCaseParser.WindowResultContext):
+        if ctx.substraitError() is not None:
+            return self.visitSubstraitError(ctx.substraitError())
+        return self.visitDataColumn(ctx.dataColumn())
 
     def visitSingleArgAggregateFuncCall(
         self, ctx: FuncTestCaseParser.SingleArgAggregateFuncCallContext
@@ -152,8 +184,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
                     raise ParseError(
                         "Table name in argument does not match the table name in the function call"
                     )
-                column_index = int(arg.column_name[3:])
-                arg.column_type = column_types[column_index]
+                self._bind_column_type(arg, column_types)
 
         return TestCase(
             func_name=ctx.identifier().getText(),
@@ -165,6 +196,38 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             result=SubstraitError("uninitialized"),
             comment="",
         )
+
+    def visitWindowFuncCall(self, ctx: FuncTestCaseParser.WindowFuncCallContext):
+        table_name, column_types, rows = self.visitTableData(ctx.tableData())
+
+        frame_ref = ctx.frameRef.text
+        if frame_ref != table_name:
+            raise ParseError(
+                f"OVER references frame '{frame_ref}' but DEFINE declared '{table_name}'"
+            )
+
+        args = []
+        if ctx.windowFuncArgs() is not None:
+            args = self.visitWindowFuncArgs(ctx.windowFuncArgs())
+        for arg in args:
+            if arg.scalar_value is None:
+                self._bind_column_type(arg, column_types)
+
+        return TestCase(
+            func_name=ctx.identifier().getText(),
+            base_uri="",
+            group=None,
+            options={},
+            rows=rows,
+            args=args,
+            result=SubstraitError("uninitialized"),
+            comment="",
+        )
+
+    @staticmethod
+    def _bind_column_type(arg, column_types):
+        column_index = int(arg.column_name[3:])
+        arg.column_type = column_types[column_index]
 
     def visitAggregateFuncArgs(self, ctx: FuncTestCaseParser.AggregateFuncArgsContext):
         args = []
@@ -197,6 +260,14 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return AggregateArgument(
             ctx.ColumnName().getText(), "", table_name, scalar_value=None
         )
+
+    def visitWindowFuncArgs(self, ctx: FuncTestCaseParser.WindowFuncArgsContext):
+        return [self.visitWindowFuncArg(arg) for arg in ctx.windowFuncArg()]
+
+    def visitWindowFuncArg(self, ctx: FuncTestCaseParser.WindowFuncArgContext):
+        if ctx.argument() is not None:
+            return AggregateArgument("", "", "", self.visitArgument(ctx.argument()))
+        return AggregateArgument(ctx.ColumnName().getText(), "", "", scalar_value=None)
 
     def visitTableRows(self, ctx: FuncTestCaseParser.TableRowsContext):
         rows = []
