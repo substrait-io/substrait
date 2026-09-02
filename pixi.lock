@@ -725,6 +725,22 @@ environments:
       - pypi: https://files.pythonhosted.org/packages/f7/ec/67fbef5d497f86283db54c22eec6f6140243aae73265799baaaa19cd17fb/ghp_import-2.1.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/fd/32/55fb50ae104061dbc564ef15cc43c013dc4a9f4527a1f4d99baddf56fe5f/rpds_py-0.30.0-cp313-cp313-macosx_11_0_arm64.whl
       - pypi: https://files.pythonhosted.org/packages/fe/c4/225c87bae08c8b9ec99030cd48ae9c4eca050a59bf5c2255853e18c87b50/watchdog-6.0.0-cp313-cp313-macosx_11_0_arm64.whl
+  scan:
+    channels:
+    - url: https://conda.anaconda.org/conda-forge/
+    packages:
+      linux-64:
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/grype-0.118.0-hfc2019e_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/syft-1.51.1-hfc2019e_0.conda
+      linux-aarch64:
+      - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/grype-0.118.0-h22914b5_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/syft-1.51.1-h22914b5_0.conda
+      osx-64:
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/grype-0.118.0-h5839d16_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/syft-1.51.1-h5839d16_0.conda
+      osx-arm64:
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/grype-0.118.0-hf76c51c_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/syft-1.51.1-hf76c51c_0.conda
 packages:
 - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-20_gnu.conda
   build_number: 20
@@ -856,6 +872,14 @@ packages:
   purls: []
   size: 99596
   timestamp: 1755102025473
+- conda: https://conda.anaconda.org/conda-forge/linux-64/grype-0.118.0-hfc2019e_0.conda
+  sha256: f121300f6370e29291fd4cc0870889c282288b25f33b62dcfe0bad87f85ae83c
+  md5: cda5d69c454e64071ef3abad7e2e07a5
+  license: Apache-2.0
+  license_family: APACHE
+  run_exports: {}
+  size: 53815438
+  timestamp: 1787884218875
 - conda: https://conda.anaconda.org/conda-forge/linux-64/harfbuzz-13.2.1-h6083320_0.conda
   sha256: 477f2c553f72165020d3c56740ba354be916c2f0b76fd9f535e83d698277d5ec
   md5: 14470902326beee192e33719a2e8bb7f
@@ -1466,6 +1490,14 @@ packages:
   purls: []
   size: 345073
   timestamp: 1765813471974
+- conda: https://conda.anaconda.org/conda-forge/linux-64/syft-1.51.1-hfc2019e_0.conda
+  sha256: 5d24c9819f821bf5bbec53ea98a810a7408bf08e1970358222126e41c68c84ed
+  md5: c057666816db2babc49ddb92913c4a30
+  license: Apache-2.0
+  license_family: APACHE
+  run_exports: {}
+  size: 51676934
+  timestamp: 1787857376112
 - conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_h366c992_103.conda
   sha256: cafeec44494f842ffeca27e9c8b0c27ed714f93ac77ddadc6aaf726b5554ebac
   md5: cffd3bdd58090148f4cfcd831f4b26ab
@@ -1764,6 +1796,14 @@ packages:
   purls: []
   size: 102400
   timestamp: 1755102000043
+- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/grype-0.118.0-h22914b5_0.conda
+  sha256: e53301189a2885e0f10fea59f40856865457d49698c7f46e83d4ff5ea6d03153
+  md5: 9a949548a9b2dbfba7e2b5d69a11a3f3
+  license: Apache-2.0
+  license_family: APACHE
+  run_exports: {}
+  size: 49964922
+  timestamp: 1787884216590
 - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/harfbuzz-13.2.1-h1134a53_0.conda
   sha256: e22f485fddaaea3ff4b6cae98e0197b9dccd2ed2770337ad6ff38a92afe04e59
   md5: 05d65a2cf410adc331c9ea61f59f1013
@@ -2331,6 +2371,14 @@ packages:
   purls: []
   size: 357597
   timestamp: 1765815673644
+- conda: https://conda.anaconda.org/conda-forge/linux-aarch64/syft-1.51.1-h22914b5_0.conda
+  sha256: 02c8b6d058b32661547aea42611889842e955b0501faece8346977eec6f2174d
+  md5: 9170d5d850772aee88b0d436293448bf
+  license: Apache-2.0
+  license_family: APACHE
+  run_exports: {}
+  size: 48007613
+  timestamp: 1787857388892
 - conda: https://conda.anaconda.org/conda-forge/linux-aarch64/tk-8.6.13-noxft_h0dc03b3_103.conda
   sha256: e25c314b52764219f842b41aea2c98a059f06437392268f09b03561e4f6e5309
   md5: 7fc6affb9b01e567d2ef1d05b84aa6ed
@@ -2614,6 +2662,16 @@ packages:
   purls: []
   size: 186122
   timestamp: 1765215100384
+- conda: https://conda.anaconda.org/conda-forge/osx-64/grype-0.118.0-h5839d16_0.conda
+  sha256: 1c89c6b632ab6cfb34b176ea8bef0e31a4dc6eb050f685b59f72eed9fdb27d3b
+  md5: 917035f2778778ec3bd40a2ed9cb4df3
+  constrains:
+  - __osx >=10.12
+  license: Apache-2.0
+  license_family: APACHE
+  run_exports: {}
+  size: 56051875
+  timestamp: 1787884296367
 - conda: https://conda.anaconda.org/conda-forge/osx-64/icu-78.3-h25d91c4_0.conda
   sha256: 1294117122d55246bb83ad5b589e2a031aacdf2d0b1f99fd338aa4394f881735
   md5: 627eca44e62e2b665eeec57a984a7f00
@@ -2853,6 +2911,16 @@ packages:
   purls: []
   size: 317819
   timestamp: 1765813692798
+- conda: https://conda.anaconda.org/conda-forge/osx-64/syft-1.51.1-h5839d16_0.conda
+  sha256: db8bc4d0e5c7f2d4647aca36c54ab435a651dfbd5a4c243358a5de0b97ef2453
+  md5: e9636907f3018bec9886ca1b38ca5ce5
+  constrains:
+  - __osx >=10.12
+  license: Apache-2.0
+  license_family: APACHE
+  run_exports: {}
+  size: 53814386
+  timestamp: 1787857436572
 - conda: https://conda.anaconda.org/conda-forge/osx-64/tk-8.6.13-h7142dee_3.conda
   sha256: 7f0d9c320288532873e2d8486c331ec6d87919c9028208d3f6ac91dc8f99a67b
   md5: 6e6efb7463f8cef69dbcb4c2205bf60e
@@ -2913,6 +2981,14 @@ packages:
   purls: []
   size: 180327
   timestamp: 1765215064054
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/grype-0.118.0-hf76c51c_0.conda
+  sha256: b85894b6d835e7fcdad9dd1c8ebb45b66493b7fd4c54f04843be56528e2d177c
+  md5: b00f69c1b50f317a5b93427e5d326fe4
+  license: Apache-2.0
+  license_family: APACHE
+  run_exports: {}
+  size: 52365347
+  timestamp: 1787884221463
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/icu-78.3-hef89b57_0.conda
   sha256: 3a7907a17e9937d3a46dfd41cffaf815abad59a569440d1e25177c15fd0684e5
   md5: f1182c91c0de31a7abd40cedf6a5ebef
@@ -3153,6 +3229,14 @@ packages:
   purls: []
   size: 313930
   timestamp: 1765813902568
+- conda: https://conda.anaconda.org/conda-forge/osx-arm64/syft-1.51.1-hf76c51c_0.conda
+  sha256: 14ab660514213280118902699e645c1444ac96713a07ab9adb633bf4ecc5bff5
+  md5: 42f21f76776337fe93195b18425ff69b
+  license: Apache-2.0
+  license_family: APACHE
+  run_exports: {}
+  size: 50296181
+  timestamp: 1787857419824
 - conda: https://conda.anaconda.org/conda-forge/osx-arm64/tk-8.6.13-h010d191_3.conda
   sha256: 799cab4b6cde62f91f750149995d149bc9db525ec12595e8a1d91b9317f038b3
   md5: a9d86bc62f39b94c4661716624eb21b0

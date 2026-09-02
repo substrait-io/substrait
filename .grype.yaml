@@ -1,0 +1,9 @@
+# Grype configuration for scanning the installed pixi environments.
+#
+# conda packages get CPEs but generally not PURLs (conda/ceps#63 would add
+# them), so they are matched through Grype's "stock" matcher using CPEs. That is
+# Grype's default today; pinning it here keeps the conda findings coming if the
+# default ever flips.
+match:
+  stock:
+    using-cpes: true
