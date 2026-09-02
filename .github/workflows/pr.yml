@@ -2,6 +2,11 @@ name: PR Build Check
 
 on:
   pull_request:
+
+# Every job only builds, lints or tests the checked-out tree.
+permissions:
+  contents: read
+
 jobs:
   site:
     name: Build Website
