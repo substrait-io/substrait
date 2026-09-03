@@ -519,8 +519,8 @@ def test_parse_window_func_test_multiple_columns():
         "v1.0", "extension:io.substrait:functions_arithmetic"
     )
     tests = """# multi-column frame
-DEFINE f1(fp32, fp32) = ((20, 20), (-3, -3), (1, 1), (10, 10))
-corr(col0, col1) OVER f1 = (1, 1, 1, 1)::fp64
+DEFINE f1(fp64, fp64) = ((20, 20), (-3, -3), (1, 1), (10, 10))
+corr(col0, col1) OVER f1 = (1, 1, 1, 1)::fp64?
 """
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 1
@@ -533,13 +533,15 @@ corr(col0, col1) OVER f1 = (1, 1, 1, 1)::fp64
     ]
     assert test_file.testcases[0].args == [
         AggregateArgument(
-            column_name="col0", column_type="fp32", table_name="", scalar_value=None
+            column_name="col0", column_type="fp64", table_name="", scalar_value=None
         ),
         AggregateArgument(
-            column_name="col1", column_type="fp32", table_name="", scalar_value=None
+            column_name="col1", column_type="fp64", table_name="", scalar_value=None
         ),
     ]
-    assert test_file.testcases[0].result == CaseLiteral(["1", "1", "1", "1"], "fp64")
+    assert test_file.testcases[0].result == CaseLiteral(
+        ["1", "1", "1", "1"], "fp64?", nullable=True
+    )
 
 
 def get_absolute_path(relative_path):
