@@ -2,6 +2,10 @@ name: License check
 
 on: pull_request
 
+# The SPDX header check only reads the checked-out files.
+permissions:
+  contents: read
+
 jobs:
   license:
     runs-on: ubuntu-latest

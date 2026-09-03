@@ -8,6 +8,12 @@ on:
       - "extensions/**"
       - "text/**"
 
+# The deploy step pushes to substrait-io/substrait.io with an SSH deploy key
+# rather than GITHUB_TOKEN, so read access to this repository is all that is
+# needed.
+permissions:
+  contents: read
+
 jobs:
   site:
     name: Build & Deploy Website
