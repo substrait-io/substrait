@@ -147,37 +147,10 @@ A testcase with mixed arguments
 
 ### Spec
 
-```
-doc         := <version>
-               <include>
-               (<dependency>)*
-               ((<test_group>)?(<test_case>)+\n)+
-version     := ### SUBSTRAIT_SCALAR_TEST: <test_library_version>
-include     := ### SUBSTRAIT_INCLUDE: <urn>
-dependency  := ### SUBSTRAIT_DEPENDENCY: <urn>
-test_group  := # <description>
-test_case   := <function>(<arguments>) ([<options>])? = <result> (#<description>)?
-description := string
-function    := string
-arguments   := <argument>, <argument>, ... <argument>
-argument    := <literal> | <enum_value> | <func_call>
-literal     := <literal_value>::<datatype>
-enum_value  := <identifier>::enum
-func_call   := <function>(<arguments>)
-result      := <substrait_error> | <literal> | <enum_value> | <func_call>
-options     := <option>, <option>, ... <option>
-option      := <option_name>:<option_value>
-literal_value := string | integer | decimal | float | boolean | date | interval year | interval days | null | list | struct | map | udt
-datatype    := <basic_type> | <parametrized_type> | <compound_type>
-basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | iyear | vbin | <parametrized_type>
-parametrized_type := fchar<int> | vchar<int> | dec<int,int> | fbin<int> | iday<int> | icompound<int> | pt<int> | pts<int> | ptstz<int> | func<params -> datatype>
-params := datatype | (datatype(, datatype)*)
-compound_type := list<datatype> | struct<datatype...> | map<datatype, datatype>
-udt_type      := u!<identifier> | u!<identifier>?
-substrait_error := <!ERROR> | <!UNDEFINED>
-```
+The formal grammar for the test file format is the ANTLR grammar in
+[`grammar/FuncTestCaseParser.g4`](../grammar/FuncTestCaseParser.g4) (paired with
+the lexer in `grammar/FuncTestCaseLexer.g4`).
 
-Actual antlr grammar can be found in `grammar/FuncTestCaseParser.g4`
 ### Literals
 
 `<literal_value>` described in this section.
