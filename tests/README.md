@@ -28,7 +28,7 @@ member it excuses is reported as stale.
 
 ## Substrait Test Format
 
-This document describes the format for Substrait scalar test files.
+This document describes the format for Substrait test files.
 A test file consists of the following elements:
 
 1. Version declaration
@@ -40,7 +40,7 @@ A test file consists of the following elements:
 
 ### Version Declaration
 The version declaration must appear as the first line of the file. It defines the type of tests in the file and test file format version.
-Each test file must exclusively contain either scalar tests or aggregate tests. Mixing test types in the same file is not allowed.
+Each test file must exclusively contain either scalar, aggregate, or window tests. Mixing test types in the same file is not allowed.
 The version declaration should follow this format:
 ```code
 ### SUBSTRAIT_SCALAR_TEST: V1
@@ -49,6 +49,11 @@ or
 
 ```code
 ### SUBSTRAIT_AGGREGATE_TEST: V1
+```
+or
+
+```code
+### SUBSTRAIT_WINDOW_TEST: V1
 ```
 
 ### Include Statement
@@ -143,6 +148,44 @@ Aggregate test cases support 3 formats:
 A testcase with mixed arguments
 ```code
     ((20), (-3), (1), (10)) LIST_AGG(col0::fp32, ','::string) = 1::fp64
+```
+
+### Window Test Cases
+A test case consists of the following elements:
+- **frame definition**: `DEFINE <frame-name>(<datatype>(, <datatype>)*) = ((<literal>(, <literal>)*), ...)`
+    - A table (same syntax as aggregate tables) the function observes.
+    - Rows are written in the exact order the function sees them, so there's no separate partitioning, ordering, or bounds clause.
+- **function**: The name of the function being tested. The function name must be an identifier alphanumeric string.
+- **arguements**: Comma-separated list of arguments to the function. The arguments can be literals or a bare column reference (e.g. `col0`) into the frame.
+- **over**: Names the input frame the function is evaluated against. Must match the frame name given in the frame definition.
+- **options**: Optional comma-separated list of options in key:value format. The options describe the behavior of the function. The test should be run only on dialects that support the options. If options are not specified, the test should be run for all permutations of the options.
+- **result**: The expected result of the function, written as a column of data using the same format as aggregate function arguments, giving one value per row of the frame in row order (e.g. `(1, 2, 3, 4)::i64?`), or `SUBSTRAIT_ERROR`.
+
+Window test cases support the following format:
+**Static Frame**: A test case that supplies a window function's input as a table whose rows are written in the order the function observes them. This frame of data the function observes is fixed, with no partitioning or bounds clause needed. The tests asserts the function's output at each position within the frame.
+
+```code
+    # lag tests
+    DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+    lag(col0) OVER f1 = (Null, 1998, 1999, 2000)::i32?
+
+    DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+    lag(col0, 2::i32) OVER f1 = (Null, Null, 1998, 1999)::i32?
+
+    # row_number tests
+    DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+    row_number() OVER f1 = (1, 2, 3, 4)::i64?
+```
+
+The frame's rows fix the order the function observes them in, so there is no
+separate `ORDER BY` or bounds clause. In SQL, this is a window ordered by row
+position with a frame spanning the whole partition. The first `lag` case above
+is equivalent to:
+
+```sql
+SELECT lag(v) OVER (ORDER BY ord ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+FROM (VALUES (1, 1998), (2, 1999), (3, 2000), (4, 2001)) AS t(ord, v)
+ORDER BY ord;
 ```
 
 ### Spec
@@ -307,6 +350,27 @@ The above test file has two test groups "Common Maths" and "Arithmetic Overflow 
 ((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64
 DEFINE t1(fp32, fp32) = ((20, -20), (-3, 3), (1, -1), (10, -10), (5, -5))
 corr(t1.col0, t1.col1) = -11::fp64
+```
+
+### Example of a test file for window functions
+
+```code
+### SUBSTRAIT_WINDOW_TEST:V1
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
+
+# lag tests
+DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+lag(col0) OVER f1 = (Null, 1998, 1999, 2000)::i32?
+
+DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+lag(col0, 2::i32) OVER f1 = (Null, Null, 1998, 1999)::i32?
+
+DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+lag(col0, 2::i32, 5::i32) OVER f1 = (5, 5, 1998, 1999)::i32?
+
+# row_number tests
+DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+row_number() OVER f1 = (1, 2, 3, 4)::i64?
 ```
 
 ### Example of a test file with dependencies
