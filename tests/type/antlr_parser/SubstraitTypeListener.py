@@ -135,6 +135,15 @@ class SubstraitTypeListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by SubstraitTypeParser#null.
+    def enterNull(self, ctx:SubstraitTypeParser.NullContext):
+        pass
+
+    # Exit a parse tree produced by SubstraitTypeParser#null.
+    def exitNull(self, ctx:SubstraitTypeParser.NullContext):
+        pass
+
+
     # Enter a parse tree produced by SubstraitTypeParser#fixedChar.
     def enterFixedChar(self, ctx:SubstraitTypeParser.FixedCharContext):
         pass

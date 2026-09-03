@@ -130,6 +130,10 @@ def test_iter_structure_type_expressions():
 def test_parse_valid_type_expressions():
     """Type grammar accepts representative valid type expressions."""
     valid_cases = [
+        "null?",
+        "list<null?>",
+        "map<null?, null?>",
+        "struct<null?, i32>",
         "u!point",
         "u!point?",
         "u!wrapper<i32>",
