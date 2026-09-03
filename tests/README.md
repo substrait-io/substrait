@@ -130,8 +130,9 @@ A testcase with mixed arguments
 
 ### Window Test Cases
 A test case consists of the following elements:
-- **frame definition**: `DEFINE <frame-name>(<datatype>) = ((<literal>), (<literal>), ...)`
-    - Defines the data a window function observes, as a table (same syntax as aggregate test tables). The rows are written in the order the function observes them.
+- **frame definition**: `DEFINE <frame-name>(<datatype>(, <datatype>)*) = ((<literal>(, <literal>)*), ...)`
+    - A table (same syntax as aggregate tables) the function observes.
+    - Rows are written in the exact order the function sees them, so there's no separate partitioning, ordering, or bounds clause.
 - **function**: The name of the function being tested. The function name must be an identifier alphanumeric string.
 - **arguements**: Comma-separated list of arguments to the function. The arguments can be literals or a bare column reference (e.g. `col0`) into the frame.
 - **over**: Names the input frame the function is evaluated against. Must match the frame name given in the frame definition.
@@ -152,6 +153,17 @@ Window test cases support the following format:
     # row_number tests
     DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
     row_number() OVER f1 = (1, 2, 3, 4)::i64?
+```
+
+The frame's rows fix the order the function observes them in, so there is no
+separate `ORDER BY` or bounds clause. In SQL, this is a window ordered by row
+position with a frame spanning the whole partition. The first `lag` case above
+is equivalent to:
+
+```sql
+SELECT lag(v) OVER (ORDER BY ord ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)
+FROM (VALUES (1, 1998), (2, 1999), (3, 2000), (4, 2001)) AS t(ord, v)
+ORDER BY ord;
 ```
 
 ### Spec
