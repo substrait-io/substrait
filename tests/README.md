@@ -153,8 +153,6 @@ the lexer in `grammar/FuncTestCaseLexer.g4`).
 
 ### Literals
 
-`<literal_value>` described in this section.
-
 #### String
 - **string**, **fixedchar**, **varchar**: A sequence of characters enclosed in single quotes. To include a single quote or backslash within the sequence, escape them with a backslash (e.g., `\'` for a single quote and `\\` for a backslash). Example: 'Hello, world!'
 
