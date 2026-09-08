@@ -42,3 +42,4 @@ supported_types:
   - type: DECIMAL
     max_precision: 27
     max_scale: 5
+  - FUNC

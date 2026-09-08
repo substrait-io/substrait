@@ -1,6 +1,43 @@
 Release Notes
 ---
 
+## [0.103.0](https://github.com/substrait-io/substrait/compare/v0.102.0...v0.103.0) (2026-08-30)
+
+### ⚠ BREAKING CHANGES
+
+* **dialect:** dialect files declaring `EXTENSION_SINGLE`,
+`EXTENSION_MULTI` or `EXTENSION_LEAF` must now list the `message_types`
+they support, the same way `USER_DEFINED` types have to name their
+extension. `ExpandRel` support is declared with `CONSISTENT_FIELD`
+rather than `CONSTANT_FIELD`, which never named a protobuf member.
+
+### Features
+
+* **dialect:** check the dialect schema against the protos ([#1173](https://github.com/substrait-io/substrait/issues/1173)) ([b92e97c](https://github.com/substrait-io/substrait/commit/b92e97c3ca1a7f4b3f4c2f10295b7e842548027d))
+
+### Bug Fixes
+
+* **extensions:** split shared type parameters in strpos and logb ([#1186](https://github.com/substrait-io/substrait/issues/1186)) ([5a189e7](https://github.com/substrait-io/substrait/commit/5a189e7b86d7f017c1a31483d0d983bd7bfc3880))
+
+## [0.102.0](https://github.com/substrait-io/substrait/compare/v0.101.0...v0.102.0) (2026-08-23)
+
+### ⚠ BREAKING CHANGES
+
+* **protos:** deprecates the `offset` field of the `Preceding` and
+`Following` window bounds in favor of the new `offset_expr` field, which
+accepts an arbitrary expression instead of an integer literal. Consumers
+should add `offset_expr` support before producers switch to it. The PR
+also requires explicit window frame bounds type. Producers should set
+the bounds type and Consumers should reject `BOUNDS_TYPE_UNSPECIFIED` in
+such cases.
+ 
+<!-- Reviewable:start -->
+
+### Features
+
+* **extensions:** add a decimal overload for negate ([#1177](https://github.com/substrait-io/substrait/issues/1177)) ([6092523](https://github.com/substrait-io/substrait/commit/60925234a0a2c02a41400df349b0bad1e674581b))
+* **protos:** support expression in window aggregate bounds ([#1105](https://github.com/substrait-io/substrait/issues/1105)) ([6706015](https://github.com/substrait-io/substrait/commit/6706015ffdb19345fef399ef8238e3e6269cb380)), closes [#748](https://github.com/substrait-io/substrait/issues/748) [#617](https://github.com/substrait-io/substrait/issues/617) [#930](https://github.com/substrait-io/substrait/issues/930)
+
 ## [0.101.0](https://github.com/substrait-io/substrait/compare/v0.100.0...v0.101.0) (2026-08-16)
 
 ### ⚠ BREAKING CHANGES

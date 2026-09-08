@@ -4,6 +4,28 @@
 
 Validates protobuf textformat examples in `site/examples/proto-textformat/`.
 
+## Dialect Schema Validator
+
+Validates that `text/dialect_schema.yaml` still describes the protobuf
+definitions.  Dialects declare which relations, expressions and types they
+support, and which enum values (join types, set operations, ...) they accept for
+them, so every relation, expression, type or enum value added to, removed from
+or renamed in the protos has to be reflected in the dialect schema.
+
+`tests/test_dialect_schema.py` reports what is out of sync.  Where the dialect
+schema deliberately deviates from the protos, the deviation is recorded in that
+file together with the reason for it:
+
+- `not_declarable` lists protobuf members dialects cannot declare support for.
+- `long_form_only` lists declarations that need properties, and therefore cannot
+  be written as a bare name.
+- `excluded` lists the protobuf values an enum list deliberately does not offer.
+- `DIALECT_ONLY_ENUM_LISTS` lists the enums that describe the dialect itself and
+  have no protobuf counterpart.
+
+Each record names the value it is about, so a record that outlives the protobuf
+member it excuses is reported as stale.
+
 ## Substrait Test Format
 
 This document describes the format for Substrait test files.
@@ -169,40 +191,11 @@ ORDER BY ord;
 
 ### Spec
 
-```
-doc         := <version>
-               <include>
-               (<dependency>)*
-               ((<test_group>)?(<test_case>)+\n)+
-version     := ### SUBSTRAIT_SCALAR_TEST: <test_library_version>
-include     := ### SUBSTRAIT_INCLUDE: <urn>
-dependency  := ### SUBSTRAIT_DEPENDENCY: <urn>
-test_group  := # <description>
-test_case   := <function>(<arguments>) ([<options>])? = <result> (#<description>)?
-description := string
-function    := string
-arguments   := <argument>, <argument>, ... <argument>
-argument    := <literal> | <enum_value> | <func_call>
-literal     := <literal_value>::<datatype>
-enum_value  := <identifier>::enum
-func_call   := <function>(<arguments>)
-result      := <substrait_error> | <literal> | <enum_value> | <func_call>
-options     := <option>, <option>, ... <option>
-option      := <option_name>:<option_value>
-literal_value := string | integer | decimal | float | boolean | date | interval year | interval days | null | list | struct | map | udt
-datatype    := <basic_type> | <parametrized_type> | <compound_type>
-basic_type := bool | i8 | i16 | i32 | i64 | f32 | f64 | str | date | iyear | vbin | <parametrized_type>
-parametrized_type := fchar<int> | vchar<int> | dec<int,int> | fbin<int> | iday<int> | icompound<int> | pt<int> | pts<int> | ptstz<int> | func<params -> datatype>
-params := datatype | (datatype(, datatype)*)
-compound_type := list<datatype> | struct<datatype...> | map<datatype, datatype>
-udt_type      := u!<identifier> | u!<identifier>?
-substrait_error := <!ERROR> | <!UNDEFINED>
-```
+The formal grammar for the test file format is the ANTLR grammar in
+[`grammar/FuncTestCaseParser.g4`](../grammar/FuncTestCaseParser.g4) (paired with
+the lexer in `grammar/FuncTestCaseLexer.g4`).
 
-Actual antlr grammar can be found in `grammar/FuncTestCaseParser.g4`
 ### Literals
-
-`<literal_value>` described in this section.
 
 #### String
 - **string**, **fixedchar**, **varchar**: A sequence of characters enclosed in single quotes. To include a single quote or backslash within the sequence, escape them with a backslash (e.g., `\'` for a single quote and `\\` for a backslash). Example: 'Hello, world!'

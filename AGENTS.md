@@ -23,31 +23,11 @@ configured — the `gh` CLI or a GitHub MCP server.
 
 These are the things agents tend to miss even after reading the docs above.
 
-### A spec change is an ecosystem API change
+### Check migration requirements
 
-A change to `proto/` ripples into every SDK that implements the spec. The active
-libraries are the release gate — the maintained list is
-[`active_libraries.md`](site/docs/community/active_libraries.md); treat it as the
-source of truth rather than hardcoding the set. External consumers (e.g. Apache
-DataFusion, DuckDB's substrait extension) are useful *usage signal* for gauging
-blast radius but are not release-blocking.
-
-Removing or changing a deprecated field is the most common breaking change here.
-Beyond the breaking-change policy (migration must land in all active libraries
-*before* the breaking change), the agent-specific workflow is:
-
-1. Propose an explicit migration strategy (dual-write → prefer-consume-new →
-   remove after a soak — see the URI→URN cookbook in the policy).
-2. For each active library, determine whether it still *produces* the old field
-   and whether it *consumes* the new one, and classify the change as
-   *wire-compatible*, *source-breaking*, and/or *semantically breaking*. Search
-   the repos via `gh`/MCP, or clone them (they're often sibling dirs like
-   `../substrait-go`).
-3. Land the companion migration PRs first, then remove the field here.
-
-Put this per-library compatibility analysis in the PR (or draft PR) body — there
-is no need to open a separate issue per PR. Issues are for surfacing design
-discussion on larger or contentious changes before the design is settled.
+Specification changes can require coordinated ecosystem migrations. Read the
+[breaking-change policy](site/docs/spec/breaking_change_policy.md) before changing
+or removing existing behavior.
 
 ### Docs travel with the change
 
@@ -67,8 +47,8 @@ out the noise agents tend to add:
   If they didn't, the checks would be red.
 - **Process notes that are already implicit** — e.g. "draft pending review".
 
-Do include the rationale, the migration strategy, and the compatibility analysis
-above. Keep commit bodies free of git trailers (`Signed-off-by`,
+Do include the rationale and any migration strategy required by policy. Keep
+commit bodies free of git trailers (`Signed-off-by`,
 `Co-authored-by`, tool attribution) — the changelog pipeline strips them and repo
 history doesn't use them.
 
