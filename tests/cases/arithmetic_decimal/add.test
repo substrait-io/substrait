@@ -1,0 +1,13 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
+
+# basic: Sums of small values, with the result type given by the precision and scale formula
+add(1.00::dec<10, 2>, 2.0::dec<5, 1>) = 3.00::dec<11, 2>
+add(-1.00::dec<10, 2>, 2.0::dec<5, 1>) = 1.00::dec<11, 2>
+add(0.00::dec<10, 2>, 0.0::dec<5, 1>) = 0.00::dec<11, 2>
+
+# scale_reduction: Two operands at scale 10 need 39 digits, so the formula keeps precision 38 and drops the scale to 9
+add(1.0000000000::dec<38, 10>, 2.0000000000::dec<38, 10>) = 3.000000000::dec<38, 9>
+
+# overflow: A sum whose exact result is outside the returned type, whatever is done about scale
+add(99999999999999999999999999999999999999::dec<38, 0>, 1.0000000000::dec<38, 10>) [overflow:ERROR] = <!ERROR>

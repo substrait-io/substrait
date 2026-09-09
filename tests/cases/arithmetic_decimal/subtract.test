@@ -1,0 +1,10 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
+
+# basic: Differences of small values, with the result type given by the precision and scale formula
+subtract(1.00::dec<10, 2>, 2.0::dec<5, 1>) = -1.00::dec<11, 2>
+subtract(2.0::dec<5, 1>, 1.00::dec<10, 2>) = 1.00::dec<11, 2>
+subtract(0.00::dec<10, 2>, 0.0::dec<5, 1>) = 0.00::dec<11, 2>
+
+# scale_reduction: Two operands at scale 10 need 39 digits, so the formula keeps precision 38 and drops the scale to 9
+subtract(3.0000000000::dec<38, 10>, 1.0000000000::dec<38, 10>) = 2.000000000::dec<38, 9>

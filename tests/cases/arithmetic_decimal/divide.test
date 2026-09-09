@@ -1,0 +1,10 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
+
+# basic: Quotients of small values, with the result type given by the precision and scale formula
+divide(1.00::dec<10, 2>, 2.0::dec<5, 1>) = 0.50000000::dec<21, 8>
+divide(-1.00::dec<10, 2>, 2.0::dec<5, 1>) = -0.50000000::dec<21, 8>
+divide(0.00::dec<10, 2>, 2.0::dec<5, 1>) = 0.00000000::dec<21, 8>
+
+# scale_reduction: A quotient of two scale-10 operands asks for scale 49 and precision 115, so the formula returns precision 38 and scale 6
+divide(6.0000000000::dec<38, 10>, 2.0000000000::dec<38, 10>) = 3.000000::dec<38, 6>
