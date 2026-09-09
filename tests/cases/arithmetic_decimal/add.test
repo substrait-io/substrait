@@ -11,3 +11,7 @@ add(1.0000000000::dec<38, 10>, 2.0000000000::dec<38, 10>) = 3.000000000::dec<38,
 
 # overflow: A sum whose exact result is outside the returned type, whatever is done about scale
 add(99999999999999999999999999999999999999::dec<38, 0>, 1.0000000000::dec<38, 10>) [overflow:ERROR] = <!ERROR>
+
+# null_values: test with null values
+add(null::dec?<10, 2>, 2.0::dec<5, 1>) = null::dec?<11, 2>
+add(null::dec?<10, 2>, null::dec?<5, 1>) = null::dec?<11, 2>

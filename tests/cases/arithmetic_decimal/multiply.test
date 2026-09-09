@@ -11,3 +11,7 @@ multiply(1.0000000000::dec<38, 10>, 2.0000000000::dec<38, 10>) = 2.000000::dec<3
 
 # overflow: A product that does not fit the reduced result type
 multiply(9999999999999999999999999999.9999999999::dec<38, 10>, 9999999999999999999999999999.9999999999::dec<38, 10>) [overflow:ERROR] = <!ERROR>
+
+# null_values: test with null values
+multiply(null::dec?<10, 2>, 2.0::dec<5, 1>) = null::dec?<16, 3>
+multiply(null::dec?<10, 2>, null::dec?<5, 1>) = null::dec?<16, 3>
