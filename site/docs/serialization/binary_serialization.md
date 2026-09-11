@@ -23,6 +23,8 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 
 Protobuf implementations impose recursion limits while parsing nested messages. A producer can keep the physical message depth bounded by moving relation or expression subtrees into the `detached_rels` or `detached_expressions` repeated field of their containing `PlanRel` and replacing each moved subtree with a detached reference. Detached entries may themselves contain detached references, allowing a producer to split an arbitrarily deep logical tree into bounded-depth chunks.
 
+A producer may detach every relation and expression node, yielding an effectively flat representation connected entirely by ordinal references. The `PlanRel.rel` or `PlanRel.root` field remains as the entry-point wrapper.
+
 Detached references are encoding details and do not change the meaning of a plan. Resolving every detached reference by substituting its target must produce the logical relation and expression trees represented by the `PlanRel`. They are not a mechanism for sharing computation; use a [`ReferenceRel`](../relations/logical_relations.md#reference-operation) for a relation intentionally shared by multiple trees.
 
 The following rules apply independently to each `PlanRel`:
