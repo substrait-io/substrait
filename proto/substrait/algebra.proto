@@ -687,7 +687,14 @@ message Rel {
     ExchangeRel exchange = 15;
     ExpandRel expand = 16;
     TopNRel top_n = 23;
+    DetachedReferenceRel detached_reference = 25;
   }
+}
+
+// An encoding-only reference to a relation in PlanRel.detached_rels.
+message DetachedReferenceRel {
+  // Zero-based ordinal of the target in the containing PlanRel.
+  uint32 detached_rel_ordinal = 1;
 }
 
 // A base object for writing (e.g., a table or a view).
@@ -1097,6 +1104,14 @@ message Expression {
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
     ExecutionContextVariable execution_context_variable = 17;
+    DetachedExpressionReference detached_reference = 18;
+  }
+
+  // An encoding-only reference to an expression in
+  // PlanRel.detached_expressions.
+  message DetachedExpressionReference {
+    // Zero-based ordinal of the target in the containing PlanRel.
+    uint32 detached_expression_ordinal = 1;
   }
 
   message Literal {
