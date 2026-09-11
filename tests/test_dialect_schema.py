@@ -200,6 +200,10 @@ DECLARATIONS = [
         property="supported_relations",
         discriminator="relation",
         members=relation_options(),
+        not_declarable={
+            "DETACHED_REFERENCE": "DetachedReferenceRel is an encoding detail "
+            "rather than a relation capability",
+        },
         long_form_only=dict.fromkeys(
             ("EXTENSION_SINGLE", "EXTENSION_MULTI", "EXTENSION_LEAF"),
             "the supported extension messages have to be named",
@@ -209,6 +213,10 @@ DECLARATIONS = [
         property="supported_expressions",
         discriminator="expression",
         members=expression_options(),
+        not_declarable={
+            "DETACHED_REFERENCE": "Expression.DetachedExpressionReference is an "
+            "encoding detail rather than an expression capability",
+        },
     ),
     Declaration(
         property="supported_types",

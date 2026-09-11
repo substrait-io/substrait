@@ -10,7 +10,7 @@ from google.protobuf.message import Message
 import pytest
 
 try:
-    from substrait import algebra_pb2
+    from substrait import algebra_pb2, plan_pb2
 except ImportError as err:
     raise ImportError(
         "Protobuf bindings not found. Run 'buf generate' to generate them."
@@ -64,3 +64,10 @@ def test_validate_field_references():
         validate_example(
             textproto_file.read_text(), algebra_pb2.Expression.FieldReference
         )
+
+
+def test_validate_plan_rels():
+    """Validate plan relation examples."""
+    examples_dir = Path("site/examples/proto-textformat/plan_rel")
+    for textproto_file in examples_dir.glob("*.textproto"):
+        validate_example(textproto_file.read_text(), plan_pb2.PlanRel)

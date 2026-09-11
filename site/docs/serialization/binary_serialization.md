@@ -13,6 +13,31 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 %%% proto.message.Plan %%%
     ```
 
+=== "PlanRel Message"
+
+    ```proto
+%%% proto.message.PlanRel %%%
+    ```
+
+### Bounded Nesting
+
+Protobuf implementations impose recursion limits while parsing nested messages. A producer can keep the physical message depth bounded by moving relation or expression subtrees into the `detached_rels` or `detached_expressions` repeated field of their containing `PlanRel` and replacing each moved subtree with a detached reference. Detached entries may themselves contain detached references, allowing a producer to split an arbitrarily deep logical tree into bounded-depth chunks.
+
+Detached references are encoding details and do not change the meaning of a plan. Resolving every detached reference by substituting its target must produce the logical relation and expression trees represented by the `PlanRel`. They are not a mechanism for sharing computation; use a [`ReferenceRel`](../relations/logical_relations.md#reference-operation) for a relation intentionally shared by multiple trees.
+
+The following rules apply independently to each `PlanRel`:
+
+1. A detached reference contains the zero-based ordinal of an entry in the corresponding repeated field of the same `PlanRel`.
+2. Every detached entry must be reachable from the `rel` or `root` field and referenced exactly once.
+3. Detached references must not form a cycle.
+4. Reordering detached entries requires updating their references and does not otherwise change plan semantics.
+
+Consumers should resolve or traverse detached subtrees iteratively so logical depth is not transferred from the protobuf parser to the application call stack. Producers choose a chunk depth appropriate for the protobuf implementations they support.
+
+```textproto
+--8<-- "examples/proto-textformat/plan_rel/detached_subtrees.textproto"
+```
+
 ## Extensions
 Protobuf supports both [simple](../extensions/index.md#simple-extensions) and [advanced](../extensions/index.md#advanced-extensions) extensions. Simple extensions are declared at the plan level and advanced extensions are declared at multiple levels of messages within the plan.
 
