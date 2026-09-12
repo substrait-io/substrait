@@ -5,14 +5,10 @@ root {
   input {
     project {
       input {
-        detached_reference {
-          detached_rel_ordinal: 0
-        }
+        detached_rel_ordinal: 0
       }
       expressions {
-        detached_reference {
-          detached_expression_ordinal: 0
-        }
+        detached_expression_ordinal: 0
       }
     }
   }
