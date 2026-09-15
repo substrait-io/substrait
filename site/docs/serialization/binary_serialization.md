@@ -19,25 +19,25 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 %%% proto.message.PlanRel %%%
     ```
 
-### Bounded Nesting
+### Bounded Expression Nesting
 
-Protobuf implementations impose recursion limits while parsing nested messages. A producer can keep the physical message depth bounded by moving relation or expression subtrees into the `detached_rels` or `detached_expressions` repeated field of their containing `PlanRel` and replacing each moved subtree with a detached reference. Detached entries may themselves contain detached references, allowing a producer to split an arbitrarily deep logical tree into bounded-depth chunks.
+Protobuf implementations impose recursion limits while parsing nested messages. A producer can limit the physical message depth of an expression tree by moving expression subtrees into the `detached_expressions` repeated field of their containing `PlanRel` and replacing each moved subtree with its ordinal. Detached expressions may themselves contain detached expression ordinals, allowing a producer to split an arbitrarily deep expression tree into bounded-depth chunks. Relation trees can be split using [`ReferenceRel`](../relations/logical_relations.md#reference-operation).
 
-For reliable communication across protobuf implementations, producers of plans with unknown or unbounded logical depth should detach every recursive relation and expression child. This yields an effectively flat representation connected entirely by ordinal references. The `PlanRel.rel` or `PlanRel.root` field remains as the entry-point wrapper.
+For reliable communication across protobuf implementations, producers of plans with unknown or unbounded expression depth should detach every recursive expression child. This yields an effectively flat expression representation connected entirely by ordinals.
 
-Detached references are encoding details and do not change the meaning of a plan. Resolving every detached reference by substituting its target must produce the logical relation and expression trees represented by the `PlanRel`. They are not a mechanism for sharing computation; use a [`ReferenceRel`](../relations/logical_relations.md#reference-operation) for a relation intentionally shared by multiple trees.
+Detached expression ordinals are encoding details and do not change the meaning of a plan. Substituting every detached expression ordinal with its target must produce the logical expression trees represented by the `PlanRel`. They are not a mechanism for sharing computation.
 
 The following rules apply independently to each `PlanRel`:
 
-1. A detached reference contains the zero-based ordinal of an entry in the corresponding repeated field of the same `PlanRel`.
-2. Every detached entry must be reachable from the `rel` or `root` field and referenced exactly once.
-3. Detached references must not form a cycle.
-4. Reordering detached entries requires updating their references and does not otherwise change plan semantics.
+1. A detached expression ordinal is the zero-based index of an entry in `detached_expressions` on the same `PlanRel`.
+2. Every detached expression must be reachable from the `rel` or `root` field and referenced exactly once.
+3. Detached expression ordinals must not form a cycle.
+4. Reordering detached expressions requires updating their ordinals and does not otherwise change plan semantics.
 
-Producers may inline subtrees when they can guarantee that the resulting protobuf nesting remains within every target implementation's limit. Logical node count is not a portable measure of protobuf message depth.
+Producers may inline expression subtrees when they can guarantee that the resulting protobuf nesting remains within every target implementation's limit. Logical expression depth is not a portable measure of protobuf message depth.
 
 ```textproto
---8<-- "examples/proto-textformat/plan_rel/detached_subtrees.textproto"
+--8<-- "examples/proto-textformat/plan_rel/detached_expressions.textproto"
 ```
 
 ## Extensions
