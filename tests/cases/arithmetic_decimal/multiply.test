@@ -1,0 +1,17 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
+
+# basic: Products of small values, with the result type given by the precision and scale formula
+multiply(1.00::dec<10, 2>, 2.0::dec<5, 1>) = 2.000::dec<16, 3>
+multiply(-1.00::dec<10, 2>, 2.0::dec<5, 1>) = -2.000::dec<16, 3>
+multiply(0.00::dec<10, 2>, 2.0::dec<5, 1>) = 0.000::dec<16, 3>
+
+# scale_reduction: The product of two scale-10 operands asks for scale 20 and precision 77, so the formula returns precision 38 and scale 6
+multiply(1.0000000000::dec<38, 10>, 2.0000000000::dec<38, 10>) = 2.000000::dec<38, 6>
+
+# overflow: A product that does not fit the reduced result type
+multiply(9999999999999999999999999999.9999999999::dec<38, 10>, 9999999999999999999999999999.9999999999::dec<38, 10>) [overflow:ERROR] = <!ERROR>
+
+# null_values: test with null values
+multiply(null::dec?<10, 2>, 2.0::dec<5, 1>) = null::dec?<16, 3>
+multiply(null::dec?<10, 2>, null::dec?<5, 1>) = null::dec?<16, 3>
