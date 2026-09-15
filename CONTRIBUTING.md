@@ -28,6 +28,37 @@ Pixi manages two types of dependencies:
 - **non-PyPI**: Includes all non-PyPI dependencies (Python itself, buf, ANTLR, Node.js, etc.) as `[tool.pixi.dependencies]` in `pyproject.toml`
 - **PyPI**: Includes all PyPI development dependencies (Ruff, pytest, check-jsonschema, yamllint, etc.) and documentation dependencies (mkdocs and plugins) as a regular pyproject.toml `dev` dependency group in `pyproject.toml` which can be used with other Python package managers like `uv`.
 
+### Dependency Cooldown
+
+`[tool.pixi.workspace]` in `pyproject.toml` sets `exclude-newer = "14d"`, so
+`pixi lock` and `pixi update` ignore conda and PyPI packages published in the
+last 14 days. A compromised or broken upload therefore has two weeks to be
+noticed before it can reach `pixi.lock` — see
+[Pixi's security guide](https://pixi.prefix.dev/latest/security/) for the
+reasoning. The cutoff is a relative duration evaluated at solve time, so the
+window slides on its own and needs no maintenance. (For conda packages the
+cutoff is compared against the build timestamp in the channel's repodata, which
+predates the upload, so the effective hold is a little shorter than 14 days.)
+
+Keep this window in step with the cooldown configured for automated dependency
+updates. If a bot proposes a version newer than pixi's cutoff, the `pixi lock`
+step in its own pull request cannot resolve that version.
+
+To take a security fix that is younger than the window, add a per-package
+override rather than lowering the workspace-wide cutoff:
+
+```toml
+# conda packages
+[tool.pixi.exclude-newer]
+openssl = "0d"
+
+# PyPI packages
+[tool.pixi.pypi-exclude-newer]
+urllib3 = "0d"
+```
+
+Drop the override again once the fix has aged past the window.
+
 ## Common Development Tasks
 
 Pixi provides convenient tasks for common development operations. Here are the most frequently used commands:

@@ -48,6 +48,10 @@ pythonpath = ["gen/proto/python"]
 name = "substrait"
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64", "linux-aarch64"]
+# Ignore conda and PyPI packages published in the last 14 days when solving, so
+# a compromised or broken upload has time to be noticed before it can reach a
+# build. See CONTRIBUTING.md for how to bypass this for an urgent security fix.
+exclude-newer = "14d"
 
 [tool.pixi.dependencies]
 antlr = ">=4.13.2,<5"
