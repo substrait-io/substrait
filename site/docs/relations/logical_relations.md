@@ -78,6 +78,12 @@ Local files are references to files which are locally-accessible. This may inclu
 | --------------------------- | ----------------------------------------------------------------- | -------- |
 | Items                       | An array of Items (path or path glob) associated with the read.   | Required |
 
+##### Partition Fields
+
+Partitioned datasets commonly encode some field values in the file path (for example `.../year=2024/month=03/...`) rather than in the file contents. Each item may carry a set of partition fields (commonly called partition columns), where each pairs a reference to a (possibly nested) field in the read schema with a constant `value` (a literal). The field is addressed by ordinal position, with optional child segments for nested structs — the same addressing used by the read projection. Every record produced from that item takes the given constant value for that field, while the remaining fields are read from the file itself. This is optional and is empty for non-partitioned data.
+
+This models value-based (identity) partitioning only. Hash, range, and bucket partitioning schemes are out of scope here; a redistribution by hash or bucket is expressed with an [exchange operator](physical_relations.md#exchange-operator).
+
 ##### File Formats
 
 Included in the definition of the local files above is a specification of the file type. The currently available file types are: 
