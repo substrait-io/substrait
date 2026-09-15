@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+
+reviews:
+  path_instructions:
+    - path: "site/docs/**"
+      instructions: |
+        Treat these files as normative specification text, not supplementary
+        documentation. Review changes for semantic correctness, ambiguity,
+        compatibility, and consistency with the rest of the specification and
+        linked implementation repositories.
+
+knowledge_base:
+  linked_repositories:
+    - repository: "substrait-io/substrait-go"
+    - repository: "substrait-io/substrait-java"
+    - repository: "substrait-io/substrait-python"
+    - repository: "substrait-io/substrait-rs"
