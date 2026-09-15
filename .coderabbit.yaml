@@ -11,6 +11,7 @@ reviews:
 
 knowledge_base:
   linked_repositories:
+    - repository: "substrait-io/substrait-csharp"
     - repository: "substrait-io/substrait-go"
     - repository: "substrait-io/substrait-java"
     - repository: "substrait-io/substrait-python"
