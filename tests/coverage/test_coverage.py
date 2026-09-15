@@ -7,7 +7,7 @@ from tests.coverage.case_file_parser import parse_stream, parse_one_file
 from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import Extension, validate_impl_nullability_markers
 from tests.coverage.visitor import ParseError
-from tests.coverage.nodes import CaseLiteral, FuncCallArg
+from tests.coverage.nodes import AggregateArgument, CaseLiteral, FuncCallArg
 
 
 def parse_string(input_string):
@@ -23,6 +23,13 @@ def make_header(version, include):
 
 def make_aggregate_test_header(version, include):
     return f"""### SUBSTRAIT_AGGREGATE_TEST: {version}
+### SUBSTRAIT_INCLUDE: {include}
+
+"""
+
+
+def make_window_test_header(version, include):
+    return f"""### SUBSTRAIT_WINDOW_TEST: {version}
 ### SUBSTRAIT_INCLUDE: {include}
 
 """
@@ -440,6 +447,103 @@ max((2.5, 0, 5.0, -2.5, -7.5)::fp32) = 5.0::fp32
     ]
 
 
+def test_parse_window_func_test():
+    header = make_window_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
+    tests = """# row_number tests
+DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+row_number() OVER f1 = (1, 2, 3, 4)::i64?
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "row_number"
+    assert test_file.testcases[0].args == []
+    assert test_file.testcases[0].rows == [["1998"], ["1999"], ["2000"], ["2001"]]
+    assert test_file.testcases[0].result == CaseLiteral(
+        ["1", "2", "3", "4"], "i64?", nullable=True
+    )
+
+
+def test_parse_window_func_test_with_args():
+    header = make_window_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
+    tests = """# lag tests
+DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+lag(col0, 2::i32, 5::i32) OVER f1 = (5, 5, 1998, 1999)::i32?
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "lag"
+    assert test_file.testcases[0].rows == [["1998"], ["1999"], ["2000"], ["2001"]]
+    assert test_file.testcases[0].args == [
+        AggregateArgument(
+            column_name="col0", column_type="i32", table_name="", scalar_value=None
+        ),
+        AggregateArgument(
+            column_name="",
+            column_type="",
+            table_name="",
+            scalar_value=CaseLiteral("2", "i32"),
+        ),
+        AggregateArgument(
+            column_name="",
+            column_type="",
+            table_name="",
+            scalar_value=CaseLiteral("5", "i32"),
+        ),
+    ]
+    assert test_file.testcases[0].result == CaseLiteral(
+        ["5", "5", "1998", "1999"], "i32?", nullable=True
+    )
+
+
+def test_parse_window_func_test_empty_frame():
+    header = make_window_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
+    tests = """# empty frame
+DEFINE f1(i32) = ()
+row_number() OVER f1 = ()::i64?
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "row_number"
+    assert test_file.testcases[0].rows == []
+    assert test_file.testcases[0].result == CaseLiteral([], "i64?", nullable=True)
+
+
+def test_parse_window_func_test_multiple_columns():
+    header = make_window_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
+    tests = """# multi-column frame
+DEFINE f1(fp64, fp64) = ((20, 20), (-3, -3), (1, 1), (10, 10))
+corr(col0, col1) OVER f1 = (1, 1, 1, 1)::fp64?
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "corr"
+    assert test_file.testcases[0].rows == [
+        ["20", "20"],
+        ["-3", "-3"],
+        ["1", "1"],
+        ["10", "10"],
+    ]
+    assert test_file.testcases[0].args == [
+        AggregateArgument(
+            column_name="col0", column_type="fp64", table_name="", scalar_value=None
+        ),
+        AggregateArgument(
+            column_name="col1", column_type="fp64", table_name="", scalar_value=None
+        ),
+    ]
+    assert test_file.testcases[0].result == CaseLiteral(
+        ["1", "1", "1", "1"], "fp64?", nullable=True
+    )
+
+
 def get_absolute_path(relative_path):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(script_dir, relative_path)
@@ -639,6 +743,31 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
         make_aggregate_test_header(
             "v1.0", "extension:io.substrait:functions_arithmetic"
         )
+        + "# basic\n"
+    )
+    with pytest.raises(ParseError) as pm:
+        parse_string(header + input_func_test + "\n")
+    assert expected_message in str(pm.value)
+
+
+@pytest.mark.parametrize(
+    "input_func_test, expected_message",
+    [
+        (
+            """DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+                row_number() OVER f2 = (1, 2, 3, 4)::i64?""",
+            "OVER references frame 'f2' but DEFINE declared 'f1'",
+        ),
+        (
+            """DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+                row_number() OVER f1 = (1, 2, 3)::i64?""",
+            "Window result has 3 value(s) but frame 'f1' has 4 row(s)",
+        ),
+    ],
+)
+def test_parse_errors_with_bad_window_testcases(input_func_test, expected_message):
+    header = (
+        make_window_test_header("v1.0", "extension:io.substrait:functions_arithmetic")
         + "# basic\n"
     )
     with pytest.raises(ParseError) as pm:
