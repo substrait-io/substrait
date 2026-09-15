@@ -246,3 +246,29 @@ def test_extension_yaml_type_names_are_defined():
                 )
 
     assert failures == [], "\n".join(failures)
+
+
+def test_extension_yaml_argument_names_are_unique():
+    """No checked-in function implementation repeats a named argument."""
+    repo_root = Path(__file__).parents[2]
+    failures = []
+    for path in extension_yaml_files():
+        with path.open() as f:
+            extension = yaml.load(f, Loader=yaml.FullLoader)
+
+        for section in ("scalar_functions", "aggregate_functions", "window_functions"):
+            for function in extension.get(section) or []:
+                for index, impl in enumerate(function.get("impls") or [], 1):
+                    names = [
+                        arg["name"] for arg in impl.get("args") or [] if "name" in arg
+                    ]
+                    duplicates = sorted(
+                        {name for name in names if names.count(name) > 1}
+                    )
+                    if duplicates:
+                        failures.append(
+                            f"{path.relative_to(repo_root)}: {section}.{function['name']} "
+                            f"implementation {index} repeats argument name(s): {duplicates}"
+                        )
+
+    assert failures == [], "\n".join(failures)
