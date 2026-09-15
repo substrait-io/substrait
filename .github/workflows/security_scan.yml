@@ -1,0 +1,35 @@
+name: Security Scan
+
+on:
+  schedule:
+    # weekly, Tuesday 05:17 UTC -- off the hour so it does not pile onto the
+    # top-of-hour scheduling peak
+    - cron: "17 5 * * 2"
+  workflow_dispatch:
+
+# Reads the repository and reports to the job summary; nothing is written back.
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Scan installed environments
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'substrait-io/substrait' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.2
+        with:
+          pixi-version: v0.73.0
+          cache: true
+      - name: Install every environment
+        run: pixi install --all --locked
+      - name: Scan installed environments
+        run: pixi run scan >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload SBOMs and reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: sbom
+          path: sbom/
+          retention-days: 30
