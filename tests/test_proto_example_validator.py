@@ -58,7 +58,7 @@ def test_validate_lambda_invocations():
 
 
 def test_validate_plan_functions():
-    """Validate plan-scoped function examples."""
+    """Validate plan-defined function examples."""
     examples_dir = Path("site/examples/proto-textformat/plan_function")
     for textproto_file in examples_dir.glob("*.textproto"):
         validate_example(textproto_file.read_text(), plan_pb2.Plan)

@@ -130,11 +130,12 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 --8<-- "examples/proto-textformat/lambda_invocation/inline_invocation.textproto"
 ```
 
-## Plan-Scoped Functions
+## Plan-Defined Functions
 
 A lambda can be defined once in `Plan.plan_functions` and invoked from multiple
-expressions using `PlanFunctionInvocation`. Plan-scoped functions use their own
-anchor namespace, separate from extension function anchors.
+expressions using `PlanFunctionInvocation`. Each entry is represented by a
+`PlanFunctionDefinition`. Plan-defined functions use their own anchor namespace,
+separate from extension function anchors.
 
 Each definition consists of a `function_anchor`, an `Expression.Lambda`, and an
 optional human-readable `name`. The name is only for diagnostics and plan
@@ -144,9 +145,9 @@ as a reference. An invocation supplies a `function_reference` and a
 the lambda parameters, and the invocation's return type is the type of the
 lambda body.
 
-Plan-scoped definitions are closed over their parameters. Their bodies cannot
+Plan-defined functions are closed over their parameters. Their bodies cannot
 reference relational input or outer records. They may use dynamic parameters,
-execution context variables, and other plan-scoped functions. Plan-function
+execution context variables, and other plan-defined functions. Plan-function
 references may be forward references, but the resulting invocation graph must
 be acyclic so consumers can either execute calls directly or inline them.
 

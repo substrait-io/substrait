@@ -66,12 +66,12 @@ message Plan {
   // Execution behavior settings for this plan, required.
   ExecutionBehavior execution_behavior = 10;
 
-  // An optional list of plan-scoped function definitions.
-  repeated PlanFunction plan_functions = 11;
+  // An optional list of plan-defined functions.
+  repeated PlanFunctionDefinition plan_functions = 11;
 }
 
-// A plan-scoped function defined using a lambda expression.
-message PlanFunction {
+// A function defined within a plan using a lambda expression.
+message PlanFunctionDefinition {
   // A surrogate key used in the context of a single plan to reference this
   // function. This anchor is in a separate namespace from extension function
   // anchors. 0 is a valid anchor/reference, but prefer non-zero values for

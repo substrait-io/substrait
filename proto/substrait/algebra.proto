@@ -1317,7 +1317,7 @@ message Expression {
     Nested.Struct arguments = 2;
   }
 
-  // Invokes a plan-scoped function with provided arguments.
+  // Invokes a plan-defined function with provided arguments.
   message PlanFunctionInvocation {
     // References a function_anchor in Plan.plan_functions. Required.
     uint32 function_reference = 1;
