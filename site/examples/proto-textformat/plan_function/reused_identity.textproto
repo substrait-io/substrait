@@ -1,0 +1,86 @@
+# Defines an identity function once and invokes it at two call sites.
+#
+# message Plan
+
+version {
+  major_number: 0
+  minor_number: 103
+  patch_number: 0
+}
+
+plan_functions {
+  function_anchor: 1
+  definition {
+    parameters {
+      types {
+        i32 {
+          nullability: NULLABILITY_REQUIRED
+        }
+      }
+      nullability: NULLABILITY_REQUIRED
+    }
+    body {
+      selection {
+        lambda_parameter_reference {
+          steps_out: 0
+        }
+        direct_reference {
+          struct_field {
+            field: 0
+          }
+        }
+      }
+    }
+  }
+}
+
+relations {
+  root {
+    input {
+      project {
+        input {
+          read {
+            base_schema {
+              struct {
+                nullability: NULLABILITY_REQUIRED
+              }
+            }
+            named_table {
+              names: "example"
+            }
+          }
+        }
+        expressions {
+          plan_function_invocation {
+            function_reference: 1
+            arguments {
+              fields {
+                literal {
+                  i32: 1
+                }
+              }
+            }
+          }
+        }
+        expressions {
+          plan_function_invocation {
+            function_reference: 1
+            arguments {
+              fields {
+                literal {
+                  i32: 2
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    names: "first"
+    names: "second"
+  }
+}
+
+execution_behavior {
+  variable_eval_mode: VARIABLE_EVALUATION_MODE_PER_PLAN
+}

@@ -130,6 +130,31 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 --8<-- "examples/proto-textformat/lambda_invocation/inline_invocation.textproto"
 ```
 
+## Plan-Scoped Functions
+
+A lambda can be defined once in `Plan.plan_functions` and invoked from multiple
+expressions using `PlanFunctionInvocation`. Plan-scoped functions use their own
+anchor namespace, separate from extension function anchors.
+
+Each definition consists of a `function_anchor` and an `Expression.Lambda`. An
+invocation supplies a `function_reference` and a `Nested.Struct` of arguments.
+The argument count and types must exactly match the lambda parameters, and the
+invocation's return type is the type of the lambda body.
+
+Plan-scoped definitions are closed over their parameters. Their bodies cannot
+reference relational input or outer records. They may use dynamic parameters,
+execution context variables, and other plan-scoped functions. Plan-function
+references may be forward references, but the resulting invocation graph must
+be acyclic so consumers can either execute calls directly or inline them.
+
+Within a plan, every plan-function anchor must be unique and every invocation
+must reference an existing definition. A definition may be invoked any number
+of times.
+
+```protobuf
+--8<-- "examples/proto-textformat/plan_function/reused_identity.textproto"
+```
+
 ## See Also
 
 - [Field References](field_references.md) - How to reference data in expressions

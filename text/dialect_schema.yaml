@@ -166,6 +166,7 @@ properties:
           - DYNAMIC_PARAMETER
           - LAMBDA
           - LAMBDA_INVOCATION
+          - PLAN_FUNCTION_INVOCATION
           - EXECUTION_CONTEXT_VARIABLE
         - $ref: "#/definitions/literal_expression"
         - $ref: "#/definitions/selection_expression"
@@ -181,6 +182,7 @@ properties:
         - $ref: "#/definitions/dynamic_parameter_expression"
         - $ref: "#/definitions/lambda_expression"
         - $ref: "#/definitions/lambda_invocation_expression"
+        - $ref: "#/definitions/plan_function_invocation_expression"
         - $ref: "#/definitions/execution_context_variable"
 
   supported_scalar_functions:
@@ -1300,6 +1302,16 @@ definitions:
     properties:
       expression:
         const: LAMBDA_INVOCATION
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
+    required: [expression]
+  plan_function_invocation_expression:
+    type: object
+    additionalProperties: false
+    properties:
+      expression:
+        const: PLAN_FUNCTION_INVOCATION
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.
