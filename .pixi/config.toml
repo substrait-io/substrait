@@ -1,0 +1,10 @@
+# Project-local pixi configuration.
+#
+# Conda packages may ship a `post-link` script that pixi would run with the
+# user's privileges at install time. Pixi disables them by default; pinning the
+# value here keeps them disabled if that default ever changes, and overrides a
+# contributor's global `insecure` setting for this workspace.
+#
+# See https://pixi.prefix.dev/latest/security/ (§4) and
+# https://pixi.prefix.dev/latest/reference/pixi_configuration/
+run-post-link-scripts = "false"
