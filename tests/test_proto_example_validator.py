@@ -73,7 +73,6 @@ def test_validate_plan_rels():
     for textproto_file in examples_dir.glob("*.textproto"):
         plan_rel = validate_example(textproto_file.read_text(), plan_pb2.PlanRel)
         project = plan_rel.root.input.project
-        assert project.input.WhichOneof("rel_type") == "detached_rel_ordinal"
         assert (
             project.expressions[0].WhichOneof("rex_type")
             == "detached_expression_ordinal"
