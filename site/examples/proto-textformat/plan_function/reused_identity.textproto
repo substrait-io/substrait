@@ -10,6 +10,7 @@ version {
 
 plan_functions {
   function_anchor: 1
+  name: "identity"
   definition {
     parameters {
       types {

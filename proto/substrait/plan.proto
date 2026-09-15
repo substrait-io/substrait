@@ -81,6 +81,10 @@ message PlanFunction {
   // The function signature and body. The body must be closed over the
   // parameters: it cannot reference relational input or an outer record.
   Expression.Lambda definition = 2;
+
+  // An optional human-readable name for diagnostics and plan inspection. The
+  // name has no semantic meaning, need not be unique, and cannot be referenced.
+  optional string name = 3;
 }
 
 // This message type can be used to deserialize only the version of a Substrait

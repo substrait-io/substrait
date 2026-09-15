@@ -136,10 +136,13 @@ A lambda can be defined once in `Plan.plan_functions` and invoked from multiple
 expressions using `PlanFunctionInvocation`. Plan-scoped functions use their own
 anchor namespace, separate from extension function anchors.
 
-Each definition consists of a `function_anchor` and an `Expression.Lambda`. An
-invocation supplies a `function_reference` and a `Nested.Struct` of arguments.
-The argument count and types must exactly match the lambda parameters, and the
-invocation's return type is the type of the lambda body.
+Each definition consists of a `function_anchor`, an `Expression.Lambda`, and an
+optional human-readable `name`. The name is only for diagnostics and plan
+inspection: it has no semantic meaning, need not be unique, and cannot be used
+as a reference. An invocation supplies a `function_reference` and a
+`Nested.Struct` of arguments. The argument count and types must exactly match
+the lambda parameters, and the invocation's return type is the type of the
+lambda body.
 
 Plan-scoped definitions are closed over their parameters. Their bodies cannot
 reference relational input or outer records. They may use dynamic parameters,
