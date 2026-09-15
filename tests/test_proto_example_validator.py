@@ -10,7 +10,7 @@ from google.protobuf.message import Message
 import pytest
 
 try:
-    from substrait import algebra_pb2
+    from substrait import algebra_pb2, plan_pb2
 except ImportError as err:
     raise ImportError(
         "Protobuf bindings not found. Run 'buf generate' to generate them."
@@ -55,6 +55,13 @@ def test_validate_lambda_invocations():
         validate_example(
             textproto_file.read_text(), algebra_pb2.Expression.LambdaInvocation
         )
+
+
+def test_validate_plan_functions():
+    """Validate plan-defined function examples."""
+    examples_dir = Path("site/examples/proto-textformat/plan_function")
+    for textproto_file in examples_dir.glob("*.textproto"):
+        validate_example(textproto_file.read_text(), plan_pb2.Plan)
 
 
 def test_validate_field_references():
