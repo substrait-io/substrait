@@ -77,3 +77,6 @@ def test_validate_plan_rels():
             project.expressions[0].WhichOneof("rex_type")
             == "detached_expression_ordinal"
         )
+        ordinal = project.expressions[0].detached_expression_ordinal
+        assert ordinal < len(plan_rel.detached_expressions)
+        assert plan_rel.detached_expressions[ordinal].literal.i64 == 42
