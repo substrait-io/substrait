@@ -4,7 +4,10 @@ urn: extension:io.substrait:functions_arithmetic_decimal
 scalar_functions:
   -
     name: "add"
-    description: "Add two decimal values."
+    description: >
+      Add two decimal values. The precision and scale of the result follow Arrow Gandiva's DecimalTypeUtil, the same
+      rules Hive and Spark use: where an exact result would need more than 38 digits of precision, the result takes
+      precision 38 and the surplus comes out of the scale, down to a minimum of six fractional digits.
     impls:
       - args:
           - name: x
@@ -25,6 +28,11 @@ scalar_functions:
           DECIMAL<prec, scale>
   -
     name: "subtract"
+    description: >
+      Subtract one decimal value from another. The precision and scale of the result follow Arrow Gandiva's
+      DecimalTypeUtil, the same rules Hive and Spark use: where an exact result would need more than 38 digits of
+      precision, the result takes precision 38 and the surplus comes out of the scale, down to a minimum of six
+      fractional digits.
     impls:
       - args:
           - name: x
@@ -45,6 +53,10 @@ scalar_functions:
           DECIMAL<prec, scale>
   -
     name: "multiply"
+    description: >
+      Multiply two decimal values. The precision and scale of the result follow Arrow Gandiva's DecimalTypeUtil, the
+      same rules Hive and Spark use: where an exact result would need more than 38 digits of precision, the result takes
+      precision 38 and the surplus comes out of the scale, down to a minimum of six fractional digits.
     impls:
       - args:
           - name: x
