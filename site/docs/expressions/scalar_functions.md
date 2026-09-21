@@ -180,10 +180,35 @@ These types are evaluated using a small set of operations to support common scen
 
 ```
 Math: +, -, *, /, min, max
-Boolean: &&, ||, !, <, >, ==
+Boolean: AND, OR, !
+Comparison: <, >, <=, >=, =, !=
+Conditional: if ... then ... else ..., ... ? ... : ...
 Parameters: type, integer
 Literals: type, integer
 ```
+
+`AND` and `OR` are keywords, and all keywords in a type expression are case-insensitive. Note that the boolean operators are spelled `AND`, `OR` and `!`, and equality is spelled `=` and `!=` -- not `&&`, `||` or `==`.
+
+#### Operator Precedence
+
+Sub-expressions may be grouped with parentheses, and grouping always takes precedence over the table below. Without parentheses, operators bind in this order:
+
+| Precedence | Operators | Associativity |
+| ---------- | --------- | ------------- |
+| 1 (tightest) | grouping `( )`, function call `f(...)` | n/a |
+| 2 | `!` | right (unary prefix) |
+| 3 | `*` `/` | left |
+| 4 | `+` `-` | left |
+| 5 | `<` `>` `<=` `>=` | left |
+| 6 | `=` `!=` | left |
+| 7 | `AND` | left |
+| 8 | `OR` | left |
+| 9 | `if ... then ... else ...` | right |
+| 10 (loosest) | `... ? ... : ...` | right |
+
+So `P - S + 1` is `(P - S) + 1`, `S1 + P2 * 2` is `S1 + (P2 * 2)`, and `!a AND b` is `(!a) AND b`. Both conditional forms nest to the right, so `c1 ? 1 : c2 ? 2 : 3` is `c1 ? 1 : (c2 ? 2 : 3)`, and `if ... then ... else ...` binds tighter than `? :`.
+
+The normative statement of this grammar is [`grammar/SubstraitType.g4`](https://github.com/substrait-io/substrait/blob/main/grammar/SubstraitType.g4); the table above records the precedence that grammar derives.
 
 Fully defined with argument types:
 
