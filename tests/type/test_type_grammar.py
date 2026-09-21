@@ -152,13 +152,26 @@ def test_parse_valid_type_expressions():
 def render_precedence(ctx):
     """Render an expr parse tree as a fully-parenthesized string.
 
-    Binary operators all expose ``left``/``op``/``right``; parenthesized
-    expressions pass through to their inner expr so the rendered structure
-    reflects grammar-derived precedence rather than the source parentheses.
+    Binary operators all expose ``left``/``op``/``right``; the unary and
+    conditional forms carry no ``op`` and are matched by context type.
+    Parenthesized expressions pass through to their inner expr so the rendered
+    structure reflects grammar-derived precedence rather than the source
+    parentheses.
     """
-    paren = SubstraitTypeParser.ParenExpressionContext
-    if isinstance(ctx, paren):
+    if isinstance(ctx, SubstraitTypeParser.ParenExpressionContext):
         return render_precedence(ctx.expr())
+    if isinstance(ctx, SubstraitTypeParser.NotExprContext):
+        return f"(! {render_precedence(ctx.expr())})"
+    if isinstance(ctx, SubstraitTypeParser.TernaryContext):
+        condition = render_precedence(ctx.ifExpr)
+        then_expr = render_precedence(ctx.thenExpr)
+        else_expr = render_precedence(ctx.elseExpr)
+        return f"({condition} ? {then_expr} : {else_expr})"
+    if isinstance(ctx, SubstraitTypeParser.IfExprContext):
+        condition = render_precedence(ctx.ifExpr)
+        then_expr = render_precedence(ctx.thenExpr)
+        else_expr = render_precedence(ctx.elseExpr)
+        return f"(if {condition} then {then_expr} else {else_expr})"
     if getattr(ctx, "op", None) is not None:
         left = render_precedence(ctx.left)
         right = render_precedence(ctx.right)
@@ -175,6 +188,36 @@ def test_operator_precedence():
         ("(1 + 2) * 3", "((1 + 2) * 3)"),
         ("1 + 2 < 3 * 4", "((1 + 2) < (3 * 4))"),
         ("a and b or c", "((a and b) or c)"),
+    ]
+
+    for expression, expected in cases:
+        tree = parse_type_expression(expression)
+        assert render_precedence(tree.expr()) == expected, expression
+
+
+def test_not_binds_tighter_than_its_operand_expression():
+    """`!` is the highest-precedence operator, so it takes only its operand."""
+    cases = [
+        ("!a and b", "((! a) and b)"),
+        ("!a or b", "((! a) or b)"),
+        ("a and !b or c", "((a and (! b)) or c)"),
+        ("!a < b", "((! a) < b)"),
+        ("!a = b", "((! a) = b)"),
+        ("!(a and b)", "(! (a and b))"),
+        ("!a ? 1 : 2", "((! a) ? 1 : 2)"),
+    ]
+
+    for expression, expected in cases:
+        tree = parse_type_expression(expression)
+        assert render_precedence(tree.expr()) == expected, expression
+
+
+def test_conditional_is_right_associative():
+    """A chained `? :` nests to the right, so each `:` pairs with the nearest `?`."""
+    cases = [
+        ("c1 ? 1 : c2 ? 2 : 3", "(c1 ? 1 : (c2 ? 2 : 3))"),
+        ("c1 ? 1 : c2 ? 2 : c3 ? 3 : 4", "(c1 ? 1 : (c2 ? 2 : (c3 ? 3 : 4)))"),
+        ("a > b ? 1 : a < b ? 2 : 3", "((a > b) ? 1 : ((a < b) ? 2 : 3))"),
     ]
 
     for expression, expected in cases:

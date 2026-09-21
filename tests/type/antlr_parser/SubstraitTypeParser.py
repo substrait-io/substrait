@@ -118,17 +118,17 @@ def serializedATN():
         281,3,16,8,0,277,278,5,68,0,0,278,280,3,16,8,0,279,277,1,0,0,0,280,
         283,1,0,0,0,281,279,1,0,0,0,281,282,1,0,0,0,282,285,1,0,0,0,283,
         281,1,0,0,0,284,276,1,0,0,0,284,285,1,0,0,0,285,286,1,0,0,0,286,
-        297,5,65,0,0,287,288,5,4,0,0,288,289,3,16,8,0,289,290,5,5,0,0,290,
-        291,3,16,8,0,291,292,5,6,0,0,292,293,3,16,8,3,293,297,1,0,0,0,294,
-        295,5,61,0,0,295,297,3,16,8,2,296,235,1,0,0,0,296,240,1,0,0,0,296,
+        297,5,65,0,0,287,288,5,61,0,0,288,297,3,16,8,9,289,290,5,4,0,0,290,
+        291,3,16,8,0,291,292,5,5,0,0,292,293,3,16,8,0,293,294,5,6,0,0,294,
+        295,3,16,8,2,295,297,1,0,0,0,296,235,1,0,0,0,296,240,1,0,0,0,296,
         268,1,0,0,0,296,269,1,0,0,0,296,270,1,0,0,0,296,274,1,0,0,0,296,
-        287,1,0,0,0,296,294,1,0,0,0,297,324,1,0,0,0,298,299,10,9,0,0,299,
-        300,7,0,0,0,300,323,3,16,8,10,301,302,10,8,0,0,302,303,7,1,0,0,303,
-        323,3,16,8,9,304,305,10,7,0,0,305,306,7,2,0,0,306,323,3,16,8,8,307,
-        308,10,6,0,0,308,309,7,3,0,0,309,323,3,16,8,7,310,311,10,5,0,0,311,
-        312,5,73,0,0,312,323,3,16,8,6,313,314,10,4,0,0,314,315,5,74,0,0,
-        315,323,3,16,8,5,316,317,10,1,0,0,317,318,5,70,0,0,318,319,3,16,
-        8,0,319,320,5,69,0,0,320,321,3,16,8,2,321,323,1,0,0,0,322,298,1,
+        287,1,0,0,0,296,289,1,0,0,0,297,324,1,0,0,0,298,299,10,8,0,0,299,
+        300,7,0,0,0,300,323,3,16,8,9,301,302,10,7,0,0,302,303,7,1,0,0,303,
+        323,3,16,8,8,304,305,10,6,0,0,305,306,7,2,0,0,306,323,3,16,8,7,307,
+        308,10,5,0,0,308,309,7,3,0,0,309,323,3,16,8,6,310,311,10,4,0,0,311,
+        312,5,73,0,0,312,323,3,16,8,5,313,314,10,3,0,0,314,315,5,74,0,0,
+        315,323,3,16,8,4,316,317,10,1,0,0,317,318,5,70,0,0,318,319,3,16,
+        8,0,319,320,5,69,0,0,320,321,3,16,8,1,321,323,1,0,0,0,322,298,1,
         0,0,0,322,301,1,0,0,0,322,304,1,0,0,0,322,307,1,0,0,0,322,310,1,
         0,0,0,322,313,1,0,0,0,322,316,1,0,0,0,323,326,1,0,0,0,324,322,1,
         0,0,0,324,325,1,0,0,0,325,17,1,0,0,0,326,324,1,0,0,0,40,36,40,48,
@@ -2882,32 +2882,32 @@ class SubstraitTypeParser ( Parser ):
                 pass
 
             elif la_ == 7:
-                localctx = SubstraitTypeParser.IfExprContext(self, localctx)
-                self._ctx = localctx
-                _prevctx = localctx
-                self.state = 287
-                self.match(SubstraitTypeParser.If)
-                self.state = 288
-                localctx.ifExpr = self.expr(0)
-                self.state = 289
-                self.match(SubstraitTypeParser.Then)
-                self.state = 290
-                localctx.thenExpr = self.expr(0)
-                self.state = 291
-                self.match(SubstraitTypeParser.Else)
-                self.state = 292
-                localctx.elseExpr = self.expr(3)
-                pass
-
-            elif la_ == 8:
                 localctx = SubstraitTypeParser.NotExprContext(self, localctx)
                 self._ctx = localctx
                 _prevctx = localctx
 
-                self.state = 294
+                self.state = 287
                 self.match(SubstraitTypeParser.Bang)
-                self.state = 295
-                self.expr(2)
+                self.state = 288
+                self.expr(9)
+                pass
+
+            elif la_ == 8:
+                localctx = SubstraitTypeParser.IfExprContext(self, localctx)
+                self._ctx = localctx
+                _prevctx = localctx
+                self.state = 289
+                self.match(SubstraitTypeParser.If)
+                self.state = 290
+                localctx.ifExpr = self.expr(0)
+                self.state = 291
+                self.match(SubstraitTypeParser.Then)
+                self.state = 292
+                localctx.thenExpr = self.expr(0)
+                self.state = 293
+                self.match(SubstraitTypeParser.Else)
+                self.state = 294
+                localctx.elseExpr = self.expr(2)
                 pass
 
 
@@ -2928,9 +2928,9 @@ class SubstraitTypeParser ( Parser ):
                         localctx.left = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 298
-                        if not self.precpred(self._ctx, 9):
+                        if not self.precpred(self._ctx, 8):
                             from antlr4.error.Errors import FailedPredicateException
-                            raise FailedPredicateException(self, "self.precpred(self._ctx, 9)")
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 8)")
                         self.state = 299
                         localctx.op = self._input.LT(1)
                         _la = self._input.LA(1)
@@ -2940,7 +2940,7 @@ class SubstraitTypeParser ( Parser ):
                             self._errHandler.reportMatch(self)
                             self.consume()
                         self.state = 300
-                        localctx.right = self.expr(10)
+                        localctx.right = self.expr(9)
                         pass
 
                     elif la_ == 2:
@@ -2948,9 +2948,9 @@ class SubstraitTypeParser ( Parser ):
                         localctx.left = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 301
-                        if not self.precpred(self._ctx, 8):
+                        if not self.precpred(self._ctx, 7):
                             from antlr4.error.Errors import FailedPredicateException
-                            raise FailedPredicateException(self, "self.precpred(self._ctx, 8)")
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 7)")
                         self.state = 302
                         localctx.op = self._input.LT(1)
                         _la = self._input.LA(1)
@@ -2960,7 +2960,7 @@ class SubstraitTypeParser ( Parser ):
                             self._errHandler.reportMatch(self)
                             self.consume()
                         self.state = 303
-                        localctx.right = self.expr(9)
+                        localctx.right = self.expr(8)
                         pass
 
                     elif la_ == 3:
@@ -2968,9 +2968,9 @@ class SubstraitTypeParser ( Parser ):
                         localctx.left = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 304
-                        if not self.precpred(self._ctx, 7):
+                        if not self.precpred(self._ctx, 6):
                             from antlr4.error.Errors import FailedPredicateException
-                            raise FailedPredicateException(self, "self.precpred(self._ctx, 7)")
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 6)")
                         self.state = 305
                         localctx.op = self._input.LT(1)
                         _la = self._input.LA(1)
@@ -2980,7 +2980,7 @@ class SubstraitTypeParser ( Parser ):
                             self._errHandler.reportMatch(self)
                             self.consume()
                         self.state = 306
-                        localctx.right = self.expr(8)
+                        localctx.right = self.expr(7)
                         pass
 
                     elif la_ == 4:
@@ -2988,9 +2988,9 @@ class SubstraitTypeParser ( Parser ):
                         localctx.left = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 307
-                        if not self.precpred(self._ctx, 6):
+                        if not self.precpred(self._ctx, 5):
                             from antlr4.error.Errors import FailedPredicateException
-                            raise FailedPredicateException(self, "self.precpred(self._ctx, 6)")
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 5)")
                         self.state = 308
                         localctx.op = self._input.LT(1)
                         _la = self._input.LA(1)
@@ -3000,7 +3000,7 @@ class SubstraitTypeParser ( Parser ):
                             self._errHandler.reportMatch(self)
                             self.consume()
                         self.state = 309
-                        localctx.right = self.expr(7)
+                        localctx.right = self.expr(6)
                         pass
 
                     elif la_ == 5:
@@ -3008,13 +3008,13 @@ class SubstraitTypeParser ( Parser ):
                         localctx.left = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 310
-                        if not self.precpred(self._ctx, 5):
+                        if not self.precpred(self._ctx, 4):
                             from antlr4.error.Errors import FailedPredicateException
-                            raise FailedPredicateException(self, "self.precpred(self._ctx, 5)")
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 4)")
                         self.state = 311
                         localctx.op = self.match(SubstraitTypeParser.And)
                         self.state = 312
-                        localctx.right = self.expr(6)
+                        localctx.right = self.expr(5)
                         pass
 
                     elif la_ == 6:
@@ -3022,13 +3022,13 @@ class SubstraitTypeParser ( Parser ):
                         localctx.left = _prevctx
                         self.pushNewRecursionContext(localctx, _startState, self.RULE_expr)
                         self.state = 313
-                        if not self.precpred(self._ctx, 4):
+                        if not self.precpred(self._ctx, 3):
                             from antlr4.error.Errors import FailedPredicateException
-                            raise FailedPredicateException(self, "self.precpred(self._ctx, 4)")
+                            raise FailedPredicateException(self, "self.precpred(self._ctx, 3)")
                         self.state = 314
                         localctx.op = self.match(SubstraitTypeParser.Or)
                         self.state = 315
-                        localctx.right = self.expr(5)
+                        localctx.right = self.expr(4)
                         pass
 
                     elif la_ == 7:
@@ -3046,7 +3046,7 @@ class SubstraitTypeParser ( Parser ):
                         self.state = 319
                         self.match(SubstraitTypeParser.Colon)
                         self.state = 320
-                        localctx.elseExpr = self.expr(2)
+                        localctx.elseExpr = self.expr(1)
                         pass
 
              
@@ -3076,27 +3076,27 @@ class SubstraitTypeParser ( Parser ):
 
     def expr_sempred(self, localctx:ExprContext, predIndex:int):
             if predIndex == 0:
-                return self.precpred(self._ctx, 9)
-         
-
-            if predIndex == 1:
                 return self.precpred(self._ctx, 8)
          
 
-            if predIndex == 2:
+            if predIndex == 1:
                 return self.precpred(self._ctx, 7)
          
 
-            if predIndex == 3:
+            if predIndex == 2:
                 return self.precpred(self._ctx, 6)
          
 
-            if predIndex == 4:
+            if predIndex == 3:
                 return self.precpred(self._ctx, 5)
          
 
-            if predIndex == 5:
+            if predIndex == 4:
                 return self.precpred(self._ctx, 4)
+         
+
+            if predIndex == 5:
+                return self.precpred(self._ctx, 3)
          
 
             if predIndex == 6:
