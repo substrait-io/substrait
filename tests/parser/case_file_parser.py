@@ -20,6 +20,7 @@ class ParseErrorListener(ErrorListener):
 
 
 def parse_stream(input_stream, file_path):
+    """Parse function test cases from an ANTLR input stream."""
     # Create a lexer and parser
     lexer = FuncTestCaseLexer(input_stream)
     token_stream = CommonTokenStream(lexer)
@@ -45,6 +46,7 @@ def parse_stream(input_stream, file_path):
 
 
 def parse_one_file(file_path):
+    """Parse function test cases from one UTF-8 encoded file."""
     return parse_stream(FileStream(file_path, "UTF-8"), file_path)
 
 
@@ -63,4 +65,5 @@ def parse_testcase_directory_recursively(dir_path):
 
 
 def load_all_testcases(dir_path) -> list:
+    """Load all function test case files from a directory tree."""
     return parse_testcase_directory_recursively(dir_path)
