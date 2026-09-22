@@ -26,7 +26,7 @@ insert_final_newline = unset
 indent_style = unset
 trim_trailing_whitespace = unset
 
-[tests/coverage/antlr_parser/**]
+[tools/function_tests/antlr_parser/**]
 charset = unset
 end_of_line = unset
 insert_final_newline = unset
