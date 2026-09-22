@@ -4,7 +4,7 @@ import os
 from dataclasses import asdict
 
 from tests.baseline import read_baseline_file, generate_baseline
-from tools.function_tests.case_file_parser import load_all_testcases
+from tests.parser import load_all_testcases
 from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import build_type_to_short_type
 from tests.coverage.extensions import Extension, validate_nullability_markers

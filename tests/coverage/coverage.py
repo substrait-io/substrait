@@ -2,9 +2,9 @@
 import json
 from collections import defaultdict
 
-from tools.function_tests.case_file_parser import load_all_testcases
+from tests.parser import load_all_testcases
 from tests.coverage.extensions import Extension, error, FunctionRegistry
-from tools.function_tests.nodes import CaseLiteral, SubstraitError, AggregateArgument
+from tests.parser.nodes import CaseLiteral, SubstraitError, AggregateArgument
 
 
 class FunctionTestCoverage:

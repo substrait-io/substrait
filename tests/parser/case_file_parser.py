@@ -4,9 +4,9 @@ import os
 from antlr4 import CommonTokenStream, FileStream
 from antlr4.error.ErrorListener import ErrorListener
 
-from tools.function_tests.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
-from tools.function_tests.antlr_parser.FuncTestCaseParser import FuncTestCaseParser
-from tools.function_tests.visitor import TestCaseVisitor, ParseError
+from tests.parser.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
+from tests.parser.antlr_parser.FuncTestCaseParser import FuncTestCaseParser
+from tests.parser.visitor import TestCaseVisitor, ParseError
 
 
 class ParseErrorListener(ErrorListener):
