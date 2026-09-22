@@ -203,33 +203,26 @@ Sub-expressions may be grouped with parentheses, and grouping always takes prece
 | 6 | `=` `!=` | left |
 | 7 | `AND` | left |
 | 8 | `OR` | left |
-| 9 | `if ... then ... else ...` | right (trailing branch only, see below) |
-| 10 (loosest) | `... ? ... : ...` | right (trailing branch only, see below) |
+| 9 | `if ... then ... else ...` | right |
+| 10 (loosest) | `... ? ... : ...` | right |
 
-So `P - S + 1` is `(P - S) + 1`, `S1 + P2 * 2` is `S1 + (P2 * 2)`, and `!a AND b` is `(!a) AND b`. Both conditional forms nest to the right, so `c1 ? 1 : c2 ? 2 : 3` is `c1 ? 1 : (c2 ? 2 : 3)`, and `if ... then ... else ...` binds tighter than `? :`.
+See [`grammar/SubstraitType.g4`](https://github.com/substrait-io/substrait/blob/main/grammar/SubstraitType.g4) for the formal grammar.
 
-The two conditional forms need one qualification, because only their trailing branch is governed by the table. Their condition and middle branch are delimited on both sides -- by `if` and `then`, by `then` and `else`, and by `?` and `:` -- so each accepts a complete expression whatever its precedence:
+##### Examples
 
-```
-if a ? b : c then d else e   is   if (a ? b : c) then d else e
-if a then b ? c : d else e   is   if a then (b ? c : d) else e
-a ? b ? c : d : e            is   a ? (b ? c : d) : e
-```
-
-The trailing `else` branch is the one the table binds, and that is what makes both forms right-associative:
-
-```
-if a then b else c AND d     is   if a then b else (c AND d)
-if a then b else c ? d : e   is   (if a then b else c) ? d : e
-```
-
-Finally, because `if ... then ... else ...` begins with a keyword rather than with an operand, a complete one may appear wherever a value may, including as the operand of a tighter operator:
-
-```
-x AND if a then b else c     is   x AND (if a then b else c)
-```
-
-The normative statement of this grammar is [`grammar/SubstraitType.g4`](https://github.com/substrait-io/substrait/blob/main/grammar/SubstraitType.g4); the table above records the precedence that grammar derives.
+| Expression | Binds as |
+| ---------- | -------- |
+| `P - S + 1` | `(P - S) + 1` |
+| `S1 + P2 * 2` | `S1 + (P2 * 2)` |
+| `!a AND b` | `(!a) AND b` |
+| `c1 ? 1 : c2 ? 2 : 3` | `c1 ? 1 : (c2 ? 2 : 3)` |
+| `if a then b else if c then d else e` | `if a then b else (if c then d else e)` |
+| `if a ? b : c then d else e` | `if (a ? b : c) then d else e` |
+| `if a then b ? c : d else e` | `if a then (b ? c : d) else e` |
+| `a ? b ? c : d : e` | `a ? (b ? c : d) : e` |
+| `if a then b else c ? d : e` | `(if a then b else c) ? d : e` |
+| `if a then b else c AND d` | `if a then b else (c AND d)` |
+| `x AND if a then b else c` | `x AND (if a then b else c)` |
 
 Fully defined with argument types:
 
