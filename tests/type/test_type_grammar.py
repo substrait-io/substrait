@@ -217,6 +217,30 @@ def test_not_binds_tighter_than_its_operand_expression():
         assert render_precedence(tree.expr()) == expected, expression
 
 
+def test_conditional_branches_delimited_on_both_sides_take_a_full_expression():
+    """A branch delimited by tokens on both sides is not bound by precedence."""
+    cases = [
+        # `if`..`then` and `then`..`else` absorb a looser conditional.
+        ("if a ? b : c then d else e", "(if (a ? b : c) then d else e)"),
+        ("if a then b ? c : d else e", "(if a then (b ? c : d) else e)"),
+        (
+            "if if a then b else c then d else e",
+            "(if (if a then b else c) then d else e)",
+        ),
+        # `?`..`:` likewise.
+        ("a ? if b then c else d : e", "(a ? (if b then c else d) : e)"),
+        # Only the trailing branch is bound by the table.
+        ("if a then b else c AND d", "(if a then b else (c AND d))"),
+        ("if a then b else c ? d : e", "((if a then b else c) ? d : e)"),
+        # `if` starts with a keyword, so a whole one can be a tighter operator's operand.
+        ("x AND if a then b else c", "(x AND (if a then b else c))"),
+    ]
+
+    for expression, expected in cases:
+        tree = parse_type_expression(expression)
+        assert render_precedence(tree.expr()) == expected, expression
+
+
 def test_conditional_is_right_associative():
     """A chained `? :` nests to the right, so each `:` pairs with the nearest `?`."""
     cases = [
