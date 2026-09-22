@@ -28,7 +28,9 @@ member it excuses is reported as stale.
 
 ## Substrait Test Format
 
-This document describes the format for Substrait scalar test files.
+This document describes the format for Substrait scalar test files. The reference
+parser lives in [`tools/function_tests`](../tools/function_tests/). It applies
+format-level validations on top of the concrete syntax defined by the grammar.
 A test file consists of the following elements:
 
 1. Version declaration
