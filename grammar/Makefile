@@ -1,7 +1,7 @@
 TYPE_GRAMMAR=SubstraitLexer.g4 SubstraitType.g4
 TYPE_OUTPUT_DIR=../tests/type/antlr_parser
 TESTCASE_GRAMMAR=FuncTestCaseLexer.g4 FuncTestCaseParser.g4
-TESTCASE_OUTPUT_DIR=../tests/coverage/antlr_parser
+TESTCASE_OUTPUT_DIR=../tools/function_tests/antlr_parser
 
 all: generate_testcase_parser generate_type_parser
 

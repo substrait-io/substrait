@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
-from tests.coverage.antlr_parser.FuncTestCaseParser import FuncTestCaseParser
-from tests.coverage.antlr_parser.FuncTestCaseParserVisitor import (
+from tools.function_tests.antlr_parser.FuncTestCaseParser import FuncTestCaseParser
+from tools.function_tests.antlr_parser.FuncTestCaseParserVisitor import (
     FuncTestCaseParserVisitor,
 )
-from tests.coverage.nodes import (
+from tools.function_tests.nodes import (
     AggregateArgument,
     CaseGroup,
     FuncCallArg,

@@ -2,8 +2,8 @@
 import os
 import yaml
 
-from tests.coverage.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
-from tests.coverage.nodes import SubstraitError, type_str_is_outer_nullable
+from tools.function_tests.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
+from tools.function_tests.nodes import SubstraitError, type_str_is_outer_nullable
 
 enable_debug = False
 
