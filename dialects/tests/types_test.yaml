@@ -9,6 +9,8 @@ dependencies:
 supported_types:
   - I8
   - I16
+  # Quoted because a bare NULL is parsed as the null value in YAML.
+  - type: "NULL"
   - type: UNBOUND
   - type: I32
     metadata:

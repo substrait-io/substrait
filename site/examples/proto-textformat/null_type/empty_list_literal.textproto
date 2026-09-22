@@ -1,0 +1,18 @@
+# An empty list whose element type is unknown, such as the result of Spark's
+# `array()` constructor.
+#
+# The list itself is a non-nullable list; only its element type is the null
+# type.
+#
+# message Expression
+
+literal: {
+  empty_list: {
+    type: {
+      null: {
+        nullability: NULLABILITY_NULLABLE
+      }
+    }
+    nullability: NULLABILITY_REQUIRED
+  }
+}
