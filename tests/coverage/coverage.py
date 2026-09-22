@@ -1,4 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
+"""Coverage checks for parsed Substrait function test cases.
+
+This module consumes the reference parser output from `tests.parser` and checks
+coverage of existing extension functions. The parser owns the function test file
+format and format-level validations.
+"""
+
 import json
 from collections import defaultdict
 

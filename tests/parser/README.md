@@ -12,7 +12,3 @@ The front door is the `tests.parser` package. Code that loads `.test` files
 should use `parse_one_file`, `parse_stream`, or `load_all_testcases` from that
 package rather than invoking the ANTLR parser directly, so those validations run
 consistently.
-
-Coverage code under `../coverage/` consumes the parsed test model. It should only
-contain coverage-specific checks, not the definition of the function test file
-format.
