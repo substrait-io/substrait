@@ -223,6 +223,10 @@ def test_conditional_is_right_associative():
         ("c1 ? 1 : c2 ? 2 : 3", "(c1 ? 1 : (c2 ? 2 : 3))"),
         ("c1 ? 1 : c2 ? 2 : c3 ? 3 : 4", "(c1 ? 1 : (c2 ? 2 : (c3 ? 3 : 4)))"),
         ("a > b ? 1 : a < b ? 2 : 3", "((a > b) ? 1 : ((a < b) ? 2 : 3))"),
+        # A conditional in the `then` is taken by that branch, not left to the outer `:`.
+        ("c1 ? c2 ? 1 : 2 : 3", "(c1 ? (c2 ? 1 : 2) : 3)"),
+        ("c1 ? c2 ? 1 : 2 : c3 ? 3 : 4", "(c1 ? (c2 ? 1 : 2) : (c3 ? 3 : 4))"),
+        ("a > b ? c > d ? 1 : 2 : 3", "((a > b) ? ((c > d) ? 1 : 2) : 3)"),
     ]
 
     for expression, expected in cases:
