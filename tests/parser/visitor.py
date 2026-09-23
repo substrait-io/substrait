@@ -227,6 +227,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
     @staticmethod
     def _bind_column_type(arg, column_types):
         column_index = int(arg.column_name[3:])
+        if column_index >= len(column_types):
+            raise ParseError(f"Column '{arg.column_name}' is not declared by the frame")
         arg.column_type = column_types[column_index]
 
     def visitAggregateFuncArgs(self, ctx: FuncTestCaseParser.AggregateFuncArgsContext):
