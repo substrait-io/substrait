@@ -30,8 +30,8 @@
       "enabled": false
     },
     {
-      "description": "The commitlint CLI, its config and the copy pinned in the pre-commit hook enforce the same rules, so they have to move together",
-      "matchPackageNames": ["@commitlint/**"],
+      "description": "The commitlint CLI, its config and the pre-commit hook enforce the same rules, so they have to move together. The hook bundles its own CLI, so its rev belongs here rather than in the pixi group",
+      "matchPackageNames": ["@commitlint/**", "alessandrojcm/commitlint-pre-commit-hook"],
       "groupName": "commitlint"
     }
   ],
