@@ -3,11 +3,10 @@ import os
 
 import pytest
 from antlr4 import InputStream
-from tests.coverage.case_file_parser import parse_stream, parse_one_file
+from tests.parser import ParseError, parse_one_file, parse_stream
 from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import Extension, validate_impl_nullability_markers
-from tests.coverage.visitor import ParseError
-from tests.coverage.nodes import AggregateArgument, CaseLiteral, FuncCallArg
+from tests.parser.nodes import AggregateArgument, CaseLiteral, FuncCallArg
 
 
 def parse_string(input_string):

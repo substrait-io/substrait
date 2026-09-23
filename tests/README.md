@@ -28,7 +28,9 @@ member it excuses is reported as stale.
 
 ## Substrait Test Format
 
-This document describes the format for Substrait test files.
+This document describes the format for Substrait test files. The reference
+parser lives in [`tests/parser`](parser/). It applies
+format-level validations on top of the concrete syntax defined by the grammar.
 A test file consists of the following elements:
 
 1. Version declaration
