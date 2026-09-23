@@ -1,6 +1,12 @@
 Release Notes
 ---
 
+## [0.103.1](https://github.com/substrait-io/substrait/compare/v0.103.0...v0.103.1) (2026-09-20)
+
+### Bug Fixes
+
+* **extensions:** bind quantile return type ([#1193](https://github.com/substrait-io/substrait/issues/1193)) ([272d8dc](https://github.com/substrait-io/substrait/commit/272d8dc153ac980094d54b63660451d99eab9f89))
+
 ## [0.103.0](https://github.com/substrait-io/substrait/compare/v0.102.0...v0.103.0) (2026-08-30)
 
 ### ⚠ BREAKING CHANGES
