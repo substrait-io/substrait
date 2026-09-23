@@ -1,5 +1,5 @@
 proto/buf.lock linguist-generated=true
-tests/coverage/antlr_parser/** linguist-generated=true
+tests/parser/antlr_parser/** linguist-generated=true
 tests/type/antlr_parser/** linguist-generated=true
 
 # SCM syntax highlighting & preventing 3-way merges
