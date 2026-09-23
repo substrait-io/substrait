@@ -631,6 +631,15 @@ def test_parse_errors_with_bad_scalar_testcases(
             "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, column1::fp32) = 1::fp64",
             "mismatched input 'fp32' expecting 'enum'",  # `column1::fp32` gets recognized as enumArg which requires `::enum`
         ),
+        (
+            "((20, 20), (-3)) corr(col0::fp32, col1::fp32) = 1::fp64",
+            "All rows in a table must have the same number of values",
+        ),
+        (
+            """DEFINE t1(fp32) = ((20, 20), (-3, -3))
+                corr(t1.col0) = 1::fp64""",
+            "declares 1 column(s) but row has 2 value(s)",
+        ),
     ],
 )
 def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_message):

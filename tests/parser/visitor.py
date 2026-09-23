@@ -202,6 +202,12 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         rows = []
         for row in ctx.columnValues():
             rows.append(self.visitColumnValues(row))
+        for row in rows[1:]:
+            if len(row) != len(rows[0]):
+                raise ParseError(
+                    f"All rows in a table must have the same number of values, "
+                    f"but got rows with {len(rows[0])} and {len(row)} values"
+                )
         return rows
 
     def visitTableData(self, ctx: FuncTestCaseParser.TableDataContext):
@@ -210,6 +216,12 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         column_types = []
         for dataType in ctx.dataType():
             column_types.append(self.visitDataType(dataType))
+        for row in rows:
+            if len(row) != len(column_types):
+                raise ParseError(
+                    f"Table '{table_name}' declares {len(column_types)} column(s) "
+                    f"but row has {len(row)} value(s): {row}"
+                )
         return table_name, column_types, rows
 
     def visitDataColumn(self, ctx: FuncTestCaseParser.DataColumnContext):
