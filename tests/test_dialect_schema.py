@@ -142,12 +142,15 @@ def relation_options() -> dict[str, str]:
 
     Relations are named after their message without the `Rel` suffix, so
     `ConsistentPartitionWindowRel` is declared as `CONSISTENT_PARTITION_WINDOW`.
+    Scalar variants use their field name.
     """
     return by_dialect_name(
         algebra_pb2.Rel.DESCRIPTOR.oneofs_by_name["rel_type"].fields,
         lambda member: screaming_snake_case(
             member.message_type.name.removesuffix("Rel")
-        ),
+        )
+        if member.message_type is not None
+        else member.name.upper(),
     )
 
 
@@ -200,6 +203,10 @@ DECLARATIONS = [
         property="supported_relations",
         discriminator="relation",
         members=relation_options(),
+        not_declarable={
+            "DETACHED_REL_ORDINAL": "detached ordinals are an encoding "
+            "mechanism, not a semantic relation kind",
+        },
         long_form_only=dict.fromkeys(
             ("EXTENSION_SINGLE", "EXTENSION_MULTI", "EXTENSION_LEAF"),
             "the supported extension messages have to be named",
