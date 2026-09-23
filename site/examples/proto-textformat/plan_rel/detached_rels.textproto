@@ -1,0 +1,15 @@
+# The relation below RelRoot is stored as a separate protobuf chunk.
+# Resolving the ordinal is equivalent to placing the ReadRel inline.
+
+root {
+  input {
+    detached_rel_ordinal: 0
+  }
+}
+detached_rels {
+  read {
+    named_table {
+      names: "example"
+    }
+  }
+}

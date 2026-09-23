@@ -19,23 +19,29 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 %%% proto.message.PlanRel %%%
     ```
 
-### Bounded Expression Nesting
+### Bounded Relation and Expression Nesting
 
-[Protobuf implementations impose recursion limits while parsing nested messages](https://protobuf.dev/programming-guides/proto-limits/). A producer can limit the physical message depth of an expression tree by moving expression subtrees into the `detached_expressions` repeated field of their containing `PlanRel` and replacing each moved subtree with its ordinal. Detached expressions may themselves contain detached expression ordinals, allowing a producer to split an arbitrarily deep expression tree into bounded-depth chunks. Relation trees can be split using [`ReferenceRel`](../relations/logical_relations.md#reference-operation).
+[Protobuf implementations impose recursion limits while parsing nested messages](https://protobuf.dev/programming-guides/proto-limits/). A producer can limit the physical message depth of relation and expression trees by moving subtrees into the `detached_rels` and `detached_expressions` repeated fields of their containing `PlanRel` and replacing each moved subtree with its ordinal. Detached subtrees may themselves contain detached ordinals, allowing a producer to split arbitrarily deep trees into bounded-depth chunks.
 
-
-Detached expression ordinals are encoding details and do not change the meaning of a plan. Substituting every detached expression ordinal with its target must produce the logical expression trees represented by the `PlanRel`. They are not a mechanism for sharing computation.
+Detached ordinals are encoding details and do not change the meaning of a plan. Substituting every detached ordinal with its target must produce the logical relation and expression trees represented by the `PlanRel`. They are not a mechanism for sharing computation; use [`ReferenceRel`](../relations/logical_relations.md#reference-operation) for intentional relation sharing.
 
 The following rules apply independently to each `PlanRel`:
 
-1. A detached expression ordinal is the zero-based index of an entry in `detached_expressions` on the same `PlanRel`.
-2. Every detached expression must be reachable from the `rel` or `root` field and referenced exactly once.
-3. Detached expression ordinals must not form a cycle.
+1. A detached ordinal is the zero-based index of an entry in the corresponding `detached_rels` or `detached_expressions` field on the same `PlanRel`.
+2. Every detached relation and expression must be reachable from the `rel` or `root` field and referenced exactly once.
+3. Detached ordinals must not form a cycle.
 
+=== "Detached Expression"
 
-```textproto
---8<-- "examples/proto-textformat/plan_rel/detached_expressions.textproto"
-```
+    ```textproto
+    --8<-- "examples/proto-textformat/plan_rel/detached_expressions.textproto"
+    ```
+
+=== "Detached Relation"
+
+    ```textproto
+    --8<-- "examples/proto-textformat/plan_rel/detached_rels.textproto"
+    ```
 
 ## Extensions
 Protobuf supports both [simple](../extensions/index.md#simple-extensions) and [advanced](../extensions/index.md#advanced-extensions) extensions. Simple extensions are declared at the plan level and advanced extensions are declared at multiple levels of messages within the plan.
