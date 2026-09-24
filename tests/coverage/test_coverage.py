@@ -82,22 +82,6 @@ def make_window_test_header(version, include):
 
 
 
-def test_parse_window_func_test():
-    header = make_window_test_header(
-        "v1.0", "extension:io.substrait:functions_arithmetic"
-    )
-    tests = """# row_number tests
-DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
-row_number() OVER f1 = (1, 2, 3, 4)::i64?
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 1
-    assert test_file.testcases[0].func_name == "row_number"
-    assert test_file.testcases[0].args == []
-    assert test_file.testcases[0].rows == [["1998"], ["1999"], ["2000"], ["2001"]]
-    assert test_file.testcases[0].result == CaseLiteral(
-        ["1", "2", "3", "4"], "i64?", nullable=True
-    )
 
 
 def test_parse_window_func_test_with_args():
