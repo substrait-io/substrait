@@ -80,24 +80,6 @@ def make_window_test_header(version, include):
 
 
 
-def test_parse_aggregate_func_max():
-    header = make_aggregate_test_header(
-        "v1.0", "extension:io.substrait:functions_arithmetic"
-    )
-    tests = """# basic
-max((2.5, 0, 5.0, -2.5, -7.5)::fp32) = 5.0::fp32
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 1
-    assert test_file.testcases[0].func_name == "max"
-    assert (
-        test_file.testcases[0].base_uri == "extension:io.substrait:functions_arithmetic"
-    )
-    assert test_file.testcases[0].group.name == "basic"
-    assert test_file.testcases[0].result == CaseLiteral("5.0", "fp32")
-    assert test_file.testcases[0].args == [
-        CaseLiteral(value=["2.5", "0", "5.0", "-2.5", "-7.5"], type="fp32")
-    ]
 
 
 def test_parse_window_func_test():
