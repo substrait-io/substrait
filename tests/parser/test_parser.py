@@ -282,3 +282,14 @@ some_func((1, 'abc', true)::struct<i32, str, bool>) = (2, 'def')::struct<i32, st
     assert test_file.testcases[0].result == CaseLiteral(
         ["2", "'def'"], "struct<i32,str>"
     )
+
+
+def test_parse_empty_struct_example():
+    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    tests = """# basic
+some_func(()::struct<>) = ()::struct<>
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].args[0] == CaseLiteral([], "struct<>")
+    assert test_file.testcases[0].result == CaseLiteral([], "struct<>")
