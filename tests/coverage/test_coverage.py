@@ -95,15 +95,6 @@ def get_absolute_path(relative_path):
     return os.path.join(script_dir, relative_path)
 
 
-def test_parse_file_add():
-    test_file = parse_one_file(get_absolute_path("../cases/arithmetic/add.test"))
-    assert len(test_file.testcases) == 15
-    assert test_file.testcases[0].func_name == "add"
-    assert (
-        test_file.testcases[0].base_uri == "extension:io.substrait:functions_arithmetic"
-    )
-    assert test_file.include == "extension:io.substrait:functions_arithmetic"
-    assert test_file.dependencies == []
 
 
 def test_parse_file_max():

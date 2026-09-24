@@ -544,3 +544,14 @@ corr(col0, col1) OVER f1 = (1, 1, 1, 1)::fp64?
     assert test_file.testcases[0].result == CaseLiteral(
         ["1", "1", "1", "1"], "fp64?", nullable=True
     )
+
+
+def test_parse_file_add():
+    test_file = parse_one_file(get_absolute_path("../cases/arithmetic/add.test"))
+    assert len(test_file.testcases) == 15
+    assert test_file.testcases[0].func_name == "add"
+    assert (
+        test_file.testcases[0].base_uri == "extension:io.substrait:functions_arithmetic"
+    )
+    assert test_file.include == "extension:io.substrait:functions_arithmetic"
+    assert test_file.dependencies == []
