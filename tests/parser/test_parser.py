@@ -465,3 +465,37 @@ row_number() OVER f1 = (1, 2, 3, 4)::i64?
     assert test_file.testcases[0].result == CaseLiteral(
         ["1", "2", "3", "4"], "i64?", nullable=True
     )
+
+
+def test_parse_window_func_test_with_args():
+    header = make_window_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
+    tests = """# lag tests
+DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+lag(col0, 2::i32, 5::i32) OVER f1 = (5, 5, 1998, 1999)::i32?
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "lag"
+    assert test_file.testcases[0].rows == [["1998"], ["1999"], ["2000"], ["2001"]]
+    assert test_file.testcases[0].args == [
+        AggregateArgument(
+            column_name="col0", column_type="i32", table_name="", scalar_value=None
+        ),
+        AggregateArgument(
+            column_name="",
+            column_type="",
+            table_name="",
+            scalar_value=CaseLiteral("2", "i32"),
+        ),
+        AggregateArgument(
+            column_name="",
+            column_type="",
+            table_name="",
+            scalar_value=CaseLiteral("5", "i32"),
+        ),
+    ]
+    assert test_file.testcases[0].result == CaseLiteral(
+        ["5", "5", "1998", "1999"], "i32?", nullable=True
+    )
