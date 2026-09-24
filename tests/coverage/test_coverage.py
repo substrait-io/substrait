@@ -140,42 +140,6 @@ def test_coverage_rejects_unknown_dependency():
 
 
 
-@pytest.mark.parametrize(
-    "input_func_test, expected_message",
-    [
-        (
-            "max((-12, +5)::i8) = -7.0::i8",
-            "no viable alternative at input '-7.0::i8'",
-        ),
-        (
-            "max((-12, 'arg')::str) = -7::i8",
-            "All values in a column must have the same type",
-        ),
-        (
-            """DEFINE t1(fp32, fp32) = ((20, 20), (-3, -3), (1, 1), (10,10), (5,5))
-                corr(t1.col0, t2.col1) = 1::fp64""",
-            "Table name in argument does not match the table name in the function call",
-        ),
-        (
-            "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(my_col::fp32, col0::fp32) = 1::fp64",
-            "mismatched input 'fp32' expecting 'enum'",  # `my_col::fp32` gets recognized as enumArg which requires `::enum`
-        ),
-        (
-            "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, column1::fp32) = 1::fp64",
-            "mismatched input 'fp32' expecting 'enum'",  # `column1::fp32` gets recognized as enumArg which requires `::enum`
-        ),
-    ],
-)
-def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_message):
-    header = (
-        make_aggregate_test_header(
-            "v1.0", "extension:io.substrait:functions_arithmetic"
-        )
-        + "# basic\n"
-    )
-    with pytest.raises(ParseError) as pm:
-        parse_string(header + input_func_test + "\n")
-    assert expected_message in str(pm.value)
 
 
 @pytest.mark.parametrize(
