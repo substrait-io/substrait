@@ -50,3 +50,29 @@ add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
 
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 4
+
+
+def test_parse_func_call_arg():
+    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic")
+    tests = """# associativity
+add(1::i32, add(2::i32, 3::i32)) = add(add(1::i32, 2::i32), 3::i32)
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    tc = test_file.testcases[0]
+    assert tc.func_name == "add"
+    assert tc.args[0] == CaseLiteral("1", "i32")
+    assert tc.args[1] == FuncCallArg(
+        func_name="add",
+        args=[CaseLiteral("2", "i32"), CaseLiteral("3", "i32")],
+    )
+    assert tc.result == FuncCallArg(
+        func_name="add",
+        args=[
+            FuncCallArg(
+                func_name="add",
+                args=[CaseLiteral("1", "i32"), CaseLiteral("2", "i32")],
+            ),
+            CaseLiteral("3", "i32"),
+        ],
+    )
