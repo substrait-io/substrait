@@ -224,3 +224,16 @@ some_func('abc'::str, 'def'::str) = [1, 2, 3, 4, 5, 6]::List<i8>
     )
     assert test_file.testcases[0].args[0] == CaseLiteral("'abc'", "str")
     assert test_file.testcases[0].args[1] == CaseLiteral("'def'", "str")
+
+
+def test_parse_nested_list_example():
+    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    tests = """# basic
+some_func([[1, 2], [3, 4]]::List<List<i32>>) = [[5, 6]]::List<List<i32>>
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        [["1", "2"], ["3", "4"]], "List<List<i32>>"
+    )
+    assert test_file.testcases[0].result == CaseLiteral([["5", "6"]], "List<List<i32>>")
