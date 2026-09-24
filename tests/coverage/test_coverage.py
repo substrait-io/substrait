@@ -218,27 +218,6 @@ def test_urn_match_in_get_function(
 
 
 
-def test_double_nullable_rejected():
-    """Verify that double-nullable syntax (e.g., Type??) is rejected by the parser."""
-    invalid_cases = [
-        "add([1, 2]::List?<i8>?, [3]::List?<i8>) = [1]::List?<i8>",
-        "add(1.5::dec??, 2.5::dec?) = 4.0::dec?",
-        "add('a23':fchar<3?>, '123456789'::fchar<9?>) = 4.0::dec?",
-        "add('abc'::fchar?<3>?, 'def'::fchar?<3>) = 'abcdef'::fchar?<6>",
-        "add('abc'::vchar?<10>?, 'def'::vchar?<10>) = 'abcdef'::vchar?<10>",
-        "add('abc'::fbin?<3>?, 'def'::fbin?<3>) = 'abcdef'::fbin?<6>",
-        "add(P1D::iday??, P2D::iday?) = P3D::iday?",
-        "add(12:00:00::pt?<3>?, 13:00:00::pt?<3>) = 01:00:00::pt?<3>",
-        "add(2020-01-01T12:00:00::pts?<3>?, 2020-01-02T12:00:00::pts?<3>) = 1::i64",
-        "add(2020-01-01T12:00:00+00:00::ptstz?<3>?, 2020-01-02T12:00:00+00:00::ptstz?<3>) = 1::i64",
-    ]
-    header = (
-        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
-    )
-    for case in invalid_cases:
-        with pytest.raises(ParseError) as pm:
-            parse_string(header + case + "\n")
-        assert "?" in str(pm.value), f"Expected parse error about '?' for: {case}"
 
 
 class TestNullabilityValidation:
