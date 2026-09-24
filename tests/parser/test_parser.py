@@ -267,3 +267,18 @@ some_func(null::List?<i32>) = null::List?<i32>
     assert test_file.testcases[0].result == CaseLiteral(
         None, "List?<i32>", nullable=True
     )
+
+
+def test_parse_struct_example():
+    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    tests = """# basic
+some_func((1, 'abc', true)::struct<i32, str, bool>) = (2, 'def')::struct<i32, str>
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        ["1", "'abc'", "true"], "struct<i32,str,bool>"
+    )
+    assert test_file.testcases[0].result == CaseLiteral(
+        ["2", "'def'"], "struct<i32,str>"
+    )
