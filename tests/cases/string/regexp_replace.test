@@ -4,8 +4,10 @@
 # basic: Basic examples without any special cases
 regexp_replace('test@test.com'::str, '^\S+@\S+$'::str, 'email_found'::str, 1::i64, 0::i64) = 'email_found'::str
 regexp_replace('17:50'::str, '[0-9]?[0-9]:[0-9][0-9]'::str, 'TIME'::str, 1::i64, 0::i64) = 'TIME'::str
+regexp_replace('17:50'::vchar<5>, '[0-9]?[0-9]:[0-9][0-9]'::vchar<22>, 'TIME'::vchar<4>, 1::i64, 0::i64) = 'TIME'::vchar<5>
 regexp_replace('test@test.com'::str, '^\S+@\S+$'::str, 'email_found'::str) = 'email_found'::str
 regexp_replace('17:50'::str, '[0-9]?[0-9]:[0-9][0-9]'::str, 'TIME'::str) = 'TIME'::str
+regexp_replace('17:50'::vchar<5>, '[0-9]?[0-9]:[0-9][0-9]'::vchar<22>, 'TIME'::vchar<4>) = 'TIME'::vchar<5>
 
 # lazy_matching: Examples with lazy matching
 regexp_replace('Hello'::str, 'Hel+?'::str, '1'::str, 1::i64, 0::i64) = '1lo'::str
