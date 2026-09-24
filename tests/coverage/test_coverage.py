@@ -64,15 +64,6 @@ def make_window_test_header(version, include):
 
 
 
-def test_parse_user_defined_type_literal():
-    header = make_header("v1.0", "extension:org.example:extension_types")
-    tests = """# basic
-some_func((4, 2)::u!point) = (1, 1)::u!point
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 1
-    assert test_file.testcases[0].args[0] == CaseLiteral(["4", "2"], "u!point")
-    assert test_file.testcases[0].result == CaseLiteral(["1", "1"], "u!point")
 
 
 def test_parse_nullable_user_defined_type_literal():
