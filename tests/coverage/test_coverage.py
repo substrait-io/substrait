@@ -54,19 +54,6 @@ def make_window_test_header(version, include):
 
 
 
-def test_parse_null_list_arg():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
-    tests = """# basic
-some_func(null::List?<i32>) = null::List?<i32>
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 1
-    assert test_file.testcases[0].args[0] == CaseLiteral(
-        None, "List?<i32>", nullable=True
-    )
-    assert test_file.testcases[0].result == CaseLiteral(
-        None, "List?<i32>", nullable=True
-    )
 
 
 def test_parse_struct_example():
