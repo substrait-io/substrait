@@ -237,3 +237,18 @@ some_func([[1, 2], [3, 4]]::List<List<i32>>) = [[5, 6]]::List<List<i32>>
         [["1", "2"], ["3", "4"]], "List<List<i32>>"
     )
     assert test_file.testcases[0].result == CaseLiteral([["5", "6"]], "List<List<i32>>")
+
+
+def test_parse_triply_nested_list_example():
+    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    tests = """# basic
+some_func([[[1, 2], [3, 4]], [[5, 6]]]::List<List<List<i32>>>) = [[[7]]]::List<List<List<i32>>>
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        [[["1", "2"], ["3", "4"]], [["5", "6"]]], "List<List<List<i32>>>"
+    )
+    assert test_file.testcases[0].result == CaseLiteral(
+        [[["7"]]], "List<List<List<i32>>>"
+    )
