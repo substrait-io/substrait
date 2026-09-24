@@ -252,3 +252,18 @@ some_func([[[1, 2], [3, 4]], [[5, 6]]]::List<List<List<i32>>>) = [[[7]]]::List<L
     assert test_file.testcases[0].result == CaseLiteral(
         [[["7"]]], "List<List<List<i32>>>"
     )
+
+
+def test_parse_null_list_arg():
+    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    tests = """# basic
+some_func(null::List?<i32>) = null::List?<i32>
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        None, "List?<i32>", nullable=True
+    )
+    assert test_file.testcases[0].result == CaseLiteral(
+        None, "List?<i32>", nullable=True
+    )
