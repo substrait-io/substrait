@@ -587,3 +587,88 @@ def test_parse_file_power_decimal():
         test_file.testcases[0].base_uri
         == "extension:io.substrait:functions_arithmetic_decimal"
     )
+
+
+@pytest.mark.parametrize(
+    "input_func_test, position, expected_message",
+    [
+        (
+            "add(-12::i8, +5::i8) = -7.0::i8",
+            29,
+            "no viable alternative at input '-7.0::i8'",
+        ),
+        (
+            "add(123.5::i8, 5::i8) = 125::i8",
+            11,
+            "no viable alternative at input '123.5::i8'",
+        ),
+        (
+            "add(123.5::i16, 5.5::i16) = 125::i16",
+            11,
+            "no viable alternative at input '123.5::i16'",
+        ),
+        (
+            "add(123.5::i32, 5.5::i32) = 125::i32",
+            21,
+            "no viable alternative at input '5.5::i32'",
+        ),
+        (
+            "add(123f::i64, 5.5::i64) = 125::i64",
+            7,
+            "no viable alternative at input '123f'",
+        ),
+        (
+            "add(123::i64, 5_000::i64) = 5123::i64",
+            15,
+            "no viable alternative at input '5_000'",
+        ),
+        (
+            "add(123::dec<38,10>, 5.0E::dec<38,10>) = 123::dec<38,10>",
+            24,
+            "no viable alternative at input '5.0E'",
+        ),
+        (
+            "add(123::dec<38,10>, 1a.2::dec<38,10>) = 123::fp32",
+            22,
+            "no viable alternative at input '1a'",
+        ),
+        (
+            "add(123::dec<38,10>, 1.2.3::dec<38,10>) = 123::fp32",
+            24,
+            "no viable alternative at input '1.2.'",
+        ),
+        (
+            "add(123::dec<38,10>, +-12.3::dec<38,10>) = 123::i64",
+            21,
+            "extraneous input '+'",
+        ),
+        ("add(123::fp32, .5E2::fp32) = 123::fp32", 15, "extraneous input '.'"),
+        ("add(123::fp32, 4.1::fp32) = ++123::fp32", 28, "extraneous input '+'"),
+        (
+            "add(123::fp32, 2.5E::fp32) = 123::fp32",
+            18,
+            "no viable alternative at input '2.5E'",
+        ),
+        (
+            "add(123::fp32, 1.4E+::fp32) = 123::fp32",
+            18,
+            "no viable alternative at input '1.4E'",
+        ),
+        (
+            "add(123::fp32, 3.E.5::fp32) = 123::fp32",
+            17,
+            "no viable alternative at input '3.E'",
+        ),
+    ],
+)
+def test_parse_errors_with_bad_scalar_testcases(
+    input_func_test, position, expected_message
+):
+    header = (
+        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    )
+    with pytest.raises(ParseError) as pm:
+        parse_string(header + input_func_test + "\n")
+    assert f"Syntax error at line 5, column {position}: {expected_message}" in str(
+        pm.value
+    )
