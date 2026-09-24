@@ -355,3 +355,18 @@ some_func((4, 2)::u!point?) = (1, 1)::u!point?
     assert test_file.testcases[0].result == CaseLiteral(
         ["1", "1"], "u!point?", nullable=True
     )
+
+
+def test_parse_nested_user_defined_type_literal():
+    header = make_header("v1.0", "extension:org.example:extension_types")
+    tests = """# basic
+some_func(((4, 2), (1, 1))::u!line) = ((0, 0), (3, 3))::u!line
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        [["4", "2"], ["1", "1"]], "u!line"
+    )
+    assert test_file.testcases[0].result == CaseLiteral(
+        [["0", "0"], ["3", "3"]], "u!line"
+    )
