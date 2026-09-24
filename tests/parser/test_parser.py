@@ -801,3 +801,28 @@ def test_parse_various_scalar_func_argument_types(input_func_test):
     )
     test_file = parse_string(header + input_func_test + "\n")
     assert len(test_file.testcases) == 1
+
+
+@pytest.mark.parametrize(
+    "input_func_test",
+    [
+        "f1((1, 2, 3, 4)::i64) = -7.0::fp32",
+        "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) count_star() = 1::fp64",
+        "((20), (3), (1), (10), (5)) count_star() = 1::fp64",
+        """DEFINE t1(fp32, fp32) = ((20, 20), (-3, -3), (1, 1), (10,10), (5,5))
+            count_star() = 1::fp64""",
+        "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64",
+        """DEFINE t1(fp32, fp32) = ((20, -20), (-3, 3), (1, -1), (10, -10), (5, -5))
+corr(t1.col0, t1.col1) = -11::fp64"
+        """,
+    ],
+)
+def test_parse_various_aggregate_scalar_func_argument_types(input_func_test):
+    header = (
+        make_aggregate_test_header(
+            "v1.0", "extension:io.substrait:functions_arithmetic"
+        )
+        + "# basic\n"
+    )
+    test_file = parse_string(header + input_func_test + "\n")
+    assert len(test_file.testcases) == 1
