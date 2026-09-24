@@ -32,11 +32,6 @@ def make_window_test_header(version, include):
 """
 
 
-def get_absolute_path(relative_path):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(script_dir, relative_path)
-
-
 def test_parse_basic_example():
     header = make_header("v1.0", "extension:io.substrait:functions_arithmetic")
     tests = """# 'Basic examples without any special cases'
@@ -544,6 +539,11 @@ corr(col0, col1) OVER f1 = (1, 1, 1, 1)::fp64?
     assert test_file.testcases[0].result == CaseLiteral(
         ["1", "1", "1", "1"], "fp64?", nullable=True
     )
+
+
+def get_absolute_path(relative_path):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(script_dir, relative_path)
 
 
 def test_parse_file_add():

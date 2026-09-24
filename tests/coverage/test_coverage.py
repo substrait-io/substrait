@@ -3,10 +3,9 @@ import os
 
 import pytest
 from antlr4 import InputStream
-from tests.parser import ParseError, parse_one_file, parse_stream
+from tests.parser import parse_stream
 from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import Extension, validate_impl_nullability_markers
-from tests.parser.nodes import AggregateArgument, CaseLiteral, FuncCallArg
 
 
 def parse_string(input_string):
@@ -27,76 +26,9 @@ def make_aggregate_test_header(version, include):
 """
 
 
-def make_window_test_header(version, include):
-    return f"""### SUBSTRAIT_WINDOW_TEST: {version}
-### SUBSTRAIT_INCLUDE: {include}
-
-"""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def get_absolute_path(relative_path):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(script_dir, relative_path)
-
-
-
-
 
 
 def test_coverage_accepts_multiple_known_dependencies():
@@ -132,20 +64,6 @@ def test_coverage_rejects_unknown_dependency():
         match="Unknown extension URN: extension:io.substrait:functions_does_not_exist",
     ):
         get_test_coverage([test_file], registry)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @pytest.mark.parametrize(
@@ -214,10 +132,6 @@ def test_urn_match_in_get_function(
 
     function = registry.get_function(func_name, func_urn, func_args, func_ret)
     assert (function is None) == expected_failure
-
-
-
-
 
 
 class TestNullabilityValidation:
