@@ -735,3 +735,69 @@ def test_parse_errors_with_bad_window_testcases(input_func_test, expected_messag
     with pytest.raises(ParseError) as pm:
         parse_string(header + input_func_test + "\n")
     assert expected_message in str(pm.value)
+
+
+@pytest.mark.parametrize(
+    "input_func_test",
+    [
+        "f1(1::i8, 2::i16, 3::i32, 4::i64) = -7.0::fp32",
+        "f2(1.0::fp32, 2.0::fp64) = -7.0::fp32",
+        "f3('a'::str, 'b'::string) = 'c'::str",
+        "f4(false::bool, true::boolean) = false::bool",
+        "f5(1.1::dec, 2.2::decimal) = 3.3::dec",
+        "f6(1.1::dec<38,10>, 2.2::dec<38,10>) = 3.3::dec<38,10>",
+        "f7(1.1::dec<38,10>, 2.2::decimal<38,10>) = 3.3::decimal<38,10>",
+        "f8(1991-01-01::date) = 2001-01-01::date",
+        "f9(13:01:01.2345678::pt<6>) = 23:59:59.999::pt<6>",
+        "f10(1991-01-01T01:02:03.456::pts<6>, 1991-01-01T00:00:00::pts<6>) = 1991-01-01T22:33:44::pts<6>",
+        "f11(1991-01-01T01:02:03.456+05:30::ptstz<6>, 1991-01-01T00:00:00+15:30::ptstz<6>) = 23::i32",
+        "f12(1991-01-01::date, 5::i64) = 1991-01-01T00:00:00+15:30::ptstz<6>",
+        "f13(P10Y5M::interval_year, 5::i64) = P15Y5M::interval_year",
+        "f14(P10Y5M::iyear, 5::i64) = P15Y5M::iyear",
+        "f15(P10DT5H6M7.2000S::interval_day<6>, 5::i64) = P10DT10H6M7.2000S::interval_day<6>",
+        "f16(P10DT6M7.200S::interval_day<3>, 5::i64) = P10DT11M7.200S::interval_day<3>",
+        "f16(P10DT6M0.2000S::iday<4>, 5::i64) = P10DT11M5.2000S::iday<4>",
+        "f16(P10DT6M7S::interval_day, 5::i64) = P10DT11M7S::interval_day",
+        "f17(P10Y5M10DT6M7S::interval_compound, 5::i64) = P10Y5M10DT6M7S::interval_compound",
+        "f17(P10Y5M10DT6M7.200S::interval_compound<3>, 5::i64) = P10Y5M10DT6M7.200S::interval_compound<3>",
+        "f17(P10Y5M10DT6M0.2000S::icompound<4>, 5::i64) = P10Y5M10DT6M0.2000S::icompound<4>",
+        "ltrim('abcabcdef'::str, 'abc'::str) [spaces_only:FALSE] = 'def'::str",
+        "concat('abcd'::str, Null::str?) [null_handling:ACCEPT_NULLS] = Null::str?",
+        "concat('abcd'::str, Null::str?) [null_handling:IGNORE_NULLS] = 'abcd'::str",
+        "concat(Null::str?) [null_handling:ACCEPT_NULLS] = Null::str?",
+        "regexp_string_split('Hello'::str, 'Hel+?'::str) = ['', 'lo']::List<str>",
+        "regexp_replace('USD100'::str, '(?<=USD)\\d{3}'::str, '999'::str) [lookaround:TRUE] = 'USD999'::str",
+        "divide(5::i64, 0::i64) [on_division_by_zero:LIMIT] = inf::fp64",
+        "modulus(5::i8, 0::i8) [on_domain_error:Null] = Null::i8?",
+        "modulus(8::i8, -3::i8) [division_type:TRUNCATE] = 2::i8",
+        "and(true::bool, false::bool) = false::bool",
+        "or(true::bool, false::boolean) = true::bool",
+        "not(true::bool) = false::bool",
+        "is_null(Null::str?) = true::bool",
+        "logb(2.0::fp64, 0.0::fp64) [on_log_zero:MINUS_INFINITY] = -inf::fp64",
+        "logb(10::fp64, -inf::fp64) [on_domain_error:NONE] = Null::fp64?",
+        "regexp_string_split('HHHelloooo'::str, 'Hel+'::str) = ['HH', 'oooo']::List<str>",
+        "octet_length(''::str) = 0::i64",
+        "octet_length(' '::str) = 1::i64",
+        "octet_length('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'::str) = 48::i64",
+        "concat('abcd'::varchar<9>, Null::str?) [null_handling:ACCEPT_NULLS] = Null::str?",
+        "concat('abcd'::vchar<9>, 'ef'::varchar<9>) = Null::vchar?<9>",
+        "concat('abcd'::vchar<9>, 'ef'::fixedchar<9>) = Null::fchar?<9>",
+        "concat('abcd'::fbin<9>, 'ef'::fixedbinary<9>) = Null::fbin?<9>",
+        "f35(1991-01-01T01:02:03.456::pts<3>) = 1991-01-01T01:02:30.123123::precision_timestamp<3>",
+        "f36(1991-01-01T01:02:03.456::pts<3>, 1991-01-01T01:02:30.123123::precision_timestamp<3>) = 123456::i64",
+        "f37(1991-01-01T01:02:03.123456::pts<6>, 1991-01-01T04:05:06.456::precision_timestamp<6>) = 123456::i64",
+        "f38(1991-01-01T01:02:03.456+05:30::ptstz<3>) = 1991-01-01T00:00:00+15:30::precision_timestamp_tz<3>",
+        "f39(1991-01-01T01:02:03.123456+05:30::ptstz<6>) = 1991-01-01T00:00:00+15:30::precision_timestamp_tz<6>",
+        "logb(10::fp64, -inf::fp64) [on_domain_error:ERROR] = <!ERROR>",
+        "bitwise_and(-31766::dec<5, 0>, 900::dec<3, 0>) = 896::dec<5, 0>",
+        "or(true::bool, true::bool) = true::bool",
+        "between(5::i8, 0::i8, 127::i8) = true::bool",
+    ],
+)
+def test_parse_various_scalar_func_argument_types(input_func_test):
+    header = (
+        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    )
+    test_file = parse_string(header + input_func_test + "\n")
+    assert len(test_file.testcases) == 1
