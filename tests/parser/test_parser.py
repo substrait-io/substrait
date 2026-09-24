@@ -719,3 +719,28 @@ def test_parse_errors_with_bad_aggregate_testcases(input_func_test, expected_mes
     with pytest.raises(ParseError) as pm:
         parse_string(header + input_func_test + "\n")
     assert expected_message in str(pm.value)
+
+
+@pytest.mark.parametrize(
+    "input_func_test, expected_message",
+    [
+        (
+            """DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+                row_number() OVER f2 = (1, 2, 3, 4)::i64?""",
+            "OVER references frame 'f2' but DEFINE declared 'f1'",
+        ),
+        (
+            """DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+                row_number() OVER f1 = (1, 2, 3)::i64?""",
+            "Window result has 3 value(s) but frame 'f1' has 4 row(s)",
+        ),
+    ],
+)
+def test_parse_errors_with_bad_window_testcases(input_func_test, expected_message):
+    header = (
+        make_window_test_header("v1.0", "extension:io.substrait:functions_arithmetic")
+        + "# basic\n"
+    )
+    with pytest.raises(ParseError) as pm:
+        parse_string(header + input_func_test + "\n")
+    assert expected_message in str(pm.value)
