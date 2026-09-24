@@ -84,7 +84,9 @@ def test_validate_plan_rels():
     )
     expression_ordinal = project.expressions[0].detached_expression_ordinal
     assert expression_ordinal < len(expression_plan_rel.detached_expressions)
-    assert expression_plan_rel.detached_expressions[expression_ordinal].literal.i64 == 42
+    assert (
+        expression_plan_rel.detached_expressions[expression_ordinal].literal.i64 == 42
+    )
 
     relation_plan_rel = plan_rels["detached_rels.textproto"]
     assert relation_plan_rel.root.input.WhichOneof("rel_type") == (
@@ -92,6 +94,6 @@ def test_validate_plan_rels():
     )
     relation_ordinal = relation_plan_rel.root.input.detached_rel_ordinal
     assert relation_ordinal < len(relation_plan_rel.detached_rels)
-    assert relation_plan_rel.detached_rels[
-        relation_ordinal
-    ].read.named_table.names == ["example"]
+    assert relation_plan_rel.detached_rels[relation_ordinal].read.named_table.names == [
+        "example"
+    ]
