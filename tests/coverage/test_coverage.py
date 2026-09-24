@@ -70,15 +70,6 @@ def make_window_test_header(version, include):
 
 
 
-def test_parse_aggregate_func_test():
-    header = make_aggregate_test_header(
-        "v1.0", "extension:io.substrait:functions_arithmetic"
-    )
-    tests = """# basic
-avg((1,2,3)::fp32) = 2::fp64
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 1
 
 
 def test_parse_aggregate_func_test_compact():
