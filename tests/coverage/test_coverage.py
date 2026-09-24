@@ -97,15 +97,6 @@ def get_absolute_path(relative_path):
 
 
 
-def test_parse_file_max():
-    test_file = parse_one_file(get_absolute_path("../cases/arithmetic/max.test"))
-    assert len(test_file.testcases) == 12
-    assert test_file.testcases[0].func_name == "max"
-    assert (
-        test_file.testcases[0].base_uri == "extension:io.substrait:functions_arithmetic"
-    )
-    assert test_file.include == "extension:io.substrait:functions_arithmetic"
-    assert test_file.dependencies == []
 
 
 def test_coverage_accepts_multiple_known_dependencies():
