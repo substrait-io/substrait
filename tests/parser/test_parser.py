@@ -575,3 +575,15 @@ def test_parse_file_lt_datetime():
     assert (
         test_file.testcases[0].base_uri == "extension:io.substrait:functions_datetime"
     )
+
+
+def test_parse_file_power_decimal():
+    test_file = parse_one_file(
+        get_absolute_path("../cases/arithmetic_decimal/power.test")
+    )
+    assert len(test_file.testcases) == 9
+    assert test_file.testcases[0].func_name == "power"
+    assert (
+        test_file.testcases[0].base_uri
+        == "extension:io.substrait:functions_arithmetic_decimal"
+    )
