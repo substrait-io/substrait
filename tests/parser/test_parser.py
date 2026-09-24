@@ -381,3 +381,14 @@ avg((1,2,3)::fp32) = 2::fp64
 """
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 1
+
+
+def test_parse_aggregate_func_test_compact():
+    header = make_aggregate_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
+    tests = """# basic
+((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
