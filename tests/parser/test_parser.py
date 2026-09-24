@@ -415,3 +415,15 @@ def test_parse_aggregate_func_test_compact_mixed_args():
 """
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 1
+
+
+def test_parse_aggregate_func_test_compact_string_agg():
+    header = make_aggregate_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
+    tests = """# basic
+(('ant'), ('bat'), ('cat')) string_agg(col0::str, ','::str) = 1::fp64
+(('ant'), ('bat'), ('cat')) string_agg(col0::string, ','::string) = 1::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 2
