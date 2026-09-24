@@ -20,8 +20,8 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
             for key, value in type.items():
                 mdFile.new_line(f"{key}: {value}")
 
-    for function_classification, _value in file_obj.items():
-        if function_classification in ("urn", "dependencies"):
+    for function_classification in file_obj:
+        if function_classification not in function_sections:
             continue
         function_classification_str = function_classification.replace("_", " ").title()
         mdFile.new_header(level=2, title=f"{function_classification_str}")
