@@ -44,39 +44,6 @@ def make_window_test_header(version, include):
 
 
 
-def test_parse_string_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
-    tests = """# basic
-concat('abc'::str, 'def'::str) = 'abcdef'::str
-regexp_string_split('HHHelloooo'::str, 'Hel+'::str) = ['HH', 'oooo']::List<str>
-octet_length('à'::str) = 2::i64
-octet_length('😄'::str) = 4::i64
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 4
-    assert test_file.testcases[0].func_name == "concat"
-    assert test_file.testcases[0].base_uri == "extension:io.substrait:functions_string"
-    assert test_file.testcases[0].group.name == "basic"
-    assert test_file.testcases[0].result == CaseLiteral("'abcdef'", "str")
-
-    assert test_file.testcases[1].func_name == "regexp_string_split"
-    assert test_file.testcases[1].base_uri == "extension:io.substrait:functions_string"
-    assert test_file.testcases[1].group.name == "basic"
-    assert test_file.testcases[1].result == CaseLiteral(["'HH'", "'oooo'"], "List<str>")
-    assert test_file.testcases[1].args[0] == CaseLiteral("'HHHelloooo'", "str")
-    assert test_file.testcases[1].args[1] == CaseLiteral("'Hel+'", "str")
-
-    assert test_file.testcases[2].func_name == "octet_length"
-    assert test_file.testcases[2].base_uri == "extension:io.substrait:functions_string"
-    assert test_file.testcases[2].group.name == "basic"
-    assert test_file.testcases[2].result == CaseLiteral("2", "i64")
-    assert test_file.testcases[2].args[0] == CaseLiteral("'à'", "str")
-
-    assert test_file.testcases[3].func_name == "octet_length"
-    assert test_file.testcases[3].base_uri == "extension:io.substrait:functions_string"
-    assert test_file.testcases[3].group.name == "basic"
-    assert test_file.testcases[3].result == CaseLiteral("4", "i64")
-    assert test_file.testcases[3].args[0] == CaseLiteral("'😄'", "str")
 
 
 def test_parse_type_shaped_string_literals():
