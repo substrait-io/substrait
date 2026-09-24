@@ -514,3 +514,33 @@ row_number() OVER f1 = ()::i64?
     assert test_file.testcases[0].func_name == "row_number"
     assert test_file.testcases[0].rows == []
     assert test_file.testcases[0].result == CaseLiteral([], "i64?", nullable=True)
+
+
+def test_parse_window_func_test_multiple_columns():
+    header = make_window_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
+    tests = """# multi-column frame
+DEFINE f1(fp64, fp64) = ((20, 20), (-3, -3), (1, 1), (10, 10))
+corr(col0, col1) OVER f1 = (1, 1, 1, 1)::fp64?
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "corr"
+    assert test_file.testcases[0].rows == [
+        ["20", "20"],
+        ["-3", "-3"],
+        ["1", "1"],
+        ["10", "10"],
+    ]
+    assert test_file.testcases[0].args == [
+        AggregateArgument(
+            column_name="col0", column_type="fp64", table_name="", scalar_value=None
+        ),
+        AggregateArgument(
+            column_name="col1", column_type="fp64", table_name="", scalar_value=None
+        ),
+    ]
+    assert test_file.testcases[0].result == CaseLiteral(
+        ["1", "1", "1", "1"], "fp64?", nullable=True
+    )
