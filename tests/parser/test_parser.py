@@ -370,3 +370,14 @@ some_func(((4, 2), (1, 1))::u!line) = ((0, 0), (3, 3))::u!line
     assert test_file.testcases[0].result == CaseLiteral(
         [["0", "0"], ["3", "3"]], "u!line"
     )
+
+
+def test_parse_aggregate_func_test():
+    header = make_aggregate_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
+    tests = """# basic
+avg((1,2,3)::fp32) = 2::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
