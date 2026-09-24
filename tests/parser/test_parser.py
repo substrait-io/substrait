@@ -404,3 +404,14 @@ corr(t1.col0, t1.col1) = 1::fp64
 """
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 1
+
+
+def test_parse_aggregate_func_test_compact_mixed_args():
+    header = make_aggregate_test_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic"
+    )
+    tests = """# basic
+((20), (-3), (1), (10)) LIST_AGG(col0::fp32, ','::string) = 1::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
