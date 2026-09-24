@@ -207,3 +207,20 @@ identity('P1Y2M3DT4H5M6S'::str) = 'P1Y2M3DT4H5M6S'::str
     for test_case, value in zip(test_file.testcases, values, strict=True):
         assert test_case.args[0] == CaseLiteral(value, "str")
         assert test_case.result == CaseLiteral(value, "str")
+
+
+def test_parse_string_list_example():
+    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    tests = """# basic
+some_func('abc'::str, 'def'::str) = [1, 2, 3, 4, 5, 6]::List<i8>
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "some_func"
+    assert test_file.testcases[0].base_uri == "extension:io.substrait:functions_string"
+    assert test_file.testcases[0].group.name == "basic"
+    assert test_file.testcases[0].result == CaseLiteral(
+        ["1", "2", "3", "4", "5", "6"], "List<i8>"
+    )
+    assert test_file.testcases[0].args[0] == CaseLiteral("'abc'", "str")
+    assert test_file.testcases[0].args[1] == CaseLiteral("'def'", "str")
