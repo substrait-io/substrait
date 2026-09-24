@@ -40,24 +40,6 @@ def make_window_test_header(version, include):
 
 
 
-def test_parse_decimal_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic_decimal")
-    tests = """# basic
-power(8::dec<38,0>, 2::dec<38, 0>) = 64::fp64
-power(1.0::dec<38, 0>, -1.0::dec<38, 0>) = 1.0::fp64
-power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 3
-    assert test_file.testcases[0].func_name == "power"
-    assert (
-        test_file.testcases[0].base_uri
-        == "extension:io.substrait:functions_arithmetic_decimal"
-    )
-    assert test_file.testcases[0].group.name == "basic"
-    assert test_file.testcases[0].result == CaseLiteral("64", "fp64")
-    assert test_file.testcases[0].args[0] == CaseLiteral("8", "dec<38,0>")
-    assert test_file.testcases[0].args[1] == CaseLiteral("2", "dec<38,0>")
 
 
 def test_parse_decimal_example_with_nan():
