@@ -826,3 +826,35 @@ def test_parse_various_aggregate_scalar_func_argument_types(input_func_test):
     )
     test_file = parse_string(header + input_func_test + "\n")
     assert len(test_file.testcases) == 1
+
+
+def test_nullable_types():
+    valid_cases = [
+        # Integer types
+        "add(1::i8?, 2::i8?) = 3::i8?",
+        "add(1::i16?, 2::i32?) = 3::i64?",
+        # Float types
+        "add(1.0::fp32?, 2.0::fp64?) = 3.0::fp64?",
+        # Decimal
+        "add(1.5::dec?, 2.5::dec?) = 4.0::dec?",
+        # List
+        "concat([1, 2]::List?<i8>, [3]::List?<i8>) = [1, 2, 3]::List?<i8>",
+        # Date and time types
+        "lt(2020-01-01::date?, 2020-01-02::date?) = true::bool",
+        "lt(12:00:00::pt?<6>, 13:00:00::pt?<6>) = true::bool",
+        "lt(2020-01-01T12:00:00::pts?<6>, 2020-01-02T12:00:00::pts?<6>) = true::bool",
+        "lt(2020-01-01T12:00:00+00:00::ptstz?<6>, 2020-01-02T12:00:00+00:00::ptstz?<6>) = true::bool",
+        # Interval types
+        "lt(P1Y::iyear?, P2Y::iyear?) = true::bool",
+        "lt(P1D::iday?, P2D::iday?) = true::bool",
+        # Precision time types
+        "lt(12:00:00.123::pt?<3>, 13:00:00.456::pt?<3>) = true::bool",
+        "lt(2020-01-01T12:00:00.123::pts?<3>, 2020-01-02T12:00:00.456::pts?<3>) = true::bool",
+        "lt(2020-01-01T12:00:00.123+00:00::ptstz?<3>, 2020-01-02T12:00:00.456+00:00::ptstz?<3>) = true::bool",
+    ]
+    header = (
+        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+    )
+    for case in valid_cases:
+        test_file = parse_string(header + case + "\n")
+        assert len(test_file.testcases) == 1
