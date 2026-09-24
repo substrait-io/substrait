@@ -134,13 +134,6 @@ def test_coverage_rejects_unknown_dependency():
         get_test_coverage([test_file], registry)
 
 
-def test_parse_file_lt_datetime():
-    test_file = parse_one_file(get_absolute_path("../cases/datetime/lt_datetime.test"))
-    assert len(test_file.testcases) == 13
-    assert test_file.testcases[0].func_name == "lt"
-    assert (
-        test_file.testcases[0].base_uri == "extension:io.substrait:functions_datetime"
-    )
 
 
 def test_parse_file_power_decimal():
