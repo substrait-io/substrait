@@ -76,3 +76,28 @@ add(1::i32, add(2::i32, 3::i32)) = add(add(1::i32, 2::i32), 3::i32)
             CaseLiteral("3", "i32"),
         ],
     )
+
+
+def test_parse_date_time_example():
+    header = make_header("v1.0", "extension:io.substrait:functions_datetime")
+    tests = """# timestamp examples using the precision_timestamp type
+lt(2016-12-31T13:30:15::pts<6>, 2017-12-31T13:30:15::pts<6>) = true::bool
+"""
+
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "lt"
+    assert (
+        test_file.testcases[0].base_uri == "extension:io.substrait:functions_datetime"
+    )
+    assert (
+        test_file.testcases[0].group.name
+        == "timestamp examples using the precision_timestamp type"
+    )
+    assert test_file.testcases[0].result == CaseLiteral("true", "bool")
+    assert test_file.testcases[0].args[0] == CaseLiteral(
+        "2016-12-31T13:30:15", "pts<6>"
+    )
+    assert test_file.testcases[0].args[1] == CaseLiteral(
+        "2017-12-31T13:30:15", "pts<6>"
+    )
