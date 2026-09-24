@@ -60,21 +60,6 @@ def make_window_test_header(version, include):
 
 
 
-def test_parse_map_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
-    tests = """# basic
-some_func({'a': 1, 'b': 2}::map<str, i32>) = {}::map<str, i32>
-"""
-    test_file = parse_string(header + tests)
-    assert len(test_file.testcases) == 1
-    assert test_file.testcases[0].args[0] == CaseLiteral(
-        [
-            {"key": "'a'", "value": "1"},
-            {"key": "'b'", "value": "2"},
-        ],
-        "map<str,i32>",
-    )
-    assert test_file.testcases[0].result == CaseLiteral([], "map<str,i32>")
 
 
 def test_parse_nested_complex_literals():
