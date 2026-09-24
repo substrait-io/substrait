@@ -121,3 +121,21 @@ power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
     assert test_file.testcases[0].result == CaseLiteral("64", "fp64")
     assert test_file.testcases[0].args[0] == CaseLiteral("8", "dec<38,0>")
     assert test_file.testcases[0].args[1] == CaseLiteral("2", "dec<38,0>")
+
+
+def test_parse_decimal_example_with_nan():
+    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic_decimal")
+    tests = """# basic
+power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
+"""
+    test_file = parse_string(header + tests)
+    assert len(test_file.testcases) == 1
+    assert test_file.testcases[0].func_name == "power"
+    assert (
+        test_file.testcases[0].base_uri
+        == "extension:io.substrait:functions_arithmetic_decimal"
+    )
+    assert test_file.testcases[0].group.name == "basic"
+    assert test_file.testcases[0].result == CaseLiteral("nan", "fp64")
+    assert test_file.testcases[0].args[0] == CaseLiteral("-1", "dec")
+    assert test_file.testcases[0].args[1] == CaseLiteral("0.5", "dec<38,1>")
