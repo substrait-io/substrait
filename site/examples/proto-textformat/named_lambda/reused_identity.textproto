@@ -8,10 +8,10 @@ version {
   patch_number: 0
 }
 
-plan_functions {
-  function_anchor: 1
+named_lambdas {
+  lambda_anchor: 1
   name: "identity"
-  definition {
+  lambda {
     parameters {
       types {
         i32 {
@@ -52,8 +52,8 @@ relations {
           }
         }
         expressions {
-          plan_function_invocation {
-            function_reference: 1
+          lambda_invocation {
+            named_lambda_reference: 1
             arguments {
               fields {
                 literal {
@@ -64,8 +64,8 @@ relations {
           }
         }
         expressions {
-          plan_function_invocation {
-            function_reference: 1
+          lambda_invocation {
+            named_lambda_reference: 1
             arguments {
               fields {
                 literal {

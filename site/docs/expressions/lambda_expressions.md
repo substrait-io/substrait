@@ -106,14 +106,17 @@ Lambda bodies can reference data from outside their parameter list through [`Fie
 
 ## Lambda Invocation
 
-Lambda expressions can be invoked using the `LambdaInvocation` expression type, allowing a lambda to be defined and called in a single expression.
+Lambda expressions can be invoked using the `LambdaInvocation` expression
+type. An invocation can call either an inline lambda or a named lambda defined
+at the plan level.
 
 A lambda invocation consists of:
 
-| Component  | Description                                                                 | Protobuf Field | Required |
-|------------|-----------------------------------------------------------------------------|----------------|----------|
-| Lambda     | The inline lambda expression to invoke                                      | `lambda`       | Yes      |
-| Arguments  | A `Nested.Struct` containing expressions for each lambda parameter. Each field corresponds to a lambda parameter and must evaluate to the matching parameter type. | `arguments`    | Yes      |
+| Component    | Description                                                                 | Protobuf Field            | Required |
+|--------------|-----------------------------------------------------------------------------|---------------------------|----------|
+| Lambda       | The inline lambda expression to invoke                                      | `lambda`                  | One of `lambda` or `named_lambda_reference` |
+| Named lambda | The anchor of a lambda in `Plan.named_lambdas`                              | `named_lambda_reference`  | One of `lambda` or `named_lambda_reference` |
+| Arguments    | A `Nested.Struct` containing expressions for each lambda parameter. Each field corresponds to a lambda parameter and must evaluate to the matching parameter type. | `arguments` | Yes |
 
 The `arguments` field must be a `Nested.Struct` with exactly as many fields as the lambda has parameters. The type of each expression field must match the corresponding parameter type. The return type is derived from the type of the lambda's body expression.
 
@@ -130,33 +133,33 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 --8<-- "examples/proto-textformat/lambda_invocation/inline_invocation.textproto"
 ```
 
-## Plan-Defined Functions
+## Named Lambdas
 
-A lambda can be defined once in `Plan.plan_functions` and invoked from multiple
-expressions using `PlanFunctionInvocation`. Each entry is represented by a
-`PlanFunctionDefinition`. Plan-defined functions use their own anchor namespace,
-separate from extension function anchors.
+A lambda can be defined once in `Plan.named_lambdas` and invoked from multiple
+`LambdaInvocation` expressions. Each entry is represented by a `NamedLambda`.
+Named lambdas use their own anchor namespace, separate from extension function
+anchors.
 
-Each definition consists of a `function_anchor`, an `Expression.Lambda`, and an
+Each definition consists of a `lambda_anchor`, an `Expression.Lambda`, and an
 optional human-readable `name`. The name is only for diagnostics and plan
 inspection: it has no semantic meaning, need not be unique, and cannot be used
-as a reference. An invocation supplies a `function_reference` and a
+as a reference. An invocation supplies a `named_lambda_reference` and a
 `Nested.Struct` of arguments. The argument count and types must exactly match
 the lambda parameters, and the invocation's return type is the type of the
 lambda body.
 
-Plan-defined functions are closed over their parameters. Their bodies cannot
-reference relational input or outer records. They may use dynamic parameters,
-execution context variables, and other plan-defined functions. Plan-function
-references may be forward references, but the resulting invocation graph must
-be acyclic so consumers can either execute calls directly or inline them.
+Named lambdas are closed over their parameters. Their bodies cannot reference
+relational input or outer records. They may use dynamic parameters, execution
+context variables, and other named lambdas. Named-lambda references may be
+forward references, but the resulting invocation graph must be acyclic so
+consumers can either execute calls directly or inline them.
 
-Within a plan, every plan-function anchor must be unique and every invocation
-must reference an existing definition. A definition may be invoked any number
+Within a plan, every named-lambda anchor must be unique and every invocation
+must reference an existing definition. A named lambda may be invoked any number
 of times.
 
 ```protobuf
---8<-- "examples/proto-textformat/plan_function/reused_identity.textproto"
+--8<-- "examples/proto-textformat/named_lambda/reused_identity.textproto"
 ```
 
 ## See Also

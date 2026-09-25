@@ -1097,7 +1097,6 @@ message Expression {
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
     ExecutionContextVariable execution_context_variable = 17;
-    PlanFunctionInvocation plan_function_invocation = 18;
   }
 
   message Literal {
@@ -1303,28 +1302,23 @@ message Expression {
     Expression body = 2;
   }
 
-  // Invokes an inline lambda expression with provided arguments.
-  // Enables immediate invocation patterns like: ((x) -> x * 2)(5)
+  // Invokes an inline or named lambda expression with provided arguments.
+  // Enables immediate invocation patterns like ((x) -> x * 2)(5), as well as
+  // reuse of a lambda defined in Plan.named_lambdas.
   //
   // The return type is derived from the type of the lambda's body expression.
   message LambdaInvocation {
-    // The lambda expression to invoke.
-    Lambda lambda = 1;
+    oneof lambda_type {
+      // The inline lambda expression to invoke.
+      Lambda lambda = 1;
+
+      // References a lambda_anchor in Plan.named_lambdas.
+      uint32 named_lambda_reference = 3;
+    }
 
     // Arguments to pass to the lambda, as a struct expression. The struct must have
     // exactly one Expression field for each lambda parameter, and the expression at
     // each position must have a type that matches the corresponding parameter type.
-    Nested.Struct arguments = 2;
-  }
-
-  // Invokes a plan-defined function with provided arguments.
-  message PlanFunctionInvocation {
-    // References a function_anchor in Plan.plan_functions. Required.
-    uint32 function_reference = 1;
-
-    // Arguments to pass to the function, as a struct expression. The struct
-    // must have exactly one Expression field for each function parameter, and
-    // each expression must match the corresponding parameter type.
     Nested.Struct arguments = 2;
   }
 

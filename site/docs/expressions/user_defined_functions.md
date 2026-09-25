@@ -4,9 +4,9 @@ Substrait supports the creation of custom functions using [simple extensions](..
 
 Simple extensions identify externally implemented functions. A function whose
 implementation is itself a Substrait expression can instead be defined as a
-[plan-defined function](lambda_expressions.md#plan-defined-functions). Such a
-function is represented by a lambda definition in the plan and can be invoked
-multiple times without requiring an external implementation.
+[named lambda](lambda_expressions.md#named-lambdas). Such a function is
+represented by a lambda definition in the plan and can be invoked multiple
+times without requiring an external implementation.
 
 Here's an example function that doubles its input:
 
