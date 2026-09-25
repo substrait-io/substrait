@@ -6,6 +6,7 @@ on:
     paths:
       - "site/**"
       - "extensions/**"
+      - "proto/**"
       - "text/**"
 
 jobs:
