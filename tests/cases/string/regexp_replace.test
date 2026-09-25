@@ -9,12 +9,12 @@ regexp_replace('17:50'::str, '[0-9]?[0-9]:[0-9][0-9]'::str, 'TIME'::str) = 'TIME
 
 # lazy_matching: Examples with lazy matching
 regexp_replace('Hello'::str, 'Hel+?'::str, '1'::str, 1::i64, 0::i64) = '1lo'::str
-regexp_replace('Hello'::str, 'Hel+'::str, '1'::str, 1::i64, 0::i64) = '1o'::str
 regexp_replace('Hello'::str, 'Hel+?'::str, '1'::str) = '1lo'::str
-regexp_replace('Hello'::str, 'Hel+'::str, '1'::str) = '1o'::str
 
 # greedy_matching: Examples with greedy matching
+regexp_replace('Hello'::str, 'Hel+'::str, '1'::str, 1::i64, 0::i64) = '1o'::str
 regexp_replace('Helo'::str, 'Hel+'::str, '1'::str, 1::i64, 0::i64) = '1o'::str
+regexp_replace('Hello'::str, 'Hel+'::str, '1'::str) = '1o'::str
 regexp_replace('Helo'::str, 'Hel+'::str, '1'::str) = '1o'::str
 
 # null_input: Examples with null as input
