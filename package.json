@@ -1,0 +1,11 @@
+{
+  "name": "substrait-commitlint",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Pinned commitlint toolchain used to lint PR titles and commit messages. Not part of the specification or of any published artifact.",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3"
+  }
+}
