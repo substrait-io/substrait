@@ -3,6 +3,12 @@ name: Breaking Changes Check
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
+
+# `buf breaking` reads the base branch over public HTTPS and the PR description
+# comes from the event payload, so no API access is needed.
+permissions:
+  contents: read
+
 jobs:
   breaking:
     name: Ensure breaking changes are labeled in description
