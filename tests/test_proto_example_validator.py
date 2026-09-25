@@ -70,13 +70,30 @@ def test_validate_field_references():
 def test_validate_plan_rels():
     """Validate plan relation examples."""
     examples_dir = Path("site/examples/proto-textformat/plan_rel")
-    for textproto_file in examples_dir.glob("*.textproto"):
-        plan_rel = validate_example(textproto_file.read_text(), plan_pb2.PlanRel)
-        project = plan_rel.root.input.project
-        assert (
-            project.expressions[0].WhichOneof("rex_type")
-            == "detached_expression_ordinal"
+    plan_rels = {
+        textproto_file.name: validate_example(
+            textproto_file.read_text(), plan_pb2.PlanRel
         )
-        ordinal = project.expressions[0].detached_expression_ordinal
-        assert ordinal < len(plan_rel.detached_expressions)
-        assert plan_rel.detached_expressions[ordinal].literal.i64 == 42
+        for textproto_file in examples_dir.glob("*.textproto")
+    }
+
+    expression_plan_rel = plan_rels["detached_expressions.textproto"]
+    project = expression_plan_rel.root.input.project
+    assert project.expressions[0].WhichOneof("rex_type") == (
+        "detached_expression_ordinal"
+    )
+    expression_ordinal = project.expressions[0].detached_expression_ordinal
+    assert expression_ordinal < len(expression_plan_rel.detached_expressions)
+    assert (
+        expression_plan_rel.detached_expressions[expression_ordinal].literal.i64 == 42
+    )
+
+    relation_plan_rel = plan_rels["detached_rels.textproto"]
+    assert relation_plan_rel.root.input.WhichOneof("rel_type") == (
+        "detached_rel_ordinal"
+    )
+    relation_ordinal = relation_plan_rel.root.input.detached_rel_ordinal
+    assert relation_ordinal < len(relation_plan_rel.detached_rels)
+    assert relation_plan_rel.detached_rels[relation_ordinal].read.named_table.names == [
+        "example"
+    ]

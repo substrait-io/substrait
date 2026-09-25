@@ -9,3 +9,4 @@ We use protobuf text format (textproto) rather than JSON for these examples beca
 - `lambda/` - Examples of `Expression.Lambda` messages
 - `lambda_invocation/` - Examples of `Expression.LambdaInvocation` messages
 - `field_reference/` - Examples of `Expression.FieldReference` messages
+- `plan_rel/` - Examples of `PlanRel` messages
