@@ -14,9 +14,7 @@ regexp_replace('Hello'::str, 'Hel+?'::str, '1'::str) = '1lo'::str
 regexp_replace('Hello'::str, 'Hel+'::str, '1'::str) = '1o'::str
 
 # greedy_matching: Examples with greedy matching
-regexp_replace('Hello'::str, 'Hel+'::str, '1'::str, 1::i64, 0::i64) = '1o'::str
 regexp_replace('Helo'::str, 'Hel+'::str, '1'::str, 1::i64, 0::i64) = '1o'::str
-regexp_replace('Hello'::str, 'Hel+'::str, '1'::str) = '1o'::str
 regexp_replace('Helo'::str, 'Hel+'::str, '1'::str) = '1o'::str
 
 # null_input: Examples with null as input
