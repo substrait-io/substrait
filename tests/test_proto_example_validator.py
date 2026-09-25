@@ -10,18 +10,19 @@ from google.protobuf.message import Message
 import pytest
 
 try:
-    from substrait import algebra_pb2
+    from substrait import algebra_pb2, plan_pb2
 except ImportError as err:
     raise ImportError(
         "Protobuf bindings not found. Run 'buf generate' to generate them."
     ) from err
 
 
-def validate_example(textproto: str, message_class: type[Message]) -> None:
+def validate_example(textproto: str, message_class: type[Message]) -> Message:
     """Parse and validate a textproto string with strict field checking."""
     message = message_class()
     text_format.Parse(textproto, message, allow_unknown_field=False)
     assert message.ListFields(), "Message has no fields populated"
+    return message
 
 
 def test_validation_rejects_unknown_fields():
@@ -64,3 +65,18 @@ def test_validate_field_references():
         validate_example(
             textproto_file.read_text(), algebra_pb2.Expression.FieldReference
         )
+
+
+def test_validate_plan_rels():
+    """Validate plan relation examples."""
+    examples_dir = Path("site/examples/proto-textformat/plan_rel")
+    for textproto_file in examples_dir.glob("*.textproto"):
+        plan_rel = validate_example(textproto_file.read_text(), plan_pb2.PlanRel)
+        project = plan_rel.root.input.project
+        assert (
+            project.expressions[0].WhichOneof("rex_type")
+            == "detached_expression_ordinal"
+        )
+        ordinal = project.expressions[0].detached_expression_ordinal
+        assert ordinal < len(plan_rel.detached_expressions)
+        assert plan_rel.detached_expressions[ordinal].literal.i64 == 42

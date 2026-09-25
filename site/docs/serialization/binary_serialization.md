@@ -13,6 +13,30 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 %%% proto.message.Plan %%%
     ```
 
+=== "PlanRel Message"
+
+    ```proto
+%%% proto.message.PlanRel %%%
+    ```
+
+### Bounded Expression Nesting
+
+[Protobuf implementations impose recursion limits while parsing nested messages](https://protobuf.dev/programming-guides/proto-limits/). A producer can limit the physical message depth of an expression tree by moving expression subtrees into the `detached_expressions` repeated field of their containing `PlanRel` and replacing each moved subtree with its ordinal. Detached expressions may themselves contain detached expression ordinals, allowing a producer to split an arbitrarily deep expression tree into bounded-depth chunks. Relation trees can be split using [`ReferenceRel`](../relations/logical_relations.md#reference-operation).
+
+
+Detached expression ordinals are encoding details and do not change the meaning of a plan. Substituting every detached expression ordinal with its target must produce the logical expression trees represented by the `PlanRel`. They are not a mechanism for sharing computation.
+
+The following rules apply independently to each `PlanRel`:
+
+1. A detached expression ordinal is the zero-based index of an entry in `detached_expressions` on the same `PlanRel`.
+2. Every detached expression must be reachable from the `rel` or `root` field and referenced exactly once.
+3. Detached expression ordinals must not form a cycle.
+
+
+```textproto
+--8<-- "examples/proto-textformat/plan_rel/detached_expressions.textproto"
+```
+
 ## Extensions
 Protobuf supports both [simple](../extensions/index.md#simple-extensions) and [advanced](../extensions/index.md#advanced-extensions) extensions. Simple extensions are declared at the plan level and advanced extensions are declared at multiple levels of messages within the plan.
 
