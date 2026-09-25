@@ -1302,13 +1302,19 @@ message Expression {
     Expression body = 2;
   }
 
-  // Invokes an inline lambda expression with provided arguments.
-  // Enables immediate invocation patterns like: ((x) -> x * 2)(5)
+  // Invokes an inline or named lambda expression with provided arguments.
+  // Enables immediate invocation patterns like ((x) -> x * 2)(5), as well as
+  // reuse of a lambda defined in Plan.named_lambdas.
   //
   // The return type is derived from the type of the lambda's body expression.
   message LambdaInvocation {
-    // The lambda expression to invoke.
-    Lambda lambda = 1;
+    oneof lambda_type {
+      // The inline lambda expression to invoke.
+      Lambda lambda = 1;
+
+      // References a lambda_anchor in Plan.named_lambdas.
+      uint32 named_lambda_reference = 3;
+    }
 
     // Arguments to pass to the lambda, as a struct expression. The struct must have
     // exactly one Expression field for each lambda parameter, and the expression at

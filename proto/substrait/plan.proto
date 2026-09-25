@@ -65,6 +65,26 @@ message Plan {
 
   // Execution behavior settings for this plan, required.
   ExecutionBehavior execution_behavior = 10;
+
+  // An optional list of named lambdas.
+  repeated NamedLambda named_lambdas = 11;
+}
+
+// A lambda defined once and available for invocation throughout a plan.
+message NamedLambda {
+  // A surrogate key used in the context of a single plan to reference this
+  // lambda. This anchor is in a separate namespace from extension function
+  // anchors. 0 is a valid anchor/reference, but prefer non-zero values for
+  // ergonomics.
+  uint32 lambda_anchor = 1;
+
+  // The lambda signature and body. The body must be closed over the parameters:
+  // it cannot reference relational input or an outer record.
+  Expression.Lambda lambda = 2;
+
+  // An optional human-readable name for diagnostics and plan inspection. The
+  // name has no semantic meaning, need not be unique, and cannot be referenced.
+  optional string name = 3;
 }
 
 // This message type can be used to deserialize only the version of a Substrait
