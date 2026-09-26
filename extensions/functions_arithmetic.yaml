@@ -1737,7 +1737,7 @@ aggregate_functions:
             description: >
               A positive integer which defines the number of quantile
               partitions.
-          - value: any
+          - value: any1
             name: distribution
             description: >
               The data for which the quantiles should be computed.
@@ -1763,7 +1763,7 @@ aggregate_functions:
             values: [ TIE_TO_EVEN, TIE_AWAY_FROM_ZERO, TRUNCATE, CEILING, FLOOR ]
         nullability: DECLARED_OUTPUT
         ordered: true
-        return: LIST?<any>
+        return: LIST?<any1>
 
 window_functions:
   - name: "row_number"

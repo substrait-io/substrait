@@ -20,8 +20,8 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
             for key, value in type.items():
                 mdFile.new_line(f"{key}: {value}")
 
-    for function_classification, _value in file_obj.items():
-        if function_classification in ("urn", "dependencies"):
+    for function_classification in file_obj:
+        if function_classification not in function_sections:
             continue
         function_classification_str = function_classification.replace("_", " ").title()
         mdFile.new_header(level=2, title=f"{function_classification_str}")
@@ -125,12 +125,16 @@ current_file = Path(__file__).name
 cur_path = Path(__file__).resolve()
 functions_folder = os.path.join(str(Path(cur_path).parents[3]), "extensions")
 
-# Get a list of all the function yaml files
+# Get all extension YAML files that define functions
 function_files = []
-for file in os.listdir(functions_folder):
-    if file.startswith("functions"):
+function_sections = {"scalar_functions", "aggregate_functions", "window_functions"}
+for file in sorted(os.listdir(functions_folder)):
+    if file.endswith(".yaml"):
         full_path = os.path.join(functions_folder, file)
-        function_files.append(full_path)
+        with open(full_path) as yaml_file:
+            extension = yaml.load(yaml_file, Loader=yaml.FullLoader)
+        if function_sections.intersection(extension):
+            function_files.append(full_path)
 
 current_directory = Path(__file__).resolve().parent
 with tempfile.TemporaryDirectory() as temp_directory:

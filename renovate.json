@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommitTypeAll(build)",
+    ":maintainLockFilesWeekly"
+  ],
+  "semanticCommits": "enabled",
+  "semanticCommitType": "build",
+  "semanticCommitScope": "deps",
+  "fetchChangeLogs": "off",
+  "labels": ["dependencies"],
+  "rangeStrategy": "bump",
+  "minimumReleaseAge": "14 days",
+  "pre-commit": {
+    "enabled": true
+  },
+  "gomod": {
+    "enabled": false
+  },
+  "packageRules": [
+    {
+      "description": "Group dependency bumps so pixi.lock is regenerated once, and keep the pre-commit hook revisions in step with the pyproject ranges",
+      "matchManagers": ["pep621", "pixi", "pre-commit"],
+      "groupName": "all pixi deps"
+    },
+    {
+      "description": "Changing the supported Python version is a project decision, not a routine bump. Covers both requires-python and the pixi python pin",
+      "matchPackageNames": ["python"],
+      "enabled": false
+    }
+  ]
+}
