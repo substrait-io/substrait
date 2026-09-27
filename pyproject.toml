@@ -81,6 +81,7 @@ format = { depends-on = ["ruff-format", "format-protobuf"], description = "Forma
 
 # testing
 test = { cmd = "pytest .", default-environment = "dev", depends-on = ["generate-protobuf"], description = "Run tests including test_substrait_extension_coverage" }
+test-extension-coverage = { cmd = "pytest tests/test_extensions.py::test_substrait_extension_coverage", default-environment = "dev", description = "Check extension test coverage against tests/baseline.json (used by the pre-commit hook)" }
 
 # docs
 mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", description = "Build Website" }
