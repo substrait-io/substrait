@@ -150,8 +150,9 @@ scalar_functions:
       will return the substring matching the full regular expression. Specifying `1` will
       return the substring matching only the first capture group, and so on. The `group`
       argument should be a non-negative integer. If `position`, `occurrence` and `group` are
-      omitted they default to `1`, `1` and `0` respectively, i.e. the first occurrence from the
-      beginning of the input string, returning the substring matching the full regular expression.
+      omitted, `position` and `occurrence` default to `1` and `group` defaults to `0`, i.e. the
+      first occurrence from the beginning of the input string, returning the substring matching
+      the full regular expression.
 
       The `case_sensitivity` option specifies case-sensitive or case-insensitive matching.
       Enabling the `multiline` option will treat the input string as multiple lines. This makes
@@ -1208,9 +1209,9 @@ scalar_functions:
       using the `position` argument. Specifying `1` means to search for matches starting at the
       first character of the input string, `2` means the second character, and so on. The
       `position` argument should be a positive non-zero integer. The replacement string can
-      capture groups using numbered backreferences. If `position` and `occurrence` are omitted
-      they default to `1` and `0` respectively, i.e. all occurrences are replaced, searching from
-      the first character of the input string.
+      capture groups using numbered backreferences. If `position` and `occurrence` are omitted,
+      `position` defaults to `1` and `occurrence` defaults to `0`, i.e. all occurrences are
+      replaced, searching from the first character of the input string.
 
       The `case_sensitivity` option specifies case-sensitive or case-insensitive matching.
       Enabling the `multiline` option will treat the input string as multiple lines. This makes
