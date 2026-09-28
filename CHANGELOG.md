@@ -1,6 +1,34 @@
 Release Notes
 ---
 
+## [0.104.0](https://github.com/substrait-io/substrait/compare/v0.103.1...v0.104.0) (2026-09-27)
+
+### ⚠ BREAKING CHANGES
+
+* **grammar:** Fixes the precedence of `!` and the associativity of
+the `? :` conditional when parsing return type expressions from
+extension YAMLs. This can be breaking for user defined extension YAMLs
+which may have relied on `!` binding looser than `AND` and `OR`, or on a
+chained `? :` grouping to the left; both now follow conventional
+precedence and associativity.
+
+### Features
+
+* add support for window function testing ([#1209](https://github.com/substrait-io/substrait/issues/1209)) ([d149822](https://github.com/substrait-io/substrait/commit/d14982226dd274cd4806985961afa88c361a0edd))
+
+### Bug Fixes
+
+* **grammar:** bind ! tighter than AND/OR and right-associate ? : ([#1228](https://github.com/substrait-io/substrait/issues/1228)) ([0f9b92b](https://github.com/substrait-io/substrait/commit/0f9b92bfb0958d10d7d9bb5faac82d1c2c2aa065))
+* **site:** track generated documentation inputs ([#1194](https://github.com/substrait-io/substrait/issues/1194)) ([930f109](https://github.com/substrait-io/substrait/commit/930f109319771229c9e60ed766afc15358b5f25b)), closes [#1144](https://github.com/substrait-io/substrait/issues/1144)
+* **tests:** remove byte-identical duplicate test case lines ([#1239](https://github.com/substrait-io/substrait/issues/1239)) ([5c6046b](https://github.com/substrait-io/substrait/commit/5c6046bf769850949b0f22e67a8739a83d430a3d))
+* **tests:** validate row shape matches column count in tables ([#1235](https://github.com/substrait-io/substrait/issues/1235)) ([b0341ce](https://github.com/substrait-io/substrait/commit/b0341cea26fd0a83eb2dfd8e9d4f64df1b8e1759))
+
+## [0.103.1](https://github.com/substrait-io/substrait/compare/v0.103.0...v0.103.1) (2026-09-20)
+
+### Bug Fixes
+
+* **extensions:** bind quantile return type ([#1193](https://github.com/substrait-io/substrait/issues/1193)) ([272d8dc](https://github.com/substrait-io/substrait/commit/272d8dc153ac980094d54b63660451d99eab9f89))
+
 ## [0.103.0](https://github.com/substrait-io/substrait/compare/v0.102.0...v0.103.0) (2026-08-30)
 
 ### ⚠ BREAKING CHANGES
