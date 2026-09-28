@@ -2,33 +2,14 @@
 import os
 
 import pytest
-from antlr4 import InputStream
-from tests.parser import parse_stream
 from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import Extension, validate_impl_nullability_markers
-
-
-def parse_string(input_string):
-    return parse_stream(InputStream(input_string), "test_string")
-
-
-def make_header(version, include):
-    return f"""### SUBSTRAIT_SCALAR_TEST: {version}
-### SUBSTRAIT_INCLUDE: {include}
-
-"""
-
-
-def make_aggregate_test_header(version, include):
-    return f"""### SUBSTRAIT_AGGREGATE_TEST: {version}
-### SUBSTRAIT_INCLUDE: {include}
-
-"""
-
-
-def get_absolute_path(relative_path):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(script_dir, relative_path)
+from tests.helpers import (
+    get_test_path,
+    make_aggregate_test_header,
+    make_scalar_header,
+    parse_string,
+)
 
 
 def test_coverage_accepts_multiple_known_dependencies():
@@ -39,9 +20,7 @@ def test_coverage_accepts_multiple_known_dependencies():
 
 """
     test_file = parse_string(header + "# basic\nadd(1::i8, 2::i8) = 3::i8\n")
-    registry = Extension.read_substrait_extensions(
-        get_absolute_path("../../extensions")
-    )
+    registry = Extension.read_substrait_extensions(get_test_path("../extensions"))
 
     coverage = get_test_coverage([test_file], registry)
 
@@ -55,9 +34,7 @@ def test_coverage_rejects_unknown_dependency():
 
 """
     test_file = parse_string(header + "# basic\nadd(1::i8, 2::i8) = 3::i8\n")
-    registry = Extension.read_substrait_extensions(
-        get_absolute_path("../../extensions")
-    )
+    registry = Extension.read_substrait_extensions(get_test_path("../extensions"))
 
     with pytest.raises(
         ValueError,
@@ -145,7 +122,7 @@ class TestNullabilityValidation:
 
     def test_mirror_nullable_input_requires_nullable_output(self):
         """MIRROR: if any arg is nullable, the output must be nullable."""
-        header = make_header("v1.0", "extension:io.substrait:functions_boolean")
+        header = make_scalar_header("v1.0", "extension:io.substrait:functions_boolean")
         test_file = parse_string(
             header
             + """\
@@ -160,7 +137,7 @@ and(true::bool, null::bool?) = false::bool
 
     def test_mirror_nullable_input_with_nullable_output_ok(self):
         """MIRROR: nullable input + nullable output is correct."""
-        header = make_header("v1.0", "extension:io.substrait:functions_boolean")
+        header = make_scalar_header("v1.0", "extension:io.substrait:functions_boolean")
         test_file = parse_string(
             header
             + """\
@@ -173,7 +150,7 @@ and(true::bool, null::bool?) = false::bool?
 
     def test_mirror_non_nullable_input_non_nullable_output_ok(self):
         """MIRROR: all non-nullable inputs + non-nullable output is correct."""
-        header = make_header("v1.0", "extension:io.substrait:functions_boolean")
+        header = make_scalar_header("v1.0", "extension:io.substrait:functions_boolean")
         test_file = parse_string(
             header
             + """\
@@ -217,7 +194,9 @@ bool_and((true, false)::bool) = false::bool?
 
     def test_declared_output_non_nullable_when_declared_non_nullable(self):
         """DECLARED_OUTPUT: is_null declares non-nullable boolean return — nullable output is wrong."""
-        header = make_header("v1.0", "extension:io.substrait:functions_comparison")
+        header = make_scalar_header(
+            "v1.0", "extension:io.substrait:functions_comparison"
+        )
         test_file = parse_string(
             header
             + """\
@@ -231,7 +210,9 @@ is_null(null::i8?) = true::bool?
 
     def test_error_results_are_skipped(self):
         """Error results (<!ERROR>) should not be checked for nullability."""
-        header = make_header("v1.0", "extension:io.substrait:functions_arithmetic")
+        header = make_scalar_header(
+            "v1.0", "extension:io.substrait:functions_arithmetic"
+        )
         test_file = parse_string(
             header
             + """\
@@ -245,7 +226,9 @@ add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
     def test_mirror_options_skip_false_positive(self):
         """MIRROR with function options: nullable output with non-nullable args is allowed
         when options are present (e.g. on_domain_error:NONE can produce null)."""
-        header = make_header("v1.0", "extension:io.substrait:functions_arithmetic")
+        header = make_scalar_header(
+            "v1.0", "extension:io.substrait:functions_arithmetic"
+        )
         test_file = parse_string(
             header
             + """\

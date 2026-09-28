@@ -1,39 +1,18 @@
 # SPDX-License-Identifier: Apache-2.0
-import os
-
 import pytest
-from antlr4 import InputStream
-from tests.parser import ParseError, parse_one_file, parse_stream
+from tests.helpers import (
+    get_test_path,
+    make_aggregate_test_header,
+    make_scalar_header,
+    make_window_test_header,
+    parse_string,
+)
+from tests.parser import ParseError, parse_one_file
 from tests.parser.nodes import AggregateArgument, CaseLiteral, FuncCallArg
 
 
-def parse_string(input_string):
-    return parse_stream(InputStream(input_string), "test_string")
-
-
-def make_header(version, include):
-    return f"""### SUBSTRAIT_SCALAR_TEST: {version}
-### SUBSTRAIT_INCLUDE: {include}
-
-"""
-
-
-def make_aggregate_test_header(version, include):
-    return f"""### SUBSTRAIT_AGGREGATE_TEST: {version}
-### SUBSTRAIT_INCLUDE: {include}
-
-"""
-
-
-def make_window_test_header(version, include):
-    return f"""### SUBSTRAIT_WINDOW_TEST: {version}
-### SUBSTRAIT_INCLUDE: {include}
-
-"""
-
-
 def test_parse_basic_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_arithmetic")
     tests = """# 'Basic examples without any special cases'
 add(120::i8, 5::i8) = 125::i8
 add(100::i16, 100::i16) = 200::i16
@@ -48,7 +27,7 @@ add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
 
 
 def test_parse_func_call_arg():
-    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_arithmetic")
     tests = """# associativity
 add(1::i32, add(2::i32, 3::i32)) = add(add(1::i32, 2::i32), 3::i32)
 """
@@ -74,7 +53,7 @@ add(1::i32, add(2::i32, 3::i32)) = add(add(1::i32, 2::i32), 3::i32)
 
 
 def test_parse_date_time_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_datetime")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_datetime")
     tests = """# timestamp examples using the precision_timestamp type
 lt(2016-12-31T13:30:15::pts<6>, 2017-12-31T13:30:15::pts<6>) = true::bool
 """
@@ -99,7 +78,9 @@ lt(2016-12-31T13:30:15::pts<6>, 2017-12-31T13:30:15::pts<6>) = true::bool
 
 
 def test_parse_decimal_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic_decimal")
+    header = make_scalar_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic_decimal"
+    )
     tests = """# basic
 power(8::dec<38,0>, 2::dec<38, 0>) = 64::fp64
 power(1.0::dec<38, 0>, -1.0::dec<38, 0>) = 1.0::fp64
@@ -119,7 +100,9 @@ power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
 
 
 def test_parse_decimal_example_with_nan():
-    header = make_header("v1.0", "extension:io.substrait:functions_arithmetic_decimal")
+    header = make_scalar_header(
+        "v1.0", "extension:io.substrait:functions_arithmetic_decimal"
+    )
     tests = """# basic
 power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
 """
@@ -137,7 +120,7 @@ power(-1::dec, 0.5::dec<38,1>) [complex_number_result:NAN] = nan::fp64
 
 
 def test_parse_string_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
 concat('abc'::str, 'def'::str) = 'abcdef'::str
 regexp_string_split('HHHelloooo'::str, 'Hel+'::str) = ['HH', 'oooo']::List<str>
@@ -172,7 +155,7 @@ octet_length('😄'::str) = 4::i64
 
 
 def test_parse_type_shaped_string_literals():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
 identity('2020-05-10'::str) = '2020-05-10'::str
 identity('12:00:00'::str) = '12:00:00'::str
@@ -205,7 +188,7 @@ identity('P1Y2M3DT4H5M6S'::str) = 'P1Y2M3DT4H5M6S'::str
 
 
 def test_parse_string_list_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
 some_func('abc'::str, 'def'::str) = [1, 2, 3, 4, 5, 6]::List<i8>
 """
@@ -222,7 +205,7 @@ some_func('abc'::str, 'def'::str) = [1, 2, 3, 4, 5, 6]::List<i8>
 
 
 def test_parse_nested_list_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
 some_func([[1, 2], [3, 4]]::List<List<i32>>) = [[5, 6]]::List<List<i32>>
 """
@@ -235,7 +218,7 @@ some_func([[1, 2], [3, 4]]::List<List<i32>>) = [[5, 6]]::List<List<i32>>
 
 
 def test_parse_triply_nested_list_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
 some_func([[[1, 2], [3, 4]], [[5, 6]]]::List<List<List<i32>>>) = [[[7]]]::List<List<List<i32>>>
 """
@@ -250,7 +233,7 @@ some_func([[[1, 2], [3, 4]], [[5, 6]]]::List<List<List<i32>>>) = [[[7]]]::List<L
 
 
 def test_parse_null_list_arg():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
 some_func(null::List?<i32>) = null::List?<i32>
 """
@@ -265,7 +248,7 @@ some_func(null::List?<i32>) = null::List?<i32>
 
 
 def test_parse_struct_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
 some_func((1, 'abc', true)::struct<i32, str, bool>) = (2, 'def')::struct<i32, str>
 """
@@ -280,7 +263,7 @@ some_func((1, 'abc', true)::struct<i32, str, bool>) = (2, 'def')::struct<i32, st
 
 
 def test_parse_empty_struct_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
 some_func(()::struct<>) = ()::struct<>
 """
@@ -291,7 +274,7 @@ some_func(()::struct<>) = ()::struct<>
 
 
 def test_parse_map_example():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
 some_func({'a': 1, 'b': 2}::map<str, i32>) = {}::map<str, i32>
 """
@@ -308,7 +291,7 @@ some_func({'a': 1, 'b': 2}::map<str, i32>) = {}::map<str, i32>
 
 
 def test_parse_nested_complex_literals():
-    header = make_header("v1.0", "extension:io.substrait:functions_string")
+    header = make_scalar_header("v1.0", "extension:io.substrait:functions_string")
     tests = """# basic
 some_func(([1, 2], {'x': (3, null)})::struct<list<i32>, map<str, struct<i32, str?>>>) = null::map?<str, i32>
 """
@@ -327,7 +310,7 @@ some_func(([1, 2], {'x': (3, null)})::struct<list<i32>, map<str, struct<i32, str
 
 
 def test_parse_user_defined_type_literal():
-    header = make_header("v1.0", "extension:org.example:extension_types")
+    header = make_scalar_header("v1.0", "extension:org.example:extension_types")
     tests = """# basic
 some_func((4, 2)::u!point) = (1, 1)::u!point
 """
@@ -338,7 +321,7 @@ some_func((4, 2)::u!point) = (1, 1)::u!point
 
 
 def test_parse_nullable_user_defined_type_literal():
-    header = make_header("v1.0", "extension:org.example:extension_types")
+    header = make_scalar_header("v1.0", "extension:org.example:extension_types")
     tests = """# basic
 some_func((4, 2)::u!point?) = (1, 1)::u!point?
 """
@@ -353,7 +336,7 @@ some_func((4, 2)::u!point?) = (1, 1)::u!point?
 
 
 def test_parse_nested_user_defined_type_literal():
-    header = make_header("v1.0", "extension:org.example:extension_types")
+    header = make_scalar_header("v1.0", "extension:org.example:extension_types")
     tests = """# basic
 some_func(((4, 2), (1, 1))::u!line) = ((0, 0), (3, 3))::u!line
 """
@@ -541,13 +524,8 @@ corr(col0, col1) OVER f1 = (1, 1, 1, 1)::fp64?
     )
 
 
-def get_absolute_path(relative_path):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(script_dir, relative_path)
-
-
 def test_parse_file_add():
-    test_file = parse_one_file(get_absolute_path("../cases/arithmetic/add.test"))
+    test_file = parse_one_file(get_test_path("cases/arithmetic/add.test"))
     assert len(test_file.testcases) == 15
     assert test_file.testcases[0].func_name == "add"
     assert (
@@ -558,7 +536,7 @@ def test_parse_file_add():
 
 
 def test_parse_file_max():
-    test_file = parse_one_file(get_absolute_path("../cases/arithmetic/max.test"))
+    test_file = parse_one_file(get_test_path("cases/arithmetic/max.test"))
     assert len(test_file.testcases) == 12
     assert test_file.testcases[0].func_name == "max"
     assert (
@@ -569,7 +547,7 @@ def test_parse_file_max():
 
 
 def test_parse_file_lt_datetime():
-    test_file = parse_one_file(get_absolute_path("../cases/datetime/lt_datetime.test"))
+    test_file = parse_one_file(get_test_path("cases/datetime/lt_datetime.test"))
     assert len(test_file.testcases) == 13
     assert test_file.testcases[0].func_name == "lt"
     assert (
@@ -578,9 +556,7 @@ def test_parse_file_lt_datetime():
 
 
 def test_parse_file_power_decimal():
-    test_file = parse_one_file(
-        get_absolute_path("../cases/arithmetic_decimal/power.test")
-    )
+    test_file = parse_one_file(get_test_path("cases/arithmetic_decimal/power.test"))
     assert len(test_file.testcases) == 9
     assert test_file.testcases[0].func_name == "power"
     assert (
@@ -665,7 +641,8 @@ def test_parse_errors_with_bad_scalar_testcases(
     input_func_test, position, expected_message
 ):
     header = (
-        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+        make_scalar_header("v1.0", "extension:io.substrait:functions_arithmetic")
+        + "# basic\n"
     )
     with pytest.raises(ParseError) as pm:
         parse_string(header + input_func_test + "\n")
@@ -806,7 +783,8 @@ def test_parse_errors_with_bad_window_testcases(input_func_test, expected_messag
 )
 def test_parse_various_scalar_func_argument_types(input_func_test):
     header = (
-        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+        make_scalar_header("v1.0", "extension:io.substrait:functions_arithmetic")
+        + "# basic\n"
     )
     test_file = parse_string(header + input_func_test + "\n")
     assert len(test_file.testcases) == 1
@@ -862,7 +840,8 @@ def test_nullable_types():
         "lt(2020-01-01T12:00:00.123+00:00::ptstz?<3>, 2020-01-02T12:00:00.456+00:00::ptstz?<3>) = true::bool",
     ]
     header = (
-        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+        make_scalar_header("v1.0", "extension:io.substrait:functions_arithmetic")
+        + "# basic\n"
     )
     for case in valid_cases:
         test_file = parse_string(header + case + "\n")
@@ -884,7 +863,8 @@ def test_double_nullable_rejected():
         "add(2020-01-01T12:00:00+00:00::ptstz?<3>?, 2020-01-02T12:00:00+00:00::ptstz?<3>) = 1::i64",
     ]
     header = (
-        make_header("v1.0", "extension:io.substrait:functions_arithmetic") + "# basic\n"
+        make_scalar_header("v1.0", "extension:io.substrait:functions_arithmetic")
+        + "# basic\n"
     )
     for case in invalid_cases:
         with pytest.raises(ParseError) as pm:
