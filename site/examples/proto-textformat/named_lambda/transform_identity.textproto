@@ -1,0 +1,108 @@
+# Passes a named identity lambda to transform without an inline wrapper.
+#
+# message Plan
+
+version {
+  major_number: 0
+  minor_number: 103
+  patch_number: 0
+}
+
+extension_urns {
+  extension_urn_anchor: 1
+  urn: "extension:io.substrait:functions_list"
+}
+
+extensions {
+  extension_function {
+    extension_urn_reference: 1
+    function_anchor: 1
+    name: "transform:list_func"
+  }
+}
+
+named_lambdas {
+  lambda_anchor: 1
+  name: "identity"
+  lambda {
+    parameters {
+      types {
+        i32 {
+          nullability: NULLABILITY_REQUIRED
+        }
+      }
+      nullability: NULLABILITY_REQUIRED
+    }
+    body {
+      selection {
+        lambda_parameter_reference {
+          steps_out: 0
+        }
+        direct_reference {
+          struct_field {
+            field: 0
+          }
+        }
+      }
+    }
+  }
+}
+
+relations {
+  root {
+    input {
+      project {
+        input {
+          read {
+            base_schema {
+              struct {
+                nullability: NULLABILITY_REQUIRED
+              }
+            }
+            named_table {
+              names: "example"
+            }
+          }
+        }
+        expressions {
+          scalar_function {
+            function_reference: 1
+            arguments {
+              value {
+                literal {
+                  list {
+                    values { i32: 1 }
+                    values { i32: 2 }
+                    values { i32: 3 }
+                  }
+                }
+              }
+            }
+            arguments {
+              value {
+                named_lambda_reference {
+                  lambda_reference: 1
+                }
+              }
+            }
+            output_type {
+              list {
+                type {
+                  i32 {
+                    nullability: NULLABILITY_REQUIRED
+                  }
+                }
+                nullability: NULLABILITY_REQUIRED
+              }
+            }
+          }
+        }
+      }
+    }
+    names: "transformed"
+  }
+}
+
+execution_behavior {
+  variable_eval_mode: VARIABLE_EVALUATION_MODE_PER_PLAN
+}

@@ -18,6 +18,8 @@ supported_expressions:
       - LIST
   - LAMBDA
   - expression: LAMBDA_INVOCATION
+  - NAMED_LAMBDA_REFERENCE
+  - expression: NAMED_LAMBDA_REFERENCE
   - expression: EXECUTION_CONTEXT_VARIABLE
     variable_types:
       - CURRENT_DATE

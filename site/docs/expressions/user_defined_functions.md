@@ -6,7 +6,9 @@ Simple extensions identify externally implemented functions. A function whose
 implementation is itself a Substrait expression can instead be defined as a
 [named lambda](lambda_expressions.md#named-lambdas). Such a function is
 represented by a lambda definition in the plan and can be invoked multiple
-times without requiring an external implementation.
+times without requiring an external implementation. A
+[named lambda reference](lambda_expressions.md#named-lambda-references) can
+also pass that function to a higher-order function without invoking it first.
 
 Here's an example function that doubles its input:
 

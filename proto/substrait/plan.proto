@@ -70,7 +70,8 @@ message Plan {
   repeated NamedLambda named_lambdas = 11;
 }
 
-// A lambda defined once and available for invocation throughout a plan.
+// A lambda defined once and available for invocation or reference as a function
+// value throughout a plan.
 message NamedLambda {
   // A surrogate key used in the context of a single plan to reference this
   // lambda. This anchor is in a separate namespace from extension function

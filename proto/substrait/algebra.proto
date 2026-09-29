@@ -1097,6 +1097,7 @@ message Expression {
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
     ExecutionContextVariable execution_context_variable = 17;
+    NamedLambdaReference named_lambda_reference = 18;
   }
 
   message Literal {
@@ -1300,6 +1301,18 @@ message Expression {
     // The lambda body expression. Lambda parameters can be referenced using FieldReference
     // with FieldReference.LambdaParameterReference as root_type.
     Expression body = 2;
+  }
+
+  // A function value referring to a named lambda, without invoking it.
+  // Its non-nullable Func type is derived from the referenced lambda's
+  // parameter types and body type. It does not capture the caller's scope.
+  // References within named lambda bodies, including higher-order function
+  // arguments, must form an acyclic definition dependency graph.
+  message NamedLambdaReference {
+    // References a lambda_anchor in Plan.named_lambdas, not an extension
+    // function anchor. The definition must exist in the same plan.
+    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
+    uint32 lambda_reference = 1;
   }
 
   // Invokes an inline or named lambda expression with provided arguments.
