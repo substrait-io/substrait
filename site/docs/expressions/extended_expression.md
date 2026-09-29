@@ -20,6 +20,19 @@ An Extended Exression will have one or more referred expressions, which can be e
 
 For a message with multiple expressions, users may produce each Extended Expression in the same order as they occur in the original Plan rel. But, the consumer does NOT have to handle them in this order. A consumer needs only to ensure that the columns in the final output are organized in the same order as defined in the message.
 
+## Detached expressions
+
+Expressions in `referred_expr`, including measure arguments, can use
+`Expression.detached_expression_ordinal` to reference zero-based entries in
+`ExtendedExpression.detached_expressions`. The same
+[encoding and validation rules](../serialization/binary_serialization.md#bounded-expression-nesting)
+apply as for `PlanRel`. Detachment preserves input schema binding, output names,
+and expression semantics.
+
+```protobuf
+--8<-- "examples/proto-textformat/extended_expression/detached_expressions.textproto"
+```
+
 ## Function extensions
 
 Function extensions work the same for both Extended Expression and the original Expression defined in the Substrait protocol.

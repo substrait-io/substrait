@@ -1,11 +1,19 @@
-# The ProjectRel expression is stored as a separate protobuf chunk.
-# Resolving the ordinal is equivalent to placing its value inline.
+# Ordinal 0 resolves to the literal 42, as if it were inline.
 
 root {
   input {
     project {
+      common { direct {} }
       input {
         read {
+          common { direct {} }
+          base_schema {
+            names: "value"
+            struct {
+              types { i64 { nullability: NULLABILITY_REQUIRED } }
+              nullability: NULLABILITY_REQUIRED
+            }
+          }
           named_table {
             names: "example"
           }
@@ -16,6 +24,8 @@ root {
       }
     }
   }
+  names: "value"
+  names: "answer"
 }
 detached_expressions {
   literal {
