@@ -25,6 +25,11 @@ message PlanRel {
   // are local to this PlanRel and referenced by their zero-based ordinal. Every
   // entry must be reachable from rel_type and referenced exactly once.
   repeated Expression detached_expressions = 3;
+
+  // Relation subtrees detached to limit protobuf message nesting. Entries are
+  // local to this PlanRel and referenced by their zero-based ordinal. Every
+  // entry must be reachable from rel_type and referenced exactly once.
+  repeated Rel detached_rels = 4;
 }
 
 // Describe a set of operations to complete.

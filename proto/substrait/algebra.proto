@@ -687,6 +687,9 @@ message Rel {
     ExchangeRel exchange = 15;
     ExpandRel expand = 16;
     TopNRel top_n = 23;
+    // Zero-based ordinal of an encoding-only reference into the containing
+    // PlanRel.detached_rels.
+    uint32 detached_rel_ordinal = 25;
   }
 }
 
