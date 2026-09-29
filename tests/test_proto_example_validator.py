@@ -75,9 +75,11 @@ def test_named_lambda_reference_as_function_argument():
     assert declaration.name == "transform:list_func"
     assert function.function_reference == declaration.function_anchor
     assert len(function.arguments) == 2
-    assert [
-        value.i32 for value in function.arguments[0].value.literal.list.values
-    ] == [1, 2, 3]
+    assert [value.i32 for value in function.arguments[0].value.literal.list.values] == [
+        1,
+        2,
+        3,
+    ]
     argument = function.arguments[1]
     assert argument.WhichOneof("arg_type") == "value"
     assert argument.value.WhichOneof("rex_type") == "named_lambda_reference"
