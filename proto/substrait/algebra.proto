@@ -411,9 +411,8 @@ message AggregateRel {
   }
 }
 
-// ConsistentPartitionWindowRel provides the ability to perform calculations across sets of rows
-// that are related to the current query row. It can be used to execute window functions where
-// all the windows share the same partitioning and ordering.
+// Window functions with shared partitioning and ordering.
+// See https://substrait.io/expressions/window_functions/#window-bindings.
 message ConsistentPartitionWindowRel {
   RelCommon common = 1;
   Rel input = 2;
@@ -423,9 +422,9 @@ message ConsistentPartitionWindowRel {
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;
 
-  // This message mirrors the `WindowFunction` message but removes the fields defining the partition,
-  // sorts, and bounds, since those must be consistent across the various functions in this rel.  Refer
-  // to the `WindowFunction` message for a description of these fields.
+  // Mirrors Expression.WindowFunction with partitioning and ordering supplied
+  // by the enclosing relation. Each function has its own frame bounds and mode.
+  // See https://substrait.io/expressions/window_functions/.
   message WindowRelFunction {
     // References a function_anchor defined in this plan.
     uint32 function_reference = 1;
@@ -440,23 +439,16 @@ message ConsistentPartitionWindowRel {
 
     AggregateFunction.AggregationInvocation invocation = 10;
 
-    // Defines the lower bound of the window frame.
-    // Optional; defaults to the start of the partition.
-    // See `Expression.WindowFunction.Bound`.
+    // Inclusive lower bound; defaults to the start of the partition.
+    // See https://substrait.io/expressions/window_functions/#frame-bounds.
     Expression.WindowFunction.Bound lower_bound = 5;
 
-    // Defines the upper bound of the window frame.
-    // Optional; defaults to the end of the partition.
-    // See `Expression.WindowFunction.Bound`.
+    // Inclusive upper bound; defaults to the end of the partition.
+    // See https://substrait.io/expressions/window_functions/#frame-bounds.
     Expression.WindowFunction.Bound upper_bound = 4;
 
-    // Defines how this function's window bounds are interpreted.
-    // Must be ROWS or RANGE when either bound is CurrentRow, Preceding, or
-    // Following.
-    //
-    // For RANGE with a Preceding or Following bound, `sorts` on the enclosing
-    // ConsistentPartitionWindowRel must contain exactly one ordering expression
-    // and must not use SORT_DIRECTION_CLUSTERED or a custom comparison function.
+    // Required bound mode. Uses the enclosing relation's sorts.
+    // See https://substrait.io/expressions/window_functions/#bound-modes.
     Expression.WindowFunction.BoundsType bounds_type = 12;
   }
 }
@@ -1349,6 +1341,7 @@ message Expression {
   }
 
   // A window function call.
+  // See https://substrait.io/expressions/window_functions/.
   message WindowFunction {
     reserved 8;
     reserved "args";
@@ -1391,164 +1384,86 @@ message Expression {
     // INITIAL_TO_RESULT for window functions that are not decomposable.
     AggregationPhase phase = 6;
 
-    // If specified, the records that are part of the window defined by
-    // upper_bound and lower_bound are ordered according to this list
-    // before they are aggregated. The first sort field has the highest
-    // priority; only if a sort field determines two records to be equivalent
-    // is the next field queried. This field is optional, and is only allowed
-    // if the window function is defined to support sorting.
-    //
-    // For RANGE bounds type, SORT_DIRECTION_CLUSTERED and custom comparison
-    // functions are not allowed in any of the sorts if either bound is Preceding
-    // or Following.
+    // Ordering within each partition, highest-priority sort field first.
+    // See https://substrait.io/expressions/window_functions/#window-bindings
+    // and https://substrait.io/expressions/window_functions/#bound-modes.
     repeated SortField sorts = 3;
 
     // Specifies whether equivalent records are merged before being aggregated.
     // Optional, defaults to AGGREGATION_INVOCATION_ALL.
     AggregateFunction.AggregationInvocation invocation = 10;
 
-    // When one or more partition expressions are specified, two records are
-    // considered to be in the same partition if and only if these expressions
-    // yield an equal record of values for both (nulls are considered equal).
-    // When computing the window function, only the subset of records within
-    // the inclusive frame bounds that are also in the same partition as the current record
-    // are aggregated.
+    // Partitioning expressions; empty means one partition for the entire input.
+    // See https://substrait.io/expressions/window_functions/#partitions-peer-groups-and-frames.
     repeated Expression partitions = 2;
 
-    // Defines how the window bounds are interpreted.
-    // Required when either bound is CurrentRow, Preceding, or Following
+    // Required bound mode.
+    // See https://substrait.io/expressions/window_functions/#bound-modes.
     BoundsType bounds_type = 12;
 
-    // Defines the record relative to the current record from which the window
-    // extends. The bound is inclusive. If the lower bound indexes a record
-    // greater than the upper bound (i.e., empty frame due to contradiction),
-    // then the behavior follows the semantics of the window function over
-    // the empty frame (e.g., SUM yields NULL, COUNT(*) yields 0).
-    // Optional; defaults to the start of the partition.
+    // Inclusive lower bound; defaults to the start of the partition.
+    // See https://substrait.io/expressions/window_functions/#frame-bounds.
     Bound lower_bound = 5;
 
-    // Defines the record relative to the current record up to which the window
-    // extends. The bound is inclusive. If the upper bound indexes a record
-    // less than the lower bound (i.e., empty frame due to contradiction),
-    // then the behavior follows the semantics of the window function over
-    // the empty frame (e.g., SUM yields NULL, COUNT(*) yields 0).
-    // Optional; defaults to the end of the partition.
+    // Inclusive upper bound; defaults to the end of the partition.
+    // See https://substrait.io/expressions/window_functions/#frame-bounds.
     Bound upper_bound = 4;
 
+    // See https://substrait.io/expressions/window_functions/#bound-modes.
     enum BoundsType {
-      // Unspecified. Producers must set one of the defined bounds type.
+      // Invalid; producers must select ROWS or RANGE.
       BOUNDS_TYPE_UNSPECIFIED = 0;
-      // Bounds are physical row offsets in the declared ordering in `sorts`.
-      // If no ordering is declared, no order is guaranteed.
+      // Physical row offsets.
       BOUNDS_TYPE_ROWS = 1;
-      // Bounds are value offsets from the current row's ordering value.
-      // This bounds type requires exactly one ordering expression if Preceding or Following is used.
-      // Preceding moves toward values earlier in the declared ordering in `sorts`;
-      // Following moves toward values later in the declared ordering in `sorts`.
-      // Bounds are inclusive.
+      // Ordering-value offsets, with peer-group boundaries.
       BOUNDS_TYPE_RANGE = 2;
     }
 
-    // Defines one of the two boundaries for the window of a window function.
+    // A frame boundary.
+    // See https://substrait.io/expressions/window_functions/#frame-bounds.
     message Bound {
-      // Defines a bound earlier than the current record in the declared ordering in `sorts`.
+      // A bound toward earlier rows or values in the declared ordering.
       message Preceding {
-        // A strictly positive integer specifying the offset of this bound.
-        // Use CurrentRow for offset zero and Following for negative offsets.
-        //
-        // At least one of `offset` and `offset_expr` must be set.
-        //
-        // Deprecated: use `offset_expr` instead.
+        // Deprecated positive integer offset; use offset_expr instead.
+        // See https://substrait.io/expressions/window_functions/#offset-expressions.
         int64 offset = 1 [deprecated = true];
 
-        // Expression specifying the distance of this bound from the current
-        // row. Its interpretation depends on `WindowFunction.bounds_type`:
-        //
-        // * BOUNDS_TYPE_ROWS: evaluates to a non-negative integer number
-        //   of rows. The type must be int64.
-        // * BOUNDS_TYPE_RANGE: evaluates to a non-negative distance
-        //   applied toward values earlier in the declared ordering in `sorts`.
-        //   Its type D must be compatible with the type T of the single ordering
-        //   expression, i.e. `add(T, D) -> T` and `subtract(T, D) -> T` must
-        //   be defined (e.g. timestamp/interval_day, decimal/decimal,
-        //   i64/i64).
-        //
-        // A null offset expression result is invalid. When the current row's
-        // ordering value is null, a RANGE offset bound is equivalent to CurrentRow.
-        // A negative result is invalid; a zero result is equivalent
-        // to CurrentRow. Because `offset` cannot represent zero, producers
-        // should emit CurrentRow rather than a zero `offset_expr` so that the
-        // bound remains readable by consumers that do not yet support
-        // `offset_expr`. Use Following for a bound after the current row.
-        //
-        // Field references resolve against the input schema of the relation
-        // containing this window function; the expression must behave
-        // as if evaluated once per input record.
-        // It must not contain window or aggregate functions.
+        // Offset expression; interpretation and validity depend on the bound mode.
+        // See https://substrait.io/expressions/window_functions/#bound-modes
+        // and https://substrait.io/expressions/window_functions/#offset-expressions.
         Expression offset_expr = 2;
       }
 
-      // Defines a bound later than the current record in the declared ordering in `sorts`.
+      // A bound toward later rows or values in the declared ordering.
       message Following {
-        // A strictly positive integer specifying the offset of this bound.
-        // Use CurrentRow for offset zero and Preceding for negative offsets.
-        //
-        // At least one of `offset` and `offset_expr` must be set.
-        //
-        // Deprecated: use `offset_expr` instead.
+        // Deprecated positive integer offset; use offset_expr instead.
+        // See https://substrait.io/expressions/window_functions/#offset-expressions.
         int64 offset = 1 [deprecated = true];
 
-        // Expression specifying the distance of this bound from the current
-        // row. Its interpretation depends on `WindowFunction.bounds_type`:
-        //
-        // * BOUNDS_TYPE_ROWS: evaluates to a non-negative integer number
-        //   of rows. The type must be int64.
-        // * BOUNDS_TYPE_RANGE: evaluates to a non-negative distance
-        //   applied toward values later in the declared ordering in `sorts`.
-        //   Its type D must be compatible with the type T of the single ordering
-        //   expression, i.e. `add(T, D) -> T` and `subtract(T, D) -> T` must
-        //   be defined (e.g. timestamp/interval_day, decimal/decimal,
-        //   i64/i64).
-        //
-        // A null offset expression result is invalid. When the current row's
-        // ordering value is null, a RANGE offset bound is equivalent to CurrentRow.
-        // A negative result is invalid; a zero result is equivalent
-        // to CurrentRow. Because `offset` cannot represent zero, producers
-        // should emit CurrentRow rather than a zero `offset_expr` so that the
-        // bound remains readable by consumers that do not yet support
-        // `offset_expr`. Use Preceding for a bound before the current row.
-        //
-        // Field references resolve against the input schema of the relation
-        // containing this window function; the expression must behave
-        // as if evaluated once per input record.
-        // It must not contain window or aggregate functions.
+        // Offset expression; interpretation and validity depend on the bound mode.
+        // See https://substrait.io/expressions/window_functions/#bound-modes
+        // and https://substrait.io/expressions/window_functions/#offset-expressions.
         Expression offset_expr = 2;
       }
 
-      // Defines that the bound extends to or from the current record under
-      // BOUNDS_TYPE_ROWS, or to or from the current peer group under
-      // BOUNDS_TYPE_RANGE. A peer group is the set of records with equal sort
-      // key values, where two null sort key values are considered equal.
+      // The current row or peer-group boundary, depending on the bound mode.
+      // See https://substrait.io/expressions/window_functions/#bound-modes.
       message CurrentRow {}
 
-      // Defines an "unbounded bound": for lower bounds this means the start
-      // of the partition, and for upper bounds this means the end of the
-      // partition.
+      // The start of the partition for a lower bound; the end for an upper bound.
       message Unbounded {}
 
       oneof kind {
-        // The bound is earlier than the current record in the declared ordering in `sorts`.
+        // A bound toward earlier rows or values in the declared ordering.
         Preceding preceding = 1;
 
-        // The bound is later than the current record in the declared ordering in `sorts`.
+        // A bound toward later rows or values in the declared ordering.
         Following following = 2;
 
-        // The bound extends to the current record.
+        // The current row or peer-group boundary, depending on the bound mode.
         CurrentRow current_row = 3;
 
-        // The bound extends to the start of the partition or the end of the
-        // partition, depending on whether this represents the upper or lower
-        // bound.
+        // The start of the partition for a lower bound; the end for an upper bound.
         Unbounded unbounded = 4;
       }
     }
