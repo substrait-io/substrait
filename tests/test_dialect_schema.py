@@ -209,6 +209,12 @@ DECLARATIONS = [
         property="supported_expressions",
         discriminator="expression",
         members=expression_options(),
+        not_declarable={
+            "DETACHED_EXPRESSION_ORDINAL": (
+                "Expression.detached_expression_ordinal is an encoding detail "
+                "rather than an expression capability"
+            ),
+        },
     ),
     Declaration(
         property="supported_types",

@@ -1097,6 +1097,9 @@ message Expression {
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
     ExecutionContextVariable execution_context_variable = 17;
+    // Zero-based ordinal of an encoding-only reference into the containing
+    // PlanRel.detached_expressions.
+    uint32 detached_expression_ordinal = 18;
   }
 
   message Literal {
