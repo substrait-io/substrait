@@ -26,6 +26,6 @@ repos:
   hooks:
   - id: check-substrait-extensions_coverage
     name: Check Substrait extensions and test coverage
-    entry: pytest tests/test_extensions.py::test_substrait_extension_coverage
+    entry: pytest tests/coverage/test_extensions.py::test_substrait_extension_coverage
     language: python
     pass_filenames: false
