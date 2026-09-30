@@ -119,7 +119,9 @@ The following rules apply to `offset_expr` in both `Preceding` and `Following`, 
 * A null or negative result is invalid. Use the opposite bound direction, not a negative offset, to move the other way.
 * A statically-known zero offset **must** be represented as `CurrentRow`. If a non-literal expression evaluates to zero for a row, the bound is equivalent to `CurrentRow` for that row.
 
-The strictly positive integer `offset` field is deprecated in favor of `offset_expr`. At least one must be set. Following the [field replacement migration policy](../spec/breaking_change_policy.md#replacing-a-protobuf-field), consumers use `offset_expr` when present and ignore `offset`; producers also write an equivalent `offset` when the expression has an exact legacy representation. Otherwise, producers write only `offset_expr`.
+The strictly positive integer `offset` field is deprecated in favor of `offset_expr`. Producers must set at least one, and consumers must reject a `Preceding` or `Following` bound with neither set.
+
+Following the [field replacement migration policy](../spec/breaking_change_policy.md#replacing-a-protobuf-field), consumers use `offset_expr` when present and ignore `offset`. Producers also write an equivalent `offset` when `offset_expr` has an exact legacy representation as one fixed, strictly positive `int64` offset, semantically equivalent for every input row; literal syntax is not required. Otherwise, producers write only `offset_expr`.
 
 ## Function Signatures
 
