@@ -1,56 +1,160 @@
 name: PR Title Check
 
 on:
+  # synchronize is required even though a push changes neither the title nor the
+  # description: GitHub keys check runs to the head commit, so without it a push
+  # strands the check on the previous commit. edited is likewise not one of the
+  # default activity types, so retitling would not re-run the check without it.
   pull_request_target:
     types: [opened, edited, synchronize, reopened]
+
+# Serialize runs for the same PR so the comment job cannot race with itself.
+#
+# cancel-in-progress must stay false: a bot rebase force-pushes and edits the PR
+# body at once, firing synchronize and edited on the same commit, and cancelling
+# either leaves a cancelled check-run on the head commit that fails the status
+# rollup.
+#
+# queue: max is needed for the same reason. The default, queue: single, allows
+# only one pending run and lets a newly arriving run displace it, so the run that
+# gets cancelled is simply the waiting one instead of the running one. max allows
+# up to 100 pending runs, so both finish. Note that actionlint up to 1.7.12 does
+# not know this key yet and reports it as a syntax error; it is valid per the
+# workflow-syntax documentation, and actionlint does not gate CI here.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  queue: max
+  cancel-in-progress: false
+
+# Default to the minimum read-only token for all jobs.
+permissions:
+  contents: read
+
 jobs:
   commitlint:
     name: PR title / description conforms to semantic-release
     runs-on: ubuntu-latest
+    outputs:
+      outcome: ${{ steps.commitlint.outcome }}
     steps:
-      # Check out the base ref (trusted, not the PR head) so the committed
-      # commitlint.config.js cannot be weakened by the PR being validated.
-      - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
           node-version: "24"
-      - run: npm install @commitlint/config-conventional
-      - run: npx commitlint --verbose <<< $COMMIT_MSG
+      # pull_request_target runs the workflow from the base ref and checks out
+      # the base ref, so neither this workflow nor commitlint.config.js nor the
+      # pinned toolchain can be altered by the PR being validated.
+      - uses: actions/checkout@v7
+        with:
+          # Do not leave the workflow token in .git/config: npm ci runs
+          # third-party package code in this same workspace.
+          persist-credentials: false
+          sparse-checkout: |
+            commitlint.config.js
+            package.json
+            package-lock.json
+            .npmrc
+          sparse-checkout-cone-mode: false
+      # npm ci installs exactly the tree recorded in package-lock.json, so
+      # neither a new commitlint release nor a compromised transitive dependency
+      # can change what runs here. --ignore-scripts also blocks install hooks.
+      - run: npm ci --ignore-scripts
+      # continue-on-error keeps a lint failure distinguishable from an
+      # infrastructure failure: only outcome == 'failure' means the title or
+      # description is genuinely malformed, and only that should be commented on.
+      # --no-install so this can only run the pinned local CLI, never fetch one.
+      - id: commitlint
+        continue-on-error: true
+        run: npx --no-install commitlint --verbose <<< "$COMMIT_MSG"
         env:
           COMMIT_MSG: >
             ${{ github.event.pull_request.title }}
 
             ${{ github.event.pull_request.body }}
-      - if: failure()
-        uses: actions/github-script@v9
+      # Fail this job, rather than the comment job, so that the check which goes
+      # red is the one whose name describes what is wrong.
+      - if: steps.commitlint.outcome == 'failure'
+        run: |
+          echo "PR title and description do not follow the Conventional Commits specification." >&2
+          exit 1
+
+  comment:
+    name: Post / remove PR comment
+    runs-on: ubuntu-latest
+    needs: commitlint
+    # always(), because the lint job now fails when the message is malformed,
+    # which is exactly when the comment has to be posted.
+    if: always() && contains(fromJSON('["success", "failure"]'), needs.commitlint.outputs.outcome)
+    permissions:
+      pull-requests: write
+    steps:
+      # The message below is prose inside the github-script template literal;
+      # wrapping it would change the rendered comment, so disable line-length here.
+      # yamllint disable rule:line-length
+      - uses: actions/github-script@v9
+        env:
+          # Passed through the environment rather than interpolated into the
+          # script, so a crafted title or body cannot inject JavaScript.
+          LINTED_TITLE: ${{ github.event.pull_request.title }}
+          LINTED_BODY: ${{ github.event.pull_request.body }}
         with:
           script: |
-            const message = `**ACTION NEEDED**
+            // queue: max lets two runs for one commit finish, and their order is
+            // not guaranteed, so an older run could otherwise overwrite a newer
+            // one's result. Skip if the PR text has moved on since this run's
+            // event fired; the run for that edit will handle it.
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            if (pr.title !== process.env.LINTED_TITLE || (pr.body ?? "") !== (process.env.LINTED_BODY ?? "")) {
+              core.info("PR title or description changed since this run started; leaving it to the newer run.");
+              return;
+            }
 
-              Substrait follows the [Conventional Commits
-              specification](https://www.conventionalcommits.org/en/v1.0.0/) for
-              release automation.
+            // Hidden marker used to find this job's comment regardless of wording.
+            const marker = "<!-- pr-title-check -->";
+            const message = `${marker}
+            **ACTION NEEDED**
 
-              The PR title and description are used as the merge commit message.\
-              Please update your PR title and description to match the specification.
-              `
-            // Get list of current comments
+            Substrait follows the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/) for release automation.
+
+            The PR title and description are used as the merge commit message. Please update your PR title and description to match the specification.`;
+            const passed = "${{ needs.commitlint.outputs.outcome }}" === "success";
+
+            // Find an existing comment from this job, if any.
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.issue.number
-            });
-            // Check if this job already commented
-            for (const comment of comments) {
-              if (comment.body === message) {
-                return // Already commented
-              }
-            }
-            // Post the comment about Conventional Commits
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: message
-            })
-            core.setFailed(message)
+            });
+            // Match on author as well as marker: the marker is a plain string, so
+            // anyone quoting this workflow could otherwise have their comment
+            // deleted on a pass, or suppress the warning on a failure.
+            const existing = comments.find(
+              (c) => c.user?.login === "github-actions[bot]" && c.body.includes(marker)
+            );
+
+            if (passed) {
+              // Clean up the comment now that the check passes.
+              if (existing) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                });
+              }
+              return;
+            }
+
+            // Check failed: post the comment if it isn't already there. The lint
+            // job has already gone red, so this job does not need to fail too.
+            if (!existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: message,
+              });
+            }
+      # yamllint enable rule:line-length
