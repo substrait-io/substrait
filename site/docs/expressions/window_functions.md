@@ -99,23 +99,17 @@ A boundary value need not occur in the input. For example, with ascending scores
 
 #### Offset Type Compatibility
 
-Let `T` be the ordering expression's type and `D` the offset expression's type. Both `add` and `subtract` must have an overload whose arguments are exactly `(T, D)`, and their results must denote values in the same ordered domain as `T`. **The boundary need not have type `T`.** The consumer compares ordering values against the boundary by value, including when arithmetic widens the type.
+Let `T` be the ordering expression's type and `D` the offset expression's type. `D` must be compatible with `T`: `add(T, D) -> T` and `subtract(T, D) -> T` must be defined.
 
 For example, the standard extensions allow:
 
 | Ordering type `T` | Offset type `D` | Boundary type |
 | ----------------- | --------------- | ------------- |
 | `i64` | `i64` | `i64` |
-| `decimal<10,2>` | `decimal<10,2>` | `decimal<11,2>` |
-| `date` | `interval_day<P>` | `precision_timestamp<P>` |
-| `precision_timestamp_tz<P>` | `interval_day<P>` | `precision_timestamp_tz<P>` |
+| `precision_timestamp<P>` | `interval_day<P>` | `precision_timestamp<P>` |
 
-A pair requiring additional arithmetic arguments is not valid: the frame cannot supply them. In particular, the standard `precision_timestamp_tz<P>` / `interval_year` pair is not supported because `add` requires a timezone. Consumers must not invent one.
-
-For a user-defined type, the extension must define the required arithmetic over that type. [Type variations](../types/type_variations.md) with `INHERITS` behavior inherit applicable arithmetic; a `SEPARATE` variation needs its own overloads. Compatibility is not determined solely by the base type class.
-
-!!! note "Limits of the current representation"
-    Boundary comparison is internal to the window operator, not a typed scalar comparison call or permission for implicit coercion elsewhere in a plan. Bounds do not reference a particular `add` or `subtract` declaration, so selection between matching declarations in different extensions remains unspecified. Explicit arithmetic selection and extra arguments require a follow-up specification change; see [#1227](https://github.com/substrait-io/substrait/issues/1227).
+!!! note "Open compatibility questions"
+    This restates the existing compatibility rule. Widened boundary types, arithmetic requiring additional arguments, and selection among extension declarations are under discussion in [#1227](https://github.com/substrait-io/substrait/issues/1227); changes to that rule are deferred to that issue.
 
 ## Offset Expressions
 
