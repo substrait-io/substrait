@@ -85,12 +85,27 @@ test = { cmd = "pytest .", default-environment = "dev", depends-on = ["generate-
 # docs
 mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", description = "Build Website" }
 
-# release
-dry-run = { cmd = "./ci/release/dry_run.sh", default-environment = "dev", description = "dry-run release" }
-release = { cmd = "./ci/release/run.sh", default-environment = "dev", description = "release" }
+# release -- the tasks live in [tool.pixi.feature.release.tasks] because their
+# environment deliberately excludes the default feature
+
+# The release path only needs Node.js, to run semantic-release through npx, and
+# buf, for the lint/build/generate/push steps in ci/release/. Keeping it in its
+# own environment means the BUF_TOKEN and the GitHub App token in the release
+# job's environment are not reachable from the activation scripts of the whole
+# dev toolchain -- mkdocs, pytest, ruff and everything they pull in. Activation
+# scripts run on every `pixi run` and cannot be disabled (pixi#4889), so the
+# size of the environment is the size of the exposure.
+[tool.pixi.feature.release.dependencies]
+buf = ">=1.62.1,<2"
+nodejs = ">=24,<25"
+
+[tool.pixi.feature.release.tasks]
+dry-run = { cmd = "./ci/release/dry_run.sh", description = "dry-run release" }
+release = { cmd = "./ci/release/run.sh", description = "release" }
 
 [tool.pixi.environments]
 dev = { features = ["dev"] }
+release = { features = ["release"], no-default-feature = true }
 
 [dependency-groups]
 dev = [
