@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_arithmetic
+description: >
+  Arithmetic, mathematical, and bitwise operations, plus aggregate and window functions.
 scalar_functions:
   -
     name: "add"

@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_rounding
+description: >
+  Ceiling, floor, and rounding functions for numeric values.
 scalar_functions:
   -
     name: "ceil"

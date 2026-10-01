@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_logarithmic
+description: >
+  Logarithmic functions with base e, 2, 10, or a base supplied as an argument.
 scalar_functions:
   -
     name: "ln"

@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_geometry
+description: >
+  The geometry type and functions for constructing, inspecting, and transforming geometries.
 types:
   - name: geometry
     structure: "BINARY"

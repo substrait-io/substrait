@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_aggregate_approx
+description: >
+  Aggregate functions for estimating the number of distinct values.
 aggregate_functions:
   - name: "approx_count_distinct"
     description: >-

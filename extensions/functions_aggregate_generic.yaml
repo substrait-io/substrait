@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_aggregate_generic
+description: >
+  Aggregate functions for counting records or values and selecting an arbitrary value.
 aggregate_functions:
   - name: "count"
     description: Count the number of values or records.

@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_aggregate_decimal_output
+description: >
+  Count aggregates with decimal return types, including approximate distinct counts.
 aggregate_functions:
   - name: "count"
     description: Count a set of values. Result is returned as a decimal instead of i64.

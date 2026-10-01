@@ -1,6 +1,9 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_datetime
+description: >
+  Date, time, timestamp, and interval operations, including arithmetic, comparison,
+  extraction, parsing, formatting, and rounding.
 scalar_functions:
   -
     name: extract

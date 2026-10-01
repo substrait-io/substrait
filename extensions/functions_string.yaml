@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_string
+description: >
+  String manipulation, pattern matching, splitting, and aggregation functions.
 scalar_functions:
   -
     name: concat
