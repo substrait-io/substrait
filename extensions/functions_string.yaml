@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_string
 description: >
-  String manipulation, pattern matching, splitting, and aggregation functions.
+  String manipulation, pattern matching, and splitting functions.
 scalar_functions:
   -
     name: concat

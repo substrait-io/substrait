@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_rounding_decimal
 description: >
-  Ceiling, floor, and rounding functions for decimal values.
+  Rounding functions for decimal values.
 scalar_functions:
   -
     name: "ceil"

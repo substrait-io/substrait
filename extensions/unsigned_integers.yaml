@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:unsigned_integers
 description: >
-  Unsigned integer types and their arithmetic and aggregate functions.
+  Unsigned integer types and their arithmetic functions.
 
 types:
   - name: u8

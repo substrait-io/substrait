@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_arithmetic
 description: >
-  Arithmetic, mathematical, and bitwise operations, plus aggregate and window functions.
+  Arithmetic, mathematical, and bitwise functions.
 scalar_functions:
   -
     name: "add"

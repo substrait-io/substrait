@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_geometry
 description: >
-  The geometry type and functions for constructing, inspecting, and transforming geometries.
+  The geometry type and functions operating on geometries.
 types:
   - name: geometry
     structure: "BINARY"

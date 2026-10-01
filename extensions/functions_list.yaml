@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_list
 description: >
-  List transformations, filtering, sorting, predicate tests, and element counting.
+  Functions operating on lists.
 scalar_functions:
   - name: "transform"
     description: >-

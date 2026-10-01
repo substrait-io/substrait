@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_aggregate_approx
 description: >
-  Aggregate functions for estimating the number of distinct values.
+  Approximate aggregation functions.
 aggregate_functions:
   - name: "approx_count_distinct"
     description: >-

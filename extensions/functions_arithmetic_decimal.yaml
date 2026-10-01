@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_arithmetic_decimal
 description: >
-  Arithmetic and aggregate functions for decimal values.
+  Arithmetic functions for decimal values.
 scalar_functions:
   -
     name: "add"

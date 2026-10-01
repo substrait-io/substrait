@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_boolean
 description: >
-  Boolean logic functions and aggregates.
+  Boolean logic functions.
 scalar_functions:
   -
     name: or

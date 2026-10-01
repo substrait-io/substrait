@@ -2,7 +2,7 @@
 ---
 urn: extension:io.substrait:functions_aggregate_generic
 description: >
-  Aggregate functions for counting records or values and selecting an arbitrary value.
+  Generic aggregation functions.
 aggregate_functions:
   - name: "count"
     description: Count the number of values or records.
