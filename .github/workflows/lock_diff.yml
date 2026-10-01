@@ -1,0 +1,30 @@
+name: Lock File Diff
+
+on:
+  pull_request:
+    paths:
+      - pixi.lock
+
+# Rendering the diff only reads the repository; the result goes to the job
+# summary rather than a comment so that no write scope is needed.
+permissions:
+  contents: read
+
+jobs:
+  lock-diff:
+    name: Render pixi.lock diff
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # the base revision is needed to diff against
+          fetch-depth: 0
+      - uses: prefix-dev/setup-pixi@v0.10.2
+        with:
+          pixi-version: v0.73.0
+          cache: true
+          environments: lock-diff
+      - name: Render pixi.lock diff
+        run: pixi run lock-diff "$BASE_SHA" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
