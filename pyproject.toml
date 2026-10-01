@@ -89,8 +89,19 @@ mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", descriptio
 dry-run = { cmd = "./ci/release/dry_run.sh", default-environment = "dev", description = "dry-run release" }
 release = { cmd = "./ci/release/run.sh", default-environment = "dev", description = "release" }
 
+# Vulnerability scanning of the installed environments. Kept out of the default
+# feature -- and out of `dev` -- so the scanners are pinned in pixi.lock without
+# adding ~200 MB of Go binaries to every developer environment.
+[tool.pixi.feature.scan.dependencies]
+syft = ">=1.51.1,<2"
+grype = ">=0.118.0,<1"
+
+[tool.pixi.feature.scan.tasks]
+scan = { cmd = "./ci/scan_environments.sh", description = "Scan the installed pixi environments for known vulnerabilities" }
+
 [tool.pixi.environments]
 dev = { features = ["dev"] }
+scan = { features = ["scan"], no-default-feature = true }
 
 [dependency-groups]
 dev = [

@@ -11,3 +11,6 @@ __pycache__
 
 # uv virtual environment
 .venv
+
+# SBOMs and vulnerability reports from ci/scan_environments.sh
+sbom
