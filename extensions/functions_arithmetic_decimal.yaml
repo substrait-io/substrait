@@ -4,7 +4,10 @@ urn: extension:io.substrait:functions_arithmetic_decimal
 scalar_functions:
   -
     name: "add"
-    description: "Add two decimal values."
+    description: >
+      Add two decimal values. Where an exact result would need more than 38 digits of precision, the result takes
+      precision 38 and the surplus comes out of the scale, never taking it below six fractional digits; a scale of six
+      or less is left as it is.
     impls:
       - args:
           - name: x
@@ -25,6 +28,10 @@ scalar_functions:
           DECIMAL<prec, scale>
   -
     name: "subtract"
+    description: >
+      Subtract one decimal value from another. Where an exact result would need more than 38 digits of precision, the
+      result takes precision 38 and the surplus comes out of the scale, never taking it below six fractional digits; a
+      scale of six or less is left as it is.
     impls:
       - args:
           - name: x
@@ -45,6 +52,10 @@ scalar_functions:
           DECIMAL<prec, scale>
   -
     name: "multiply"
+    description: >
+      Multiply two decimal values. Where an exact result would need more than 38 digits of precision, the result takes
+      precision 38 and the surplus comes out of the scale, never taking it below six fractional digits; a scale of six
+      or less is left as it is.
     impls:
       - args:
           - name: x
