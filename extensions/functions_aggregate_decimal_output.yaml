@@ -1,8 +1,22 @@
 %YAML 1.2
 ---
+# Every function in this extension is deprecated. These functions duplicate the names of the standard
+# aggregates in functions_aggregate_generic and functions_aggregate_approx. They are not strict
+# equivalents: the count variants accumulate partial aggregates in decimal<38,0> rather than i64, so
+# they overflow later. That difference only matters above 2^63-1 rows in a single group, which no
+# materialized input reaches. Prefer the standard function, casting to decimal<38,0> where a decimal
+# result is required. This extension is scheduled for removal in a later release.
 urn: extension:io.substrait:functions_aggregate_decimal_output
 aggregate_functions:
   - name: "count"
+    deprecated:
+      since: "0.100.0"
+      reason: >-
+        Prefer count from functions_aggregate_generic, casting its i64 result to decimal<38,0> where a
+        decimal result is required. This variant is not a strict equivalent: it accumulates partial
+        aggregates in decimal<38,0> rather than i64, so it overflows later. That only matters above
+        2^63-1 rows in a single group, which no materialized input reaches. A use case that genuinely
+        needs more range is better served by a wider integer type than by a decimal-typed count.
     description: Count a set of values. Result is returned as a decimal instead of i64.
     impls:
       - args:
@@ -16,6 +30,15 @@ aggregate_functions:
         intermediate: decimal<38,0>
         return: decimal<38,0>
   - name: "count"
+    deprecated:
+      since: "0.100.0"
+      reason: >-
+        Prefer count from functions_aggregate_generic, casting its i64 result to decimal<38,0> where a
+        decimal result is required. This variant is not a strict equivalent: it accumulates partial
+        aggregates in decimal<38,0> rather than i64, so it overflows later. That only matters above
+        2^63-1 records in a single group, which no materialized input reaches. A use case that
+        genuinely needs more range is better served by a wider integer type than by a decimal-typed
+        count.
     description: "Count a set of records (not field referenced). Result is returned as a decimal instead of i64."
     impls:
       - options:
@@ -26,6 +49,13 @@ aggregate_functions:
         intermediate: decimal<38,0>
         return: decimal<38,0>
   - name: "approx_count_distinct"
+    deprecated:
+      since: "0.100.0"
+      reason: >-
+        Prefer approx_count_distinct from functions_aggregate_approx, casting its i64 result to
+        decimal<38,0> where a decimal result is required. Both variants accumulate the same binary
+        HyperLogLog sketch and differ only in return type; an estimate exceeding 2^63-1 distinct
+        values is not reachable in practice.
     description: >-
       Calculates the approximate number of rows that contain distinct values of the expression argument using
       HyperLogLog. This function provides an alternative to the COUNT (DISTINCT expression) function, which
