@@ -13,6 +13,11 @@ concurrency:
   # so cancel-in-progress is false
   cancel-in-progress: false
 
+# Everything that touches GitHub -- the checkout, semantic-release and the
+# downstream notifications in ci/release/notify.sh -- authenticates with the
+# GitHub App token generated below, so GITHUB_TOKEN itself needs no scopes.
+permissions: {}
+
 jobs:
   release:
     runs-on: ubuntu-latest

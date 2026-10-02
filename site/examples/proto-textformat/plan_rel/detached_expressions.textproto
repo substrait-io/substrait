@@ -1,0 +1,34 @@
+# Ordinal 0 resolves to the literal 42, as if it were inline.
+
+root {
+  input {
+    project {
+      common { direct {} }
+      input {
+        read {
+          common { direct {} }
+          base_schema {
+            names: "value"
+            struct {
+              types { i64 { nullability: NULLABILITY_REQUIRED } }
+              nullability: NULLABILITY_REQUIRED
+            }
+          }
+          named_table {
+            names: "example"
+          }
+        }
+      }
+      expressions {
+        detached_expression_ordinal: 0
+      }
+    }
+  }
+  names: "value"
+  names: "answer"
+}
+detached_expressions {
+  literal {
+    i64: 42
+  }
+}

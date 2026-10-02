@@ -209,6 +209,10 @@ DECLARATIONS = [
         property="supported_expressions",
         discriminator="expression",
         members=expression_options(),
+        not_declarable={
+            "DETACHED_EXPRESSION_ORDINAL": "detached ordinals are an encoding "
+            "mechanism, not a semantic expression kind",
+        },
     ),
     Declaration(
         property="supported_types",
