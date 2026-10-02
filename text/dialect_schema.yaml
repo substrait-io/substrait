@@ -1310,8 +1310,8 @@ definitions:
     type: object
     additionalProperties: false
     description: >
-      Resolving detached expression ordinals in PlanRel and ExtendedExpression.
-      Resolved expression kinds must also be supported.
+      Support for resolving detached expression ordinals in PlanRel and
+      ExtendedExpression, including inside interpreted extension payloads.
     properties:
       expression:
         const: DETACHED_EXPRESSION_ORDINAL

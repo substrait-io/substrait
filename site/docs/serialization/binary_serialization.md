@@ -25,17 +25,20 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 
 Detachment is encoding-only, not computation sharing. Resolving ordinals must recover the same logical expression trees and preserve their semantics. Expression-kind requirements, such as literal-only arguments, apply after resolution.
 
-For each `PlanRel` or `ExtendedExpression`:
+Substrait expressions inside extension-defined `google.protobuf.Any` payloads may use detached expression ordinals referring to the containing `PlanRel` or `ExtendedExpression`. The same container-local rules apply when those payloads are interpreted.
+
+For each `PlanRel` or `ExtendedExpression`, consumers validate the expression trees in the relation or referred expressions, and in extension payloads they interpret, following detached references transitively. The following rules apply to this reachable portion:
 
 1. Ordinals are zero-based indices into the containing message's `detached_expressions`. They must be in range and cannot reference another container, including a `ReferenceRel` target. Ordinals outside these containers are invalid.
-2. Each entry may be referenced at most once, counting references within detached entries. Unused entries are allowed and do not affect evaluation.
-3. References must be acyclic, including among unused entries.
+2. Within the reachable portion, each detached entry may be referenced at most once, including references from other detached entries.
+3. References must be acyclic.
 4. A detached entry must not itself be an ordinal, but its child expressions may be.
-5. Ordinals are forbidden inside `google.protobuf.Any` payloads, including extension details and `AdvancedExtension` payloads.
 
-Consumers must reject violations, including in unused entries.
+Consumers must reject violations in the reachable portion. Unreachable detached entries are allowed and need not be resolved or validated. The existing [rules for ignoring extension payloads](#advanced-extensions) remain unchanged.
 
-Dialects declare support for both containers using `DETACHED_EXPRESSION_ORDINAL` in `supported_expressions`; resolved expression kinds must also be supported. An absent or empty list declares support for all expressions, including this encoding.
+When retaining opaque extension payloads, consumers must not remove or renumber detached entries unless they can ensure that references inside those payloads continue to identify the same expression subtrees.
+
+Dialects declare support for resolving detached expression ordinals in both `PlanRel` and `ExtendedExpression`, including inside interpreted extension payloads, using `DETACHED_EXPRESSION_ORDINAL` in `supported_expressions`. An absent or empty list declares support for all expressions, including this encoding.
 
 ```protobuf
 --8<-- "examples/proto-textformat/plan_rel/detached_expressions.textproto"
