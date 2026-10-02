@@ -1097,6 +1097,7 @@ message Expression {
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
     ExecutionContextVariable execution_context_variable = 17;
+    NamedLambdaReference named_lambda_reference = 18;
   }
 
   message Literal {
@@ -1302,13 +1303,31 @@ message Expression {
     Expression body = 2;
   }
 
-  // Invokes an inline lambda expression with provided arguments.
-  // Enables immediate invocation patterns like: ((x) -> x * 2)(5)
+  // A function value referring to a named lambda, without invoking it.
+  // Its non-nullable Func type is derived from the referenced lambda's
+  // parameter types and body type. It does not capture the caller's scope.
+  // References within named lambda bodies, including higher-order function
+  // arguments, must form an acyclic definition dependency graph.
+  message NamedLambdaReference {
+    // References a lambda_anchor in Plan.named_lambdas, not an extension
+    // function anchor. The definition must exist in the same plan.
+    // 0 is a valid anchor/reference, but prefer non-zero values for ergonomics.
+    uint32 lambda_reference = 1;
+  }
+
+  // Invokes an inline or named lambda expression with provided arguments.
+  // Enables immediate invocation patterns like ((x) -> x * 2)(5), as well as
+  // reuse of a lambda defined in Plan.named_lambdas.
   //
   // The return type is derived from the type of the lambda's body expression.
   message LambdaInvocation {
-    // The lambda expression to invoke.
-    Lambda lambda = 1;
+    oneof lambda_type {
+      // The inline lambda expression to invoke.
+      Lambda lambda = 1;
+
+      // References a lambda_anchor in Plan.named_lambdas.
+      NamedLambdaReference named_lambda_reference = 3;
+    }
 
     // Arguments to pass to the lambda, as a struct expression. The struct must have
     // exactly one Expression field for each lambda parameter, and the expression at
