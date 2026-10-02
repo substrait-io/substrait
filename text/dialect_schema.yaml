@@ -167,7 +167,6 @@ properties:
           - LAMBDA
           - LAMBDA_INVOCATION
           - EXECUTION_CONTEXT_VARIABLE
-          - DETACHED_EXPRESSION_ORDINAL
         - $ref: "#/definitions/literal_expression"
         - $ref: "#/definitions/selection_expression"
         - $ref: "#/definitions/scalar_function_expression"
@@ -183,7 +182,6 @@ properties:
         - $ref: "#/definitions/lambda_expression"
         - $ref: "#/definitions/lambda_invocation_expression"
         - $ref: "#/definitions/execution_context_variable"
-        - $ref: "#/definitions/detached_expression_ordinal"
 
   supported_scalar_functions:
     type: array
@@ -1302,19 +1300,6 @@ definitions:
     properties:
       expression:
         const: LAMBDA_INVOCATION
-      metadata:
-        type: object
-        description: Arbitrary data created by the dialect author.
-    required: [expression]
-  detached_expression_ordinal:
-    type: object
-    additionalProperties: false
-    description: >
-      Support for resolving detached expression ordinals in PlanRel and
-      ExtendedExpression, including inside interpreted extension payloads.
-    properties:
-      expression:
-        const: DETACHED_EXPRESSION_ORDINAL
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.

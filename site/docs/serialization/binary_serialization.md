@@ -38,8 +38,6 @@ Consumers must reject violations in the reachable portion. Unreachable detached 
 
 When retaining opaque extension payloads, consumers must not remove or renumber detached entries unless they can ensure that references inside those payloads continue to identify the same expression subtrees.
 
-Dialects declare support for resolving detached expression ordinals in both `PlanRel` and `ExtendedExpression`, including inside interpreted extension payloads, using `DETACHED_EXPRESSION_ORDINAL` in `supported_expressions`. An absent or empty list declares support for all expressions, including this encoding.
-
 ```protobuf
 --8<-- "examples/proto-textformat/plan_rel/detached_expressions.textproto"
 ```
