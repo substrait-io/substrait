@@ -1668,8 +1668,9 @@ message Expression {
   // eliminate the 98 fields that are not relevant to the rest of the operation
   // pipeline.
   //
-  // Note that this does not fundamentally alter the structure of data beyond
-  // the elimination of unnecessary elements.
+  // The selected fields are output in the order the mask lists them, which
+  // need not be their order in the input. Beyond that order, a mask does not
+  // alter the structure of data other than by eliminating unnecessary elements.
   message MaskExpression {
     StructSelect select = 1;
     bool maintain_singular_struct = 2;
