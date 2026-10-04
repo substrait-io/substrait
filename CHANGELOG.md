@@ -1,6 +1,23 @@
 Release Notes
 ---
 
+## [0.105.0](https://github.com/substrait-io/substrait/compare/v0.104.0...v0.105.0) (2026-10-04)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** `avg` over a decimal returns a nullable
+`DECIMAL?<38,S>`. A plan that declares the result required should
+declare it nullable.
+
+### Features
+
+* **extensions:** support file-level descriptions ([#1257](https://github.com/substrait-io/substrait/issues/1257)) ([2da7f00](https://github.com/substrait-io/substrait/commit/2da7f003eac1674a510d1597f51ce64d5fdaad34))
+* **proto:** support detached expression subtrees ([#1218](https://github.com/substrait-io/substrait/issues/1218)) ([795e693](https://github.com/substrait-io/substrait/commit/795e69359206d959ba994185cd93c1b887ea32b2)), closes [#1217](https://github.com/substrait-io/substrait/issues/1217)
+
+### Bug Fixes
+
+* **extensions:** make the decimal average nullable ([#1253](https://github.com/substrait-io/substrait/issues/1253)) ([30bc5cc](https://github.com/substrait-io/substrait/commit/30bc5ccf1035064c91bdbf5dfc0bf4461e88e2dd)), closes [#1252](https://github.com/substrait-io/substrait/issues/1252)
+
 ## [0.104.0](https://github.com/substrait-io/substrait/compare/v0.103.1...v0.104.0) (2026-09-27)
 
 ### ⚠ BREAKING CHANGES
