@@ -747,8 +747,6 @@ scalar_functions:
             options: [ YEAR, MONTH, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK, DAY ]
           - name: multiple
             value: i64
-          - name: origin
-            value: date
         return: date
       - args:
           - name: x
@@ -761,8 +759,6 @@ scalar_functions:
             options: [ DAY, HOUR, MINUTE, SECOND, MILLISECOND ]
           - name: multiple
             value: i64
-          - name: origin
-            value: precision_time<P>
         return: precision_time<P>
 
 aggregate_functions:
