@@ -1,0 +1,45 @@
+name: Security Scan
+
+on:
+  schedule:
+    # weekly, Tuesday 05:17 UTC -- off the hour so it does not pile onto the
+    # top-of-hour scheduling peak
+    - cron: "17 5 * * 2"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Scan installed environments
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'substrait-io/substrait' }}
+    permissions:
+      contents: read
+      # to upload the findings as code scanning alerts
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.10.2
+        with:
+          pixi-version: v0.73.0
+          cache: true
+      - name: Install every environment
+        run: pixi install --all --locked
+      # Neither dependabot nor Renovate covers conda advisories -- GHSA and OSV
+      # have no conda ecosystem -- so the installed environments are scanned
+      # directly. Grype picks up .grype.yaml from the repository root.
+      - name: Scan installed environments
+        id: scan
+        uses: anchore/scan-action@v7
+        with:
+          path: .pixi/envs
+          # report findings as alerts rather than failing the run
+          fail-build: false
+      - name: Upload findings to code scanning
+        if: ${{ !cancelled() }}
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
+          category: pixi-environments
