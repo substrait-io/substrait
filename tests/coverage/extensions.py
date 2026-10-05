@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-from tests.extension_files import (
+from tests.helpers import (
     find_extension_files,
     iter_function_impls,
     load_extension,

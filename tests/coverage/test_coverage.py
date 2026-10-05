@@ -1,11 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
-import os
-
 import pytest
 from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import Extension, validate_impl_nullability_markers
 from tests.helpers import (
-    get_test_path,
+    EXTENSIONS_DIR,
     make_aggregate_test_header,
     make_scalar_header,
     parse_string,
@@ -20,7 +18,7 @@ def test_coverage_accepts_multiple_known_dependencies():
 
 """
     test_file = parse_string(header + "# basic\nadd(1::i8, 2::i8) = 3::i8\n")
-    registry = Extension.read_substrait_extensions(get_test_path("../extensions"))
+    registry = Extension.read_substrait_extensions(EXTENSIONS_DIR)
 
     coverage = get_test_coverage([test_file], registry)
 
@@ -34,7 +32,7 @@ def test_coverage_rejects_unknown_dependency():
 
 """
     test_file = parse_string(header + "# basic\nadd(1::i8, 2::i8) = 3::i8\n")
-    registry = Extension.read_substrait_extensions(get_test_path("../extensions"))
+    registry = Extension.read_substrait_extensions(EXTENSIONS_DIR)
 
     with pytest.raises(
         ValueError,
@@ -103,9 +101,7 @@ def test_coverage_rejects_unknown_dependency():
 def test_urn_match_in_get_function(
     func_name, func_args, func_ret, func_urn, expected_failure
 ):
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    extensions_path = os.path.join(script_dir, "../../extensions")
-    registry = Extension.read_substrait_extensions(extensions_path)
+    registry = Extension.read_substrait_extensions(EXTENSIONS_DIR)
 
     function = registry.get_function(func_name, func_urn, func_args, func_ret)
     assert (function is None) == expected_failure
@@ -116,9 +112,7 @@ class TestNullabilityValidation:
 
     @staticmethod
     def _registry():
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        extensions_path = os.path.join(script_dir, "../../extensions")
-        return Extension.read_substrait_extensions(extensions_path)
+        return Extension.read_substrait_extensions(EXTENSIONS_DIR)
 
     def test_mirror_nullable_input_requires_nullable_output(self):
         """MIRROR: if any arg is nullable, the output must be nullable."""

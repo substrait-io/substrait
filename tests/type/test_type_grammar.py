@@ -3,7 +3,7 @@
 from antlr4 import CommonTokenStream, InputStream
 from antlr4.error.ErrorListener import ErrorListener
 
-from tests.extension_files import (
+from tests.helpers import (
     EXTENSIONS_DIR,
     REPO_ROOT,
     SITE_EXAMPLES_DIR,
