@@ -45,7 +45,7 @@ A window binding inherits the [aggregate binding properties](aggregate_functions
 | Property | Protobuf field | Meaning and default |
 | -------- | -------------- | ------------------- |
 | Partitioning | `partitions` | Partitioning expressions; none means one partition for the entire input. |
-| Ordering | `sorts` | Ordering expressions, highest priority first. Optional; only allowed when the function supports sorting. |
+| Ordering | `sorts` | Ordering expressions within each partition, highest priority first. Optional, except as required by the [bound mode rules](#bound-modes). This also supplies the inherited aggregate ordering: rows in the frame are passed to the function in this order. |
 | Bound mode | `bounds_type` | Required: `BOUNDS_TYPE_ROWS` or `BOUNDS_TYPE_RANGE`. Consumers must reject `BOUNDS_TYPE_UNSPECIFIED`. |
 | Lower bound | `lower_bound` | Inclusive start of the frame; defaults to the start of the partition. |
 | Upper bound | `upper_bound` | Inclusive end of the frame; defaults to the end of the partition. |
@@ -109,7 +109,7 @@ For example, the standard extensions allow:
 | `precision_timestamp<P>` | `interval_day<P>` | `precision_timestamp<P>` |
 
 !!! note "Open compatibility questions"
-    This restates the existing compatibility rule. Widened boundary types, arithmetic requiring additional arguments, and selection among extension declarations are under discussion in [#1227](https://github.com/substrait-io/substrait/issues/1227); changes to that rule are deferred to that issue.
+    This restates the existing compatibility rule. The earlier generic `decimal`/`decimal` example is omitted because decimal arithmetic can change the result type. Widened boundary types, arithmetic requiring additional arguments, and selection among extension declarations are under discussion in [#1227](https://github.com/substrait-io/substrait/issues/1227); changes to that rule are deferred to that issue.
 
 ## Offset Expressions
 
@@ -119,9 +119,9 @@ The following rules apply to `offset_expr` in both `Preceding` and `Following`, 
 * A null or negative result is invalid. Use the opposite bound direction, not a negative offset, to move the other way.
 * A statically-known zero offset **must** be represented as `CurrentRow`. If a non-literal expression evaluates to zero for a row, the bound is equivalent to `CurrentRow` for that row.
 
-The strictly positive integer `offset` field is deprecated in favor of `offset_expr`. Producers must set at least one, and consumers must reject a `Preceding` or `Following` bound with neither set.
+The strictly positive integer `offset` field is deprecated in favor of `offset_expr`. Producers must set at least one. Because `offset` has no field presence, an `offset` of 0 counts as unset, and consumers must reject a `Preceding` or `Following` bound with no `offset_expr` and an `offset` of 0.
 
-Following the [field replacement migration policy](../spec/breaking_change_policy.md#replacing-a-protobuf-field), consumers use `offset_expr` when present and ignore `offset`. Producers also write an equivalent `offset` when `offset_expr` has an exact legacy representation as one fixed, strictly positive `int64` offset, semantically equivalent for every input row; literal syntax is not required. Otherwise, producers write only `offset_expr`.
+Migration follows [Replacing a Protobuf Field](../spec/breaking_change_policy.md#replacing-a-protobuf-field). For that policy, an exact legacy representation of `offset_expr` requires one fixed, strictly positive `int64` offset that is semantically equivalent for every input row; literal syntax is not required.
 
 ## Function Signatures
 
