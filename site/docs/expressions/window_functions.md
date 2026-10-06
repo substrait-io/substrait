@@ -36,7 +36,7 @@ Rows B and C are peers. Row F has the same score, but belongs to a different par
 
 The RANGE `Following(10)` example includes B even though it is displayed before C: the `CurrentRow` lower bound starts at the beginning of their shared peer group.
 
-Peer groups are a concept used by RANGE, not a separate bound mode. Substrait currently defines ROWS and RANGE, not a mode that counts peer groups.
+RANGE frames use peer groups, but peer groups are not a bound mode of their own: Substrait currently defines ROWS and RANGE, not a mode that counts peer groups.
 
 ## Window Bindings
 
@@ -61,7 +61,7 @@ In a [consistent partition window operation](../relations/physical_relations.md#
 | `Preceding` | An offset toward rows or values **earlier** in the declared ordering. |
 | `Following` | An offset toward rows or values **later** in the declared ordering. |
 
-Both bounds are inclusive, and only rows in the current partition can belong to the frame. If neither bound is specified, the frame is the whole partition, even when ordering is specified. Producers translating SQL must encode that SQL dialect's frame defaults explicitly when they differ.
+Both bounds are inclusive, and only rows in the current partition can belong to the frame. If neither bound is specified, the frame is the whole partition, even when ordering is specified.
 
 A frame need not contain the current row. If the lower bound is after the upper bound, the frame is empty. The function's empty-frame semantics apply, such as `SUM` yielding null and `COUNT(*)` yielding zero.
 
@@ -82,7 +82,7 @@ In the example above, one preceding row means B and one following row means D wh
 `BOUNDS_TYPE_RANGE` measures **distances in ordering values**, rather than counting rows:
 
 * `CurrentRow` means the first row of the current peer group for a lower bound and the last row of that group for an upper bound.
-* If either bound is `Preceding` or `Following`, there must be exactly one ordering expression. It must not use `SORT_DIRECTION_CLUSTERED` or a custom comparison function.
+* If either bound is `Preceding` or `Following`, there must be exactly one ordering expression, and it must not use `SORT_DIRECTION_CLUSTERED` or a custom comparison function.
 * An offset must be a non-negative distance with a [compatible type](#offset-type-compatibility).
 * When the current row's ordering value is null, an offset bound is equivalent to `CurrentRow`.
 
