@@ -7,11 +7,13 @@ regexp_match_substring('foobarboopzoo'::str, 'o{1}'::str, 1::i64, 1::i64, 0::i64
 regexp_match_substring('abcabcacb'::str, '[bc]'::str, 1::i64, 1::i64, 0::i64) = 'b'::str
 regexp_match_substring('abcdefghi'::str, '(.*)c'::str, 1::i64, 1::i64, 0::i64) = 'abc'::str
 regexp_match_substring('abcdefghi'::str, '(.*)c?'::str, 1::i64, 1::i64, 0::i64) = 'abcdefghi'::str
+regexp_match_substring('foobarboopzoo'::vchar<13>, 'o{1,}'::vchar<5>, 1::i64, 1::i64, 0::i64) = 'oo'::vchar<13>
 regexp_match_substring('foobarboopzoo'::str, 'o{1,}'::str) = 'oo'::str
 regexp_match_substring('foobarboopzoo'::str, 'o{1}'::str) = 'o'::str
 regexp_match_substring('abcabcacb'::str, '[bc]'::str) = 'b'::str
 regexp_match_substring('abcdefghi'::str, '(.*)c'::str) = 'abc'::str
 regexp_match_substring('abcdefghi'::str, '(.*)c?'::str) = 'abcdefghi'::str
+regexp_match_substring('foobarboopzoo'::vchar<13>, 'o{1,}'::vchar<5>) = 'oo'::vchar<13>
 
 # null_input: Examples with null as input
 regexp_match_substring('Hello'::str, null::str?, 1::i64, 1::i64, 0::i64) = null::str?
