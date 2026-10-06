@@ -1,9 +1,20 @@
 # Grype configuration for scanning the installed pixi environments.
 #
-# conda packages get CPEs but generally not PURLs (conda/ceps#63 would add
-# them), so they are matched through Grype's "stock" matcher using CPEs. That is
-# Grype's default today; pinning it here keeps the conda findings coming if the
-# default ever flips.
+# conda packages carry no PURLs (conda/ceps#63 would add them), so Grype's
+# "stock" matcher can only match them by CPE, and Syft derives those from the
+# package name alone (cpe:2.3:a:<name>:<name>). Packages whose conda name is
+# also their NVD vendor and product match (openssl, python, libpng); renamed
+# ones such as libexpat (libexpat_project:libexpat) or libglib (gnome:glib) do
+# not, so their CVEs go unreported. CPE matching is Grype's default today;
+# pinning it keeps the conda findings that do match if the default ever flips.
+#
+# To accept a finding, add an `ignore:` rule here (vulnerability and package
+# name, with a `reason`) rather than only dismissing the alert. An alert's
+# fingerprint includes the package version and, for conda packages, the
+# conda-meta file name with its build string, so a lock update that bumps or
+# rebuilds the package reopens a dismissed alert; fail-build does not see
+# dismissals at all. Ignored matches drop out of the report and their alerts
+# close as fixed.
 match:
   stock:
     using-cpes: true
