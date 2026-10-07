@@ -97,7 +97,10 @@ def test_validate_plan_rels():
         "detached_rel_ordinal"
     )
     relation_ordinal = relation_plan_rel.root.input.detached_rel_ordinal
+    assert relation_ordinal == 1
+    assert len(relation_plan_rel.detached_rels) == 2
     assert relation_ordinal < len(relation_plan_rel.detached_rels)
+    assert relation_plan_rel.detached_rels[0].read.named_table.names == ["unused"]
     assert relation_plan_rel.detached_rels[relation_ordinal].read.named_table.names == [
         "example"
     ]

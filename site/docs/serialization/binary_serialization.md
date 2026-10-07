@@ -27,24 +27,20 @@ To reduce relation nesting, producers can move relation subtrees into `detached_
 
 Detachment is encoding-only, not computation sharing. Resolving ordinals must recover the same logical relation and expression trees and preserve their semantics. Expression-kind requirements, such as literal-only arguments, apply after resolution. Use [`ReferenceRel`](../relations/logical_relations.md#reference-operator) for intentional relation sharing.
 
-Substrait expressions inside extension-defined `google.protobuf.Any` payloads may use detached expression ordinals referring to the containing `PlanRel` or `ExtendedExpression`. The same container-local rules apply when those payloads are interpreted.
+Substrait relations and expressions inside extension-defined `google.protobuf.Any` payloads may use detached ordinals referring to the containing message's corresponding table. The same container-local rules below apply when those payloads are interpreted.
 
-For each `PlanRel` or `ExtendedExpression`, consumers validate the expression trees in the relation or referred expressions, and in extension payloads they interpret, following detached references transitively. The following rules apply to this reachable portion:
+For each `PlanRel` or `ExtendedExpression`, consumers validate the relation and expression trees reachable from `PlanRel.rel`, `PlanRel.root`, or `ExtendedExpression.referred_expr`, and from extension payloads they interpret, following detached references transitively. The following rules apply to this reachable portion:
 
-1. Ordinals are zero-based indices into the containing message's `detached_expressions`. They must be in range and cannot reference another container, including a `ReferenceRel` target. Ordinals outside these containers are invalid.
+1. Relation ordinals are zero-based indices into the containing `PlanRel.detached_rels`; expression ordinals index `detached_expressions` on the containing `PlanRel` or `ExtendedExpression`. They must be in range and cannot reference another container, including a `ReferenceRel` target. Ordinals outside their respective containers are invalid; in particular, relation ordinals are invalid in an `ExtendedExpression`.
 2. Within the reachable portion, each detached entry may be referenced at most once, including references from other detached entries.
 3. References must be acyclic.
-4. A detached entry must not itself be an ordinal, but its child expressions may be.
+4. A detached entry must not itself be an ordinal, but its child relations and expressions may be.
 
 Consumers must reject violations in the reachable portion. Unreachable detached entries are allowed and need not be resolved or validated. The existing [rules for ignoring extension payloads](#advanced-extensions) remain unchanged.
 
-When retaining opaque extension payloads, consumers must not remove or renumber detached entries unless they can ensure that references inside those payloads continue to identify the same expression subtrees.
+Allowing unreachable entries lets producers prune a logical subtree without compacting the detached tables or rewriting surviving ordinals. These entries are not additional execution roots. Producers may remove unused entries to reduce serialized size when they can preserve all remaining references.
 
-For detached relations, the following rules apply independently to each `PlanRel`:
-
-1. A detached relation ordinal is the zero-based index of an entry in `detached_rels` on the same `PlanRel`.
-2. Every detached relation must be reachable from the `rel` or `root` field and referenced exactly once.
-3. Detached relation ordinals must not form a cycle.
+When retaining opaque extension payloads, consumers must not remove or renumber detached entries unless they can ensure that references inside those payloads continue to identify the same relation and expression subtrees.
 
 === "Detached Expression"
 
