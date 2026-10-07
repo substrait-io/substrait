@@ -146,11 +146,11 @@ def relation_options() -> dict[str, str]:
     """
     return by_dialect_name(
         algebra_pb2.Rel.DESCRIPTOR.oneofs_by_name["rel_type"].fields,
-        lambda member: screaming_snake_case(
-            member.message_type.name.removesuffix("Rel")
-        )
-        if member.message_type is not None
-        else member.name.upper(),
+        lambda member: (
+            screaming_snake_case(member.message_type.name.removesuffix("Rel"))
+            if member.message_type is not None
+            else member.name.upper()
+        ),
     )
 
 
