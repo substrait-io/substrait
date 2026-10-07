@@ -29,11 +29,13 @@ A user is someone who uses Substrait. They may contribute to Substrait by provid
 
 A contributor is a user who contributes to the project in the form of code or documentation. They take extra steps to participate in the project (loosely defined as the set of repositories under the github substrait-io organization), are active on the developer mailing list, participate in discussions, and provide patches, documentation, suggestions, and criticism.
 
+All contributors must have a signed [Contributor License Agreement (CLA)](https://cla-assistant.io/substrait-io/substrait) on file before their contributions can be merged. A GitHub app checks this on every pull request and guides new contributors through signing it.
+
 Contributors may be given write access to specific `-contrib` repositories by an PMC consensus vote per repository. The vote should be open for a week to allow adequate time for other PMC members to voice any concerns prior to providing write access.
 
 ### Committer
 
-A committer is a developer who has write access to all (i.e., core and `-contrib`) repositories and has a signed [Contributor License Agreement (CLA)](https://cla-assistant.io/substrait-io/substrait) on file. Not needing to depend on other people to make patches to the code or documentation, they are actually making short-term decisions for the project. The PMC can (even tacitly) agree and approve the changes into permanency, or they can reject them. Remember that the PMC makes the decisions, not the individual committers.
+A committer is a developer who has write access to all (i.e., core and `-contrib`) repositories. Not needing to depend on other people to make patches to the code or documentation, they are actually making short-term decisions for the project. The PMC can (even tacitly) agree and approve the changes into permanency, or they can reject them. Remember that the PMC makes the decisions, not the individual committers.
 
 ### PMC Member
 

@@ -102,7 +102,7 @@ Both enumeration arguments and options accept values from a fixed set of strings
 
 | Mode            | Description                                                  |
 | --------------- | ------------------------------------------------------------ |
-| `MIRROR`          | This means that the function has the behavior that if at least one of the input arguments are nullable, the return type is also nullable. If all arguments are non-nullable, the return type will be non-nullable. Since the nullability of the output is determined by the nullability of the inputs, argument types and return types must not include nullability markers (`?`). The function binds regardless of argument nullability. An example of a function with `MIRROR` nullability is the `add` function. |
+| `MIRROR`          | This means that the function has the behavior that if at least one of the input arguments are nullable, the return type is also nullable. If all arguments are non-nullable, the return type will be non-nullable. An implementation that declares no arguments therefore has a non-nullable return type, since there are no nullable inputs to propagate. Since the nullability of the output is determined by the nullability of the inputs, argument types and return types must not include nullability markers (`?`). The function binds regardless of argument nullability. An example of a function with `MIRROR` nullability is the `add` function. |
 | `DECLARED_OUTPUT` | This means that the function accepts input arguments of any nullability. The nullability of the output is determined solely by the return type expression. Since the nullability of the inputs is not considered, argument types must not include nullability markers (`?`). The function binds regardless of argument nullability. An example of a function with `DECLARED_OUTPUT` nullability is the `is_null()` function where the output is always `boolean` independent of the nullability of the input. |
 | `DISCRETE`        | `DISCRETE` nullability extends `DECLARED_OUTPUT`. The output nullability must still match the return type expression's nullability. Additionally, the input and arguments all define concrete nullabilities and can only be bound to the types that have those nullabilities. For example, if a type input is declared as `i64?` and one has an `i64` literal, the `i64` literal must be cast to `i64?` to allow the operation to bind. |
 
@@ -180,10 +180,49 @@ These types are evaluated using a small set of operations to support common scen
 
 ```
 Math: +, -, *, /, min, max
-Boolean: &&, ||, !, <, >, ==
+Boolean: AND, OR, !
+Comparison: <, >, <=, >=, =, !=
+Conditional: if ... then ... else ..., ... ? ... : ...
 Parameters: type, integer
 Literals: type, integer
 ```
+
+`AND` and `OR` are keywords, and all keywords in a type expression are case-insensitive. Note that the boolean operators are spelled `AND`, `OR` and `!`, and equality is spelled `=` and `!=` -- not `&&`, `||` or `==`.
+
+#### Operator Precedence
+
+Sub-expressions may be grouped with parentheses, and grouping always takes precedence over the table below. Without parentheses, operators bind in this order:
+
+| Precedence | Operators | Associativity |
+| ---------- | --------- | ------------- |
+| 1 (tightest) | grouping `( )`, function call `f(...)` | n/a |
+| 2 | `!` | right (unary prefix) |
+| 3 | `*` `/` | left |
+| 4 | `+` `-` | left |
+| 5 | `<` `>` `<=` `>=` | left |
+| 6 | `=` `!=` | left |
+| 7 | `AND` | left |
+| 8 | `OR` | left |
+| 9 | `if ... then ... else ...` | right |
+| 10 (loosest) | `... ? ... : ...` | right |
+
+See [`grammar/SubstraitType.g4`](https://github.com/substrait-io/substrait/blob/main/grammar/SubstraitType.g4) for the formal grammar.
+
+##### Examples
+
+| Expression | Binds as |
+| ---------- | -------- |
+| `P - S + 1` | `(P - S) + 1` |
+| `S1 + P2 * 2` | `S1 + (P2 * 2)` |
+| `!a AND b` | `(!a) AND b` |
+| `c1 ? 1 : c2 ? 2 : 3` | `c1 ? 1 : (c2 ? 2 : 3)` |
+| `if a then b else if c then d else e` | `if a then b else (if c then d else e)` |
+| `if a ? b : c then d else e` | `if (a ? b : c) then d else e` |
+| `if a then b ? c : d else e` | `if a then (b ? c : d) else e` |
+| `a ? b ? c : d : e` | `a ? (b ? c : d) : e` |
+| `if a then b else c ? d : e` | `(if a then b else c) ? d : e` |
+| `if a then b else c AND d` | `if a then b else (c AND d)` |
+| `x AND if a then b else c` | `x AND (if a then b else c)` |
 
 Fully defined with argument types:
 

@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_datetime
+description: >
+  Date, time, timestamp, and interval functions.
 scalar_functions:
   -
     name: extract
@@ -327,6 +329,9 @@ scalar_functions:
             value: precision_timestamp_tz<P>
           - name: y
             value: interval_year
+        deprecated:
+          since: "0.100.0"
+          reason: "Use the three-argument overload with an explicit timezone."
         return: precision_timestamp_tz<P>
       - description: >-
           Subtract a year/month interval after converting the UTC instant to civil time in the

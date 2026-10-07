@@ -3,6 +3,14 @@ name: PR Title Check
 on:
   pull_request_target:
     types: [opened, edited, synchronize, reopened]
+
+# `pull_request_target` grants a write-capable token by default, including for
+# pull requests from forks. Narrow it to what the failure path actually does:
+# read the base ref, and list and post pull request comments.
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   commitlint:
     name: PR title / description conforms to semantic-release

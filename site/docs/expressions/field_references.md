@@ -5,7 +5,7 @@ In Substrait, all fields are dealt with on a positional basis. Field names are o
 Field references can originate from different root types:
 
 - **RootReference**: References the incoming record from the relation
-- **OuterReference**: References outer query records in correlated subqueries, supporting either offset-based (`steps_out`) or id-based (`rel_reference`) resolution (see [Outer References](#outer-references))
+- **OuterReference**: References outer query records in correlated subqueries, using id-based (`rel_reference`) resolution, or the deprecated offset-based (`steps_out`) resolution (see [Outer References](#outer-references))
 - **Expression**: References the result of evaluating an expression
 - **LambdaParameterReference**: References lambda parameters within lambda body expressions (see [Lambda Expressions](lambda_expressions.md))
 
@@ -159,7 +159,11 @@ By default, when only a single field is selected from a struct, that struct is r
 
 Outer references allow expressions inside a subquery to access records from an enclosing relation. The `OuterReference` root type supports two mutually exclusive resolution strategies:
 
-#### `steps_out` (offset-based)
+#### `steps_out` (offset-based, deprecated)
+
+!!! warning "Deprecated"
+
+    `steps_out` is deprecated in favor of `rel_reference`. New producers should use `rel_reference`, which resolves unambiguously in all plan shapes. `steps_out` is retained for backward compatibility.
 
 `steps_out` resolves the reference by counting subquery boundaries upward (`steps_out >= 1`). This works correctly whenever the plan is a **tree**, i.e., when each relation has exactly one parent, the path to the binding relation can be uniquely determined via `steps_out`.
 

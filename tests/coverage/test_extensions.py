@@ -3,21 +3,21 @@ import json
 import os
 from dataclasses import asdict
 
-from tests.baseline import read_baseline_file, generate_baseline
-from tests.coverage.case_file_parser import load_all_testcases
+from tests.coverage.baseline import read_baseline_file, generate_baseline
+from tests.parser import load_all_testcases
 from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import build_type_to_short_type
-from tests.coverage.extensions import Extension
+from tests.coverage.extensions import Extension, validate_nullability_markers
 
 
 # NOTE: this test is run as part of pre-commit hook
 def test_substrait_extension_coverage():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     baseline = read_baseline_file(os.path.join(script_dir, "baseline.json"))
-    extensions_path = os.path.join(script_dir, "../extensions")
+    extensions_path = os.path.join(script_dir, "../../extensions")
     registry = Extension.read_substrait_extensions(extensions_path)
 
-    test_case_dir = os.path.join(script_dir, "./cases")
+    test_case_dir = os.path.join(script_dir, "../cases")
     all_test_files = load_all_testcases(test_case_dir)
     coverage = get_test_coverage(all_test_files, registry)
 
@@ -30,12 +30,12 @@ def test_substrait_extension_coverage():
     assert not errors, (
         "\n".join(errors)
         + f"The baseline file does not match the current test coverage. "
-        f"Please update the file at tests/baseline.json to align with the current baseline"
+        f"Please update the file at tests/coverage/baseline.json to align with the current baseline"
         f"{json.dumps(asdict(actual_baseline), indent=2)}"
     )
 
     if baseline != actual_baseline:
-        print("\nBaseline has changed, updating tests/baseline.json")
+        print("\nBaseline has changed, updating tests/coverage/baseline.json")
         print(json.dumps(asdict(actual_baseline), indent=2))
 
 
@@ -44,10 +44,10 @@ def test_substrait_nullability_consistency():
     the nullability handling declared in extension YAMLs.
     """
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    extensions_path = os.path.join(script_dir, "../extensions")
+    extensions_path = os.path.join(script_dir, "../../extensions")
     registry = Extension.read_substrait_extensions(extensions_path)
 
-    test_case_dir = os.path.join(script_dir, "./cases")
+    test_case_dir = os.path.join(script_dir, "../cases")
     all_test_files = load_all_testcases(test_case_dir)
 
     errors = []
@@ -55,6 +55,19 @@ def test_substrait_nullability_consistency():
         errors.extend(validate_nullability(test_file, registry))
     assert not errors, f"{len(errors)} nullability violation(s) found:\n" + "\n".join(
         errors
+    )
+
+
+def test_no_ignored_nullability_markers_in_declarations():
+    """Verify that extension YAMLs declare no nullability markers that the
+    nullability handling would ignore.
+    """
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    extensions_path = os.path.join(script_dir, "../../extensions")
+
+    errors = validate_nullability_markers(extensions_path)
+    assert not errors, (
+        f"{len(errors)} ignored nullability marker(s) found:\n" + "\n".join(errors)
     )
 
 
