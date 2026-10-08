@@ -205,6 +205,8 @@ The project operation will produce one or more additional expressions based on t
 
 The cross product operation will combine two separate inputs into a single output. It pairs every record from the left input with every record of the right input.
 
+The nullability of each output field is unchanged from the corresponding input field.
+
 | Signature            | Value                                                        |
 | -------------------- | ------------------------------------------------------------ |
 | Inputs               | 2                                                            |

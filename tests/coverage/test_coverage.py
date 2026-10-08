@@ -10,7 +10,14 @@ from tests.helpers import (
 )
 
 
-def test_coverage_accepts_multiple_known_dependencies():
+# get_test_coverage increments per-variant test counts on the registry, so a
+# test that asserts on those counts needs its own registry rather than this one.
+@pytest.fixture(scope="module")
+def registry():
+    return Extension.read_substrait_extensions(EXTENSIONS_DIR)
+
+
+def test_coverage_accepts_multiple_known_dependencies(registry):
     header = """### SUBSTRAIT_SCALAR_TEST: v1.0
 ### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 ### SUBSTRAIT_DEPENDENCY: extension:io.substrait:functions_comparison
@@ -18,22 +25,18 @@ def test_coverage_accepts_multiple_known_dependencies():
 
 """
     test_file = parse_string(header + "# basic\nadd(1::i8, 2::i8) = 3::i8\n")
-    registry = Extension.read_substrait_extensions(EXTENSIONS_DIR)
-
     coverage = get_test_coverage([test_file], registry)
 
     assert coverage.num_tests_with_no_matching_function == 0
 
 
-def test_coverage_rejects_unknown_dependency():
+def test_coverage_rejects_unknown_dependency(registry):
     header = """### SUBSTRAIT_SCALAR_TEST: v1.0
 ### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
 ### SUBSTRAIT_DEPENDENCY: extension:io.substrait:functions_does_not_exist
 
 """
     test_file = parse_string(header + "# basic\nadd(1::i8, 2::i8) = 3::i8\n")
-    registry = Extension.read_substrait_extensions(EXTENSIONS_DIR)
-
     with pytest.raises(
         ValueError,
         match="Unknown extension URN: extension:io.substrait:functions_does_not_exist",
@@ -99,10 +102,8 @@ def test_coverage_rejects_unknown_dependency():
     ],
 )
 def test_urn_match_in_get_function(
-    func_name, func_args, func_ret, func_urn, expected_failure
+    registry, func_name, func_args, func_ret, func_urn, expected_failure
 ):
-    registry = Extension.read_substrait_extensions(EXTENSIONS_DIR)
-
     function = registry.get_function(func_name, func_urn, func_args, func_ret)
     assert (function is None) == expected_failure
 
@@ -110,11 +111,7 @@ def test_urn_match_in_get_function(
 class TestNullabilityValidation:
     """Tests for validate_nullability covering MIRROR, DECLARED_OUTPUT, and DISCRETE rules."""
 
-    @staticmethod
-    def _registry():
-        return Extension.read_substrait_extensions(EXTENSIONS_DIR)
-
-    def test_mirror_nullable_input_requires_nullable_output(self):
+    def test_mirror_nullable_input_requires_nullable_output(self, registry):
         """MIRROR: if any arg is nullable, the output must be nullable."""
         header = make_scalar_header("v1.0", "extension:io.substrait:functions_boolean")
         test_file = parse_string(
@@ -124,12 +121,12 @@ class TestNullabilityValidation:
 and(true::bool, null::bool?) = false::bool
 """
         )
-        errors = validate_nullability(test_file, self._registry())
+        errors = validate_nullability(test_file, registry)
         assert len(errors) == 1
         assert "MIRROR" in errors[0]
         assert "should be nullable" in errors[0]
 
-    def test_mirror_nullable_input_with_nullable_output_ok(self):
+    def test_mirror_nullable_input_with_nullable_output_ok(self, registry):
         """MIRROR: nullable input + nullable output is correct."""
         header = make_scalar_header("v1.0", "extension:io.substrait:functions_boolean")
         test_file = parse_string(
@@ -139,10 +136,10 @@ and(true::bool, null::bool?) = false::bool
 and(true::bool, null::bool?) = false::bool?
 """
         )
-        errors = validate_nullability(test_file, self._registry())
+        errors = validate_nullability(test_file, registry)
         assert errors == []
 
-    def test_mirror_non_nullable_input_non_nullable_output_ok(self):
+    def test_mirror_non_nullable_input_non_nullable_output_ok(self, registry):
         """MIRROR: all non-nullable inputs + non-nullable output is correct."""
         header = make_scalar_header("v1.0", "extension:io.substrait:functions_boolean")
         test_file = parse_string(
@@ -152,10 +149,10 @@ and(true::bool, null::bool?) = false::bool?
 and(true::bool, false::bool) = false::bool
 """
         )
-        errors = validate_nullability(test_file, self._registry())
+        errors = validate_nullability(test_file, registry)
         assert errors == []
 
-    def test_declared_output_requires_nullable_when_declared(self):
+    def test_declared_output_requires_nullable_when_declared(self, registry):
         """DECLARED_OUTPUT: bool_and declares boolean? return — output must be nullable."""
         header = make_aggregate_test_header(
             "v1.0", "extension:io.substrait:functions_boolean"
@@ -167,11 +164,11 @@ and(true::bool, false::bool) = false::bool
 bool_and((true, false)::bool) = false::bool
 """
         )
-        errors = validate_nullability(test_file, self._registry())
+        errors = validate_nullability(test_file, registry)
         assert len(errors) == 1
         assert "DECLARED_OUTPUT" in errors[0]
 
-    def test_declared_output_nullable_return_ok(self):
+    def test_declared_output_nullable_return_ok(self, registry):
         """DECLARED_OUTPUT: bool_and with nullable output is correct."""
         header = make_aggregate_test_header(
             "v1.0", "extension:io.substrait:functions_boolean"
@@ -183,10 +180,10 @@ bool_and((true, false)::bool) = false::bool
 bool_and((true, false)::bool) = false::bool?
 """
         )
-        errors = validate_nullability(test_file, self._registry())
+        errors = validate_nullability(test_file, registry)
         assert errors == []
 
-    def test_declared_output_non_nullable_when_declared_non_nullable(self):
+    def test_declared_output_non_nullable_when_declared_non_nullable(self, registry):
         """DECLARED_OUTPUT: is_null declares non-nullable boolean return — nullable output is wrong."""
         header = make_scalar_header(
             "v1.0", "extension:io.substrait:functions_comparison"
@@ -198,11 +195,11 @@ bool_and((true, false)::bool) = false::bool?
 is_null(null::i8?) = true::bool?
 """
         )
-        errors = validate_nullability(test_file, self._registry())
+        errors = validate_nullability(test_file, registry)
         assert len(errors) == 1
         assert "should not be nullable" in errors[0]
 
-    def test_error_results_are_skipped(self):
+    def test_error_results_are_skipped(self, registry):
         """Error results (<!ERROR>) should not be checked for nullability."""
         header = make_scalar_header(
             "v1.0", "extension:io.substrait:functions_arithmetic"
@@ -214,10 +211,10 @@ is_null(null::i8?) = true::bool?
 add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
 """
         )
-        errors = validate_nullability(test_file, self._registry())
+        errors = validate_nullability(test_file, registry)
         assert errors == []
 
-    def test_mirror_options_skip_false_positive(self):
+    def test_mirror_options_skip_false_positive(self, registry):
         """MIRROR with function options: nullable output with non-nullable args is allowed
         when options are present (e.g. on_domain_error:NONE can produce null)."""
         header = make_scalar_header(
@@ -230,7 +227,7 @@ add(120::i8, 10::i8) [overflow:ERROR] = <!ERROR>
 divide(5::i8, 0::i8) [on_division_by_zero:NAN] = null::i8?
 """
         )
-        errors = validate_nullability(test_file, self._registry())
+        errors = validate_nullability(test_file, registry)
         assert errors == []
 
 
