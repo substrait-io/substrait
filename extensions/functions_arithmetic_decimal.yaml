@@ -2,7 +2,10 @@
 ---
 urn: extension:io.substrait:functions_arithmetic_decimal
 description: >
-  Arithmetic functions for decimal values.
+  Arithmetic functions for decimal values. SQL:1999 (ISO/IEC 9075-2:1999, section 6.26) leaves the result precision of
+  addition, subtraction and multiplication implementation-defined. It uses the larger operand scale for addition and
+  subtraction, and the sum of operand scales for multiplication. The return expressions below specify Substrait's
+  rules for these operations, including scale reduction when the initial precision exceeds 38.
 scalar_functions:
   -
     name: "add"
