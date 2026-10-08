@@ -135,11 +135,7 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 
 ## Named Lambdas
 
-A lambda can be defined once in `Plan.named_lambdas`, invoked from multiple
-`LambdaInvocation` expressions, or passed as a function value using
-`NamedLambdaReference`. Each entry is represented by a `NamedLambda`.
-Named lambdas use their own anchor namespace, separate from extension function
-anchors.
+A named lambda is defined once in `Plan.named_lambdas`, where each entry is represented by a `NamedLambda`. Once defined, it can be invoked from multiple `LambdaInvocation` expressions and passed as a function value using `NamedLambdaReference`. Named lambdas use their own anchor namespace, separate from extension function anchors.
 
 Each definition consists of a `lambda_anchor`, an `Expression.Lambda`, and an
 optional human-readable `name`. The name is only for diagnostics and plan
@@ -176,11 +172,7 @@ lambda. Its `lambda_reference` identifies a `lambda_anchor` in
 `Plan.named_lambdas`, using the same namespace as
 `LambdaInvocation.named_lambda_reference`. Anchor 0 is valid.
 
-The reference has a non-nullable `func` type. Its parameter types are the
-referenced lambda's `parameters.types`, in order, and its return type is the
-type of that lambda's body. Parameter and return nullability are preserved;
-the function value itself is not null. The reference does not capture the
-caller's relational input or enclosing lambda parameters.
+A named lambda reference has a non-nullable function type, with parameter and return types derived from the referenced lambda as described in [Lambda Type Derivation](#type-derivation).
 
 Unlike a `LambdaInvocation`, which produces the result of a call, a
 `NamedLambdaReference` supplies the function itself. It can be placed in
