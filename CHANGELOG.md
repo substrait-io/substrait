@@ -1,6 +1,169 @@
 Release Notes
 ---
 
+## [0.105.0](https://github.com/substrait-io/substrait/compare/v0.104.0...v0.105.0) (2026-10-04)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** `avg` over a decimal returns a nullable
+`DECIMAL?<38,S>`. A plan that declares the result required should
+declare it nullable.
+
+### Features
+
+* **extensions:** support file-level descriptions ([#1257](https://github.com/substrait-io/substrait/issues/1257)) ([2da7f00](https://github.com/substrait-io/substrait/commit/2da7f003eac1674a510d1597f51ce64d5fdaad34))
+* **proto:** support detached expression subtrees ([#1218](https://github.com/substrait-io/substrait/issues/1218)) ([795e693](https://github.com/substrait-io/substrait/commit/795e69359206d959ba994185cd93c1b887ea32b2)), closes [#1217](https://github.com/substrait-io/substrait/issues/1217)
+
+### Bug Fixes
+
+* **extensions:** make the decimal average nullable ([#1253](https://github.com/substrait-io/substrait/issues/1253)) ([30bc5cc](https://github.com/substrait-io/substrait/commit/30bc5ccf1035064c91bdbf5dfc0bf4461e88e2dd)), closes [#1252](https://github.com/substrait-io/substrait/issues/1252)
+
+## [0.104.0](https://github.com/substrait-io/substrait/compare/v0.103.1...v0.104.0) (2026-09-27)
+
+### ⚠ BREAKING CHANGES
+
+* **grammar:** Fixes the precedence of `!` and the associativity of
+the `? :` conditional when parsing return type expressions from
+extension YAMLs. This can be breaking for user defined extension YAMLs
+which may have relied on `!` binding looser than `AND` and `OR`, or on a
+chained `? :` grouping to the left; both now follow conventional
+precedence and associativity.
+
+### Features
+
+* add support for window function testing ([#1209](https://github.com/substrait-io/substrait/issues/1209)) ([d149822](https://github.com/substrait-io/substrait/commit/d14982226dd274cd4806985961afa88c361a0edd))
+
+### Bug Fixes
+
+* **grammar:** bind ! tighter than AND/OR and right-associate ? : ([#1228](https://github.com/substrait-io/substrait/issues/1228)) ([0f9b92b](https://github.com/substrait-io/substrait/commit/0f9b92bfb0958d10d7d9bb5faac82d1c2c2aa065))
+* **site:** track generated documentation inputs ([#1194](https://github.com/substrait-io/substrait/issues/1194)) ([930f109](https://github.com/substrait-io/substrait/commit/930f109319771229c9e60ed766afc15358b5f25b)), closes [#1144](https://github.com/substrait-io/substrait/issues/1144)
+* **tests:** remove byte-identical duplicate test case lines ([#1239](https://github.com/substrait-io/substrait/issues/1239)) ([5c6046b](https://github.com/substrait-io/substrait/commit/5c6046bf769850949b0f22e67a8739a83d430a3d))
+* **tests:** validate row shape matches column count in tables ([#1235](https://github.com/substrait-io/substrait/issues/1235)) ([b0341ce](https://github.com/substrait-io/substrait/commit/b0341cea26fd0a83eb2dfd8e9d4f64df1b8e1759))
+
+## [0.103.1](https://github.com/substrait-io/substrait/compare/v0.103.0...v0.103.1) (2026-09-20)
+
+### Bug Fixes
+
+* **extensions:** bind quantile return type ([#1193](https://github.com/substrait-io/substrait/issues/1193)) ([272d8dc](https://github.com/substrait-io/substrait/commit/272d8dc153ac980094d54b63660451d99eab9f89))
+
+## [0.103.0](https://github.com/substrait-io/substrait/compare/v0.102.0...v0.103.0) (2026-08-30)
+
+### ⚠ BREAKING CHANGES
+
+* **dialect:** dialect files declaring `EXTENSION_SINGLE`,
+`EXTENSION_MULTI` or `EXTENSION_LEAF` must now list the `message_types`
+they support, the same way `USER_DEFINED` types have to name their
+extension. `ExpandRel` support is declared with `CONSISTENT_FIELD`
+rather than `CONSTANT_FIELD`, which never named a protobuf member.
+
+### Features
+
+* **dialect:** check the dialect schema against the protos ([#1173](https://github.com/substrait-io/substrait/issues/1173)) ([b92e97c](https://github.com/substrait-io/substrait/commit/b92e97c3ca1a7f4b3f4c2f10295b7e842548027d))
+
+### Bug Fixes
+
+* **extensions:** split shared type parameters in strpos and logb ([#1186](https://github.com/substrait-io/substrait/issues/1186)) ([5a189e7](https://github.com/substrait-io/substrait/commit/5a189e7b86d7f017c1a31483d0d983bd7bfc3880))
+
+## [0.102.0](https://github.com/substrait-io/substrait/compare/v0.101.0...v0.102.0) (2026-08-23)
+
+### ⚠ BREAKING CHANGES
+
+* **protos:** deprecates the `offset` field of the `Preceding` and
+`Following` window bounds in favor of the new `offset_expr` field, which
+accepts an arbitrary expression instead of an integer literal. Consumers
+should add `offset_expr` support before producers switch to it. The PR
+also requires explicit window frame bounds type. Producers should set
+the bounds type and Consumers should reject `BOUNDS_TYPE_UNSPECIFIED` in
+such cases.
+ 
+<!-- Reviewable:start -->
+
+### Features
+
+* **extensions:** add a decimal overload for negate ([#1177](https://github.com/substrait-io/substrait/issues/1177)) ([6092523](https://github.com/substrait-io/substrait/commit/60925234a0a2c02a41400df349b0bad1e674581b))
+* **protos:** support expression in window aggregate bounds ([#1105](https://github.com/substrait-io/substrait/issues/1105)) ([6706015](https://github.com/substrait-io/substrait/commit/6706015ffdb19345fef399ef8238e3e6269cb380)), closes [#748](https://github.com/substrait-io/substrait/issues/748) [#617](https://github.com/substrait-io/substrait/issues/617) [#930](https://github.com/substrait-io/substrait/issues/930)
+
+## [0.101.0](https://github.com/substrait-io/substrait/compare/v0.100.0...v0.101.0) (2026-08-16)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** `extensions/extension_types.yaml` and
+`extensions/type_variations.yaml` are no longer part of the extension
+catalog. They move to `site/examples/extensions/`, and their URNs change
+from `extension:io.substrait:extension_types` and
+`extension:io.substrait:type_variations` to
+`extension:org.example:extension_types` and
+`extension:org.example:type_variations`.
+
+Consumers that resolve `extension:io.substrait:extension_types` — the
+`point`/`line` user-defined types, which substrait-java and substrait-go
+both register today — will no longer find it in the catalog, and should
+either define those types locally or load the example explicitly under
+its new URN.
+
+The remaining example files keep their location but also move to the
+`extension:org.example:` owner, including
+`lambda_function_example.yaml`, which previously duplicated the official
+`extension:io.substrait:functions_list` URN.
+
+Nothing in the `extension:org.example:` namespace carries a
+compatibility guarantee: those files exist to illustrate the extension
+schema and to serve as parser fixtures, and may change without a
+deprecation cycle.
+* **protos:** `Expression.FieldReference.OuterReference.steps_out`
+is deprecated in favor of `rel_reference`, which names the binding
+relation via its plan-wide unique `RelCommon.rel_anchor` and therefore
+resolves unambiguously in DAG-shaped plans with shared relations
+(`ReferenceRel`), where counting subquery boundaries upward does not.
+Consumers should add `rel_reference` support before producers switch to
+it. Note that both fields are members of the same `outer_reference_type`
+oneof, so a plan cannot carry both forms at once: the migration is
+consumer-first rather than dual-write. Nothing is removed by this
+change: the deprecation is metadata only, consumers are not required to
+understand or validate it, and no existing plan changes meaning.
+`steps_out` remains fully functional and is scheduled for removal in a
+later release.
+
+### Features
+
+* **protos:** deprecate OuterReference.steps_out in favor of rel_reference ([#1132](https://github.com/substrait-io/substrait/issues/1132)) ([25940fb](https://github.com/substrait-io/substrait/commit/25940fb57d57dd8970112bc7d4b611012998eb52))
+
+### Bug Fixes
+
+* add missing RelCommon field to UpdateRel ([#1168](https://github.com/substrait-io/substrait/issues/1168)) ([cdf0102](https://github.com/substrait-io/substrait/commit/cdf0102f0d45e044cfa08a9a81174c5892f72f6a))
+
+### Code Refactoring
+
+* **extensions:** move example YAML files out of the extensions folder ([#1136](https://github.com/substrait-io/substrait/issues/1136)) ([c9f697e](https://github.com/substrait-io/substrait/commit/c9f697e6a1773e9d1248e87a2bd0fabe0c0e7906))
+
+## [0.100.0](https://github.com/substrait-io/substrait/compare/v0.99.0...v0.100.0) (2026-08-09)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** the two-argument `subtract:ptstz_iyear` overload,
+`subtract(precision_timestamp_tz<P>, interval_year)`, is deprecated as of
+0.100.0. Use the three-argument `subtract:ptstz_iyear_str` overload,
+`subtract(precision_timestamp_tz<P>, interval_year, string)`, and pass an
+explicit IANA timezone instead. `interval_year` carries a number of months,
+and month arithmetic on an instant is only definable as field arithmetic on
+a civil datetime; the timezone is what maps the instant to that calendar,
+so the two-argument form has no well-defined result. This also aligns
+`subtract` with `add`, which offers only the three-argument form for this
+type combination. Nothing is removed by this change: the deprecation is
+metadata only, consumers are not required to understand or validate it, and
+no existing plan changes meaning. The overload is scheduled for removal in
+a later release.
+
+### Features
+
+* add advanced_extension to ExpandRel ([#1167](https://github.com/substrait-io/substrait/issues/1167)) ([4d5d57a](https://github.com/substrait-io/substrait/commit/4d5d57a1918edaacef529845dcc1d9664aa6068d))
+* **extensions:** add unsigned integer extension types (u8, u16, u32, u64) ([#953](https://github.com/substrait-io/substrait/issues/953)) ([f5e0715](https://github.com/substrait-io/substrait/commit/f5e0715454c4a7b54ed13efe018f590d1618623d))
+* **extensions:** deprecate subtract(precision_timestamp_tz, interval_year) overload ([#1160](https://github.com/substrait-io/substrait/issues/1160)) ([993ad15](https://github.com/substrait-io/substrait/commit/993ad15ca6c8b0dbcafef7316f48d83e20902dd2))
+
+### Bug Fixes
+
+* remove ignored nullability markers from MIRROR declarations ([#1148](https://github.com/substrait-io/substrait/issues/1148)) ([f77d2d4](https://github.com/substrait-io/substrait/commit/f77d2d4b0e0a1640fa323c7370ccfab8c15877ef))
+
 ## [0.99.0](https://github.com/substrait-io/substrait/compare/v0.98.0...v0.99.0) (2026-07-26)
 
 ### Features

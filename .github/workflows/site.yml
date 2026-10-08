@@ -6,7 +6,14 @@ on:
     paths:
       - "site/**"
       - "extensions/**"
+      - "proto/**"
       - "text/**"
+
+# The deploy step pushes to substrait-io/substrait.io with an SSH deploy key
+# rather than GITHUB_TOKEN, so read access to this repository is all that is
+# needed.
+permissions:
+  contents: read
 
 jobs:
   site:
@@ -15,7 +22,7 @@ jobs:
     if: ${{ github.repository == 'substrait-io/substrait' }}
     steps:
       - uses: actions/checkout@v7
-      - uses: prefix-dev/setup-pixi@v0.10.0
+      - uses: prefix-dev/setup-pixi@v0.10.2
         with:
           pixi-version: v0.73.0
           cache: true

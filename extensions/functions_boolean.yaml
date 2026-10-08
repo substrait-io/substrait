@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_boolean
+description: >
+  Boolean logic functions.
 scalar_functions:
   -
     name: or
@@ -27,11 +29,11 @@ scalar_functions:
         or(x) -> x
     impls:
       - args:
-          - value: boolean?
+          - value: boolean
             name: a
         variadic:
           min: 0
-        return: boolean?
+        return: boolean
   -
     name: and
     description: >
@@ -57,11 +59,11 @@ scalar_functions:
         and(x) -> x
     impls:
       - args:
-          - value: boolean?
+          - value: boolean
             name: a
         variadic:
           min: 0
-        return: boolean?
+        return: boolean
   -
     name: and_not
     description: >
@@ -84,11 +86,11 @@ scalar_functions:
       unknown value.
     impls:
       - args:
-          - value: boolean?
+          - value: boolean
             name: a
-          - value: boolean?
+          - value: boolean
             name: b
-        return: boolean?
+        return: boolean
   -
     name: xor
     description: >
@@ -97,11 +99,11 @@ scalar_functions:
       When a null is encountered in either input, a null is output.
     impls:
       - args:
-          - value: boolean?
+          - value: boolean
             name: a
-          - value: boolean?
+          - value: boolean
             name: b
-        return: boolean?
+        return: boolean
   -
     name: not
     description: >
@@ -110,9 +112,9 @@ scalar_functions:
       When a null is input, a null is output.
     impls:
       - args:
-          - value: boolean?
+          - value: boolean
             name: a
-        return: boolean?
+        return: boolean
 
 aggregate_functions:
   -

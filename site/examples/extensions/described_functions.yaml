@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: Apache-2.0
+---
+urn: extension:org.example:described_functions
+description: |
+  Functions for **integer values**.
+
+  Each function preserves the input type.
+scalar_functions:
+  - name: negate
+    description: Negate an integer value.
+    impls:
+      - args:
+          - value: i32
+        return: i32

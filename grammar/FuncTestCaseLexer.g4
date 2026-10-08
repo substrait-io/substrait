@@ -11,6 +11,7 @@ Whitespace    : [ \t\n\r]+ -> channel(HIDDEN) ;
 TripleHash: '###';
 SubstraitScalarTest: 'SUBSTRAIT_SCALAR_TEST';
 SubstraitAggregateTest: 'SUBSTRAIT_AGGREGATE_TEST';
+SubstraitWindowTest: 'SUBSTRAIT_WINDOW_TEST';
 SubstraitInclude: 'SUBSTRAIT_INCLUDE';
 SubstraitDependency: 'SUBSTRAIT_DEPENDENCY';
 
@@ -39,6 +40,7 @@ IgnoreNulls: 'IGNORE_NULLS';
 NullHandling: 'NULL_HANDLING';
 SpacesOnly: 'SPACES_ONLY';
 Truncate: 'TRUNCATE';
+Over: 'OVER';
 
 IntegerLiteral
     : [+-]? Int

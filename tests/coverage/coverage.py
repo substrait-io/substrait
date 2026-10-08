@@ -1,10 +1,16 @@
 # SPDX-License-Identifier: Apache-2.0
+"""Coverage checks for parsed Substrait function test cases.
+
+This module consumes the reference parser output from `tests.parser` and checks
+coverage of existing extension functions.
+"""
+
 import json
 from collections import defaultdict
 
-from tests.coverage.case_file_parser import load_all_testcases
+from tests.parser import load_all_testcases
 from tests.coverage.extensions import Extension, error, FunctionRegistry
-from tests.coverage.nodes import CaseLiteral, SubstraitError, AggregateArgument
+from tests.parser.nodes import CaseLiteral, SubstraitError, AggregateArgument
 
 
 class FunctionTestCoverage:
@@ -109,6 +115,8 @@ def update_test_count(test_case_files: list, function_registry: FunctionRegistry
     num_tests_with_no_matching_function = 0
     for test_file in test_case_files:
         function_registry.validate_urn(test_file.include)
+        for dependency in test_file.dependencies:
+            function_registry.validate_urn(dependency)
         for test_case in test_file.testcases:
             function_variant = function_registry.get_function(
                 test_case.func_name,
