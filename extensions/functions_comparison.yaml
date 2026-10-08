@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_comparison
+description: >
+  Comparison and predicate functions.
 scalar_functions:
   -
     name: "not_equal"
