@@ -55,6 +55,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#windowFuncTestGroup.
+    def visitWindowFuncTestGroup(self, ctx:FuncTestCaseParser.WindowFuncTestGroupContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#arguments.
     def visitArguments(self, ctx:FuncTestCaseParser.ArgumentsContext):
         return self.visitChildren(ctx)
@@ -87,6 +92,21 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#singleArgAggregateFuncCall.
     def visitSingleArgAggregateFuncCall(self, ctx:FuncTestCaseParser.SingleArgAggregateFuncCallContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#windowFuncTestCase.
+    def visitWindowFuncTestCase(self, ctx:FuncTestCaseParser.WindowFuncTestCaseContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#windowFuncCall.
+    def visitWindowFuncCall(self, ctx:FuncTestCaseParser.WindowFuncCallContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#windowResult.
+    def visitWindowResult(self, ctx:FuncTestCaseParser.WindowResultContext):
         return self.visitChildren(ctx)
 
 
@@ -132,6 +152,16 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#aggregateFuncArg.
     def visitAggregateFuncArg(self, ctx:FuncTestCaseParser.AggregateFuncArgContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#windowFuncArgs.
+    def visitWindowFuncArgs(self, ctx:FuncTestCaseParser.WindowFuncArgsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#windowFuncArg.
+    def visitWindowFuncArg(self, ctx:FuncTestCaseParser.WindowFuncArgContext):
         return self.visitChildren(ctx)
 
 

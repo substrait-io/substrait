@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:unsigned_integers
+description: >
+  Unsigned integer types and their arithmetic functions.
 
 types:
   - name: u8

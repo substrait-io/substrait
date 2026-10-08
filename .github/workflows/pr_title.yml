@@ -26,7 +26,9 @@ concurrency:
   queue: max
   cancel-in-progress: false
 
-# Default to the minimum read-only token for all jobs.
+# `pull_request_target` grants a write-capable token by default, including for
+# pull requests from forks. Default to the minimum read-only token for all jobs;
+# only the comment job is granted pull-requests: write.
 permissions:
   contents: read
 

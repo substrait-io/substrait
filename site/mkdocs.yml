@@ -58,6 +58,7 @@ plugins:
         - docs/extensions/generate_function_docs.py
 watch:
 - ../extensions
+- ../proto
 markdown_extensions:
   - smarty
   - sane_lists

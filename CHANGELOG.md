@@ -1,6 +1,45 @@
 Release Notes
 ---
 
+## [0.105.0](https://github.com/substrait-io/substrait/compare/v0.104.0...v0.105.0) (2026-10-04)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** `avg` over a decimal returns a nullable
+`DECIMAL?<38,S>`. A plan that declares the result required should
+declare it nullable.
+
+### Features
+
+* **extensions:** support file-level descriptions ([#1257](https://github.com/substrait-io/substrait/issues/1257)) ([2da7f00](https://github.com/substrait-io/substrait/commit/2da7f003eac1674a510d1597f51ce64d5fdaad34))
+* **proto:** support detached expression subtrees ([#1218](https://github.com/substrait-io/substrait/issues/1218)) ([795e693](https://github.com/substrait-io/substrait/commit/795e69359206d959ba994185cd93c1b887ea32b2)), closes [#1217](https://github.com/substrait-io/substrait/issues/1217)
+
+### Bug Fixes
+
+* **extensions:** make the decimal average nullable ([#1253](https://github.com/substrait-io/substrait/issues/1253)) ([30bc5cc](https://github.com/substrait-io/substrait/commit/30bc5ccf1035064c91bdbf5dfc0bf4461e88e2dd)), closes [#1252](https://github.com/substrait-io/substrait/issues/1252)
+
+## [0.104.0](https://github.com/substrait-io/substrait/compare/v0.103.1...v0.104.0) (2026-09-27)
+
+### ⚠ BREAKING CHANGES
+
+* **grammar:** Fixes the precedence of `!` and the associativity of
+the `? :` conditional when parsing return type expressions from
+extension YAMLs. This can be breaking for user defined extension YAMLs
+which may have relied on `!` binding looser than `AND` and `OR`, or on a
+chained `? :` grouping to the left; both now follow conventional
+precedence and associativity.
+
+### Features
+
+* add support for window function testing ([#1209](https://github.com/substrait-io/substrait/issues/1209)) ([d149822](https://github.com/substrait-io/substrait/commit/d14982226dd274cd4806985961afa88c361a0edd))
+
+### Bug Fixes
+
+* **grammar:** bind ! tighter than AND/OR and right-associate ? : ([#1228](https://github.com/substrait-io/substrait/issues/1228)) ([0f9b92b](https://github.com/substrait-io/substrait/commit/0f9b92bfb0958d10d7d9bb5faac82d1c2c2aa065))
+* **site:** track generated documentation inputs ([#1194](https://github.com/substrait-io/substrait/issues/1194)) ([930f109](https://github.com/substrait-io/substrait/commit/930f109319771229c9e60ed766afc15358b5f25b)), closes [#1144](https://github.com/substrait-io/substrait/issues/1144)
+* **tests:** remove byte-identical duplicate test case lines ([#1239](https://github.com/substrait-io/substrait/issues/1239)) ([5c6046b](https://github.com/substrait-io/substrait/commit/5c6046bf769850949b0f22e67a8739a83d430a3d))
+* **tests:** validate row shape matches column count in tables ([#1235](https://github.com/substrait-io/substrait/issues/1235)) ([b0341ce](https://github.com/substrait-io/substrait/commit/b0341cea26fd0a83eb2dfd8e9d4f64df1b8e1759))
+
 ## [0.103.1](https://github.com/substrait-io/substrait/compare/v0.103.0...v0.103.1) (2026-09-20)
 
 ### Bug Fixes
