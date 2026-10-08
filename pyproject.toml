@@ -48,16 +48,20 @@ pythonpath = ["gen/proto/python"]
 name = "substrait"
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64", "linux-aarch64"]
+# Ignore conda and PyPI packages published in the last 14 days when solving, so
+# a compromised or broken upload has time to be noticed before it can reach a
+# build. See CONTRIBUTING.md for how to bypass this for an urgent security fix.
+exclude-newer = "14d"
 
 [tool.pixi.dependencies]
 antlr = ">=4.13.2,<5"
-buf = ">=1.62.1,<2"
+buf = ">=1.66.0,<2"
 python = ">=3.13,<3.14"
-nodejs = ">=24,<25"
+nodejs = ">=26.8.2,<27"
 
 [tool.pixi.tasks]
 # code generation
-generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate ANTLR Python parsers", inputs = ["grammar/*.g4"], outputs = ["tests/type/antlr_parser/*.py", "tests/coverage/antlr_parser/*.py"] }
+generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate ANTLR Python parsers", inputs = ["grammar/*.g4"], outputs = ["tests/type/antlr_parser/*.py", "tests/parser/antlr_parser/*.py"] }
 generate-protobuf = { cmd = "buf generate", description = "Generate protobuf Python code", inputs = ["proto/**/*.proto"], outputs = ["gen/proto/python/substrait/*.py"] }
 generate = { depends-on = ["generate-antlr", "generate-protobuf"] }
 
@@ -81,6 +85,7 @@ format = { depends-on = ["ruff-format", "format-protobuf"], description = "Forma
 
 # testing
 test = { cmd = "pytest .", default-environment = "dev", depends-on = ["generate-protobuf"], description = "Run tests including test_substrait_extension_coverage" }
+test-extension-coverage = { cmd = "pytest tests/coverage/test_extensions.py::test_substrait_extension_coverage", default-environment = "dev", description = "Check extension test coverage against tests/coverage/baseline.json (used by the pre-commit hook)" }
 
 # docs
 mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", description = "Build Website" }
@@ -95,24 +100,24 @@ dev = { features = ["dev"] }
 [dependency-groups]
 dev = [
   "antlr4-python3-runtime>=4.13.2,<5",
-  "editorconfig-checker>=3.6.1,<4",
-  "ruff>=0.15.22,<1",
-  "protobuf==6.33.1",
-  "pytest>=9.0.3,<10",
+  "editorconfig-checker>=3.11.1,<4",
+  "ruff>=0.16.8,<1",
+  "protobuf==7.36.2",
+  "pytest>=9.1.1,<10",
   "pyyaml>=6.0.3,<7",
   "mdutils>=1.8.1,<2",
   "mkdocs>=1.6.1,<2",
   "mkdocs-awesome-pages-plugin>=2.10.1,<3",
   "mkdocs-gen-files>=0.6.1,<1",
-  "mkdocs-markdownextradata-plugin>=0.2.5,<1",
-  "mkdocs-material>=9.7.6",
+  "mkdocs-markdownextradata-plugin>=0.2.6,<1",
+  "mkdocs-material>=9.7.7",
   "mkdocs-minify-plugin>=0.8.0,<1",
   "mkdocs-protobuf>=0.1.0,<1",
   "mkdocs-redirects>=1.2.3,<2",
-  "mkdocs-table-reader-plugin>=3.1.0,<4",
+  "mkdocs-table-reader-plugin>=4.0.1,<5",
   "oyaml>=1.0,<2",
-  "pygments>=2.14,<3",
-  "pymdown-extensions>=11.0.1,<12",
+  "pygments>=2.21.0,<3",
+  "pymdown-extensions>=12.1,<13",
   "yamllint>=1.38,<2",
-  "check-jsonschema>=0.38.0,<1",
+  "check-jsonschema>=0.38.2,<1",
 ]

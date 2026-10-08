@@ -15,6 +15,9 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           days-before-issue-stale: -1 # don't operate on issues
+          # Renovate PRs are immortal: it recreates closed grouped and lock
+          # file maintenance PRs, so staling them only produces churn.
+          exempt-pr-labels: dependencies
           stale-pr-message: |
             This PR has been automatically marked as stale because it has not had
             recent activity. It will be closed in 7 days if no further activity occurs.

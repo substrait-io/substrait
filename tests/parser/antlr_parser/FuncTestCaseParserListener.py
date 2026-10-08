@@ -90,6 +90,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#windowFuncTestGroup.
+    def enterWindowFuncTestGroup(self, ctx:FuncTestCaseParser.WindowFuncTestGroupContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#windowFuncTestGroup.
+    def exitWindowFuncTestGroup(self, ctx:FuncTestCaseParser.WindowFuncTestGroupContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#arguments.
     def enterArguments(self, ctx:FuncTestCaseParser.ArgumentsContext):
         pass
@@ -150,6 +159,33 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#singleArgAggregateFuncCall.
     def exitSingleArgAggregateFuncCall(self, ctx:FuncTestCaseParser.SingleArgAggregateFuncCallContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#windowFuncTestCase.
+    def enterWindowFuncTestCase(self, ctx:FuncTestCaseParser.WindowFuncTestCaseContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#windowFuncTestCase.
+    def exitWindowFuncTestCase(self, ctx:FuncTestCaseParser.WindowFuncTestCaseContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#windowFuncCall.
+    def enterWindowFuncCall(self, ctx:FuncTestCaseParser.WindowFuncCallContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#windowFuncCall.
+    def exitWindowFuncCall(self, ctx:FuncTestCaseParser.WindowFuncCallContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#windowResult.
+    def enterWindowResult(self, ctx:FuncTestCaseParser.WindowResultContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#windowResult.
+    def exitWindowResult(self, ctx:FuncTestCaseParser.WindowResultContext):
         pass
 
 
@@ -231,6 +267,24 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#aggregateFuncArg.
     def exitAggregateFuncArg(self, ctx:FuncTestCaseParser.AggregateFuncArgContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#windowFuncArgs.
+    def enterWindowFuncArgs(self, ctx:FuncTestCaseParser.WindowFuncArgsContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#windowFuncArgs.
+    def exitWindowFuncArgs(self, ctx:FuncTestCaseParser.WindowFuncArgsContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#windowFuncArg.
+    def enterWindowFuncArg(self, ctx:FuncTestCaseParser.WindowFuncArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#windowFuncArg.
+    def exitWindowFuncArg(self, ctx:FuncTestCaseParser.WindowFuncArgContext):
         pass
 
 

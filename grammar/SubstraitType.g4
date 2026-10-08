@@ -73,6 +73,7 @@ expr
   | Number                                                                                  #LiteralNumber
   | Identifier isnull=QMark?                                                                #ParameterName
   | Identifier OParen (expr (Comma expr)*)? CParen                                          #FunctionCall
+  | (Bang) expr                                                                             #NotExpr
   | left=expr op=(Asterisk | ForwardSlash) right=expr                                       #MulDiv
   | left=expr op=(Plus | Minus) right=expr                                                  #AddSub
   | left=expr op=(Lt | Gt | Lte | Gte) right=expr                                           #Comparison
@@ -80,6 +81,5 @@ expr
   | left=expr op=And right=expr                                                             #And
   | left=expr op=Or right=expr                                                              #Or
   | If ifExpr=expr Then thenExpr=expr Else elseExpr=expr                                    #IfExpr
-  | (Bang) expr                                                                             #NotExpr
-  | ifExpr=expr QMark thenExpr=expr Colon elseExpr=expr                                     #Ternary
+  | <assoc=right> ifExpr=expr QMark thenExpr=expr Colon elseExpr=expr                       #Ternary
   ;

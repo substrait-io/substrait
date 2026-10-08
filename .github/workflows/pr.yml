@@ -2,6 +2,11 @@ name: PR Build Check
 
 on:
   pull_request:
+
+# Every job only builds, lints or tests the checked-out tree.
+permissions:
+  contents: read
+
 jobs:
   site:
     name: Build Website
@@ -61,7 +66,7 @@ jobs:
       - name: Generate ANTLR parsers
         run: pixi run generate-antlr
       - name: Check generated ANTLR parsers
-        run: git diff --exit-code -- tests/coverage/antlr_parser tests/type/antlr_parser
+        run: git diff --exit-code -- tests/parser/antlr_parser tests/type/antlr_parser
   yamllint:
     name: Lint YAML extensions
     runs-on: ubuntu-latest

@@ -49,6 +49,8 @@ There are three main types of arguments: value arguments, type arguments, and en
 | Name        | A human-readable name for this argument to help clarify use.  | Optional, defaults to a name based on position (e.g. `arg0`) |
 | Description | Additional description of this argument.                      | Optional                                                     |
 
+Explicit argument names must be unique within a function implementation.
+
 ## Options
 
 In addition to arguments, each function call may specify zero or more options. Options allow a producer to express preferences about how a consumer handles corner cases or engine-specific behavior. Unlike enumeration arguments, options are not required. If a producer omits an option, the consumer is free to choose any supported behavior. Options are named (not positional) and are not part of the function signature. See [Enumeration Arguments vs Options](#enumeration-arguments-vs-options) for a detailed comparison.
@@ -180,10 +182,49 @@ These types are evaluated using a small set of operations to support common scen
 
 ```
 Math: +, -, *, /, min, max
-Boolean: &&, ||, !, <, >, ==
+Boolean: AND, OR, !
+Comparison: <, >, <=, >=, =, !=
+Conditional: if ... then ... else ..., ... ? ... : ...
 Parameters: type, integer
 Literals: type, integer
 ```
+
+`AND` and `OR` are keywords, and all keywords in a type expression are case-insensitive. Note that the boolean operators are spelled `AND`, `OR` and `!`, and equality is spelled `=` and `!=` -- not `&&`, `||` or `==`.
+
+#### Operator Precedence
+
+Sub-expressions may be grouped with parentheses, and grouping always takes precedence over the table below. Without parentheses, operators bind in this order:
+
+| Precedence | Operators | Associativity |
+| ---------- | --------- | ------------- |
+| 1 (tightest) | grouping `( )`, function call `f(...)` | n/a |
+| 2 | `!` | right (unary prefix) |
+| 3 | `*` `/` | left |
+| 4 | `+` `-` | left |
+| 5 | `<` `>` `<=` `>=` | left |
+| 6 | `=` `!=` | left |
+| 7 | `AND` | left |
+| 8 | `OR` | left |
+| 9 | `if ... then ... else ...` | right |
+| 10 (loosest) | `... ? ... : ...` | right |
+
+See [`grammar/SubstraitType.g4`](https://github.com/substrait-io/substrait/blob/main/grammar/SubstraitType.g4) for the formal grammar.
+
+##### Examples
+
+| Expression | Binds as |
+| ---------- | -------- |
+| `P - S + 1` | `(P - S) + 1` |
+| `S1 + P2 * 2` | `S1 + (P2 * 2)` |
+| `!a AND b` | `(!a) AND b` |
+| `c1 ? 1 : c2 ? 2 : 3` | `c1 ? 1 : (c2 ? 2 : 3)` |
+| `if a then b else if c then d else e` | `if a then b else (if c then d else e)` |
+| `if a ? b : c then d else e` | `if (a ? b : c) then d else e` |
+| `if a then b ? c : d else e` | `if a then (b ? c : d) else e` |
+| `a ? b ? c : d : e` | `a ? (b ? c : d) : e` |
+| `if a then b else c ? d : e` | `(if a then b else c) ? d : e` |
+| `if a then b else c AND d` | `if a then b else (c AND d)` |
+| `x AND if a then b else c` | `x AND (if a then b else c)` |
 
 Fully defined with argument types:
 
