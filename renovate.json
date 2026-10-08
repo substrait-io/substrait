@@ -28,6 +28,20 @@
       "description": "Changing the supported Python version is a project decision, not a routine bump. Covers both requires-python and the pixi python pin",
       "matchPackageNames": ["python"],
       "enabled": false
+    },
+    {
+      "description": "The commitlint CLI, its config and the pre-commit hook enforce the same rules, so they have to move together. The hook bundles its own CLI, so its rev belongs here rather than in the pixi group",
+      "matchPackageNames": ["@commitlint/**", "alessandrojcm/commitlint-pre-commit-hook"],
+      "groupName": "commitlint"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The pre-commit manager only tracks a hook repo's rev, not its additional_dependencies, so pick up the commitlint config pinned there as well",
+      "managerFilePatterns": ["/^\\.pre-commit-config\\.yaml$/"],
+      "matchStrings": ["additional_dependencies: \\['(?<depName>@commitlint/[^@']+)@(?<currentValue>[^']+)'\\]"],
+      "datasourceTemplate": "npm"
     }
   ]
 }
