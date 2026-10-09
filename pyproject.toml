@@ -57,7 +57,7 @@ exclude-newer = "14d"
 antlr = ">=4.13.2,<5"
 buf = ">=1.66.0,<2"
 python = ">=3.13,<3.14"
-nodejs = ">=26.8.2,<27"
+nodejs = ">=26.10.0,<27"
 
 [tool.pixi.tasks]
 # code generation
@@ -101,7 +101,7 @@ dev = { features = ["dev"] }
 dev = [
   "antlr4-python3-runtime>=4.13.2,<5",
   "editorconfig-checker>=3.11.1,<4",
-  "ruff>=0.16.8,<1",
+  "ruff>=0.16.9,<1",
   "protobuf==7.36.2",
   "pytest>=9.1.1,<10",
   "pyyaml>=6.0.3,<7",
