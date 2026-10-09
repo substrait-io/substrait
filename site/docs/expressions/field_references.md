@@ -145,15 +145,13 @@ struct:
   - i64
 ```
 
+#### Field Order
+
+A mask outputs the fields it selects in the order it lists them, which need not be their order in the schema. Over a record of `i64`, `string` and `boolean`, a mask that selects fields `2` and `0` yields `boolean` and then `i64`.
+
 #### Unwrapping Behavior
 
 By default, when only a single field is selected from a struct, that struct is removed. When only a single element is removed from a list, the list is removed. A user can also configure the mask to avoid unwrapping in these cases. [TBD how we express this in the serialization formats.]
-
-
-
-???+ question "Discussion Points"
-
-    * Should we support column reordering/positioning using a masked complex expression? (Right now, you can only mask things out.)
 
 ### Outer References
 
