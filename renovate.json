@@ -28,6 +28,11 @@
       "description": "Changing the supported Python version is a project decision, not a routine bump. Covers both requires-python and the pixi python pin",
       "matchPackageNames": ["python"],
       "enabled": false
+    },
+    {
+      "description": "setup-pixi's pixi-version input is a v-prefixed release tag, which conda versioning reads as a range and never updates",
+      "matchDepNames": ["prefix-dev/pixi"],
+      "versioning": "semver"
     }
   ]
 }
