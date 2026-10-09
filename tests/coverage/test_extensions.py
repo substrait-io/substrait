@@ -8,16 +8,16 @@ from tests.parser import load_all_testcases
 from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import build_type_to_short_type
 from tests.coverage.extensions import Extension, validate_nullability_markers
+from tests.helpers import EXTENSIONS_DIR, get_test_path
 
 
 # NOTE: this test is run as part of pre-commit hook
 def test_substrait_extension_coverage():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     baseline = read_baseline_file(os.path.join(script_dir, "baseline.json"))
-    extensions_path = os.path.join(script_dir, "../../extensions")
-    registry = Extension.read_substrait_extensions(extensions_path)
+    registry = Extension.read_substrait_extensions(EXTENSIONS_DIR)
 
-    test_case_dir = os.path.join(script_dir, "../cases")
+    test_case_dir = get_test_path("cases")
     all_test_files = load_all_testcases(test_case_dir)
     coverage = get_test_coverage(all_test_files, registry)
 
@@ -43,11 +43,9 @@ def test_substrait_nullability_consistency():
     """Verify that return type nullability in .test cases is consistent with
     the nullability handling declared in extension YAMLs.
     """
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    extensions_path = os.path.join(script_dir, "../../extensions")
-    registry = Extension.read_substrait_extensions(extensions_path)
+    registry = Extension.read_substrait_extensions(EXTENSIONS_DIR)
 
-    test_case_dir = os.path.join(script_dir, "../cases")
+    test_case_dir = get_test_path("cases")
     all_test_files = load_all_testcases(test_case_dir)
 
     errors = []
@@ -62,10 +60,7 @@ def test_no_ignored_nullability_markers_in_declarations():
     """Verify that extension YAMLs declare no nullability markers that the
     nullability handling would ignore.
     """
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    extensions_path = os.path.join(script_dir, "../../extensions")
-
-    errors = validate_nullability_markers(extensions_path)
+    errors = validate_nullability_markers(EXTENSIONS_DIR)
     assert not errors, (
         f"{len(errors)} ignored nullability marker(s) found:\n" + "\n".join(errors)
     )

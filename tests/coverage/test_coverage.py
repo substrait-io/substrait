@@ -3,7 +3,7 @@ import pytest
 from tests.coverage.coverage import get_test_coverage, validate_nullability
 from tests.coverage.extensions import Extension, validate_impl_nullability_markers
 from tests.helpers import (
-    get_test_path,
+    EXTENSIONS_DIR,
     make_aggregate_test_header,
     make_scalar_header,
     parse_string,
@@ -14,7 +14,7 @@ from tests.helpers import (
 # test that asserts on those counts needs its own registry rather than this one.
 @pytest.fixture(scope="module")
 def registry():
-    return Extension.read_substrait_extensions(get_test_path("../extensions"))
+    return Extension.read_substrait_extensions(EXTENSIONS_DIR)
 
 
 def test_coverage_accepts_multiple_known_dependencies(registry):
