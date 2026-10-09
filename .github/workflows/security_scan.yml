@@ -1,0 +1,106 @@
+name: Security Scan
+
+on:
+  schedule:
+    # weekly, Tuesday 05:17 UTC -- off the hour so it does not pile onto the
+    # top-of-hour scheduling peak
+    - cron: "17 5 * * 2"
+  workflow_dispatch:
+
+# Default to the minimum read-only token for all jobs.
+permissions:
+  contents: read
+
+env:
+  # The report's file name: the scan job writes it, the hand-off artifact is
+  # named after it, and the upload job reads it back.
+  SARIF_FILE: grype.sarif
+
+jobs:
+  scan:
+    name: Scan installed environments
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'substrait-io/substrait' }}
+    outputs:
+      handed-off: ${{ steps.hand-off.outcome }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Remove the workflow token once the checkout is done: pixi builds
+          # PyPI sdists and scan-action runs a downloaded installer in this job.
+          persist-credentials: false
+      - uses: prefix-dev/setup-pixi@v0.10.2
+        with:
+          pixi-version: v0.73.0
+          # The next step installs every environment. setup-pixi would only
+          # install and cache the default one, without the package downloads,
+          # so its cache saves nothing here.
+          run-install: false
+      - name: Install every environment
+        run: pixi install --all --locked
+      # Neither dependabot nor Renovate covers conda advisories -- GHSA and OSV
+      # have no conda ecosystem -- so the installed environments are scanned
+      # directly. Not covered: platforms other than linux-64; the Go modules in
+      # conda-forge's linux buf binaries, whose program headers (reordered by
+      # patchelf) defeat Go's build-info reader; and npm with the dependencies
+      # it bundles in the nodejs package, which Syft catalogs only in image
+      # scans.
+      - name: Scan installed environments
+        id: scan
+        # A full version on purpose: the floating v7 tag is no longer moved and
+        # still points at v7.4.0, which installs grype v0.110.0 through the
+        # installer on grype's main branch.
+        uses: anchore/scan-action@v7.4.2
+        with:
+          # Alert locations are relative to this directory, so
+          # /dev/bin/openssl means .pixi/envs/dev/bin/openssl.
+          path: .pixi/envs
+          # Named explicitly so that a missing file fails the scan instead of
+          # grype silently falling back to the defaults .grype.yaml pins.
+          config: .grype.yaml
+          output-file: ${{ runner.temp }}/${{ env.SARIF_FILE }}
+          # Report findings as alerts rather than failing the run. --fail-on
+          # does not see code-scanning dismissals, so turning this on first
+          # needs the accepted findings as ignore rules in .grype.yaml.
+          fail-build: false
+      # grype creates the report file before it starts, so a crash leaves it
+      # empty, and a Go panic exits 2 like a threshold breach. Check the report
+      # itself, not the exit status. !cancelled() keeps this (and the hand-off)
+      # running if fail-build is turned on; the output check skips it when the
+      # scan never ran.
+      - name: Check the report is complete
+        id: report
+        if: ${{ !cancelled() && steps.scan.outputs.sarif != '' }}
+        env:
+          REPORT: ${{ steps.scan.outputs.sarif }}
+        run: jq -e '.runs | length > 0' "$REPORT" > /dev/null
+      # This job runs third-party package code, so it only hands the report on;
+      # the upload job is the only one whose token can write alerts. That keeps
+      # the token away from that code, not the report.
+      - name: Hand the findings to the upload job
+        id: hand-off
+        if: ${{ !cancelled() && steps.report.outcome == 'success' }}
+        uses: actions/upload-artifact@v7
+        with:
+          # one unzipped file; the artifact is named after it
+          archive: false
+          path: ${{ steps.scan.outputs.sarif }}
+          if-no-files-found: error
+          retention-days: 7
+
+  upload:
+    name: Upload findings to code scanning
+    runs-on: ubuntu-latest
+    needs: scan
+    if: ${{ !cancelled() && needs.scan.outputs.handed-off == 'success' }}
+    permissions:
+      # to upload the findings as code scanning alerts
+      security-events: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: ${{ env.SARIF_FILE }}
+      - uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: ${{ env.SARIF_FILE }}
+          category: pixi-environments
