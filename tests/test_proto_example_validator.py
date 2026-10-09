@@ -72,20 +72,37 @@ def test_validate_plan_rels():
     examples_dir = Path("site/examples/proto-textformat/plan_rel")
     example_files = list(examples_dir.glob("*.textproto"))
     assert example_files, "No plan relation examples found"
+    plan_rels = {}
     for textproto_file in example_files:
         plan_rel = validate_example(textproto_file.read_text(), plan_pb2.PlanRel)
         assert isinstance(plan_rel, plan_pb2.PlanRel)
-        project = plan_rel.root.input.project
-        assert (
-            project.expressions[0].WhichOneof("rex_type")
-            == "detached_expression_ordinal"
-        )
-        ordinal = project.expressions[0].detached_expression_ordinal
-        assert ordinal < len(plan_rel.detached_expressions)
-        assert plan_rel.detached_expressions[ordinal].literal.i64 == 42
-        assert list(project.input.read.base_schema.names) == ["value"]
-        assert len(project.input.read.base_schema.struct.types) == 1
-        assert list(plan_rel.root.names) == ["value", "answer"]
+        plan_rels[textproto_file.name] = plan_rel
+
+    expression_plan_rel = plan_rels["detached_expressions.textproto"]
+    project = expression_plan_rel.root.input.project
+    assert project.expressions[0].WhichOneof("rex_type") == (
+        "detached_expression_ordinal"
+    )
+    expression_ordinal = project.expressions[0].detached_expression_ordinal
+    assert expression_ordinal < len(expression_plan_rel.detached_expressions)
+    assert (
+        expression_plan_rel.detached_expressions[expression_ordinal].literal.i64 == 42
+    )
+    assert list(project.input.read.base_schema.names) == ["value"]
+    assert len(project.input.read.base_schema.struct.types) == 1
+    assert list(expression_plan_rel.root.names) == ["value", "answer"]
+
+    relation_plan_rel = plan_rels["detached_rels.textproto"]
+    assert relation_plan_rel.root.input.WhichOneof("rel_type") == (
+        "detached_rel_ordinal"
+    )
+    relation_ordinal = relation_plan_rel.root.input.detached_rel_ordinal
+    assert relation_ordinal == 0
+    assert len(relation_plan_rel.detached_rels) == 1
+    assert relation_ordinal < len(relation_plan_rel.detached_rels)
+    assert relation_plan_rel.detached_rels[relation_ordinal].read.named_table.names == [
+        "example"
+    ]
 
 
 def test_validate_extended_expressions():

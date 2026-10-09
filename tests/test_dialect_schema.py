@@ -142,9 +142,14 @@ def relation_options() -> dict[str, str]:
 
     Relations are named after their message without the `Rel` suffix, so
     `ConsistentPartitionWindowRel` is declared as `CONSISTENT_PARTITION_WINDOW`.
+    Encoding-only detached relation ordinals are excluded.
     """
     return by_dialect_name(
-        algebra_pb2.Rel.DESCRIPTOR.oneofs_by_name["rel_type"].fields,
+        [
+            member
+            for member in algebra_pb2.Rel.DESCRIPTOR.oneofs_by_name["rel_type"].fields
+            if member.name != "detached_rel_ordinal"
+        ],
         lambda member: screaming_snake_case(
             member.message_type.name.removesuffix("Rel")
         ),

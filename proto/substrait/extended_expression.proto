@@ -54,6 +54,6 @@ message ExtendedExpression {
 
   // Expression subtrees stored separately to reduce protobuf nesting.
   // Referenced by zero-based ordinals local to this ExtendedExpression.
-  // See https://substrait.io/serialization/binary_serialization/#bounded-expression-nesting.
+  // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
   repeated Expression detached_expressions = 9;
 }
