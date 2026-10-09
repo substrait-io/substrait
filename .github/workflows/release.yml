@@ -39,6 +39,8 @@ jobs:
             substrait-python
             substrait-go
             substrait-rs
+            duckdb-substrait-extension
+            substrait-csharp
 
       - uses: actions/checkout@v7
         with:
