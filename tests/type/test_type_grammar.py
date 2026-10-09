@@ -320,11 +320,10 @@ def test_extension_yaml_type_names_are_defined():
 
 def test_extension_yaml_argument_names_are_unique():
     """No checked-in function implementation repeats an explicit argument name."""
-    repo_root = Path(__file__).parents[2]
+    repo_root = REPO_ROOT
     failures = []
     for path in extension_yaml_files():
-        with path.open() as f:
-            extension = yaml.load(f, Loader=yaml.FullLoader)
+        extension = load_extension(path)
 
         for section in ("scalar_functions", "aggregate_functions", "window_functions"):
             for function in extension.get(section) or []:
