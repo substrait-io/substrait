@@ -30,7 +30,7 @@
       "enabled": false
     },
     {
-      "description": "setup-pixi's pixi-version input is a v-prefixed release tag, which conda versioning reads as a range and never updates",
+      "description": "setup-pixi's pixi-version input is a v-prefixed release tag. Conda versioning cannot determine a major version for it, so Renovate silently drops every update",
       "matchDepNames": ["prefix-dev/pixi"],
       "versioning": "semver"
     }
