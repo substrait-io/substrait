@@ -1,13 +1,18 @@
 # SPDX-License-Identifier: Apache-2.0
 
-from pathlib import Path
-
-import yaml
 from antlr4 import CommonTokenStream, InputStream
 from antlr4.error.ErrorListener import ErrorListener
 
-from antlr_parser.SubstraitTypeLexer import SubstraitTypeLexer
-from antlr_parser.SubstraitTypeParser import SubstraitTypeParser
+from tests.helpers import (
+    EXTENSIONS_DIR,
+    REPO_ROOT,
+    SITE_EXAMPLES_DIR,
+    find_extension_files,
+    iter_function_impls,
+    load_extension,
+)
+from tests.type.antlr_parser.SubstraitTypeLexer import SubstraitTypeLexer
+from tests.type.antlr_parser.SubstraitTypeParser import SubstraitTypeParser
 
 
 class ErrorCollector(ErrorListener):
@@ -49,29 +54,21 @@ def iter_type_expressions(extension):
     for typ in extension.get("types", []):
         yield from iter_structure_type_expressions(typ.get("structure"))
 
-    for functions in (
-        extension.get("scalar_functions"),
-        extension.get("aggregate_functions"),
-        extension.get("window_functions"),
-    ):
-        for function in functions or []:
-            for impl in function.get("impls", []):
-                for arg in impl.get("args", []):
-                    if "value" in arg:
-                        yield arg["value"]
-                    if "type" in arg:
-                        yield arg["type"]
-                if "return" in impl:
-                    yield impl["return"]
-                if "intermediate" in impl:
-                    yield impl["intermediate"]
+    for _function, impl in iter_function_impls(extension):
+        for arg in impl.get("args", []):
+            if "value" in arg:
+                yield arg["value"]
+            if "type" in arg:
+                yield arg["type"]
+        if "return" in impl:
+            yield impl["return"]
+        if "intermediate" in impl:
+            yield impl["intermediate"]
 
 
 def extension_yaml_files():
-    """Yield extension YAML files whose type strings should match the grammar."""
-    repo_root = Path(__file__).parents[2]
-    yield from sorted((repo_root / "extensions").glob("*.yaml"))
-    yield from sorted((repo_root / "site" / "examples").glob("**/*.yaml"))
+    """Extension YAML files whose type strings should match the grammar."""
+    return find_extension_files(EXTENSIONS_DIR, SITE_EXAMPLES_DIR)
 
 
 def undefined_type_names(expression: str):
@@ -262,8 +259,7 @@ def test_extension_yaml_type_expressions_are_grammar_compliant():
     """All type expressions in checked-in extension YAML parse successfully."""
     failures = []
     for path in extension_yaml_files():
-        with path.open() as f:
-            extension = yaml.load(f, Loader=yaml.FullLoader)
+        extension = load_extension(path)
 
         for expression in iter_type_expressions(extension):
             try:
@@ -308,17 +304,41 @@ def test_extension_yaml_type_names_are_defined():
     ``i64``) shipped in example files embedded in the published documentation
     before this check existed.
     """
+    failures = []
+    for path in extension_yaml_files():
+        extension = load_extension(path)
+
+        for expression in iter_type_expressions(extension):
+            for name in undefined_type_names(expression):
+                failures.append(
+                    f"{path.relative_to(REPO_ROOT)}: {expression!r} names "
+                    f"'{name}', which is not a Substrait type"
+                )
+
+    assert failures == [], "\n".join(failures)
+
+
+def test_extension_yaml_argument_names_are_unique():
+    """No checked-in function implementation repeats an explicit argument name."""
     repo_root = Path(__file__).parents[2]
     failures = []
     for path in extension_yaml_files():
         with path.open() as f:
             extension = yaml.load(f, Loader=yaml.FullLoader)
 
-        for expression in iter_type_expressions(extension):
-            for name in undefined_type_names(expression):
-                failures.append(
-                    f"{path.relative_to(repo_root)}: {expression!r} names "
-                    f"'{name}', which is not a Substrait type"
-                )
+        for section in ("scalar_functions", "aggregate_functions", "window_functions"):
+            for function in extension.get(section) or []:
+                for index, impl in enumerate(function.get("impls") or [], 1):
+                    names = [
+                        arg["name"] for arg in impl.get("args") or [] if "name" in arg
+                    ]
+                    duplicates = sorted(
+                        {name for name in names if names.count(name) > 1}
+                    )
+                    if duplicates:
+                        failures.append(
+                            f"{path.relative_to(repo_root)}: {section}.{function['name']} "
+                            f"implementation {index} repeats argument name(s): {duplicates}"
+                        )
 
     assert failures == [], "\n".join(failures)

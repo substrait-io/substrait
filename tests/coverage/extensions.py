@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
-import os
-import yaml
-
+from tests.helpers import (
+    find_extension_files,
+    iter_function_impls,
+    load_extension,
+)
 from tests.parser.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
 from tests.parser.nodes import SubstraitError, type_str_is_outer_nullable
 
@@ -19,21 +21,6 @@ def debug(msg):
 
 def substrait_type_str(rule_num):
     return FuncTestCaseLexer.symbolicNames[rule_num].lower()
-
-
-def find_extension_files(dir_path: str):
-    """Paths of the extension YAML files under dir_path, sorted."""
-    extensions = []
-    for root, _dirs, files in os.walk(dir_path):
-        for file in files:
-            if file.endswith(".yaml"):
-                extensions.append(os.path.join(root, file))
-
-    extensions.sort()
-    return extensions
-
-
-FUNCTION_SECTIONS = ("scalar_functions", "aggregate_functions", "window_functions")
 
 
 def declared_type(type_str):
@@ -102,13 +89,9 @@ def validate_nullability_markers(dir_path: str):
     """
     errors = []
     for path in find_extension_files(dir_path):
-        with open(path, "r") as fh:
-            data = yaml.load(fh, Loader=yaml.FullLoader)
-        for section in FUNCTION_SECTIONS:
-            for func in data.get(section) or []:
-                loc = f"{os.path.basename(path)}: {func['name']}"
-                for impl in func.get("impls") or []:
-                    errors.extend(validate_impl_nullability_markers(impl, loc))
+        for func, impl in iter_function_impls(load_extension(path)):
+            loc = f"{path.name}: {func['name']}"
+            errors.extend(validate_impl_nullability_markers(impl, loc))
     return errors
 
 
@@ -260,43 +243,39 @@ class Extension:
         registered_urns = set()
         # convert yaml file to a python dictionary
         for extension in extensions:
-            suffix = extension[:-5]  # strip .yaml at the end of the extension
-            suffix = suffix[
-                suffix.rfind("/") + 1 :
-            ]  # strip the path and get the name of the extension
+            suffix = extension.stem  # the name of the extension
             uri = f"/extensions/{suffix}.yaml"
             suffix = suffix[suffix.find("_") + 1 :]  # get the suffix after the last _
 
             dependencies[suffix] = Extension.get_base_uri() + uri
-            with open(extension, "r") as fh:
-                data = yaml.load(fh, Loader=yaml.FullLoader)
-                urn = data.get("urn")
-                if urn:
-                    registered_urns.add(urn)
-                if "scalar_functions" in data:
-                    Extension.add_functions_to_map(
-                        data["scalar_functions"],
-                        scalar_functions,
-                        suffix,
-                        extension,
-                        urn,
-                    )
-                if "aggregate_functions" in data:
-                    Extension.add_functions_to_map(
-                        data["aggregate_functions"],
-                        aggregate_functions,
-                        suffix,
-                        extension,
-                        urn,
-                    )
-                if "window_functions" in data:
-                    Extension.add_functions_to_map(
-                        data["window_functions"],
-                        window_functions,
-                        suffix,
-                        extension,
-                        urn,
-                    )
+            data = load_extension(extension)
+            urn = data.get("urn")
+            if urn:
+                registered_urns.add(urn)
+            if "scalar_functions" in data:
+                Extension.add_functions_to_map(
+                    data["scalar_functions"],
+                    scalar_functions,
+                    suffix,
+                    extension,
+                    urn,
+                )
+            if "aggregate_functions" in data:
+                Extension.add_functions_to_map(
+                    data["aggregate_functions"],
+                    aggregate_functions,
+                    suffix,
+                    extension,
+                    urn,
+                )
+            if "window_functions" in data:
+                Extension.add_functions_to_map(
+                    data["window_functions"],
+                    window_functions,
+                    suffix,
+                    extension,
+                    urn,
+                )
 
         return FunctionRegistry(
             scalar_functions,
