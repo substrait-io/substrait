@@ -64,6 +64,23 @@ def test_validate_named_lambdas():
         validate_example(textproto_file.read_text(), plan_pb2.Plan)
 
 
+def test_named_lambda_invocations_use_reference_messages():
+    """Named lambda invocations use the shared reference message."""
+    example = Path(
+        "site/examples/proto-textformat/named_lambda/reused_identity.textproto"
+    )
+    plan = text_format.Parse(example.read_text(), plan_pb2.Plan())
+    expressions = plan.relations[0].root.input.project.expressions
+    assert len(expressions) == 2
+    for expression in expressions:
+        invocation = expression.lambda_invocation
+        assert invocation.WhichOneof("lambda_type") == "named_lambda"
+        assert (
+            invocation.named_lambda.lambda_reference
+            == plan.named_lambdas[0].lambda_anchor
+        )
+
+
 def test_named_lambda_reference_as_function_argument():
     """The transform example passes a function reference, not a call result."""
     example = Path(
@@ -110,6 +127,29 @@ def test_named_lambda_reference_round_trip(anchor):
         assert restored == argument
         assert restored.value.WhichOneof("rex_type") == "named_lambda_reference"
         assert restored.value.named_lambda_reference.lambda_reference == anchor
+
+
+@pytest.mark.parametrize("anchor", [0, 1, 4294967295])
+def test_named_lambda_invocation_round_trip(anchor):
+    """Preserve invocation references, including anchor zero, on the wire."""
+    invocation = algebra_pb2.Expression.LambdaInvocation(
+        named_lambda=algebra_pb2.Expression.NamedLambdaReference(
+            lambda_reference=anchor
+        )
+    )
+    restored_invocations = [
+        algebra_pb2.Expression.LambdaInvocation.FromString(
+            invocation.SerializeToString()
+        ),
+        json_format.Parse(
+            json_format.MessageToJson(invocation),
+            algebra_pb2.Expression.LambdaInvocation(),
+        ),
+    ]
+    for restored in restored_invocations:
+        assert restored == invocation
+        assert restored.WhichOneof("lambda_type") == "named_lambda"
+        assert restored.named_lambda.lambda_reference == anchor
 
 
 def test_validate_field_references():

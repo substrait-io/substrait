@@ -36,7 +36,7 @@ Extension URNs and declarations are encapsulated in the top level of the plan. E
 
 Once the YAML file extension URN anchor is defined, the anchor will be referenced by zero or more `SimpleExtensionDefinition`s. For each simple extension definition, an anchor is defined for that specific extension entity. This anchor is then referenced to within lower-level primitives (functions, etc.) to reference that specific extension. Message properties are named `*_anchor` where the anchor is defined and `*_reference` when referencing the anchor. For example `function_anchor` and `function_reference`.
 
-[Named lambdas](../expressions/lambda_expressions.md#named-lambdas) use the same anchor and reference naming convention, but their anchors form a separate namespace from extension function anchors. Both `LambdaInvocation.named_lambda_reference` and `NamedLambdaReference.lambda_reference` resolve a `NamedLambda.lambda_anchor` in `Plan.named_lambdas`; the former invokes the lambda, while the latter denotes a function value.
+[Named lambdas](../expressions/lambda_expressions.md#named-lambdas) use the same anchor and reference naming convention, but their anchors form a separate namespace from extension function anchors. Both `LambdaInvocation.named_lambda.lambda_reference` and `NamedLambdaReference.lambda_reference` resolve a `NamedLambda.lambda_anchor` in `Plan.named_lambdas`; the former invokes the lambda, while the latter denotes a function value.
 
 Anchor values are non-negative integers starting from 0. A value of 0 is valid and can be used to reference an extension entity, but prefer non-zero values for ergonomics.
 

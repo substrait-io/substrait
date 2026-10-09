@@ -84,7 +84,7 @@ message NamedLambda {
   Expression.Lambda lambda = 2;
 
   // An optional human-readable name for diagnostics and plan inspection. The
-  // name has no semantic meaning, need not be unique, and cannot be referenced.
+  // name has no semantic meaning and cannot be referenced.
   optional string name = 3;
 }
 

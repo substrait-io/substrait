@@ -1326,7 +1326,7 @@ message Expression {
       Lambda lambda = 1;
 
       // References a lambda_anchor in Plan.named_lambdas.
-      NamedLambdaReference named_lambda_reference = 3;
+      NamedLambdaReference named_lambda = 3;
     }
 
     // Arguments to pass to the lambda, as a struct expression. The struct must have
