@@ -1102,7 +1102,7 @@ message Expression {
     ExecutionContextVariable execution_context_variable = 17;
     // Encoding-only, zero-based index into detached_expressions on the
     // containing PlanRel or ExtendedExpression.
-    // See https://substrait.io/serialization/binary_serialization/#bounded-expression-nesting.
+    // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
     uint32 detached_expression_ordinal = 18;
   }
 

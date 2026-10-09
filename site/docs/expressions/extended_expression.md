@@ -22,7 +22,7 @@ For a message with multiple expressions, users may produce each Extended Express
 
 ## Detached expressions
 
-Expressions in `referred_expr`, including measure arguments, can use `Expression.detached_expression_ordinal` to reference zero-based entries in `ExtendedExpression.detached_expressions`. The same [encoding and validation rules](../serialization/binary_serialization.md#bounded-expression-nesting) apply as for `PlanRel`. Detachment preserves input schema binding, output names, and expression semantics.
+Expressions in `referred_expr`, including measure arguments, can use `Expression.detached_expression_ordinal` to reference zero-based entries in `ExtendedExpression.detached_expressions`. The same [encoding and validation rules](../serialization/binary_serialization.md#detached-relations-and-expressions) apply as for `PlanRel`. Detachment preserves input schema binding, output names, and expression semantics.
 
 ```protobuf
 --8<-- "examples/proto-textformat/extended_expression/detached_expressions.textproto"
