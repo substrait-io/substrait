@@ -80,7 +80,8 @@ message NamedLambda {
   uint32 lambda_anchor = 1;
 
   // The lambda signature and body. The body must be closed over the parameters:
-  // it cannot reference relational input or an outer record.
+  // it cannot reference relational input, an outer record, or parameters of a
+  // caller's enclosing lambda.
   Expression.Lambda lambda = 2;
 
   // An optional human-readable name for diagnostics and plan inspection. The
