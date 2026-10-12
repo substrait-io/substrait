@@ -1,6 +1,20 @@
 Release Notes
 ---
 
+## [0.106.0](https://github.com/substrait-io/substrait/compare/v0.105.0...v0.106.0) (2026-10-11)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** Removes the trailing origin value argument from the
+date and precision_time round_calendar implementations. Plans using the
+old compound signatures must use the new signatures without that
+trailing argument.
+
+### Bug Fixes
+
+* **extensions:** merge duplicate regexp function definitions ([#1215](https://github.com/substrait-io/substrait/issues/1215)) ([f11461b](https://github.com/substrait-io/substrait/commit/f11461b117b4fc20e8fcf2896567421379152339))
+* **extensions:** remove duplicate origin arguments from round_calendar ([#1191](https://github.com/substrait-io/substrait/issues/1191)) ([a6c0d55](https://github.com/substrait-io/substrait/commit/a6c0d5540467f3a39b3f0368070748cdc78592ba))
+
 ## [0.105.0](https://github.com/substrait-io/substrait/compare/v0.104.0...v0.105.0) (2026-10-04)
 
 ### ⚠ BREAKING CHANGES
