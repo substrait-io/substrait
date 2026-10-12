@@ -689,6 +689,9 @@ message Rel {
     TopNRel top_n = 23;
     // Zero-based ordinal of an encoding-only reference into the containing
     // PlanRel.detached_rels.
+    // Zero-based ordinal of an encoding-only reference into the containing
+    // PlanRel.detached_rels.
+    // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
     uint32 detached_rel_ordinal = 25;
   }
 }

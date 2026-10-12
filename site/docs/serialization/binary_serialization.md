@@ -19,6 +19,8 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 %%% proto.message.PlanRel %%%
     ```
 
+<a id="bounded-expression-nesting"></a>
+
 ### Detached Relations and Expressions
 
 [Protobuf parsers impose recursion limits](https://protobuf.dev/programming-guides/proto-limits/). To reduce expression nesting, producers can move subtrees into `detached_expressions` on the containing `PlanRel` or `ExtendedExpression`, replacing them with `detached_expression_ordinal` references. Detached entries can also have ordinal children. This does not bound nesting within literals, types, field reference paths, or masks.
@@ -36,7 +38,7 @@ For each `PlanRel` or `ExtendedExpression`, consumers validate the relation and 
 3. References must be acyclic.
 4. A detached entry must not itself be an ordinal, but its child relations and expressions may be.
 
-Consumers must reject violations in the reachable portion. Unreachable detached entries are allowed and need not be resolved or validated. The existing [rules for ignoring extension payloads](#advanced-extensions) remain unchanged.
+Consumers must reject violations in the reachable portion. Unreachable detached entries are allowed, are not execution roots, and need not be resolved or validated. The existing [rules for ignoring extension payloads](#advanced-extensions) remain unchanged.
 
 When retaining opaque extension payloads, consumers must not remove or renumber detached entries unless they can ensure that references inside those payloads continue to identify the same relation and expression subtrees.
 
