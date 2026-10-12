@@ -5,6 +5,7 @@ from antlr4.error.ErrorListener import ErrorListener
 
 from tests.helpers import (
     EXTENSIONS_DIR,
+    FUNCTION_SECTIONS,
     REPO_ROOT,
     SITE_EXAMPLES_DIR,
     find_extension_files,
@@ -320,13 +321,11 @@ def test_extension_yaml_type_names_are_defined():
 
 def test_extension_yaml_argument_names_are_unique():
     """No checked-in function implementation repeats an explicit argument name."""
-    repo_root = Path(__file__).parents[2]
     failures = []
     for path in extension_yaml_files():
-        with path.open() as f:
-            extension = yaml.load(f, Loader=yaml.FullLoader)
+        extension = load_extension(path)
 
-        for section in ("scalar_functions", "aggregate_functions", "window_functions"):
+        for section in FUNCTION_SECTIONS:
             for function in extension.get(section) or []:
                 for index, impl in enumerate(function.get("impls") or [], 1):
                     names = [
@@ -337,7 +336,7 @@ def test_extension_yaml_argument_names_are_unique():
                     )
                     if duplicates:
                         failures.append(
-                            f"{path.relative_to(repo_root)}: {section}.{function['name']} "
+                            f"{path.relative_to(REPO_ROOT)}: {section}.{function['name']} "
                             f"implementation {index} repeats argument name(s): {duplicates}"
                         )
 
