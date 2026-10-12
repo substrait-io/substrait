@@ -28,6 +28,16 @@ Expressions in `referred_expr`, including measure arguments, can use `Expression
 --8<-- "examples/proto-textformat/extended_expression/detached_expressions.textproto"
 ```
 
+## Detached relations
+
+Relations inside subquery expressions can use `Rel.detached_rel_ordinal` to reference zero-based entries in `ExtendedExpression.detached_rels`. This applies to scalar subqueries, `IN` predicates, `EXISTS`/`UNIQUE` predicates, and `ANY`/`ALL` comparisons. The same [encoding and validation rules](../serialization/binary_serialization.md#detached-relations-and-expressions) apply as for `PlanRel`.
+
+Relations and expressions reached through either detached table use the tables on the same `ExtendedExpression`. In this example, a scalar subquery references a detached filter, whose input is another detached relation and whose condition is a detached expression.
+
+```protobuf
+--8<-- "examples/proto-textformat/extended_expression/detached_rels.textproto"
+```
+
 ## Function extensions
 
 Function extensions work the same for both Extended Expression and the original Expression defined in the Substrait protocol.

@@ -56,4 +56,9 @@ message ExtendedExpression {
   // Referenced by zero-based ordinals local to this ExtendedExpression.
   // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
   repeated Expression detached_expressions = 9;
+
+  // Relation subtrees stored separately to reduce protobuf nesting.
+  // Referenced by zero-based ordinals local to this ExtendedExpression.
+  // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
+  repeated Rel detached_rels = 10;
 }

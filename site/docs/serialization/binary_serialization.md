@@ -25,7 +25,7 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 
 [Protobuf parsers impose recursion limits](https://protobuf.dev/programming-guides/proto-limits/). To reduce expression nesting, producers can move subtrees into `detached_expressions` on the containing `PlanRel` or `ExtendedExpression`, replacing them with `detached_expression_ordinal` references. Detached entries can also have ordinal children. This does not bound nesting within literals, types, field reference paths, or masks.
 
-To reduce relation nesting, producers can move relation subtrees into `detached_rels` on the containing `PlanRel`, replacing them with `detached_rel_ordinal` references. Detached relations may themselves contain detached relation ordinals, allowing a producer to split arbitrarily deep relation trees into bounded-depth chunks.
+To reduce relation nesting, producers can move relation subtrees into `detached_rels` on the containing `PlanRel` or `ExtendedExpression`, replacing them with `detached_rel_ordinal` references. This includes relation trees inside subquery expressions. Detached relations may themselves contain detached relation ordinals, allowing a producer to split arbitrarily deep relation trees into bounded-depth chunks.
 
 Detachment is encoding-only, not computation sharing. Resolving ordinals must recover the same logical relation and expression trees and preserve their semantics. Expression-kind requirements, such as literal-only arguments, apply after resolution. Use [`ReferenceRel`](../relations/logical_relations.md#reference-operator) for intentional relation sharing.
 
@@ -33,10 +33,10 @@ Substrait relations and expressions inside extension-defined `google.protobuf.An
 
 For each `PlanRel` or `ExtendedExpression`, consumers validate the relation and expression trees reachable from `PlanRel.rel`, `PlanRel.root`, or `ExtendedExpression.referred_expr`, and from extension payloads they interpret, following detached references transitively. The following rules apply to this reachable portion:
 
-1. Relation ordinals are zero-based indices into the containing `PlanRel.detached_rels`; expression ordinals index `detached_expressions` on the containing `PlanRel` or `ExtendedExpression`. They must be in range and cannot reference another container, including a `ReferenceRel` target. Ordinals outside their respective containers are invalid; in particular, relation ordinals are invalid in an `ExtendedExpression`.
+1. Relation ordinals are zero-based indices into `detached_rels`; expression ordinals index `detached_expressions`. Both tables belong to the containing `PlanRel` or `ExtendedExpression`. Ordinals must be in range and cannot reference another container, including a `ReferenceRel` target.
 2. Within the reachable portion, each detached entry may be referenced at most once, including references from other detached entries.
 3. References must be acyclic.
-4. A detached entry must not itself be an ordinal, but its child relations and expressions may be.
+4. A detached entry must have its `rel_type` or `rex_type` set to a non-ordinal variant, but its child relations and expressions may be ordinals.
 
 Consumers must reject violations in the reachable portion. Unreachable detached entries are allowed, are not execution roots, and need not be resolved or validated. The existing [rules for ignoring extension payloads](#advanced-extensions) remain unchanged.
 
@@ -54,7 +54,7 @@ When retaining opaque extension payloads, consumers must not remove or renumber 
     --8<-- "examples/proto-textformat/plan_rel/detached_rels.textproto"
     ```
 
-See also the [ExtendedExpression example](../expressions/extended_expression.md#detached-expressions).
+See also the ExtendedExpression examples for [detached expressions](../expressions/extended_expression.md#detached-expressions) and [detached relations](../expressions/extended_expression.md#detached-relations).
 
 ## Extensions
 Protobuf supports both [simple](../extensions/index.md#simple-extensions) and [advanced](../extensions/index.md#advanced-extensions) extensions. Simple extensions are declared at the plan level and advanced extensions are declared at multiple levels of messages within the plan.

@@ -5,9 +5,18 @@ root {
   input {
     detached_rel_ordinal: 0
   }
+  names: "value"
 }
 detached_rels {
   read {
+    common { direct {} }
+    base_schema {
+      names: "value"
+      struct {
+        types { i64 { nullability: NULLABILITY_REQUIRED } }
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
     named_table {
       names: "example"
     }
