@@ -19,6 +19,7 @@ from pathlib import Path
 import pytest
 import yaml
 from google.protobuf.descriptor import Descriptor, EnumDescriptor
+from jsonschema import Draft202012Validator, ValidationError
 
 try:
     from substrait import algebra_pb2, plan_pb2, type_pb2
@@ -365,6 +366,21 @@ ENUM_LISTS = [
     EnumList(
         path=(
             "definitions",
+            "lambda_invocation_expression",
+            "properties",
+            "lambda_types",
+            "items",
+            "enum",
+        ),
+        values=oneof_options(
+            algebra_pb2.Expression.LambdaInvocation.DESCRIPTOR,
+            "lambda_type",
+            renames={"lambda": "INLINE", "named_lambda": "NAMED"},
+        ),
+    ),
+    EnumList(
+        path=(
+            "definitions",
             "execution_context_variable",
             "properties",
             "variable_types",
@@ -417,6 +433,66 @@ FIX_HINT = (
 def schema() -> dict:
     with DIALECT_SCHEMA_PATH.open() as schema_file:
         return yaml.safe_load(schema_file)
+
+
+@pytest.mark.parametrize(
+    "supported_expressions",
+    [
+        None,
+        [],
+        ["LAMBDA_INVOCATION"],
+        [{"expression": "LAMBDA_INVOCATION"}],
+        ["NAMED_LAMBDA_REFERENCE"],
+    ],
+    ids=["omitted", "empty", "shorthand", "object", "reference-only"],
+)
+def test_lambda_dialect_legacy_declarations(schema: dict, supported_expressions):
+    dialect = {}
+    if supported_expressions is not None:
+        dialect["supported_expressions"] = supported_expressions
+    Draft202012Validator(schema).validate(dialect)
+
+
+def test_lambda_invocation_default_is_inline(schema: dict):
+    declaration = schema["definitions"]["lambda_invocation_expression"]
+    lambda_types = declaration["properties"]["lambda_types"]
+    assert lambda_types["default"] == ["INLINE"]
+    assert "lambda_types" not in declaration["required"]
+    Draft202012Validator(lambda_types).validate(lambda_types["default"])
+
+
+@pytest.mark.parametrize("lambda_types", [["INLINE"], ["NAMED"], ["INLINE", "NAMED"]])
+def test_lambda_invocation_callee_types(schema: dict, lambda_types: list[str]):
+    dialect = {
+        "supported_expressions": [
+            {"expression": "LAMBDA_INVOCATION", "lambda_types": lambda_types}
+        ]
+    }
+    Draft202012Validator(schema).validate(dialect)
+
+
+@pytest.mark.parametrize(
+    "lambda_types",
+    [
+        [],
+        ["INLINE", "INLINE"],
+        ["NAMED", "NAMED"],
+        ["UNKNOWN"],
+        ["INLINE", "UNKNOWN"],
+        ["inline"],
+        [1],
+        "INLINE",
+        None,
+    ],
+)
+def test_lambda_invocation_rejects_invalid_callee_types(schema: dict, lambda_types):
+    dialect = {
+        "supported_expressions": [
+            {"expression": "LAMBDA_INVOCATION", "lambda_types": lambda_types}
+        ]
+    }
+    with pytest.raises(ValidationError):
+        Draft202012Validator(schema).validate(dialect)
 
 
 def alternatives(schema: dict, declaration: Declaration) -> list[dict]:

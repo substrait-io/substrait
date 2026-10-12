@@ -131,6 +131,26 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 --8<-- "examples/proto-textformat/lambda_invocation/inline_invocation.textproto"
 ```
 
+### Dialect Support
+
+Dialects can restrict `LAMBDA_INVOCATION` to inline or named callees with the optional `lambda_types` property:
+
+| Declaration in `supported_expressions` | Supported callees |
+|---------------------------------------|-------------------|
+| `LAMBDA_INVOCATION` shorthand | Inline only |
+| `expression: LAMBDA_INVOCATION` without `lambda_types` | Inline only |
+| `lambda_types: [INLINE]` on a `LAMBDA_INVOCATION` entry | Inline only |
+| `lambda_types: [NAMED]` on a `LAMBDA_INVOCATION` entry | Named only |
+| `lambda_types: [INLINE, NAMED]` on a `LAMBDA_INVOCATION` entry | Both |
+
+`INLINE` corresponds to `LambdaInvocation.lambda`, and `NAMED` corresponds to `LambdaInvocation.named_lambda`. An explicit `lambda_types` list must be non-empty and contain no duplicates.
+
+Omitting `lambda_types` from an explicit invocation declaration means inline-only support, preserving the meaning of declarations written before named lambdas were introduced. Dialect consumers must apply this rule; the JSON Schema `default` annotation does not insert the property during validation.
+
+This default does not change the rule for an absent or empty `supported_expressions` list: all expressions are supported in that case, including both inline and named lambda invocations.
+
+Support for named callees is independent of `NAMED_LAMBDA_REFERENCE`, which declares support for named lambdas as function-valued expressions. Declaring either capability does not imply the other.
+
 ## Named Lambdas
 
 A named lambda is defined once in `Plan.named_lambdas`, where each entry is represented by a `NamedLambda`. Once defined, it can be invoked from multiple `LambdaInvocation` expressions and passed as a function value using `NamedLambdaReference`. Named lambdas use their own anchor namespace, separate from extension function anchors.
