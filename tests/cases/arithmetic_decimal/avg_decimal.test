@@ -1,0 +1,12 @@
+### SUBSTRAIT_AGGREGATE_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
+
+# basic: Basic examples without any special cases
+avg((20, -3, 1, -10, 0, 4)::dec<2, 0>) = 2::dec?<38, 0>
+avg((1.00, 2.00, 3.00)::dec<3, 2>) = 2.00::dec?<38, 2>
+avg((2.5, 0, 5.0, -2.5, -7.5)::dec<2, 1>) = -0.5::dec?<38, 1>
+
+# null_handling: Examples with null as input or output
+avg(()::dec<1, 0>) = null::dec?<38, 0>
+avg((Null, Null)::dec<1, 0>) = null::dec?<38, 0>
+avg((1, Null, 3)::dec<1, 0>) = 2::dec?<38, 0>

@@ -49,6 +49,8 @@ There are three main types of arguments: value arguments, type arguments, and en
 | Name        | A human-readable name for this argument to help clarify use.  | Optional, defaults to a name based on position (e.g. `arg0`) |
 | Description | Additional description of this argument.                      | Optional                                                     |
 
+Explicit argument names must be unique within a function implementation.
+
 ## Options
 
 In addition to arguments, each function call may specify zero or more options. Options allow a producer to express preferences about how a consumer handles corner cases or engine-specific behavior. Unlike enumeration arguments, options are not required. If a producer omits an option, the consumer is free to choose any supported behavior. Options are named (not positional) and are not part of the function signature. See [Enumeration Arguments vs Options](#enumeration-arguments-vs-options) for a detailed comparison.

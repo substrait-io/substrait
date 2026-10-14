@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_list
+description: >
+  Functions operating on lists.
 scalar_functions:
   - name: "transform"
     description: >-

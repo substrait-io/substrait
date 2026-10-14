@@ -26,6 +26,14 @@ file together with the reason for it:
 Each record names the value it is about, so a record that outlives the protobuf
 member it excuses is reported as stale.
 
+## Function Coverage
+
+The checks in [`tests/coverage`](coverage/) match `.test` cases to extension
+functions and validate dependencies and nullability. The coverage test in
+[`tests/coverage/test_extensions.py`](coverage/test_extensions.py) compares the
+resulting counts against [`tests/coverage/baseline.json`](coverage/baseline.json)
+to catch coverage regressions.
+
 ## Substrait Test Format
 
 This document describes the format for Substrait test files. The reference
