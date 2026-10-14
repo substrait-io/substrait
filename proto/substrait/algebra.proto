@@ -264,7 +264,7 @@ message ReadRel {
           // line-delimited (NDJSON) interpretation unless they are able to
           // autodetect otherwise.
           STRUCTURE_UNSPECIFIED = 0;
-          // Each line holds a single, self-contained JSON value
+          // Each line holds a single, self-contained JSON object
           // (newline-delimited JSON, also known as JSON Lines / NDJSON).
           STRUCTURE_LINE_DELIMITED = 1;
           // The file holds a single top-level JSON array whose elements are
