@@ -12,8 +12,7 @@ properties:
   dependencies:
     # For reusing types from other extension files.
     # The keys are namespace identifiers that you can then use as dot-separated
-    # prefixes for type names in functions. 
-    # The values must be extension URNs, following
+    # prefixes for type names in functions. The values must be extension URNs, following
     # the same format and conventions as those used in the proto plans.
     type: object
     patternProperties:
