@@ -22,6 +22,12 @@ This extension URN uses the format `extension:<OWNER>:<ID>`, where:
 
 The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
+An optional top-level `description` describes the extension as a whole. For files that define functions, the generated documentation page displays it above the function definitions.
+
+```yaml
+--8<-- "examples/extensions/described_functions.yaml"
+```
+
 A Substrait plan can reference one or more YAML files via their extension URN. In the places where these entities are referenced, they will be referenced using an extension URN + name reference. Each extension entity (type, type variation, or function) is assigned an anchor value, which is a non-negative integer starting from 0. The anchor value 0 is valid and can be used to reference extension entities, but prefer non-zero values for ergonomics. The name scheme per type works as follows:
 
 | Category           | Naming scheme                                                |
@@ -48,7 +54,7 @@ A YAML file can also reference types and type variations defined in another YAML
     udt-reference = [dependency-alias "."] "u!" type-name
     ```
 
-For example, if the extension with extension URN `extension:io.substrait:extension_types` defines a user-defined type called `point`, a different YAML file can use the type in a function declaration as follows:
+For example, if the extension with extension URN `extension:org.example:extension_types` defines a user-defined type called `point`, a different YAML file can use the type in a function declaration as follows:
 
 ```yaml
 --8<-- "examples/extensions/distance_functions.yaml"
@@ -71,7 +77,7 @@ The resulting function signatures look like: `<function_name>:<short_arg_type0>_
     The formal grammar for function signatures (in [ABNF](https://datatracker.ietf.org/doc/html/rfc5234)):
     ```abnf
     function-signature = function-name ":" argument-signature
-    argument-signature = short-arg-type *("_" short-arg-type)
+    argument-signature = [short-arg-type *("_" short-arg-type)]
     ```
 
 Argument types (`short_arg_type`) are encoded using the Type Short Names given below.
@@ -79,6 +85,14 @@ Argument types (`short_arg_type`) are encoded using the Type Short Names given b
 #### Variadic Functions
 
 For variadic functions, the variadic argument is included *once* in the argument signature.
+
+#### Zero-Argument Functions
+
+An implementation that declares no arguments has an empty argument signature. The colon separator is still required, so such an implementation is referenced by its function name followed by a trailing colon: `count:` for the record-counting implementation of `count`, or `rank:` for `rank`. A bare function name with no colon is not a function signature and cannot be used to reference an implementation.
+
+A function can have at most one zero-argument implementation, since a second one would produce the same signature and violate the [Uniqueness Constraint](#uniqueness-constraint).
+
+Because there are no arguments to bind against, the return type must be concrete: neither the `any` and `any[\d]` placeholders nor a type expression with unresolved type parameters has anything to resolve against. A parameterized type with concrete parameter values, such as `decimal<38,0>`, is unaffected.
 
 #### Uniqueness Constraint
 
@@ -121,7 +135,7 @@ A function signature uniquely identifies a function implementation within a sing
 
 Function-level [options](../expressions/scalar_functions.md#options) are not part of the function signature and do not appear here. Only enumeration arguments (which are positional and required) contribute to the signature as `req`.
 
-| Function Signature                                | Function Name       |
+| Function Declaration                              | Function Signature  |
 | ------------------------------------------------- | ------------------- |
 | `add(i8, i8) => i8`                               | `add:i8_i8`         |
 | `avg(fp32) => fp32`                               | `avg:fp32`          |
@@ -129,6 +143,8 @@ Function-level [options](../expressions/scalar_functions.md#options) are not par
 | `sum(any1) => any1`                               | `sum:any`           |
 | `concat(str...) => str`                           | `concat:str`        |
 | `transform(list<any1>, func<any1 -> any2>) => list<any2>` | `transform:list_func` |
+| `count() => i64`                                  | `count:`            |
+| `row_number() => i64?`                            | `row_number:`       |
 
 ### Any Types
 

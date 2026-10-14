@@ -14,7 +14,7 @@ header
     ;
 
 version
-    : TripleHash (SubstraitScalarTest | SubstraitAggregateTest) Colon FormatVersion
+    : TripleHash (SubstraitScalarTest | SubstraitAggregateTest | SubstraitWindowTest) Colon FormatVersion
     ;
 
 include
@@ -36,6 +36,7 @@ testCase
 testGroup
     : testGroupDescription? (testCase)+                          #scalarFuncTestGroup
     | testGroupDescription? (aggFuncTestCase)+                   #aggregateFuncTestGroup
+    | testGroupDescription? (windowFuncTestCase)+                #windowFuncTestGroup
     ;
 
 arguments
@@ -84,6 +85,19 @@ aggFuncCall
     | functName=identifier OParen dataColumn CParen                                     #singleArgAggregateFuncCall
     ;
 
+windowFuncTestCase
+    : windowFuncCall ( OBracket funcOptions CBracket )? Eq windowResult
+    ;
+
+windowFuncCall
+    : tableData funcName=identifier OParen windowFuncArgs? CParen Over frameRef=Identifier
+    ;
+
+windowResult
+    : dataColumn
+    | substraitError
+    ;
+
 tableData
     : Define tableName=Identifier OParen dataType (Comma dataType)* CParen Eq tableRows
     ;
@@ -129,6 +143,15 @@ qualifiedAggregateFuncArg
 
 aggregateFuncArg
     : ColumnName DoubleColon dataType
+    | argument
+    ;
+
+windowFuncArgs
+    : windowFuncArg (Comma windowFuncArg)*
+    ;
+
+windowFuncArg
+    : ColumnName
     | argument
     ;
 

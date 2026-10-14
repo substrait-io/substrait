@@ -24,6 +24,20 @@ Simple type classes are those that don't support any form of configuration. For 
 | date            | A date within [1000-01-01..9999-12-31].                      | `int32` days since `1970-01-01`
 | interval_year   | Interval year to month. Supports a range of [-10,000..10,000] years with month precision (= [-120,000..120,000] months). Usually stored as separate integers for years and months, but only the total number of months is significant, i.e. `1y 0m` is considered equal to `0y 12m` or `1001y -12000m`. | `int32` years and `int32` months, with the added constraint that each component can never independently specify more than 10,000 years, even if the components have opposite signs (e.g. `-10000y 200000m` is **not** allowed)
 | uuid            | A universally-unique identifier composed of 128 bits. Typically presented to users in the following hexadecimal format: `c48ffa9e-64f4-44cb-ae47-152b4e60e77b`. Any 128-bit value is allowed, without specific adherence to RFC4122. | 16-byte `binary`
+| unbound         | A placeholder for a type that has not yet been bound to a concrete type. May only appear in partially bound plans, which must be bound before execution. | n/a
+
+### Unbound Type
+
+The `unbound` type class is a placeholder for a type that has not yet been bound to a concrete type. It may appear wherever a concrete type would normally appear, for example as a field type within `ReadRel.base_schema`. This allows a producer to serialize the shape of a plan — its relations and the names and ordering of its fields — before the concrete types of those fields are known. A downstream binder later replaces each occurrence of the `unbound` type with a concrete type once the necessary schema or catalog information is available.
+
+A plan that contains the `unbound` type anywhere within it is *partially bound*. Partially bound plans may be serialized and exchanged, but they are not executable, and Substrait defines no runtime semantics for values of the `unbound` type. Specifically:
+
+- The `unbound` type is not a wildcard: it does not unify with, or implicitly coerce to, any other type. In particular, it is distinct from `any`: `any` is a function-signature wildcard that participates in overload matching, while the `unbound` type is a plan-level placeholder for a type that is not yet known.
+- The `unbound` type carries no nullability and accepts no parameters; those properties are determined when it is bound to a concrete type.
+- There is no literal of the `unbound` type.
+- Substrait prescribes no resolution policy for the `unbound` type. A function invocation whose argument types are unbound is part of a partially bound plan; how a binder assigns concrete types, and how it subsequently resolves function bindings, is left entirely to the system performing the binding.
+
+Consumers that do not support partially bound plans should reject any plan containing the `unbound` type.
 
 ### Compound Types
 

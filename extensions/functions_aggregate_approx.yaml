@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_aggregate_approx
+description: >
+  Approximate aggregation functions.
 aggregate_functions:
   - name: "approx_count_distinct"
     description: >-

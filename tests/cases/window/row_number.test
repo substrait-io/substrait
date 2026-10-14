@@ -1,0 +1,10 @@
+### SUBSTRAIT_WINDOW_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
+
+# basic: Basic examples without any special cases
+DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+row_number() OVER f1 = (1, 2, 3, 4)::i64?
+
+# edge_case: Edge cases
+DEFINE f1(i32) = ()
+row_number() OVER f1 = ()::i64?

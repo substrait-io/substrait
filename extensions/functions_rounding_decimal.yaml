@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_rounding_decimal
+description: >
+  Rounding functions for decimal values.
 scalar_functions:
   -
     name: "ceil"
@@ -13,7 +15,7 @@ scalar_functions:
         return: |-
           integral_least_num_digits = P - S + 1
           precision = min(integral_least_num_digits, 38)
-          decimal?<precision, 0>
+          decimal<precision, 0>
   -
     name: "floor"
     description: >
@@ -25,7 +27,7 @@ scalar_functions:
         return: |-
           integral_least_num_digits = P - S + 1
           precision = min(integral_least_num_digits, 38)
-          decimal?<precision, 0>
+          decimal<precision, 0>
   -
     name: "round"
     description: >

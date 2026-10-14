@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
-import os
-import yaml
-
-from tests.coverage.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
-from tests.coverage.nodes import SubstraitError, type_str_is_outer_nullable
+from tests.helpers import (
+    find_extension_files,
+    iter_function_impls,
+    load_extension,
+)
+from tests.parser.antlr_parser.FuncTestCaseLexer import FuncTestCaseLexer
+from tests.parser.nodes import SubstraitError, type_str_is_outer_nullable
 
 enable_debug = False
 
@@ -19,6 +21,78 @@ def debug(msg):
 
 def substrait_type_str(rule_num):
     return FuncTestCaseLexer.symbolicNames[rule_num].lower()
+
+
+def declared_type(type_str):
+    """The concrete type of a declaration, dropping any derivation expression.
+
+    A ``return`` may be a multi-line derivation expression whose leading lines
+    assign intermediate values.  Those lines can contain a ``?`` that is a
+    ternary operator rather than a nullability marker (e.g.
+    ``scale = init_prec > 38 ? scale_after_borrow : init_scale``), so only the
+    final line names the declared type.
+    """
+    return str(type_str).strip().split("\n")[-1].strip()
+
+
+def validate_impl_nullability_markers(impl, loc):
+    """Validate that one impl carries no meaningless nullability markers.
+
+    Under ``MIRROR`` the output nullability is derived from the arguments, so a
+    ``?`` on an argument or on the return type is ignored.  Under
+    ``DECLARED_OUTPUT`` the return marker is authoritative, but the outermost
+    argument nullability is still stripped before binding.  A marker that is
+    ignored is misleading, so it must not appear.  ``DISCRETE`` is exempt: there
+    markers are meaningful on both sides.
+
+    Only the outermost nullability is checked; nested markers are meaningful
+    (e.g. ``func<any1 -> boolean?>``, ``list<i32?>``).
+
+    Returns a list of error strings (empty if everything is valid).
+    """
+    nullability = impl.get("nullability", "MIRROR")  # MIRROR is the spec default
+    if nullability == "DISCRETE":
+        return []
+
+    errors = []
+    for arg in impl.get("args") or []:
+        value = arg.get("value")
+        if value is None:
+            continue  # option (enum) argument, not a value
+        if type_str_is_outer_nullable(declared_type(value)):
+            errors.append(
+                f"{loc}: argument '{arg.get('name', value)}' is declared '{value}' "
+                f"under {nullability} nullability, but the outermost nullability of "
+                f"an argument is stripped before binding; remove the '?'"
+            )
+
+    return_type = impl.get("return")
+    if (
+        nullability == "MIRROR"
+        and return_type is not None
+        and type_str_is_outer_nullable(declared_type(return_type))
+    ):
+        errors.append(
+            f"{loc}: return type '{declared_type(return_type)}' carries a nullability "
+            f"marker under MIRROR nullability, where output nullability is derived "
+            f"from the arguments; remove the '?'"
+        )
+    return errors
+
+
+def validate_nullability_markers(dir_path: str):
+    """Validate every function declaration under dir_path.
+
+    See :func:`validate_impl_nullability_markers` for the rules applied.
+
+    Returns a list of error strings (empty if everything is valid).
+    """
+    errors = []
+    for path in find_extension_files(dir_path):
+        for func, impl in iter_function_impls(load_extension(path)):
+            loc = f"{path.name}: {func['name']}"
+            errors.extend(validate_impl_nullability_markers(impl, loc))
+    return errors
 
 
 def build_type_to_short_type():
@@ -160,14 +234,7 @@ class Extension:
 
     @staticmethod
     def read_substrait_extensions(dir_path: str):
-        # read files from extensions directory
-        extensions = []
-        for root, _dirs, files in os.walk(dir_path):
-            for file in files:
-                if file.endswith(".yaml") and file.startswith("functions_"):
-                    extensions.append(os.path.join(root, file))
-
-        extensions.sort()
+        extensions = find_extension_files(dir_path)
 
         scalar_functions = {}
         aggregate_functions = {}
@@ -176,43 +243,39 @@ class Extension:
         registered_urns = set()
         # convert yaml file to a python dictionary
         for extension in extensions:
-            suffix = extension[:-5]  # strip .yaml at the end of the extension
-            suffix = suffix[
-                suffix.rfind("/") + 1 :
-            ]  # strip the path and get the name of the extension
+            suffix = extension.stem  # the name of the extension
             uri = f"/extensions/{suffix}.yaml"
             suffix = suffix[suffix.find("_") + 1 :]  # get the suffix after the last _
 
             dependencies[suffix] = Extension.get_base_uri() + uri
-            with open(extension, "r") as fh:
-                data = yaml.load(fh, Loader=yaml.FullLoader)
-                urn = data.get("urn")
-                if urn:
-                    registered_urns.add(urn)
-                if "scalar_functions" in data:
-                    Extension.add_functions_to_map(
-                        data["scalar_functions"],
-                        scalar_functions,
-                        suffix,
-                        extension,
-                        urn,
-                    )
-                if "aggregate_functions" in data:
-                    Extension.add_functions_to_map(
-                        data["aggregate_functions"],
-                        aggregate_functions,
-                        suffix,
-                        extension,
-                        urn,
-                    )
-                if "window_functions" in data:
-                    Extension.add_functions_to_map(
-                        data["window_functions"],
-                        window_functions,
-                        suffix,
-                        extension,
-                        urn,
-                    )
+            data = load_extension(extension)
+            urn = data.get("urn")
+            if urn:
+                registered_urns.add(urn)
+            if "scalar_functions" in data:
+                Extension.add_functions_to_map(
+                    data["scalar_functions"],
+                    scalar_functions,
+                    suffix,
+                    extension,
+                    urn,
+                )
+            if "aggregate_functions" in data:
+                Extension.add_functions_to_map(
+                    data["aggregate_functions"],
+                    aggregate_functions,
+                    suffix,
+                    extension,
+                    urn,
+                )
+            if "window_functions" in data:
+                Extension.add_functions_to_map(
+                    data["window_functions"],
+                    window_functions,
+                    suffix,
+                    extension,
+                    urn,
+                )
 
         return FunctionRegistry(
             scalar_functions,
