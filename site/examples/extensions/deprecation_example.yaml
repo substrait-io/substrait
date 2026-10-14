@@ -48,5 +48,5 @@ scalar_functions:
     impls:
       - args:
           - name: x
-            value: int
-        return: int
+            value: i64
+        return: i64

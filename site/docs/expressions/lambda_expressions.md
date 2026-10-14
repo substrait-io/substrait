@@ -84,7 +84,7 @@ The `Func` type has its own nullability field, which applies to the function val
 
 ### Example: The `transform` Function
 
-The `transform` function transforms each element of a list using a lambda. Here's how it's defined in the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml):
+The `transform` function transforms each element of a list using a lambda. It is declared in the [functions_list extension](https://github.com/substrait-io/substrait/blob/main/extensions/functions_list.yaml); the declaration looks like this:
 
 ```yaml
 --8<-- "examples/extensions/lambda_function_example.yaml"

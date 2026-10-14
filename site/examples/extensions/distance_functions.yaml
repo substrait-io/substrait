@@ -1,6 +1,6 @@
-urn: extension:example:distance_functions
+urn: extension:org.example:distance_functions
 dependencies:
-  ext: extension:io.substrait:extension_types
+  ext: extension:org.example:extension_types
 scalar_functions:
 - name: distance
   description: The distance between two points.
@@ -10,4 +10,4 @@ scalar_functions:
       value: ext.u!point
     - name: b
       value: ext.u!point
-    return: f64
+    return: fp64

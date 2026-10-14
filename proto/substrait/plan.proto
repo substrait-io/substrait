@@ -20,6 +20,11 @@ message PlanRel {
     // The root of a relation tree
     RelRoot root = 2;
   }
+
+  // Expression subtrees stored separately to reduce protobuf nesting.
+  // Referenced by zero-based ordinals local to this PlanRel.
+  // See https://substrait.io/serialization/binary_serialization/#bounded-expression-nesting.
+  repeated Expression detached_expressions = 3;
 }
 
 // Describe a set of operations to complete.

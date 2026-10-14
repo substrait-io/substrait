@@ -1,5 +1,5 @@
 # Example showing the 'any' type - arguments can be of any type
-urn: extension:example:any_type
+urn: extension:org.example:any_type
 scalar_functions:
 - name: foo
   impls:
@@ -8,4 +8,4 @@ scalar_functions:
       value: any
     - name: b
       value: any
-    return: int64
+    return: i64

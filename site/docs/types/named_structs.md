@@ -86,8 +86,8 @@ NamedStruct {
 #### Structs in Structs
 ```
 NamedStruct {
-    names: [a, b, c, d, e, f, g, h, i]
-    struct: struct<i64, struct<i64, struct<i64, i64>, i64, struct<i64, i64>>>>
+    names: [a, b, c, d, e, f, g, h, i, j]
+    struct: struct<i64, struct<i64, struct<i64, i64>, i64, struct<i64, i64>>>
                    ↑    ↑      ↑    ↑      ↑    ↑     ↑    ↑      ↑    ↑
                    a    b      c    d      e    f     g    h      i    j
 }

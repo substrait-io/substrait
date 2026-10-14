@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_logarithmic
+description: >
+  Logarithmic functions.
 scalar_functions:
   -
     name: "ln"
@@ -202,7 +204,7 @@ scalar_functions:
           - value: decimal<P1,S1>
             name: "x"
             description: "The number `x` to compute the logarithm of"
-          - value: decimal<P1,S1>
+          - value: decimal<P2,S2>
             name: "base"
             description: "The logarithm base `b` to use"
         options:
