@@ -4,3 +4,5 @@ tests/type/antlr_parser/** linguist-generated=true
 
 # SCM syntax highlighting & preventing 3-way merges
 pixi.lock merge=binary linguist-language=YAML linguist-generated=true -diff
+
+text/simple_extensions_schema.yaml text eol=lf
