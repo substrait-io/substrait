@@ -244,6 +244,14 @@ message ReadRel {
       message JsonReadOptions {
         // JSON files may be compressed.  The reader should autodetect this and
         // decompress as needed.
+        //
+        // Each record must be a JSON object.  Records are unpacked into the
+        // read's base_schema: each top-level key is matched by name against
+        // the base_schema fields, and nested objects and arrays map onto the
+        // corresponding struct and list types.  A field whose key is absent
+        // from a record is null.  Keys that do not match any field are
+        // ignored.  Whether key matching is case-sensitive is left to the
+        // consumer.
 
         // Describes how JSON records are laid out within the file.
         enum Structure {
