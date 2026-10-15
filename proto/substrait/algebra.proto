@@ -1417,9 +1417,7 @@ message Expression {
     enum BoundsType {
       // Invalid; producers must select ROWS or RANGE.
       BOUNDS_TYPE_UNSPECIFIED = 0;
-      // Physical row offsets.
       BOUNDS_TYPE_ROWS = 1;
-      // Ordering-value offsets, with peer-group boundaries.
       BOUNDS_TYPE_RANGE = 2;
     }
 
@@ -1432,9 +1430,6 @@ message Expression {
         // See https://substrait.io/expressions/window_functions/#offset-expressions
         int64 offset = 1 [deprecated = true];
 
-        // Offset expression; interpretation and validity depend on the bound mode.
-        // See https://substrait.io/expressions/window_functions/#bound-modes
-        // and https://substrait.io/expressions/window_functions/#offset-expressions
         Expression offset_expr = 2;
       }
 
@@ -1444,9 +1439,6 @@ message Expression {
         // See https://substrait.io/expressions/window_functions/#offset-expressions
         int64 offset = 1 [deprecated = true];
 
-        // Offset expression; interpretation and validity depend on the bound mode.
-        // See https://substrait.io/expressions/window_functions/#bound-modes
-        // and https://substrait.io/expressions/window_functions/#offset-expressions
         Expression offset_expr = 2;
       }
 

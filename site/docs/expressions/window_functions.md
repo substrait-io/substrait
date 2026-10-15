@@ -6,9 +6,9 @@ A window function produces one result for each input row, using that row and oth
 
 Three concepts determine which rows a window function can use:
 
-* **Partition:** the rows with the same values for all partitioning expressions. Each partition is processed independently; a frame never crosses a partition boundary. Null partitioning values are considered equal. Without partitioning expressions, the entire input is one partition.
-* **Peer group (row group):** rows within a partition that share the same values for **all** ordering expressions. Two null ordering values are considered equal. Ordering arranges the rows within a partition, but does not break ties between peers. Without ordering expressions, all rows in a partition are peers.
-* **Window frame:** the subset of a partition selected by lower and upper bounds for the **current row**, the row whose result is being calculated. The frame can change as the current row changes. Whether a bound counts rows or measures a distance in ordering values depends on the [bound mode](#bound-modes).
+* **Partition:** rows with the same values for all partitioning expressions. Each partition is processed independently; a frame never crosses a partition boundary. Null partitioning values are considered equal. Without partitioning expressions, the entire input is one partition.
+* **Peer group:** rows within a partition that share the same values for **all** ordering expressions. Two null ordering values are considered equal. Ordering arranges rows within a partition, but does not break ties between peers. Without ordering expressions, all rows in a partition are peers.
+* **Frame:** the subset of a partition selected by lower and upper bounds relative to the **current row**, which is the row whose result is being calculated. The frame can change as the current row changes. Whether a bound counts rows or measures a distance in ordering values depends on the [bound mode](#bound-modes).
 
 For example, partition by `team` and order by `score` ascending:
 
@@ -47,8 +47,8 @@ A window binding inherits the [aggregate binding properties](aggregate_functions
 | Partitioning | `partitions` | Partitioning expressions; none means one partition for the entire input. |
 | Ordering | `sorts` | Ordering expressions within each partition, highest priority first. Optional, except as required by the [bound mode rules](#bound-modes). This also supplies the inherited aggregate ordering: rows in the frame are passed to the function in this order. |
 | Bound mode | `bounds_type` | Required: `BOUNDS_TYPE_ROWS` or `BOUNDS_TYPE_RANGE`. Consumers must reject `BOUNDS_TYPE_UNSPECIFIED`. |
-| Lower bound | `lower_bound` | Inclusive start of the frame; defaults to the start of the partition. |
-| Upper bound | `upper_bound` | Inclusive end of the frame; defaults to the end of the partition. |
+| Lower bound | `lower_bound` | Inclusive start of the frame; defaults to Unbounded if not set. |
+| Upper bound | `upper_bound` | Inclusive end of the frame; defaults to Unbounded if not set. |
 
 In a [consistent partition window operation](../relations/physical_relations.md#consistent-partition-window-operation), `partition_expressions` and `sorts` are shared by all functions. Each function still has its own bound mode and frame bounds. The same rules below apply to both representations.
 
@@ -61,7 +61,7 @@ In a [consistent partition window operation](../relations/physical_relations.md#
 | `Preceding` | An offset toward rows or values **earlier** in the declared ordering. |
 | `Following` | An offset toward rows or values **later** in the declared ordering. |
 
-Both bounds are inclusive, and only rows in the current partition can belong to the frame. If neither bound is specified, the frame is the whole partition, even when ordering is specified.
+Both bounds are inclusive, and only rows in the current partition can belong to the frame.
 
 A frame need not contain the current row. If the lower bound is after the upper bound, the frame is empty. The function's empty-frame semantics apply, such as `SUM` yielding null and `COUNT(*)` yielding zero.
 
@@ -115,7 +115,7 @@ For example, the standard extensions allow:
 
 The following rules apply to `offset_expr` in both `Preceding` and `Following`, in either bound mode:
 
-* Field references resolve against the containing relation's input schema. The expression must behave as if evaluated once per input row, and must not contain window or aggregate functions.
+* Field references resolve against the input relation schema. The expression must behave as if evaluated once per input row, and must not contain window or aggregate functions.
 * A null or negative result is invalid. Use the opposite bound direction, not a negative offset, to move the other way.
 * A statically-known zero offset **must** be represented as `CurrentRow`. If a non-literal expression evaluates to zero for a row, the bound is equivalent to `CurrentRow` for that row.
 
