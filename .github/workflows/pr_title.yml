@@ -1,5 +1,9 @@
 name: PR Title Check
 
+# GitHub blocks pull_request_target in public repositories by default. A
+# repository Actions policy (Settings > Actions > Policies) allows it for this
+# workflow only, matched by its file path, so renaming or moving this file
+# blocks the check until the policy's workflow path is updated to match.
 on:
   # synchronize is required even though a push changes neither the title nor the
   # description: GitHub keys check runs to the head commit, so without it a push
