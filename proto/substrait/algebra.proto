@@ -1671,8 +1671,8 @@ message Expression {
   // pipeline.
   //
   // The selected fields are output in the order the mask lists them, which
-  // need not be their order in the input. Beyond that order, a mask does not
-  // alter the structure of data other than by eliminating unnecessary elements.
+  // need not be their order in the input. In some cases a mask also unwraps a
+  // single selected child from its container (see maintain_singular_struct).
   message MaskExpression {
     StructSelect select = 1;
     bool maintain_singular_struct = 2;

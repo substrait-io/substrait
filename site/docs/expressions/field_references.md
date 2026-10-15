@@ -151,7 +151,7 @@ A mask outputs the fields it selects in the order it lists them, which need not 
 
 #### Unwrapping Behavior
 
-By default, when only a single field is selected from a struct, that struct is removed. When only a single element is removed from a list, the list is removed. A user can also configure the mask to avoid unwrapping in these cases. [TBD how we express this in the serialization formats.]
+By default, when only a single field is selected from a struct, that struct is removed, leaving the bare field. Set `maintain_singular_struct` on the mask to keep the struct instead. When only a single element is selected from a list, the list is removed; there is currently no option to keep it.
 
 ### Outer References
 
