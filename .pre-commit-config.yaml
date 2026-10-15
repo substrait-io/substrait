@@ -15,7 +15,7 @@ repos:
     stages: [commit-msg]
     additional_dependencies: ['@commitlint/config-conventional']
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.16.8
+  rev: v0.16.9
   hooks:
   # Run the linter
   - id: ruff
