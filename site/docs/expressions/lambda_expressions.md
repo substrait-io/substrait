@@ -25,7 +25,7 @@ A lambda expression consists of:
 
 ### Type Derivation
 
-The type of a lambda expression is a `func` type. The parameters of the `func` are the parameters of the lambda. The return type of the `func` is determined by the type of the expression comprising the body of the lambda. 
+The type of a lambda expression is a non-nullable `func` type. The parameters of the `func` are the parameters of the lambda. The return type of the `func` is determined by the type of the expression comprising the body of the lambda.
 
 ## Parameter References
 
@@ -106,62 +106,84 @@ Lambda bodies can reference data from outside their parameter list through [`Fie
 
 ## Lambda Invocation
 
-Lambda expressions can be invoked using the `LambdaInvocation` expression type. An invocation can call either an inline lambda or a named lambda defined at the plan level.
+`LambdaInvocation` invokes a function-valued expression, such as an inline lambda, a named-lambda reference, or a function-valued parameter.
 
-A lambda invocation consists of:
+| Field | Requirement |
+|-------|-------------|
+| `function` | An expression of type `Func` with `NULLABILITY_REQUIRED`; required except when reading a legacy invocation. |
+| `arguments` | A `Nested.Struct` whose fields exactly match `Func.parameter_types` in count, order, and type; required even for zero arguments. |
 
-| Component    | Description                                                                 | Protobuf Field            | Required |
-|--------------|-----------------------------------------------------------------------------|---------------------------|----------|
-| Lambda       | The inline lambda expression to invoke                                      | `lambda`       | One of `lambda` or `named_lambda` |
-| Named lambda | A reference to a lambda in `Plan.named_lambdas`                             | `named_lambda` | One of `lambda` or `named_lambda` |
-| Arguments    | A `Nested.Struct` containing expressions for each lambda parameter. Each field corresponds to a lambda parameter and must evaluate to the matching parameter type. | `arguments` | Yes |
+Consumers must reject non-function and nullable function callees; there is no implicit wrapping as a constant function. The result type is `Func.return_type`, which may be any valid type, including a nullable or function type.
 
-The `arguments` field must be a `Nested.Struct` with exactly as many fields as the lambda has parameters. The type of each expression field must match the corresponding parameter type. The return type is derived from the type of the lambda's body expression.
+Evaluate the function and arguments in the caller's scope, then invoke the resulting function with the bound argument values and its captured environment. Parameter references read bound values rather than re-evaluating argument expressions. Evaluating a lambda constructs a function value; only invocation evaluates its body.
+
+Invocations do not introduce lexical lambda scopes or change `steps_out`; only enclosing lambda definitions do.
 
 === "LambdaInvocation Message"
     ```proto
 %%% proto.message.Expression.LambdaInvocation %%%
     ```
 
-### Example
+### Inline Invocation
 
-Invoking `((x: i32) -> x * 2)(5)` to compute 10:
+`((x: i32) -> x * 2)(5)` computes 10. This example also writes the equivalent legacy callee:
 
 ```protobuf
 --8<-- "examples/proto-textformat/lambda_invocation/inline_invocation.textproto"
 ```
 
+### Invoking a Function Parameter
+
+In `apply_twice = (f: func<i32 -> i32>, x: i32) -> f(f(x))`, parameter 0 is `f` and parameter 1 is `x`. All references use `steps_out = 0`:
+
+```protobuf
+--8<-- "examples/proto-textformat/lambda/apply_twice.textproto"
+```
+
+Parameter and returned-function callees have no direct legacy representation. This example invokes a returned function with its captured environment:
+
+```protobuf
+--8<-- "examples/proto-textformat/lambda_invocation/returned_function.textproto"
+```
+
+### Migration from Inline Callees
+
+`function` replaces the deprecated `lambda` field. They are independent fields, not a oneof, and share `arguments`, allowing dual-writing for older consumers.
+
+Consumers must:
+
+1. Use `function` when present and ignore `lambda`, including for validation, dependency analysis, and capability checks. Reject an empty, invalid, or unsupported `function` without fallback.
+2. Otherwise, use `lambda` with its existing inline semantics.
+3. Reject invocations with neither field.
+
+Producers must write `function` and an equivalent `lambda` whenever an exact legacy representation exists: `function.lambda` and `lambda` must contain the same definition. Other callees, such as named-lambda or parameter references, use only `function`.
+
+Once all active libraries read `function` and stop writing `lambda`, allow a reasonable migration period before removing `lambda` under the [breaking-change policy](../spec/breaking_change_policy.md#replacing-a-protobuf-field). Reserve field number 1 and name `lambda` when removing it.
+
 ### Dialect Support
 
-Dialects can restrict `LAMBDA_INVOCATION` to inline or named callees with the optional `lambda_types` property:
+The optional `lambda_types` list on `LAMBDA_INVOCATION` accepts one or both representations, without duplicates:
 
-| Declaration in `supported_expressions` | Supported callees |
-|---------------------------------------|-------------------|
-| `LAMBDA_INVOCATION` shorthand | Inline only |
-| `expression: LAMBDA_INVOCATION` without `lambda_types` | Inline only |
-| `lambda_types: [INLINE]` on a `LAMBDA_INVOCATION` entry | Inline only |
-| `lambda_types: [NAMED]` on a `LAMBDA_INVOCATION` entry | Named only |
-| `lambda_types: [INLINE, NAMED]` on a `LAMBDA_INVOCATION` entry | Both |
+| Capability | Callee field |
+|------------|--------------|
+| `INLINE` | Deprecated `LambdaInvocation.lambda` |
+| `FUNCTION` | `LambdaInvocation.function` |
 
-`INLINE` corresponds to `LambdaInvocation.lambda`, and `NAMED` corresponds to `LambdaInvocation.named_lambda`. An explicit `lambda_types` list must be non-empty and contain no duplicates.
+Omitting `lambda_types`, including in the `LAMBDA_INVOCATION` shorthand, means `[INLINE]`. Consumers must apply this default; JSON Schema validation does not insert it. An absent or empty `supported_expressions` list still means all expressions and both callee representations are supported.
 
-Omitting `lambda_types` from an explicit invocation declaration means inline-only support, preserving the meaning of declarations written before named lambdas were introduced. Dialect consumers must apply this rule; the JSON Schema `default` annotation does not insert the property during validation.
-
-This default does not change the rule for an absent or empty `supported_expressions` list: all expressions are supported in that case, including both inline and named lambda invocations.
-
-Support for named callees is independent of `NAMED_LAMBDA_REFERENCE`, which declares support for named lambdas as function-valued expressions. Declaring either capability does not imply the other.
+A present `function` requires `FUNCTION` plus support for its expression kinds, such as `NAMED_LAMBDA_REFERENCE` or `LAMBDA`. Those expression capabilities alone do not enable invocation. Apply the migration precedence above: the ignored legacy callee adds no capability requirements and cannot serve as a fallback.
 
 ## Named Lambdas
 
 A named lambda is defined once in `Plan.named_lambdas`, where each entry is represented by a `NamedLambda`. Once defined, it can be invoked from multiple `LambdaInvocation` expressions and passed as a function value using `NamedLambdaReference`. Named lambdas use their own anchor namespace, separate from extension function anchors.
 
-Each definition consists of a `lambda_anchor`, an `Expression.Lambda`, and an optional human-readable `name`. The name is only for diagnostics and plan inspection: it has no semantic meaning and cannot be used as a reference. An invocation supplies a `named_lambda` reference and a `Nested.Struct` of arguments. The argument count and types must exactly match the lambda parameters, and the invocation's return type is the type of the lambda body.
+Each definition consists of a `lambda_anchor`, an `Expression.Lambda`, and an optional human-readable `name`. The name is only for diagnostics and plan inspection: it has no semantic meaning and cannot be used as a reference. An invocation supplies a `function.named_lambda_reference` and a `Nested.Struct` of arguments. The argument count and types must exactly match the lambda parameters, and the invocation's return type is the type of the lambda body.
 
 Named lambdas are closed over their parameters. Their bodies cannot reference relational input, outer records, or parameters from a caller's enclosing lambda. They may use dynamic parameters, execution context variables, and other named lambdas.
 
-Named-lambda references may reference definitions that appear later in `Plan.named_lambdas`, but the definition dependency graph must be acyclic. A definition depends on another whenever its body invokes that named lambda or reference it as a function value, including inside nested expressions and arguments to higher-order functions. Self-references and indirect cycles are invalid, even if the reference is only passed as an argument or occurs in a branch that is not evaluated.
+Named-lambda references may reference definitions that appear later in `Plan.named_lambdas`, but the definition dependency graph must be acyclic. After applying invocation migration precedence, a definition depends on another whenever its body invokes that named lambda or references it as a function value, including inside callee expressions, nested expressions, and arguments to higher-order functions. Self-references and indirect cycles are invalid, even if the reference is only passed as an argument or occurs in a branch that is not evaluated.
 
-Within a plan, every named-lambda anchor must be unique and every named-lambda invocation or reference must target an existing definition. A named lambda may be referenced or invoked any number of times.
+Within a plan, every named-lambda anchor must be unique and every effective named-lambda invocation or reference must target an existing definition. A named lambda may be referenced or invoked any number of times.
 
 ```protobuf
 --8<-- "examples/proto-textformat/named_lambda/reused_identity.textproto"
@@ -169,7 +191,7 @@ Within a plan, every named-lambda anchor must be unique and every named-lambda i
 
 ### Named Lambda References
 
-`Expression.NamedLambdaReference` denotes a function value without invoking the lambda. Its `lambda_reference` identifies a `lambda_anchor` in `Plan.named_lambdas`, using the same namespace as `LambdaInvocation.named_lambda`. Anchor 0 is valid.
+`Expression.NamedLambdaReference` denotes a function value without invoking the lambda. Its `lambda_reference` identifies a `lambda_anchor` in `Plan.named_lambdas`. Anchor 0 is valid. Passing this expression as `LambdaInvocation.function` invokes the referenced function.
 
 A named lambda reference has a non-nullable function type, with parameter and return types derived from the referenced lambda as described in [Lambda Type Derivation](#type-derivation).
 

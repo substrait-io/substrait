@@ -1,0 +1,50 @@
+# Represents ((x: i32) -> (() -> x))(42)(), producing 42.
+# The inner call returns a zero-argument function capturing x.
+# Only the inner call has an equivalent legacy callee.
+#
+# message Expression.LambdaInvocation
+
+function {
+  lambda_invocation {
+    function {
+      lambda {
+        parameters {
+          types { i32 { nullability: NULLABILITY_REQUIRED } }
+          nullability: NULLABILITY_REQUIRED
+        }
+        body {
+          lambda {
+            parameters { nullability: NULLABILITY_REQUIRED }
+            body {
+              selection {
+                lambda_parameter_reference { steps_out: 1 }
+                direct_reference { struct_field { field: 0 } }
+              }
+            }
+          }
+        }
+      }
+    }
+    lambda {
+      parameters {
+        types { i32 { nullability: NULLABILITY_REQUIRED } }
+        nullability: NULLABILITY_REQUIRED
+      }
+      body {
+        lambda {
+          parameters { nullability: NULLABILITY_REQUIRED }
+          body {
+            selection {
+              lambda_parameter_reference { steps_out: 1 }
+              direct_reference { struct_field { field: 0 } }
+            }
+          }
+        }
+      }
+    }
+    arguments {
+      fields { literal { i32: 42 } }
+    }
+  }
+}
+arguments {}

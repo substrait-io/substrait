@@ -1320,24 +1320,37 @@ message Expression {
     uint32 lambda_reference = 1;
   }
 
-  // Invokes an inline or named lambda expression with provided arguments.
-  // Enables immediate invocation patterns like ((x) -> x * 2)(5), as well as
-  // reuse of a lambda defined in Plan.named_lambdas.
+  // Invokes a function-valued expression with provided arguments.
+  // The function and arguments are evaluated in the caller's scope. Invocation
+  // applies the resulting function value to the argument values, preserving the
+  // function's captured environment. It does not introduce a lambda scope for
+  // the function or argument expressions.
   //
-  // The return type is derived from the type of the lambda's body expression.
+  // The return type is the return_type of the callee's Func type.
   message LambdaInvocation {
-    oneof lambda_type {
-      // The inline lambda expression to invoke.
-      Lambda lambda = 1;
+    // Deprecated inline callee. Use function.lambda instead.
+    // Ignored when function is present.
+    Lambda lambda = 1 [deprecated = true];
 
-      // References a lambda_anchor in Plan.named_lambdas.
-      NamedLambdaReference named_lambda = 3;
-    }
-
-    // Arguments to pass to the lambda, as a struct expression. The struct must have
-    // exactly one Expression field for each lambda parameter, and the expression at
-    // each position must have a type that matches the corresponding parameter type.
+    // Arguments to pass to the function, as a struct expression. The struct must
+    // have exactly one field for each Func.parameter_types entry, in the same
+    // order, with exactly matching types. Required, including for zero arguments.
     Nested.Struct arguments = 2;
+
+    // The function value to invoke. Its type must be Func with
+    // NULLABILITY_REQUIRED; other types and nullable function types are invalid.
+    // The return type may be nullable or itself a Func.
+    //
+    // When present, this field takes precedence over lambda. Consumers must
+    // ignore the deprecated callee, and must not fall back to it if function is
+    // invalid or unsupported. When absent, use the deprecated callee. An
+    // invocation with neither representation is invalid.
+    //
+    // Producers must write this field and also write an equivalent deprecated
+    // callee whenever an exact legacy representation exists: function.lambda
+    // matches lambda.
+    // Otherwise, producers write only function.
+    Expression function = 3;
   }
 
   // A scalar function call.

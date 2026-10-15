@@ -7,7 +7,7 @@ We use protobuf text format (textproto) rather than JSON for these examples beca
 ## Directories
 
 - `lambda/` - Examples of `Expression.Lambda` messages
-- `lambda_invocation/` - Examples of `Expression.LambdaInvocation` messages
+- `lambda_invocation/` - Examples of `Expression.LambdaInvocation` messages, including unified function-valued callees and dual-written legacy representations
 - `named_lambda/` - Examples of named lambdas, direct invocations, and function-valued references passed to higher-order functions
 - `field_reference/` - Examples of `Expression.FieldReference` messages
 - `plan_rel/` - Examples of `PlanRel` messages
