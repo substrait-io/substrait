@@ -251,12 +251,14 @@ message ReadRel {
         // decompress as needed.
         //
         // Each record must be a JSON object.  Records are unpacked into the
-        // read's base_schema: each top-level key is matched by name against
-        // the base_schema fields, and nested objects and arrays map onto the
-        // corresponding struct and list types.  A field whose key is absent
-        // from a record is null.  Keys that do not match any field are
-        // ignored.  Whether key matching is case-sensitive is left to the
-        // consumer.
+        // read's base_schema: each top-level key is matched against the
+        // base_schema field names (see ignore_key_case), and nested objects
+        // and arrays map onto the corresponding struct, map and list types.
+        // A field whose key is absent from a record is null.  Keys that do
+        // not match any field are ignored.  How JSON values are converted to
+        // the base_schema types, and what happens when a value cannot be
+        // converted, is left to the consumer; the records produced must
+        // conform to the base_schema.
 
         // Describes how JSON records are laid out within the file.
         enum Structure {
@@ -276,6 +278,11 @@ message ReadRel {
         // exceeds this limit the resulting behavior is undefined.  Optional;
         // if unset the consumer chooses an appropriate limit.
         optional uint64 max_record_size = 2;
+        // If true, JSON keys are matched to base_schema field names
+        // case-insensitively.  Otherwise keys must match exactly.  This
+        // affects only the matching of JSON keys; Substrait field names
+        // remain case-sensitive.
+        bool ignore_key_case = 3;
       }
 
       // The format of the files along with options for reading those files.
