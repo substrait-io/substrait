@@ -256,9 +256,12 @@ message ReadRel {
         // and arrays map onto the corresponding struct, map and list types.
         // A field whose key is absent from a record is null.  Keys that do
         // not match any field are ignored.  How JSON values are converted to
-        // the base_schema types, and what happens when a value cannot be
-        // converted, is left to the consumer; the records produced must
-        // conform to the base_schema.
+        // the base_schema types is left to the consumer; the records
+        // produced must conform to the base_schema.  What happens when a
+        // record cannot be made to conform (a value cannot be converted, or
+        // a non-nullable field is absent or null) is also left to the
+        // consumer, as is the result when more than one key in a record
+        // matches the same field.
 
         // Describes how JSON records are laid out within the file.
         enum Structure {
@@ -281,7 +284,9 @@ message ReadRel {
         // If true, JSON keys are matched to base_schema field names
         // case-insensitively.  Otherwise keys must match exactly.  This
         // affects only the matching of JSON keys; Substrait field names
-        // remain case-sensitive.
+        // remain case-sensitive.  If true, the field names at each level of
+        // the base_schema must be unique ignoring case; otherwise the plan
+        // is invalid.
         bool ignore_key_case = 3;
       }
 
