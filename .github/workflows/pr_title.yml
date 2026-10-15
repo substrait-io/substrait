@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v7
         with:
-          node-version: "24"
+          node-version: "24.21.0"
       # pull_request_target runs the workflow from the base ref and checks out
       # the base ref, so neither this workflow nor commitlint.config.js nor the
       # pinned toolchain can be altered by the PR being validated.
