@@ -40,12 +40,12 @@ If we want to represent the SQL expression:
 a.b[2].c['my_map_key'].x
 ```
 
-We will need to declare the nested field such that:
+We will need to declare the nested field such that (SQL array subscripts start at 1, while list offsets start at 0):
 
 ```
 Struct field reference a
 Struct field b
-List offset 2
+List offset 1
 Struct field c
 Map key my_map_key
 Struct field x
@@ -63,7 +63,7 @@ selection {
           field: 0 # .b
           child {
             list_element {
-              offset: 2
+              offset: 1 # [2]
               child {
                 struct_field {
                   field: 0 # .c

@@ -22,6 +22,12 @@ This extension URN uses the format `extension:<OWNER>:<ID>`, where:
 
 The YAML file is constructed according to the [YAML Schema](https://github.com/substrait-io/substrait/blob/main/text/simple_extensions_schema.yaml). Each definition in the file corresponds to the YAML-based serialization of the relevant data structure. If a user only wants to extend one of these types of objects (e.g. types), a developer does not have to provide definitions for the other extension points.
 
+An optional top-level `description` describes the extension as a whole. For files that define functions, the generated documentation page displays it above the function definitions.
+
+```yaml
+--8<-- "examples/extensions/described_functions.yaml"
+```
+
 A Substrait plan can reference one or more YAML files via their extension URN. In the places where these entities are referenced, they will be referenced using an extension URN + name reference. Each extension entity (type, type variation, or function) is assigned an anchor value, which is a non-negative integer starting from 0. The anchor value 0 is valid and can be used to reference extension entities, but prefer non-zero values for ergonomics. The name scheme per type works as follows:
 
 | Category           | Naming scheme                                                |
@@ -40,7 +46,7 @@ Within YAML extension files, [user-defined types](../types/type_classes.md#user-
 
 [Built-in types](../types/type_classes.md#built-in-types) like `i32`, `string`, or `list` (as in `list<fp64>`) do not use any prefix.
 
-A YAML file can also reference types and type variations defined in another YAML file. To do this, it must declare the extension it depends on using a key-value pair in the `dependencies` key, where the value is the extension URN, and the key is a valid identifier that can then be used as an identifier-safe alias for the extension URN. This alias can then be used as a `.`-separated namespace prefix wherever a type class or type variation name is expected. Note that user-defined types still require the `u!` prefix when referenced via namespace aliases (e.g., `ext.u!point`).
+A YAML file can also reference types defined in another YAML file. To do this, it must declare the extension it depends on using a key-value pair in the `dependencies` key, where the value is the extension URN, and the key is a valid identifier that can then be used as an identifier-safe alias for the extension URN. This alias can then be used as a `.`-separated namespace prefix wherever a type name is expected. Note that user-defined types still require the `u!` prefix when referenced via namespace aliases (e.g., `ext.u!point`).
 
 !!! note "Grammar"
     The grammar for referencing [user-defined types](../types/type_classes.md#user-defined-types) is (in [ABNF](https://datatracker.ietf.org/doc/html/rfc5234)):

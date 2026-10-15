@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_arithmetic_decimal
+description: >
+  Arithmetic functions for decimal values.
 scalar_functions:
   -
     name: "add"
@@ -219,7 +221,7 @@ aggregate_functions:
         nullability: DECLARED_OUTPUT
         decomposable: MANY
         intermediate: "STRUCT<DECIMAL<38,S>,i64>"
-        return: "DECIMAL<38,S>"
+        return: "DECIMAL?<38,S>"
   - name: "min"
     description: Min a set of values.
     impls:

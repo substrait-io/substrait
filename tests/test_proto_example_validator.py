@@ -10,18 +10,19 @@ from google.protobuf.message import Message
 import pytest
 
 try:
-    from substrait import algebra_pb2
+    from substrait import algebra_pb2, extended_expression_pb2, plan_pb2
 except ImportError as err:
     raise ImportError(
         "Protobuf bindings not found. Run 'buf generate' to generate them."
     ) from err
 
 
-def validate_example(textproto: str, message_class: type[Message]) -> None:
+def validate_example(textproto: str, message_class: type[Message]) -> Message:
     """Parse and validate a textproto string with strict field checking."""
     message = message_class()
     text_format.Parse(textproto, message, allow_unknown_field=False)
     assert message.ListFields(), "Message has no fields populated"
+    return message
 
 
 def test_validation_rejects_unknown_fields():
@@ -64,3 +65,48 @@ def test_validate_field_references():
         validate_example(
             textproto_file.read_text(), algebra_pb2.Expression.FieldReference
         )
+
+
+def test_validate_plan_rels():
+    """Validate plan relation examples."""
+    examples_dir = Path("site/examples/proto-textformat/plan_rel")
+    example_files = list(examples_dir.glob("*.textproto"))
+    assert example_files, "No plan relation examples found"
+    for textproto_file in example_files:
+        plan_rel = validate_example(textproto_file.read_text(), plan_pb2.PlanRel)
+        assert isinstance(plan_rel, plan_pb2.PlanRel)
+        project = plan_rel.root.input.project
+        assert (
+            project.expressions[0].WhichOneof("rex_type")
+            == "detached_expression_ordinal"
+        )
+        ordinal = project.expressions[0].detached_expression_ordinal
+        assert ordinal < len(plan_rel.detached_expressions)
+        assert plan_rel.detached_expressions[ordinal].literal.i64 == 42
+        assert list(project.input.read.base_schema.names) == ["value"]
+        assert len(project.input.read.base_schema.struct.types) == 1
+        assert list(plan_rel.root.names) == ["value", "answer"]
+
+
+def test_validate_extended_expressions():
+    """Validate detached expressions in an expression-only message."""
+    examples_dir = Path("site/examples/proto-textformat/extended_expression")
+    example_files = list(examples_dir.glob("*.textproto"))
+    assert example_files, "No extended expression examples found"
+    for textproto_file in example_files:
+        extended = validate_example(
+            textproto_file.read_text(), extended_expression_pb2.ExtendedExpression
+        )
+        assert isinstance(extended, extended_expression_pb2.ExtendedExpression)
+        expression = extended.referred_expr[0].expression
+        assert expression.WhichOneof("rex_type") == "detached_expression_ordinal"
+        ordinal = expression.detached_expression_ordinal
+        assert ordinal < len(extended.detached_expressions)
+        nested = extended.detached_expressions[ordinal]
+        assert nested.WhichOneof("rex_type") == "nested"
+        child = nested.nested.struct.fields[0]
+        assert child.WhichOneof("rex_type") == "detached_expression_ordinal"
+        ordinal = child.detached_expression_ordinal
+        assert ordinal < len(extended.detached_expressions)
+        assert extended.detached_expressions[ordinal].literal.i64 == 42
+        assert list(extended.referred_expr[0].output_names) == ["result", "answer"]

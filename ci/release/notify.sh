@@ -35,6 +35,7 @@ DOWNSTREAM_REPOS=(
   "substrait-io/substrait-go"
   "substrait-io/substrait-rs"
   "substrait-io/duckdb-substrait-extension"
+  "substrait-io/substrait-csharp"
 )
 
 ISSUE_TITLE="Update to Substrait v${VERSION}"

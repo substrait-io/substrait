@@ -1,6 +1,8 @@
 %YAML 1.2
 ---
 urn: extension:io.substrait:functions_rounding_decimal
+description: >
+  Rounding functions for decimal values.
 scalar_functions:
   -
     name: "ceil"

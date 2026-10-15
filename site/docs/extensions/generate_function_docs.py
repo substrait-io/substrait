@@ -162,6 +162,9 @@ with tempfile.TemporaryDirectory() as temp_directory:
 
         mdFile.new_paragraph(description)
 
+        if "description" in yaml_file_object:
+            mdFile.new_paragraph(yaml_file_object["description"].strip())
+
         write_markdown(yaml_file_object, function_file_name)
         mdFile.create_md_file()
 
