@@ -39,6 +39,7 @@ reasoning. The cutoff is a relative duration evaluated at solve time, so the
 window slides on its own and needs no maintenance. (For conda packages the
 cutoff is compared against the build timestamp in the channel's repodata, which
 predates the upload, so the effective hold is a little shorter than 14 days.)
+The cutoff needs pixi 0.67.0 or later, which `requires-pixi` enforces.
 
 Keep this window in step with the cooldown configured for automated dependency
 updates. If a bot proposes a version newer than pixi's cutoff, the `pixi lock`
