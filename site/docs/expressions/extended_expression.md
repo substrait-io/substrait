@@ -22,10 +22,20 @@ For a message with multiple expressions, users may produce each Extended Express
 
 ## Detached expressions
 
-Expressions in `referred_expr`, including measure arguments, can use `Expression.detached_expression_ordinal` to reference zero-based entries in `ExtendedExpression.detached_expressions`. The same [encoding and validation rules](../serialization/binary_serialization.md#bounded-expression-nesting) apply as for `PlanRel`. Detachment preserves input schema binding, output names, and expression semantics.
+Expressions in `referred_expr`, including measure arguments, can use `Expression.detached_expression_ordinal` to reference zero-based entries in `ExtendedExpression.detached_expressions`. The same [encoding and validation rules](../serialization/binary_serialization.md#detached-relations-and-expressions) apply as for `PlanRel`. Detachment preserves input schema binding, output names, and expression semantics.
 
 ```protobuf
 --8<-- "examples/proto-textformat/extended_expression/detached_expressions.textproto"
+```
+
+## Detached relations
+
+Relations inside subquery expressions can use `Rel.detached_rel_ordinal` to reference zero-based entries in `ExtendedExpression.detached_rels`. This applies to scalar subqueries, `IN` predicates, `EXISTS`/`UNIQUE` predicates, and `ANY`/`ALL` comparisons. The same [encoding and validation rules](../serialization/binary_serialization.md#detached-relations-and-expressions) apply as for `PlanRel`.
+
+Relations and expressions reached through either detached table use the tables on the same `ExtendedExpression`. In this example, a scalar subquery references a detached filter, whose input is another detached relation and whose condition is a detached expression.
+
+```protobuf
+--8<-- "examples/proto-textformat/extended_expression/detached_rels.textproto"
 ```
 
 ## Function extensions
