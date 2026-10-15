@@ -1,4 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="10 10 80 80">
+  <!--
+    Variant of logo.svg used as the site favicon. It differs in two ways:
+    the viewBox is cropped to the glyph so it fills a browser tab, and the
+    fill switches to white under prefers-color-scheme: dark so it stays
+    visible on dark tabs. logo.svg is left unchanged because the site has
+    no dark palette, so the header logo should not follow the OS setting.
+  -->
   <style>
     path { fill: #000000; }
     @media (prefers-color-scheme: dark) {
