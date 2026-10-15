@@ -51,7 +51,10 @@ platforms = ["linux-64", "osx-64", "osx-arm64", "linux-aarch64"]
 # Ignore conda and PyPI packages published in the last 14 days when solving, so
 # a compromised or broken upload has time to be noticed before it can reach a
 # build. See CONTRIBUTING.md for how to bypass this for an urgent security fix.
+# 0.67.0 is the first release that accepts a relative cutoff and the per-package
+# tables.
 exclude-newer = "14d"
+requires-pixi = ">=0.67.0"
 
 [tool.pixi.dependencies]
 antlr = ">=4.13.2,<5"
