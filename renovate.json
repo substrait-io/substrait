@@ -30,9 +30,28 @@
       "enabled": false
     },
     {
+      "description": "The commitlint CLI, its config and the pre-commit hook enforce the same rules, so they have to move together. The hook bundles its own CLI, so its rev belongs here rather than in the pixi group",
+      "matchPackageNames": ["@commitlint/**", "alessandrojcm/commitlint-pre-commit-hook"],
+      "groupName": "commitlint"
+    },
+    {
       "description": "setup-pixi's pixi-version input is a v-prefixed release tag. Conda versioning cannot determine a major version for it, so Renovate silently drops every update",
       "matchDepNames": ["prefix-dev/pixi"],
       "versioning": "semver"
+    },
+    {
+      "description": "pixi's exclude-newer already applies the release-age cooldown to every package pixi lock picks. Lock file maintenance has no release date for Renovate to check, so its own gate would never pass",
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "minimumReleaseAge": null
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The pre-commit manager only tracks a hook repo's rev, not its additional_dependencies, so pick up the commitlint config pinned there as well",
+      "managerFilePatterns": ["/^\\.pre-commit-config\\.yaml$/"],
+      "matchStrings": ["additional_dependencies: \\['(?<depName>@commitlint/[^@']+)@(?<currentValue>[^']+)'\\]"],
+      "datasourceTemplate": "npm"
     }
   ]
 }
