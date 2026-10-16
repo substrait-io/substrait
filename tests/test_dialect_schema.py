@@ -375,21 +375,6 @@ ENUM_LISTS = [
     EnumList(
         path=(
             "definitions",
-            "lambda_invocation_expression",
-            "properties",
-            "lambda_types",
-            "items",
-            "enum",
-        ),
-        values=oneof_options(
-            algebra_pb2.Expression.LambdaInvocation.DESCRIPTOR,
-            "lambda_type",
-            renames={"lambda": "INLINE", "named_lambda": "NAMED"},
-        ),
-    ),
-    EnumList(
-        path=(
-            "definitions",
             "execution_context_variable",
             "properties",
             "variable_types",
@@ -452,52 +437,45 @@ def schema() -> dict:
         ["LAMBDA_INVOCATION"],
         [{"expression": "LAMBDA_INVOCATION"}],
         ["NAMED_LAMBDA_REFERENCE"],
+        [{"expression": "NAMED_LAMBDA_REFERENCE"}],
+        ["LAMBDA_INVOCATION", "NAMED_LAMBDA_REFERENCE"],
+        [
+            {"expression": "LAMBDA_INVOCATION"},
+            {"expression": "NAMED_LAMBDA_REFERENCE"},
+        ],
+        ["LAMBDA_INVOCATION", {"expression": "NAMED_LAMBDA_REFERENCE"}],
+        [{"expression": "LAMBDA_INVOCATION"}, "NAMED_LAMBDA_REFERENCE"],
+        ["LITERAL"],
     ],
-    ids=["omitted", "empty", "shorthand", "object", "reference-only"],
+    ids=[
+        "omitted",
+        "empty",
+        "invocation-shorthand",
+        "invocation-object",
+        "reference-shorthand",
+        "reference-object",
+        "both-shorthand",
+        "both-object",
+        "reference-object-mixed",
+        "invocation-object-mixed",
+        "neither",
+    ],
 )
-def test_lambda_dialect_legacy_declarations(schema: dict, supported_expressions):
+def test_lambda_dialect_declarations(schema: dict, supported_expressions):
     dialect = {}
     if supported_expressions is not None:
         dialect["supported_expressions"] = supported_expressions
     Draft202012Validator(schema).validate(dialect)
 
 
-def test_lambda_invocation_default_is_inline(schema: dict):
-    declaration = schema["definitions"]["lambda_invocation_expression"]
-    lambda_types = declaration["properties"]["lambda_types"]
-    assert lambda_types["default"] == ["INLINE"]
-    assert "lambda_types" not in declaration["required"]
-    Draft202012Validator(lambda_types).validate(lambda_types["default"])
-
-
 @pytest.mark.parametrize("lambda_types", [["INLINE"], ["NAMED"], ["INLINE", "NAMED"]])
-def test_lambda_invocation_callee_types(schema: dict, lambda_types: list[str]):
+def test_lambda_invocation_rejects_callee_type_restrictions(
+    schema: dict, lambda_types: list[str]
+):
     dialect = {
         "supported_expressions": [
-            {"expression": "LAMBDA_INVOCATION", "lambda_types": lambda_types}
-        ]
-    }
-    Draft202012Validator(schema).validate(dialect)
-
-
-@pytest.mark.parametrize(
-    "lambda_types",
-    [
-        [],
-        ["INLINE", "INLINE"],
-        ["NAMED", "NAMED"],
-        ["UNKNOWN"],
-        ["INLINE", "UNKNOWN"],
-        ["inline"],
-        [1],
-        "INLINE",
-        None,
-    ],
-)
-def test_lambda_invocation_rejects_invalid_callee_types(schema: dict, lambda_types):
-    dialect = {
-        "supported_expressions": [
-            {"expression": "LAMBDA_INVOCATION", "lambda_types": lambda_types}
+            {"expression": "LAMBDA_INVOCATION", "lambda_types": lambda_types},
+            "NAMED_LAMBDA_REFERENCE",
         ]
     }
     with pytest.raises(ValidationError):

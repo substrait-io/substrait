@@ -133,23 +133,22 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 
 ### Dialect Support
 
-Dialects can restrict `LAMBDA_INVOCATION` to inline or named callees with the optional `lambda_types` property:
+Dialect support for invoking named lambdas follows from supporting both `LAMBDA_INVOCATION` and `NAMED_LAMBDA_REFERENCE`. There is no separate callee-type restriction.
 
-| Declaration in `supported_expressions` | Supported callees |
-|---------------------------------------|-------------------|
-| `LAMBDA_INVOCATION` shorthand | Inline only |
-| `expression: LAMBDA_INVOCATION` without `lambda_types` | Inline only |
-| `lambda_types: [INLINE]` on a `LAMBDA_INVOCATION` entry | Inline only |
-| `lambda_types: [NAMED]` on a `LAMBDA_INVOCATION` entry | Named only |
-| `lambda_types: [INLINE, NAMED]` on a `LAMBDA_INVOCATION` entry | Both |
+For a non-empty `supported_expressions` list:
 
-`INLINE` corresponds to `LambdaInvocation.lambda`, and `NAMED` corresponds to `LambdaInvocation.named_lambda`. An explicit `lambda_types` list must be non-empty and contain no duplicates.
+| Declared capabilities | Supported uses |
+|-----------------------|----------------|
+| `LAMBDA_INVOCATION` only | Inline calls through `LambdaInvocation.lambda` |
+| `NAMED_LAMBDA_REFERENCE` only | Named function-valued expressions, but no direct lambda invocation |
+| Both | Inline and named calls, plus named function-valued expressions |
+| Neither | Neither lambda invocation nor named function-valued expressions |
 
-Omitting `lambda_types` from an explicit invocation declaration means inline-only support, preserving the meaning of declarations written before named lambdas were introduced. Dialect consumers must apply this rule; the JSON Schema `default` annotation does not insert the property during validation.
+The rule applies equally to shorthand entries and object entries with an `expression` property. Declaring `LAMBDA_INVOCATION` without `NAMED_LAMBDA_REFERENCE` remains inline-only, preserving the meaning of invocation declarations written before named lambdas were introduced.
 
-This default does not change the rule for an absent or empty `supported_expressions` list: all expressions are supported in that case, including both inline and named lambda invocations.
+`NAMED_LAMBDA_REFERENCE` alone can be used to pass a named lambda to a supported higher-order function, such as `transform`; it does not imply support for the `LAMBDA_INVOCATION` expression. When both capabilities are declared, the dialect must also support direct named calls through `LambdaInvocation.named_lambda`. This applies even though that field embeds a reference message rather than a function-valued expression.
 
-Support for named callees is independent of `NAMED_LAMBDA_REFERENCE`, which declares support for named lambdas as function-valued expressions. Declaring either capability does not imply the other.
+An absent or empty `supported_expressions` list still means all expressions are supported, including both inline and named lambda invocations.
 
 ## Named Lambdas
 

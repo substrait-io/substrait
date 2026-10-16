@@ -149,8 +149,10 @@ properties:
     description: >
       Expressions that are supported by this dialect.  If not present or empty,
       all expressions are supported, including both inline and named lambda
-      invocations. An explicit LAMBDA_INVOCATION entry supports only inline
-      callees unless its lambda_types includes NAMED.
+      invocations. In a non-empty list, LAMBDA_INVOCATION supports inline
+      callees; named callees require both LAMBDA_INVOCATION and
+      NAMED_LAMBDA_REFERENCE. This rule applies to both shorthand and object
+      entries.
     items:
       oneOf:
         - enum:
@@ -1301,34 +1303,25 @@ definitions:
   lambda_invocation_expression:
     type: object
     additionalProperties: false
+    description: >
+      Support for invoking inline lambdas. When NAMED_LAMBDA_REFERENCE is also
+      supported, this includes invoking named lambdas through
+      LambdaInvocation.named_lambda.
     properties:
       expression:
         const: LAMBDA_INVOCATION
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.
-      lambda_types:
-        type: array
-        minItems: 1
-        uniqueItems: true
-        default: [INLINE]
-        description: >
-          The supported callee types: INLINE for LambdaInvocation.lambda and
-          NAMED for LambdaInvocation.named_lambda. If omitted, only INLINE is
-          supported, preserving the meaning of existing declarations. The
-          LAMBDA_INVOCATION shorthand also supports only INLINE. NAMED does not
-          require support for NAMED_LAMBDA_REFERENCE expressions.
-        items:
-          enum:
-            - INLINE
-            - NAMED
     required: [expression]
   named_lambda_reference_expression:
     type: object
     additionalProperties: false
     description: >
       Support for named lambda references as function-valued expressions.
-      This does not imply support for named lambda invocations.
+      Combined with LAMBDA_INVOCATION, this also declares support for invoking
+      named lambdas. On its own, this does not imply support for the
+      LAMBDA_INVOCATION expression.
     properties:
       expression:
         const: NAMED_LAMBDA_REFERENCE
