@@ -1,39 +1,11 @@
-# Represents ((x: i32) -> x * 2)(5), producing 10.
-# Function reference 1 denotes the scalar multiply extension.
-# The inline callee is dual-written for older consumers.
+# Represents the invocation of the lambda `(x: i32) -> x * 2)` on parameter `5`
+# i.e. `(x: i32) -> x * 2)(5)`
 #
 # message Expression.LambdaInvocation
-
-function {
-  lambda {
-    parameters {
-      types { i32 { nullability: NULLABILITY_REQUIRED } }
-      nullability: NULLABILITY_REQUIRED
-    }
-    body {
-      scalar_function {
-        function_reference: 1
-        arguments {
-          value {
-            selection {
-              lambda_parameter_reference { steps_out: 0 }
-              direct_reference { struct_field { field: 0 } }
-            }
-          }
-        }
-        arguments {
-          value { literal { i32: 2 } }
-        }
-        output_type { i32 { nullability: NULLABILITY_REQUIRED } }
-      }
-    }
-  }
-}
 
 lambda: {
   # Lambda parameter: x (type i32)
   parameters: {
-    nullability: NULLABILITY_REQUIRED
     types: [
       {
         i32: {

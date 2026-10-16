@@ -53,10 +53,8 @@ relations {
         }
         expressions {
           lambda_invocation {
-            function {
-              named_lambda_reference {
-                lambda_reference: 1
-              }
+            named_lambda {
+              lambda_reference: 1
             }
             arguments {
               fields {
@@ -69,10 +67,8 @@ relations {
         }
         expressions {
           lambda_invocation {
-            function {
-              named_lambda_reference {
-                lambda_reference: 1
-              }
+            named_lambda {
+              lambda_reference: 1
             }
             arguments {
               fields {

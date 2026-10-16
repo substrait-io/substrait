@@ -10,7 +10,7 @@ from google.protobuf.message import Message
 import pytest
 
 try:
-    from substrait import algebra_pb2, extended_expression_pb2, plan_pb2, type_pb2
+    from substrait import algebra_pb2, extended_expression_pb2, plan_pb2
 except ImportError as err:
     raise ImportError(
         "Protobuf bindings not found. Run 'buf generate' to generate them."
@@ -66,7 +66,7 @@ def test_validate_named_lambdas():
 
 
 def test_named_lambda_invocations_use_reference_messages():
-    """Named callees use function-valued references without a legacy callee."""
+    """Named lambda invocations use the shared reference message."""
     example = Path(
         "site/examples/proto-textformat/named_lambda/reused_identity.textproto"
     )
@@ -75,10 +75,9 @@ def test_named_lambda_invocations_use_reference_messages():
     assert len(expressions) == 2
     for expression in expressions:
         invocation = expression.lambda_invocation
-        assert invocation.function.WhichOneof("rex_type") == "named_lambda_reference"
-        assert not invocation.HasField("lambda")
+        assert invocation.WhichOneof("lambda_type") == "named_lambda"
         assert (
-            invocation.function.named_lambda_reference.lambda_reference
+            invocation.named_lambda.lambda_reference
             == plan.named_lambdas[0].lambda_anchor
         )
 
@@ -135,10 +134,8 @@ def test_named_lambda_reference_round_trip(anchor):
 def test_named_lambda_invocation_round_trip(anchor):
     """Preserve invocation references, including anchor zero, on the wire."""
     invocation = algebra_pb2.Expression.LambdaInvocation(
-        function=algebra_pb2.Expression(
-            named_lambda_reference=algebra_pb2.Expression.NamedLambdaReference(
-                lambda_reference=anchor
-            )
+        named_lambda=algebra_pb2.Expression.NamedLambdaReference(
+            lambda_reference=anchor
         )
     )
     restored_invocations = [
@@ -152,144 +149,8 @@ def test_named_lambda_invocation_round_trip(anchor):
     ]
     for restored in restored_invocations:
         assert restored == invocation
-        assert not restored.HasField("lambda")
-        assert restored.function.WhichOneof("rex_type") == "named_lambda_reference"
-        assert restored.function.named_lambda_reference.lambda_reference == anchor
-
-
-def test_unified_invocation_descriptor():
-    descriptor = algebra_pb2.Expression.LambdaInvocation.DESCRIPTOR
-    function = descriptor.fields_by_name["function"]
-    assert function.number == 3
-    assert function.message_type == algebra_pb2.Expression.DESCRIPTOR
-    assert function.containing_oneof is None
-    legacy = descriptor.fields_by_name["lambda"]
-    assert legacy.number == 1
-    assert legacy.GetOptions().deprecated
-    assert legacy.containing_oneof is None
-    assert not descriptor.oneofs
-    assert set(descriptor.fields_by_name) == {"lambda", "arguments", "function"}
-    assert descriptor.fields_by_name["arguments"].number == 2
-
-
-@pytest.mark.parametrize("dual_write", [False, True])
-def test_inline_unified_invocation_round_trip(dual_write: bool):
-    invocation = algebra_pb2.Expression.LambdaInvocation()
-    inline = getattr(invocation.function, "lambda")
-    inline.parameters.nullability = type_pb2.Type.NULLABILITY_REQUIRED
-    inline.body.literal.i32 = 42
-    if dual_write:
-        getattr(invocation, "lambda").CopyFrom(inline)
-    invocation.arguments.SetInParent()
-
-    restored_invocations = [
-        algebra_pb2.Expression.LambdaInvocation.FromString(
-            invocation.SerializeToString()
-        ),
-        json_format.Parse(
-            json_format.MessageToJson(invocation),
-            algebra_pb2.Expression.LambdaInvocation(),
-        ),
-    ]
-    for restored in restored_invocations:
-        assert restored == invocation
-        assert restored.HasField("function")
-        assert restored.HasField("arguments")
-        assert restored.function.WhichOneof("rex_type") == "lambda"
-        assert restored.HasField("lambda") == dual_write
-
-
-def test_inline_invocation_dual_write():
-    example = Path(
-        "site/examples/proto-textformat/lambda_invocation/inline_invocation.textproto"
-    )
-    invocation = text_format.Parse(
-        example.read_text(), algebra_pb2.Expression.LambdaInvocation()
-    )
-    assert invocation.function.WhichOneof("rex_type") == "lambda"
-    assert getattr(invocation.function, "lambda") == getattr(invocation, "lambda")
-
-    legacy = algebra_pb2.Expression.LambdaInvocation()
-    legacy.CopyFrom(invocation)
-    legacy.ClearField("function")
-    restored = algebra_pb2.Expression.LambdaInvocation.FromString(
-        legacy.SerializeToString()
-    )
-    assert restored == legacy
-    assert restored.HasField("lambda")
-    assert not restored.HasField("function")
-
-
-def test_apply_twice_parameter_invocations():
-    example = Path("site/examples/proto-textformat/lambda/apply_twice.textproto")
-    definition = text_format.Parse(
-        example.read_text(), algebra_pb2.Expression.Lambda()
-    )
-    assert definition.parameters.nullability == type_pb2.Type.NULLABILITY_REQUIRED
-    assert len(definition.parameters.types) == 2
-    function_type, argument_type = definition.parameters.types
-    assert function_type.WhichOneof("kind") == "func"
-    assert function_type.func.nullability == type_pb2.Type.NULLABILITY_REQUIRED
-    assert argument_type.WhichOneof("kind") == "i32"
-    assert argument_type.i32.nullability == type_pb2.Type.NULLABILITY_REQUIRED
-    assert list(function_type.func.parameter_types) == [argument_type]
-    assert function_type.func.return_type == argument_type
-
-    outer = definition.body.lambda_invocation
-    inner = outer.arguments.fields[0].lambda_invocation
-    for invocation in [outer, inner]:
-        assert not invocation.HasField("lambda")
-        assert invocation.function.WhichOneof("rex_type") == "selection"
-        assert len(invocation.arguments.fields) == 1
-        reference = invocation.function.selection
-        assert reference.WhichOneof("root_type") == "lambda_parameter_reference"
-        assert reference.lambda_parameter_reference.steps_out == 0
-        assert reference.direct_reference.struct_field.field == 0
-    argument = inner.arguments.fields[0]
-    assert argument.WhichOneof("rex_type") == "selection"
-    assert argument.selection.WhichOneof("root_type") == "lambda_parameter_reference"
-    assert argument.selection.lambda_parameter_reference.steps_out == 0
-    assert argument.selection.direct_reference.struct_field.field == 1
-
-    for restored in [
-        algebra_pb2.Expression.Lambda.FromString(definition.SerializeToString()),
-        json_format.Parse(
-            json_format.MessageToJson(definition), algebra_pb2.Expression.Lambda()
-        ),
-    ]:
-        assert restored == definition
-
-
-def test_returned_function_invocation():
-    example = Path(
-        "site/examples/proto-textformat/lambda_invocation/returned_function.textproto"
-    )
-    invocation = text_format.Parse(
-        example.read_text(), algebra_pb2.Expression.LambdaInvocation()
-    )
-    assert not invocation.HasField("lambda")
-    assert invocation.HasField("arguments")
-    assert not invocation.arguments.fields
-    assert invocation.function.WhichOneof("rex_type") == "lambda_invocation"
-    factory_call = invocation.function.lambda_invocation
-    assert factory_call.function.WhichOneof("rex_type") == "lambda"
-    factory = getattr(factory_call.function, "lambda")
-    assert factory == getattr(factory_call, "lambda")
-    assert len(factory.parameters.types) == 1
-    assert len(factory_call.arguments.fields) == 1
-    assert factory_call.arguments.fields[0].literal.i32 == 42
-    assert factory.body.WhichOneof("rex_type") == "lambda"
-    returned = getattr(factory.body, "lambda")
-    assert returned.parameters.nullability == type_pb2.Type.NULLABILITY_REQUIRED
-    assert not returned.parameters.types
-    capture = returned.body.selection
-    assert capture.WhichOneof("root_type") == "lambda_parameter_reference"
-    assert capture.lambda_parameter_reference.steps_out == 1
-    assert capture.direct_reference.struct_field.field == 0
-    assert json_format.Parse(
-        json_format.MessageToJson(invocation),
-        algebra_pb2.Expression.LambdaInvocation(),
-    ) == invocation
+        assert restored.WhichOneof("lambda_type") == "named_lambda"
+        assert restored.named_lambda.lambda_reference == anchor
 
 
 def test_validate_field_references():

@@ -18,7 +18,7 @@ supported_expressions:
       - LIST
   - LAMBDA
   - expression: LAMBDA_INVOCATION
-    lambda_types: [INLINE, FUNCTION]
+    lambda_types: [INLINE, NAMED]
   - expression: NAMED_LAMBDA_REFERENCE
   - expression: EXECUTION_CONTEXT_VARIABLE
     variable_types:

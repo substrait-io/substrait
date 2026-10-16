@@ -148,9 +148,9 @@ properties:
     uniqueItems: true
     description: >
       Expressions that are supported by this dialect.  If not present or empty,
-      all expressions are supported, including all lambda invocation callee
-      representations. An explicit LAMBDA_INVOCATION entry supports only the
-      deprecated inline representation unless its lambda_types includes FUNCTION.
+      all expressions are supported, including both inline and named lambda
+      invocations. An explicit LAMBDA_INVOCATION entry supports only inline
+      callees unless its lambda_types includes NAMED.
     items:
       oneOf:
         - enum:
@@ -1313,28 +1313,22 @@ definitions:
         uniqueItems: true
         default: [INLINE]
         description: >
-          The supported callee representations: INLINE for the deprecated
-          LambdaInvocation.lambda and FUNCTION for LambdaInvocation.function.
-          If omitted, only INLINE is supported,
-          preserving the meaning of existing declarations. The LAMBDA_INVOCATION
-          shorthand also supports only INLINE. FUNCTION requires support for the
-          expressions used to compute the callee; for example, a named reference
-          requires NAMED_LAMBDA_REFERENCE. When function is present, FUNCTION
-          is required and the deprecated callee is ignored, including for
-          capability checks.
+          The supported callee types: INLINE for LambdaInvocation.lambda and
+          NAMED for LambdaInvocation.named_lambda. If omitted, only INLINE is
+          supported, preserving the meaning of existing declarations. The
+          LAMBDA_INVOCATION shorthand also supports only INLINE. NAMED does not
+          require support for NAMED_LAMBDA_REFERENCE expressions.
         items:
           enum:
             - INLINE
-            - FUNCTION
+            - NAMED
     required: [expression]
   named_lambda_reference_expression:
     type: object
     additionalProperties: false
     description: >
       Support for named lambda references as function-valued expressions.
-      This does not imply support for lambda invocations. Invoking a reference
-      through LambdaInvocation.function additionally requires the FUNCTION
-      callee representation.
+      This does not imply support for named lambda invocations.
     properties:
       expression:
         const: NAMED_LAMBDA_REFERENCE

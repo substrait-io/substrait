@@ -376,15 +376,10 @@ ENUM_LISTS = [
             "items",
             "enum",
         ),
-        values=by_dialect_name(
-            [
-                member
-                for member in algebra_pb2.Expression.LambdaInvocation.DESCRIPTOR.fields
-                if member.name != "arguments"
-            ],
-            lambda member: {"lambda": "INLINE"}.get(
-                member.name, member.name.upper()
-            ),
+        values=oneof_options(
+            algebra_pb2.Expression.LambdaInvocation.DESCRIPTOR,
+            "lambda_type",
+            renames={"lambda": "INLINE", "named_lambda": "NAMED"},
         ),
     ),
     EnumList(
@@ -470,14 +465,7 @@ def test_lambda_invocation_default_is_inline(schema: dict):
     Draft202012Validator(lambda_types).validate(lambda_types["default"])
 
 
-@pytest.mark.parametrize(
-    "lambda_types",
-    [
-        ["INLINE"],
-        ["FUNCTION"],
-        ["INLINE", "FUNCTION"],
-    ],
-)
+@pytest.mark.parametrize("lambda_types", [["INLINE"], ["NAMED"], ["INLINE", "NAMED"]])
 def test_lambda_invocation_callee_types(schema: dict, lambda_types: list[str]):
     dialect = {
         "supported_expressions": [
@@ -492,13 +480,10 @@ def test_lambda_invocation_callee_types(schema: dict, lambda_types: list[str]):
     [
         [],
         ["INLINE", "INLINE"],
-        ["FUNCTION", "FUNCTION"],
-        ["NAMED"],
-        ["INLINE", "NAMED"],
+        ["NAMED", "NAMED"],
         ["UNKNOWN"],
         ["INLINE", "UNKNOWN"],
         ["inline"],
-        ["function"],
         [1],
         "INLINE",
         None,
