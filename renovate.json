@@ -35,11 +35,6 @@
       "groupName": "commitlint"
     },
     {
-      "description": "setup-pixi's pixi-version input is a v-prefixed release tag. Conda versioning cannot determine a major version for it, so Renovate silently drops every update",
-      "matchDepNames": ["prefix-dev/pixi"],
-      "versioning": "semver"
-    },
-    {
       "description": "pixi's exclude-newer already applies the release-age cooldown to every package pixi lock picks. Lock file maintenance has no release date for Renovate to check, so its own gate would never pass",
       "matchUpdateTypes": ["lockFileMaintenance"],
       "minimumReleaseAge": null
