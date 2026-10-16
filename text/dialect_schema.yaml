@@ -151,8 +151,7 @@ properties:
       all expressions are supported, including both inline and named lambda
       invocations. In a non-empty list, LAMBDA_INVOCATION supports inline
       callees; named callees require both LAMBDA_INVOCATION and
-      NAMED_LAMBDA_REFERENCE. This rule applies to both shorthand and object
-      entries.
+      NAMED_LAMBDA_REFERENCE.
     items:
       oneOf:
         - enum:

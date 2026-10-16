@@ -131,24 +131,6 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 --8<-- "examples/proto-textformat/lambda_invocation/inline_invocation.textproto"
 ```
 
-### Dialect Support
-
-Dialect support for invoking named lambdas follows from supporting both `LAMBDA_INVOCATION` and `NAMED_LAMBDA_REFERENCE`. There is no separate callee-type restriction.
-
-For a non-empty `supported_expressions` list:
-
-| Declared capabilities | Supported uses |
-|-----------------------|----------------|
-| `LAMBDA_INVOCATION` only | Inline calls through `LambdaInvocation.lambda` |
-| `NAMED_LAMBDA_REFERENCE` only | Named function-valued expressions, but no direct lambda invocation |
-| Both | Inline and named calls, plus named function-valued expressions |
-| Neither | Neither lambda invocation nor named function-valued expressions |
-
-The rule applies equally to shorthand entries and object entries with an `expression` property. Declaring `LAMBDA_INVOCATION` without `NAMED_LAMBDA_REFERENCE` remains inline-only, preserving the meaning of invocation declarations written before named lambdas were introduced.
-
-`NAMED_LAMBDA_REFERENCE` alone can be used to pass a named lambda to a supported higher-order function, such as `transform`; it does not imply support for the `LAMBDA_INVOCATION` expression. When both capabilities are declared, the dialect must also support direct named calls through `LambdaInvocation.named_lambda`. This applies even though that field embeds a reference message rather than a function-valued expression.
-
-An absent or empty `supported_expressions` list still means all expressions are supported, including both inline and named lambda invocations.
 
 ## Named Lambdas
 
@@ -169,6 +151,8 @@ Within a plan, every named-lambda anchor must be unique and every named-lambda i
 ### Named Lambda References
 
 `Expression.NamedLambdaReference` denotes a function value without invoking the lambda. Its `lambda_reference` identifies a `lambda_anchor` in `Plan.named_lambdas`, using the same namespace as `LambdaInvocation.named_lambda`. Anchor 0 is valid.
+
+Dialects can enable named lambda references by including `NAMED_LAMBDA_REFERENCE` in `supported_expressions`. Direct calls to named lambdas require both `NAMED_LAMBDA_REFERENCE` and `LAMBDA_INVOCATION`; `LAMBDA_INVOCATION` alone supports only inline calls.
 
 A named lambda reference has a non-nullable function type, with parameter and return types derived from the referenced lambda as described in [Lambda Type Derivation](#type-derivation).
 
