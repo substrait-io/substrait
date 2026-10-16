@@ -69,10 +69,10 @@ A frame need not contain the current row. If the lower bound is after the upper 
 
 ### ROWS
 
-`BOUNDS_TYPE_ROWS` counts **physical rows** in the declared ordering:
+`BOUNDS_TYPE_ROWS` counts **rows** in the declared ordering:
 
 * `CurrentRow` means only the current row, even when it has peers.
-* `Preceding` and `Following` offsets must have type `int64` and evaluate to a non-negative number of rows.
+* `Preceding` and `Following` offset expressions must have type `int64` and evaluate to a non-negative value `n`. This specifies an inclusive frame boundary `n` rows before the current row for `Preceding`, or after it for `Following`.
 * Without ordering, no row order is guaranteed. With ordering, the relative order of peers is still not guaranteed.
 
 In the example above, one preceding row means B and one following row means D when C is current and the displayed order is used. These offsets count individual rows, not groups of rows sharing a score.
@@ -108,9 +108,6 @@ For example, the standard extensions allow:
 | `i64` | `i64` | `i64` |
 | `precision_timestamp<P>` | `interval_day<P>` | `precision_timestamp<P>` |
 
-!!! note "Open compatibility questions"
-    This restates the existing compatibility rule. The earlier generic `decimal`/`decimal` example is omitted because decimal arithmetic can change the result type. Widened boundary types, arithmetic requiring additional arguments, and selection among extension declarations are under discussion in [#1227](https://github.com/substrait-io/substrait/issues/1227); changes to that rule are deferred to that issue.
-
 ## Offset Expressions
 
 The following rules apply to `offset_expr` in both `Preceding` and `Following`, in either bound mode:
@@ -119,9 +116,9 @@ The following rules apply to `offset_expr` in both `Preceding` and `Following`, 
 * A null or negative result is invalid. Use the opposite bound direction, not a negative offset, to move the other way.
 * A statically-known zero offset **must** be represented as `CurrentRow`. If a non-literal expression evaluates to zero for a row, the bound is equivalent to `CurrentRow` for that row.
 
-The strictly positive integer `offset` field is deprecated in favor of `offset_expr`. Producers must set at least one. Because `offset` has no field presence, an `offset` of 0 counts as unset, and consumers must reject a `Preceding` or `Following` bound with no `offset_expr` and an `offset` of 0.
+The strictly positive integer `offset` field is deprecated in favor of `offset_expr` and will be removed in a future release. Producers must set at least one. Because `offset` has no field presence, an `offset` of 0 counts as unset, and consumers must reject a `Preceding` or `Following` bound with no `offset_expr` and an `offset` of 0.
 
-Migration follows [Replacing a Protobuf Field](../spec/breaking_change_policy.md#replacing-a-protobuf-field). For that policy, an exact legacy representation of `offset_expr` requires one fixed, strictly positive `int64` offset that is semantically equivalent for every input row; literal syntax is not required.
+When `offset_expr` is present, consumers must use it and ignore `offset`. Producers must write `offset_expr` and must also write `offset` whenever an exact legacy representation exists; otherwise, they must write only `offset_expr`. An exact legacy representation requires one fixed, strictly positive `int64` offset that is semantically equivalent for every input row; literal syntax is not required.
 
 ## Function Signatures
 
