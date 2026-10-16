@@ -2,11 +2,17 @@
 ---
 urn: extension:io.substrait:functions_arithmetic_decimal
 description: >
-  Arithmetic functions for decimal values.
+  Arithmetic functions for decimal values. SQL:1999 (ISO/IEC 9075-2:1999, section 6.26) leaves the result precision of
+  addition, subtraction and multiplication implementation-defined. It uses the larger operand scale for addition and
+  subtraction, and the sum of operand scales for multiplication. The return expressions below specify Substrait's
+  rules for these operations, including scale reduction when the initial precision exceeds 38.
 scalar_functions:
   -
     name: "add"
-    description: "Add two decimal values."
+    description: >
+      Add two decimal values. Where an exact result would need more than 38 digits of precision, the result takes
+      precision 38 and the surplus comes out of the scale, never taking it below six fractional digits; a scale of six
+      or less is left as it is.
     impls:
       - args:
           - name: x
@@ -27,6 +33,10 @@ scalar_functions:
           DECIMAL<prec, scale>
   -
     name: "subtract"
+    description: >
+      Subtract one decimal value from another. Where an exact result would need more than 38 digits of precision, the
+      result takes precision 38 and the surplus comes out of the scale, never taking it below six fractional digits; a
+      scale of six or less is left as it is.
     impls:
       - args:
           - name: x
@@ -47,6 +57,10 @@ scalar_functions:
           DECIMAL<prec, scale>
   -
     name: "multiply"
+    description: >
+      Multiply two decimal values. Where an exact result would need more than 38 digits of precision, the result takes
+      precision 38 and the surplus comes out of the scale, never taking it below six fractional digits; a scale of six
+      or less is left as it is.
     impls:
       - args:
           - name: x
