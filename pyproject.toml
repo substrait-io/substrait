@@ -104,7 +104,7 @@ dev = { features = ["dev"] }
 dev = [
   "antlr4-python3-runtime>=4.13.2,<5",
   "editorconfig-checker>=3.11.1,<4",
-  "ruff>=0.16.9,<1",
+  "ruff>=0.16.10,<1",
   "protobuf==7.36.2",
   "pytest>=9.1.1,<10",
   "pyyaml>=6.0.3,<7",
