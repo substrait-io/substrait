@@ -13,9 +13,9 @@ repos:
   hooks:
   - id: commitlint
     stages: [commit-msg]
-    additional_dependencies: ['@commitlint/config-conventional']
+    additional_dependencies: ['@commitlint/config-conventional@21.2.3']
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.16.8
+  rev: v0.16.10
   hooks:
   # Run the linter
   - id: ruff
@@ -26,6 +26,6 @@ repos:
   hooks:
   - id: check-substrait-extensions_coverage
     name: Check Substrait extensions and test coverage
-    entry: pytest tests/coverage/test_extensions.py::test_substrait_extension_coverage
-    language: python
+    entry: pixi run test-extension-coverage
+    language: system
     pass_filenames: false

@@ -1,8 +1,14 @@
 # SPDX-License-Identifier: Apache-2.0
-import os
+from pathlib import Path
 
+import yaml
 from antlr4 import InputStream
 from tests.parser import parse_stream
+
+TESTS_DIR = Path(__file__).parent
+REPO_ROOT = TESTS_DIR.parent
+EXTENSIONS_DIR = REPO_ROOT / "extensions"
+SITE_EXAMPLES_DIR = REPO_ROOT / "site" / "examples"
 
 
 def parse_string(input_string):
@@ -31,5 +37,29 @@ def make_window_test_header(version, include):
 
 
 def get_test_path(relative_path):
-    tests_dir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(tests_dir, relative_path)
+    return str(TESTS_DIR / relative_path)
+
+
+FUNCTION_SECTIONS = ("scalar_functions", "aggregate_functions", "window_functions")
+
+
+def find_extension_files(*roots):
+    """Paths of the extension YAML files under each root, sorted per root."""
+    files = []
+    for root in roots:
+        files.extend(sorted(Path(root).rglob("*.yaml")))
+    return files
+
+
+def load_extension(path):
+    """Parse one extension YAML file into a dict."""
+    with open(path) as fh:
+        return yaml.load(fh, Loader=yaml.FullLoader)
+
+
+def iter_function_impls(extension):
+    """Yield ``(function, impl)`` for every function impl in an extension document."""
+    for section in FUNCTION_SECTIONS:
+        for function in extension.get(section) or []:
+            for impl in function.get("impls") or []:
+                yield function, impl

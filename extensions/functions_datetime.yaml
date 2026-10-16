@@ -311,15 +311,6 @@ scalar_functions:
             value: precision_timestamp_tz<P>
           - name: y
             value: interval_year
-        deprecated:
-          since: "0.100.0"
-          reason: "Use the three-argument overload with an explicit timezone."
-        return: precision_timestamp_tz<P>
-      - args:
-          - name: x
-            value: precision_timestamp_tz<P>
-          - name: y
-            value: interval_year
           - name: timezone
             description: Timezone string from IANA tzdb.
             value: string
@@ -749,8 +740,6 @@ scalar_functions:
             options: [ YEAR, MONTH, MONDAY_WEEK, SUNDAY_WEEK, ISO_WEEK, US_WEEK, DAY ]
           - name: multiple
             value: i64
-          - name: origin
-            value: date
         return: date
       - args:
           - name: x
@@ -763,8 +752,6 @@ scalar_functions:
             options: [ DAY, HOUR, MINUTE, SECOND, MILLISECOND ]
           - name: multiple
             value: i64
-          - name: origin
-            value: precision_time<P>
         return: precision_time<P>
 
 aggregate_functions:
