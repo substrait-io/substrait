@@ -1,0 +1,46 @@
+# The scalar subquery returns 42 after resolving both detached relations
+# and the filter's detached condition within this ExtendedExpression.
+
+version {
+  minor_number: 105
+}
+base_schema {
+  struct { nullability: NULLABILITY_REQUIRED }
+}
+referred_expr {
+  expression {
+    subquery {
+      scalar {
+        input { detached_rel_ordinal: 0 }
+      }
+    }
+  }
+  output_names: "answer"
+}
+detached_rels {
+  filter {
+    common { direct {} }
+    input { detached_rel_ordinal: 1 }
+    condition { detached_expression_ordinal: 0 }
+  }
+}
+detached_rels {
+  read {
+    common { direct {} }
+    base_schema {
+      names: "value"
+      struct {
+        types { i64 { nullability: NULLABILITY_REQUIRED } }
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+    virtual_table {
+      expressions {
+        fields { literal { i64: 42 } }
+      }
+    }
+  }
+}
+detached_expressions {
+  literal { boolean: true }
+}
