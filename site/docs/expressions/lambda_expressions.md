@@ -4,7 +4,7 @@ Lambda expressions represent inline, anonymous functions within query plans, ena
 
 ## Overview
 
-Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions or [invoked directly](#lambda-invocation).
+Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions or [invoked directly](#lambda-invocation). A [named lambda reference](#named-lambda-references) can also be passed as a function-valued argument without repeating its definition.
 
 !!! note "Documentation Syntax"
     This documentation uses the syntax `(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. There is no formal syntax specified in the Substrait spec for compactly representing lambdas.
@@ -64,7 +64,7 @@ Because lambda parameters are accessed using [`FieldReference`](field_references
 
 In YAML extension definitions, function types are specified using the `func` keyword with generic type parameters:
 
-This notation applies to extension YAML signatures; in plans, lambdas are always represented as `Expression.Lambda` with `parameters` (a struct type) and `body`.
+This notation applies to extension YAML signatures. In plans, inline lambdas are represented as `Expression.Lambda` with `parameters` (a struct type) and `body`. A function value can also be represented by an `Expression.NamedLambdaReference`, whose type is derived from the referenced definition.
 
 **Single parameter** (represents a lambda with 1 field in the `parameters` struct):
 ```yaml
@@ -106,14 +106,15 @@ Lambda bodies can reference data from outside their parameter list through [`Fie
 
 ## Lambda Invocation
 
-Lambda expressions can be invoked using the `LambdaInvocation` expression type, allowing a lambda to be defined and called in a single expression.
+Lambda expressions can be invoked using the `LambdaInvocation` expression type. An invocation can call either an inline lambda or a named lambda defined at the plan level.
 
 A lambda invocation consists of:
 
-| Component  | Description                                                                 | Protobuf Field | Required |
-|------------|-----------------------------------------------------------------------------|----------------|----------|
-| Lambda     | The inline lambda expression to invoke                                      | `lambda`       | Yes      |
-| Arguments  | A `Nested.Struct` containing expressions for each lambda parameter. Each field corresponds to a lambda parameter and must evaluate to the matching parameter type. | `arguments`    | Yes      |
+| Component    | Description                                                                 | Protobuf Field            | Required |
+|--------------|-----------------------------------------------------------------------------|---------------------------|----------|
+| Lambda       | The inline lambda expression to invoke                                      | `lambda`       | One of `lambda` or `named_lambda` |
+| Named lambda | A reference to a lambda in `Plan.named_lambdas`                             | `named_lambda` | One of `lambda` or `named_lambda` |
+| Arguments    | A `Nested.Struct` containing expressions for each lambda parameter. Each field corresponds to a lambda parameter and must evaluate to the matching parameter type. | `arguments` | Yes |
 
 The `arguments` field must be a `Nested.Struct` with exactly as many fields as the lambda has parameters. The type of each expression field must match the corresponding parameter type. The return type is derived from the type of the lambda's body expression.
 
@@ -128,6 +129,44 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 
 ```protobuf
 --8<-- "examples/proto-textformat/lambda_invocation/inline_invocation.textproto"
+```
+
+
+## Named Lambdas
+
+A named lambda is defined once in `Plan.named_lambdas`, where each entry is represented by a `NamedLambda`. Once defined, it can be invoked from multiple `LambdaInvocation` expressions and passed as a function value using `NamedLambdaReference`. Named lambdas use their own anchor namespace, separate from extension function anchors.
+
+Each definition consists of a `lambda_anchor`, an `Expression.Lambda`, and an optional human-readable `name`. The name is only for diagnostics and plan inspection: it has no semantic meaning and cannot be used as a reference. An invocation supplies a `named_lambda` reference and a `Nested.Struct` of arguments. The argument count and types must exactly match the lambda parameters, and the invocation's return type is the type of the lambda body.
+
+Named lambdas are closed over their parameters. Their bodies cannot reference relational input, outer records, or parameters from a caller's enclosing lambda. They may use dynamic parameters, execution context variables, and other named lambdas.
+
+Named-lambda references may reference definitions that appear later in `Plan.named_lambdas`, but the definition dependency graph must be acyclic. A definition depends on another whenever its body invokes that named lambda or reference it as a function value, including inside nested expressions and arguments to higher-order functions. Self-references and indirect cycles are invalid, even if the reference is only passed as an argument or occurs in a branch that is not evaluated.
+
+Within a plan, every named-lambda anchor must be unique and every named-lambda invocation or reference must target an existing definition. A named lambda may be referenced or invoked any number of times.
+
+```protobuf
+--8<-- "examples/proto-textformat/named_lambda/reused_identity.textproto"
+```
+
+### Named Lambda References
+
+`Expression.NamedLambdaReference` denotes a function value without invoking the lambda. Its `lambda_reference` identifies a `lambda_anchor` in `Plan.named_lambdas`, using the same namespace as `LambdaInvocation.named_lambda`. Anchor 0 is valid.
+
+Dialects can enable named lambda references by including `NAMED_LAMBDA_REFERENCE` in `supported_expressions`. Direct calls to named lambdas require both `NAMED_LAMBDA_REFERENCE` and `LAMBDA_INVOCATION`; `LAMBDA_INVOCATION` alone supports only inline calls.
+
+A named lambda reference has a non-nullable function type, with parameter and return types derived from the referenced lambda as described in [Lambda Type Derivation](#type-derivation).
+
+Unlike a `LambdaInvocation`, which produces the result of a call, a `NamedLambdaReference` supplies the function itself. It can be placed in `FunctionArgument.value` wherever a compatible function type is expected, such as the transformer argument of `transform` or the predicate argument of `filter`. The higher-order function supplies the arguments when it invokes the referenced lambda.
+
+=== "NamedLambdaReference Message"
+    ```proto
+%%% proto.message.Expression.NamedLambdaReference %%%
+    ```
+
+The following plan passes a named identity lambda to `transform`. For each input row, the projected expression produces `[1, 2, 3]`. Both the extension function and the named lambda use anchor 1, demonstrating their separate namespaces.
+
+```protobuf
+--8<-- "examples/proto-textformat/named_lambda/transform_identity.textproto"
 ```
 
 ## See Also
