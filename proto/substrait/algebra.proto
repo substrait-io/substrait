@@ -128,6 +128,7 @@ message ReadRel {
     NamedTable named_table = 7;
     ExtensionTable extension_table = 8;
     IcebergTable iceberg_table = 9;
+    SqlQuery sql_query = 12;
   }
 
   // A base table. The list of string is used to represent namespacing (e.g., mydb.mytable).
@@ -166,6 +167,16 @@ message ReadRel {
     reserved "values";
 
     repeated Expression.Nested.Struct expressions = 2;
+  }
+
+  // A relation defined by a SQL query, passed through unchanged to the consumer.
+  // The query must be read-only and produce exactly one result set.
+  // The SQL dialect, catalog and any execution environment are assumed to be
+  // agreed upon by the producer and consumer out of band.
+  message SqlQuery {
+    // The SQL query text.
+    string query = 1;
+    substrait.extensions.AdvancedExtension advanced_extension = 10;
   }
 
   // A stub type that can be used to extend/introduce new table types outside
