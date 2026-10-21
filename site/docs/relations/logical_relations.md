@@ -121,12 +121,10 @@ This allows a producer to express operations on top of a user-provided query (fo
 projections, aggregations, or limits pushed down to a database) without translating the query
 itself into Substrait.
 
-The query must be read-only and produce exactly one result set. Substrait does not
-define the SQL dialect, the catalog the query is resolved against, or the system that executes it;
-these are agreed upon by the producer and consumer out of band, in the same way that a named
-table relies on a catalog shared between them. A consumer may execute the query directly or
-forward it to another system capable of executing it. A consumer that cannot handle the query
-should reject the plan.
+The query must be read-only and produce exactly one result set. Like a named table, the query is
+resolved by the consumer against its own catalog: the one a named table would be resolved against.
+Substrait does not define the SQL dialect; a consumer that cannot handle the query should reject
+the plan.
 
 | Property | Description                                                      | Required                |
 | -------- | ---------------------------------------------------------------- | ----------------------- |

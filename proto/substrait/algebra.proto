@@ -170,9 +170,8 @@ message ReadRel {
   }
 
   // A relation defined by a SQL query, passed through unchanged to the consumer.
-  // The query must be read-only and produce exactly one result set.
-  // The SQL dialect, catalog and any execution environment are assumed to be
-  // agreed upon by the producer and consumer out of band.
+  // The query must be read-only and produce exactly one result set. Like
+  // NamedTable, it is resolved by the consumer against its own catalog.
   message SqlQuery {
     // The SQL query text.
     string query = 1;
