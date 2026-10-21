@@ -251,6 +251,7 @@ The `AdvancedExtension` message can be attached to various parts of a Substrait 
 | **Hints**                         | Extensions within optimization hints        |
 | **`ReadRel.NamedTable`**          | Custom metadata to named table references   |
 | **`ReadRel.LocalFiles`**          | Custom metadata to local file sources       |
+| **`ReadRel.SqlQuery`**            | Custom metadata to SQL query sources        |
 | **`WriteRel.NamedObjectWrite`**   | Custom metadata to write targets            |
 | **`DdlRel.NamedObjectWrite`**     | Custom metadata to DDL targets              |
 
