@@ -29,7 +29,7 @@ jobs:
           # Remove the workflow token once the checkout is done: pixi builds
           # PyPI sdists and scan-action runs a downloaded installer in this job.
           persist-credentials: false
-      - uses: prefix-dev/setup-pixi@v0.10.2
+      - uses: prefix-dev/setup-pixi@v0.11.1
         with:
           pixi-version: v0.81.0
           # The next step installs every environment. setup-pixi would only
