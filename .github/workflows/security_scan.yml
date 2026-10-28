@@ -31,7 +31,7 @@ jobs:
           persist-credentials: false
       - uses: prefix-dev/setup-pixi@v0.11.1
         with:
-          pixi-version: v0.81.0
+          pixi-version: v0.82.0
           # The next step installs every environment. setup-pixi would only
           # install and cache the default one, without the package downloads,
           # so its cache saves nothing here.
