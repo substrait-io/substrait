@@ -11,6 +11,8 @@ import mkdocs_gen_files
 import oyaml as yaml
 from mdutils.mdutils import MdUtils
 
+_FUNCTION_DOC_LOADER = getattr(yaml, "CFullLoader", yaml.FullLoader)
+
 
 def write_markdown(file_obj: dict, file_name: str) -> None:
     if "types" in file_obj:
@@ -126,24 +128,21 @@ cur_path = Path(__file__).resolve()
 functions_folder = os.path.join(str(Path(cur_path).parents[3]), "extensions")
 
 # Get all extension YAML files that define functions
-function_files = []
+function_documents = []
 function_sections = {"scalar_functions", "aggregate_functions", "window_functions"}
 for file in sorted(os.listdir(functions_folder)):
     if file.endswith(".yaml"):
         full_path = os.path.join(functions_folder, file)
         with open(full_path) as yaml_file:
-            extension = yaml.load(yaml_file, Loader=yaml.FullLoader)
+            extension = yaml.load(yaml_file, Loader=_FUNCTION_DOC_LOADER)
         if function_sections.intersection(extension):
-            function_files.append(full_path)
+            function_documents.append((full_path, extension))
 
 current_directory = Path(__file__).resolve().parent
 with tempfile.TemporaryDirectory() as temp_directory:
     temp_directory = Path(temp_directory)
 
-    for function_file in function_files:
-        with open(function_file) as file:
-            yaml_file_object = yaml.load(file, Loader=yaml.FullLoader)
-
+    for function_file, yaml_file_object in function_documents:
         function_file_name = os.path.basename(function_file)
         function_file_no_extension = os.path.splitext(function_file_name)[0]
         function_category = function_file_no_extension.replace("_", " ").capitalize()
