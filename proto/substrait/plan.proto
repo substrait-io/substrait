@@ -23,8 +23,13 @@ message PlanRel {
 
   // Expression subtrees stored separately to reduce protobuf nesting.
   // Referenced by zero-based ordinals local to this PlanRel.
-  // See https://substrait.io/serialization/binary_serialization/#bounded-expression-nesting.
+  // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
   repeated Expression detached_expressions = 3;
+
+  // Relation subtrees stored separately to reduce protobuf nesting.
+  // Referenced by zero-based ordinals local to this PlanRel.
+  // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
+  repeated Rel detached_rels = 4;
 }
 
 // Describe a set of operations to complete.
@@ -70,6 +75,28 @@ message Plan {
 
   // Execution behavior settings for this plan, required.
   ExecutionBehavior execution_behavior = 10;
+
+  // An optional list of named lambdas.
+  repeated NamedLambda named_lambdas = 11;
+}
+
+// A lambda defined once and available for invocation or reference as a function
+// value throughout a plan.
+message NamedLambda {
+  // A surrogate key used in the context of a single plan to reference this
+  // lambda. This anchor is in a separate namespace from extension function
+  // anchors. 0 is a valid anchor/reference, but prefer non-zero values for
+  // ergonomics.
+  uint32 lambda_anchor = 1;
+
+  // The lambda signature and body. The body must be closed over the parameters:
+  // it cannot reference relational input, an outer record, or parameters of a
+  // caller's enclosing lambda.
+  Expression.Lambda lambda = 2;
+
+  // An optional human-readable name for diagnostics and plan inspection. The
+  // name has no semantic meaning and cannot be referenced.
+  optional string name = 3;
 }
 
 // This message type can be used to deserialize only the version of a Substrait

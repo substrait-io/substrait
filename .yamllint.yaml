@@ -1,3 +1,7 @@
+# The pinned commitlint toolchain's node_modules/ is third-party and not ours to lint.
+ignore: |
+  node_modules/
+
 rules:
   line-length:
     max: 120
