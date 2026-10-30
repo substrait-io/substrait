@@ -40,7 +40,7 @@ For each `PlanRel`, `ExtendedExpression`, or `NamedLambda`, consumers validate t
 
 Consumers must reject violations in the reachable portion. Unreachable detached entries are allowed, are not execution roots, and need not be resolved or validated. The existing [rules for ignoring extension payloads](#advanced-extensions) remain unchanged.
 
-For a named lambda, these rules apply once to its definition, not separately to each invocation. Detachment preserves the lexical scope at the reference site, including lambda parameter binding. Named-lambda calls and function-valued references are not detached-reference edges: resolving them does not expand the referenced definition's body.
+For a named lambda, these rules apply once to its definition, not separately to each invocation. Detachment preserves the lexical scope at the reference site, including lambda parameter binding. Named-lambda calls and function-valued references are not detached-reference edges: they may form [recursive definition dependencies](../expressions/lambda_expressions.md#recursive-named-lambdas) without making the detached encoding cyclic.
 
 When retaining opaque extension payloads, consumers must not remove or renumber detached entries unless they can ensure that references inside those payloads continue to identify the same relation and expression subtrees.
 

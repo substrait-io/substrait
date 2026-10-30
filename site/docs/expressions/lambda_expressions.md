@@ -13,6 +13,7 @@ Lambdas can be [invoked directly](#lambda-invocation) or passed to higher-order 
 |--------------------|-----------------------------------------------------------------------------|-----------------------|----------|
 | Parameters         | Struct with one field per parameter. Its nullability must be `NULLABILITY_REQUIRED`. | `parameters` | Yes |
 | Body Expression    | Expression evaluated when the lambda is invoked. | `body` | Yes |
+| Declared Return Type | Explicit return type; see [Type Derivation](#type-derivation). | `output_type` | For named lambdas in a [dependency cycle](#recursive-named-lambdas) |
 
 === "Lambda Message"
     ```proto
@@ -21,7 +22,12 @@ Lambdas can be [invoked directly](#lambda-invocation) or passed to higher-order 
 
 ### Type Derivation
 
-A lambda has a `func` type with the lambda's parameter types. Its return type is the body expression's type.
+A lambda has a non-nullable `func` type with the lambda's parameter types. Its return type is:
+
+- The declared `output_type`, when present. The body must match it exactly, including nullability and type variations. This is a type assertion, not an implicit cast.
+- The body expression's type, otherwise.
+
+`output_type` is optional for inline lambdas and acyclic named lambdas. Every named lambda in a [definition dependency cycle](#recursive-named-lambdas) must declare it. Missing required declarations and mismatched body types are invalid.
 
 ## Parameter References
 
@@ -40,7 +46,7 @@ Lambda parameters are accessed using a [`FieldReference`](field_references.md) w
 %%% proto.message.Expression.FieldReference.LambdaParameterReference %%%
     ```
 
-Use `direct_reference` with `StructField` to select a parameter. Subqueries and detachment do not add lambda boundaries.
+Use `direct_reference` with `StructField` to select a parameter. `steps_out` follows lexical nesting, not the recursive call stack. Subqueries and detachment do not add lambda boundaries.
 
 ### Simple Example
 
@@ -144,7 +150,7 @@ A lambda returns an expression value, including a subquery result, not a relatio
 
 `Expression.NamedLambdaReference` supplies a function value, not the result of a call. Its `lambda_reference` identifies a `lambda_anchor` in `Plan.named_lambdas`, using the same namespace as `LambdaInvocation.named_lambda`.
 
-Its non-nullable function type follows [Type Derivation](#type-derivation) for the referenced lambda. It can be passed in `FunctionArgument.value` wherever a compatible function type is expected. The higher-order function supplies arguments when it invokes the lambda.
+Its function type follows [Type Derivation](#type-derivation) for the referenced lambda. It can be passed in `FunctionArgument.value` wherever a compatible function type is expected. The higher-order function supplies arguments when it invokes the lambda.
 
 Dialects can enable named lambda references by including `NAMED_LAMBDA_REFERENCE` in `supported_expressions`. Direct calls to named lambdas require both `NAMED_LAMBDA_REFERENCE` and `LAMBDA_INVOCATION`; `LAMBDA_INVOCATION` alone supports only inline calls.
 
@@ -171,13 +177,19 @@ The following examples contrast invocation with passing a function value:
     --8<-- "examples/proto-textformat/named_lambda/transform_identity.textproto"
     ```
 
-### Named Lambda Dependencies
+### Recursive Named Lambdas
 
-The definition dependency graph must be acyclic. A definition depends on every named lambda its body invokes or references as a function value, including itself. This includes references in nested expressions and higher-order function arguments.
+Named lambdas support self-recursion and mutual recursion. A definition depends on every named lambda its body invokes or references as a function value, including itself. This includes references in nested lambdas, subquery relation trees, higher-order function arguments, and unevaluated branches.
 
-Self-references and indirect cycles are invalid, even if a reference is only passed as an argument or occurs in a branch that is not evaluated.
+Determine dependencies after resolving [detached relations and expressions](#detached-named-lambda-bodies); unreachable detached entries do not contribute dependencies. Consumers apply the [type-derivation rules](#type-derivation) by establishing declared signatures before checking recursive bodies, without recursively expanding definitions. Recursion does not introduce recursive types.
 
-Determine dependencies after resolving [detached relations and expressions](#detached-named-lambda-bodies), including references in subquery relation trees. Unreachable detached entries do not contribute dependencies.
+Consumers need not prove termination, and the specification imposes no recursion-depth limit. Consumers must report an error if their resource limits are exceeded, rather than truncate the computation or substitute a result. Consumers that do not support recursive named lambdas must reject plans that require them.
+
+This plan defines mutually recursive `is_even` and `is_odd` functions for non-negative `i32` arguments. Both declare non-nullable boolean results; `is_even(4)` returns true.
+
+```protobuf
+--8<-- "examples/proto-textformat/named_lambda/mutual_recursion.textproto"
+```
 
 ### Detached Named Lambda Bodies
 
@@ -194,7 +206,15 @@ Entries may reference further subtrees in either table. Apply the shared [encodi
 - The single-reference rule applies per definition, not per invocation.
 - Detachment changes storage, not lexical scope, field-reference binding, or computation sharing.
 
-Detached ordinals must reconstruct finite relation and expression trees. Resolving a detached reference does not expand the bodies of named lambdas it invokes or references.
+**Named-lambda recursion is not a detached-reference cycle.** Calls may be recursive, but detached ordinals must reconstruct finite relation and expression trees. Resolving a detached reference does not expand the bodies of named lambdas it invokes or references.
+
+=== "Detached factorial"
+
+    Detaches the body and recursive call of factorial. For non-negative `i32` arguments whose factorial fits in `i32`, `factorial(5)` produces 120.
+
+    ```protobuf
+    --8<-- "examples/proto-textformat/named_lambda/detached_factorial.textproto"
+    ```
 
 === "Detached subquery"
 

@@ -1,0 +1,146 @@
+# Defines factorial using a detached body and a detached recursive call.
+# For non-negative inputs whose factorial fits in i32; factorial(5) is 120.
+#
+# message Plan
+
+version {
+  major_number: 0
+  minor_number: 107
+  patch_number: 0
+}
+
+extension_urns {
+  extension_urn_anchor: 1
+  urn: "extension:io.substrait:functions_comparison"
+}
+extension_urns {
+  extension_urn_anchor: 2
+  urn: "extension:io.substrait:functions_arithmetic"
+}
+extensions {
+  extension_function {
+    extension_urn_reference: 1
+    function_anchor: 1
+    name: "equal:any_any"
+  }
+}
+extensions {
+  extension_function {
+    extension_urn_reference: 2
+    function_anchor: 2
+    name: "subtract:i32_i32"
+  }
+}
+extensions {
+  extension_function {
+    extension_urn_reference: 2
+    function_anchor: 3
+    name: "multiply:i32_i32"
+  }
+}
+
+named_lambdas {
+  lambda_anchor: 1
+  name: "factorial"
+  lambda {
+    parameters {
+      types { i32 { nullability: NULLABILITY_REQUIRED } }
+      nullability: NULLABILITY_REQUIRED
+    }
+    output_type { i32 { nullability: NULLABILITY_REQUIRED } }
+    body { detached_expression_ordinal: 0 }
+  }
+  # Entry 0: if n == 0 then 1 else n * factorial(n - 1).
+  detached_expressions {
+    if_then {
+      ifs {
+        if {
+          scalar_function {
+            function_reference: 1
+            arguments {
+              value {
+                selection {
+                  lambda_parameter_reference { steps_out: 0 }
+                  direct_reference { struct_field { field: 0 } }
+                }
+              }
+            }
+            arguments { value { literal { i32: 0 } } }
+            output_type { bool { nullability: NULLABILITY_REQUIRED } }
+          }
+        }
+        then { literal { i32: 1 } }
+      }
+      else {
+        scalar_function {
+          function_reference: 3
+          arguments {
+            value {
+              selection {
+                lambda_parameter_reference { steps_out: 0 }
+                direct_reference { struct_field { field: 0 } }
+              }
+            }
+          }
+          arguments { value { detached_expression_ordinal: 1 } }
+          output_type { i32 { nullability: NULLABILITY_REQUIRED } }
+        }
+      }
+    }
+  }
+  # Entry 1: a call, not a detached ordinal back to entry 0.
+  detached_expressions {
+    lambda_invocation {
+      named_lambda { lambda_reference: 1 }
+      arguments {
+        fields {
+          scalar_function {
+            function_reference: 2
+            arguments {
+              value {
+                selection {
+                  lambda_parameter_reference { steps_out: 0 }
+                  direct_reference { struct_field { field: 0 } }
+                }
+              }
+            }
+            arguments { value { literal { i32: 1 } } }
+            output_type { i32 { nullability: NULLABILITY_REQUIRED } }
+          }
+        }
+      }
+    }
+  }
+}
+
+relations {
+  root {
+    input {
+      project {
+        common { emit { output_mapping: 0 } }
+        input {
+          read {
+            common { direct {} }
+            base_schema {
+              struct { nullability: NULLABILITY_REQUIRED }
+            }
+            virtual_table { expressions {} }
+          }
+        }
+        expressions { detached_expression_ordinal: 0 }
+      }
+    }
+    names: "factorial"
+  }
+  # The PlanRel and NamedLambda each have their own ordinal 0.
+  detached_expressions {
+    lambda_invocation {
+      named_lambda { lambda_reference: 1 }
+      arguments { fields { literal { i32: 5 } } }
+    }
+  }
+}
+
+execution_behavior {
+  variable_eval_mode: VARIABLE_EVALUATION_MODE_PER_PLAN
+}
