@@ -91,6 +91,12 @@ Exactly one of these fields must be set. See
 [Field References — Outer References](field_references.md#outer-references)
 for details.
 
+## Subqueries in Lambdas
+
+Lambda bodies may contain subqueries. Their relation trees can reference the lambda's parameters using `LambdaParameterReference`; a subquery does not add a lambda boundary. In a [named lambda](lambda_expressions.md#named-lambdas), subqueries may use their own relational input and enclosing relational scopes established by that body, but cannot capture the caller's relational scope. This restriction applies to both forms of `OuterReference`.
+
+Named-lambda bodies can use [detached relations and expressions](lambda_expressions.md#detached-named-lambda-bodies) without changing these scopes or the subquery's semantics.
+
 === "Protobuf Representation"
 
     ```proto

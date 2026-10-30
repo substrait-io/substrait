@@ -1,0 +1,127 @@
+# lookup_exists(key) checks a local table containing the key 42.
+# The two calls return true and false, without capturing caller input.
+#
+# message Plan
+
+version {
+  major_number: 0
+  minor_number: 107
+  patch_number: 0
+}
+
+extension_urns {
+  extension_urn_anchor: 1
+  urn: "extension:io.substrait:functions_comparison"
+}
+extensions {
+  extension_function {
+    extension_urn_reference: 1
+    function_anchor: 1
+    name: "equal:any_any"
+  }
+}
+
+named_lambdas {
+  lambda_anchor: 1
+  name: "lookup_exists"
+  lambda {
+    parameters {
+      types { i64 { nullability: NULLABILITY_REQUIRED } }
+      nullability: NULLABILITY_REQUIRED
+    }
+    body { detached_expression_ordinal: 0 }
+  }
+  detached_expressions {
+    subquery {
+      set_predicate {
+        predicate_op: PREDICATE_OP_EXISTS
+        tuples { detached_rel_ordinal: 0 }
+      }
+    }
+  }
+  detached_expressions {
+    scalar_function {
+      function_reference: 1
+      arguments {
+        value {
+          selection {
+            root_reference {}
+            direct_reference { struct_field { field: 0 } }
+          }
+        }
+      }
+      arguments {
+        value {
+          selection {
+            lambda_parameter_reference { steps_out: 0 }
+            direct_reference { struct_field { field: 0 } }
+          }
+        }
+      }
+      output_type { bool { nullability: NULLABILITY_REQUIRED } }
+    }
+  }
+  detached_rels {
+    filter {
+      common { direct {} }
+      input { detached_rel_ordinal: 1 }
+      condition { detached_expression_ordinal: 1 }
+    }
+  }
+  detached_rels {
+    read {
+      common { direct {} }
+      base_schema {
+        names: "key"
+        struct {
+          types { i64 { nullability: NULLABILITY_REQUIRED } }
+          nullability: NULLABILITY_REQUIRED
+        }
+      }
+      virtual_table {
+        expressions {
+          fields { literal { i64: 42 } }
+        }
+      }
+    }
+  }
+}
+
+relations {
+  root {
+    input { detached_rel_ordinal: 0 }
+    names: "found"
+    names: "missing"
+  }
+  detached_rels {
+    project {
+      common { emit { output_mapping: 0 output_mapping: 1 } }
+      input {
+        read {
+          common { direct {} }
+          base_schema {
+            struct { nullability: NULLABILITY_REQUIRED }
+          }
+          virtual_table { expressions {} }
+        }
+      }
+      expressions { detached_expression_ordinal: 0 }
+      expressions {
+        lambda_invocation {
+          named_lambda { lambda_reference: 1 }
+          arguments { fields { literal { i64: 7 } } }
+        }
+      }
+    }
+  }
+  detached_expressions {
+    lambda_invocation {
+      named_lambda { lambda_reference: 1 }
+      arguments { fields { literal { i64: 42 } } }
+    }
+  }
+}
+
+execution_behavior {
+  variable_eval_mode: VARIABLE_EVALUATION_MODE_PER_PLAN
+}

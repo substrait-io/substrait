@@ -33,14 +33,14 @@ Lambda parameters are accessed using a [`FieldReference`](field_references.md) w
 
 | Field             | Description                                                          | Values   |
 |-------------------|----------------------------------------------------------------------|----------|
-| `steps_out`       | Number of lambda boundaries to traverse (0 = current lambda)        | 0, 1, 2... |
+| `steps_out`       | Number of lexical lambda boundaries to traverse (0 = current lambda) | 0, 1, 2... |
 
 === "LambdaParameterReference Message"
     ```proto
 %%% proto.message.Expression.FieldReference.LambdaParameterReference %%%
     ```
 
-Use `direct_reference` with `StructField` to select a parameter.
+Use `direct_reference` with `StructField` to select a parameter. Subqueries and detachment do not add lambda boundaries.
 
 ### Simple Example
 
@@ -126,13 +126,19 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 
 A named lambda is defined once in `Plan.named_lambdas` and can be invoked or passed as a function value any number of times.
 
-Each `NamedLambda` contains a `lambda_anchor`, an `Expression.Lambda`, and an optional diagnostic `name`. The name has no semantic meaning and cannot be used as a reference.
+Each `NamedLambda` contains a `lambda_anchor`, an `Expression.Lambda`, an optional diagnostic `name`, and optional [detachment tables](#detached-named-lambda-bodies). The name has no semantic meaning and cannot be used as a reference.
 
 Named-lambda anchors form a separate namespace from extension function anchors. Each anchor must be unique within the plan, and every reference must resolve to an existing definition. Anchor 0 is valid. Definitions may reference later entries.
 
 ### Scope
 
-Named lambdas are closed over their parameters. Their bodies cannot reference relational input, outer records, or parameters from a caller's enclosing lambda. They may use dynamic parameters, execution context variables, and other named lambdas.
+A named lambda cannot capture the caller's relational input, outer records, or enclosing lambda parameters.
+
+- Its body may use its parameters, dynamic parameters, execution context variables, and other named lambdas.
+- [Subqueries](subqueries.md) may access their own relational input and enclosing relational scopes established within the same body. Neither form of `OuterReference` may reach into the caller's scope.
+- Inline lambdas nested within the body may capture that invocation's parameters, following the [parameter-reference rules](#parameter-references).
+
+A lambda returns an expression value, including a subquery result, not a relation directly.
 
 ### Named Lambda References
 
@@ -170,6 +176,33 @@ The following examples contrast invocation with passing a function value:
 The definition dependency graph must be acyclic. A definition depends on every named lambda its body invokes or references as a function value, including itself. This includes references in nested expressions and higher-order function arguments.
 
 Self-references and indirect cycles are invalid, even if a reference is only passed as an argument or occurs in a branch that is not evaluated.
+
+Determine dependencies after resolving [detached relations and expressions](#detached-named-lambda-bodies), including references in subquery relation trees. Unreachable detached entries do not contribute dependencies.
+
+### Detached Named Lambda Bodies
+
+Each `NamedLambda` owns two optional detachment tables:
+
+| Table | Subtrees | Reference |
+|-------|----------|-----------|
+| `detached_expressions` | Body expressions | `Expression.detached_expression_ordinal` |
+| `detached_rels` | Relations within subqueries | `Rel.detached_rel_ordinal` |
+
+Entries may reference further subtrees in either table. Apply the shared [encoding and validation rules](../serialization/binary_serialization.md#detached-relations-and-expressions), starting from `lambda.body`:
+
+- Ordinals resolve within the definition, never against a caller's or another definition's tables.
+- The single-reference rule applies per definition, not per invocation.
+- Detachment changes storage, not lexical scope, field-reference binding, or computation sharing.
+
+Detached ordinals must reconstruct finite relation and expression trees. Resolving a detached reference does not expand the bodies of named lambdas it invokes or references.
+
+=== "Detached subquery"
+
+    `lookup_exists(key)` checks a local table containing 42. Its detached filter condition compares local input with the lambda parameter, without capturing caller input. Calls with 42 and 7 return true and false. Caller and definition each use ordinal 0 in their own expression and relation tables.
+
+    ```protobuf
+    --8<-- "examples/proto-textformat/named_lambda/detached_rels.textproto"
+    ```
 
 ## See Also
 

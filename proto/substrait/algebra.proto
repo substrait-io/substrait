@@ -680,7 +680,7 @@ message Rel {
     ExpandRel expand = 16;
     TopNRel top_n = 23;
     // Encoding-only, zero-based index into detached_rels on the
-    // containing PlanRel or ExtendedExpression.
+    // containing PlanRel, ExtendedExpression, or NamedLambda.
     // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
     uint32 detached_rel_ordinal = 25;
   }
@@ -1094,7 +1094,7 @@ message Expression {
     LambdaInvocation lambda_invocation = 16;
     ExecutionContextVariable execution_context_variable = 17;
     // Encoding-only, zero-based index into detached_expressions on the
-    // containing PlanRel or ExtendedExpression.
+    // containing PlanRel, ExtendedExpression, or NamedLambda.
     // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
     uint32 detached_expression_ordinal = 18;
     NamedLambdaReference named_lambda_reference = 19;
@@ -1692,6 +1692,8 @@ message Expression {
     message RootReference {}
 
     // A root reference for the outer relation's subquery.
+    // Within a named lambda, this may reference enclosing relational scopes
+    // established by its body, but cannot capture the caller's relational scope.
     message OuterReference {
       oneof outer_reference_type {
         // Number of subquery boundaries to traverse up for this field's
@@ -1715,7 +1717,8 @@ message Expression {
     // as a struct. Use FieldReference with this as root_type to access specific
     // parameters or nested fields within parameters.
     message LambdaParameterReference {
-      // Number of lambda boundaries to traverse up for this reference.
+      // Number of lexical lambda boundaries to traverse up for this reference.
+      // Subqueries and detachment do not introduce lambda boundaries.
       // For nested lambdas:
       //   0 = innermost lambda (current lambda's parameters as a struct)
       //   1 = one lambda level out (outer lambda's parameters as a struct)
