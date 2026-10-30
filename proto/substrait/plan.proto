@@ -76,7 +76,9 @@ message Plan {
   // Execution behavior settings for this plan, required.
   ExecutionBehavior execution_behavior = 10;
 
-  // An optional list of named lambdas.
+  // An optional list of named lambdas. Definitions may reference themselves
+  // or each other recursively; every definition in a dependency cycle must
+  // declare its lambda.output_type.
   repeated NamedLambda named_lambdas = 11;
 }
 
@@ -89,14 +91,28 @@ message NamedLambda {
   // ergonomics.
   uint32 lambda_anchor = 1;
 
-  // The lambda signature and body. The body must be closed over the parameters:
-  // it cannot reference relational input, an outer record, or parameters of a
-  // caller's enclosing lambda.
+  // The lambda signature and body. The body cannot capture the caller's
+  // relational input, outer records, or enclosing lambda parameters.
+  // Subqueries may reference their own relational scopes and this lambda's
+  // parameters, including through inline lambdas nested within the body.
   Expression.Lambda lambda = 2;
 
   // An optional human-readable name for diagnostics and plan inspection. The
   // name has no semantic meaning and cannot be referenced.
   optional string name = 3;
+
+  // Expression subtrees stored separately to reduce protobuf nesting in the
+  // lambda body. Referenced by zero-based ordinals local to this NamedLambda,
+  // never to a caller's PlanRel or another NamedLambda. Detachment preserves
+  // lexical scope and does not introduce computation sharing or recursion.
+  // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
+  repeated Expression detached_expressions = 4;
+
+  // Relation subtrees stored separately to reduce protobuf nesting in the
+  // body's subqueries. Referenced by zero-based ordinals local to this
+  // NamedLambda, with the same scope and encoding rules as detached_expressions.
+  // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
+  repeated Rel detached_rels = 5;
 }
 
 // This message type can be used to deserialize only the version of a Substrait

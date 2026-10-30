@@ -1,22 +1,19 @@
 # Lambda Expressions
 
-Lambda expressions represent inline, anonymous functions within query plans, enabling operations that require nested computation over data. They are primarily used to express array operations (such as `transform` or `filter`) and support higher-order functions that apply computations element-wise over collections. A lambda consists of explicit parameter types and a body expression that references those parameters.
+Lambdas define functions using typed parameters and an expression body. They can appear inline or be defined once at plan scope.
 
-## Overview
-
-Lambda expressions are a type of expression in Substrait (like `IfThen`, `Subquery`, or `Nested` expressions) that can be passed as arguments to higher-order functions or [invoked directly](#lambda-invocation). A [named lambda reference](#named-lambda-references) can also be passed as a function-valued argument without repeating its definition.
+Lambdas can be [invoked directly](#lambda-invocation) or passed to higher-order functions such as `transform` and `filter`. A [named lambda reference](#named-lambda-references) supplies a function value without repeating its definition.
 
 !!! note "Documentation Syntax"
-    This documentation uses the syntax `(param: type, ...) -> expression` as an illustrative notation to explain lambda concepts in a readable form. There is no formal syntax specified in the Substrait spec for compactly representing lambdas.
+    The notation `(param: type, ...) -> expression` is illustrative, not a formal Substrait syntax.
 
 ## Lambda Expression Structure
 
-A lambda expression consists of:
-
 | Component          | Description                                                                 | Protobuf Field        | Required |
 |--------------------|-----------------------------------------------------------------------------|-----------------------|----------|
-| Parameters         | Struct type defining the lambda's parameters. Each field in the struct represents a parameter that can be accessed via LambdaParameterReference (a type of FieldReference). The struct's nullability must be `NULLABILITY_REQUIRED`. | `parameters`     | Yes      |
-| Body Expression    | The expression to evaluate (can reference parameters via LambdaParameterReference). The type of this expression is the return type of the lambda. | `body`                | Yes      |
+| Parameters         | Struct with one field per parameter. Its nullability must be `NULLABILITY_REQUIRED`. | `parameters` | Yes |
+| Body Expression    | Expression evaluated when the lambda is invoked. | `body` | Yes |
+| Declared Return Type | Explicit return type; see [Type Derivation](#type-derivation). | `output_type` | For named lambdas in a [dependency cycle](#recursive-named-lambdas) |
 
 === "Lambda Message"
     ```proto
@@ -25,11 +22,16 @@ A lambda expression consists of:
 
 ### Type Derivation
 
-The type of a lambda expression is a `func` type. The parameters of the `func` are the parameters of the lambda. The return type of the `func` is determined by the type of the expression comprising the body of the lambda. 
+A lambda has a non-nullable `func` type with the lambda's parameter types. Its return type is:
+
+- The declared `output_type`, when present. The body must match it exactly, including nullability and type variations. This is a type assertion, not an implicit cast.
+- The body expression's type, otherwise.
+
+`output_type` is optional for inline lambdas and acyclic named lambdas. Every named lambda in a [definition dependency cycle](#recursive-named-lambdas) must declare it. Missing required declarations and mismatched body types are invalid.
 
 ## Parameter References
 
-Lambda parameters are referenced within the lambda body using [`FieldReference`](field_references.md)s with `LambdaParameterReference` as the root type. Lambda parameters are conceptually treated as a struct, where each parameter occupies a position that can be accessed via `StructField` references.
+Lambda parameters are accessed using a [`FieldReference`](field_references.md) with `LambdaParameterReference` as its root type and a `StructField` selecting the parameter's zero-based position.
 
 ### LambdaParameterReference Fields
 
@@ -37,14 +39,14 @@ Lambda parameters are referenced within the lambda body using [`FieldReference`]
 
 | Field             | Description                                                          | Values   |
 |-------------------|----------------------------------------------------------------------|----------|
-| `steps_out`       | Number of lambda boundaries to traverse (0 = current lambda)        | 0, 1, 2... |
+| `steps_out`       | Number of lexical lambda boundaries to traverse (0 = current lambda) | 0, 1, 2... |
 
 === "LambdaParameterReference Message"
     ```proto
 %%% proto.message.Expression.FieldReference.LambdaParameterReference %%%
     ```
 
-To access a specific parameter, wrap `LambdaParameterReference` in a [`FieldReference`](field_references.md) and use `direct_reference` with `StructField` to specify which parameter (field 0 = first parameter, field 1 = second parameter, etc.).
+Use `direct_reference` with `StructField` to select a parameter. `steps_out` follows lexical nesting, not the recursive call stack. Subqueries and detachment do not add lambda boundaries.
 
 ### Simple Example
 
@@ -62,9 +64,7 @@ Because lambda parameters are accessed using [`FieldReference`](field_references
 
 ## Function Type Syntax
 
-In YAML extension definitions, function types are specified using the `func` keyword with generic type parameters:
-
-This notation applies to extension YAML signatures. In plans, inline lambdas are represented as `Expression.Lambda` with `parameters` (a struct type) and `body`. A function value can also be represented by an `Expression.NamedLambdaReference`, whose type is derived from the referenced definition.
+Extension YAML signatures use `func` with generic type parameters. This notation is distinct from plan expressions, which represent function values using `Expression.Lambda` or `Expression.NamedLambdaReference`.
 
 **Single parameter** (represents a lambda with 1 field in the `parameters` struct):
 ```yaml
@@ -94,7 +94,7 @@ The `func<any1 -> any2>` type indicates the lambda accepts one parameter of type
 
 ## Closures
 
-Lambda bodies can reference data from outside their parameter list through [`FieldReference`](field_references.md)s. References to input records (via `RootReference`) and outer query records (via `OuterReference`) work as they do elsewhere in Substrait. There is also a way to capture lambda parameters from outer lambdas.
+Inline lambdas can capture input records through `RootReference`, outer query records through `OuterReference`, and parameters of enclosing lambdas. [Named lambdas](#scope) cannot capture the caller's scope.
 
 ### Outer Lambda Parameters
 
@@ -106,17 +106,15 @@ Lambda bodies can reference data from outside their parameter list through [`Fie
 
 ## Lambda Invocation
 
-Lambda expressions can be invoked using the `LambdaInvocation` expression type. An invocation can call either an inline lambda or a named lambda defined at the plan level.
-
-A lambda invocation consists of:
+`LambdaInvocation` calls an inline or named lambda. Each invocation binds its own arguments.
 
 | Component    | Description                                                                 | Protobuf Field            | Required |
 |--------------|-----------------------------------------------------------------------------|---------------------------|----------|
 | Lambda       | The inline lambda expression to invoke                                      | `lambda`       | One of `lambda` or `named_lambda` |
 | Named lambda | A reference to a lambda in `Plan.named_lambdas`                             | `named_lambda` | One of `lambda` or `named_lambda` |
-| Arguments    | A `Nested.Struct` containing expressions for each lambda parameter. Each field corresponds to a lambda parameter and must evaluate to the matching parameter type. | `arguments` | Yes |
+| Arguments    | A `Nested.Struct` of argument expressions, in parameter order | `arguments` | Yes |
 
-The `arguments` field must be a `Nested.Struct` with exactly as many fields as the lambda has parameters. The type of each expression field must match the corresponding parameter type. The return type is derived from the type of the lambda's body expression.
+The argument count and types must exactly match the lambda's parameters. The invocation returns the lambda's result, with the type specified by [Type Derivation](#type-derivation).
 
 === "LambdaInvocation Message"
     ```proto
@@ -130,44 +128,101 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 ```protobuf
 --8<-- "examples/proto-textformat/lambda_invocation/inline_invocation.textproto"
 ```
-
-
 ## Named Lambdas
 
-A named lambda is defined once in `Plan.named_lambdas`, where each entry is represented by a `NamedLambda`. Once defined, it can be invoked from multiple `LambdaInvocation` expressions and passed as a function value using `NamedLambdaReference`. Named lambdas use their own anchor namespace, separate from extension function anchors.
+A named lambda is defined once in `Plan.named_lambdas` and can be invoked or passed as a function value any number of times.
 
-Each definition consists of a `lambda_anchor`, an `Expression.Lambda`, and an optional human-readable `name`. The name is only for diagnostics and plan inspection: it has no semantic meaning and cannot be used as a reference. An invocation supplies a `named_lambda` reference and a `Nested.Struct` of arguments. The argument count and types must exactly match the lambda parameters, and the invocation's return type is the type of the lambda body.
+Each `NamedLambda` contains a `lambda_anchor`, an `Expression.Lambda`, an optional diagnostic `name`, and optional [detachment tables](#detached-named-lambda-bodies). The name has no semantic meaning and cannot be used as a reference.
 
-Named lambdas are closed over their parameters. Their bodies cannot reference relational input, outer records, or parameters from a caller's enclosing lambda. They may use dynamic parameters, execution context variables, and other named lambdas.
+Named-lambda anchors form a separate namespace from extension function anchors. Each anchor must be unique within the plan, and every reference must resolve to an existing definition. Anchor 0 is valid. Definitions may reference later entries.
 
-Named-lambda references may reference definitions that appear later in `Plan.named_lambdas`, but the definition dependency graph must be acyclic. A definition depends on another whenever its body invokes that named lambda or reference it as a function value, including inside nested expressions and arguments to higher-order functions. Self-references and indirect cycles are invalid, even if the reference is only passed as an argument or occurs in a branch that is not evaluated.
+### Scope
 
-Within a plan, every named-lambda anchor must be unique and every named-lambda invocation or reference must target an existing definition. A named lambda may be referenced or invoked any number of times.
+A named lambda cannot capture the caller's relational input, outer records, or enclosing lambda parameters.
 
-```protobuf
---8<-- "examples/proto-textformat/named_lambda/reused_identity.textproto"
-```
+- Its body may use its parameters, dynamic parameters, execution context variables, and other named lambdas.
+- [Subqueries](subqueries.md) may access their own relational input and enclosing relational scopes established within the same body. Neither form of `OuterReference` may reach into the caller's scope.
+- Inline lambdas nested within the body may capture that invocation's parameters, following the [parameter-reference rules](#parameter-references).
+
+A lambda returns an expression value, including a subquery result, not a relation directly.
 
 ### Named Lambda References
 
-`Expression.NamedLambdaReference` denotes a function value without invoking the lambda. Its `lambda_reference` identifies a `lambda_anchor` in `Plan.named_lambdas`, using the same namespace as `LambdaInvocation.named_lambda`. Anchor 0 is valid.
+`Expression.NamedLambdaReference` supplies a function value, not the result of a call. Its `lambda_reference` identifies a `lambda_anchor` in `Plan.named_lambdas`, using the same namespace as `LambdaInvocation.named_lambda`.
+
+Its function type follows [Type Derivation](#type-derivation) for the referenced lambda. It can be passed in `FunctionArgument.value` wherever a compatible function type is expected. The higher-order function supplies arguments when it invokes the lambda.
 
 Dialects can enable named lambda references by including `NAMED_LAMBDA_REFERENCE` in `supported_expressions`. Direct calls to named lambdas require both `NAMED_LAMBDA_REFERENCE` and `LAMBDA_INVOCATION`; `LAMBDA_INVOCATION` alone supports only inline calls.
-
-A named lambda reference has a non-nullable function type, with parameter and return types derived from the referenced lambda as described in [Lambda Type Derivation](#type-derivation).
-
-Unlike a `LambdaInvocation`, which produces the result of a call, a `NamedLambdaReference` supplies the function itself. It can be placed in `FunctionArgument.value` wherever a compatible function type is expected, such as the transformer argument of `transform` or the predicate argument of `filter`. The higher-order function supplies the arguments when it invokes the referenced lambda.
 
 === "NamedLambdaReference Message"
     ```proto
 %%% proto.message.Expression.NamedLambdaReference %%%
     ```
 
-The following plan passes a named identity lambda to `transform`. For each input row, the projected expression produces `[1, 2, 3]`. Both the extension function and the named lambda use anchor 1, demonstrating their separate namespaces.
+The following examples contrast invocation with passing a function value:
+
+=== "Direct invocation"
+
+    Defines an identity lambda once and invokes it twice.
+
+    ```protobuf
+    --8<-- "examples/proto-textformat/named_lambda/reused_identity.textproto"
+    ```
+
+=== "Function-valued argument"
+
+    Passes the identity lambda to `transform`, producing `[1, 2, 3]` for each input row. The extension function and named lambda both use anchor 1 in their separate namespaces.
+
+    ```protobuf
+    --8<-- "examples/proto-textformat/named_lambda/transform_identity.textproto"
+    ```
+
+### Recursive Named Lambdas
+
+Named lambdas support self-recursion and mutual recursion. A definition depends on every named lambda its body invokes or references as a function value, including itself. This includes references in nested lambdas, subquery relation trees, higher-order function arguments, and unevaluated branches.
+
+Determine dependencies after resolving [detached relations and expressions](#detached-named-lambda-bodies); unreachable detached entries do not contribute dependencies. Consumers apply the [type-derivation rules](#type-derivation) by establishing declared signatures before checking recursive bodies, without recursively expanding definitions. Recursion does not introduce recursive types.
+
+Consumers need not prove termination, and the specification imposes no recursion-depth limit. Consumers must report an error if their resource limits are exceeded, rather than truncate the computation or substitute a result. Consumers that do not support recursive named lambdas must reject plans that require them.
+
+This plan defines mutually recursive `is_even` and `is_odd` functions for non-negative `i32` arguments. Both declare non-nullable boolean results; `is_even(4)` returns true.
 
 ```protobuf
---8<-- "examples/proto-textformat/named_lambda/transform_identity.textproto"
+--8<-- "examples/proto-textformat/named_lambda/mutual_recursion.textproto"
 ```
+
+### Detached Named Lambda Bodies
+
+Each `NamedLambda` owns two optional detachment tables:
+
+| Table | Subtrees | Reference |
+|-------|----------|-----------|
+| `detached_expressions` | Body expressions | `Expression.detached_expression_ordinal` |
+| `detached_rels` | Relations within subqueries | `Rel.detached_rel_ordinal` |
+
+Entries may reference further subtrees in either table. Apply the shared [encoding and validation rules](../serialization/binary_serialization.md#detached-relations-and-expressions), starting from `lambda.body`:
+
+- Ordinals resolve within the definition, never against a caller's or another definition's tables.
+- The single-reference rule applies per definition, not per invocation.
+- Detachment changes storage, not lexical scope, field-reference binding, or computation sharing.
+
+**Named-lambda recursion is not a detached-reference cycle.** Calls may be recursive, but detached ordinals must reconstruct finite relation and expression trees. Resolving a detached reference does not expand the bodies of named lambdas it invokes or references.
+
+=== "Detached factorial"
+
+    Detaches the body and recursive call of factorial. For non-negative `i32` arguments whose factorial fits in `i32`, `factorial(5)` produces 120.
+
+    ```protobuf
+    --8<-- "examples/proto-textformat/named_lambda/detached_factorial.textproto"
+    ```
+
+=== "Detached subquery"
+
+    `lookup_exists(key)` checks a local table containing 42. Its detached filter condition compares local input with the lambda parameter, without capturing caller input. Calls with 42 and 7 return true and false. Caller and definition each use ordinal 0 in their own expression and relation tables.
+
+    ```protobuf
+    --8<-- "examples/proto-textformat/named_lambda/detached_rels.textproto"
+    ```
 
 ## See Also
 
