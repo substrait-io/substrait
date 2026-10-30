@@ -250,9 +250,11 @@ definitions:
       required_options:
         type: object
         description: >
-          Function-specific options that must be supported by the dialect.  These
-          are the exact list of options that must be used.  If no options are
-          listed here, no options must be present.
+          Function-defined options required by the dialect. These are the exact
+          function-defined options that must be used; if none are listed, no
+          function-defined options may be present. Options defined by the
+          invocation context, such as range_boundary_overflow for RANGE window
+          frames, are governed separately and are not constrained by this list.
       supported_impls:
         type: array
         description: >
