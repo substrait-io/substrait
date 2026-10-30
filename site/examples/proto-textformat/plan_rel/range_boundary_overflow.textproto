@@ -1,0 +1,62 @@
+# Function anchor 1 refers to count: in functions_aggregate_generic.
+
+root {
+  input {
+    project {
+      common { direct {} }
+      input {
+        read {
+          common { direct {} }
+          base_schema {
+            names: "x"
+            struct {
+              types { i8 { nullability: NULLABILITY_REQUIRED } }
+              nullability: NULLABILITY_REQUIRED
+            }
+          }
+          virtual_table {
+            expressions { fields { literal { i8: 125 } } }
+            expressions { fields { literal { i8: 126 } } }
+            expressions { fields { literal { i8: 127 } } }
+          }
+        }
+      }
+      expressions {
+        window_function {
+          function_reference: 1
+          options {
+            name: "range_boundary_overflow"
+            preference: "EXTEND"
+          }
+          output_type { i64 { nullability: NULLABILITY_REQUIRED } }
+          phase: AGGREGATION_PHASE_INITIAL_TO_RESULT
+          invocation: AGGREGATION_INVOCATION_ALL
+          sorts {
+            expr {
+              selection {
+                direct_reference { struct_field { field: 0 } }
+                root_reference {}
+              }
+            }
+            direction: SORT_DIRECTION_ASC_NULLS_LAST
+          }
+          bounds_type: BOUNDS_TYPE_RANGE
+          lower_bound {
+            following {
+              offset: 1
+              offset_expr { literal { i8: 1 } }
+            }
+          }
+          upper_bound {
+            following {
+              offset: 2
+              offset_expr { literal { i8: 2 } }
+            }
+          }
+        }
+      }
+    }
+  }
+  names: "x"
+  names: "frame_count"
+}

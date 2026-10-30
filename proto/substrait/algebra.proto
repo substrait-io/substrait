@@ -431,6 +431,12 @@ message ConsistentPartitionWindowRel {
 
     repeated FunctionArgument arguments = 9;
 
+    // Behavioral preferences for the function call and window frame.
+    // RANGE frames support range_boundary_overflow with ERROR or EXTEND,
+    // independently of options declared by the referenced function.
+    // Overflow is measured against the declared ordering type's value range,
+    // not the consumer's native arithmetic limits.
+    // See https://substrait.io/expressions/window_functions/#boundary-overflow-behavior
     repeated FunctionOption options = 11;
 
     Type output_type = 7;
@@ -1061,7 +1067,7 @@ message FunctionArgument {
 message FunctionOption {
   // Name of the option to set. If the consumer does not recognize the
   // option, it must reject the plan. The name is matched case-insensitively
-  // with option names defined for the function.
+  // with option names defined for the function or its invocation context.
   string name = 1;
 
   // List of behavior options allowed by the producer. At least one must be
@@ -1399,6 +1405,11 @@ message Expression {
     // Optional behavioral preferences for the function call. Unlike
     // arguments, these are not required and are not part of the function
     // signature. If omitted, the consumer chooses its own behavior.
+    // RANGE frames also support range_boundary_overflow with ERROR or EXTEND,
+    // independently of options declared by the referenced function.
+    // Overflow is measured against the declared ordering type's value range,
+    // not the consumer's native arithmetic limits.
+    // See https://substrait.io/expressions/window_functions/#boundary-overflow-behavior
     repeated FunctionOption options = 11;
 
     // Must be set to the return type of the function, exactly as derived
@@ -1445,6 +1456,8 @@ message Expression {
 
     // A frame boundary.
     // See https://substrait.io/expressions/window_functions/#frame-bounds
+    // For RANGE type compatibility, membership, and boundary overflow, see
+    // https://substrait.io/expressions/window_functions/#range
     message Bound {
       // A bound toward earlier rows or values in the declared ordering.
       message Preceding {
