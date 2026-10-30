@@ -138,15 +138,15 @@ A named lambda is defined once in `Plan.named_lambdas`, where each entry is repr
 
 Each definition consists of a `lambda_anchor`, an `Expression.Lambda`, and an optional human-readable `name`. The name is only for diagnostics and plan inspection: it has no semantic meaning and cannot be used as a reference. An invocation supplies a `named_lambda` reference and a `Nested.Struct` of arguments. The argument count and types must exactly match the lambda parameters, and the invocation's return type is the type of the lambda body.
 
-Named lambdas are closed over their parameters. Their bodies cannot reference relational input, outer records, or parameters from a caller's enclosing lambda. They may use dynamic parameters, execution context variables, and other named lambdas.
-
-Named-lambda references may reference definitions that appear later in `Plan.named_lambdas`, but the definition dependency graph must be acyclic. A definition depends on another whenever its body invokes that named lambda or reference it as a function value, including inside nested expressions and arguments to higher-order functions. Self-references and indirect cycles are invalid, even if the reference is only passed as an argument or occurs in a branch that is not evaluated.
-
 Within a plan, every named-lambda anchor must be unique and every named-lambda invocation or reference must target an existing definition. A named lambda may be referenced or invoked any number of times.
 
-```protobuf
---8<-- "examples/proto-textformat/named_lambda/reused_identity.textproto"
-```
+### Scope
+
+Named lambdas are closed over their parameters. Their bodies cannot reference relational input, outer records, or parameters from a caller's enclosing lambda. They may use dynamic parameters, execution context variables, and other named lambdas.
+
+### Named Lambda Dependencies
+
+Named-lambda references may reference definitions that appear later in `Plan.named_lambdas`, but the definition dependency graph must be acyclic. A definition depends on another whenever its body invokes that named lambda or reference it as a function value, including inside nested expressions and arguments to higher-order functions. Self-references and indirect cycles are invalid, even if the reference is only passed as an argument or occurs in a branch that is not evaluated.
 
 ### Named Lambda References
 
@@ -163,11 +163,23 @@ Unlike a `LambdaInvocation`, which produces the result of a call, a `NamedLambda
 %%% proto.message.Expression.NamedLambdaReference %%%
     ```
 
-The following plan passes a named identity lambda to `transform`. For each input row, the projected expression produces `[1, 2, 3]`. Both the extension function and the named lambda use anchor 1, demonstrating their separate namespaces.
+### Examples
 
-```protobuf
---8<-- "examples/proto-textformat/named_lambda/transform_identity.textproto"
-```
+=== "Direct invocation"
+
+    Defines an identity lambda once and invokes it twice.
+
+    ```protobuf
+    --8<-- "examples/proto-textformat/named_lambda/reused_identity.textproto"
+    ```
+
+=== "Function-valued argument"
+
+    The following plan passes a named identity lambda to `transform`. For each input row, the projected expression produces `[1, 2, 3]`. Both the extension function and the named lambda use anchor 1, demonstrating their separate namespaces.
+
+    ```protobuf
+    --8<-- "examples/proto-textformat/named_lambda/transform_identity.textproto"
+    ```
 
 ## See Also
 
