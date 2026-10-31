@@ -40,12 +40,12 @@ If we want to represent the SQL expression:
 a.b[2].c['my_map_key'].x
 ```
 
-We will need to declare the nested field such that:
+We will need to declare the nested field such that (SQL array subscripts start at 1, while list offsets start at 0):
 
 ```
 Struct field reference a
 Struct field b
-List offset 2
+List offset 1
 Struct field c
 Map key my_map_key
 Struct field x
@@ -63,7 +63,7 @@ selection {
           field: 0 # .b
           child {
             list_element {
-              offset: 2
+              offset: 1 # [2]
               child {
                 struct_field {
                   field: 0 # .c
@@ -145,15 +145,13 @@ struct:
   - i64
 ```
 
+#### Field Order
+
+A mask outputs the fields it selects in the order it lists them, which need not be their order in the schema. Over a record of `i64`, `string` and `boolean`, a mask that selects fields `2` and `0` yields `boolean` and then `i64`.
+
 #### Unwrapping Behavior
 
-By default, when only a single field is selected from a struct, that struct is removed. When only a single element is removed from a list, the list is removed. A user can also configure the mask to avoid unwrapping in these cases. [TBD how we express this in the serialization formats.]
-
-
-
-???+ question "Discussion Points"
-
-    * Should we support column reordering/positioning using a masked complex expression? (Right now, you can only mask things out.)
+By default, when only a single field is selected from a struct, that struct is removed, leaving the bare field. Set `maintain_singular_struct` on the mask to keep the struct instead. When only a single element is selected from a list, the list is removed; there is currently no option to keep it.
 
 ### Outer References
 

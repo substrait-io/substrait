@@ -137,7 +137,9 @@ scalar_functions:
 
       `expression` BETWEEN `low` AND `high`
 
-      If `low`, `high`, or `expression` are `null`, `null` is returned.
+      Equivalent to `and(gte(expression, low), lte(expression, high))`: if either
+      comparison is `false`, `false` is returned, even if the other bound is `null`.
+      Otherwise, if `low`, `high`, or `expression` are `null`, `null` is returned.
     impls:
       - args:
           - value: any1
