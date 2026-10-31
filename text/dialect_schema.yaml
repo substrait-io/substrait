@@ -148,7 +148,10 @@ properties:
     uniqueItems: true
     description: >
       Expressions that are supported by this dialect.  If not present or empty,
-      all expressions are supported.
+      all expressions are supported, including both inline and named lambda
+      invocations. In a non-empty list, LAMBDA_INVOCATION supports inline
+      callees; named callees require both LAMBDA_INVOCATION and
+      NAMED_LAMBDA_REFERENCE.
     items:
       oneOf:
         - enum:
@@ -167,6 +170,7 @@ properties:
           - LAMBDA
           - LAMBDA_INVOCATION
           - EXECUTION_CONTEXT_VARIABLE
+          - NAMED_LAMBDA_REFERENCE
         - $ref: "#/definitions/literal_expression"
         - $ref: "#/definitions/selection_expression"
         - $ref: "#/definitions/scalar_function_expression"
@@ -182,6 +186,7 @@ properties:
         - $ref: "#/definitions/lambda_expression"
         - $ref: "#/definitions/lambda_invocation_expression"
         - $ref: "#/definitions/execution_context_variable"
+        - $ref: "#/definitions/named_lambda_reference_expression"
 
   supported_scalar_functions:
     type: array
@@ -1297,9 +1302,28 @@ definitions:
   lambda_invocation_expression:
     type: object
     additionalProperties: false
+    description: >
+      Support for invoking inline lambdas. When NAMED_LAMBDA_REFERENCE is also
+      supported, this includes invoking named lambdas through
+      LambdaInvocation.named_lambda.
     properties:
       expression:
         const: LAMBDA_INVOCATION
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
+    required: [expression]
+  named_lambda_reference_expression:
+    type: object
+    additionalProperties: false
+    description: >
+      Support for named lambda references as function-valued expressions.
+      Combined with LAMBDA_INVOCATION, this also declares support for invoking
+      named lambdas. On its own, this does not imply support for the
+      LAMBDA_INVOCATION expression.
+    properties:
+      expression:
+        const: NAMED_LAMBDA_REFERENCE
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.

@@ -1,6 +1,29 @@
 Release Notes
 ---
 
+## [0.107.0](https://github.com/substrait-io/substrait/compare/v0.106.0...v0.107.0) (2026-10-18)
+
+### ⚠ BREAKING CHANGES
+
+* **proto:** Moving `LambdaInvocation.lambda` into a `oneof`
+preserves the wire encoding of existing inline-lambda invocations but
+may break generated source APIs requiring code change around `oneof`
+access.
+
+<!-- Reviewable:start -->
+* **extensions:** the two-argument `subtract:ptstz_iyear` overload,
+`subtract(precision_timestamp_tz<P>, interval_year)`, deprecated in
+0.100.0, has been removed. Use the three-argument
+`subtract:ptstz_iyear_str` overload,
+`subtract(precision_timestamp_tz<P>, interval_year, string)`, and pass
+an explicit IANA timezone.
+
+### Features
+
+* **extensions:** remove deprecated subtract:ptstz_iyear overload ([#1262](https://github.com/substrait-io/substrait/issues/1262)) ([e56839f](https://github.com/substrait-io/substrait/commit/e56839f95f6976b844dc21d7b7f266d811ae1503))
+* **proto:** support detached relation subtrees ([#1236](https://github.com/substrait-io/substrait/issues/1236)) ([554bbfc](https://github.com/substrait-io/substrait/commit/554bbfc15e11013d9bbb713eda2f809309378cf9))
+* **proto:** support named lambdas ([#1221](https://github.com/substrait-io/substrait/issues/1221)) ([70e6b61](https://github.com/substrait-io/substrait/commit/70e6b617e7a603d56a56db29b05b420b904acfce)), closes [#1220](https://github.com/substrait-io/substrait/issues/1220)
+
 ## [0.106.0](https://github.com/substrait-io/substrait/compare/v0.105.0...v0.106.0) (2026-10-11)
 
 ### ⚠ BREAKING CHANGES

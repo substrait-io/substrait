@@ -2,6 +2,9 @@
 
 Substrait supports the creation of custom functions using [simple extensions](../extensions/index.md#simple-extensions), using the facilities described in [scalar functions](scalar_functions.md). The functions defined by Substrait use the same mechanism. The extension files for standard functions can be found [here](https://github.com/substrait-io/substrait/tree/main/extensions).
 
+!!! note
+    To define a function within the plan using Substrait expressions, see [named lambdas](lambda_expressions.md#named-lambdas).
+
 Here's an example function that doubles its input:
 
 !!! info inline end "Implementation Note"
