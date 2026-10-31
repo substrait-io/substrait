@@ -9,8 +9,8 @@
     "num_function_overloads": 534
   },
   "coverage": {
-    "total_test_count": 1338,
+    "total_test_count": 1348,
     "num_function_variants": 534,
-    "num_covered_function_variants": 294
+    "num_covered_function_variants": 295
   }
 }

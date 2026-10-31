@@ -19,6 +19,7 @@ from pathlib import Path
 import pytest
 import yaml
 from google.protobuf.descriptor import Descriptor, EnumDescriptor
+from jsonschema import Draft202012Validator, ValidationError
 
 try:
     from substrait import algebra_pb2, plan_pb2, type_pb2
@@ -142,9 +143,14 @@ def relation_options() -> dict[str, str]:
 
     Relations are named after their message without the `Rel` suffix, so
     `ConsistentPartitionWindowRel` is declared as `CONSISTENT_PARTITION_WINDOW`.
+    Encoding-only detached relation ordinals are excluded.
     """
     return by_dialect_name(
-        algebra_pb2.Rel.DESCRIPTOR.oneofs_by_name["rel_type"].fields,
+        [
+            member
+            for member in algebra_pb2.Rel.DESCRIPTOR.oneofs_by_name["rel_type"].fields
+            if member.name != "detached_rel_ordinal"
+        ],
         lambda member: screaming_snake_case(
             member.message_type.name.removesuffix("Rel")
         ),
@@ -421,6 +427,59 @@ FIX_HINT = (
 def schema() -> dict:
     with DIALECT_SCHEMA_PATH.open() as schema_file:
         return yaml.safe_load(schema_file)
+
+
+@pytest.mark.parametrize(
+    "supported_expressions",
+    [
+        None,
+        [],
+        ["LAMBDA_INVOCATION"],
+        [{"expression": "LAMBDA_INVOCATION"}],
+        ["NAMED_LAMBDA_REFERENCE"],
+        [{"expression": "NAMED_LAMBDA_REFERENCE"}],
+        ["LAMBDA_INVOCATION", "NAMED_LAMBDA_REFERENCE"],
+        [
+            {"expression": "LAMBDA_INVOCATION"},
+            {"expression": "NAMED_LAMBDA_REFERENCE"},
+        ],
+        ["LAMBDA_INVOCATION", {"expression": "NAMED_LAMBDA_REFERENCE"}],
+        [{"expression": "LAMBDA_INVOCATION"}, "NAMED_LAMBDA_REFERENCE"],
+        ["LITERAL"],
+    ],
+    ids=[
+        "omitted",
+        "empty",
+        "invocation-shorthand",
+        "invocation-object",
+        "reference-shorthand",
+        "reference-object",
+        "both-shorthand",
+        "both-object",
+        "reference-object-mixed",
+        "invocation-object-mixed",
+        "neither",
+    ],
+)
+def test_lambda_dialect_declarations(schema: dict, supported_expressions):
+    dialect = {}
+    if supported_expressions is not None:
+        dialect["supported_expressions"] = supported_expressions
+    Draft202012Validator(schema).validate(dialect)
+
+
+@pytest.mark.parametrize("lambda_types", [["INLINE"], ["NAMED"], ["INLINE", "NAMED"]])
+def test_lambda_invocation_rejects_callee_type_restrictions(
+    schema: dict, lambda_types: list[str]
+):
+    dialect = {
+        "supported_expressions": [
+            {"expression": "LAMBDA_INVOCATION", "lambda_types": lambda_types},
+            "NAMED_LAMBDA_REFERENCE",
+        ]
+    }
+    with pytest.raises(ValidationError):
+        Draft202012Validator(schema).validate(dialect)
 
 
 def alternatives(schema: dict, declaration: Declaration) -> list[dict]:

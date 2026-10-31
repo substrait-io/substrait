@@ -199,7 +199,7 @@ The streaming aggregate operation leverages data ordered by the grouping express
 
 ## Consistent Partition Window Operation
 
-A consistent partition window operation is a special type of project operation where every function is a window function and all of the window functions share the same sorting and partitioning. This allows for the sort and partition to be calculated once and shared between the various function evaluations.
+A consistent partition window operation is a special type of project operation where every function is a window function and all of the window functions share the same sorting and partitioning. This allows for the sort and partition to be calculated once and shared between the various function evaluations. Each function has its own frame bounds and bound mode. See [Window Functions](../expressions/window_functions.md) for partition, peer-group, and frame semantics.
 
 | Signature            | Value                                                                |
 | -------------------- | -------------------------------------------------------------------- |
@@ -213,6 +213,8 @@ A consistent partition window operation is a special type of project operation w
 | Property         | Description                   | Required               |
 | ---------------- | ----------------------------- | ---------------------- |
 | Input            | The relational input.         | Required               |
+| Partitioning     | Partitioning expressions shared by all functions. | Optional; defaults to one partition for the entire input. |
+| Ordering         | Ordering expressions shared by all functions. | Subject to the [bound mode rules](../expressions/window_functions.md#bound-modes). |
 | Window Functions | One or more window functions. | At least one required. |
 
 ## Expand Operation
