@@ -253,7 +253,15 @@ For reference, here are are some common output type derivations and how they can
 | Operation                                                    | Definition                                                   |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Add item to list                                             | `add(List<T>, T) => List<T>`                               |
-| Decimal Division                                             | `divide(Decimal<P1,S1>, Decimal<P2,S2>) => Decimal<P1 -S1 + S2 + MAX(6, S1 + P2 + 1), MAX(6, S1 + P2 + 1)>` |
+| Decimal Division                                             | See [Decimal Division](#decimal-division) for the bounded return type. |
 | Select a subset of map keys based on a regular expression (requires stringlike keys) | `extract_values(regex:string, map:Map<K,V>) => List<V> WHERE K IN [STRING, VARCHAR<N>, FIXEDCHAR<N>]` |
 | Concatenate two fixed sized character strings                | `concat(FIXEDCHAR<A>, FIXEDCHAR<B>) => FIXEDCHAR<A+B>`       |
 | Make a struct of a set of fields and a struct definition.    | `make_struct(<type> T, K...) => T`                           |
+
+##### Decimal Division
+
+The [decimal `divide` function](../extensions/functions_arithmetic_decimal.md#divide) starts with scale `max(6, S1 + P2 + 1)` and precision `P1 - S1 + S2 + scale`. The divisor contributes its scale `S2` to the integral part of the result, not its precision `P2`.
+
+If the initial precision exceeds 38, the result precision is 38 and the scale is reduced by the excess, but not below 6. Otherwise, the initial precision and scale are retained. This bounds the return type; a value that does not fit is subject to the function's `overflow` option.
+
+For example, dividing `decimal<10,2>` by `decimal<5,1>` returns `decimal<17,8>`. Dividing `decimal<28,10>` by `decimal<10,2>` starts at precision 41 and scale 21, so the bounded return type is `decimal<38,18>`. Dividing two `decimal<38,10>` operands returns `decimal<38,6>`.
