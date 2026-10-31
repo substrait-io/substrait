@@ -6,11 +6,11 @@
     "num_aggregate_functions": 31,
     "num_scalar_functions": 172,
     "num_window_functions": 11,
-    "num_function_overloads":534
+    "num_function_overloads": 534
   },
   "coverage": {
-    "total_test_count": 1327,
+    "total_test_count": 1348,
     "num_function_variants": 534,
-    "num_covered_function_variants": 292
+    "num_covered_function_variants": 295
   }
 }
