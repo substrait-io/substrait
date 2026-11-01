@@ -1,6 +1,24 @@
 Release Notes
 ---
 
+## [0.108.0](https://github.com/substrait-io/substrait/compare/v0.107.0...v0.108.0) (2026-11-01)
+
+### ⚠ BREAKING CHANGES
+
+* **extensions:** between no longer always returns null for null inputs.
+A non-null bound that rules out a match now produces false.
+* Masks output fields in selection order. For a schema
+[c0, c1, c2], a mask [2, 0] outputs [c2, c0]. Consumers that use schema
+order must change; masks already in schema order are unaffected.
+
+### Bug Fixes
+
+* **extensions:** align between null-bound semantics with SQL ([#1304](https://github.com/substrait-io/substrait/issues/1304)) ([cb21a46](https://github.com/substrait-io/substrait/commit/cb21a46d76faf0bf5ea1c5337eb4dc6be9b0993e))
+
+### Documentation
+
+* output a mask's selected fields in the order it lists them ([#1247](https://github.com/substrait-io/substrait/issues/1247)) ([2a16cf8](https://github.com/substrait-io/substrait/commit/2a16cf8882d11601f89f12056a57cdb978c165e8)), closes [#1225](https://github.com/substrait-io/substrait/issues/1225)
+
 ## [0.107.0](https://github.com/substrait-io/substrait/compare/v0.106.0...v0.107.0) (2026-10-18)
 
 ### ⚠ BREAKING CHANGES
