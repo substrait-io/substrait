@@ -123,7 +123,7 @@ Points to an [Iceberg metadata file](https://iceberg.apache.org/spec/#table-meta
 
 ## Table Function
 
-`TableFunctionRel` invokes a `TableFunction` and returns its generated rows. It is a leaf operator with no local input row. Arguments may be expressions rather than literals.
+`TableFunctionRel` invokes a `TableFunction` and returns its generated rows. It is a leaf operator with no local input row. Value arguments must be constant expressions without references to input or outer relation fields.
 
 The relation contains the `TableFunction` call in its `function` field.
 

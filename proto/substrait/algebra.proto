@@ -1848,7 +1848,8 @@ message TableFunction {
 
   // Arguments must match the selected YAML implementation's signature,
   // including any variadic arguments:
-  //  - Value arguments use FunctionArgument.value.
+  //  - Value arguments use FunctionArgument.value and must be constant expressions.
+  //    References to input or outer relation fields are not allowed.
   //  - Type arguments use FunctionArgument.type.
   //  - Enum arguments use FunctionArgument.enum, matching an allowed option
   //    case-insensitively.
