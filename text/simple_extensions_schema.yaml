@@ -420,5 +420,3 @@ $defs:
                 argument types using a YAML type expression. The producer must
                 still supply a concrete output_type.
               $ref: "#/$defs/returnValue"
-            implementation:
-              $ref: "#/$defs/implementation"

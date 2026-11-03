@@ -16,7 +16,6 @@ Table functions are declared under `table_functions` in extension YAML files.
 | Options | Named behavioral options declared per implementation, following the [scalar function option mechanism](scalar_functions.md#options). | Optional |
 | Description | Human-readable description of the function or an individual implementation. | Optional |
 | Return Type | A type expression that resolves to a non-nullable struct. May be omitted when the output schema cannot be derived from argument types using a YAML type expression. | Optional, see [Schema Determination](#schema-determination). |
-| Implementation Map | Locations of function implementations. | Optional |
 
 Options follow the [scalar function option rules](scalar_functions.md#options).
 
