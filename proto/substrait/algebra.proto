@@ -648,7 +648,7 @@ message TableFunctionRel {
   // columns in field order.
   TableFunction function = 2;
 
-  substrait.extensions.AdvancedExtension advanced_extension = 7;
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
 }
 
 // A relation with output field names.
