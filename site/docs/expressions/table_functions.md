@@ -15,7 +15,7 @@ Table functions are declared under `table_functions` in extension YAML files.
 | Variadic Behavior | Whether the last argument can be repeated, with optional minimum and maximum counts. | Optional, defaults to a single argument. |
 | Options | Named behavioral options declared per implementation, following the [scalar function option mechanism](scalar_functions.md#options). | Optional |
 | Description | Human-readable description of the function or an individual implementation. | Optional |
-| Return Type | A type expression that resolves to a non-nullable struct. May be omitted when the producer determines the schema from argument values or external information. | Optional, see [Schema Determination](#schema-determination). |
+| Return Type | A type expression that resolves to a non-nullable struct. May be omitted when the output schema cannot be derived from argument types using a YAML type expression. | Optional, see [Schema Determination](#schema-determination). |
 | Implementation Map | Locations of function implementations. | Optional |
 
 Options follow the [scalar function option rules](scalar_functions.md#options).
@@ -43,9 +43,11 @@ Every call must declare a concrete `output_type`, regardless of whether its YAML
 
 If an implementation declares `return`, the call's `output_type` must match that expression evaluated with the bound argument types.
 
-### Schemas Determined by Plan Producer
+### Schemas Not Derivable from YAML
 
-An implementation may omit `return` when the producer determines the output schema using argument values, external information, or other function-specific knowledge rather than a YAML type expression. No additional marker is required. The producer must still provide the concrete schema in the call's `output_type` field.
+An implementation may omit `return` when the output schema cannot be derived from argument types using a YAML type expression. No additional marker is required.
+
+When `return` is omitted, the producer must still determine a concrete `output_type` using argument values, external information, or other function-specific knowledge. The consumer must agree with the declared `output_type`; it must not substitute a different output schema.
 
 For example, this parsing function uses a schema-defining string argument to determine its output columns. Its YAML definition intentionally omits `return`.
 

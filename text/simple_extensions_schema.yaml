@@ -416,8 +416,9 @@ $defs:
             return:
               description: >-
                 The output row type must resolve to a non-nullable struct.
-                Omit when the producer determines the schema from argument values
-                or external information instead of a YAML type expression.
+                May be omitted when the output schema cannot be derived from
+                argument types using a YAML type expression. The producer must
+                still supply a concrete output_type.
               $ref: "#/$defs/returnValue"
             implementation:
               $ref: "#/$defs/implementation"
