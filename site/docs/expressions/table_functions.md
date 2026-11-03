@@ -2,7 +2,7 @@
 
 Table functions produce a relation containing zero or more rows per invocation.
 
-A table function call is represented by the `TableFunction` message. The [Table Function relation](../relations/logical_relations.md#table-function) contains the call in its `function` field and returns its generated rows.
+Table functions are invoked using the [Table Function relation](../relations/logical_relations.md#table-function), which returns their generated rows.
 
 ## Function Definition Properties
 
