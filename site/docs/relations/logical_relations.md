@@ -138,7 +138,7 @@ The relation contains the `TableFunction` call in its `function` field.
 
 | Property | Description | Required |
 | -------- | ----------- | -------- |
-| Function | The `TableFunction` call to invoke. The call declares a concrete, non-nullable struct `output_type`, even when its YAML implementation omits `return`. | Required |
+| Function | The `TableFunction` call to invoke. The call declares a concrete, non-nullable struct `output_type`, even when its YAML implementation omits `schema`. | Required |
 
 The output fields may have optional name hints in `RelCommon.hint.output_names`; names are not part of the function's output type. Function arguments, options, and schema determination follow the [Table Functions](../expressions/table_functions.md) contract.
 

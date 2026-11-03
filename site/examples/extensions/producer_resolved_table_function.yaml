@@ -12,4 +12,4 @@ table_functions:
             value: string
           - name: schema
             value: string
-        # No return expression; the schema argument determines the output type.
+        # No schema expression; the schema argument determines the output type.

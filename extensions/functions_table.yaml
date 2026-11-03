@@ -25,7 +25,7 @@ table_functions:
           - name: step
             value: i64
             description: The increment between values
-        return: struct<i64>
+        schema: struct<i64>
       - args:
           - name: start
             value: i32
@@ -36,4 +36,4 @@ table_functions:
           - name: step
             value: i32
             description: The increment between values
-        return: struct<i32>
+        schema: struct<i32>

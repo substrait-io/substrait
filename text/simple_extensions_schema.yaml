@@ -413,9 +413,9 @@ $defs:
               $ref: "#/$defs/variadicBehavior"
             options:
               $ref: "#/$defs/options"
-            return:
+            schema:
               description: >-
-                The output row type must resolve to a non-nullable struct.
+                The output schema must resolve to a non-nullable struct.
                 May be omitted when the output schema cannot be derived from
                 argument types using a YAML type expression. The producer must
                 still supply a concrete output_type.

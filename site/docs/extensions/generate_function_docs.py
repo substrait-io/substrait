@@ -89,19 +89,25 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                 arg_values = [f"`{x}`" for x in arg_string]
                 func_concat_arg_input_values = ", ".join(arg_values)
 
-                # If the return value for the function implementation is multiple lines long,
+                output_expression = impl.get(
+                    "schema"
+                    if function_classification == "table_functions"
+                    else "return"
+                )
+
+                # If the output expression for the function implementation is multiple lines long,
                 # print each line separately. This is the case for some functions in
                 # functions_arithmetic_decimal.yaml
-                if "return" not in impl:
+                if output_expression is None:
                     mdFile.new_line(
                         f"- {function_name}({func_concat_arg_input_values}): -> "
                         f"`output schema determined by the producer`"
                     )
-                elif "\n" in impl["return"]:
+                elif "\n" in output_expression:
                     mdFile.new_line(
                         f"- {function_name}({func_concat_arg_input_values}): -> "
                     )
-                    multiline_return_str = "\t" + impl["return"]
+                    multiline_return_str = "\t" + output_expression
                     multiline_return_str = multiline_return_str.replace("\n", "\n\t")
                     mdFile.new_line("\t```")
                     mdFile.new_line(f"{multiline_return_str}")
@@ -109,7 +115,7 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                 else:
                     mdFile.new_line(
                         f"- {function_name}({func_concat_arg_input_values}): -> "
-                        f"`{impl['return']}`"
+                        f"`{output_expression}`"
                     )
 
                 if "description" in impl:

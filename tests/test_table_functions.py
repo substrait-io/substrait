@@ -20,7 +20,7 @@ def test_table_function_declarations_use_declared_output_validation(
                 "impls": [
                     {
                         "args": [{"name": "input", "value": argument_type}],
-                        "return": "struct<i64?>",
+                        "schema": "struct<i64?>",
                     },
                     {"args": [{"name": "input", "value": argument_type}]},
                 ],

@@ -15,7 +15,7 @@ Table functions are declared under `table_functions` in extension YAML files.
 | Variadic Behavior | Whether the last argument can be repeated, with optional minimum and maximum counts. | Optional, defaults to a single argument. |
 | Options | Named behavioral options declared per implementation, following the [scalar function option mechanism](scalar_functions.md#options). | Optional |
 | Description | Human-readable description of the function or an individual implementation. | Optional |
-| Return Type | A type expression that resolves to a non-nullable struct. May be omitted when the output schema cannot be derived from argument types using a YAML type expression. | Optional, see [Schema Determination](#schema-determination). |
+| Schema | A type expression that resolves to a non-nullable struct describing the output row's columns. May be omitted when the output schema cannot be derived from argument types using a YAML type expression. | Optional, see [Schema Determination](#schema-determination). |
 
 ## Table Function Calls
 
@@ -32,19 +32,19 @@ Table functions always follow the `DECLARED_OUTPUT` [nullability handling](scala
 
 ## Schema Determination
 
-Every call must declare a concrete `output_type`, regardless of whether its YAML implementation declares a `return` expression. The output type is fixed for the call, and every generated row must conform to it.
+Every call must declare a concrete `output_type`, regardless of whether its YAML implementation declares a `schema` expression. The output type is fixed for the call, and every generated row must conform to it.
 
 ### Schemas Derivable from YAML
 
-If an implementation declares a `return` type, the call's `output_type` must match that expression evaluated with the bound argument types.
+If an implementation declares a `schema` expression, the call's `output_type` must match that expression evaluated with the bound argument types.
 
 ### Schemas Not Derivable from YAML
 
-An implementation may omit `return` when the output schema cannot be derived from argument types using a YAML type expression. No additional marker is required.
+An implementation may omit `schema` when the output schema cannot be derived from argument types using a YAML type expression. No additional marker is required.
 
-When `return` is omitted, the producer must still determine a concrete `output_type` using argument values, external information, or other function-specific knowledge. The consumer must agree with the declared `output_type`; it must not substitute a different output schema.
+When `schema` is omitted, the producer must still determine a concrete `output_type` using argument values, external information, or other function-specific knowledge. The consumer must agree with the declared `output_type`; it must not substitute a different output schema.
 
-For example, this parsing function uses a schema-defining string argument to determine its output columns. Its YAML definition intentionally omits `return`.
+For example, this parsing function uses a schema-defining string argument to determine its output columns. Its YAML definition intentionally omits `schema`.
 
 ```yaml
 --8<-- "examples/extensions/producer_resolved_table_function.yaml"
