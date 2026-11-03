@@ -28,7 +28,7 @@ Table functions are declared under `table_functions` in extension YAML files.
 
 Value arguments must be constant expressions, such as literals or scalar functions of constant arguments. References to input or outer relation fields are not allowed.
 
-Table functions always follow the [scalar `DECLARED_OUTPUT` nullability rules](scalar_functions.md#nullability-handling), with the additional requirement that the output type is a non-nullable struct.
+Table functions always follow the `DECLARED_OUTPUT` [nullability handling](scalar_functions.md#nullability-handling) rules, with the additional requirement that the output type is a non-nullable struct.
 
 ## Schema Determination
 
