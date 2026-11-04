@@ -369,6 +369,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by FuncTestCaseParser#uuidArg.
+    def enterUuidArg(self, ctx:FuncTestCaseParser.UuidArgContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#uuidArg.
+    def exitUuidArg(self, ctx:FuncTestCaseParser.UuidArgContext):
+        pass
+
+
     # Enter a parse tree produced by FuncTestCaseParser#intervalYearArg.
     def enterIntervalYearArg(self, ctx:FuncTestCaseParser.IntervalYearArgContext):
         pass
@@ -744,6 +753,15 @@ class FuncTestCaseParserListener(ParseTreeListener):
 
     # Exit a parse tree produced by FuncTestCaseParser#dateType.
     def exitDateType(self, ctx:FuncTestCaseParser.DateTypeContext):
+        pass
+
+
+    # Enter a parse tree produced by FuncTestCaseParser#uuidType.
+    def enterUuidType(self, ctx:FuncTestCaseParser.UuidTypeContext):
+        pass
+
+    # Exit a parse tree produced by FuncTestCaseParser#uuidType.
+    def exitUuidType(self, ctx:FuncTestCaseParser.UuidTypeContext):
         pass
 
 

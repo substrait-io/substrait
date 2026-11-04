@@ -210,6 +210,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by FuncTestCaseParser#uuidArg.
+    def visitUuidArg(self, ctx:FuncTestCaseParser.UuidArgContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by FuncTestCaseParser#intervalYearArg.
     def visitIntervalYearArg(self, ctx:FuncTestCaseParser.IntervalYearArgContext):
         return self.visitChildren(ctx)
@@ -417,6 +422,11 @@ class FuncTestCaseParserVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by FuncTestCaseParser#dateType.
     def visitDateType(self, ctx:FuncTestCaseParser.DateTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by FuncTestCaseParser#uuidType.
+    def visitUuidType(self, ctx:FuncTestCaseParser.UuidTypeContext):
         return self.visitChildren(ctx)
 
 

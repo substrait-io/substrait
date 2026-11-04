@@ -235,6 +235,11 @@ Integers are represented as sequences of digits. Negative numbers are preceded b
 #### Enum
 - **enum**: An enumeration value represented as an identifier. Enum values are defined in extension files and are used as named constants. Example: `DISTRIBUTION_TYPE::enum` where `DISTRIBUTION_TYPE` is the enum value.
 
+#### UUID
+- **uuid**: An unquoted sequence of 32 hexadecimal digits in `8-4-4-4-12` hyphen-separated groups, for example `00112233-4455-6677-8899-aabbccddeeff::uuid`. Uppercase, lowercase, and mixed-case hexadecimal digits are accepted. Any 128-bit value is allowed, without UUID version or variant restrictions.
+- Use `uuid?` for nullable values and `null::uuid?` for a null literal. Within compound literals and table rows, omit the per-value type annotation as for other literal types.
+- To encode a UUID literal in protobuf, remove the hyphens and decode consecutive hexadecimal byte pairs from left to right into exactly 16 bytes, as specified by the [UUID literal encoding](../site/docs/types/type_classes.md#uuid-literals).
+
 #### Date and Time
 All date and time literals use ISO 8601 format:
 
@@ -270,6 +275,7 @@ Use short names listed in https://substrait.io/extensions/#function-signature-co
 - **vchar**: Variable-length string `varchar<N>`
 - **vbin**: Fixed-length binary `fixedbinary<N>`
 - **date**: Date
+- **uuid**: Universally unique identifier
 - **iyear**: Interval year
 - **iday**: Interval days `interval_day<P>`
 - **icompound**: Interval compound

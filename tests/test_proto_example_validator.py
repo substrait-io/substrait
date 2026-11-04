@@ -5,6 +5,7 @@ Ensures examples are valid and use no unknown fields.
 """
 
 from pathlib import Path
+from uuid import UUID
 from google.protobuf import json_format, text_format
 from google.protobuf.message import Message
 import pytest
@@ -40,6 +41,40 @@ def test_validation_rejects_empty_messages():
     """Test that validation rejects empty messages."""
     with pytest.raises(AssertionError, match="no fields populated"):
         validate_example("", algebra_pb2.Expression.Lambda)
+
+
+def test_uuid_literal_example():
+    example = Path("site/examples/proto-textformat/literal/uuid.textproto")
+    literal = validate_example(example.read_text(), algebra_pb2.Expression.Literal)
+    assert isinstance(literal, algebra_pb2.Expression.Literal)
+    assert literal.WhichOneof("literal_type") == "uuid"
+    assert literal.uuid == bytes.fromhex("00112233445566778899aabbccddeeff")
+    assert str(UUID(bytes=literal.uuid)) == "00112233-4455-6677-8899-aabbccddeeff"
+
+
+@pytest.mark.parametrize(
+    "uuid_text",
+    [
+        "00112233-4455-6677-8899-aabbccddeeff",
+        "00112233-4455-6677-8899-AaBbCcDdEeFf",
+        "00000000-0000-0000-0000-000000000000",
+        "ffffffff-ffff-ffff-ffff-ffffffffffff",
+        "01234567-89ab-cdef-0123-456789abcdef",
+    ],
+)
+def test_uuid_literal_round_trip(uuid_text):
+    expected_bytes = bytes.fromhex(uuid_text.replace("-", ""))
+    literal = algebra_pb2.Expression.Literal(uuid=expected_bytes)
+    restored_literals = [
+        algebra_pb2.Expression.Literal.FromString(literal.SerializeToString()),
+        json_format.Parse(
+            json_format.MessageToJson(literal), algebra_pb2.Expression.Literal()
+        ),
+    ]
+    for restored in restored_literals:
+        assert restored == literal
+        assert len(restored.uuid) == 16
+        assert UUID(bytes=restored.uuid) == UUID(uuid_text)
 
 
 def test_validate_lambdas():

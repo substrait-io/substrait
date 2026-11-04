@@ -324,6 +324,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitNumericLiteral(ctx.numericLiteral()), "number"
         if ctx.StringLiteral() is not None:
             return ctx.getText(), "str"
+        if ctx.UuidLiteral() is not None:
+            return ctx.getText(), "uuid"
         if ctx.BooleanLiteral() is not None:
             return ctx.getText(), "bool"
         if ctx.DateLiteral() is not None:
@@ -372,6 +374,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitDecimalArg(ctx.decimalArg())
         if ctx.dateArg() is not None:
             return self.visitDateArg(ctx.dateArg())
+        if ctx.uuidArg() is not None:
+            return self.visitUuidArg(ctx.uuidArg())
         if ctx.intervalDayArg() is not None:
             return self.visitIntervalDayArg(ctx.intervalDayArg())
         if ctx.intervalYearArg() is not None:
@@ -473,6 +477,13 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             value=ctx.DateLiteral().getText(),
             type=type_str,
             nullable=ctx.dateType().isnull is not None,
+        )
+
+    def visitUuidArg(self, ctx: FuncTestCaseParser.UuidArgContext):
+        return CaseLiteral(
+            value=ctx.UuidLiteral().getText(),
+            type=ctx.uuidType().getText().lower(),
+            nullable=ctx.uuidType().isnull is not None,
         )
 
     def visitIntervalDayArg(self, ctx: FuncTestCaseParser.IntervalDayArgContext):
