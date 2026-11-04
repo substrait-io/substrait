@@ -142,7 +142,7 @@ A named lambda is defined once in `Plan.named_lambdas`, where each entry is repr
 
 Each definition consists of a `lambda_anchor`, an `Expression.Lambda`, and an optional human-readable `name`. The name is only for diagnostics and plan inspection: it has no semantic meaning and cannot be used as a reference. An invocation supplies a `named_lambda` reference and a `Nested.Struct` of arguments. The argument count and types must exactly match the lambda parameters, and the invocation's return type is the type of the lambda body.
 
-A definition may also own optional [detachment tables](#detached-named-lambda-bodies).
+A definition may also use the containing plan's optional [detachment tables](#detached-named-lambda-bodies).
 
 Within a plan, every named-lambda anchor must be unique and every named-lambda invocation or reference must target an existing definition. A named lambda may be referenced or invoked any number of times.
 
@@ -195,24 +195,24 @@ Unlike a `LambdaInvocation`, which produces the result of a call, a `NamedLambda
 
 ### Detached Named Lambda Bodies
 
-Each `NamedLambda` owns two optional detachment tables:
+Named-lambda bodies use two optional detachment tables on the containing `Plan`, also available to other plan-wide definitions and plan-level extension payloads:
 
 | Table | Subtrees | Reference |
 |-------|----------|-----------|
-| `detached_expressions` | Body expressions | `Expression.detached_expression_ordinal` |
-| `detached_rels` | Relations within subqueries | `Rel.detached_rel_ordinal` |
+| `Plan.detached_expressions` | Body expressions | `Expression.detached_expression_ordinal` |
+| `Plan.detached_rels` | Relations within subqueries | `Rel.detached_rel_ordinal` |
 
 Entries may reference further subtrees in either table. Apply the shared [encoding and validation rules](../serialization/binary_serialization.md#detached-relations-and-expressions), starting from `lambda.body`:
 
-- Ordinals resolve within the definition, never against a caller's or another definition's tables.
-- The single-reference rule applies per definition, not per invocation.
+- Ordinals resolve against the containing `Plan`, never against a caller's `PlanRel` tables.
+- The single-reference rule applies across all plan-wide roots, not per definition or invocation. Different definitions must use distinct detached entries.
 - Detachment changes storage, not lexical scope, field-reference binding, or computation sharing.
 
 Detached ordinals must reconstruct finite relation and expression trees. Resolving a detached reference does not expand the bodies of named lambdas it invokes or references.
 
 === "Detached subquery"
 
-    `lookup_exists(key)` checks a local table containing 42. Its detached filter condition compares local input with the lambda parameter, without capturing caller input. Calls with 42 and 7 return true and false. Caller and definition each use ordinal 0 in their own expression and relation tables.
+    `lookup_exists(key)` checks a local table containing 42. Its detached filter condition compares local input with the lambda parameter, without capturing caller input. Calls with 42 and 7 return true and false. The caller's `PlanRel` and the containing `Plan` each use ordinal 0 in their separate expression and relation tables.
 
     ```protobuf
     --8<-- "examples/proto-textformat/named_lambda/detached_rels.textproto"

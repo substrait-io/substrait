@@ -31,57 +31,58 @@ named_lambdas {
     }
     body { detached_expression_ordinal: 0 }
   }
-  detached_expressions {
-    subquery {
-      set_predicate {
-        predicate_op: PREDICATE_OP_EXISTS
-        tuples { detached_rel_ordinal: 0 }
-      }
+}
+
+detached_expressions {
+  subquery {
+    set_predicate {
+      predicate_op: PREDICATE_OP_EXISTS
+      tuples { detached_rel_ordinal: 0 }
     }
   }
-  detached_expressions {
-    scalar_function {
-      function_reference: 1
-      arguments {
-        value {
-          selection {
-            root_reference {}
-            direct_reference { struct_field { field: 0 } }
-          }
+}
+detached_expressions {
+  scalar_function {
+    function_reference: 1
+    arguments {
+      value {
+        selection {
+          root_reference {}
+          direct_reference { struct_field { field: 0 } }
         }
       }
-      arguments {
-        value {
-          selection {
-            lambda_parameter_reference { steps_out: 0 }
-            direct_reference { struct_field { field: 0 } }
-          }
-        }
-      }
-      output_type { bool { nullability: NULLABILITY_REQUIRED } }
     }
-  }
-  detached_rels {
-    filter {
-      common { direct {} }
-      input { detached_rel_ordinal: 1 }
-      condition { detached_expression_ordinal: 1 }
-    }
-  }
-  detached_rels {
-    read {
-      common { direct {} }
-      base_schema {
-        names: "key"
-        struct {
-          types { i64 { nullability: NULLABILITY_REQUIRED } }
-          nullability: NULLABILITY_REQUIRED
+    arguments {
+      value {
+        selection {
+          lambda_parameter_reference { steps_out: 0 }
+          direct_reference { struct_field { field: 0 } }
         }
       }
-      virtual_table {
-        expressions {
-          fields { literal { i64: 42 } }
-        }
+    }
+    output_type { bool { nullability: NULLABILITY_REQUIRED } }
+  }
+}
+detached_rels {
+  filter {
+    common { direct {} }
+    input { detached_rel_ordinal: 1 }
+    condition { detached_expression_ordinal: 1 }
+  }
+}
+detached_rels {
+  read {
+    common { direct {} }
+    base_schema {
+      names: "key"
+      struct {
+        types { i64 { nullability: NULLABILITY_REQUIRED } }
+        nullability: NULLABILITY_REQUIRED
+      }
+    }
+    virtual_table {
+      expressions {
+        fields { literal { i64: 42 } }
       }
     }
   }
