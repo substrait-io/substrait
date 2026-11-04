@@ -80,6 +80,19 @@ message Plan {
   // or each other recursively; every definition in a dependency cycle must
   // declare its lambda.output_type.
   repeated NamedLambda named_lambdas = 11;
+
+  // Expression subtrees for plan-wide definitions (such as named lambdas) and
+  // plan-level extension payloads. Referenced by zero-based ordinals local to
+  // this Plan. Expressions within a PlanRel use that PlanRel's tables instead;
+  // there is no fallback between local and plan-level tables.
+  // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
+  repeated Expression detached_expressions = 12;
+
+  // Relation subtrees for plan-wide definitions and plan-level extension
+  // payloads, with the same scope and encoding rules as detached_expressions.
+  // Referenced by zero-based ordinals local to this Plan, not from a PlanRel.
+  // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
+  repeated Rel detached_rels = 13;
 }
 
 // A lambda defined once and available for invocation or reference as a function
@@ -100,19 +113,6 @@ message NamedLambda {
   // An optional human-readable name for diagnostics and plan inspection. The
   // name has no semantic meaning and cannot be referenced.
   optional string name = 3;
-
-  // Expression subtrees stored separately to reduce protobuf nesting in the
-  // lambda body. Referenced by zero-based ordinals local to this NamedLambda,
-  // never to a caller's PlanRel or another NamedLambda. Detachment preserves
-  // lexical scope and does not introduce computation sharing or recursion.
-  // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
-  repeated Expression detached_expressions = 4;
-
-  // Relation subtrees stored separately to reduce protobuf nesting in the
-  // body's subqueries. Referenced by zero-based ordinals local to this
-  // NamedLambda, with the same scope and encoding rules as detached_expressions.
-  // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
-  repeated Rel detached_rels = 5;
 }
 
 // This message type can be used to deserialize only the version of a Substrait

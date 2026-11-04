@@ -679,8 +679,8 @@ message Rel {
     ExchangeRel exchange = 15;
     ExpandRel expand = 16;
     TopNRel top_n = 23;
-    // Encoding-only, zero-based index into detached_rels on the
-    // containing PlanRel, ExtendedExpression, or NamedLambda.
+    // Encoding-only, zero-based index into detached_rels on the nearest
+    // containing PlanRel, ExtendedExpression, or Plan. No fallback to outer tables.
     // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
     uint32 detached_rel_ordinal = 25;
   }
@@ -1093,8 +1093,8 @@ message Expression {
     Lambda lambda = 15;
     LambdaInvocation lambda_invocation = 16;
     ExecutionContextVariable execution_context_variable = 17;
-    // Encoding-only, zero-based index into detached_expressions on the
-    // containing PlanRel, ExtendedExpression, or NamedLambda.
+    // Encoding-only, zero-based index into detached_expressions on the nearest
+    // containing PlanRel, ExtendedExpression, or Plan. No fallback to outer tables.
     // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
     uint32 detached_expression_ordinal = 18;
     NamedLambdaReference named_lambda_reference = 19;

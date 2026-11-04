@@ -187,8 +187,8 @@ def test_named_lambda_detached_recursive_body():
         lambda_expression.body.WhichOneof("rex_type") == "detached_expression_ordinal"
     )
     assert lambda_expression.body.detached_expression_ordinal == 0
-    assert len(definition.detached_expressions) == 2
-    body = definition.detached_expressions[0]
+    assert len(plan.detached_expressions) == 2
+    body = plan.detached_expressions[0]
     assert body.WhichOneof("rex_type") == "if_then"
     assert body.if_then.ifs[0].then.literal.i32 == 1
     product = getattr(body.if_then, "else").scalar_function
@@ -196,7 +196,7 @@ def test_named_lambda_detached_recursive_body():
     recursive_argument = product.arguments[1].value
     assert recursive_argument.WhichOneof("rex_type") == "detached_expression_ordinal"
     assert recursive_argument.detached_expression_ordinal == 1
-    recursive_expression = definition.detached_expressions[1]
+    recursive_expression = plan.detached_expressions[1]
     assert recursive_expression.WhichOneof("rex_type") == "lambda_invocation"
     assert (
         recursive_expression.lambda_invocation.named_lambda.lambda_reference
@@ -235,8 +235,8 @@ def test_named_lambda_detached_subquery_scope():
         lambda_expression.body.WhichOneof("rex_type") == "detached_expression_ordinal"
     )
     assert lambda_expression.body.detached_expression_ordinal == 0
-    assert len(definition.detached_expressions) == 2
-    expression = definition.detached_expressions[0]
+    assert len(plan.detached_expressions) == 2
+    expression = plan.detached_expressions[0]
     assert expression.WhichOneof("rex_type") == "subquery"
     assert expression.subquery.WhichOneof("subquery_type") == "set_predicate"
     predicate = expression.subquery.set_predicate
@@ -245,12 +245,12 @@ def test_named_lambda_detached_subquery_scope():
     )
     assert predicate.tuples.WhichOneof("rel_type") == "detached_rel_ordinal"
     assert predicate.tuples.detached_rel_ordinal == 0
-    assert len(definition.detached_rels) == 2
-    assert definition.detached_rels[0].WhichOneof("rel_type") == "filter"
-    filter_rel = definition.detached_rels[0].filter
+    assert len(plan.detached_rels) == 2
+    assert plan.detached_rels[0].WhichOneof("rel_type") == "filter"
+    filter_rel = plan.detached_rels[0].filter
     assert filter_rel.condition.WhichOneof("rex_type") == "detached_expression_ordinal"
     assert filter_rel.condition.detached_expression_ordinal == 1
-    condition = definition.detached_expressions[1].scalar_function
+    condition = plan.detached_expressions[1].scalar_function
     assert (
         condition.function_reference
         == plan.extensions[0].extension_function.function_anchor
@@ -264,8 +264,8 @@ def test_named_lambda_detached_subquery_scope():
     assert parameter.direct_reference.struct_field.field == 0
     assert filter_rel.input.WhichOneof("rel_type") == "detached_rel_ordinal"
     assert filter_rel.input.detached_rel_ordinal == 1
-    assert definition.detached_rels[1].WhichOneof("rel_type") == "read"
-    read = definition.detached_rels[1].read
+    assert plan.detached_rels[1].WhichOneof("rel_type") == "read"
+    read = plan.detached_rels[1].read
     assert read.base_schema.struct.types[0] == lambda_expression.parameters.types[0]
     assert read.virtual_table.expressions[0].fields[0].literal.i64 == 42
 
@@ -278,7 +278,7 @@ def test_named_lambda_recursion_in_detached_subquery_round_trip():
     definition = plan.named_lambdas[0]
     lambda_expression = getattr(definition, "lambda")
     lambda_expression.output_type.bool.nullability = type_pb2.Type.NULLABILITY_REQUIRED
-    condition = definition.detached_expressions[1]
+    condition = plan.detached_expressions[1]
     recursive_condition = algebra_pb2.Expression(
         lambda_invocation=algebra_pb2.Expression.LambdaInvocation(
             named_lambda=algebra_pb2.Expression.NamedLambdaReference(
@@ -292,20 +292,19 @@ def test_named_lambda_recursion_in_detached_subquery_round_trip():
     condition.CopyFrom(recursive_condition)
 
     for restored in [
-        plan_pb2.NamedLambda.FromString(definition.SerializeToString()),
-        json_format.Parse(
-            json_format.MessageToJson(definition), plan_pb2.NamedLambda()
-        ),
+        plan_pb2.Plan.FromString(plan.SerializeToString()),
+        json_format.Parse(json_format.MessageToJson(plan), plan_pb2.Plan()),
     ]:
-        assert restored == definition
-        assert getattr(restored, "lambda").HasField("output_type")
+        assert restored == plan
+        restored_definition = restored.named_lambdas[0]
+        assert getattr(restored_definition, "lambda").HasField("output_type")
         filter_rel = restored.detached_rels[0].filter
         condition = restored.detached_expressions[
             filter_rel.condition.detached_expression_ordinal
         ]
         assert condition.WhichOneof("rex_type") == "lambda_invocation"
         assert condition.lambda_invocation.named_lambda.lambda_reference == (
-            restored.lambda_anchor
+            restored_definition.lambda_anchor
         )
         argument = condition.lambda_invocation.arguments.fields[0].selection
         assert argument.WhichOneof("root_type") == "root_reference"
@@ -363,21 +362,23 @@ def test_named_lambda_function_valued_self_reference_round_trip():
 
 
 def test_named_lambda_detachment_preserves_lexical_scope_round_trip():
-    definition = text_format.Parse(
+    plan = text_format.Parse(
         """
-        lambda_anchor: 1
-        lambda {
-          parameters {
-            types { i32 { nullability: NULLABILITY_REQUIRED } }
-            nullability: NULLABILITY_REQUIRED
-          }
-          body {
-            lambda_invocation {
-              lambda {
-                parameters { nullability: NULLABILITY_REQUIRED }
-                body { detached_expression_ordinal: 0 }
+        named_lambdas {
+          lambda_anchor: 1
+          lambda {
+            parameters {
+              types { i32 { nullability: NULLABILITY_REQUIRED } }
+              nullability: NULLABILITY_REQUIRED
+            }
+            body {
+              lambda_invocation {
+                lambda {
+                  parameters { nullability: NULLABILITY_REQUIRED }
+                  body { detached_expression_ordinal: 0 }
+                }
+                arguments {}
               }
-              arguments {}
             }
           }
         }
@@ -388,16 +389,14 @@ def test_named_lambda_detachment_preserves_lexical_scope_round_trip():
           }
         }
         """,
-        plan_pb2.NamedLambda(),
+        plan_pb2.Plan(),
     )
     for restored in [
-        plan_pb2.NamedLambda.FromString(definition.SerializeToString()),
-        json_format.Parse(
-            json_format.MessageToJson(definition), plan_pb2.NamedLambda()
-        ),
+        plan_pb2.Plan.FromString(plan.SerializeToString()),
+        json_format.Parse(json_format.MessageToJson(plan), plan_pb2.Plan()),
     ]:
-        assert restored == definition
-        outer = getattr(restored, "lambda")
+        assert restored == plan
+        outer = getattr(restored.named_lambdas[0], "lambda")
         inner = getattr(outer.body.lambda_invocation, "lambda")
         assert inner.body.WhichOneof("rex_type") == "detached_expression_ordinal"
         selection = restored.detached_expressions[
@@ -658,19 +657,16 @@ def test_named_lambda_subquery_detachment_roundtrip(subquery_text, relation_fiel
         "site/examples/proto-textformat/named_lambda/detached_rels.textproto"
     )
     plan = text_format.Parse(example.read_text(), plan_pb2.Plan())
-    definition = plan.named_lambdas[0]
-    subquery = definition.detached_expressions[0].subquery
+    subquery = plan.detached_expressions[0].subquery
     subquery.Clear()
     text_format.Parse(subquery_text, subquery)
 
     for decoded in [
-        plan_pb2.NamedLambda.FromString(definition.SerializeToString()),
-        json_format.Parse(
-            json_format.MessageToJson(definition), plan_pb2.NamedLambda()
-        ),
+        plan_pb2.Plan.FromString(plan.SerializeToString()),
+        json_format.Parse(json_format.MessageToJson(plan), plan_pb2.Plan()),
     ]:
-        assert decoded == definition
-        body = getattr(decoded, "lambda").body
+        assert decoded == plan
+        body = getattr(decoded.named_lambdas[0], "lambda").body
         subquery = decoded.detached_expressions[
             body.detached_expression_ordinal
         ].subquery
@@ -689,3 +685,94 @@ def test_named_lambda_subquery_detachment_roundtrip(subquery_text, relation_fiel
         assert parameter.lambda_parameter_reference.steps_out == 0
         read = decoded.detached_rels[filter_rel.input.detached_rel_ordinal].read
         assert read.virtual_table.expressions[0].fields[0].literal.i64 == 42
+
+
+def test_detachment_table_ownership():
+    plan_fields = plan_pb2.Plan.DESCRIPTOR.fields_by_name
+    for name, number, message_type in [
+        ("detached_expressions", 12, algebra_pb2.Expression),
+        ("detached_rels", 13, algebra_pb2.Rel),
+    ]:
+        field = plan_fields[name]
+        assert field.number == number
+        assert field.is_repeated
+        assert field.message_type == message_type.DESCRIPTOR
+        assert name not in plan_pb2.NamedLambda.DESCRIPTOR.fields_by_name
+        assert name in plan_pb2.PlanRel.DESCRIPTOR.fields_by_name
+        assert (
+            name in extended_expression_pb2.ExtendedExpression.DESCRIPTOR.fields_by_name
+        )
+
+
+def test_multiple_named_lambdas_use_distinct_plan_entries():
+    plan = text_format.Parse(
+        """
+        named_lambdas {
+          lambda_anchor: 1
+          lambda {
+            parameters { nullability: NULLABILITY_REQUIRED }
+            body { detached_expression_ordinal: 0 }
+          }
+        }
+        named_lambdas {
+          lambda_anchor: 2
+          lambda {
+            parameters { nullability: NULLABILITY_REQUIRED }
+            body { detached_expression_ordinal: 1 }
+          }
+        }
+        detached_expressions { literal { i32: 7 } }
+        detached_expressions { literal { i32: 42 } }
+        """,
+        plan_pb2.Plan(),
+    )
+    for restored in [
+        plan_pb2.Plan.FromString(plan.SerializeToString()),
+        json_format.Parse(json_format.MessageToJson(plan), plan_pb2.Plan()),
+    ]:
+        assert restored == plan
+        ordinals = [
+            getattr(definition, "lambda").body.detached_expression_ordinal
+            for definition in restored.named_lambdas
+        ]
+        assert ordinals == [0, 1]
+        assert [
+            restored.detached_expressions[ordinal].literal.i32 for ordinal in ordinals
+        ] == [7, 42]
+
+
+@pytest.mark.parametrize("kind", ["expression", "relation"])
+def test_plan_extension_detachment_round_trip(kind):
+    example = Path(
+        "site/examples/proto-textformat/named_lambda/detached_rels.textproto"
+    )
+    plan = text_format.Parse(example.read_text(), plan_pb2.Plan())
+    if kind == "expression":
+        payload = algebra_pb2.Expression(detached_expression_ordinal=2)
+        plan.detached_expressions.add().literal.i64 = 99
+    else:
+        payload = algebra_pb2.Rel(detached_rel_ordinal=2)
+        plan.detached_rels.add().CopyFrom(plan.detached_rels[1])
+    plan.advanced_extensions.enhancement.Pack(payload)
+
+    for restored in [
+        plan_pb2.Plan.FromString(plan.SerializeToString()),
+        json_format.Parse(json_format.MessageToJson(plan), plan_pb2.Plan()),
+    ]:
+        assert restored == plan
+        unpacked = type(payload)()
+        assert restored.advanced_extensions.enhancement.Unpack(unpacked)
+        assert unpacked == payload
+        if kind == "expression":
+            entry = restored.detached_expressions[unpacked.detached_expression_ordinal]
+            assert entry.literal.i64 == 99
+        else:
+            entry = restored.detached_rels[unpacked.detached_rel_ordinal]
+            assert entry.read.virtual_table.expressions[0].fields[0].literal.i64 == 42
+        body = getattr(restored.named_lambdas[0], "lambda").body
+        assert body.detached_expression_ordinal == 0
+        assert restored.detached_expressions[0].WhichOneof("rex_type") == "subquery"
+        assert (
+            restored.relations[0].detached_expressions[0].WhichOneof("rex_type")
+            == "lambda_invocation"
+        )

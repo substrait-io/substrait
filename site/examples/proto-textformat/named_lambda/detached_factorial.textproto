@@ -50,30 +50,15 @@ named_lambdas {
     output_type { i32 { nullability: NULLABILITY_REQUIRED } }
     body { detached_expression_ordinal: 0 }
   }
-  # Entry 0: if n == 0 then 1 else n * factorial(n - 1).
-  detached_expressions {
-    if_then {
-      ifs {
-        if {
-          scalar_function {
-            function_reference: 1
-            arguments {
-              value {
-                selection {
-                  lambda_parameter_reference { steps_out: 0 }
-                  direct_reference { struct_field { field: 0 } }
-                }
-              }
-            }
-            arguments { value { literal { i32: 0 } } }
-            output_type { bool { nullability: NULLABILITY_REQUIRED } }
-          }
-        }
-        then { literal { i32: 1 } }
-      }
-      else {
+}
+
+# Entry 0: if n == 0 then 1 else n * factorial(n - 1).
+detached_expressions {
+  if_then {
+    ifs {
+      if {
         scalar_function {
-          function_reference: 3
+          function_reference: 1
           arguments {
             value {
               selection {
@@ -82,31 +67,47 @@ named_lambdas {
               }
             }
           }
-          arguments { value { detached_expression_ordinal: 1 } }
-          output_type { i32 { nullability: NULLABILITY_REQUIRED } }
+          arguments { value { literal { i32: 0 } } }
+          output_type { bool { nullability: NULLABILITY_REQUIRED } }
         }
+      }
+      then { literal { i32: 1 } }
+    }
+    else {
+      scalar_function {
+        function_reference: 3
+        arguments {
+          value {
+            selection {
+              lambda_parameter_reference { steps_out: 0 }
+              direct_reference { struct_field { field: 0 } }
+            }
+          }
+        }
+        arguments { value { detached_expression_ordinal: 1 } }
+        output_type { i32 { nullability: NULLABILITY_REQUIRED } }
       }
     }
   }
-  # Entry 1: a call, not a detached ordinal back to entry 0.
-  detached_expressions {
-    lambda_invocation {
-      named_lambda { lambda_reference: 1 }
-      arguments {
-        fields {
-          scalar_function {
-            function_reference: 2
-            arguments {
-              value {
-                selection {
-                  lambda_parameter_reference { steps_out: 0 }
-                  direct_reference { struct_field { field: 0 } }
-                }
+}
+# Entry 1: a call, not a detached ordinal back to entry 0.
+detached_expressions {
+  lambda_invocation {
+    named_lambda { lambda_reference: 1 }
+    arguments {
+      fields {
+        scalar_function {
+          function_reference: 2
+          arguments {
+            value {
+              selection {
+                lambda_parameter_reference { steps_out: 0 }
+                direct_reference { struct_field { field: 0 } }
               }
             }
-            arguments { value { literal { i32: 1 } } }
-            output_type { i32 { nullability: NULLABILITY_REQUIRED } }
           }
+          arguments { value { literal { i32: 1 } } }
+          output_type { i32 { nullability: NULLABILITY_REQUIRED } }
         }
       }
     }
@@ -132,7 +133,7 @@ relations {
     }
     names: "factorial"
   }
-  # The PlanRel and NamedLambda each have their own ordinal 0.
+  # The PlanRel and Plan each have their own ordinal 0.
   detached_expressions {
     lambda_invocation {
       named_lambda { lambda_reference: 1 }
