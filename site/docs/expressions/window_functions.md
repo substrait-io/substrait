@@ -102,7 +102,7 @@ The single-ordering-expression restriction does not apply when both bounds are `
 
 A boundary value need not occur in the input. For example, with ascending scores, current score 20, and bounds `Preceding(7)` through `CurrentRow`, the frame includes scores from 13 through 20, including every peer at score 20.
 
-For non-floating-point ordering types, compatibility and frame membership are defined directly, without resolving scalar arithmetic or comparison functions.
+Compatibility and frame membership are defined directly, without resolving scalar arithmetic or comparison functions.
 
 #### Offset Type Compatibility
 
@@ -111,7 +111,7 @@ The valid core ordering/offset type pairs are listed below. Nullability does not
 | Ordering type `T` | Offset type `D` | Interpretation |
 | ----------------- | --------------- | -------------- |
 | `i8`, `i16`, `i32`, or `i64` | Any of `i8`, `i16`, `i32`, or `i64` | Numeric distance |
-| `fp32` or `fp64` | The same floating-point type as `T` | Numeric distance |
+| `fp32` or `fp64` | `fp32` or `fp64` | Numeric distance |
 | `decimal<P1,S1>` | `decimal<P2,S2>` | Numeric distance |
 | `date` | `interval_day<P>` | Elapsed duration from midnight on the date |
 | `precision_time<P>` | `interval_day<Q>` | Elapsed duration from the time, without wrapping at midnight |
@@ -122,7 +122,7 @@ The valid core ordering/offset type pairs are listed below. Nullability does not
 
 Decimal precisions and scales, and temporal precisions, need not match between ordering and offset types. As defined in [Type Classes](../types/type_classes.md), `interval_day` measures elapsed duration (one day is 86,400 seconds, not a timezone-dependent calendar day), and `interval_year` measures months. Non-negativity depends on the total, not individual component signs.
 
-Other core type pairs are invalid. Integer offsets do not implicitly mean days for `date`; integer/floating-point pairs require explicit producer conversion. Mixed integer widths do not require conversion: the calculation uses each operand's declared value.
+Other core type pairs are invalid. Integer offsets do not implicitly mean days for `date`; integer/floating-point pairs require explicit producer conversion. Mixed widths within the integer or floating-point family do not require conversion: the calculation uses each operand's declared value.
 
 #### Boundary Values and Membership
 
@@ -133,17 +133,23 @@ For a `Preceding` or `Following` bound, the boundary calculation uses two operan
 | Ascending | `v - d` (lower values) | `v + d` (higher values) |
 | Descending | `v + d` (higher values) | `v - d` (lower values) |
 
-Integer and decimal boundaries use mathematical operand values; duration boundaries use the elapsed durations above. Calendar-month offsets adjust the year and month, preserving the day and time of day, except that a nonexistent day becomes the month's last day. For `precision_timestamp_tz`, this adjustment uses the UTC calendar. No session timezone participates.
+An operand is finite if it is non-null and, if floating-point, neither NaN nor positive or negative infinity. Nulls follow the [RANGE](#range) and [offset-expression](#offset-expressions) rules.
+
+Numeric boundaries use mathematical operand values; duration boundaries use the elapsed durations above. Calendar-month offsets adjust the year and month, preserving the day and time of day, except that a nonexistent day becomes the month's last day. For `precision_timestamp_tz`, this adjustment uses the UTC calendar. No session timezone participates.
 
 Membership is inclusive: `lower <= value <= upper` for ascending ordering, or `upper <= value <= lower` for descending ordering. `CurrentRow`, `Unbounded`, peer groups, and null placement retain their meanings above; these inequalities are not nullable SQL predicates.
 
-For non-floating-point ordering types, the mathematical boundary determines membership whenever it lies within `T`'s declared value range. The boundary is not an output expression and need not be representable as `T`. Consumers may align type parameters, widen intermediates, or avoid materializing boundaries, provided membership is preserved, including under rounding or truncation to fit `T`. Decimal scalar return-type formulas do not restrict valid frames.
+For finite operands, the mathematical boundary determines membership whenever it lies within `T`'s declared value range. The boundary is not an output expression and need not be representable as `T`. Consumers may align type parameters, widen intermediates, or avoid materializing boundaries, provided membership is preserved, including under rounding or truncation to fit `T`. Decimal scalar return-type formulas do not restrict valid frames.
 
 Behavior for boundaries outside the declared ordering type's value range remains implementation-defined. An in-range mathematical boundary is not out of range merely because it falls between representable values.
 
 ##### Floating-Point Boundaries
 
-Floating-point boundaries use scalar `add(T, T) -> T` or `subtract(T, T) -> T`, as appropriate for the bound direction. Membership uses the resulting boundary value; no rounding mode is specified here. NaN or infinite ordering values and offsets remain implementation-defined.
+For finite floating-point operands, in-range boundaries use their exact mathematical values, including when the operand widths differ. Rounded or infinite intermediates are acceptable only if they preserve the required membership; an exact boundary need not be materialized.
+
+For example, with ascending `fp64` ordering at current value `1`, take a lower bound `2^-54` following and an unbounded upper bound. The exact lower boundary exceeds `1`, excluding the current peer group. Round-to-nearest addition produces `1`, incorrectly including those peers. This is a rounding difference, not overflow.
+
+NaN or infinite ordering values and offsets remain implementation-defined. Infinity produced from finite operands does not exempt an in-range mathematical boundary from these membership rules.
 
 ## Function Signatures
 
