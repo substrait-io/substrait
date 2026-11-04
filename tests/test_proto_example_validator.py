@@ -205,6 +205,124 @@ def test_validate_plan_rels():
     assert list(relation_plan_rel.root.names) == ["value"]
 
 
+@pytest.mark.parametrize(
+    "message_class",
+    [
+        algebra_pb2.Expression.WindowFunction,
+        algebra_pb2.ConsistentPartitionWindowRel.WindowRelFunction,
+    ],
+)
+def test_range_boundary_overflow_default(
+    message_class: (
+        type[algebra_pb2.Expression.WindowFunction]
+        | type[algebra_pb2.ConsistentPartitionWindowRel.WindowRelFunction]
+    ),
+):
+    function = message_class()
+    field = function.DESCRIPTOR.fields_by_name["range_boundary_overflow"]
+    assert field.number == 13
+    enum_type = field.enum_type
+    assert enum_type is not None
+    assert (
+        enum_type.full_name
+        == "substrait.Expression.WindowFunction.RangeBoundaryOverflow"
+    )
+    assert {value.name: value.number for value in enum_type.values} == {
+        "RANGE_BOUNDARY_OVERFLOW_UNSPECIFIED": 0,
+        "RANGE_BOUNDARY_OVERFLOW_ERROR": 1,
+        "RANGE_BOUNDARY_OVERFLOW_EXTEND": 2,
+    }
+    assert (
+        function.range_boundary_overflow
+        == algebra_pb2.Expression.WindowFunction.RANGE_BOUNDARY_OVERFLOW_UNSPECIFIED
+    )
+    assert function.SerializeToString() == b""
+
+
+@pytest.mark.parametrize(
+    "message_class",
+    [
+        algebra_pb2.Expression.WindowFunction,
+        algebra_pb2.ConsistentPartitionWindowRel.WindowRelFunction,
+    ],
+)
+@pytest.mark.parametrize(
+    "policy",
+    [
+        algebra_pb2.Expression.WindowFunction.RANGE_BOUNDARY_OVERFLOW_UNSPECIFIED,
+        algebra_pb2.Expression.WindowFunction.RANGE_BOUNDARY_OVERFLOW_ERROR,
+        algebra_pb2.Expression.WindowFunction.RANGE_BOUNDARY_OVERFLOW_EXTEND,
+    ],
+)
+def test_range_boundary_overflow_round_trip(
+    message_class: (
+        type[algebra_pb2.Expression.WindowFunction]
+        | type[algebra_pb2.ConsistentPartitionWindowRel.WindowRelFunction]
+    ),
+    policy: int,
+):
+    function = message_class()
+    text_format.Parse(
+        f"""
+        bounds_type: BOUNDS_TYPE_RANGE
+        range_boundary_overflow: {policy}
+        options {{ name: "overflow" preference: "ERROR" }}
+        """,
+        function,
+    )
+    restored_functions = [
+        message_class.FromString(function.SerializeToString()),
+        json_format.Parse(json_format.MessageToJson(function), message_class()),
+        text_format.Parse(text_format.MessageToString(function), message_class()),
+    ]
+    for restored in restored_functions:
+        assert restored == function
+        assert restored.range_boundary_overflow == policy
+        assert restored.options[0].name == "overflow"
+        assert list(restored.options[0].preference) == ["ERROR"]
+
+
+def test_range_boundary_overflow_example():
+    example = Path(
+        "site/examples/proto-textformat/plan_rel/range_boundary_overflow.textproto"
+    )
+    plan_rel = validate_example(example.read_text(), plan_pb2.PlanRel)
+    assert isinstance(plan_rel, plan_pb2.PlanRel)
+    project = plan_rel.root.input.project
+    function = project.expressions[0].window_function
+    assert (
+        function.range_boundary_overflow
+        == algebra_pb2.Expression.WindowFunction.RANGE_BOUNDARY_OVERFLOW_EXTEND
+    )
+    assert (
+        function.bounds_type
+        == algebra_pb2.Expression.WindowFunction.BOUNDS_TYPE_RANGE
+    )
+    assert not function.options
+    assert (
+        function.sorts[0].direction
+        == algebra_pb2.SortField.SORT_DIRECTION_ASC_NULLS_LAST
+    )
+    values = [
+        row.fields[0].literal.i8
+        for row in project.input.read.virtual_table.expressions
+    ]
+    lower = function.lower_bound.following.offset_expr.literal.i8
+    upper = function.upper_bound.following.offset_expr.literal.i8
+    assert values == [125, 126, 127]
+    assert (lower, upper) == (1, 2)
+    assert function.lower_bound.following.offset == lower
+    assert function.upper_bound.following.offset == upper
+    assert [
+        sum(v + lower <= x <= v + upper for x in values) for v in values
+    ] == [2, 1, 0]
+    assert [v + lower > 127 or v + upper > 127 for v in values] == [
+        False,
+        True,
+        True,
+    ]
+
+
 def test_validate_extended_expressions():
     """Validate detached expression and relation examples."""
     examples_dir = Path("site/examples/proto-textformat/extended_expression")

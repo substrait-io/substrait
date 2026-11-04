@@ -49,8 +49,9 @@ A window binding inherits the [aggregate binding properties](aggregate_functions
 | Bound mode | `bounds_type` | Required: `BOUNDS_TYPE_ROWS` or `BOUNDS_TYPE_RANGE`. Consumers must reject `BOUNDS_TYPE_UNSPECIFIED`. |
 | Lower bound | `lower_bound` | Inclusive start of the frame; defaults to Unbounded if not set. |
 | Upper bound | `upper_bound` | Inclusive end of the frame; defaults to Unbounded if not set. |
+| RANGE boundary overflow | `range_boundary_overflow` | Policy for both RANGE boundaries; defaults to `RANGE_BOUNDARY_OVERFLOW_UNSPECIFIED`. See [Boundary Overflow Behavior](#boundary-overflow-behavior). |
 
-In a [consistent partition window operation](../relations/physical_relations.md#consistent-partition-window-operation), `partition_expressions` and `sorts` are shared by all functions. Each function still has its own bound mode and frame bounds. The same rules below apply to both representations.
+In a [consistent partition window operation](../relations/physical_relations.md#consistent-partition-window-operation), `partition_expressions` and `sorts` are shared by all functions. Each function still has its own bound mode, frame bounds, and RANGE boundary overflow policy. The same rules below apply to both representations.
 
 ## Frame Bounds
 
@@ -141,7 +142,7 @@ Membership is inclusive: `lower <= value <= upper` for ascending ordering, or `u
 
 For finite operands, the mathematical boundary determines membership whenever it lies within `T`'s declared value range. The boundary is not an output expression and need not be representable as `T`. Consumers may align type parameters, widen intermediates, or avoid materializing boundaries, provided membership is preserved, including under rounding or truncation to fit `T`. Decimal scalar return-type formulas do not restrict valid frames.
 
-Behavior for boundaries outside the declared ordering type's value range remains implementation-defined. An in-range mathematical boundary is not out of range merely because it falls between representable values.
+Behavior for boundaries outside the declared ordering type's value range follows [Boundary Overflow Behavior](#boundary-overflow-behavior). An in-range mathematical boundary is not out of range merely because it falls between representable values.
 
 ##### Floating-Point Boundaries
 
@@ -149,7 +150,49 @@ For finite floating-point operands, in-range boundaries use their exact mathemat
 
 For example, with ascending `fp64` ordering at current value `1`, take a lower bound `2^-54` following and an unbounded upper bound. The exact lower boundary exceeds `1`, excluding the current peer group. Round-to-nearest addition produces `1`, incorrectly including those peers. This is a rounding difference, not overflow.
 
-NaN or infinite ordering values and offsets remain implementation-defined. Infinity produced from finite operands does not exempt an in-range mathematical boundary from these membership rules.
+NaN or infinite ordering values and offsets remain implementation-defined; no overflow policy defines their arithmetic or ordering. Infinity produced from finite operands remains subject to the finite-operand membership and overflow rules.
+
+#### Boundary Overflow Behavior
+
+For finite operands, overflow means the mathematical boundary lies outside the declared ordering type `T`'s value range. Its minimum and maximum are Substrait's limits, including decimal precision/scale, temporal precision/ranges, and floating-point finite ranges, not native type, intermediate, or calendar-library limits. The offset type does not change these limits.
+
+Wider intermediates do not prevent overflow of `T`, nor do intermediate failures establish it. An in-range boundary is not an overflow merely because its precision/scale differs from `T` or it falls between representable values.
+
+The `range_boundary_overflow` field selects one policy for both RANGE boundaries. It is defined on both `Expression.WindowFunction` and `ConsistentPartitionWindowRel.WindowRelFunction`, independently of the referenced function's `options`. The enum values have the prefix `RANGE_BOUNDARY_OVERFLOW_`, omitted below:
+
+| Value | Behavior |
+| ----- | -------- |
+| `UNSPECIFIED` | Boundary-overflow behavior is implementation-defined. This is also the default when the field is omitted. |
+| `ERROR` | Report an execution error if either applicable boundary overflows `T`, even if a wider intermediate can represent it. |
+| `EXTEND` | Compare against the mathematical boundary outside `T`'s range without an overflow error, wrapping, or clamping. |
+
+Consumers must reject unknown enum values and policies they cannot support for the invocation's ordering/offset types. This field is a selection, not a preference list: consumers must not substitute a different policy. `UNSPECIFIED` does not relax type compatibility, non-overflow membership, or invalid-offset rules.
+
+`EXTEND` neither makes a bound `Unbounded` nor overrides null placement. Depending on the bound and ordering direction, it can include all remaining values on one side or yield an empty frame. The [floating-point boundary rules](#floating-point-boundaries) apply: producing infinity alone does not implement `EXTEND`.
+
+Non-default values are valid only for RANGE frames; consumers must reject them in ROWS mode. The policy has no effect on `CurrentRow` or `Unbounded`. It does not change `offset_expr` evaluation errors (including overflow), null/negative-offset validation, or the window function's own overflow semantics and options.
+
+`ERROR` must report boundary overflow even if the other bound makes the frame empty. Bound evaluation order and the choice among multiple errors are unspecified.
+
+##### Example: Overflowing Integer Boundaries
+
+For one partition containing `i8` values 125, 126, and 127, compute `COUNT(*)` in ascending order with RANGE bounds from one to two units following. Both offsets are valid `i8` values, but some boundaries exceed 127:
+
+| Current value | Mathematical lower boundary | Mathematical upper boundary | Frame members with `EXTEND` | Count with `EXTEND` | Outcome with `ERROR` |
+| ------------- | --------------------------- | --------------------------- | --------------------------- | ------------------- | -------------------- |
+| 125 | 126 | 127 | 126, 127 | 2 | 2 |
+| 126 | 127 | 128 | 127 | 1 | Execution error |
+| 127 | 128 | 129 | None | 0 | Execution error |
+
+At current value 127, clamping both boundaries to 127 would incorrectly return 1 instead of 0. Computing 128 or 129 in a wider integer type does not avoid `ERROR`, but can implement `EXTEND` comparisons.
+
+This `PlanRel` selects `EXTEND`. The enclosing plan must bind function anchor 1 to the zero-argument `count:` in `extension:io.substrait:functions_aggregate_generic`.
+
+```protobuf
+--8<-- "examples/proto-textformat/plan_rel/range_boundary_overflow.textproto"
+```
+
+Changing the field to `RANGE_BOUNDARY_OVERFLOW_ERROR` makes execution fail on boundary calculation, not offset evaluation or count overflow. The table shows per-record checks, not guaranteed partial results.
 
 ## Function Signatures
 
