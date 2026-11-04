@@ -295,8 +295,7 @@ def test_range_boundary_overflow_example():
         == algebra_pb2.Expression.WindowFunction.RANGE_BOUNDARY_OVERFLOW_EXTEND
     )
     assert (
-        function.bounds_type
-        == algebra_pb2.Expression.WindowFunction.BOUNDS_TYPE_RANGE
+        function.bounds_type == algebra_pb2.Expression.WindowFunction.BOUNDS_TYPE_RANGE
     )
     assert not function.options
     assert (
@@ -304,8 +303,7 @@ def test_range_boundary_overflow_example():
         == algebra_pb2.SortField.SORT_DIRECTION_ASC_NULLS_LAST
     )
     values = [
-        row.fields[0].literal.i8
-        for row in project.input.read.virtual_table.expressions
+        row.fields[0].literal.i8 for row in project.input.read.virtual_table.expressions
     ]
     lower = function.lower_bound.following.offset_expr.literal.i8
     upper = function.upper_bound.following.offset_expr.literal.i8
@@ -313,9 +311,11 @@ def test_range_boundary_overflow_example():
     assert (lower, upper) == (1, 2)
     assert function.lower_bound.following.offset == lower
     assert function.upper_bound.following.offset == upper
-    assert [
-        sum(v + lower <= x <= v + upper for x in values) for v in values
-    ] == [2, 1, 0]
+    assert [sum(v + lower <= x <= v + upper for x in values) for v in values] == [
+        2,
+        1,
+        0,
+    ]
     assert [v + lower > 127 or v + upper > 127 for v in values] == [
         False,
         True,
