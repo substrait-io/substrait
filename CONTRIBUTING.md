@@ -84,15 +84,17 @@ pixi run test
 pixi run generate
 ```
 
-Some generated code is committed and some is not:
+Generated code is gitignored and regenerated on demand. Never commit or
+hand-edit it.
 
-- **`gen/`** (protobuf Python bindings) is **gitignored** and regenerated on
-  demand (`pixi run test` regenerates it first) — never commit it.
-- **ANTLR parsers under `tests/*/antlr_parser/`** **are committed** (the
-  generator prepends a license header). If you change a `.g4` grammar, run
-  `pixi run generate-antlr` and commit the regenerated parsers.
+- Protobuf Python bindings live under `gen/`.
+- ANTLR Python parsers live under `tests/*/antlr_parser/`.
 
-Never hand-edit generated files.
+`pixi run test` generates both before running tests. The
+`pixi run test-extension-coverage` task (also used by pre-commit) generates the
+ANTLR parsers it needs. If you run `pytest` directly, run `pixi run generate`
+first. After changing a `.g4` grammar, commit only the grammar changes, not the
+regenerated parsers.
 
 ### Documentation
 

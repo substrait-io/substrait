@@ -65,8 +65,6 @@ jobs:
           cache: true
       - name: Generate ANTLR parsers
         run: pixi run generate-antlr
-      - name: Check generated ANTLR parsers
-        run: git diff --exit-code -- tests/parser/antlr_parser tests/type/antlr_parser
   yamllint:
     name: Lint YAML extensions
     runs-on: ubuntu-latest
