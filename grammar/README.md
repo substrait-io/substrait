@@ -12,3 +12,7 @@ To regenerate all of the parsers run the following command from the repository r
 ```sh
 pixi run generate-antlr
 ```
+
+Generated parsers are gitignored. `pixi run test` and
+`pixi run test-extension-coverage` generate them automatically before running
+tests.
