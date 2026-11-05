@@ -62,6 +62,13 @@ BooleanLiteral
 
 fragment FourDigits: [0-9][0-9][0-9][0-9];
 fragment TwoDigits: [0-9][0-9];
+fragment HexOctet: [0-9a-f][0-9a-f];
+
+UuidLiteral
+    : HexOctet HexOctet HexOctet HexOctet '-'
+      HexOctet HexOctet '-' HexOctet HexOctet '-'
+      HexOctet HexOctet '-' HexOctet HexOctet HexOctet HexOctet HexOctet HexOctet
+    ;
 
 TimestampTzLiteral
     : FourDigits '-' TwoDigits '-' TwoDigits 'T' TwoDigits ':' TwoDigits ':' TwoDigits ( '.' [0-9]+ )?

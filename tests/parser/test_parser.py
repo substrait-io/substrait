@@ -240,10 +240,10 @@ some_func(null::List?<i32>) = null::List?<i32>
     test_file = parse_string(header + tests)
     assert len(test_file.testcases) == 1
     assert test_file.testcases[0].args[0] == CaseLiteral(
-        None, "List?<i32>", nullable=True
+        None, "list?<i32>", nullable=True
     )
     assert test_file.testcases[0].result == CaseLiteral(
-        None, "List?<i32>", nullable=True
+        None, "list?<i32>", nullable=True
     )
 
 
@@ -800,7 +800,7 @@ def test_parse_various_scalar_func_argument_types(input_func_test):
             count_star() = 1::fp64""",
         "((20, 20), (-3, -3), (1, 1), (10,10), (5,5)) corr(col0::fp32, col1::fp32) = 1::fp64",
         """DEFINE t1(fp32, fp32) = ((20, -20), (-3, 3), (1, -1), (10, -10), (5, -5))
-corr(t1.col0, t1.col1) = -11::fp64"
+corr(t1.col0, t1.col1) = -11::fp64
         """,
     ],
 )

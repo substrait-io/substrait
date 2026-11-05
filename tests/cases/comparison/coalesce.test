@@ -14,3 +14,10 @@ coalesce(null::dec?<38, 0>, 2::dec<38, 0>) = 2::dec?<38, 0>
 coalesce(null::dec?<38, 0>, null::dec?<38, 0>) = null::dec?<38, 0>
 coalesce(2000000::dec<38, 0>, null::dec?<38, 0>) = 2000000::dec?<38, 0>
 coalesce(null::dec?<38, 0>, 2000000::dec<38, 0>) = 2000000::dec?<38, 0>
+
+# uuid: UUID literals preserve all 128 bits
+coalesce(00112233-4455-6677-8899-aabbccddeeff::uuid, ffffffff-ffff-ffff-ffff-ffffffffffff::uuid) = 00112233-4455-6677-8899-aabbccddeeff::uuid
+coalesce(null::uuid?, 00112233-4455-6677-8899-AaBbCcDdEeFf::uuid) = 00112233-4455-6677-8899-AaBbCcDdEeFf::uuid?
+coalesce(00000000-0000-0000-0000-000000000000::uuid, null::uuid?) = 00000000-0000-0000-0000-000000000000::uuid?
+coalesce(01234567-89ab-cdef-0123-456789abcdef::uuid, null::uuid?) = 01234567-89ab-cdef-0123-456789abcdef::uuid?
+coalesce(null::uuid?, null::uuid?) = null::uuid?
