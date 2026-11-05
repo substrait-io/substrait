@@ -10,7 +10,7 @@ from google.protobuf.message import Message
 import pytest
 
 try:
-    from substrait import algebra_pb2, extended_expression_pb2, plan_pb2
+    from substrait import algebra_pb2, extended_expression_pb2, plan_pb2, type_pb2
 except ImportError as err:
     raise ImportError(
         "Protobuf bindings not found. Run 'buf generate' to generate them."
@@ -151,6 +151,32 @@ def test_named_lambda_invocation_round_trip(anchor):
         assert restored == invocation
         assert restored.WhichOneof("lambda_type") == "named_lambda"
         assert restored.named_lambda.lambda_reference == anchor
+
+
+def test_validate_table_functions():
+    """Calls declare positional output types, including producer-resolved schemas."""
+    examples_dir = Path("site/examples/proto-textformat/table_function")
+    example_files = list(examples_dir.glob("*.textproto"))
+    assert example_files, "No table function examples found"
+    for example in example_files:
+        function = validate_example(example.read_text(), algebra_pb2.TableFunction)
+        assert function.HasField("output_type")
+        assert function.output_type.nullability == type_pb2.Type.NULLABILITY_REQUIRED
+
+
+def test_validate_table_function_relations():
+    """Standalone relations directly contain the function call."""
+    examples_dir = Path("site/examples/proto-textformat/table_function_rel")
+    example_files = list(examples_dir.glob("*.textproto"))
+    assert example_files, "No table function relation examples found"
+    for example in example_files:
+        relation = validate_example(example.read_text(), algebra_pb2.TableFunctionRel)
+        assert relation.HasField("function")
+        assert relation.function.HasField("output_type")
+        assert (
+            relation.function.output_type.nullability
+            == type_pb2.Type.NULLABILITY_REQUIRED
+        )
 
 
 def test_validate_field_references():

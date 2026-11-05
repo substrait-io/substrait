@@ -52,12 +52,15 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                 arg_string = []
 
                 for arg in args_list:
-                    if "value" in arg:
+                    if "value" in arg or "type" in arg:
+                        argument_type = (
+                            arg["value"] if "value" in arg else f"<type> {arg['type']}"
+                        )
                         name = arg.get("name")
                         if name:
-                            arg_string.append(f"{name}: {arg['value']}")
+                            arg_string.append(f"{name}: {argument_type}")
                         else:
-                            arg_string.append(arg["value"])
+                            arg_string.append(argument_type)
                     elif "options" in arg:
                         choices = str(arg["options"])
                         option_name = str(arg["name"]) if "name" in arg else choices
@@ -78,7 +81,7 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                     option_names_list.append(f"option:{opt_name}")
 
                 if "variadic" in impl:
-                    min_args = impl["variadic"]["min"]
+                    min_args = impl["variadic"].get("min", 1)
                     for _ in range(min_args - 1):
                         arg_string.append(arg_string[-1])
 
@@ -86,14 +89,25 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                 arg_values = [f"`{x}`" for x in arg_string]
                 func_concat_arg_input_values = ", ".join(arg_values)
 
-                # If the return value for the function implementation is multiple lines long,
+                output_expression = impl.get(
+                    "schema"
+                    if function_classification == "table_functions"
+                    else "return"
+                )
+
+                # If the output expression for the function implementation is multiple lines long,
                 # print each line separately. This is the case for some functions in
                 # functions_arithmetic_decimal.yaml
-                if "\n" in impl["return"]:
+                if output_expression is None:
+                    mdFile.new_line(
+                        f"- {function_name}({func_concat_arg_input_values}): -> "
+                        f"`output schema determined by the producer`"
+                    )
+                elif "\n" in output_expression:
                     mdFile.new_line(
                         f"- {function_name}({func_concat_arg_input_values}): -> "
                     )
-                    multiline_return_str = "\t" + impl["return"]
+                    multiline_return_str = "\t" + output_expression
                     multiline_return_str = multiline_return_str.replace("\n", "\n\t")
                     mdFile.new_line("\t```")
                     mdFile.new_line(f"{multiline_return_str}")
@@ -101,7 +115,7 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                 else:
                     mdFile.new_line(
                         f"- {function_name}({func_concat_arg_input_values}): -> "
-                        f"`{impl['return']}`"
+                        f"`{output_expression}`"
                     )
 
                 if "description" in impl:
@@ -127,7 +141,12 @@ functions_folder = os.path.join(str(Path(cur_path).parents[3]), "extensions")
 
 # Get all extension YAML files that define functions
 function_files = []
-function_sections = {"scalar_functions", "aggregate_functions", "window_functions"}
+function_sections = {
+    "scalar_functions",
+    "aggregate_functions",
+    "window_functions",
+    "table_functions",
+}
 for file in sorted(os.listdir(functions_folder)):
     if file.endswith(".yaml"):
         full_path = os.path.join(functions_folder, file)

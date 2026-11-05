@@ -639,6 +639,18 @@ enum FetchMode {
   FETCH_MODE_WITH_TIES = 2;
 }
 
+// Invokes a table function and returns its generated rows.
+// This leaf relation has no local input row.
+message TableFunctionRel {
+  RelCommon common = 1;
+
+  // Required function call. Its output struct fields form the relation's
+  // columns in field order.
+  TableFunction function = 2;
+
+  substrait.extensions.AdvancedExtension advanced_extension = 10;
+}
+
 // A relation with output field names.
 //
 // This is for use at the root of a `Rel` tree.
@@ -671,6 +683,7 @@ message Rel {
     WriteRel write = 19;
     DdlRel ddl = 20;
     UpdateRel update = 22;
+    TableFunctionRel table_function = 26;
     // Physical relations
     HashJoinRel hash_join = 13;
     MergeJoinRel merge_join = 14;
@@ -1825,6 +1838,35 @@ message Expression {
       Type.Date current_date = 3;
     }
   }
+}
+
+// A table function call that produces zero or more rows per invocation.
+message TableFunction {
+  // Points to a function_anchor in this plan referring to a table function
+  // in an extension YAML file. 0 is a valid anchor/reference, but prefer
+  // non-zero values for ergonomics.
+  uint32 function_reference = 1;
+
+  // Arguments must match the selected YAML implementation's signature,
+  // including any variadic arguments:
+  //  - Value arguments use FunctionArgument.value and must be constant expressions.
+  //    References to input or outer relation fields are not allowed.
+  //  - Type arguments use FunctionArgument.type.
+  //  - Enum arguments use FunctionArgument.enum, matching an allowed option
+  //    case-insensitively.
+  repeated FunctionArgument arguments = 2;
+
+  // Behavioral preferences following the options declared by the YAML
+  // implementation, with the same rules as scalar function options.
+  repeated FunctionOption options = 3;
+
+  // Required concrete output schema. Nullability must be NULLABILITY_REQUIRED.
+  // Its fields represent the generated columns, and every output row must
+  // conform to this type. If the YAML implementation declares a schema expression,
+  // this must match that expression evaluated with the bound argument types.
+  // Otherwise, the producer determines the type using argument values, external
+  // information, or other function-specific knowledge.
+  Type.Struct output_type = 4;
 }
 
 // Expression that represents a dynamic parameter.

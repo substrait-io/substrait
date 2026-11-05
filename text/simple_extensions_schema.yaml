@@ -73,6 +73,10 @@ properties:
     type: array
     items:
       $ref: "#/$defs/windowFunction"
+  table_functions:
+    type: array
+    items:
+      $ref: "#/$defs/tableFunction"
 
 $defs:
   type:
@@ -377,3 +381,42 @@ $defs:
             window_type:
               type: string
               enum: [STREAMING, PARTITION]
+
+  tableFunction:
+    type: object
+    additionalProperties: false
+    required: [name, impls]
+    properties:
+      name:
+        type: string
+      deprecated:
+        $ref: "#/$defs/deprecationStatus"
+      description:
+        type: string
+      metadata:
+        description: Arbitrary data created by the extension author.
+        type: object
+      impls:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            deprecated:
+              $ref: "#/$defs/deprecationStatus"
+            description:
+              type: string
+            args:
+              $ref: "#/$defs/arguments"
+            variadic:
+              $ref: "#/$defs/variadicBehavior"
+            options:
+              $ref: "#/$defs/options"
+            schema:
+              description: >-
+                The output schema must resolve to a non-nullable struct.
+                May be omitted when the output schema cannot be derived from
+                argument types using a YAML type expression. The producer must
+                still supply a concrete output_type.
+              $ref: "#/$defs/returnValue"

@@ -1,0 +1,16 @@
+# Generates integers from 1 through 100 with a step of 1.
+# Function anchor 1 refers to generate_series:i64_i64_i64 in functions_table.
+common {
+  direct {}
+  hint { output_names: "value" }
+}
+function {
+  function_reference: 1
+  arguments { value { literal { i64: 1 } } }
+  arguments { value { literal { i64: 100 } } }
+  arguments { value { literal { i64: 1 } } }
+  output_type {
+    types { i64 { nullability: NULLABILITY_REQUIRED } }
+    nullability: NULLABILITY_REQUIRED
+  }
+}

@@ -1,0 +1,39 @@
+%YAML 1.2
+---
+# Table functions: Functions that produce relations (zero or more records).
+urn: extension:io.substrait:functions_table
+table_functions:
+  - name: "generate_series"
+    description: >-
+      Generates a series of integer values from start to stop, incrementing by step.
+      An explicit step argument is required.
+
+      Produces zero or more records containing a single integer value. The series
+      includes both the start and stop values if they fall on a step boundary.
+      If step is positive, stops when the value exceeds stop. If step is negative,
+      stops when the value is less than stop. Returns empty if any argument is
+      NULL. Otherwise, raises an error if step is zero, and returns empty if the
+      step direction doesn't allow reaching stop from start.
+    impls:
+      - args:
+          - name: start
+            value: i64
+            description: The starting value of the series
+          - name: stop
+            value: i64
+            description: The ending value of the series (inclusive)
+          - name: step
+            value: i64
+            description: The increment between values
+        schema: struct<i64>
+      - args:
+          - name: start
+            value: i32
+            description: The starting value of the series
+          - name: stop
+            value: i32
+            description: The ending value of the series (inclusive)
+          - name: step
+            value: i32
+            description: The increment between values
+        schema: struct<i32>

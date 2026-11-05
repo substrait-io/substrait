@@ -1,0 +1,15 @@
+%YAML 1.2
+---
+urn: extension:org.example:producer_resolved_table_function
+table_functions:
+  - name: parse_records
+    description: >-
+      Parses comma-separated records into columns specified by the schema argument.
+      The producer determines the output struct from the schema argument's value.
+    impls:
+      - args:
+          - name: payload
+            value: string
+          - name: schema
+            value: string
+        # No schema expression; the schema argument determines the output type.

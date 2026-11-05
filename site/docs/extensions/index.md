@@ -169,7 +169,7 @@ This field is available at multiple levels to provide flexibility:
 
 - **Top-level**: Metadata about the extension file itself
 - **Type definitions**: Metadata about custom types
-- **Functions**: Metadata about functions (scalar, aggregate, and window functions)
+- **Functions**: Metadata about functions (scalar, aggregate, window, and table functions)
 
 Example:
 ```yaml
@@ -180,7 +180,7 @@ Consumers of extension files are not required to understand or validate metadata
 
 ### Deprecation of Extensions
 
-An extension entry can be deprecated. Producing a plan using deprecated extensions is discouraged for forward compatibility. The `deprecated` field can be added to types, type variations, functions (scalar, aggregate, and window), and individual function implementations.
+An extension entry can be deprecated. Producing a plan using deprecated extensions is discouraged for forward compatibility. The `deprecated` field can be added to types, type variations, functions (scalar, aggregate, window, and table), and individual function implementations.
 
 Consumers of extension files are not required to understand or validate deprecation fields.
 

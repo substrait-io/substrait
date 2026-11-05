@@ -63,6 +63,8 @@ def iter_type_expressions(extension):
                 yield arg["type"]
         if "return" in impl:
             yield impl["return"]
+        if "schema" in impl:
+            yield impl["schema"]
         if "intermediate" in impl:
             yield impl["intermediate"]
 
@@ -123,6 +125,29 @@ def test_iter_structure_type_expressions():
 
     for structure, expected in cases:
         assert list(iter_structure_type_expressions(structure)) == expected
+
+
+def test_iter_type_expressions_includes_table_functions():
+    extension = {
+        "table_functions": [
+            {
+                "name": "generate",
+                "impls": [
+                    {
+                        "args": [{"value": "list<any1>"}, {"type": "any2"}],
+                        "schema": "struct<any1, any2>",
+                    },
+                    {"args": [{"value": "string"}]},
+                ],
+            }
+        ]
+    }
+    assert list(iter_type_expressions(extension)) == [
+        "list<any1>",
+        "any2",
+        "struct<any1, any2>",
+        "string",
+    ]
 
 
 def test_parse_valid_type_expressions():

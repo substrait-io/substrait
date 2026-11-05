@@ -12,3 +12,5 @@ We use protobuf text format (textproto) rather than JSON for these examples beca
 - `field_reference/` - Examples of `Expression.FieldReference` messages
 - `plan_rel/` - Examples of `PlanRel` messages
 - `extended_expression/` - Examples of `ExtendedExpression` messages
+- `table_function/` - Examples of `TableFunction` calls
+- `table_function_rel/` - Examples of standalone `TableFunctionRel` messages

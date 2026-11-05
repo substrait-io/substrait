@@ -121,6 +121,42 @@ Points to an [Iceberg metadata file](https://iceberg.apache.org/spec/#table-meta
     ```
 
 
+## Table Function
+
+`TableFunctionRel` invokes a `TableFunction` and returns its generated rows. It is a leaf operator with no local input row. Value arguments must be constant expressions without references to input or outer relation fields.
+
+The relation contains the `TableFunction` call in its `function` field.
+
+| Signature | Value |
+| --------- | ----- |
+| Inputs | 0 |
+| Outputs | 1 |
+| Property Maintenance | N/A (no inputs) |
+| Direct Output Order | Fields of the function's output struct, in positional order. |
+
+### Table Function Properties
+
+| Property | Description | Required |
+| -------- | ----------- | -------- |
+| Function | The `TableFunction` call to invoke. The call declares a concrete, non-nullable struct `output_type`, even when its YAML implementation omits `schema`. | Required |
+
+The output fields may have optional name hints in `RelCommon.hint.output_names`; names are not part of the function's output type. Function arguments, options, and schema determination follow the [Table Functions](../expressions/table_functions.md) contract.
+
+### Example
+
+Generate integers from 1 to 100 using `generate_series:i64_i64_i64`. Function anchor 1 refers to that overload in the `functions_table` extension.
+
+```protobuf
+--8<-- "examples/proto-textformat/table_function_rel/generate_series.textproto"
+```
+
+=== "TableFunctionRel Message"
+
+    ```proto
+%%% proto.algebra.TableFunctionRel %%%
+    ```
+
+
 ## Filter Operation
 
 The filter operator eliminates one or more records from the input data based on a boolean filter expression.

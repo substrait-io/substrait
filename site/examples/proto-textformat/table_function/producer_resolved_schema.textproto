@@ -1,0 +1,9 @@
+# Refers to parse_records:str_str in the producer-resolved function example.
+function_reference: 1
+arguments { value { literal { string: "1,Alice" } } }
+arguments { value { literal { string: "id:i64,name:string" } } }
+output_type {
+  types { i64 { nullability: NULLABILITY_REQUIRED } }
+  types { string { nullability: NULLABILITY_REQUIRED } }
+  nullability: NULLABILITY_REQUIRED
+}
