@@ -9,15 +9,16 @@ from tests.type.test_type_grammar import extension_yaml_files, parse_type_expres
 
 
 def validate_literal_table_function_schema(schema):
-    """Require literal schema types to be non-nullable structs."""
+    """Require non-nullable struct schemas, deferring multiline derivations."""
     if isinstance(schema, dict):
         return
     expression = parse_type_expression(schema).expr()
-    if not isinstance(expression, SubstraitTypeParser.TypeLiteralContext):
-        # TODO: Validate more complex schemas after type-expression evaluation.
+    if isinstance(expression, SubstraitTypeParser.MultilineDefinitionContext):
+        # TODO: Validate multiline schemas after type-expression evaluation.
         return
-    if expression.typeDef().anyType() is not None:
-        return
+    assert isinstance(expression, SubstraitTypeParser.TypeLiteralContext), (
+        "Table-function schema must be a non-nullable struct"
+    )
     output = expression.typeDef().parameterizedType()
     assert (
         isinstance(
@@ -28,7 +29,18 @@ def validate_literal_table_function_schema(schema):
     ), "Table-function schema must be a non-nullable struct"
 
 
-@pytest.mark.parametrize("schema", ["i64", "struct?<i64>"])
+@pytest.mark.parametrize(
+    "schema",
+    [
+        "i64",
+        "struct?<i64>",
+        "(struct<i64>)",
+        "any1",
+        "any1?",
+        "42",
+        "if P > 0 then struct<i64> else struct<string>",
+    ],
+)
 def test_reject_invalid_literal_table_function_schema(schema):
     with pytest.raises(AssertionError, match="non-nullable struct"):
         validate_literal_table_function_schema(schema)
@@ -36,7 +48,11 @@ def test_reject_invalid_literal_table_function_schema(schema):
 
 @pytest.mark.parametrize(
     "schema",
-    ["struct<i64?>", {"value": "i64"}, "any1", "width = 10\nstruct<varchar<width>>"],
+    [
+        "struct<i64?>",
+        {"value": "i64"},
+        "width = 10\nstruct<varchar<width>>",
+    ],
 )
 def test_accept_valid_or_unresolved_table_function_schema(schema):
     validate_literal_table_function_schema(schema)
