@@ -1301,13 +1301,21 @@ message Expression {
     // The lambda body expression. Lambda parameters can be referenced using FieldReference
     // with FieldReference.LambdaParameterReference as root_type.
     Expression body = 2;
+
+    // Optional declared return type. If present, the body type must match exactly,
+    // including nullability and type variations. Otherwise, derive it from the body.
+    // Required for every named lambda participating in a definition dependency cycle,
+    // including cycles through function-valued references. Declared signatures are
+    // used to type-check recursive bodies without recursively expanding definitions.
+    Type output_type = 3;
   }
 
   // A function value referring to a named lambda, without invoking it.
   // Its non-nullable Func type is derived from the referenced lambda's
-  // parameter types and body type. It does not capture the caller's scope.
-  // References within named lambda bodies, including higher-order function
-  // arguments, must form an acyclic definition dependency graph.
+  // parameter types and return type. It does not capture the caller's scope.
+  // Self-references and mutual recursion are allowed, including references
+  // passed as higher-order function arguments. Every definition in a cycle
+  // must declare its lambda.output_type.
   message NamedLambdaReference {
     // References a lambda_anchor in Plan.named_lambdas, not an extension
     // function anchor. The definition must exist in Plan.named_lambdas;
@@ -1320,7 +1328,8 @@ message Expression {
   // Enables immediate invocation patterns like ((x) -> x * 2)(5), as well as
   // reuse of a lambda defined in Plan.named_lambdas.
   //
-  // The return type is derived from the type of the lambda's body expression.
+  // The return type is the lambda's output_type when declared, or is derived
+  // from its body otherwise.
   message LambdaInvocation {
     oneof lambda_type {
       // The inline lambda expression to invoke.
@@ -1718,6 +1727,7 @@ message Expression {
     // parameters or nested fields within parameters.
     message LambdaParameterReference {
       // Number of lexical lambda boundaries to traverse up for this reference.
+      // Recursive invocations do not introduce enclosing lexical scopes.
       // Subqueries and detachment do not introduce lambda boundaries.
       // For nested lambdas:
       //   0 = innermost lambda (current lambda's parameters as a struct)

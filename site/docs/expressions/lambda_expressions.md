@@ -17,6 +17,7 @@ A lambda expression consists of:
 |--------------------|-----------------------------------------------------------------------------|-----------------------|----------|
 | Parameters         | Struct type defining the lambda's parameters. Each field in the struct represents a parameter that can be accessed via LambdaParameterReference (a type of FieldReference). The struct's nullability must be `NULLABILITY_REQUIRED`. | `parameters`     | Yes      |
 | Body Expression    | The expression to evaluate (can reference parameters via LambdaParameterReference). The type of this expression is the return type of the lambda. | `body`                | Yes      |
+| Declared Return Type | Explicit return type; see [Type Derivation](#type-derivation). | `output_type` | For named lambdas in a [dependency cycle](#recursive-named-lambdas) |
 
 === "Lambda Message"
     ```proto
@@ -25,7 +26,12 @@ A lambda expression consists of:
 
 ### Type Derivation
 
-The type of a lambda expression is a `func` type. The parameters of the `func` are the parameters of the lambda. The return type of the `func` is determined by the type of the expression comprising the body of the lambda. 
+The type of a lambda expression is a non-nullable `func` type. The parameters of the `func` are the parameters of the lambda. The return type of the `func` is:
+
+- The declared `output_type`, when present. The body must match it exactly, including nullability and type variations. This is a type assertion, not an implicit cast.
+- The body expression's type, otherwise.
+
+`output_type` is optional for inline lambdas and acyclic named lambdas. Every named lambda in a [definition dependency cycle](#recursive-named-lambdas) must declare it. Missing required declarations and mismatched body types are invalid.
 
 ## Parameter References
 
@@ -46,7 +52,7 @@ Lambda parameters are referenced within the lambda body using [`FieldReference`]
 
 To access a specific parameter, wrap `LambdaParameterReference` in a [`FieldReference`](field_references.md) and use `direct_reference` with `StructField` to specify which parameter (field 0 = first parameter, field 1 = second parameter, etc.).
 
-Subqueries and detachment do not introduce lambda boundaries.
+`steps_out` follows lexical nesting, not the recursive call stack. Subqueries and detachment do not introduce lambda boundaries.
 
 ### Simple Example
 
@@ -120,7 +126,7 @@ A lambda invocation consists of:
 | Named lambda | A reference to a lambda in `Plan.named_lambdas`                             | `named_lambda` | One of `lambda` or `named_lambda` |
 | Arguments    | A `Nested.Struct` containing expressions for each lambda parameter. Each field corresponds to a lambda parameter and must evaluate to the matching parameter type. | `arguments` | Yes |
 
-The `arguments` field must be a `Nested.Struct` with exactly as many fields as the lambda has parameters. The type of each expression field must match the corresponding parameter type. The return type is derived from the type of the lambda's body expression.
+The `arguments` field must be a `Nested.Struct` with exactly as many fields as the lambda has parameters. The type of each expression field must match the corresponding parameter type. The return type follows [Type Derivation](#type-derivation).
 
 === "LambdaInvocation Message"
     ```proto
@@ -140,7 +146,7 @@ Invoking `((x: i32) -> x * 2)(5)` to compute 10:
 
 A named lambda is defined once in `Plan.named_lambdas`, where each entry is represented by a `NamedLambda`. Once defined, it can be invoked from multiple `LambdaInvocation` expressions and passed as a function value using `NamedLambdaReference`. Named lambdas use their own anchor namespace, separate from extension function anchors.
 
-Each definition consists of a `lambda_anchor`, an `Expression.Lambda`, and an optional human-readable `name`. The name is only for diagnostics and plan inspection: it has no semantic meaning and cannot be used as a reference. An invocation supplies a `named_lambda` reference and a `Nested.Struct` of arguments. The argument count and types must exactly match the lambda parameters, and the invocation's return type is the type of the lambda body.
+Each definition consists of a `lambda_anchor`, an `Expression.Lambda`, and an optional human-readable `name`. The name is only for diagnostics and plan inspection: it has no semantic meaning and cannot be used as a reference. An invocation supplies a `named_lambda` reference and a `Nested.Struct` of arguments. The argument count and types must exactly match the lambda parameters, and the invocation's return type follows [Type Derivation](#type-derivation).
 
 A definition may also use the containing plan's optional [detachment tables](#detached-named-lambda-bodies).
 
@@ -154,11 +160,13 @@ Named lambdas are closed over their parameters. Their bodies cannot capture the 
 
 A lambda returns an expression value, including a subquery result, not a relation directly.
 
-### Named Lambda Dependencies
+### Recursive Named Lambdas
 
-Named-lambda references may reference definitions that appear later in `Plan.named_lambdas`, but the definition dependency graph must be acyclic. A definition depends on another whenever its body invokes that named lambda or reference it as a function value, including inside nested expressions and arguments to higher-order functions. Self-references and indirect cycles are invalid, even if the reference is only passed as an argument or occurs in a branch that is not evaluated.
+Named-lambda references may reference definitions that appear later in `Plan.named_lambdas`. Named lambdas support self-recursion and mutual recursion. A definition depends on every named lambda its body invokes or references as a function value, including itself. This includes references in nested lambdas, subquery relation trees, higher-order function arguments, and unevaluated branches.
 
-Determine dependencies after resolving [detached relations and expressions](#detached-named-lambda-bodies), including references in subquery relation trees. Unreachable detached entries do not contribute dependencies.
+Determine dependencies after resolving [detached relations and expressions](#detached-named-lambda-bodies); unreachable detached entries do not contribute dependencies. Consumers apply the [type-derivation rules](#type-derivation) by establishing declared signatures before checking recursive bodies, without recursively expanding definitions. Recursion does not introduce recursive types.
+
+Consumers need not prove termination, and the specification imposes no recursion-depth limit. Consumers must report an error if their resource limits are exceeded, rather than truncate the computation or substitute a result. Consumers that do not support recursive named lambdas must reject plans that require them.
 
 ### Named Lambda References
 
@@ -193,6 +201,14 @@ Unlike a `LambdaInvocation`, which produces the result of a call, a `NamedLambda
     --8<-- "examples/proto-textformat/named_lambda/transform_identity.textproto"
     ```
 
+=== "Mutual recursion"
+
+    This plan defines mutually recursive `is_even` and `is_odd` functions for non-negative `i32` arguments. Both declare non-nullable boolean results; `is_even(4)` returns true.
+
+    ```protobuf
+    --8<-- "examples/proto-textformat/named_lambda/mutual_recursion.textproto"
+    ```
+
 ### Detached Named Lambda Bodies
 
 Named-lambda bodies use two optional detachment tables on the containing `Plan`, also available to other plan-wide definitions and plan-level extension payloads:
@@ -208,7 +224,15 @@ Entries may reference further subtrees in either table. Apply the shared [encodi
 - The single-reference rule applies across all plan-wide roots, not per definition or invocation. Different definitions must use distinct detached entries.
 - Detachment changes storage, not lexical scope, field-reference binding, or computation sharing.
 
-Detached ordinals must reconstruct finite relation and expression trees. Resolving a detached reference does not expand the bodies of named lambdas it invokes or references.
+**Named-lambda recursion is not a detached-reference cycle.** Calls may be recursive, but detached ordinals must reconstruct finite relation and expression trees. Resolving a detached reference does not expand the bodies of named lambdas it invokes or references.
+
+=== "Detached factorial"
+
+    Detaches the body and recursive call of factorial. For non-negative `i32` arguments whose factorial fits in `i32`, `factorial(5)` produces 120.
+
+    ```protobuf
+    --8<-- "examples/proto-textformat/named_lambda/detached_factorial.textproto"
+    ```
 
 === "Detached subquery"
 
