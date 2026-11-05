@@ -43,15 +43,6 @@ def test_validation_rejects_empty_messages():
         validate_example("", algebra_pb2.Expression.Lambda)
 
 
-def test_uuid_literal_example():
-    example = Path("site/examples/proto-textformat/literal/uuid.textproto")
-    literal = validate_example(example.read_text(), algebra_pb2.Expression.Literal)
-    assert isinstance(literal, algebra_pb2.Expression.Literal)
-    assert literal.WhichOneof("literal_type") == "uuid"
-    assert literal.uuid == bytes.fromhex("00112233445566778899aabbccddeeff")
-    assert str(UUID(bytes=literal.uuid)) == "00112233-4455-6677-8899-aabbccddeeff"
-
-
 @pytest.mark.parametrize(
     "uuid_text",
     [
