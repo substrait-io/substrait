@@ -450,6 +450,12 @@ message ConsistentPartitionWindowRel {
     // Required bound mode. Uses the enclosing relation's sorts.
     // See https://substrait.io/expressions/window_functions/#bound-modes
     Expression.WindowFunction.BoundsType bounds_type = 12;
+
+    // Overflow policy for both RANGE boundaries, independent of function options.
+    // Non-default values require RANGE mode. Unknown or unsupported policies
+    // must be rejected; UNSPECIFIED leaves boundary overflow implementation-defined.
+    // See https://substrait.io/expressions/window_functions/#boundary-overflow-behavior
+    Expression.WindowFunction.RangeBoundaryOverflow range_boundary_overflow = 13;
   }
 }
 
@@ -1435,12 +1441,32 @@ message Expression {
     // See https://substrait.io/expressions/window_functions/#frame-bounds
     Bound upper_bound = 4;
 
+    // Overflow policy for both RANGE boundaries, independent of function options.
+    // Non-default values require RANGE mode. Unknown or unsupported policies
+    // must be rejected; UNSPECIFIED leaves boundary overflow implementation-defined.
+    // See https://substrait.io/expressions/window_functions/#boundary-overflow-behavior
+    RangeBoundaryOverflow range_boundary_overflow = 13;
+
     // See https://substrait.io/expressions/window_functions/#bound-modes
     enum BoundsType {
       // Invalid; producers must select ROWS or RANGE.
       BOUNDS_TYPE_UNSPECIFIED = 0;
       BOUNDS_TYPE_ROWS = 1;
       BOUNDS_TYPE_RANGE = 2;
+    }
+
+    // Overflow is measured against the declared ordering type's value range,
+    // not the consumer's native arithmetic or intermediate type limits.
+    enum RangeBoundaryOverflow {
+      // Default, including when the field is omitted. Only boundary overflow
+      // is implementation-defined; ordinary membership rules still apply.
+      RANGE_BOUNDARY_OVERFLOW_UNSPECIFIED = 0;
+      // Report an execution error if either applicable boundary overflows,
+      // even if a wider intermediate can represent it or the frame is empty.
+      RANGE_BOUNDARY_OVERFLOW_ERROR = 1;
+      // Compare against the mathematical out-of-range boundary without an
+      // overflow error, wrapping, or clamping.
+      RANGE_BOUNDARY_OVERFLOW_EXTEND = 2;
     }
 
     // A frame boundary.
