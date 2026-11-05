@@ -65,6 +65,18 @@ Both bounds are inclusive, and only rows in the current partition can belong to 
 
 A frame need not contain the current row. If the lower bound is after the upper bound, the frame is empty. The function's empty-frame semantics apply, such as `SUM` yielding null and `COUNT(*)` yielding zero.
 
+## Offset Expressions
+
+The following rules apply to `offset_expr` in both `Preceding` and `Following`, in either bound mode:
+
+* Field references resolve against the input relation schema. The expression must behave as if evaluated once per input row, and must not contain window or aggregate functions.
+* A null or negative result is invalid. Use the opposite bound direction, not a negative offset, to move the other way.
+* A statically-known zero offset **must** be represented as `CurrentRow`. If a non-literal expression evaluates to zero for a row, the bound is equivalent to `CurrentRow` for that row.
+
+The strictly positive integer `offset` field is deprecated in favor of `offset_expr` and will be removed in a future release. Producers must set at least one. Because `offset` has no field presence, an `offset` of 0 counts as unset, and consumers must reject a `Preceding` or `Following` bound with no `offset_expr` and an `offset` of 0.
+
+When `offset_expr` is present, consumers must use it and ignore `offset`. Producers must write `offset_expr` and must also write `offset` whenever an exact legacy representation exists; otherwise, they must write only `offset_expr`. An exact legacy representation requires one fixed, strictly positive `int64` offset that is semantically equivalent for every input row; literal syntax is not required.
+
 ## Bound Modes
 
 ### ROWS
@@ -88,37 +100,50 @@ In the example above, one preceding row means B and one following row means D wh
 
 The single-ordering-expression restriction does not apply when both bounds are `CurrentRow` or `Unbounded` (or omitted). With multiple ordering expressions, peer equality uses all of them.
 
-For an offset `d` and current ordering value `v`, compute the boundary in the direction of the declared ordering:
-
-| Sort direction | `Preceding(d)` | `Following(d)` |
-| -------------- | -------------- | -------------- |
-| Ascending | `subtract(v, d)` (lower values) | `add(v, d)` (higher values) |
-| Descending | `add(v, d)` (higher values) | `subtract(v, d)` (lower values) |
-
 A boundary value need not occur in the input. For example, with ascending scores, current score 20, and bounds `Preceding(7)` through `CurrentRow`, the frame includes scores from 13 through 20, including every peer at score 20.
+
+For non-floating-point ordering types, compatibility and frame membership are defined directly, without resolving scalar arithmetic or comparison functions.
 
 #### Offset Type Compatibility
 
-Let `T` be the ordering expression's type and `D` the offset expression's type. `D` must be compatible with `T`: `add(T, D) -> T` and `subtract(T, D) -> T` must be defined.
+The valid core ordering/offset type pairs are listed below. Nullability does not affect compatibility; null values follow the [RANGE](#range) and [offset-expression](#offset-expressions) rules.
 
-For example, the standard extensions allow:
+| Ordering type `T` | Offset type `D` | Interpretation |
+| ----------------- | --------------- | -------------- |
+| `i8`, `i16`, `i32`, or `i64` | Any of `i8`, `i16`, `i32`, or `i64` | Numeric distance |
+| `fp32` or `fp64` | The same floating-point type as `T` | Numeric distance |
+| `decimal<P1,S1>` | `decimal<P2,S2>` | Numeric distance |
+| `date` | `interval_day<P>` | Elapsed duration from midnight on the date |
+| `precision_time<P>` | `interval_day<Q>` | Elapsed duration from the time, without wrapping at midnight |
+| `precision_timestamp<P>` | `interval_day<Q>` | Elapsed duration on the timezone-free timeline |
+| `precision_timestamp_tz<P>` | `interval_day<Q>` | Elapsed duration on the UTC timeline |
+| `date` or `precision_timestamp<P>` | `interval_year` | Calendar-month distance |
+| `precision_timestamp_tz<P>` | `interval_year` | Calendar-month distance in UTC |
 
-| Ordering type `T` | Offset type `D` | Boundary type |
-| ----------------- | --------------- | ------------- |
-| `i64` | `i64` | `i64` |
-| `precision_timestamp<P>` | `interval_day<P>` | `precision_timestamp<P>` |
+Decimal precisions and scales, and temporal precisions, need not match between ordering and offset types. As defined in [Type Classes](../types/type_classes.md), `interval_day` measures elapsed duration (one day is 86,400 seconds, not a timezone-dependent calendar day), and `interval_year` measures months. Non-negativity depends on the total, not individual component signs.
 
-## Offset Expressions
+Other core type pairs are invalid. Integer offsets do not implicitly mean days for `date`; integer/floating-point pairs require explicit producer conversion. Mixed integer widths do not require conversion: the calculation uses each operand's declared value.
 
-The following rules apply to `offset_expr` in both `Preceding` and `Following`, in either bound mode:
+#### Boundary Values and Membership
 
-* Field references resolve against the input relation schema. The expression must behave as if evaluated once per input row, and must not contain window or aggregate functions.
-* A null or negative result is invalid. Use the opposite bound direction, not a negative offset, to move the other way.
-* A statically-known zero offset **must** be represented as `CurrentRow`. If a non-literal expression evaluates to zero for a row, the bound is equivalent to `CurrentRow` for that row.
+For a `Preceding` or `Following` bound, the boundary calculation uses two operands: the current row's ordering value `v` and the evaluated offset `d`.
 
-The strictly positive integer `offset` field is deprecated in favor of `offset_expr` and will be removed in a future release. Producers must set at least one. Because `offset` has no field presence, an `offset` of 0 counts as unset, and consumers must reject a `Preceding` or `Following` bound with no `offset_expr` and an `offset` of 0.
+| Sort direction | `Preceding(d)` | `Following(d)` |
+| -------------- | -------------- | -------------- |
+| Ascending | `v - d` (lower values) | `v + d` (higher values) |
+| Descending | `v + d` (higher values) | `v - d` (lower values) |
 
-When `offset_expr` is present, consumers must use it and ignore `offset`. Producers must write `offset_expr` and must also write `offset` whenever an exact legacy representation exists; otherwise, they must write only `offset_expr`. An exact legacy representation requires one fixed, strictly positive `int64` offset that is semantically equivalent for every input row; literal syntax is not required.
+Integer and decimal boundaries use mathematical operand values; duration boundaries use the elapsed durations above. Calendar-month offsets adjust the year and month, preserving the day and time of day, except that a nonexistent day becomes the month's last day. For `precision_timestamp_tz`, this adjustment uses the UTC calendar. No session timezone participates.
+
+Membership is inclusive: `lower <= value <= upper` for ascending ordering, or `upper <= value <= lower` for descending ordering. `CurrentRow`, `Unbounded`, peer groups, and null placement retain their meanings above; these inequalities are not nullable SQL predicates.
+
+For non-floating-point ordering types, the mathematical boundary determines membership whenever it lies within `T`'s declared value range. The boundary is not an output expression and need not be representable as `T`. Consumers may align type parameters, widen intermediates, or avoid materializing boundaries, provided membership is preserved, including under rounding or truncation to fit `T`. Decimal scalar return-type formulas do not restrict valid frames.
+
+Behavior for boundaries outside the declared ordering type's value range remains implementation-defined. An in-range mathematical boundary is not out of range merely because it falls between representable values.
+
+##### Floating-Point Boundaries
+
+Floating-point boundaries use scalar `add(T, T) -> T` or `subtract(T, T) -> T`, as appropriate for the bound direction. Membership uses the resulting boundary value; no rounding mode is specified here. NaN or infinite ordering values and offsets remain implementation-defined.
 
 ## Function Signatures
 

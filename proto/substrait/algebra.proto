@@ -1445,6 +1445,8 @@ message Expression {
 
     // A frame boundary.
     // See https://substrait.io/expressions/window_functions/#frame-bounds
+    // For RANGE type compatibility and membership, see
+    // https://substrait.io/expressions/window_functions/#range
     message Bound {
       // A bound toward earlier rows or values in the declared ordering.
       message Preceding {
