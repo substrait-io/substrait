@@ -57,7 +57,6 @@ argument
     | stringArg
     | decimalArg
     | dateArg
-    | uuidArg
     | intervalYearArg
     | intervalDayArg
     | intervalCompoundArg
@@ -120,7 +119,6 @@ literal
     | numericLiteral
     | BooleanLiteral
     | StringLiteral
-    | UuidLiteral
     | DateLiteral
     | TimeLiteral
     | TimestampLiteral
@@ -185,10 +183,6 @@ stringArg
 
 dateArg
     : DateLiteral DoubleColon dateType
-    ;
-
-uuidArg
-    : UuidLiteral DoubleColon uuidType
     ;
 
 intervalYearArg
@@ -304,7 +298,7 @@ scalarType
   | binaryType                           #binary
   | dateType                             #date
   | intervalYearType                     #intervalYear
-  | uuidType                             #uuid
+  | UUID isnull=QMark?                   #uuid
   | userDefinedType                      #userDefined
   ;
 
@@ -334,10 +328,6 @@ floatType
 
 dateType
     : Date isnull=QMark?
-    ;
-
-uuidType
-    : UUID isnull=QMark?
     ;
 
 intervalYearType

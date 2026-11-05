@@ -23,20 +23,8 @@ Simple type classes are those that don't support any form of configuration. For 
 | binary          | A binary value, [0..2,147,483,647] bytes in length.          | `binary`
 | date            | A date within [1000-01-01..9999-12-31].                      | `int32` days since `1970-01-01`
 | interval_year   | Interval year to month. Supports a range of [-10,000..10,000] years with month precision (= [-120,000..120,000] months). Usually stored as separate integers for years and months, but only the total number of months is significant, i.e. `1y 0m` is considered equal to `0y 12m` or `1001y -12000m`. | `int32` years and `int32` months, with the added constraint that each component can never independently specify more than 10,000 years, even if the components have opposite signs (e.g. `-10000y 200000m` is **not** allowed)
-| uuid            | A universally-unique identifier composed of 128 bits. Typically presented to users in the following hexadecimal format: `c48ffa9e-64f4-44cb-ae47-152b4e60e77b`. Any 128-bit value is allowed, without specific adherence to RFC4122. | 16-byte `bytes` in network byte order; see [UUID Literals](#uuid-literals)
+| uuid            | A universally-unique identifier composed of 128 bits. Typically presented to users in the following hexadecimal format: `c48ffa9e-64f4-44cb-ae47-152b4e60e77b`. Any 128-bit value is allowed, without specific adherence to RFC4122. | Exactly 16 `bytes` in network byte order (big-endian), matching consecutive hexadecimal byte pairs in the UUID string with hyphens omitted, as in [RFC 9562, Section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4).
 | unbound         | A placeholder for a type that has not yet been bound to a concrete type. May only appear in partially bound plans, which must be bound before execution. | n/a
-
-### UUID Literals
-
-A UUID literal MUST contain exactly 16 bytes in network byte order (big-endian), following the byte-order convention in [RFC 9562, Section 4](https://www.rfc-editor.org/rfc/rfc9562.html#section-4). The bytes correspond, from left to right, to consecutive hexadecimal byte pairs in the UUID string representation with hyphens omitted. This is not the mixed-endian layout used by some GUID APIs.
-
-For example, `00112233-4455-6677-8899-aabbccddeeff` is encoded as:
-
-```proto
---8<-- "examples/proto-textformat/literal/uuid.textproto"
-```
-
-Any 128-bit value is allowed; UUID version and variant bits are unrestricted. This encoding specifies only the literal's serialized representation, not an engine's internal UUID representation or UUID ordering semantics.
 
 ### Unbound Type
 
