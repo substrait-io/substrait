@@ -9,6 +9,7 @@ TESTS_DIR = Path(__file__).parent
 REPO_ROOT = TESTS_DIR.parent
 EXTENSIONS_DIR = REPO_ROOT / "extensions"
 SITE_EXAMPLES_DIR = REPO_ROOT / "site" / "examples"
+_EXTENSION_LOADER = getattr(yaml, "CFullLoader", yaml.FullLoader)
 
 
 def parse_string(input_string):
@@ -54,7 +55,7 @@ def find_extension_files(*roots):
 def load_extension(path):
     """Parse one extension YAML file into a dict."""
     with open(path) as fh:
-        return yaml.load(fh, Loader=yaml.FullLoader)
+        return yaml.load(fh, Loader=_EXTENSION_LOADER)
 
 
 def iter_function_impls(extension):
