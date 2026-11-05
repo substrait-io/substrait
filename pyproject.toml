@@ -64,7 +64,7 @@ nodejs = ">=26.10.0,<27"
 
 [tool.pixi.tasks]
 # code generation
-generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate ANTLR Python parsers", inputs = ["grammar/*.g4"], outputs = ["tests/type/antlr_parser/*.py", "tests/parser/antlr_parser/*.py"] }
+generate-antlr = { cmd = "make all", cwd = "grammar", description = "Generate ANTLR Python parsers", inputs = ["grammar/*.g4", "grammar/Makefile", "grammar/prepend_license.sh"], outputs = ["tests/type/antlr_parser/*.py", "tests/parser/antlr_parser/*.py"] }
 generate-protobuf = { cmd = "buf generate", description = "Generate protobuf Python code", inputs = ["proto/**/*.proto"], outputs = ["gen/proto/python/substrait/*.py"] }
 generate = { depends-on = ["generate-antlr", "generate-protobuf"] }
 
@@ -87,8 +87,8 @@ ruff-format = { cmd = "ruff format .", default-environment = "dev", description 
 format = { depends-on = ["ruff-format", "format-protobuf"], description = "Format code" }
 
 # testing
-test = { cmd = "pytest .", default-environment = "dev", depends-on = ["generate-protobuf"], description = "Run tests including test_substrait_extension_coverage" }
-test-extension-coverage = { cmd = "pytest tests/coverage/test_extensions.py::test_substrait_extension_coverage", default-environment = "dev", description = "Check extension test coverage against tests/coverage/baseline.json (used by the pre-commit hook)" }
+test = { cmd = "pytest .", default-environment = "dev", depends-on = ["generate"], description = "Run tests including test_substrait_extension_coverage" }
+test-extension-coverage = { cmd = "pytest tests/coverage/test_extensions.py::test_substrait_extension_coverage", default-environment = "dev", depends-on = ["generate-antlr"], description = "Check extension test coverage against tests/coverage/baseline.json (used by the pre-commit hook)" }
 
 # docs
 mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", description = "Build Website" }
