@@ -86,6 +86,7 @@ Included in the definition of the local files above is a specification of the fi
 - [ORC](https://orc.apache.org/)
 - [Drwf](https://github.com/facebookarchive/hive-dwrf)
 - [Delimiter Separated Text](https://en.wikipedia.org/wiki/Delimiter-separated_values)
+- [JSON](https://www.json.org/) (line-delimited [JSON Lines](https://jsonlines.org/) or a single top-level array)
 
 There is also an `Any` field, allowing extension beyond the available formats.
 
