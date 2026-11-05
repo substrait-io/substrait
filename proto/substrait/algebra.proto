@@ -1861,7 +1861,7 @@ message TableFunction {
 
   // Required concrete output schema. Nullability must be NULLABILITY_REQUIRED.
   // Its fields represent the generated columns, and every output row must
-  // conform to this type. If the YAML implementation declares a return expression,
+  // conform to this type. If the YAML implementation declares a schema expression,
   // this must match that expression evaluated with the bound argument types.
   // Otherwise, the producer determines the type using argument values, external
   // information, or other function-specific knowledge.
