@@ -253,7 +253,7 @@ For reference, here are are some common output type derivations and how they can
 | Operation                                                    | Definition                                                   |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | Add item to list                                             | `add(List<T>, T) => List<T>`                               |
-| Decimal Division                                             | See the [decimal `divide` function](../extensions/functions_arithmetic_decimal.md#divide) for the bounded return type. |
+| Decimal Division                                             | See the [decimal `divide` function](https://substrait.io/extensions/functions_arithmetic_decimal/#divide) for the bounded return type. |
 | Select a subset of map keys based on a regular expression (requires stringlike keys) | `extract_values(regex:string, map:Map<K,V>) => List<V> WHERE K IN [STRING, VARCHAR<N>, FIXEDCHAR<N>]` |
 | Concatenate two fixed sized character strings                | `concat(FIXEDCHAR<A>, FIXEDCHAR<B>) => FIXEDCHAR<A+B>`       |
 | Make a struct of a set of fields and a struct definition.    | `make_struct(<type> T, K...) => T`                           |
