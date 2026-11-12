@@ -1834,7 +1834,7 @@ window_functions:
             name: expression
         nullability: DECLARED_OUTPUT
         decomposable: NONE
-        return: any1
+        return: any1?
         window_type: PARTITION
   - name: "last_value"
     description: >
@@ -1845,7 +1845,7 @@ window_functions:
             name: expression
         nullability: DECLARED_OUTPUT
         decomposable: NONE
-        return: any1
+        return: any1?
         window_type: PARTITION
   - name: "nth_value"
     description: >
@@ -1863,7 +1863,7 @@ window_functions:
             name: window_offset
         options:
           on_domain_error:
-            values: [ NAN, ERROR ]
+            values: [ "NULL", ERROR ]
         nullability: DECLARED_OUTPUT
         decomposable: NONE
         return: any1?
