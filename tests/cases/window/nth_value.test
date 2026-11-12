@@ -1,0 +1,20 @@
+### SUBSTRAIT_WINDOW_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
+
+# basic: Basic examples without any special cases
+DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+nth_value(col0, 2::i32) OVER f1 = (1999, 1999, 1999, 1999)::i32?
+
+DEFINE f1(i32) = ((1998), (1999))
+nth_value(col0, 5::i32) OVER f1 = (Null, Null)::i32?
+
+# on_domain_error: Non-positive window_offset governed by on_domain_error
+DEFINE f1(str) = (('a'), ('b'))
+nth_value(col0, 0::i32) OVER f1 [on_domain_error:NULL] = (Null, Null)::str?
+
+DEFINE f1(str) = (('a'), ('b'))
+nth_value(col0, 0::i32) OVER f1 [on_domain_error:ERROR] = <!ERROR>
+
+# edge_case: Edge cases
+DEFINE f1(i32) = ()
+nth_value(col0, 1::i32) OVER f1 = ()::i32?
