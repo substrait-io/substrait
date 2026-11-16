@@ -3,6 +3,8 @@
 **/.idea
 **/build
 gen
+/tests/parser/antlr_parser/
+/tests/type/antlr_parser/
 __pycache__
 
 # pixi environments
