@@ -14,6 +14,10 @@ table_functions:
       stops when the value is less than stop. Returns empty if any argument is
       NULL. Otherwise, raises an error if step is zero, and returns empty if the
       step direction doesn't allow reaching stop from start.
+
+      If adding step to the current value would fall outside the representable
+      range of the integer type, the series ends after the current value without
+      wrapping or raising an overflow error.
     impls:
       - args:
           - name: start
