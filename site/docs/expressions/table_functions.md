@@ -26,7 +26,7 @@ Table functions are declared under `table_functions` in extension YAML files.
 | `options` | Named behavioral preferences using the implementation's declared options. | Optional |
 | `output_type` | The concrete `Type.Struct` schema of every generated row, with `nullability` set to `NULLABILITY_REQUIRED`. | Required |
 
-Value arguments must be constant expressions, such as literals or scalar functions of constant arguments. References to input or outer relation fields are not allowed.
+When invoked by `TableFunctionRel`, value arguments must be constant expressions, such as literals or scalar functions of constant arguments. References to input or outer relation fields are not allowed in this relation.
 
 Table functions always follow the `DECLARED_OUTPUT` [nullability handling](scalar_functions.md#nullability-handling) rules, with the additional requirement that the output type is a non-nullable struct.
 
