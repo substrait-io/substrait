@@ -46,13 +46,13 @@ An implementation may omit `schema` when the output schema cannot be derived fro
 
 When the YAML implementation omits `schema`, the producer must still determine a concrete `schema` for the call using argument values, external information, or other function-specific knowledge. The consumer must agree with the declared `schema`; it must not substitute a different output schema.
 
-For example, this parsing function uses a schema-defining string argument to determine its output columns. Its YAML definition intentionally omits `schema`.
+For example, this parsing function interprets comma-separated records according to the function call's declared `schema`. Its YAML definition intentionally omits `schema` because the output columns cannot be derived from the payload's string type.
 
 ```yaml
 --8<-- "examples/extensions/producer_resolved_table_function.yaml"
 ```
 
-The producer resolves the schema argument's value and declares the resulting struct in the function call. Function anchor 1 refers to `parse_records:str_str` from the example extension.
+The producer declares the desired output struct in the function call's `schema`. Function anchor 1 refers to `parse_records:str` from the example extension.
 
 ```protobuf
 --8<-- "examples/proto-textformat/table_function/producer_resolved_schema.textproto"
