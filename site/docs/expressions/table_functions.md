@@ -34,6 +34,8 @@ Table functions always follow the `DECLARED_OUTPUT` [nullability handling](scala
 
 Every call must declare a concrete `output_type`, regardless of whether its YAML implementation declares a `schema` expression. The output type is fixed for the call, and every generated row must conform to it.
 
+A plan is invalid if the declared `output_type` is incompatible with the table function's specified output schema.
+
 ### Schemas Derivable from YAML
 
 If an implementation declares a `schema` expression, the call's `output_type` must match that expression evaluated with the bound argument types.
