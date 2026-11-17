@@ -160,8 +160,8 @@ def test_validate_table_functions():
     assert example_files, "No table function examples found"
     for example in example_files:
         function = validate_example(example.read_text(), algebra_pb2.TableFunction)
-        assert function.HasField("output_type")
-        assert function.output_type.nullability == type_pb2.Type.NULLABILITY_REQUIRED
+        assert function.HasField("schema")
+        assert function.schema.nullability == type_pb2.Type.NULLABILITY_REQUIRED
 
 
 def test_validate_table_function_relations():
@@ -172,10 +172,9 @@ def test_validate_table_function_relations():
     for example in example_files:
         relation = validate_example(example.read_text(), algebra_pb2.TableFunctionRel)
         assert relation.HasField("function")
-        assert relation.function.HasField("output_type")
+        assert relation.function.HasField("schema")
         assert (
-            relation.function.output_type.nullability
-            == type_pb2.Type.NULLABILITY_REQUIRED
+            relation.function.schema.nullability == type_pb2.Type.NULLABILITY_REQUIRED
         )
 
 

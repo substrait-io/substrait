@@ -24,7 +24,7 @@ Table functions are declared under `table_functions` in extension YAML files.
 | `function_reference` | A function anchor in the plan referring to a table function in an extension YAML file. Zero is valid, though non-zero anchors are preferred for ergonomics. | Required |
 | `arguments` | Arguments matching the selected implementation's signature, including any variadic arguments. | Optional for niladic functions. |
 | `options` | Named behavioral preferences using the implementation's declared options. | Optional |
-| `output_type` | The concrete `Type.Struct` schema of every generated row, with `nullability` set to `NULLABILITY_REQUIRED`. | Required |
+| `schema` | The concrete `Type.Struct` schema of every generated row, with `nullability` set to `NULLABILITY_REQUIRED`. | Required |
 
 When invoked by `TableFunctionRel`, value arguments must be constant expressions, such as literals or scalar functions of constant arguments. References to input or outer relation fields are not allowed in this relation.
 
@@ -32,19 +32,19 @@ Table functions always follow the `DECLARED_OUTPUT` [nullability handling](scala
 
 ## Schema Determination
 
-Every call must declare a concrete `output_type`, regardless of whether its YAML implementation declares a `schema` expression. The output type is fixed for the call, and every generated row must conform to it.
+Every call must declare a concrete `schema`, regardless of whether its YAML implementation declares a `schema` expression. The output type is fixed for the call, and every generated row must conform to it.
 
-A plan is invalid if the declared `output_type` is incompatible with the table function's specified output schema.
+A plan is invalid if the declared `schema` is incompatible with the table function's specified output schema.
 
 ### Schemas Derivable from YAML
 
-If an implementation declares a `schema` expression, the call's `output_type` must match that expression evaluated with the bound argument types.
+If an implementation declares a `schema` expression, the call's `schema` must match that expression evaluated with the bound argument types.
 
 ### Schemas Not Derivable from YAML
 
 An implementation may omit `schema` when the output schema cannot be derived from argument types using a YAML type expression. No additional marker is required.
 
-When `schema` is omitted, the producer must still determine a concrete `output_type` using argument values, external information, or other function-specific knowledge. The consumer must agree with the declared `output_type`; it must not substitute a different output schema.
+When the YAML implementation omits `schema`, the producer must still determine a concrete `schema` for the call using argument values, external information, or other function-specific knowledge. The consumer must agree with the declared `schema`; it must not substitute a different output schema.
 
 For example, this parsing function uses a schema-defining string argument to determine its output columns. Its YAML definition intentionally omits `schema`.
 

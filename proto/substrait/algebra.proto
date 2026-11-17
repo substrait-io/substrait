@@ -1866,7 +1866,7 @@ message TableFunction {
   // this must match that expression evaluated with the bound argument types.
   // Otherwise, the producer determines the type using argument values, external
   // information, or other function-specific knowledge.
-  Type.Struct output_type = 4;
+  Type.Struct schema = 4;
 }
 
 // Expression that represents a dynamic parameter.

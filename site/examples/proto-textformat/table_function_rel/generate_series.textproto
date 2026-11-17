@@ -9,7 +9,7 @@ function {
   arguments { value { literal { i64: 1 } } }
   arguments { value { literal { i64: 100 } } }
   arguments { value { literal { i64: 1 } } }
-  output_type {
+  schema {
     types { i64 { nullability: NULLABILITY_REQUIRED } }
     nullability: NULLABILITY_REQUIRED
   }
