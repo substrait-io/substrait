@@ -99,6 +99,20 @@ release = { cmd = "./ci/release/run.sh", default-environment = "dev", descriptio
 
 [tool.pixi.environments]
 dev = { features = ["dev"] }
+engines = { features = ["engines"], no-default-feature = true }
+
+# Reference SQL engines used to cross-check function test cases
+# (tests/cases/**/*.test). All run in-process; SQLite is Python's sqlite3.
+[tool.pixi.feature.engines.dependencies]
+python = ">=3.13,<3.14"
+python-duckdb = ">=2.0.0,<3"
+datafusion = ">=55.0.0,<56"
+# needed by DuckDB to return TIMESTAMP WITH TIME ZONE values to Python
+pytz = ">=2024.1"
+
+[tool.pixi.feature.engines.tasks]
+engines-run = { cmd = "python .agents/skills/review-against-engines/scripts/run_cases.py", description = "Run a cases JSON file against the reference engines" }
+engines-versions = { cmd = "python .agents/skills/review-against-engines/scripts/run_cases.py --versions", description = "Print reference engine versions" }
 
 [dependency-groups]
 dev = [
