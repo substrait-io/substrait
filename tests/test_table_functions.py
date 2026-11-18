@@ -8,18 +8,24 @@ from tests.type.antlr_parser.SubstraitTypeParser import SubstraitTypeParser
 from tests.type.test_type_grammar import extension_yaml_files, parse_type_expression
 
 
-def validate_literal_table_function_schema(schema):
-    """Require non-nullable struct schemas, deferring multiline derivations."""
+def validate_table_function_schema(schema):
+    """Require a schema whose resulting type is a non-nullable struct.
+
+    Parentheses are unwrapped, and a multiline derivation is checked by its
+    final type, since neither needs the intermediate assignments evaluated.
+    """
     if isinstance(schema, dict):
         return
     expression = parse_type_expression(schema).expr()
+    while isinstance(expression, SubstraitTypeParser.ParenExpressionContext):
+        expression = expression.expr()
     if isinstance(expression, SubstraitTypeParser.MultilineDefinitionContext):
-        # TODO: Validate multiline schemas after type-expression evaluation.
-        return
-    assert isinstance(expression, SubstraitTypeParser.TypeLiteralContext), (
-        "Table-function schema must be a non-nullable struct"
-    )
-    output = expression.typeDef().parameterizedType()
+        output_type = expression.finalType
+    elif isinstance(expression, SubstraitTypeParser.TypeLiteralContext):
+        output_type = expression.typeDef()
+    else:
+        raise AssertionError("Table-function schema must be a non-nullable struct")
+    output = output_type.parameterizedType()
     assert (
         isinstance(
             output,
@@ -34,28 +40,31 @@ def validate_literal_table_function_schema(schema):
     [
         "i64",
         "struct?<i64>",
-        "(struct<i64>)",
+        "(struct?<i64>)",
+        "width = 10\ni64",
+        "width = 10\nstruct?<i64>",
         "any1",
         "any1?",
         "42",
         "if P > 0 then struct<i64> else struct<string>",
     ],
 )
-def test_reject_invalid_literal_table_function_schema(schema):
+def test_reject_invalid_table_function_schema(schema):
     with pytest.raises(AssertionError, match="non-nullable struct"):
-        validate_literal_table_function_schema(schema)
+        validate_table_function_schema(schema)
 
 
 @pytest.mark.parametrize(
     "schema",
     [
         "struct<i64?>",
+        "(struct<i64>)",
         {"value": "i64"},
         "width = 10\nstruct<varchar<width>>",
     ],
 )
-def test_accept_valid_or_unresolved_table_function_schema(schema):
-    validate_literal_table_function_schema(schema)
+def test_accept_valid_table_function_schema(schema):
+    validate_table_function_schema(schema)
 
 
 def test_extension_table_function_schemas():
@@ -65,7 +74,7 @@ def test_extension_table_function_schemas():
         ):
             if "schema" in impl:
                 try:
-                    validate_literal_table_function_schema(impl["schema"])
+                    validate_table_function_schema(impl["schema"])
                 except AssertionError as error:
                     pytest.fail(f"{path}: {function['name']}: {error}")
 
