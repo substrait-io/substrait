@@ -1,30 +1,31 @@
 # Substrait → engine SQL: types and literals
 
-These forms were checked against DuckDB 2.0, DataFusion 55 and SQLite 3.54.
+These forms were checked against DuckDB 2.0, DataFusion 55, SQLite 3.54 and
+Spark 4.2.
 **Always cast every literal**: untyped integer literals are `INTEGER` in DuckDB
 but `Int64` in DataFusion, so a bare `120` does not test i8 semantics.
 
 ## Types
 
-| Substrait | DuckDB | DataFusion | SQLite |
-|---|---|---|---|
-| `i8` | `TINYINT` | `TINYINT` | `INTEGER` (always 64-bit) |
-| `i16` | `SMALLINT` | `SMALLINT` | `INTEGER` |
-| `i32` | `INTEGER` | `INT` | `INTEGER` |
-| `i64` | `BIGINT` | `BIGINT` | `INTEGER` |
-| `fp32` | `REAL` | `REAL` | `REAL` (always 64-bit; fp32 rounding is not testable) |
-| `fp64` | `DOUBLE` | `DOUBLE` | `REAL` |
-| `dec<P,S>` | `DECIMAL(P,S)` | `DECIMAL(P,S)` | none (becomes float; skip unless the case is about the value only) |
-| `bool` | `BOOLEAN` | `BOOLEAN` | `0`/`1` integers |
-| `str`, `vchar<N>`, `fchar<N>` | `VARCHAR` | `VARCHAR` | `TEXT` |
-| `vbin` | `X'AA'` | `X'AA'` | `X'AA'` |
-| `date` | `DATE '2020-01-02'` | `DATE '2020-01-02'` | text via `DATE('2020-01-02')` |
-| `pt<6>` | `TIME '12:00:00.5'` | `arrow_cast('12:00:00.5', 'Time64(Microsecond)')` | text |
-| `pts<6>` | `TIMESTAMP '…'` | `arrow_cast('…', 'Timestamp(Microsecond, None)')` | text |
-| `pts<3>` / `pts<9>` / `pts<0>` | `CAST(… AS TIMESTAMP_MS / TIMESTAMP_NS / TIMESTAMP_S)` | `arrow_cast(…, 'Timestamp(Millisecond/Nanosecond/Second, None)')` | text |
-| `ptstz<6>` | `TIMESTAMPTZ '…+05:30'` (normalized to UTC) | `arrow_cast('…+05:30', 'Timestamp(Microsecond, Some("UTC"))')` | text |
-| `iday` | `INTERVAL '2 days 3 hours'` | `INTERVAL '2 days 3 hours'` | none |
-| `list<T>` | `[1, 2]::INTEGER[]` | `make_array(CAST(1 AS INT), CAST(2 AS INT))` | none |
+| Substrait | DuckDB | DataFusion | SQLite | Spark |
+|---|---|---|---|---|
+| `i8` | `TINYINT` | `TINYINT` | `INTEGER` (always 64-bit) | `TINYINT` |
+| `i16` | `SMALLINT` | `SMALLINT` | `INTEGER` | `SMALLINT` |
+| `i32` | `INTEGER` | `INT` | `INTEGER` | `INT` |
+| `i64` | `BIGINT` | `BIGINT` | `INTEGER` | `BIGINT` |
+| `fp32` | `REAL` | `REAL` | `REAL` (always 64-bit; fp32 rounding is not testable) | `REAL` |
+| `fp64` | `DOUBLE` | `DOUBLE` | `REAL` | `DOUBLE` |
+| `dec<P,S>` | `DECIMAL(P,S)` | `DECIMAL(P,S)` | none (becomes float; skip unless the case is about the value only) | `DECIMAL(P,S)` |
+| `bool` | `BOOLEAN` | `BOOLEAN` | `0`/`1` integers | `BOOLEAN` |
+| `str`, `vchar<N>`, `fchar<N>` | `VARCHAR` | `VARCHAR` | `TEXT` | `STRING` |
+| `vbin` | `X'AA'` | `X'AA'` | `X'AA'` | `X'AA'` |
+| `date` | `DATE '2020-01-02'` | `DATE '2020-01-02'` | text via `DATE('2020-01-02')` | `DATE '2020-01-02'` |
+| `pt<6>` | `TIME '12:00:00.5'` | `arrow_cast('12:00:00.5', 'Time64(Microsecond)')` | text | `TIME '12:00:00.5'` |
+| `pts<6>` | `TIMESTAMP '…'` | `arrow_cast('…', 'Timestamp(Microsecond, None)')` | text | `TIMESTAMP_NTZ '…'` |
+| `pts<3>` / `pts<9>` / `pts<0>` | `CAST(… AS TIMESTAMP_MS / TIMESTAMP_NS / TIMESTAMP_S)` | `arrow_cast(…, 'Timestamp(Millisecond/Nanosecond/Second, None)')` | text | none (microseconds only) |
+| `ptstz<6>` | `TIMESTAMPTZ '…+05:30'` (normalized to UTC) | `arrow_cast('…+05:30', 'Timestamp(Microsecond, Some("UTC"))')` | text | `TIMESTAMP '…+05:30'` (normalized to UTC) |
+| `iday` | `INTERVAL '2 days 3 hours'` | `INTERVAL '2 days 3 hours'` | none | `INTERVAL '2 days 3 hours'` |
+| `list<T>` | `[1, 2]::INTEGER[]` | `make_array(CAST(1 AS INT), CAST(2 AS INT))` | none | `array(CAST(1 AS INT), CAST(2 AS INT))` |
 
 Notes:
 
@@ -34,19 +35,22 @@ Notes:
   value it gets back (`int`→i64, `float`→fp64, `str`). A typed case is
   therefore at best `PASS_TYPE_DIFF` on SQLite. That's expected and not a
   finding.
+- **Spark runs with its defaults, so ANSI mode is on.** `VARCHAR(N)` and
+  `CHAR(N)` are read as `STRING`. Spark can't return year-month intervals to
+  Python; wrap them in `CAST(… AS STRING)` and compare the text.
 - **Some engine result types have no Substrait equivalent**, for example
   DuckDB `HUGEINT` (128-bit) or DataFusion unsigned integers. They are reported
   as "not checkable".
 
 ## Special values
 
-| Value | DuckDB | DataFusion | SQLite |
-|---|---|---|---|
-| `inf` / `-inf` | `CAST('inf' AS DOUBLE)` | `CAST('inf' AS DOUBLE)` | `1e999` / `-1e999` |
-| `nan` | `CAST('nan' AS DOUBLE)` | `CAST('NaN' AS DOUBLE)` | none (`0.0/0.0` is NULL): skip |
-| `-0` | `CAST('-0' AS DOUBLE)` | `CAST('-0' AS DOUBLE)` | `-0.0` |
-| `null::T?` | `CAST(NULL AS T)` | `CAST(NULL AS T)` | `NULL` |
-| string escape `\'` | `''` | `''` | `''` |
+| Value | DuckDB | DataFusion | SQLite | Spark |
+|---|---|---|---|---|
+| `inf` / `-inf` | `CAST('inf' AS DOUBLE)` | `CAST('inf' AS DOUBLE)` | `1e999` / `-1e999` | `CAST('inf' AS DOUBLE)` |
+| `nan` | `CAST('nan' AS DOUBLE)` | `CAST('NaN' AS DOUBLE)` | none (`0.0/0.0` is NULL): skip | `CAST('NaN' AS DOUBLE)` |
+| `-0` | `CAST('-0' AS DOUBLE)` | `CAST('-0' AS DOUBLE)` | `-0.0` | `CAST('-0' AS DOUBLE)` |
+| `null::T?` | `CAST(NULL AS T)` | `CAST(NULL AS T)` | `NULL` | `CAST(NULL AS T)` |
+| string escape `\'` | `''` | `''` | `''` | `''` |
 
 ## Query shapes
 
@@ -55,7 +59,7 @@ Notes:
 **Aggregate**: write the rows untyped in one CTE, then cast them in a second.
 Casting only the first `VALUES` row is not enough, because DataFusion widens
 the column to `Int64`. SQLite does not accept `(VALUES …) AS v(c)`, but CTE
-column lists work on all three engines:
+column lists work on all four engines:
 
 ```sql
 WITH v(c0, c1) AS (VALUES (20, 20), (-3, NULL), (1, 1)),
@@ -86,7 +90,7 @@ Use `"expected": {"column": [...], "type": ...}` for these.
 SELECT (lhs) IS NOT DISTINCT FROM (rhs)
 ```
 
-Use `"expected": {"value": true, "type": "bool"}`. All three engines support
+Use `"expected": {"value": true, "type": "bool"}`. All four engines support
 `IS NOT DISTINCT FROM`; on SQLite the result comes back as `1`.
 
 ## Expected-value encoding (cases JSON)

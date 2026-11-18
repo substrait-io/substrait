@@ -6,6 +6,9 @@ Usage:
     run_cases.py CASES_JSON     run cases, write results.json next to the input,
                                 print a markdown report
     run_cases.py --versions     print engine versions
+    run_cases.py --probe ENGINE SQL
+                                run one query on one engine and print the
+                                rows, result type and any error
 
 The cases JSON format is documented in ../SKILL.md.
 """
@@ -14,15 +17,18 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import logging
 import math
+import os
 import re
 import sqlite3
 import struct
 import sys
+import time
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
-ENGINES = ("duckdb", "datafusion", "sqlite")
+ENGINES = ("duckdb", "datafusion", "sqlite", "spark")
 
 PASS = "PASS"
 PASS_TYPE_DIFF = "PASS_TYPE_DIFF"
@@ -132,17 +138,83 @@ def run_sqlite(sql: str):
         con.close()
 
 
-RUNNERS = {"duckdb": run_duckdb, "datafusion": run_datafusion, "sqlite": run_sqlite}
+_SPARK = None
+
+
+def _spark_session():
+    """Start one local Spark session per run; its JVM takes seconds to start.
+
+    Spark runs with its defaults, so ANSI mode is on (overflow and invalid
+    casts raise errors). Each case gets a fresh newSession() of it.
+    """
+    global _SPARK
+    if _SPARK is None:
+        from pyspark.sql import SparkSession
+
+        # Per-error JSON stack traces come from this Python-side logger.
+        logging.getLogger("SQLQueryContextLogger").disabled = True
+        # The JVM inherits stderr; send its startup banner and warnings to
+        # /dev/null while keeping this process's own stderr.
+        saved, null = os.dup(2), os.open(os.devnull, os.O_WRONLY)
+        os.dup2(null, 2)
+        try:
+            _SPARK = (
+                SparkSession.builder.master("local[1]")
+                .appName("substrait-review-against-engines")
+                .config("spark.ui.enabled", "false")
+                .config("spark.sql.session.timeZone", "UTC")
+                .getOrCreate()
+            )
+        finally:
+            os.dup2(saved, 2)
+            os.close(saved)
+            os.close(null)
+        _SPARK.sparkContext.setLogLevel("OFF")
+    return _SPARK
+
+
+def run_spark(sql: str):
+    from pyspark.errors import PySparkException
+
+    session = _spark_session().newSession()
+    try:
+        df = session.sql(sql)
+        col_type = df.schema.fields[0].dataType.simpleString()
+        rows = [tuple(r) for r in df.collect()]
+    except PySparkException as e:
+        state = e.getSqlState() or ""
+        # SQLSTATE class 42 is syntax or analysis (plan-time) errors.
+        kind = "compile" if state.startswith("42") else "runtime"
+        msg = str(e).splitlines()[0]
+        raise EngineError(kind, f"{type(e).__name__} [{state}]: {msg}") from None
+    if col_type == "timestamp":
+        # TIMESTAMP is Spark's zoned type; pyspark returns naive datetimes in
+        # the process time zone, which main() pins to UTC.
+        rows = [
+            (r[0].replace(tzinfo=dt.UTC) if r[0] is not None else None, *r[1:])
+            for r in rows
+        ]
+    return rows, col_type
+
+
+RUNNERS = {
+    "duckdb": run_duckdb,
+    "datafusion": run_datafusion,
+    "sqlite": run_sqlite,
+    "spark": run_spark,
+}
 
 
 def versions() -> dict[str, str]:
     import datafusion
     import duckdb
+    import pyspark
 
     return {
         "duckdb": duckdb.__version__,
         "datafusion": datafusion.__version__,
         "sqlite": sqlite3.sqlite_version,
+        "spark": pyspark.__version__,
     }
 
 
@@ -261,6 +333,21 @@ ARROW_TS_UNITS = {"s": 0, "ms": 3, "us": 6, "ns": 9}
 
 SQLITE_TYPES = {"int": "i64", "float": "fp64", "str": "str", "bytes": "vbin"}
 
+SPARK_TYPES = {
+    "tinyint": "i8",
+    "smallint": "i16",
+    "int": "i32",
+    "bigint": "i64",
+    "float": "fp32",
+    "double": "fp64",
+    "string": "str",
+    "boolean": "bool",
+    "date": "date",
+    "timestamp": "ptstz<6>",
+    "timestamp_ntz": "pts<6>",
+    "binary": "vbin",
+}
+
 
 def canon_engine(engine: str, t: str | None) -> str | None:
     if t is None:
@@ -288,6 +375,24 @@ def canon_engine(engine: str, t: str | None) -> str | None:
         return ARROW_TYPES.get(t)
     if engine == "sqlite":
         return SQLITE_TYPES.get(t)
+    if engine == "spark":
+        m = re.fullmatch(r"decimal\((\d+),\s*(\d+)\)", t)
+        if m:
+            return f"dec<{m.group(1)},{m.group(2)}>"
+        m = re.fullmatch(r"array<(.*)>", t)
+        if m:
+            inner = canon_engine(engine, m.group(1))
+            return f"list<{inner}>" if inner else None
+        if re.fullmatch(r"(?:var)?char\(\d+\)", t):
+            return "str"
+        m = re.fullmatch(r"time\((\d+)\)", t)
+        if m:
+            return f"pt<{m.group(1)}>"
+        if t.startswith("interval day"):
+            return "iday"
+        if t.startswith("interval year"):
+            return "iyear"
+        return SPARK_TYPES.get(t)
     return None
 
 
@@ -651,6 +756,16 @@ def main(argv: list[str]) -> int:
     if argv[1:] == ["--versions"]:
         for e, v in versions().items():
             print(f"{e} {v}")
+        return 0
+    # Pin the process time zone so engines that return naive local datetimes
+    # (pyspark) do so in UTC, independent of the machine running this.
+    os.environ["TZ"] = "UTC"
+    time.tzset()
+    if len(argv) == 4 and argv[1] == "--probe" and argv[2] in RUNNERS:
+        outcome = run_case(argv[2], argv[3])
+        if "rows" in outcome:
+            outcome["rows"] = [jsonable(list(r)) for r in outcome["rows"]]
+        print(json.dumps(outcome, indent=2))
         return 0
     if len(argv) != 2:
         print(__doc__, file=sys.stderr)

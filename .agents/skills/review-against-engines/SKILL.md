@@ -1,14 +1,14 @@
 ---
 name: review-against-engines
-description: Review a Substrait function test file (tests/cases/**/*.test) by translating each case to SQL, running it on reference engines (DuckDB, DataFusion, SQLite), and reporting per engine which cases agree with the file. Use when asked to review, validate, sanity-check, or cross-check .test cases or expected results against real engines.
+description: Review a Substrait function test file (tests/cases/**/*.test) by translating each case to SQL, running it on reference engines (DuckDB, DataFusion, SQLite, Spark), and reporting per engine which cases agree with the file. Use when asked to review, validate, sanity-check, or cross-check .test cases or expected results against real engines.
 ---
 
 # Review test cases against reference engines
 
-This skill runs each case of a `.test` file on DuckDB, DataFusion and SQLite
-and reports, per engine, which expectations those engines agree with. All three
-engines run in-process from the Pixi `engines` environment, so there is nothing
-to start or stop. The goal is to check whether the **behavior** the test
+This skill runs each case of a `.test` file on DuckDB, DataFusion, SQLite and
+Spark, and reports, per engine, which expectations those engines agree with.
+All four engines run in-process from the Pixi `engines` environment (Spark in
+local mode, with its default ANSI mode), so there is nothing to start or stop. The goal is to check whether the **behavior** the test
 describes matches what the engines do, and to find expectations that look
 wrong. Some differences are expected and are not findings:
 
@@ -52,10 +52,12 @@ pixi run -e engines engines-versions
   documented semantics.
 - For each engine, find the SQL function or operator that matches most closely.
   It must compute the same thing, not merely share a name: check the engine docs
-  and run a probe query if unsure. Probe like this:
+  and run a probe query if unsure. Probe with the runner, which uses the same
+  engine setup as a full run (ENGINE is `duckdb`, `datafusion`, `sqlite` or
+  `spark`):
 
   ```sh
-  pixi run -e engines python -I -c "import duckdb; print(duckdb.sql('SELECT ...').fetchall())"
+  pixi run -e engines engines-run --probe ENGINE "SELECT ..."
   ```
 
 - **If no matching function exists, stop for that engine.** Record
@@ -75,7 +77,8 @@ one entry for every case in the file, in file order:
   "engines": {
     "duckdb":     {"sql_function": "+"},
     "datafusion": {"sql_function": "+"},
-    "sqlite":     {"sql_function": "+", "notes": "dynamically typed; INTEGER is 64-bit"}
+    "sqlite":     {"sql_function": "+", "notes": "dynamically typed; INTEGER is 64-bit"},
+    "spark":      {"sql_function": "+"}
   },
   "cases": [
     {
@@ -87,7 +90,8 @@ one entry for every case in the file, in file order:
       "sql": {
         "duckdb": "SELECT CAST(120 AS TINYINT) + CAST(5 AS TINYINT)",
         "datafusion": "SELECT CAST(120 AS TINYINT) + CAST(5 AS TINYINT)",
-        "sqlite": "SELECT 120 + 5"
+        "sqlite": "SELECT 120 + 5",
+        "spark": "SELECT CAST(120 AS TINYINT) + CAST(5 AS TINYINT)"
       },
       "skip": {}
     }
