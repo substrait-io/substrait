@@ -1128,6 +1128,9 @@ message Expression {
       PrecisionTimestamp precision_timestamp_tz = 35;
       Struct struct = 25;
       Map map = 26;
+      // Exactly 16 bytes in network byte order (big-endian), matching consecutive
+      // hexadecimal byte pairs in the UUID string with hyphens omitted.
+      // Any 128-bit value is allowed; UUID version and variant bits are unrestricted.
       bytes uuid = 28;
       Type null = 29; // a typed null literal
       List list = 30;
