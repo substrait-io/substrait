@@ -2,8 +2,6 @@
 
 Table functions produce a relation containing zero or more rows per invocation.
 
-Table functions are invoked using the [Table Function relation](../relations/logical_relations.md#table-function), which returns their generated rows.
-
 ## Function Definition Properties
 
 Table functions are declared under `table_functions` in extension YAML files.
@@ -18,6 +16,8 @@ Table functions are declared under `table_functions` in extension YAML files.
 | Schema | A type expression that resolves to a non-nullable struct describing the output row's columns. May be omitted when the output schema cannot be derived from argument types using a YAML type expression. | Optional, see [Schema Determination](#schema-determination). |
 
 ## Table Function Calls
+
+Table functions are invoked using the [Table Function relation](../relations/logical_relations.md#table-function-operator), which returns their generated rows.
 
 | Field | Description | Required |
 | ----- | ----------- | -------- |
