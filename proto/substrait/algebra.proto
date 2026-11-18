@@ -645,8 +645,7 @@ message TableFunctionRel {
   RelCommon common = 1;
 
   // Required function call. Its output struct fields form the relation's
-  // columns in field order. Value arguments must be constant expressions.
-  // References to input or outer relation fields are not allowed.
+  // columns in field order.
   TableFunction function = 2;
 
   substrait.extensions.AdvancedExtension advanced_extension = 10;

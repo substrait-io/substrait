@@ -256,6 +256,20 @@ def test_validate_plan_rels():
     assert list(relation_plan_rel.root.names) == ["value"]
 
 
+def test_lateral_table_function_references_left_row():
+    """The series stop argument binds to the lateral join's current left row."""
+    example = Path(
+        "site/examples/proto-textformat/plan_rel/lateral_generate_series.textproto"
+    )
+    plan_rel = validate_example(example.read_text(), plan_pb2.PlanRel)
+    lateral_join = plan_rel.root.input.lateral_join
+    function = lateral_join.right.table_function.function
+    stop_argument = function.arguments[1].value.selection
+    assert stop_argument.outer_reference.rel_reference == lateral_join.common.rel_anchor
+    field_index = stop_argument.direct_reference.struct_field.field
+    assert lateral_join.left.read.base_schema.names[field_index] == "n"
+
+
 def test_validate_extended_expressions():
     """Validate detached expression and relation examples."""
     examples_dir = Path("site/examples/proto-textformat/extended_expression")
