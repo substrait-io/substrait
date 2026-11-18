@@ -1,22 +1,28 @@
 ---
 name: review-against-engines
-description: Review a Substrait function test file (tests/cases/**/*.test) by translating each case to SQL, running it on reference engines (DuckDB, DataFusion, SQLite, Spark), and reporting per engine which cases agree with the file. Use when asked to review, validate, sanity-check, or cross-check .test cases or expected results against real engines.
+description: Review a Substrait function test file (tests/cases/**/*.test) by translating each case to SQL, running it on reference engines (DuckDB, DataFusion, SQLite, Spark), and reporting per engine which cases match the behavior the file encodes and which deviate from it. Use when asked to review, validate, sanity-check, or cross-check .test cases or expected results against real engines.
 ---
 
 # Review test cases against reference engines
 
 This skill runs each case of a `.test` file on DuckDB, DataFusion, SQLite and
-Spark, and reports, per engine, which expectations those engines agree with.
-All four engines run in-process from the Pixi `engines` environment (Spark in
-local mode, with its default ANSI mode), so there is nothing to start or stop. The goal is to check whether the **behavior** the test
-describes matches what the engines do, and to find expectations that look
-wrong. Some differences are expected and are not findings:
+Spark. All four engines run in-process from the Pixi `engines` environment
+(Spark in local mode, with its default ANSI mode), so there is nothing to start
+or stop.
+
+The goal is to identify, per engine, which cases **match** the behavior the
+test encodes and which **deviate** from it. SQL dialects deviate from Substrait
+semantics and from each other, so a deviation is a valid outcome, not a failure
+of the engine or of the test. Report each deviation as what the engine does
+instead. Some differences don't count as deviations at all:
 
 - **Result types differ between dialects.** A matching value with a different
-  type (`PASS_TYPE_DIFF`) counts as agreement. Mention type differences only
+  type (`PASS_TYPE_DIFF`) counts as a match. Mention type differences only
   briefly in the report.
-- **An engine implements a different option** from the one a case specifies.
-  Record which option it follows.
+
+When a case's options (such as `overflow:ERROR`) select a behavior, engines
+that implement a different option deviate on that case. Record which option
+each engine follows.
 
 **Each invocation is a separate investigation.** Work out every fact about the
 function and the engines in this run: which SQL function matches, how each
@@ -112,7 +118,7 @@ Rules:
 - **Skip only when untestable.** Use `skip: {"<engine>": "<reason>"}` only when
   the case can't be expressed on that engine at all (no NaN in SQLite, no
   decimals in SQLite, no fp32 in SQLite for rounding-sensitive cases, and
-  similar). Never skip a case because you expect it to fail.
+  similar). Never skip a case because you expect the engine to deviate.
 - **Options.** Don't skip cases that have options. Translate and run them
   normally. Engines have one fixed behavior, and the results show which option
   each engine implements.
@@ -127,7 +133,7 @@ pixi run -e engines engines-run <tmpdir>/cases.json
 ```
 
 The runner writes `<tmpdir>/results.json` and prints a markdown report. It has
-a status matrix, a per-case table, and details for every case that didn't pass.
+a status matrix, a per-case table, and details for every case that didn't match.
 Statuses:
 
 | Status | Meaning |
@@ -135,33 +141,31 @@ Statuses:
 | `PASS` | Value and result type match. |
 | `PASS_TYPE_DIFF` | Value matches, but the result type differs or can't be checked (always the case on SQLite). |
 | `CHECK` | An error was expected and raised, but at parse or plan time. Confirm it is the error the case means, not broken SQL. |
-| `FAIL` | Wrong value, or a value where an error was expected. |
-| `ERROR` | An error where a value was expected. |
+| `DEVIATES` | The engine behaves differently from the test: a different value, a value where an error was expected, or a runtime error where a value was expected. |
+| `ERROR` | The query failed to parse or plan where a value was expected. Usually a translation problem. |
 | `N/A` | Unsupported engine, or the case was skipped. |
 
 ### 5. Triage, fix translation problems, re-run
 
-Go through every non-`PASS` result, and every `PASS` on an `<!ERROR>` case, and
-classify it:
+Go through every result other than `PASS` and `PASS_TYPE_DIFF`, and every
+`PASS` on an `<!ERROR>` case, and classify it:
 
 1. **Translation problem.** The SQL doesn't express the case: a missing cast, a
    wrong literal, a SQL syntax error, the wrong function. Fix the cases JSON and
-   re-run. Iterate until none remain. Plan-time errors (`CHECK`, `ERROR` with
-   `compile`) are usually this.
-2. **Engine follows a different option.** The case has options, and the engine
-   implements a different one. For example, the case expects an error but the
-   engine returns a wrapped or saturated value. This is not a test problem.
-   Record which option each engine follows, based on its results in this run.
-3. **Engine type gap.** Not a test problem either. The engine has no
-   equivalent type, or produces a wider or narrower result type.
-4. **Expectation looks wrong.** The engines disagree with the test, and the
-   disagreement isn't explained by 2 or 3. This is the actionable finding, and
-   it is strongest when several engines agree with each other. Before reporting
-   it, check the extension YAML's documented semantics. Also check
+   re-run. Iterate until none remain. `ERROR` and `CHECK` are usually this. A
+   `DEVIATES` can be too, so confirm the SQL is right before calling something
+   a deviation.
+2. **Deviation.** The SQL is right and the engine behaves differently. Describe
+   how: which option it follows (for example, it wraps on overflow where the
+   case expects an error), or which value or error it produces instead. Base
+   this on its results in this run.
+3. **Possible test issue.** No engine matches the case, or the engines agree
+   with each other and not with the test. The expectation may be wrong. Before
+   reporting it, check the extension YAML's documented semantics. Also check
    floating-point details (exact binary values, fp32 rounding).
 
 For every `<!ERROR>` case that passed, read the error message and confirm it is
-the error the case is about. For example, an overflow case should fail with
+the error the case is about. For example, an overflow case should error with
 "Overflow", not "function does not exist".
 
 ### 6. Report
@@ -170,14 +174,15 @@ Report in the terminal:
 
 1. A header with the test file, the function, and the engine versions.
 2. Per engine, the SQL function it was mapped to (or why it is unsupported) and
-   counts of passed / failed / N/A after triage. Give a pass count that treats
-   `PASS_TYPE_DIFF` as passed, and state the strict `PASS` count separately.
-3. **Suspect expectations** (class 4): each with its line number, the case, what
-   each engine returned, and why the expectation looks wrong. Put this first if
-   there are any.
+   counts of matches / deviations / N/A after triage. Count `PASS_TYPE_DIFF` as
+   a match, and state the strict `PASS` count separately.
+3. **Deviations**, per engine: which cases deviate and how the engine behaves
+   instead.
 4. **Option behavior**: for each option exercised (`overflow`, `rounding`, …),
    which option each engine implements.
-5. Other notable differences (types, unsupported cases), kept short.
+5. **Possible test issues** (class 3), if any: the line number, the case, what
+   each engine returned, and why the expectation may be wrong.
+6. Other notable differences (types, unsupported cases), kept short.
 
 Don't paste the full runner output. Point to `results.json` for details. Don't
 edit the `.test` file unless asked. If the user asks for fixes, propose them

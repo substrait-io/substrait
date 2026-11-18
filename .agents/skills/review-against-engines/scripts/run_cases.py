@@ -33,10 +33,12 @@ ENGINES = ("duckdb", "datafusion", "sqlite", "spark")
 PASS = "PASS"
 PASS_TYPE_DIFF = "PASS_TYPE_DIFF"
 CHECK = "CHECK"  # expected an error and got one, but at plan/parse time
-FAIL = "FAIL"
-ERROR = "ERROR"
+# The engine's behavior differs from the test. SQL dialects legitimately
+# deviate from Substrait semantics, so this is an outcome, not a failure.
+DEVIATES = "DEVIATES"
+ERROR = "ERROR"  # the query failed to parse or plan where a value was expected
 NA = "N/A"
-STATUSES = (PASS, PASS_TYPE_DIFF, CHECK, FAIL, ERROR, NA)
+STATUSES = (PASS, PASS_TYPE_DIFF, CHECK, DEVIATES, ERROR, NA)
 
 
 # --------------------------------------------------------------------------
@@ -558,11 +560,13 @@ def judge(expected: dict, outcome: dict) -> tuple[str, str]:
                     "errored at plan/parse time; confirm it is the expected error",
                 )
             return PASS, "errored as expected"
-        return ERROR, outcome["error_kind"] + " error"
+        if outcome["error_kind"] == "compile":
+            return ERROR, "plan/parse-time error; check the SQL"
+        return DEVIATES, "runtime error where a value was expected"
 
     rows = outcome["rows"]
     if expected.get("error"):
-        return FAIL, "expected an error, got a value"
+        return DEVIATES, "expected an error, got a value"
     if expected.get("undefined"):
         return PASS, "result undefined; any value accepted"
 
@@ -575,11 +579,11 @@ def judge(expected: dict, outcome: dict) -> tuple[str, str]:
         )
     else:
         if len(rows) != 1:
-            return FAIL, f"expected 1 row, got {len(rows)}"
+            return DEVIATES, f"expected 1 row, got {len(rows)}"
         actual = rows[0][0]
         ok = values_equal(expected.get("value"), actual, etype)
     if not ok:
-        return FAIL, "value mismatch"
+        return DEVIATES, "value differs"
 
     tm = types_match(canon_substrait(etype), outcome["substrait_type"])
     if tm is True:

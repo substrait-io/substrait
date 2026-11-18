@@ -28,8 +28,8 @@ and others) discover them automatically. If yours doesn't, read the relevant
 `SKILL.md` when a task matches its description.
 
 - [`review-against-engines`](.agents/skills/review-against-engines/SKILL.md): run the
-  cases in a `.test` file against reference SQL engines and report where each
-  engine agrees with the expected results.
+  cases in a `.test` file against reference SQL engines and report, per engine,
+  which cases match the encoded behavior and which deviate from it.
 
 ## What agents specifically need to get right
 
