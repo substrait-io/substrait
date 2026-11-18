@@ -40,6 +40,18 @@ A plan is invalid if the declared `schema` is incompatible with the table functi
 
 If an implementation declares a `schema` expression, the call's `schema` must match that expression evaluated with the bound argument types.
 
+For example, this function produces rows containing a value of whatever type its first argument has.
+
+```yaml
+--8<-- "examples/extensions/derived_schema_table_function.yaml"
+```
+
+In this call, the `value` argument is a `string` literal, so `any1` binds to `string` and the `schema` expression `struct<any1>` evaluates to `struct<string>`. The call's `schema` must therefore be `struct<string>`. Function anchor 1 refers to `repeat_value:any_i64` from the example extension.
+
+```protobuf
+--8<-- "examples/proto-textformat/table_function/derived_schema.textproto"
+```
+
 ### Schemas Not Derivable from YAML
 
 An implementation may omit `schema` when the output schema cannot be derived from argument types using a YAML type expression.
