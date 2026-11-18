@@ -1844,8 +1844,7 @@ message Expression {
 // A table function call that produces zero or more rows per invocation.
 message TableFunction {
   // Points to a function_anchor in this plan referring to a table function
-  // in an extension YAML file. 0 is a valid anchor/reference, but prefer
-  // non-zero values for ergonomics.
+  // in an extension YAML file.
   uint32 function_reference = 1;
 
   // Arguments must match the selected YAML implementation's signature,
