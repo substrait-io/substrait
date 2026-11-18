@@ -11,10 +11,10 @@ Table functions are declared under `table_functions` in extension YAML files.
 | Property | Description | Required |
 | -------- | ----------- | -------- |
 | Name | A case-sensitive UTF-8 name used to reference the function. | Required |
-| List of arguments | Value, type, or enumeration arguments, following [scalar function argument types](scalar_functions.md#argument-types). | Optional, defaults to niladic. |
-| Variadic Behavior | Whether the last argument can be repeated, with optional minimum and maximum counts. | Optional, defaults to a single argument. |
-| Options | Named behavioral options declared per implementation, following the [scalar function option mechanism](scalar_functions.md#options). | Optional |
-| Description | Human-readable description of the function or an individual implementation. | Optional |
+| List of arguments | Value, type, or enumeration arguments, following [standard function argument types](scalar_functions.md#argument-types). | Optional, defaults to niladic. |
+| Variadic Behavior | Whether the last argument of the function is variadic or a single argument. If variadic, the argument can optionally have a lower bound (minimum number of instances) and an upper bound (maximum number of instances). |
+| Options | Named behavioral options declared per implementation, following the [standard function option mechanism](scalar_functions.md#options). | Optional |
+| Description | Additional description of function for implementers or users. Should be written human-readable to allow exposure to end users. Can be specified at the function level and/or on individual implementations to document overload-specific behavior. | Optional |
 | Schema | A type expression that resolves to a non-nullable struct describing the output row's columns. May be omitted when the output schema cannot be derived from argument types using a YAML type expression. | Optional, see [Schema Determination](#schema-determination). |
 
 ## Table Function Calls
@@ -42,7 +42,7 @@ If an implementation declares a `schema` expression, the call's `schema` must ma
 
 ### Schemas Not Derivable from YAML
 
-An implementation may omit `schema` when the output schema cannot be derived from argument types using a YAML type expression. No additional marker is required.
+An implementation may omit `schema` when the output schema cannot be derived from argument types using a YAML type expression.
 
 When the YAML implementation omits `schema`, the producer must still determine a concrete `schema` for the call using argument values, external information, or other function-specific knowledge. The consumer must agree with the declared `schema`; it must not substitute a different output schema.
 

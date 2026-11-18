@@ -121,9 +121,9 @@ Points to an [Iceberg metadata file](https://iceberg.apache.org/spec/#table-meta
     ```
 
 
-## Table Function
+## Table Function Operator
 
-`TableFunctionRel` invokes a `TableFunction` and returns its generated rows. It is a leaf operator with no local input row. Value arguments must be constant expressions without references to input or outer relation fields.
+The table function operator invokes a [table function](../expressions/table_functions.md) and returns its generated rows. It is a leaf operator that consumes no inputs.
 
 The relation contains the `TableFunction` call in its `function` field.
 
@@ -144,7 +144,6 @@ The output fields may have optional name hints in `RelCommon.hint.output_names`;
 
 ### Example
 
-Generate integers from 1 to 100 using `generate_series:i64_i64_i64`. Function anchor 1 refers to that overload in the `functions_table` extension.
 
 ```protobuf
 --8<-- "examples/proto-textformat/table_function_rel/generate_series.textproto"
