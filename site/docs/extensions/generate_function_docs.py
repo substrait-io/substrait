@@ -81,7 +81,7 @@ def write_markdown(file_obj: dict, file_name: str) -> None:
                     option_names_list.append(f"option:{opt_name}")
 
                 if "variadic" in impl:
-                    min_args = impl["variadic"].get("min", 1)
+                    min_args = impl["variadic"]["min"]
                     for _ in range(min_args - 1):
                         arg_string.append(arg_string[-1])
 
