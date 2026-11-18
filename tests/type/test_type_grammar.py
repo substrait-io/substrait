@@ -64,7 +64,7 @@ def iter_type_expressions(extension):
         if "return" in impl:
             yield impl["return"]
         if "schema" in impl:
-            yield impl["schema"]
+            yield from iter_structure_type_expressions(impl["schema"])
         if "intermediate" in impl:
             yield impl["intermediate"]
 
@@ -138,6 +138,10 @@ def test_iter_type_expressions_includes_table_functions():
                         "schema": "struct<any1, any2>",
                     },
                     {"args": [{"value": "string"}]},
+                    {
+                        "args": [{"value": "i32"}],
+                        "schema": {"value": "i64", "label": "string"},
+                    },
                 ],
             }
         ]
@@ -146,6 +150,9 @@ def test_iter_type_expressions_includes_table_functions():
         "list<any1>",
         "any2",
         "struct<any1, any2>",
+        "string",
+        "i32",
+        "i64",
         "string",
     ]
 
