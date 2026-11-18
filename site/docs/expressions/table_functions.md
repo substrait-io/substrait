@@ -26,7 +26,7 @@ Table functions are invoked using the [Table Function relation](../relations/log
 | `options` | Named behavioral preferences using the implementation's declared options. | Optional |
 | `schema` | The concrete `Type.Struct` schema of every generated row, with `nullability` set to `NULLABILITY_REQUIRED`. | Required |
 
-When invoked by `TableFunctionRel`, value arguments must be constant expressions, such as literals or scalar functions of constant arguments. References to input or outer relation fields are not allowed in this relation.
+Value arguments are evaluated once per invocation. `TableFunctionRel` has no input of its own, but its arguments may reference outer rows in scope, such as the left row of a [lateral join](../relations/logical_relations.md#lateral-join-operation).
 
 Table functions always follow the `DECLARED_OUTPUT` [nullability handling](scalar_functions.md#nullability-handling) rules, with the additional requirement that the output type is a non-nullable struct.
 
@@ -83,6 +83,20 @@ Generate integers from 1 to 100 using `generate_series:i64_i64_i64` with an expl
 ```
 
 The SQL equivalent is `SELECT * FROM generate_series(1, 100, 1)`.
+
+## Lateral Invocation Example
+
+Generate a sequence for each row of `series_bounds`, using the row's `n` as the stop argument.
+
+```sql
+SELECT b.n, s.value
+FROM series_bounds b
+CROSS JOIN LATERAL generate_series(1, b.n, 1) AS s(value)
+```
+
+```protobuf
+--8<-- "examples/proto-textformat/plan_rel/lateral_generate_series.textproto"
+```
 
 === "TableFunction Message"
 
