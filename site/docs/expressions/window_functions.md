@@ -101,13 +101,15 @@ In the example above, one preceding row means B and one following row means D wh
 
 The single-ordering-expression restriction does not apply when both bounds are `CurrentRow` or `Unbounded` (or omitted). With multiple ordering expressions, peer equality uses all of them.
 
+Orderability alone does not imply support for offsets. `CurrentRow` and `Unbounded` may be used with any valid ordering expression, even when its type has no compatible offset type below.
+
 A boundary value need not occur in the input. For example, with ascending scores, current score 20, and bounds `Preceding(7)` through `CurrentRow`, the frame includes scores from 13 through 20, including every peer at score 20.
 
 Compatibility and frame membership are defined directly, without resolving scalar arithmetic or comparison functions.
 
 #### Offset Type Compatibility
 
-The valid core ordering/offset type pairs are listed below. Nullability does not affect compatibility; null values follow the [RANGE](#range) and [offset-expression](#offset-expressions) rules.
+The table covers core scalar types. `None` means no core offset type is defined: `Preceding` and `Following` are invalid for that ordering type, but this does not restrict frames using only `CurrentRow` and `Unbounded`. Nullability does not affect compatibility; null values follow the [RANGE](#range) and [offset-expression](#offset-expressions) rules.
 
 | Ordering type `T` | Offset type `D` | Interpretation |
 | ----------------- | --------------- | -------------- |
@@ -120,10 +122,19 @@ The valid core ordering/offset type pairs are listed below. Nullability does not
 | `precision_timestamp_tz<P>` | `interval_day<Q>` | Elapsed duration on the UTC timeline |
 | `date` or `precision_timestamp<P>` | `interval_year` | Calendar-month distance |
 | `precision_timestamp_tz<P>` | `interval_year` | Calendar-month distance in UTC |
+| `interval_year` | `interval_year` | Distance in total months |
+| `interval_day<P>` | `interval_day<Q>` | Distance in total elapsed duration |
+| `boolean` | None | No core offset distance defined |
+| `string`, `fixedchar<L>`, or `varchar<L>` | None | No core offset distance defined |
+| `binary` or `fixedbinary<L>` | None | No core offset distance defined |
+| `uuid` | None | No core offset distance defined |
+| `interval_compound<P>` | None | No core offset distance defined across month and elapsed-duration components |
 
 Decimal precisions and scales, and temporal precisions, need not match between ordering and offset types. As defined in [Type Classes](../types/type_classes.md), `interval_day` measures elapsed duration (one day is 86,400 seconds, not a timezone-dependent calendar day), and `interval_year` measures months. Non-negativity depends on the total, not individual component signs.
 
 Other core type pairs are invalid. Integer offsets do not implicitly mean days for `date`; integer/floating-point pairs require explicit producer conversion. Mixed widths within the integer or floating-point family do not require conversion: the calculation uses each operand's declared value.
+
+There is no implicit conversion between month and elapsed-duration intervals. In particular, `interval_compound` does not define a conversion between its independent grains, so this specification does not assign it a total order or offset arithmetic. The `unbound` placeholder has no runtime values and must be bound to a concrete type before execution.
 
 #### Boundary Values and Membership
 
@@ -135,6 +146,8 @@ For a `Preceding` or `Following` bound, the boundary calculation uses two operan
 | Descending | `v + d` (higher values) | `v - d` (lower values) |
 
 An operand is finite if it is non-null and, if floating-point, neither NaN nor positive or negative infinity. Nulls follow the [RANGE](#range) and [offset-expression](#offset-expressions) rules.
+
+For interval ordering values, arithmetic and comparisons use total months (`interval_year`) or total elapsed duration (`interval_day`), not individual components. Calendar-month adjustment below applies to date and timestamp ordering values, not interval ordering values.
 
 Numeric boundaries use mathematical operand values; duration boundaries use the elapsed durations above. Calendar-month offsets adjust the year and month, preserving the day and time of day, except that a nonexistent day becomes the month's last day. For `precision_timestamp_tz`, this adjustment uses the UTC calendar. No session timezone participates.
 
