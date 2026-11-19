@@ -1953,4 +1953,8 @@ message AggregateFunction {
 // in case we refer to a RelRoot field names will be ignored
 message ReferenceRel {
   int32 subtree_ordinal = 1;
+
+  // Applies to this reference, not to the referenced relation.
+  // The direct output is the referenced relation's output, after its own emit.
+  RelCommon common = 2;
 }

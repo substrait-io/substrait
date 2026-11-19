@@ -465,6 +465,10 @@ We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the t
 One expressing `A JOIN B` (in position 0 in the plan), one using reference as follows: `ReferenceRel(0) JOIN C` and a third one
 doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B`.
 
+Each reference can carry its own `RelCommon`, allowing different uses of the same shared subtree to have different emit mappings, hints, advanced extensions, and relation anchors. These common fields apply to the `ReferenceRel` itself; they do not modify the referenced relation or other references to it. Relation anchors follow the usual plan-wide uniqueness rules.
+
+The direct output of a reference is the output of the referenced relation, after that relation's own emit mapping. A reference's `common.emit.output_mapping` indexes this output, not the referenced relation's inputs or pre-emit columns. If the referenced relation is a `RelRoot`, its field names are ignored. Omitting `common`, or leaving its emit kind unset, preserves the referenced output unchanged.
+
 !!! note "Outer references in shared relations"
 
     When a shared relation contains an unresolved outer reference, the reference must use `rel_reference` instead of `steps_out`, because a `ReferenceRel` can be reached through multiple paths of different depths, making offset-based resolution ambiguous. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
@@ -473,7 +477,7 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 | -------------------- |---------------------------------------|
 | Inputs               | 1                                     |
 | Outputs              | 1                                     |
-| Property Maintenance | Maintains all properties of the input |
+| Property Maintenance | Maintains input properties, mapped by emit |
 | Direct Output Order  | Maintains order                       |
 
 
@@ -482,6 +486,19 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 | Property                    | Description                                                                    | Required                    |
 |-----------------------------|--------------------------------------------------------------------------------| --------------------------- |
 | Referred Rel                | A zero-indexed positional reference to a `Rel` defined within the same `Plan`. | Required                    |
+| Common                      | Common properties applied to this reference, independently of the referenced relation. | Optional                    |
+
+### Reference-Local Output Example
+
+The shared read below emits `[region, id]`. The first reference reorders those columns to `[id, region]`, while the second emits only `[region]`. Each reference also has its own alias and relation anchor.
+
+```proto
+--8<-- "examples/proto-textformat/reference_rel/per_reference_common.textproto"
+```
+
+### Compatibility
+
+`common` uses a new field number; `subtree_ordinal` remains field 1. Existing plans without `common` retain their behavior. However, older consumers may ignore the new field in binary plans, so producers must not rely on its semantics until the consumer supports it. When targeting older consumers, leave `ReferenceRel.common` unset and express required per-reference behavior using existing wrapper relations, such as a project operation for projection.
 
 === "ReferenceRel Message"
 

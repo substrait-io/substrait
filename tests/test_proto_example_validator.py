@@ -188,6 +188,15 @@ def test_validate_field_references():
         )
 
 
+def test_validate_reference_rels():
+    """Validate plans with reference-local common fields."""
+    examples_dir = Path("site/examples/proto-textformat/reference_rel")
+    example_files = list(examples_dir.glob("*.textproto"))
+    assert example_files, "No reference relation examples found"
+    for textproto_file in example_files:
+        validate_example(textproto_file.read_text(), plan_pb2.Plan)
+
+
 def test_validate_plan_rels():
     """Validate plan relation examples."""
     examples_dir = Path("site/examples/proto-textformat/plan_rel")
