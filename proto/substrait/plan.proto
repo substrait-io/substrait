@@ -76,7 +76,9 @@ message Plan {
   // Execution behavior settings for this plan, required.
   ExecutionBehavior execution_behavior = 10;
 
-  // An optional list of named lambdas.
+  // An optional list of named lambdas. Definitions may reference themselves
+  // or each other recursively; every definition in a dependency cycle must
+  // declare its lambda.output_type.
   repeated NamedLambda named_lambdas = 11;
 }
 

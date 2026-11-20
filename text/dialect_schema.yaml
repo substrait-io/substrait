@@ -1318,6 +1318,8 @@ definitions:
     additionalProperties: false
     description: >
       Support for named lambda references as function-valued expressions.
+      References may be self-recursive or mutually recursive, including when
+      passed as higher-order function arguments.
       Combined with LAMBDA_INVOCATION, this also declares support for invoking
       named lambdas. On its own, this does not imply support for the
       LAMBDA_INVOCATION expression.
