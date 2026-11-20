@@ -23,22 +23,32 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 
 ### Detached Relations and Expressions
 
-[Protobuf parsers impose recursion limits](https://protobuf.dev/programming-guides/proto-limits/). To reduce expression nesting, producers can move subtrees into `detached_expressions` on the containing `PlanRel` or `ExtendedExpression`, replacing them with `detached_expression_ordinal` references. Detached entries can also have ordinal children. This does not bound nesting within literals, types, field reference paths, or masks.
+[Protobuf parsers impose recursion limits](https://protobuf.dev/programming-guides/proto-limits/). To reduce expression nesting, producers can move subtrees into `detached_expressions` on the containing `PlanRel`, `ExtendedExpression`, or `Plan`, replacing them with `detached_expression_ordinal` references. Detached entries can also have ordinal children. This does not bound nesting within literals, types, field reference paths, or masks.
 
-To reduce relation nesting, producers can move relation subtrees into `detached_rels` on the containing `PlanRel` or `ExtendedExpression`, replacing them with `detached_rel_ordinal` references. This includes relation trees inside subquery expressions. Detached relations may themselves contain detached relation ordinals, allowing a producer to split arbitrarily deep relation trees into bounded-depth chunks.
+To reduce relation nesting, producers can move relation subtrees into `detached_rels` on the containing `PlanRel`, `ExtendedExpression`, or `Plan`, replacing them with `detached_rel_ordinal` references. This includes relation trees inside subquery expressions. Detached relations may themselves contain detached relation ordinals, allowing a producer to split arbitrarily deep relation trees into bounded-depth chunks.
 
 Detachment is encoding-only, not computation sharing. Resolving ordinals must recover the same logical relation and expression trees and preserve their semantics. Expression-kind requirements, such as literal-only arguments, apply after resolution. Use [`ReferenceRel`](../relations/logical_relations.md#reference-operator) for intentional relation sharing.
 
-Substrait relations and expressions inside extension-defined `google.protobuf.Any` payloads may use detached ordinals referring to the containing message's corresponding table. The same container-local rules below apply when those payloads are interpreted.
+Detached ordinals resolve against the nearest containing `PlanRel`, `ExtendedExpression`, or `Plan`:
 
-For each `PlanRel` or `ExtendedExpression`, consumers validate the relation and expression trees reachable from `PlanRel.rel`, `PlanRel.root`, or `ExtendedExpression.referred_expr`, and from extension payloads they interpret, following detached references transitively. The following rules apply to this reachable portion:
+- A `PlanRel` uses its own tables, including within inline lambdas, subqueries, and extension payloads.
+- An `ExtendedExpression` uses its own tables and can stand alone.
+- Plan-wide definitions, including all `Plan.named_lambdas` bodies, and plan-level extension payloads use the `Plan` tables.
 
-1. Relation ordinals are zero-based indices into `detached_rels`; expression ordinals index `detached_expressions`. Both tables belong to the containing `PlanRel` or `ExtendedExpression`. Ordinals must be in range and cannot reference another container, including a `ReferenceRel` target.
+There is no fallback between containers, even when a local table is empty or an ordinal is out of range. Entries in a detached table resolve their child ordinals against that same container. Calling a named lambda from a `PlanRel` does not change where the definition's ordinals resolve. `PlanRel` tables remain independent of the plan-level tables; adding plan-level tables does not change existing local encodings.
+
+Substrait relations and expressions inside extension-defined `google.protobuf.Any` payloads may use detached ordinals under these same rules when the payloads are interpreted. Plan-level tables are available to other plan-wide entries wherever their schemas permit relations or expressions; detachment does not relax expression-kind requirements.
+
+Consumers validate the trees reachable from `PlanRel.rel` or `PlanRel.root`, from `ExtendedExpression.referred_expr`, or, for a `Plan`, from all named-lambda bodies and other plan-wide relation/expression roots outside `PlanRel`. Interpreted extension payloads in the corresponding container also contribute roots. Follow detached references transitively, without treating detached entries themselves as roots. The following rules apply to this reachable portion of each container:
+
+1. Relation ordinals are zero-based indices into `detached_rels`; expression ordinals index `detached_expressions`. Ordinals must be in range and cannot reference another container, including a `ReferenceRel` target.
 2. Within the reachable portion, each detached entry may be referenced at most once, including references from other detached entries.
-3. References must be acyclic.
+3. References must be acyclic, including cycles crossing between relation and expression tables.
 4. A detached entry must have its `rel_type` or `rex_type` set to a non-ordinal variant, but its child relations and expressions may be ordinals.
 
 Consumers must reject violations in the reachable portion. Unreachable detached entries are allowed, are not execution roots, and need not be resolved or validated. The existing [rules for ignoring extension payloads](#advanced-extensions) remain unchanged.
+
+For the `Plan` tables, the single-reference rule applies across all plan-wide roots together: two named-lambda definitions cannot reference the same detached entry. Repeated invocations of a definition do not count as additional detached references. Detachment preserves the lexical scope at the reference site, including lambda parameter binding; plan-level storage does not grant access to another definition's parameters or a caller's records. Named-lambda calls and function-valued references are not detached-reference edges: resolving them does not expand the referenced definition's body.
 
 When retaining opaque extension payloads, consumers must not remove or renumber detached entries unless they can ensure that references inside those payloads continue to identify the same relation and expression subtrees.
 
@@ -54,7 +64,7 @@ When retaining opaque extension payloads, consumers must not remove or renumber 
     --8<-- "examples/proto-textformat/plan_rel/detached_rels.textproto"
     ```
 
-See also the ExtendedExpression examples for [detached expressions](../expressions/extended_expression.md#detached-expressions) and [detached relations](../expressions/extended_expression.md#detached-relations).
+See also the ExtendedExpression examples for [detached expressions](../expressions/extended_expression.md#detached-expressions) and [detached relations](../expressions/extended_expression.md#detached-relations), and the [detached named-lambda body](../expressions/lambda_expressions.md#detached-named-lambda-bodies) example.
 
 ## Extensions
 Protobuf supports both [simple](../extensions/index.md#simple-extensions) and [advanced](../extensions/index.md#advanced-extensions) extensions. Simple extensions are declared at the plan level and advanced extensions are declared at multiple levels of messages within the plan.
