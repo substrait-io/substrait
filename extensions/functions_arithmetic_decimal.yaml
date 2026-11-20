@@ -78,7 +78,7 @@ scalar_functions:
             values: [ SILENT, SATURATE, ERROR ]
         return: |-
           init_scale = max(6, S1 + P2 + 1)
-          init_prec = P1 - S1 + P2 + init_scale
+          init_prec = P1 - S1 + S2 + init_scale
           min_scale = min(init_scale, 6)
           delta = init_prec - 38
           prec = min(init_prec, 38)

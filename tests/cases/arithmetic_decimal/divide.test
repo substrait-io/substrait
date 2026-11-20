@@ -1,0 +1,22 @@
+### SUBSTRAIT_SCALAR_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic_decimal
+
+# basic: The divisor's scale contributes to result precision
+divide(1.00::dec<10, 2>, 2.0::dec<5, 1>) = 0.50000000::dec<17, 8>
+divide(-1.00::dec<10, 2>, 2.0::dec<5, 1>) = -0.50000000::dec<17, 8>
+divide(1.00::dec<10, 2>, -2.0::dec<5, 1>) = -0.50000000::dec<17, 8>
+divide(0.00::dec<10, 2>, 2.0::dec<5, 1>) = 0.00000000::dec<17, 8>
+divide(1.00::dec<10, 2>, 2::dec<9, 0>) = 0.500000000000::dec<20, 12>
+
+# scale_reduction: Cap precision at 38 while retaining the available fractional digits
+divide(6.0000000000::dec<28, 10>, 2.00::dec<10, 2>) = 3.000000000000000000::dec<38, 18>
+divide(6.0000000000::dec<38, 10>, 2.0000000000::dec<38, 10>) = 3.000000::dec<38, 6>
+divide(6::dec<32, 0>, 2::dec<1, 0>) = 3.000000::dec<38, 6>
+
+# overflow: The exact quotient does not fit the bounded return type
+divide(99999999999999999999999999999999999999::dec<38, 0>, 0.1::dec<5, 1>) [overflow:ERROR] = <!ERROR>
+
+# null_values: Either nullable operand makes the result nullable
+divide(null::dec?<10, 2>, 2.0::dec<5, 1>) = null::dec?<17, 8>
+divide(1.00::dec<10, 2>, null::dec?<5, 1>) = null::dec?<17, 8>
+divide(null::dec?<10, 2>, null::dec?<5, 1>) = null::dec?<17, 8>
