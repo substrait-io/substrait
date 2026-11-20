@@ -1,4 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
+from antlr4.tree.Tree import TerminalNode
+
 from tests.parser.antlr_parser.FuncTestCaseParser import FuncTestCaseParser
 from tests.parser.antlr_parser.FuncTestCaseParserVisitor import (
     FuncTestCaseParserVisitor,
@@ -158,6 +160,12 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         args = []
         if ctx.aggregateFuncArgs() is not None:
             args = self.visitAggregateFuncArgs(ctx.aggregateFuncArgs())
+            for arg in ctx.aggregateFuncArgs().aggregateFuncArg():
+                if arg.dataType() is not None:
+                    column_index = int(arg.ColumnName().getText()[3:])
+                    self._validate_table_column(
+                        ctx.tableRows(), column_index, arg.dataType()
+                    )
         return TestCase(
             func_name=ctx.identifier().getText(),
             base_uri="",
@@ -272,15 +280,21 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return AggregateArgument(ctx.ColumnName().getText(), "", "", scalar_value=None)
 
     def visitTableRows(self, ctx: FuncTestCaseParser.TableRowsContext):
-        rows = []
-        for row in ctx.columnValues():
-            rows.append(self.visitColumnValues(row))
+        parsed_rows = [
+            [self.visitLiteral(literal) for literal in row.literal()]
+            for row in ctx.columnValues()
+        ]
+        rows = [[value for value, _ in row] for row in parsed_rows]
         for row in rows[1:]:
             if len(row) != len(rows[0]):
                 raise ParseError(
                     f"All rows in a table must have the same number of values, "
                     f"but got rows with {len(rows[0])} and {len(row)} values"
                 )
+        for column in zip(*parsed_rows, strict=True):
+            kinds = {kind for _, kind in column} - {"null"}
+            if len(kinds) > 1:
+                raise ParseError("All values in a column must have the same type")
         return rows
 
     def visitTableData(self, ctx: FuncTestCaseParser.TableDataContext):
@@ -295,10 +309,24 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
                     f"Table '{table_name}' declares {len(column_types)} column(s) "
                     f"but row has {len(row)} value(s): {row}"
                 )
+        for column_index, data_type in enumerate(ctx.dataType()):
+            self._validate_table_column(ctx.tableRows(), column_index, data_type)
         return table_name, column_types, rows
 
+    def _validate_table_column(self, ctx, column_index, data_type):
+        for row in ctx.columnValues():
+            # Compact aggregate tests use an empty row for an empty input.
+            if not row.literal():
+                continue
+            if column_index >= len(row.literal()):
+                raise ParseError(
+                    f"Column 'col{column_index}' is not declared by the table"
+                )
+            _, kind = self.visitLiteral(row.literal()[column_index])
+            self._validate_literal_type(kind, data_type)
+
     def visitDataColumn(self, ctx: FuncTestCaseParser.DataColumnContext):
-        column = self.visitColumnValues(ctx.columnValues())
+        column = self.visitColumnValues(ctx.columnValues(), ctx.dataType())
         column_type = ctx.dataType().getText()
         return CaseLiteral(
             value=column,
@@ -306,7 +334,9 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             nullable=type_str_is_outer_nullable(column_type),
         )
 
-    def visitColumnValues(self, ctx: FuncTestCaseParser.ColumnValuesContext):
+    def visitColumnValues(
+        self, ctx: FuncTestCaseParser.ColumnValuesContext, data_type=None
+    ):
         values = []
         type_str = ""
         for literal in ctx.literal():
@@ -317,13 +347,67 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
                 elif type_str != curr_type:
                     raise ParseError("All values in a column must have the same type")
             values.append(value)
+        if data_type is not None and type_str:
+            self._validate_literal_type(type_str, data_type)
         return values
+
+    @staticmethod
+    def _concrete_type(ctx):
+        while isinstance(
+            ctx,
+            (
+                FuncTestCaseParser.DataTypeContext,
+                FuncTestCaseParser.ScalarTypeContext,
+                FuncTestCaseParser.ParameterizedTypeContext,
+            ),
+        ):
+            ctx = ctx.getChild(0)
+        return ctx
+
+    def _validate_literal_type(self, kind, data_type):
+        if kind == "null":
+            return
+        allowed_types = {
+            "number": (
+                FuncTestCaseParser.IntTypeContext,
+                FuncTestCaseParser.FloatTypeContext,
+                FuncTestCaseParser.DecimalTypeContext,
+            ),
+            "str": (
+                FuncTestCaseParser.StringTypeContext,
+                FuncTestCaseParser.BinaryTypeContext,
+                FuncTestCaseParser.FixedCharTypeContext,
+                FuncTestCaseParser.VarCharTypeContext,
+                FuncTestCaseParser.FixedBinaryTypeContext,
+            ),
+            "bool": (FuncTestCaseParser.BooleanTypeContext,),
+            "uuid": (FuncTestCaseParser.UuidTypeContext,),
+            "date": (FuncTestCaseParser.DateTypeContext,),
+            "pt": (FuncTestCaseParser.PrecisionTimeTypeContext,),
+            "pts": (FuncTestCaseParser.PrecisionTimestampTypeContext,),
+            "ptstz": (FuncTestCaseParser.PrecisionTimestampTZTypeContext,),
+            "iyear": (FuncTestCaseParser.IntervalYearTypeContext,),
+            "iday": (FuncTestCaseParser.IntervalDayTypeContext,),
+            "icompound": (FuncTestCaseParser.IntervalCompoundTypeContext,),
+            "list": (FuncTestCaseParser.ListTypeContext,),
+            "struct": (
+                FuncTestCaseParser.StructTypeContext,
+                FuncTestCaseParser.UserDefinedTypeContext,
+            ),
+            "map": (FuncTestCaseParser.MapTypeContext,),
+        }
+        if not isinstance(self._concrete_type(data_type), allowed_types[kind]):
+            raise ParseError(
+                f"Literal kind '{kind}' does not match declared type '{data_type.getText()}'"
+            )
 
     def visitLiteral(self, ctx: FuncTestCaseParser.LiteralContext):
         if ctx.numericLiteral() is not None:
             return self.visitNumericLiteral(ctx.numericLiteral()), "number"
         if ctx.StringLiteral() is not None:
             return ctx.getText(), "str"
+        if ctx.UuidLiteral() is not None:
+            return ctx.getText(), "uuid"
         if ctx.BooleanLiteral() is not None:
             return ctx.getText(), "bool"
         if ctx.DateLiteral() is not None:
@@ -338,6 +422,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return ctx.getText(), "iday"
         if ctx.IntervalYearLiteral() is not None:
             return ctx.getText(), "iyear"
+        if ctx.IntervalCompoundLiteral() is not None:
+            return ctx.getText(), "icompound"
         if ctx.NullLiteral() is not None:
             return ctx.getText(), "null"
 
@@ -372,6 +458,8 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             return self.visitDecimalArg(ctx.decimalArg())
         if ctx.dateArg() is not None:
             return self.visitDateArg(ctx.dateArg())
+        if ctx.uuidArg() is not None:
+            return self.visitUuidArg(ctx.uuidArg())
         if ctx.intervalDayArg() is not None:
             return self.visitIntervalDayArg(ctx.intervalDayArg())
         if ctx.intervalYearArg() is not None:
@@ -420,13 +508,26 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
         return ctx.NaN().getText()
 
     def visitNullArg(self, ctx: FuncTestCaseParser.NullArgContext):
-        datatype = ctx.dataType().getText()
+        datatype = self._normalized_type_text(ctx.dataType())
         if not type_str_is_outer_nullable(datatype):
             raise ParseError(
                 f"Null literal must have a nullable type (add '?'), "
                 f"got: null::{datatype}"
             )
         return CaseLiteral(value=None, type=datatype, nullable=True)
+
+    @staticmethod
+    def _normalized_type_text(ctx):
+        if isinstance(ctx, TerminalNode):
+            text = ctx.getText()
+            return (
+                text
+                if ctx.getSymbol().type == FuncTestCaseParser.Identifier
+                else text.lower()
+            )
+        return "".join(
+            TestCaseVisitor._normalized_type_text(child) for child in ctx.getChildren()
+        )
 
     def visitIntArg(self, ctx: FuncTestCaseParser.IntArgContext):
         type_str = ctx.intType().getText().lower()
@@ -473,6 +574,13 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             value=ctx.DateLiteral().getText(),
             type=type_str,
             nullable=ctx.dateType().isnull is not None,
+        )
+
+    def visitUuidArg(self, ctx: FuncTestCaseParser.UuidArgContext):
+        return CaseLiteral(
+            value=ctx.UuidLiteral().getText(),
+            type=ctx.uuidType().getText().lower(),
+            nullable=ctx.uuidType().isnull is not None,
         )
 
     def visitIntervalDayArg(self, ctx: FuncTestCaseParser.IntervalDayArgContext):
@@ -545,21 +653,25 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
 
     def visitListArg(self, ctx: FuncTestCaseParser.ListArgContext):
         return CaseLiteral(
-            value=self.visitLiteralList(ctx.literalList()),
+            value=self.visitLiteralList(ctx.literalList(), ctx.listType().elemType),
             type=ctx.listType().getText(),
             nullable=ctx.listType().isnull is not None,
         )
 
     def visitStructArg(self, ctx: FuncTestCaseParser.StructArgContext):
         return CaseLiteral(
-            value=self.visitLiteralStruct(ctx.literalStruct()),
+            value=self.visitLiteralStruct(
+                ctx.literalStruct(), ctx.structType().dataType()
+            ),
             type=ctx.structType().getText(),
             nullable=ctx.structType().isnull is not None,
         )
 
     def visitMapArg(self, ctx: FuncTestCaseParser.MapArgContext):
         return CaseLiteral(
-            value=self.visitLiteralMap(ctx.literalMap()),
+            value=self.visitLiteralMap(
+                ctx.literalMap(), ctx.mapType().keyType, ctx.mapType().valueType
+            ),
             type=ctx.mapType().getText(),
             nullable=ctx.mapType().isnull is not None,
         )
@@ -571,31 +683,69 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
             nullable=ctx.userDefinedType().isnull is not None,
         )
 
-    def visitLiteralList(self, ctx: FuncTestCaseParser.LiteralListContext):
-        return [self.visitCompoundLiteral(element) for element in ctx.compoundLiteral()]
+    def visitLiteralList(
+        self, ctx: FuncTestCaseParser.LiteralListContext, element_type=None
+    ):
+        return [
+            self.visitCompoundLiteral(element, element_type)
+            for element in ctx.compoundLiteral()
+        ]
 
-    def visitLiteralStruct(self, ctx: FuncTestCaseParser.LiteralStructContext):
-        return [self.visitCompoundLiteral(element) for element in ctx.compoundLiteral()]
+    def visitLiteralStruct(
+        self, ctx: FuncTestCaseParser.LiteralStructContext, field_types=None
+    ):
+        elements = ctx.compoundLiteral()
+        if field_types is not None and len(elements) != len(field_types):
+            raise ParseError(
+                f"Struct literal has {len(elements)} field(s) but type declares {len(field_types)}"
+            )
+        return [
+            self.visitCompoundLiteral(
+                element, field_types[index] if field_types is not None else None
+            )
+            for index, element in enumerate(elements)
+        ]
 
-    def visitLiteralMap(self, ctx: FuncTestCaseParser.LiteralMapContext):
+    def visitLiteralMap(
+        self, ctx: FuncTestCaseParser.LiteralMapContext, key_type=None, value_type=None
+    ):
         return [
             {
-                "key": self.visitCompoundLiteral(entry.key),
-                "value": self.visitCompoundLiteral(entry.value),
+                "key": self.visitCompoundLiteral(entry.key, key_type),
+                "value": self.visitCompoundLiteral(entry.value, value_type),
             }
             for entry in ctx.mapEntry()
         ]
 
-    def visitCompoundLiteral(self, ctx: FuncTestCaseParser.CompoundLiteralContext):
+    def visitCompoundLiteral(
+        self, ctx: FuncTestCaseParser.CompoundLiteralContext, data_type=None
+    ):
         if ctx.literal() is not None:
-            value, _ = self.visitLiteral(ctx.literal())
+            value, kind = self.visitLiteral(ctx.literal())
+            if data_type is not None:
+                self._validate_literal_type(kind, data_type)
             return value
         if ctx.literalList() is not None:
-            return self.visitLiteralList(ctx.literalList())
+            element_type = None
+            if data_type is not None:
+                self._validate_literal_type("list", data_type)
+                element_type = self._concrete_type(data_type).elemType
+            return self.visitLiteralList(ctx.literalList(), element_type)
         if ctx.literalStruct() is not None:
-            return self.visitLiteralStruct(ctx.literalStruct())
+            field_types = None
+            if data_type is not None:
+                self._validate_literal_type("struct", data_type)
+                concrete_type = self._concrete_type(data_type)
+                if isinstance(concrete_type, FuncTestCaseParser.StructTypeContext):
+                    field_types = concrete_type.dataType()
+            return self.visitLiteralStruct(ctx.literalStruct(), field_types)
         if ctx.literalMap() is not None:
-            return self.visitLiteralMap(ctx.literalMap())
+            key_type = value_type = None
+            if data_type is not None:
+                self._validate_literal_type("map", data_type)
+                concrete_type = self._concrete_type(data_type)
+                key_type, value_type = concrete_type.keyType, concrete_type.valueType
+            return self.visitLiteralMap(ctx.literalMap(), key_type, value_type)
         raise ParseError("Unknown compound literal")
 
     def visitLambdaArg(self, ctx: FuncTestCaseParser.LambdaArgContext):
