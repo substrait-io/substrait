@@ -828,6 +828,7 @@ definitions:
             - NAMED_TABLE
             - EXTENSION_TABLE
             - ICEBERG_TABLE
+            - SQL_QUERY
     required: [relation]
   filter_relation:
     type: object
