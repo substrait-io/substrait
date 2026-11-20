@@ -482,6 +482,21 @@ def test_lambda_invocation_rejects_callee_type_restrictions(
         Draft202012Validator(schema).validate(dialect)
 
 
+def test_table_function_dialect_declarations(schema: dict):
+    dialect = {
+        "dependencies": {"table": "extension:io.substrait:functions_table"},
+        "supported_relations": ["TABLE_FUNCTION"],
+        "supported_table_functions": [
+            {
+                "source": "table",
+                "name": "generate_series",
+                "supported_impls": ["i32_i32_i32", "i64_i64_i64"],
+            }
+        ],
+    }
+    Draft202012Validator(schema).validate(dialect)
+
+
 def alternatives(schema: dict, declaration: Declaration) -> list[dict]:
     """Return the alternative forms a declaration can be written in."""
     forms = resolve(schema, (*declaration.path, "items", "oneOf"))

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 from tests.helpers import (
+    FUNCTION_SECTIONS,
     find_extension_files,
     iter_function_impls,
     load_extension,
@@ -35,7 +36,7 @@ def declared_type(type_str):
     return str(type_str).strip().split("\n")[-1].strip()
 
 
-def validate_impl_nullability_markers(impl, loc):
+def validate_impl_nullability_markers(impl, loc, default_nullability="MIRROR"):
     """Validate that one impl carries no meaningless nullability markers.
 
     Under ``MIRROR`` the output nullability is derived from the arguments, so a
@@ -50,7 +51,7 @@ def validate_impl_nullability_markers(impl, loc):
 
     Returns a list of error strings (empty if everything is valid).
     """
-    nullability = impl.get("nullability", "MIRROR")  # MIRROR is the spec default
+    nullability = impl.get("nullability", default_nullability)
     if nullability == "DISCRETE":
         return []
 
@@ -89,9 +90,16 @@ def validate_nullability_markers(dir_path: str):
     """
     errors = []
     for path in find_extension_files(dir_path):
-        for func, impl in iter_function_impls(load_extension(path)):
-            loc = f"{path.name}: {func['name']}"
-            errors.extend(validate_impl_nullability_markers(impl, loc))
+        extension = load_extension(path)
+        for section in FUNCTION_SECTIONS:
+            default_nullability = (
+                "DECLARED_OUTPUT" if section == "table_functions" else "MIRROR"
+            )
+            for func, impl in iter_function_impls(extension, sections=(section,)):
+                loc = f"{path.name}: {func['name']}"
+                errors.extend(
+                    validate_impl_nullability_markers(impl, loc, default_nullability)
+                )
     return errors
 
 

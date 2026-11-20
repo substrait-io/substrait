@@ -1,0 +1,51 @@
+# For each n in series_bounds, generate integers from 1 through n.
+# Function anchor 1 refers to generate_series:i64_i64_i64 in functions_table.
+root {
+  input {
+    lateral_join {
+      common {
+        direct {}
+        rel_anchor: 7
+      }
+      left {
+        read {
+          common { direct {} }
+          base_schema {
+            names: "n"
+            struct {
+              types { i64 { nullability: NULLABILITY_REQUIRED } }
+              nullability: NULLABILITY_REQUIRED
+            }
+          }
+          named_table { names: "series_bounds" }
+        }
+      }
+      right {
+        table_function {
+          common { direct {} }
+          function {
+            function_reference: 1
+            arguments { value { literal { i64: 1 } } }
+            arguments {
+              value {
+                selection {
+                  direct_reference { struct_field { field: 0 } }
+                  outer_reference { rel_reference: 7 }
+                }
+              }
+            }
+            arguments { value { literal { i64: 1 } } }
+            schema {
+              types { i64 { nullability: NULLABILITY_REQUIRED } }
+              nullability: NULLABILITY_REQUIRED
+            }
+          }
+        }
+      }
+      expression { literal { boolean: true } }
+      type: JOIN_TYPE_INNER
+    }
+  }
+  names: "n"
+  names: "value"
+}

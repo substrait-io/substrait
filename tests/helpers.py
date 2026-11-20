@@ -40,7 +40,12 @@ def get_test_path(relative_path):
     return str(TESTS_DIR / relative_path)
 
 
-FUNCTION_SECTIONS = ("scalar_functions", "aggregate_functions", "window_functions")
+FUNCTION_SECTIONS = (
+    "scalar_functions",
+    "aggregate_functions",
+    "window_functions",
+    "table_functions",
+)
 
 
 def find_extension_files(*roots):
@@ -57,9 +62,9 @@ def load_extension(path):
         return yaml.load(fh, Loader=yaml.FullLoader)
 
 
-def iter_function_impls(extension):
-    """Yield ``(function, impl)`` for every function impl in an extension document."""
-    for section in FUNCTION_SECTIONS:
+def iter_function_impls(extension, sections=FUNCTION_SECTIONS):
+    """Yield ``(function, impl)`` for the selected extension function sections."""
+    for section in sections:
         for function in extension.get(section) or []:
             for impl in function.get("impls") or []:
                 yield function, impl
