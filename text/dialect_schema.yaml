@@ -111,6 +111,7 @@ properties:
           - WRITE
           - DDL
           - UPDATE
+          - TABLE_FUNCTION
           - HASH_JOIN
           - MERGE_JOIN
           - NESTED_LOOP_JOIN
@@ -135,6 +136,7 @@ properties:
         - $ref: "#/definitions/write_relation"
         - $ref: "#/definitions/ddl_relation"
         - $ref: "#/definitions/update_relation"
+        - $ref: "#/definitions/table_function_relation"
         - $ref: "#/definitions/hash_join_relation"
         - $ref: "#/definitions/merge_join_relation"
         - $ref: "#/definitions/nested_loop_join_relation"
@@ -201,6 +203,12 @@ properties:
   supported_window_functions:
     type: array
     description: Functions that operate over a window of rows.
+    items:
+      $ref: "#/definitions/dialect_function"
+
+  supported_table_functions:
+    type: array
+    description: Functions that produce zero or more rows per invocation.
     items:
       $ref: "#/definitions/dialect_function"
 
@@ -1041,6 +1049,16 @@ definitions:
     properties:
       relation:
         const: UPDATE
+      metadata:
+        type: object
+        description: Arbitrary data created by the dialect author.
+    required: [relation]
+  table_function_relation:
+    type: object
+    additionalProperties: false
+    properties:
+      relation:
+        const: TABLE_FUNCTION
       metadata:
         type: object
         description: Arbitrary data created by the dialect author.

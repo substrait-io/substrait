@@ -1,0 +1,14 @@
+%YAML 1.2
+---
+urn: extension:org.example:derived_schema_table_function
+table_functions:
+  - name: repeat_value
+    description: >-
+      Produces count rows, each containing value.
+    impls:
+      - args:
+          - name: value
+            value: any1
+          - name: count
+            value: i64
+        schema: struct<any1>

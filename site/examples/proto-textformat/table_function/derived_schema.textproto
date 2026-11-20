@@ -1,0 +1,8 @@
+# Refers to repeat_value:any_i64 in the derived-schema function example.
+function_reference: 1
+arguments { value { literal { string: "x" } } }
+arguments { value { literal { i64: 3 } } }
+schema {
+  types { string { nullability: NULLABILITY_REQUIRED } }
+  nullability: NULLABILITY_REQUIRED
+}
