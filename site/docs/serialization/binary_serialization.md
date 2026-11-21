@@ -19,6 +19,12 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 %%% proto.message.PlanRel %%%
     ```
 
+### Plan Relation Dependencies
+
+`PlanRel.direct_dependencies` is an optional summary of the [`ReferenceRel`](../relations/logical_relations.md#reference-operator) targets reachable from that `PlanRel`'s `rel` or `root`, including references in subqueries and reachable detached subtrees. Each entry is a zero-based index into the enclosing `Plan.relations`, just like `ReferenceRel.subtree_ordinal` and appears exactly once in any order.
+
+When `direct_dependencies` is present, the producer guarantees that `relation_ordinals` contains each directly referenced target exactly once, in any order. Consumers can use the summary without traversing the relation tree to discover dependencies.  A present but empty message (`direct_dependencies {}` in protobuf text format) identifies a leaf in the dependency graph. If the message is absent, consumers must traverse the relation tree to discover dependencies.
+
 <a id="bounded-expression-nesting"></a>
 
 ### Detached Relations and Expressions

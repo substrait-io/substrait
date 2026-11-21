@@ -256,6 +256,45 @@ def test_validate_plan_rels():
     assert list(relation_plan_rel.root.names) == ["value"]
 
 
+def test_plan_rel_direct_dependencies_round_trip():
+    """Preserve omitted, explicitly empty, and populated dependency summaries."""
+    plan = text_format.Parse(
+        """
+        relations {
+          rel { read { named_table { names: "left" } } }
+          direct_dependencies {}
+        }
+        relations { rel { read { named_table { names: "right" } } } }
+        relations {
+          rel {
+            cross {
+              left { reference { subtree_ordinal: 0 } }
+              right { reference { subtree_ordinal: 1 } }
+            }
+          }
+          direct_dependencies { relation_ordinals: [0, 1] }
+        }
+        relations {
+          root { input { reference { subtree_ordinal: 2 } } }
+          direct_dependencies { relation_ordinals: 2 }
+        }
+        """,
+        plan_pb2.Plan(),
+    )
+    relations = plan_pb2.Plan.FromString(plan.SerializeToString()).relations
+    assert relations[0].HasField("direct_dependencies")
+    assert not relations[0].direct_dependencies.relation_ordinals
+    assert not relations[1].HasField("direct_dependencies")
+    cross = relations[2].rel.cross
+    assert list(relations[2].direct_dependencies.relation_ordinals) == [
+        cross.left.reference.subtree_ordinal,
+        cross.right.reference.subtree_ordinal,
+    ]
+    assert list(relations[3].direct_dependencies.relation_ordinals) == [
+        relations[3].root.input.reference.subtree_ordinal
+    ]
+
+
 def test_lateral_table_function_references_left_row():
     """The series stop argument binds to the lateral join's current left row."""
     example = Path(
