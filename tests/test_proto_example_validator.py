@@ -5,12 +5,13 @@ Ensures examples are valid and use no unknown fields.
 """
 
 from pathlib import Path
+from uuid import UUID
 from google.protobuf import json_format, text_format
 from google.protobuf.message import Message
 import pytest
 
 try:
-    from substrait import algebra_pb2, extended_expression_pb2, plan_pb2
+    from substrait import algebra_pb2, extended_expression_pb2, plan_pb2, type_pb2
 except ImportError as err:
     raise ImportError(
         "Protobuf bindings not found. Run 'buf generate' to generate them."
@@ -40,6 +41,31 @@ def test_validation_rejects_empty_messages():
     """Test that validation rejects empty messages."""
     with pytest.raises(AssertionError, match="no fields populated"):
         validate_example("", algebra_pb2.Expression.Lambda)
+
+
+@pytest.mark.parametrize(
+    "uuid_text",
+    [
+        "00112233-4455-6677-8899-aabbccddeeff",
+        "00112233-4455-6677-8899-AaBbCcDdEeFf",
+        "00000000-0000-0000-0000-000000000000",
+        "ffffffff-ffff-ffff-ffff-ffffffffffff",
+        "01234567-89ab-cdef-0123-456789abcdef",
+    ],
+)
+def test_uuid_literal_round_trip(uuid_text):
+    expected_bytes = bytes.fromhex(uuid_text.replace("-", ""))
+    literal = algebra_pb2.Expression.Literal(uuid=expected_bytes)
+    restored_literals = [
+        algebra_pb2.Expression.Literal.FromString(literal.SerializeToString()),
+        json_format.Parse(
+            json_format.MessageToJson(literal), algebra_pb2.Expression.Literal()
+        ),
+    ]
+    for restored in restored_literals:
+        assert restored == literal
+        assert len(restored.uuid) == 16
+        assert UUID(bytes=restored.uuid) == UUID(uuid_text)
 
 
 def test_validate_lambdas():
@@ -153,6 +179,31 @@ def test_named_lambda_invocation_round_trip(anchor):
         assert restored.named_lambda.lambda_reference == anchor
 
 
+def test_validate_table_functions():
+    """Calls declare positional output types, including producer-resolved schemas."""
+    examples_dir = Path("site/examples/proto-textformat/table_function")
+    example_files = list(examples_dir.glob("*.textproto"))
+    assert example_files, "No table function examples found"
+    for example in example_files:
+        function = validate_example(example.read_text(), algebra_pb2.TableFunction)
+        assert function.HasField("schema")
+        assert function.schema.nullability == type_pb2.Type.NULLABILITY_REQUIRED
+
+
+def test_validate_table_function_relations():
+    """Standalone relations directly contain the function call."""
+    examples_dir = Path("site/examples/proto-textformat/table_function_rel")
+    example_files = list(examples_dir.glob("*.textproto"))
+    assert example_files, "No table function relation examples found"
+    for example in example_files:
+        relation = validate_example(example.read_text(), algebra_pb2.TableFunctionRel)
+        assert relation.HasField("function")
+        assert relation.function.HasField("schema")
+        assert (
+            relation.function.schema.nullability == type_pb2.Type.NULLABILITY_REQUIRED
+        )
+
+
 def test_validate_field_references():
     """Validate field reference examples."""
     examples_dir = Path("site/examples/proto-textformat/field_reference")
@@ -203,6 +254,20 @@ def test_validate_plan_rels():
     assert len(read.base_schema.struct.types) == 1
     assert read.base_schema.struct.types[0].WhichOneof("kind") == "i64"
     assert list(relation_plan_rel.root.names) == ["value"]
+
+
+def test_lateral_table_function_references_left_row():
+    """The series stop argument binds to the lateral join's current left row."""
+    example = Path(
+        "site/examples/proto-textformat/plan_rel/lateral_generate_series.textproto"
+    )
+    plan_rel = validate_example(example.read_text(), plan_pb2.PlanRel)
+    lateral_join = plan_rel.root.input.lateral_join
+    function = lateral_join.right.table_function.function
+    stop_argument = function.arguments[1].value.selection
+    assert stop_argument.outer_reference.rel_reference == lateral_join.common.rel_anchor
+    field_index = stop_argument.direct_reference.struct_field.field
+    assert lateral_join.left.read.base_schema.names[field_index] == "n"
 
 
 def test_validate_extended_expressions():
