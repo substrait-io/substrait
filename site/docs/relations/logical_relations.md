@@ -500,6 +500,10 @@ We could use the `ReferenceRel` to highlight the shared `A JOIN B` between the t
 One expressing `A JOIN B` (in position 0 in the plan), one using reference as follows: `ReferenceRel(0) JOIN C` and a third one
 doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B`.
 
+Each reference can carry its own `RelCommon`, allowing different uses of the same shared subtree to have different emit mappings, hints, advanced extensions, and relation anchors. These common fields apply to the `ReferenceRel` itself; they do not modify the referenced relation or other references to it. Relation anchors follow the usual plan-wide uniqueness rules.
+
+If the referenced relation is a `RelRoot`, its field names are ignored.
+
 !!! note "Outer references in shared relations"
 
     When a shared relation contains an unresolved outer reference, the reference must use `rel_reference` instead of `steps_out`, because a `ReferenceRel` can be reached through multiple paths of different depths, making offset-based resolution ambiguous. See [Field References — Outer References](../expressions/field_references.md#outer-references) for details.
@@ -508,8 +512,8 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 | -------------------- |---------------------------------------|
 | Inputs               | 1                                     |
 | Outputs              | 1                                     |
-| Property Maintenance | Maintains all properties of the input |
-| Direct Output Order  | Maintains order                       |
+| Property Maintenance | Maintains input properties, mapped by emit |
+| Direct Output Order  | The output order of the referenced relation, after its emit mapping |
 
 
 ### Reference Properties
@@ -517,6 +521,14 @@ doing `ReferenceRel(0) JOIN D`. This allows to avoid the redundancy of `A JOIN B
 | Property                    | Description                                                                    | Required                    |
 |-----------------------------|--------------------------------------------------------------------------------| --------------------------- |
 | Referred Rel                | A zero-indexed positional reference to a `Rel` defined within the same `Plan`. | Required                    |
+
+### Reference-Local Output Example
+
+The shared read below emits `[region, id]`. The first reference reorders those columns to `[id, region]`, while the second emits only `[region]`.
+
+```proto
+--8<-- "examples/proto-textformat/reference_rel/per_reference_common.textproto"
+```
 
 === "ReferenceRel Message"
 
