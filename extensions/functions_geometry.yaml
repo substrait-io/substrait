@@ -44,7 +44,8 @@ scalar_functions:
       - args:
           - name: point
             value: u!geometry
-        return: fp64
+        nullability: DECLARED_OUTPUT
+        return: fp64?
   -
     name: "y_coordinate"
     description: >
@@ -53,7 +54,8 @@ scalar_functions:
       - args:
           - name: point
             value: u!geometry
-        return: fp64
+        nullability: DECLARED_OUTPUT
+        return: fp64?
   -
     name: "num_points"
     description: >
