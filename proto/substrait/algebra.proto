@@ -1994,7 +1994,6 @@ message AggregateFunction {
 message ReferenceRel {
   int32 subtree_ordinal = 1;
 
-  // Applies to this reference, not to the referenced relation.
-  // The direct output is the referenced relation's output, after its own emit.
+  // Applied to the ReferenceRel itself, not the referenced relation.
   RelCommon common = 2;
 }

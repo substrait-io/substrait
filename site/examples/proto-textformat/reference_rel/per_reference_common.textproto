@@ -1,4 +1,4 @@
-# Two references apply independent common fields to the same shared relation.
+# Two references apply independent emit mappings to the same shared relation.
 #
 # message Plan
 
@@ -57,10 +57,6 @@ relations {
             output_mapping: 1
             output_mapping: 0
           }
-          hint {
-            alias: "sales_by_id"
-          }
-          rel_anchor: 1
         }
       }
     }
@@ -78,10 +74,6 @@ relations {
           emit {
             output_mapping: 0
           }
-          hint {
-            alias: "sales_regions"
-          }
-          rel_anchor: 2
         }
       }
     }
