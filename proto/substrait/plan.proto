@@ -30,6 +30,16 @@ message PlanRel {
   // Referenced by zero-based ordinals local to this PlanRel.
   // See https://substrait.io/serialization/binary_serialization/#detached-relations-and-expressions.
   repeated Rel detached_rels = 4;
+
+  // When present, the producer guarantees this is the complete set of immediate
+  // ReferenceRel dependencies. An empty message means there are none; an absent
+  // message means dependencies must be discovered from the relation tree.
+  DirectDependencies direct_dependencies = 5;
+
+  message DirectDependencies {
+    // Distinct, zero-based indices into the enclosing Plan.relations.
+    repeated int32 relation_ordinals = 1;
+  }
 }
 
 // Describe a set of operations to complete.
