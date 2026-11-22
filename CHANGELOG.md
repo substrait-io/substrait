@@ -1,6 +1,16 @@
 Release Notes
 ---
 
+## [0.109.0](https://github.com/substrait-io/substrait/compare/v0.108.0...v0.109.0) (2026-11-22)
+
+### Features
+
+* introduce table functions ([#1327](https://github.com/substrait-io/substrait/issues/1327)) ([74dd223](https://github.com/substrait-io/substrait/commit/74dd22320df507edbedf196a090685430604129a))
+
+### Bug Fixes
+
+* specify UUID literal byte order ([#1320](https://github.com/substrait-io/substrait/issues/1320)) ([dc7a470](https://github.com/substrait-io/substrait/commit/dc7a470959dda2f5acfbdbadb43cfe59504e1fea)), closes [#1331](https://github.com/substrait-io/substrait/issues/1331)
+
 ## [0.108.0](https://github.com/substrait-io/substrait/compare/v0.107.0...v0.108.0) (2026-11-01)
 
 ### ⚠ BREAKING CHANGES
