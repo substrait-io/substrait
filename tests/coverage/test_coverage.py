@@ -108,6 +108,30 @@ def test_urn_match_in_get_function(
     assert (function is None) == expected_failure
 
 
+@pytest.mark.parametrize(
+    "urn, body, expected_type",
+    [
+        (
+            "extension:io.substrait:functions_arithmetic",
+            "add(null::I32?, 1::i32) = null::I32?",
+            "i32?",
+        ),
+        (
+            "extension:io.substrait:functions_comparison",
+            "coalesce(null::UUID?, null::UUID?) = null::UUID?",
+            "uuid?",
+        ),
+    ],
+)
+def test_uppercase_typed_null_matches_overload(registry, urn, body, expected_type):
+    test_file = parse_string(make_scalar_header("v1.0", urn) + body + "\n")
+    testcase = test_file.testcases[0]
+    assert testcase.args[0].type == expected_type
+    assert testcase.get_return_type() == expected_type
+    coverage = get_test_coverage([test_file], registry)
+    assert coverage.num_tests_with_no_matching_function == 0
+
+
 class TestNullabilityValidation:
     """Tests for validate_nullability covering MIRROR, DECLARED_OUTPUT, and DISCRETE rules."""
 

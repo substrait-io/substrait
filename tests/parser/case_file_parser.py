@@ -28,13 +28,15 @@ def parse_stream(input_stream, file_path):
 
     # Add custom error listener
     error_listener = ParseErrorListener()
+    lexer.removeErrorListeners()
+    lexer.addErrorListener(error_listener)
     parser.removeErrorListeners()
     parser.addErrorListener(error_listener)
 
     tree = parser.doc()  # This is the entry point of testfile parser
-    if parser.getNumberOfSyntaxErrors() > 0:
+    if error_listener.errors:
         print(tree.toStringTree(recog=parser))
-        print(f"{parser.getNumberOfSyntaxErrors()} Syntax errors found, exiting")
+        print(f"{len(error_listener.errors)} Syntax errors found, exiting")
         raise ParseError(f"Syntax errors: {error_listener.errors}")
 
     # uncomment below line to see the parse tree for debugging
