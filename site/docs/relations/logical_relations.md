@@ -114,6 +114,22 @@ Points to an [Iceberg metadata file](https://iceberg.apache.org/spec/#table-meta
 | snapshot_id    | The snapshot that should be read using id. If not provided, the current snapshot is read. Only one of snapshot_id or snapshot_timestamp should be set. | Optional |
 | snapshot_timestamp    | The snapshot that should be read using timestamp. If not provided, the current snapshot is read. | Optional |
 
+#### SQL Query
+
+A SQL query read is a relation defined by a SQL query that is passed through unchanged to the consumer.
+This allows a producer to express operations on top of a user-provided query (for example, filters,
+projections, aggregations, or limits pushed down to a database) without translating the query
+itself into Substrait.
+
+The query must be read-only and produce exactly one result set. Like a named table, the query is
+resolved by the consumer against its own catalog: the one a named table would be resolved against.
+Substrait does not define the SQL dialect; a consumer that cannot handle the query should reject
+the plan.
+
+| Property | Description                                                      | Required                |
+| -------- | ---------------------------------------------------------------- | ----------------------- |
+| Query    | The SQL query text. | Required |
+
 === "ReadRel Message"
 
     ```proto

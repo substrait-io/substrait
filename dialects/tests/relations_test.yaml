@@ -25,7 +25,7 @@ supported_relations:
       - LEFT_SINGLE
       - LEFT_MARK
   - relation: READ
-    read_types: [ICEBERG_TABLE, VIRTUAL_TABLE]
+    read_types: [ICEBERG_TABLE, SQL_QUERY, VIRTUAL_TABLE]
   - relation: EXTENSION_LEAF
     message_types:
       - type.googleapis.com/google.profile.Person
