@@ -90,7 +90,14 @@ windowFuncTestCase
     ;
 
 windowFuncCall
-    : tableData funcName=identifier OParen windowFuncArgs? CParen Over frameRef=Identifier
+    : tableData funcName=windowFuncName OParen windowFuncArgs? CParen Over frameRef=Identifier
+    ;
+
+// Keep this wrapper so Go's generated rule accessor does not collide with the
+// Identifier token accessor. See https://github.com/antlr/antlr4/issues/4150
+// and https://github.com/antlr/antlr4/issues/4632.
+windowFuncName
+    : identifier
     ;
 
 windowResult

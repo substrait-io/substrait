@@ -5,6 +5,7 @@
 gen
 /tests/parser/antlr_parser/
 /tests/type/antlr_parser/
+/tests/antlr_go/
 __pycache__
 
 # pixi environments
