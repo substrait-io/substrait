@@ -55,7 +55,7 @@ jobs:
       - name: Compile protobuf
         run: pixi run generate-protobuf
   antlr:
-    name: Check Python and Go ANTLR Parsers
+    name: Check ANTLR Parsers
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
