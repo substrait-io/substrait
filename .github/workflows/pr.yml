@@ -63,7 +63,7 @@ jobs:
         with:
           pixi-version: v0.84.1
           cache: true
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version: '1.23'
       - name: Generate Python and Go ANTLR parsers
