@@ -102,8 +102,16 @@ mkdocs = { cmd = "mkdocs", cwd = "site", default-environment = "dev", descriptio
 dry-run = { cmd = "./ci/release/dry_run.sh", default-environment = "dev", description = "dry-run release" }
 release = { cmd = "./ci/release/run.sh", default-environment = "dev", description = "release" }
 
+[tool.pixi.feature.antlr-cpp]
+platforms = ["linux-64", "osx-64"]
+
+[tool.pixi.feature.antlr-cpp.dependencies]
+antlr = "4.13.2.*"
+antlr-cpp-runtime = "4.13.2.*"
+
 [tool.pixi.environments]
 dev = { features = ["dev"] }
+antlr-cpp = { features = ["antlr-cpp"] }
 
 [dependency-groups]
 dev = [

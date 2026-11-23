@@ -99,15 +99,13 @@ jobs:
         with:
           pixi-version: v0.84.1
           cache: true
+          environments: antlr-cpp
       - name: Generate C++ ANTLR parsers
-        run: pixi run generate-antlr-cpp
+        run: pixi run -e antlr-cpp generate-antlr-cpp
       - name: Check C++ ANTLR parser compilation
         run: |
-          antlr_version=$(awk '/Generated .* by ANTLR/ {print $NF; exit}' gen/antlr/cpp/SubstraitTypeParser.cpp)
-          curl -fsSL "https://www.antlr.org/download/antlr4-cpp-runtime-${antlr_version}-source.zip" \
-            -o gen/antlr/cpp/runtime.zip
-          unzip -q gen/antlr/cpp/runtime.zip 'runtime/src/*' -d gen/antlr/cpp
-          c++ -std=c++17 -fsyntax-only -I gen/antlr/cpp/runtime/src gen/antlr/cpp/*.cpp
+          pixi run -e antlr-cpp bash -c \
+            'c++ -std=c++17 -fsyntax-only -I "$CONDA_PREFIX/include/antlr4-runtime" gen/antlr/cpp/*.cpp'
   antlr-csharp:
     name: Check C# ANTLR Parsers
     runs-on: ubuntu-latest

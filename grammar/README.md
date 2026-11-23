@@ -42,7 +42,10 @@ For parallel local generation, run `pixi run make -C grammar -j5 all`.
 
 Java and Python tooling comes from Pixi. The other checks require Go 1.23 or
 later, a C++17 compiler, or .NET SDK 10 or later for their respective targets.
-The C++ check also downloads runtime headers using `curl` and `unzip`.
+The C++ check uses the `antlr-cpp` Pixi environment, which supplies matching
+ANTLR tool and runtime versions. This environment supports Linux x86-64 and
+Intel macOS; it is separate from the default environment so ARM development
+setups are unaffected.
 
 `pixi run test` and `pixi run test-extension-coverage` generate only the Python
 parsers they need, without generating the other language targets.
