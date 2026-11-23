@@ -1,0 +1,14 @@
+### SUBSTRAIT_WINDOW_TEST: v1.0
+### SUBSTRAIT_INCLUDE: extension:io.substrait:functions_arithmetic
+
+# basic: Basic examples without any special cases
+DEFINE f1(i32) = ((1998), (1999), (2000), (2001))
+first_value(col0) OVER f1 = (1998, 1998, 1998, 1998)::i32?
+
+# null_handling: Examples with null as input or output
+DEFINE f1(i32?) = ((Null), (1999), (2000))
+first_value(col0) OVER f1 = (Null, Null, Null)::i32?
+
+# edge_case: Edge cases
+DEFINE f1(i32) = ()
+first_value(col0) OVER f1 = ()::i32?
