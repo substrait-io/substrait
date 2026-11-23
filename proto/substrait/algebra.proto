@@ -1993,4 +1993,7 @@ message AggregateFunction {
 // in case we refer to a RelRoot field names will be ignored
 message ReferenceRel {
   int32 subtree_ordinal = 1;
+
+  // Applied to the ReferenceRel itself, not the referenced relation.
+  RelCommon common = 2;
 }
