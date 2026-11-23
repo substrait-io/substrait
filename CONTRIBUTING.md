@@ -89,9 +89,16 @@ hand-edit it.
 
 - Protobuf Python bindings live under `gen/`.
 - ANTLR Python parsers live under `tests/*/antlr_parser/`.
+- Other ANTLR language targets live under `gen/antlr/<language>/`, including
+  Go under `gen/antlr/go/`.
 
-`pixi run test` generates both before running tests. The
-`pixi run test-extension-coverage` task (also used by pre-commit) generates the
+Use `pixi run generate-antlr-<language>` to generate one language, or
+`pixi run generate-antlr` for all six. The matching `check-antlr-<language>`
+tasks validate the generated parsers. See the [grammar guide](grammar/README.md)
+for toolchain requirements.
+
+`pixi run test` generates the protobuf bindings and Python parsers before running
+tests. The `pixi run test-extension-coverage` task (also used by pre-commit) generates the
 ANTLR parsers it needs. If you run `pytest` directly, run `pixi run generate`
 first. After changing a `.g4` grammar, commit only the grammar changes, not the
 regenerated parsers.

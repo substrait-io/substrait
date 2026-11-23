@@ -1,18 +1,50 @@
 # Grammar
-This file defines the grammars for:
+This directory defines the grammars for:
 1. The Substrait Type language used in the YAML extensions.
-2. The test grammar language used to unit tests functions.
+2. The test grammar language used to unit test functions.
 
 ## Requirements
-You will need [Pixi](https://pixi.prefix.dev) available on your machine to regenerate the parser.
+You will need [Pixi](https://pixi.prefix.dev) available on your machine to regenerate the parsers.
 
 ## Regenerating
-To regenerate all of the parsers run the following command from the repository root:
+To regenerate all language targets, run the following command from the repository root:
 
 ```sh
 pixi run generate-antlr
 ```
 
-Generated parsers are gitignored. `pixi run test` and
-`pixi run test-extension-coverage` generate them automatically before running
-tests.
+Each language also has an independent task:
+
+```sh
+pixi run generate-antlr-python
+pixi run generate-antlr-go
+pixi run generate-antlr-java
+pixi run generate-antlr-rust
+pixi run generate-antlr-cpp
+pixi run generate-antlr-csharp
+```
+
+Python output lives under `tests/*/antlr_parser/`. All other targets live under
+`gen/antlr/<language>/`, including Go under `gen/antlr/go/`.
+All generated files are gitignored.
+
+Rust generation downloads a checksum-verified ANTLR fork matching the
+`antlr4rust` runtime. The other languages use the ANTLR tool supplied by Pixi.
+
+## Checking generated parsers
+Run `pixi run check-antlr-<language>` to generate and compile a single target.
+The Python check runs the parser and type tests instead. CI runs these tasks
+in parallel using a language matrix; the aggregate generation task runs its
+dependencies sequentially in Pixi. For parallel local generation, run
+`pixi run make -C grammar -j6 all`.
+
+Java and Python tooling comes from Pixi. The other checks require the selected
+language's toolchain on `PATH`:
+
+- Go 1.23 or later.
+- Rust 1.85.1 or later.
+- CMake 3.24 or later and a C++17 compiler.
+- .NET SDK 10 or later.
+
+`pixi run test` and `pixi run test-extension-coverage` generate only the Python
+parsers they need, without generating the other language targets.
