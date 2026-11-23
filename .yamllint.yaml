@@ -1,6 +1,5 @@
-# Generated code and third-party build dependencies are not ours to lint.
+# The pinned commitlint toolchain's node_modules/ is third-party and not ours to lint.
 ignore: |
-  gen/
   node_modules/
 
 rules:

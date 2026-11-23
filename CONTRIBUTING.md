@@ -93,7 +93,7 @@ hand-edit it.
   Go under `gen/antlr/go/`.
 
 Use `pixi run generate-antlr-<language>` to generate one language, or
-`pixi run generate-antlr` for all five. The matching `check-antlr-<language>`
+`pixi run generate-antlr` for all three. The matching `check-antlr-<language>`
 tasks validate the generated parsers. See the [grammar guide](grammar/README.md)
 for toolchain requirements.
 

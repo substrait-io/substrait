@@ -60,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [go, java, cpp, csharp]
+        language: [go, java]
     steps:
       - uses: actions/checkout@v7
       - uses: prefix-dev/setup-pixi@v0.11.3
@@ -71,10 +71,6 @@ jobs:
         if: matrix.language == 'go'
         with:
           go-version: '1.23'
-      - uses: actions/setup-dotnet@v5
-        if: matrix.language == 'csharp'
-        with:
-          dotnet-version: '10.0.x'
       - name: Check ${{ matrix.language }} ANTLR parsers
         run: pixi run check-antlr-${{ matrix.language }}
   yamllint:

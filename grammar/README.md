@@ -19,8 +19,6 @@ Each language also has an independent task:
 pixi run generate-antlr-python
 pixi run generate-antlr-go
 pixi run generate-antlr-java
-pixi run generate-antlr-cpp
-pixi run generate-antlr-csharp
 ```
 
 Python output lives under `tests/*/antlr_parser/`. All other targets live under
@@ -35,14 +33,10 @@ The Python check runs the parser and type tests instead. CI runs the non-Python
 checks in parallel using a language matrix; Python is covered by the full test
 suite. The aggregate generation task runs its dependencies sequentially in Pixi.
 For parallel local generation, run
-`pixi run make -C grammar -j6 all`.
+`pixi run make -C grammar -j3 all`.
 
-Java and Python tooling comes from Pixi. The other checks require the selected
-language's toolchain on `PATH`:
-
-- Go 1.23 or later.
-- CMake 3.24 or later and a C++17 compiler.
-- .NET SDK 10 or later.
+Java and Python tooling comes from Pixi. The Go check requires Go 1.23 or later
+on `PATH`.
 
 `pixi run test` and `pixi run test-extension-coverage` generate only the Python
 parsers they need, without generating the other language targets.
