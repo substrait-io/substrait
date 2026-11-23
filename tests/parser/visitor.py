@@ -214,7 +214,7 @@ class TestCaseVisitor(FuncTestCaseParserVisitor):
                 self._bind_column_type(arg, column_types)
 
         return TestCase(
-            func_name=ctx.identifier().getText(),
+            func_name=ctx.identifierOrKeyword().identifier().getText(),
             base_uri="",
             group=None,
             options={},
