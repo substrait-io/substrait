@@ -2,15 +2,14 @@ TYPE_GRAMMAR=SubstraitLexer.g4 SubstraitType.g4
 TYPE_OUTPUT_DIR=../tests/type/antlr_parser
 GO_OUTPUT_DIR=../gen/antlr/go
 JAVA_OUTPUT_DIR=../gen/antlr/java
-RUST_OUTPUT_DIR=../gen/antlr/rust
 CPP_OUTPUT_DIR=../gen/antlr/cpp
 CSHARP_OUTPUT_DIR=../gen/antlr/csharp
 TESTCASE_GRAMMAR=FuncTestCaseLexer.g4 FuncTestCaseParser.g4
 TESTCASE_OUTPUT_DIR=../tests/parser/antlr_parser
 
-.PHONY: all generate_python_parser generate_testcase_parser generate_type_parser generate_go_parser generate_java_parser generate_rust_parser generate_cpp_parser generate_csharp_parser clean
+.PHONY: all generate_python_parser generate_testcase_parser generate_type_parser generate_go_parser generate_java_parser generate_cpp_parser generate_csharp_parser clean
 
-all: generate_python_parser generate_go_parser generate_java_parser generate_rust_parser generate_cpp_parser generate_csharp_parser
+all: generate_python_parser generate_go_parser generate_java_parser generate_cpp_parser generate_csharp_parser
 
 generate_python_parser: generate_testcase_parser generate_type_parser
 
@@ -36,11 +35,6 @@ generate_go_parser:
 generate_java_parser:
 	@echo "\nGenerating Java parsers"
 	antlr4 -o $(JAVA_OUTPUT_DIR) -Dlanguage=Java -visitor $(TYPE_GRAMMAR) $(TESTCASE_GRAMMAR)
-
-generate_rust_parser:
-	@echo "\nGenerating Rust parsers"
-	python generate_rust.py
-	cp ../tests/antlr/Cargo.toml $(RUST_OUTPUT_DIR)/Cargo.toml
 
 generate_cpp_parser:
 	@echo "\nGenerating C++ parsers"

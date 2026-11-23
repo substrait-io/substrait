@@ -19,7 +19,6 @@ Each language also has an independent task:
 pixi run generate-antlr-python
 pixi run generate-antlr-go
 pixi run generate-antlr-java
-pixi run generate-antlr-rust
 pixi run generate-antlr-cpp
 pixi run generate-antlr-csharp
 ```
@@ -28,8 +27,7 @@ Python output lives under `tests/*/antlr_parser/`. All other targets live under
 `gen/antlr/<language>/`, including Go under `gen/antlr/go/`.
 All generated files are gitignored.
 
-Rust generation downloads a checksum-verified ANTLR fork matching the
-`antlr4rust` runtime. The other languages use the ANTLR tool supplied by Pixi.
+All targets use the ANTLR tool supplied by Pixi.
 
 ## Checking generated parsers
 Run `pixi run check-antlr-<language>` to generate and compile a single target.
@@ -42,7 +40,6 @@ Java and Python tooling comes from Pixi. The other checks require the selected
 language's toolchain on `PATH`:
 
 - Go 1.23 or later.
-- Rust 1.85.1 or later.
 - CMake 3.24 or later and a C++17 compiler.
 - .NET SDK 10 or later.
 

@@ -60,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [python, go, java, rust, cpp, csharp]
+        language: [python, go, java, cpp, csharp]
     steps:
       - uses: actions/checkout@v7
       - uses: prefix-dev/setup-pixi@v0.11.3
@@ -71,8 +71,6 @@ jobs:
         if: matrix.language == 'go'
         with:
           go-version: '1.23'
-      - uses: dtolnay/rust-toolchain@stable
-        if: matrix.language == 'rust'
       - uses: actions/setup-dotnet@v5
         if: matrix.language == 'csharp'
         with:
