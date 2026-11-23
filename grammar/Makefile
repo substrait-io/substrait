@@ -20,11 +20,9 @@ generate_type_parser:
 
 generate_go_parser:
 	@echo "\nGenerating Go parsers"
-	tmp=$$(mktemp -d); trap 'rm -rf "$$tmp"' EXIT; \
-	cp ./*.g4 "$$tmp"/; \
-	mkdir -p $(GO_OUTPUT_DIR)/substraittype $(GO_OUTPUT_DIR)/functestcase; \
-	(cd "$$tmp" && antlr4 -o "$(abspath $(GO_OUTPUT_DIR)/substraittype)" -Dlanguage=Go -visitor -package substraittype SubstraitLexer.g4 SubstraitType.g4); \
-	(cd "$$tmp" && antlr4 -o "$(abspath $(GO_OUTPUT_DIR)/functestcase)" -Dlanguage=Go -visitor -no-listener -package functestcase FuncTestCaseLexer.g4 FuncTestCaseParser.g4)
+	mkdir -p $(GO_OUTPUT_DIR)/substraittype $(GO_OUTPUT_DIR)/functestcase
+	antlr4 -o $(GO_OUTPUT_DIR)/substraittype -Dlanguage=Go -visitor -package substraittype $(TYPE_GRAMMAR)
+	antlr4 -o $(GO_OUTPUT_DIR)/functestcase -Dlanguage=Go -visitor -no-listener -package functestcase $(TESTCASE_GRAMMAR)
 
 clean:
 	rm -rf $(TYPE_OUTPUT_DIR)/*.py  $(TYPE_OUTPUT_DIR)/*.tokens $(TYPE_OUTPUT_DIR)/*.interp
