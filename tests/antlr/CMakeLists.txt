@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.24)
 project(SubstraitAntlrCheck LANGUAGES CXX)
 
 set(PARSER_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../gen/antlr/cpp")
-file(STRINGS "${PARSER_SOURCE_DIR}/substraittype/SubstraitTypeParser.cpp"
+file(STRINGS "${PARSER_SOURCE_DIR}/SubstraitTypeParser.cpp"
      ANTLR_GENERATOR_HEADER LIMIT_COUNT 1 REGEX "by ANTLR")
 string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
        ANTLR_VERSION "${ANTLR_GENERATOR_HEADER}")
@@ -20,12 +20,8 @@ FetchContent_Declare(
   SOURCE_SUBDIR runtime/Cpp)
 FetchContent_MakeAvailable(antlr4_runtime)
 
-file(GLOB PARSER_SOURCES CONFIGURE_DEPENDS
-     "${PARSER_SOURCE_DIR}/substraittype/*.cpp"
-     "${PARSER_SOURCE_DIR}/functestcase/*.cpp")
+file(GLOB PARSER_SOURCES CONFIGURE_DEPENDS "${PARSER_SOURCE_DIR}/*.cpp")
 add_library(antlrcheck STATIC ${PARSER_SOURCES})
 target_compile_features(antlrcheck PRIVATE cxx_std_17)
-target_include_directories(antlrcheck PRIVATE
-                           "${PARSER_SOURCE_DIR}/substraittype"
-                           "${PARSER_SOURCE_DIR}/functestcase")
+target_include_directories(antlrcheck PRIVATE "${PARSER_SOURCE_DIR}")
 target_link_libraries(antlrcheck PRIVATE antlr4_static)

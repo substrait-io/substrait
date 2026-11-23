@@ -31,9 +31,10 @@ All targets use the ANTLR tool supplied by Pixi.
 
 ## Checking generated parsers
 Run `pixi run check-antlr-<language>` to generate and compile a single target.
-The Python check runs the parser and type tests instead. CI runs these tasks
-in parallel using a language matrix; the aggregate generation task runs its
-dependencies sequentially in Pixi. For parallel local generation, run
+The Python check runs the parser and type tests instead. CI runs the non-Python
+checks in parallel using a language matrix; Python is covered by the full test
+suite. The aggregate generation task runs its dependencies sequentially in Pixi.
+For parallel local generation, run
 `pixi run make -C grammar -j6 all`.
 
 Java and Python tooling comes from Pixi. The other checks require the selected

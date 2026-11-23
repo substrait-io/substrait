@@ -38,14 +38,11 @@ generate_java_parser:
 
 generate_cpp_parser:
 	@echo "\nGenerating C++ parsers"
-	antlr4 -o $(CPP_OUTPUT_DIR)/substraittype -Dlanguage=Cpp -visitor -package substraittype $(TYPE_GRAMMAR)
-	antlr4 -o $(CPP_OUTPUT_DIR)/functestcase -Dlanguage=Cpp -visitor -no-listener -package functestcase $(TESTCASE_GRAMMAR)
+	antlr4 -o $(CPP_OUTPUT_DIR) -Dlanguage=Cpp -visitor $(TYPE_GRAMMAR) $(TESTCASE_GRAMMAR)
 
 generate_csharp_parser:
 	@echo "\nGenerating C# parsers"
-	mkdir -p $(CSHARP_OUTPUT_DIR)
-	antlr4 -o $(CSHARP_OUTPUT_DIR)/substraittype -Dlanguage=CSharp -visitor -package Substrait.Antlr.SubstraitType $(TYPE_GRAMMAR)
-	antlr4 -o $(CSHARP_OUTPUT_DIR)/functestcase -Dlanguage=CSharp -visitor -no-listener -package Substrait.Antlr.FuncTestCase $(TESTCASE_GRAMMAR)
+	antlr4 -o $(CSHARP_OUTPUT_DIR) -Dlanguage=CSharp -visitor $(TYPE_GRAMMAR) $(TESTCASE_GRAMMAR)
 	cp ../tests/antlr/AntlrCheck.csproj $(CSHARP_OUTPUT_DIR)/AntlrCheck.csproj
 
 clean:
