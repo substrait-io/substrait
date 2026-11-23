@@ -75,7 +75,11 @@ A frame need not contain the current row. If the lower bound is after the upper 
 * `Preceding` and `Following` offset expressions must have type `int64` and evaluate to a non-negative value `n`. This specifies an inclusive frame boundary `n` rows before the current row for `Preceding`, or after it for `Following`.
 * Without ordering, no row order is guaranteed. With ordering, the relative order of peers is still not guaranteed.
 
+ROWS boundaries are mathematical row positions, independent of implementation integer width. Include only existing partition rows between them; out-of-partition boundaries neither wrap nor cause arithmetic-overflow errors. Errors evaluating `offset_expr`, including overflow, retain that expression's semantics.
+
 In the example above, one preceding row means B and one following row means D when C is current and the displayed order is used. These offsets count individual rows, not groups of rows sharing a score.
+
+At the last row of a partition, a frame from `Following(1)` through `Following(2)` is empty; clamping both boundaries to the last row would incorrectly include it.
 
 ### RANGE
 
