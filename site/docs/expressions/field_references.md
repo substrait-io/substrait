@@ -157,6 +157,8 @@ By default, when only a single field is selected from a struct, that struct is r
 
 Outer references allow expressions inside a subquery to access records from an enclosing relation. The `OuterReference` root type supports two mutually exclusive resolution strategies:
 
+Neither strategy bypasses a [named lambda's scope boundary](lambda_expressions.md#named-lambdas). Within a named lambda, outer references may access enclosing relational scopes established by its body, but not the caller's relational scope. Use `LambdaParameterReference` to access lambda parameters.
+
 #### `steps_out` (offset-based, deprecated)
 
 !!! warning "Deprecated"
