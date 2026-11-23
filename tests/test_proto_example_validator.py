@@ -91,6 +91,161 @@ def test_validate_named_lambdas():
         validate_example(textproto_file.read_text(), plan_pb2.Plan)
 
 
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "reused_identity.textproto",
+        "transform_identity.textproto",
+        "factorial.textproto",
+        "mutual_recursion.textproto",
+    ],
+)
+def test_named_lambda_plan_round_trip(filename):
+    example = Path("site/examples/proto-textformat/named_lambda") / filename
+    plan = text_format.Parse(example.read_text(), plan_pb2.Plan())
+    assert plan_pb2.Plan.FromString(plan.SerializeToString()) == plan
+    assert json_format.Parse(json_format.MessageToJson(plan), plan_pb2.Plan()) == plan
+
+
+@pytest.mark.parametrize("declared", [False, True])
+@pytest.mark.parametrize(
+    "nullability",
+    [type_pb2.Type.NULLABILITY_REQUIRED, type_pb2.Type.NULLABILITY_NULLABLE],
+)
+def test_lambda_output_type_round_trip(declared, nullability):
+    return_type = type_pb2.Type(i32=type_pb2.Type.I32(nullability=nullability))
+    body = algebra_pb2.Expression()
+    if nullability == type_pb2.Type.NULLABILITY_NULLABLE:
+        body.literal.null.CopyFrom(return_type)
+    else:
+        body.literal.i32 = 42
+    lambda_expression = algebra_pb2.Expression.Lambda(
+        parameters=type_pb2.Type.Struct(nullability=type_pb2.Type.NULLABILITY_REQUIRED),
+        body=body,
+    )
+    if declared:
+        lambda_expression.output_type.CopyFrom(return_type)
+
+    for restored in [
+        algebra_pb2.Expression.Lambda.FromString(lambda_expression.SerializeToString()),
+        json_format.Parse(
+            json_format.MessageToJson(lambda_expression),
+            algebra_pb2.Expression.Lambda(),
+        ),
+    ]:
+        assert restored == lambda_expression
+        assert restored.HasField("output_type") == declared
+        if declared:
+            assert restored.output_type == return_type
+
+
+def test_named_lambda_recursive_body():
+    example = Path("site/examples/proto-textformat/named_lambda/factorial.textproto")
+    plan = text_format.Parse(example.read_text(), plan_pb2.Plan())
+    call = plan.relations[0].root.input.project.expressions[0].lambda_invocation
+    definition = plan.named_lambdas[0]
+    assert call.named_lambda.lambda_reference == definition.lambda_anchor
+    assert call.arguments.fields[0].literal.i32 == 5
+
+    lambda_expression = getattr(definition, "lambda")
+    assert lambda_expression.output_type == type_pb2.Type(
+        i32=type_pb2.Type.I32(nullability=type_pb2.Type.NULLABILITY_REQUIRED)
+    )
+    conditional = lambda_expression.body.if_then
+    assert conditional.ifs[0].then.literal.i32 == 1
+    product = getattr(conditional, "else").scalar_function
+    assert product.function_reference == 3
+    recursive_expression = product.arguments[1].value
+    assert recursive_expression.WhichOneof("rex_type") == "lambda_invocation"
+    recursive_call = recursive_expression.lambda_invocation
+    assert recursive_call.named_lambda.lambda_reference == definition.lambda_anchor
+    decrement = recursive_call.arguments.fields[0].scalar_function
+    assert decrement.function_reference == 2
+    assert decrement.arguments[1].value.literal.i32 == 1
+    for operand in [product.arguments[0].value, decrement.arguments[0].value]:
+        parameter = operand.selection
+        assert parameter.WhichOneof("root_type") == "lambda_parameter_reference"
+        assert parameter.lambda_parameter_reference.steps_out == 0
+        assert parameter.direct_reference.struct_field.field == 0
+
+
+def test_named_lambda_mutual_recursion():
+    example = Path(
+        "site/examples/proto-textformat/named_lambda/mutual_recursion.textproto"
+    )
+    plan = text_format.Parse(example.read_text(), plan_pb2.Plan())
+    assert [definition.lambda_anchor for definition in plan.named_lambdas] == [1, 2]
+    for definition, callee, base_value in zip(
+        plan.named_lambdas, [2, 1], [True, False], strict=True
+    ):
+        lambda_expression = getattr(definition, "lambda")
+        assert lambda_expression.output_type == type_pb2.Type(
+            bool=type_pb2.Type.Boolean(nullability=type_pb2.Type.NULLABILITY_REQUIRED)
+        )
+        conditional = lambda_expression.body.if_then
+        assert conditional.ifs[0].then.literal.boolean == base_value
+        call = getattr(conditional, "else").lambda_invocation
+        assert call.WhichOneof("lambda_type") == "named_lambda"
+        assert call.named_lambda.lambda_reference == callee
+        decrement = call.arguments.fields[0].scalar_function
+        assert decrement.function_reference == 2
+        parameter = decrement.arguments[0].value.selection
+        assert parameter.WhichOneof("root_type") == "lambda_parameter_reference"
+        assert parameter.lambda_parameter_reference.steps_out == 0
+        assert decrement.arguments[1].value.literal.i32 == 1
+
+
+def test_named_lambda_function_valued_self_reference_round_trip():
+    """A function-valued dependency can be cyclic even without a recursive call."""
+    definition = text_format.Parse(
+        """
+        lambda_anchor: 0
+        lambda {
+          parameters {
+            types { i32 { nullability: NULLABILITY_REQUIRED } }
+            nullability: NULLABILITY_REQUIRED
+          }
+          output_type { i32 { nullability: NULLABILITY_REQUIRED } }
+          body {
+            lambda_invocation {
+              lambda {
+                parameters {
+                  types {
+                    func {
+                      parameter_types { i32 { nullability: NULLABILITY_REQUIRED } }
+                      return_type { i32 { nullability: NULLABILITY_REQUIRED } }
+                      nullability: NULLABILITY_REQUIRED
+                    }
+                  }
+                  nullability: NULLABILITY_REQUIRED
+                }
+                body { literal { i32: 0 } }
+              }
+              arguments {
+                fields { named_lambda_reference { lambda_reference: 0 } }
+              }
+            }
+          }
+        }
+        """,
+        plan_pb2.NamedLambda(),
+    )
+    for restored in [
+        plan_pb2.NamedLambda.FromString(definition.SerializeToString()),
+        json_format.Parse(
+            json_format.MessageToJson(definition), plan_pb2.NamedLambda()
+        ),
+    ]:
+        assert restored == definition
+        lambda_expression = getattr(restored, "lambda")
+        argument = lambda_expression.body.lambda_invocation.arguments.fields[0]
+        assert argument.WhichOneof("rex_type") == "named_lambda_reference"
+        assert (
+            argument.named_lambda_reference.lambda_reference == restored.lambda_anchor
+        )
+        assert lambda_expression.HasField("output_type")
+
+
 def test_named_lambda_invocations_use_reference_messages():
     """Named lambda invocations use the shared reference message."""
     example = Path(
