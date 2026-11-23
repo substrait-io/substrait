@@ -54,13 +54,9 @@ jobs:
           cache: true
       - name: Compile protobuf
         run: pixi run generate-protobuf
-  antlr:
-    name: Check ANTLR Parsers (${{ matrix.language }})
+  antlr-go:
+    name: Check Go ANTLR Parsers
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [go, java]
     steps:
       - uses: actions/checkout@v7
       - uses: prefix-dev/setup-pixi@v0.11.3
@@ -68,11 +64,69 @@ jobs:
           pixi-version: v0.84.1
           cache: true
       - uses: actions/setup-go@v5
-        if: matrix.language == 'go'
         with:
           go-version: '1.23'
-      - name: Check ${{ matrix.language }} ANTLR parsers
-        run: pixi run check-antlr-${{ matrix.language }}
+      - name: Generate Go ANTLR parsers
+        run: pixi run generate-antlr-go
+      - name: Compile Go ANTLR parsers
+        working-directory: gen/antlr/go
+        run: |
+          go mod init example.com/antlrcheck
+          go get github.com/antlr4-go/antlr/v4@v4.13.1
+          go build ./...
+  antlr-java:
+    name: Check Java ANTLR Parsers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.84.1
+          cache: true
+      - name: Generate Java ANTLR parsers
+        run: pixi run generate-antlr-java
+      - name: Compile Java ANTLR parsers
+        run: |
+          mkdir -p gen/antlr/java/classes
+          pixi run bash -c \
+            'javac -cp "$CONDA_PREFIX/lib/antlr4.jar" -d gen/antlr/java/classes gen/antlr/java/*.java'
+  antlr-cpp:
+    name: Check C++ ANTLR Parsers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.84.1
+          cache: true
+      - name: Generate C++ ANTLR parsers
+        run: pixi run generate-antlr-cpp
+      - name: Check C++ ANTLR parser compilation
+        run: |
+          antlr_version=$(awk '/Generated .* by ANTLR/ {print $NF; exit}' gen/antlr/cpp/SubstraitTypeParser.cpp)
+          curl -fsSL "https://www.antlr.org/download/antlr4-cpp-runtime-${antlr_version}-source.zip" \
+            -o gen/antlr/cpp/runtime.zip
+          unzip -q gen/antlr/cpp/runtime.zip 'runtime/src/*' -d gen/antlr/cpp
+          c++ -std=c++17 -fsyntax-only -I gen/antlr/cpp/runtime/src gen/antlr/cpp/*.cpp
+  antlr-csharp:
+    name: Check C# ANTLR Parsers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: prefix-dev/setup-pixi@v0.11.3
+        with:
+          pixi-version: v0.84.1
+          cache: true
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - name: Generate C# ANTLR parsers
+        run: pixi run generate-antlr-csharp
+      - name: Compile C# ANTLR parsers
+        run: |
+          dotnet new classlib --name AntlrCheck --framework netstandard2.0 --output gen/antlr/csharp --no-restore
+          dotnet add gen/antlr/csharp/AntlrCheck.csproj package Antlr4.Runtime.Standard --version 4.13.1
+          dotnet build gen/antlr/csharp/AntlrCheck.csproj
   yamllint:
     name: Lint YAML extensions
     runs-on: ubuntu-latest

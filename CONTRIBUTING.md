@@ -93,9 +93,8 @@ hand-edit it.
   Go under `gen/antlr/go/`.
 
 Use `pixi run generate-antlr-<language>` to generate one language, or
-`pixi run generate-antlr` for all three. The matching `check-antlr-<language>`
-tasks validate the generated parsers. See the [grammar guide](grammar/README.md)
-for toolchain requirements.
+`pixi run generate-antlr` for all five. CI checks the Go, Java, C++, and C#
+parsers in parallel. See the [grammar guide](grammar/README.md) for details.
 
 `pixi run test` generates the protobuf bindings and Python parsers before running
 tests. The `pixi run test-extension-coverage` task (also used by pre-commit) generates the
