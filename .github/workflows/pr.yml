@@ -55,7 +55,7 @@ jobs:
       - name: Compile protobuf
         run: pixi run generate-protobuf
   antlr:
-    name: Check ANTLR Parsers
+    name: Check Python and Go ANTLR Parsers
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -63,8 +63,17 @@ jobs:
         with:
           pixi-version: v0.84.1
           cache: true
-      - name: Generate ANTLR parsers
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      - name: Generate Python and Go ANTLR parsers
         run: pixi run generate-antlr
+      - name: Compile Go ANTLR parsers
+        working-directory: tests/antlr_go
+        run: |
+          go mod init example.com/antlrcheck
+          go get github.com/antlr4-go/antlr/v4@v4.13.1
+          go build ./...
   yamllint:
     name: Lint YAML extensions
     runs-on: ubuntu-latest

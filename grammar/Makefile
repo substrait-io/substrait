@@ -1,9 +1,10 @@
 TYPE_GRAMMAR=SubstraitLexer.g4 SubstraitType.g4
 TYPE_OUTPUT_DIR=../tests/type/antlr_parser
+GO_OUTPUT_DIR=../tests/antlr_go
 TESTCASE_GRAMMAR=FuncTestCaseLexer.g4 FuncTestCaseParser.g4
 TESTCASE_OUTPUT_DIR=../tests/parser/antlr_parser
 
-all: generate_testcase_parser generate_type_parser
+all: generate_testcase_parser generate_type_parser generate_go_parser
 
 generate_testcase_parser:
 	@echo "\nGenerating Test Case Parser"
@@ -17,7 +18,16 @@ generate_type_parser:
 	rm -rf $(TYPE_OUTPUT_DIR)/*.tokens $(TYPE_OUTPUT_DIR)/*.interp
 	./prepend_license.sh $(TYPE_OUTPUT_DIR)
 
+generate_go_parser:
+	@echo "\nGenerating Go parsers"
+	tmp=$$(mktemp -d); trap 'rm -rf "$$tmp"' EXIT; \
+	cp ./*.g4 "$$tmp"/; \
+	mkdir -p $(GO_OUTPUT_DIR)/substraittype $(GO_OUTPUT_DIR)/functestcase; \
+	(cd "$$tmp" && antlr4 -o "$(abspath $(GO_OUTPUT_DIR)/substraittype)" -Dlanguage=Go -visitor -package substraittype SubstraitLexer.g4 SubstraitType.g4); \
+	(cd "$$tmp" && antlr4 -o "$(abspath $(GO_OUTPUT_DIR)/functestcase)" -Dlanguage=Go -visitor -no-listener -package functestcase FuncTestCaseLexer.g4 FuncTestCaseParser.g4)
+
 clean:
 	rm -rf $(TYPE_OUTPUT_DIR)/*.py  $(TYPE_OUTPUT_DIR)/*.tokens $(TYPE_OUTPUT_DIR)/*.interp
 	rm -rf $(TESTCASE_OUTPUT_DIR)/*.py $(TESTCASE_OUTPUT_DIR)/*.tokens $(TESTCASE_OUTPUT_DIR)/*.interp
+	rm -rf $(GO_OUTPUT_DIR)
 	rm -rf ./*.tokens
