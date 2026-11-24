@@ -10,7 +10,10 @@ Despite this, we strive to maintain backward compatibility for both the binary r
 When a breaking change cannot be reasonably avoided, we may remove previously deprecated fields.
 All deprecated fields will be removed for the 1.0.0 release.
 
-Substrait uses [semantic versioning](https://semver.org/) for its version numbers, with the addition that, during 0.x.y, we increment the x digit for breaking changes and new features, and the y digit for fixes and other nonfunctional changes.
+Substrait uses [semantic versioning](https://semver.org/) for its version numbers, with the addition that, during 0.x.y, we increment the x digit for every release, whether it contains breaking changes, new features, or fixes.
+Releases of the specification always have y set to 0.
+The y digit is reserved for [substrait-packaging](https://github.com/substrait-io/substrait-packaging), whose artifacts are versioned in lockstep with the specification, so that a broken artifact can be re-published as 0.x.1, 0.x.2, and so on without implying a change to the specification.
+This applies to releases after 0.103.1, which was the last patch release of the specification itself.
 The release process is currently automated and makes a new release every week, provided something has changed on the main branch since the previous release.
 This release cadence will likely be slowed down as stability increases over time.
 [Conventional commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) are used to distinguish between breaking changes, new features, and fixes,
