@@ -86,7 +86,17 @@ export default {
     [
       "@semantic-release/commit-analyzer",
       {
-        releaseRules: [{ breaking: true, release: "minor" }],
+        // Every release bumps the minor version, never the patch version:
+        // breaking changes (while in 0.x), and the types that would otherwise
+        // default to a patch bump. Patch versions are reserved for
+        // substrait-packaging to re-publish fixed artifacts for an existing
+        // spec version. ci/release/verify_release.sh enforces this.
+        releaseRules: [
+          { breaking: true, release: "minor" },
+          { type: "fix", release: "minor" },
+          { type: "perf", release: "minor" },
+          { type: "revert", release: "minor" },
+        ],
       },
     ],
     [
@@ -119,6 +129,7 @@ export default {
       "@semantic-release/exec",
       {
         verifyConditionsCmd: "ci/release/verify.sh",
+        verifyReleaseCmd: "ci/release/verify_release.sh ${nextRelease.version}",
         prepareCmd: "ci/release/prepare.sh",
         // publish/notify must not run during a dry run.
         ...(dryRun
