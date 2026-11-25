@@ -32,8 +32,9 @@ message PlanRel {
   repeated Rel detached_rels = 4;
 
   // When present, the producer guarantees this is the complete set of immediate
-  // ReferenceRel dependencies. An empty message means there are none; an absent
-  // message means dependencies must be discovered from the relation tree.
+  // ReferenceRel dependencies. A present summary that violates this contract
+  // makes the plan invalid. An empty message means there are no dependencies;
+  // an absent message means they must be discovered from the relation tree.
   DirectDependencies direct_dependencies = 5;
 
   message DirectDependencies {

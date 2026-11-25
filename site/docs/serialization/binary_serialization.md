@@ -21,9 +21,9 @@ The main top-level object used to communicate a Substrait plan using protobuf is
 
 ### Plan Relation Dependencies
 
-`PlanRel.direct_dependencies` is an optional summary of the [`ReferenceRel`](../relations/logical_relations.md#reference-operator) targets reachable from that `PlanRel`'s `rel` or `root`, including references in subqueries and reachable detached subtrees. Each entry is a zero-based index into the enclosing `Plan.relations`, just like `ReferenceRel.subtree_ordinal` and appears exactly once in any order.
+`PlanRel.direct_dependencies` is an optional summary of the direct [`ReferenceRel`](../relations/logical_relations.md#reference-operator) targets of that `PlanRel`'s `rel` or `root`, including references in subqueries and reachable detached subtrees. To discover direct dependencies, record each `ReferenceRel` target without traversing the target's relation tree. There is no need to traverse [named lambda bodies](../expressions/lambda_expressions.md#scope), which cannot reference relational input.
 
-When `direct_dependencies` is present, the producer guarantees that `relation_ordinals` contains each directly referenced target exactly once, in any order. Consumers can use the summary without traversing the relation tree to discover dependencies.  A present but empty message (`direct_dependencies {}` in protobuf text format) identifies a leaf in the dependency graph. If the message is absent, consumers must traverse the relation tree to discover dependencies.
+When `direct_dependencies` is present, `relation_ordinals` must contain the zero-based index into `Plan.relations` of each directly referenced target exactly once, in any order. A missing, extra, duplicate, or out-of-range ordinal makes the plan invalid. Consumers may rely on the producer's summary without traversing the relation tree to verify it. A present but empty message (`direct_dependencies {}` in protobuf text format) identifies a leaf in the dependency graph. If the message is absent, consumers must traverse the relation tree to discover dependencies.
 
 <a id="bounded-expression-nesting"></a>
 
